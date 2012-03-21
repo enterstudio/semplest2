@@ -26,15 +26,16 @@ public interface GoogleAdwordsServiceInterface
 	//Campaign Data Management (cm)
 	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount) throws Exception;
 	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception;
-	public abstract Boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
+	public abstract Long addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract AdGroup[] getAdGroupsByCampaignId(String customerID, Long campaignID, Boolean includeDeleted) throws Exception;
 	public abstract Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
+	//public abstract deleteAD
 	
-	
+	public abstract String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception;
 	public abstract void resumeCampaignById(String customerId, long campaignId) throws Exception;
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
 	public abstract BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
-	public abstract String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception;
+	
 	//public GeoTargetList getCampaignGeoTargets(String customerId, long campaignId) throws Exception;
 	//optimization (o)
 	
