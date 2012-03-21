@@ -1,0 +1,185 @@
+﻿@{
+    ViewBag.Title = "Ad Setup";
+}
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script>
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                        {
+                            text: "Home",
+                            items: [
+                                { text: "My Account" },
+                                { text: "Reporting" },
+                                { text: "Billing" }
+                            ]
+                        },
+                        {
+                            text: "Product Groups",
+                            items: [
+                                { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance"}] },
+                                { text: "Safty Tips", items: [{ text: "Auto Mobile"}] },
+                                { text: "Agents", items: [{ text: "Best Agents"}] }
+                            ]
+                        }
+                    ]
+        });
+
+
+    </script>
+}
+<div id="exampleTitleBg">
+    <h1 id="exampleTitle">
+        <span class="exampleIcon overviewIcon"></span>Ad Setup
+         
+    </h1>
+    <div id="examplesThemeChooser" style="margin-right:120px">
+                Step 1 of 3
+        </div>
+</div>
+<div id="exampleWrap">
+    <div id="example" class="k-content">
+        <div class="configuration">
+            <span class="infoHead">Helpful Links</span>
+            <ul>
+                <li>@Html.ActionLink("What are SEM Ads?", "/About");</li>
+                <li>@Html.ActionLink("What is a Product Group?", "/About");</li>
+                <li>@Html.ActionLink("What is a Product?", "/About");</li>
+                <li>@Html.ActionLink("Ad Creation Tips", "/About");</li>
+                <li>@Html.ActionLink("Why should i create morethan one Ad?", "/About"); </li>
+            </ul>
+        </div>
+       
+        <div id="datasource-views" class="k-header" style="background-image: none">
+            <h3>
+                DEFINE PRODUCT</h3>
+            <div id="cap-view" class="k-header">
+                <div id="cap" class="black-cap">
+                </div>
+                <div id="options">
+                    <h4>
+                        Product Group Name</h4>
+                    <input id="color" />
+                    <h4>
+                        Product / Promotion Name</h4>
+                    <input id="temppwd" />
+                    <h4>
+                        Please type in several words or phrases that describe your business or what you
+                        sell or are promoting (separated by commas) to help us build your search campaign:
+                    </h4>
+                    <input id="color1" />
+                    <h4>
+                        Budjet</h4>
+                    <input id="temppwd1" />
+                    <h4>
+                        Product Start / End Date</h4>
+                    <label for="start">
+                        Start date:</label>
+                    <input id="start" value="10/10/2011" />
+                    <label for="end" style="margin-left: 3em">
+                        End date:</label>
+                    <input id="end" value="10/10/2012" />
+                    <h4>
+                        Search Engines</h4>
+                    <input type="checkbox"> Google</input>
+                    <input type="checkbox"> Yahoo</input>
+                    <input type="checkbox"> Bing</input>
+                    <br />
+                    <br />
+                    <button class="k-button" id="get">
+                        Save And Continue</button>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $(document).ready(function () {
+                function startChange() {
+                    var startDate = start.value();
+
+                    if (startDate) {
+                        startDate = new Date(startDate);
+                        startDate.setDate(startDate.getDate() + 1);
+                        end.min(startDate);
+                    }
+                }
+
+                function endChange() {
+                    var endDate = end.value();
+
+                    if (endDate) {
+                        endDate = new Date(endDate);
+                        endDate.setDate(endDate.getDate() - 1);
+                        start.max(endDate);
+                    }
+                }
+
+                var start = $("#start").kendoDatePicker({
+                    change: startChange
+                }).data("kendoDatePicker");
+
+                var end = $("#end").kendoDatePicker({
+                    change: endChange
+                }).data("kendoDatePicker");
+
+                start.max(end.value());
+                end.min(start.value());
+            });
+        </script>
+        <style scoped>
+                vertical-align: middle;
+                }
+
+                #example h3 {
+                    clear: both;
+                }
+
+                #example .code-sample {
+                    width: 60%;
+                    float:left;
+                    margin-bottom: 20px;
+                }
+
+                #example .output {
+                    width: 24%;
+                    margin-left: 4%;
+                    float:left;
+                }
+            #datasource-views
+            {
+                padding: 20px;
+                border-radius: 10px;
+                border-style: solid;
+                border-width: 1px;
+                overflow: hidden;
+            }
+            
+            .selector
+            {
+                text-align: right;
+            }
+            * + html .selector
+            {
+                margin-bottom: 25px;
+            }
+            
+            .selector h3
+            {
+                float: left;
+                margin: 0;
+                font-size: 16px;
+                font-weight: normal;
+            }
+            
+            .selector h3, .k-dropdown
+            {
+                vertical-align: middle;
+            }
+            
+            .k-dropdown
+            {
+                text-align: left;
+            }
+        </style>
+    </div>
+</div>
