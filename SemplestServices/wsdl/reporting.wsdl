@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<wsdl:definitions xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="https://adcenter.microsoft.com/v8" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="ReportingService" targetNamespace="https://adcenter.microsoft.com/v8">
+  <wsp:Policy wsu:Id="BasicHttpBinding_IReportingService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false"/>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256/>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict/>
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="https://adcenter.microsoft.com/v8/Imports">
+      <xsd:import namespace="https://adcenter.microsoft.com/v8" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/Reporting/ReportingService.svc?xsd=xsd0"/>
+      <xsd:import namespace="https://adapi.microsoft.com" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/Reporting/ReportingService.svc?xsd=xsd3"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/Reporting/ReportingService.svc?xsd=xsd1"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/Reporting/ReportingService.svc?xsd=xsd2"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="SubmitGenerateReportRequest">
+    <wsdl:part element="tns:SubmitGenerateReportRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitGenerateReportRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitGenerateReportResponse">
+    <wsdl:part element="tns:SubmitGenerateReportResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SubmitGenerateReportResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IReportingService_SubmitGenerateReport_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q1="https://adapi.microsoft.com" element="q1:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IReportingService_SubmitGenerateReport_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="PollGenerateReportRequest">
+    <wsdl:part element="tns:PollGenerateReportRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="PollGenerateReportRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="PollGenerateReportResponse">
+    <wsdl:part element="tns:PollGenerateReportResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="PollGenerateReportResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IReportingService_PollGenerateReport_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q2="https://adapi.microsoft.com" element="q2:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IReportingService_PollGenerateReport_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="false" name="IReportingService">
+    <wsdl:operation name="SubmitGenerateReport">
+      <wsdl:input message="tns:SubmitGenerateReportRequest" name="SubmitGenerateReportRequest" wsaw:Action="SubmitGenerateReport"/>
+      <wsdl:output message="tns:SubmitGenerateReportResponse" name="SubmitGenerateReportResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/SubmitGenerateReportResponse"/>
+      <wsdl:fault message="tns:IReportingService_SubmitGenerateReport_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/SubmitGenerateReportAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IReportingService_SubmitGenerateReport_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/SubmitGenerateReportApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="PollGenerateReport">
+      <wsdl:input message="tns:PollGenerateReportRequest" name="PollGenerateReportRequest" wsaw:Action="PollGenerateReport"/>
+      <wsdl:output message="tns:PollGenerateReportResponse" name="PollGenerateReportResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/PollGenerateReportResponse"/>
+      <wsdl:fault message="tns:IReportingService_PollGenerateReport_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/PollGenerateReportAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IReportingService_PollGenerateReport_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IReportingService/PollGenerateReportApiFaultDetailFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IReportingService" type="tns:IReportingService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_IReportingService_policy"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="SubmitGenerateReport">
+      <soap:operation soapAction="SubmitGenerateReport" style="document"/>
+      <wsdl:input name="SubmitGenerateReportRequest">
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:SubmitGenerateReportRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SubmitGenerateReportResponse">
+        <soap:header message="tns:SubmitGenerateReportResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="PollGenerateReport">
+      <soap:operation soapAction="PollGenerateReport" style="document"/>
+      <wsdl:input name="PollGenerateReportRequest">
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:PollGenerateReportRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="PollGenerateReportResponse">
+        <soap:header message="tns:PollGenerateReportResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ReportingService">
+    <wsdl:port binding="tns:BasicHttpBinding_IReportingService" name="BasicHttpBinding_IReportingService">
+      <soap:address location="https://adcenterapi.microsoft.com/Api/Advertiser/V8/Reporting/ReportingService.svc"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
