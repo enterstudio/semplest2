@@ -1,53 +1,49 @@
 package semplest.service.google.adwords;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import semplest.other.DateTimeCeiling;
+import semplest.other.DateTimeFloored;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
 import com.google.api.adwords.lib.AdWordsUser;
-import com.google.api.adwords.lib.utils.MapUtils;
 import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupAdOperation;
 import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
+import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupOperation;
+import com.google.api.adwords.v201109.cm.AdGroupPage;
 import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
 import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetDeliveryMethod;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignOperation;
+import com.google.api.adwords.v201109.cm.CampaignPage;
 import com.google.api.adwords.v201109.cm.CampaignReturnValue;
 import com.google.api.adwords.v201109.cm.CampaignServiceInterface;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.cm.Operator;
-import com.google.api.adwords.v201109.cm.Paging;
+import com.google.api.adwords.v201109.cm.OrderBy;
+import com.google.api.adwords.v201109.cm.Predicate;
+import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.Selector;
+import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
 import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
-import com.google.api.adwords.v201109.o.Attribute;
-import com.google.api.adwords.v201109.o.BulkOpportunityPage;
-import com.google.api.adwords.v201109.o.BulkOpportunitySelector;
-import com.google.api.adwords.v201109.o.BulkOpportunityServiceInterface;
-import com.google.api.adwords.v201109.o.IntegerAttribute;
-import com.google.api.adwords.v201109.o.KeywordAttribute;
-import com.google.api.adwords.v201109.o.LongAttribute;
-import com.google.api.adwords.v201109.o.Opportunity;
-import com.google.api.adwords.v201109.o.OpportunityAttributeType;
-import com.google.api.adwords.v201109.o.OpportunityIdea;
-import com.google.api.adwords.v201109.o.OpportunityIdeaType;
-import com.google.api.adwords.v201109.o.OpportunityIdeaTypeAttribute;
 import com.google.gson.Gson;
 
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
@@ -59,7 +55,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = true;
+	private static boolean useSandbox = false;
 
 	public String CreateOneAccountService(String json) throws Exception
 	{
@@ -210,7 +206,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(res);
 	}
 	@Override
-	public boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception
+	public Boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);          
 		// Get the AdGroupAdService.        
@@ -247,54 +243,148 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	
 	public static void main(String[] args)
 	{
-		try
-		{
+		
 			// Log SOAP XML request and response.
-			AdWordsServiceLogger.log();
-			// Get AdWordsUser from "~/adwords.properties".
-			AdWordsUser user = new AdWordsUser(email, password, "6048920973", userAgent, developerToken, useSandbox);
-			// Get the BulkOpportunityService.
-			BulkOpportunityServiceInterface service = user.getService(AdWordsService.V201109.BULK_OPPORTUNITY_SERVICE);
-			// Create selector.
-			BulkOpportunitySelector selector = new BulkOpportunitySelector();
-			selector.setRequestedAttributeTypes(new OpportunityAttributeType[]
-			{ OpportunityAttributeType.ADGROUP_ID, OpportunityAttributeType.AVERAGE_MONTHLY_SEARCHES, OpportunityAttributeType.CAMPAIGN_ID,
-					OpportunityAttributeType.IDEA_TYPE, OpportunityAttributeType.KEYWORD });
-			selector.setIdeaTypes(new OpportunityIdeaType[]
-			{ OpportunityIdeaType.KEYWORD });
-			// Set selector paging.
-			Paging paging = new Paging();
-			paging.setStartIndex(0);
-			paging.setNumberResults(10);
-			selector.setPaging(paging);
-			// Get keyword opportunities.
-			BulkOpportunityPage page = service.get(selector);
-			// Display related keyword opportunities.
-			if (page != null && page.getEntries() != null)
+			try
 			{
-				for (Opportunity entry : page.getEntries())
+				AdWordsServiceLogger.log();
+				String accountID = "6048920973";
+				// Get AdWordsUser from "~/adwords.properties".
+				//AdWordsUser user = new AdWordsUser(email, password, "6048920973", userAgent, developerToken, useSandbox);
+				GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+				AdGroup[] res =  g.getAdGroupsByCampaignId("6048920973", 75239229L, false);
+				if (res != null)
 				{
-					for (OpportunityIdea idea : entry.getOpportunityIdeas())
+				for(int i = 0; i < res.length; i++)
+				{
+					System.out.println(res[i].getCampaignName() + ":" + res[i].getName());
+				}
+				}
+				Campaign[] camp = g.getCampaignsByAccountId(accountID, false);
+				if (camp != null)
+				{
+					for(int i = 0; i < camp.length; i++)
 					{
-						Map<OpportunityAttributeType, Attribute> data = MapUtils.toMap(idea.getData());
-						OpportunityIdeaType ideaType = ((OpportunityIdeaTypeAttribute) data.get(OpportunityAttributeType.IDEA_TYPE)).getValue();
-						String keywordText = ((KeywordAttribute) data.get(OpportunityAttributeType.KEYWORD)).getValue().getText();
-						Long campaignId = ((LongAttribute) data.get(OpportunityAttributeType.CAMPAIGN_ID)).getValue();
-						Long adGroupId = ((LongAttribute) data.get(OpportunityAttributeType.ADGROUP_ID)).getValue();
-						Integer averageMonthlySearches = ((IntegerAttribute) data.get(OpportunityAttributeType.AVERAGE_MONTHLY_SEARCHES)).getValue();
-						System.out.printf("%s opportunity for Campaign %d and AdGroup %d:" + " %s with %d average monthly searches\n", ideaType,
-								campaignId, adGroupId, keywordText, averageMonthlySearches);
+						System.out.println(camp[i].getName());
 					}
 				}
 			}
-			else
+			catch (Exception e)
 			{
-				System.out.println("No keyword opportunities were found.");
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+			
+	}
+
+	@Override
+	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String[] getClientAccounts() throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Budget[] getAccountBudgets(String customerId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void updateAccountBudget(Budget budgetForUpdate, Money money, String customerId, String orderId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount,
+			String string) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);          
+		// Get the AdGroupService.        
+		AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);                  
+		// Create selector.        
+		Selector selector = new Selector();       
+		selector.setFields(new String[] {"Id", "Name"});       
+		selector.setOrdering(new OrderBy[] {new OrderBy("Name", SortOrder.ASCENDING)});          
+		// Create predicates.       
+		Predicate campaignIdPredicate =  new Predicate("CampaignId", PredicateOperator.IN, new String[] {campaignID.toString()});        
+		selector.setPredicates(new Predicate[] {campaignIdPredicate});          
+		// Get all ad groups.       
+		AdGroupPage page = adGroupService.get(selector);
+		return page.getEntries();
+	}
+
+	@Override
+	public Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox); 
+		 // Get the CampaignService.        
+		CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);          
+		// Create selector.        
+		Selector selector = new Selector();        
+		selector.setFields(new String[] {"Id", "Name"});        
+		selector.setOrdering(new OrderBy[] {new OrderBy("Name", SortOrder.ASCENDING)});                
+		// Get all campaigns.        
+		CampaignPage page = campaignService.get(selector); 
+		return page.getEntries();
+	}
+
+	@Override
+	public void resumeCampaignById(String customerId, long campaignId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
