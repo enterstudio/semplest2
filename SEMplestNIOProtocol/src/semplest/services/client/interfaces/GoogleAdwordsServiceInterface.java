@@ -12,8 +12,10 @@ import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
+import com.google.api.adwords.v201109.o.TargetingIdea;
 
 
 /*
@@ -29,7 +31,12 @@ public interface GoogleAdwordsServiceInterface
 	public abstract Long addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract AdGroup[] getAdGroupsByCampaignId(String customerID, Long campaignID, Boolean includeDeleted) throws Exception;
 	public abstract Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
-	//public abstract deleteAD
+	public abstract Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
+	public abstract Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
+	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
+	public abstract TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
+	public abstract TargetingIdea[] GetRelatedKeywordsForURL(String URL, KeywordMatchType matchType, int numberResults) throws Exception;
+	
 	
 	public abstract String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception;
 	public abstract void resumeCampaignById(String customerId, long campaignId) throws Exception;
