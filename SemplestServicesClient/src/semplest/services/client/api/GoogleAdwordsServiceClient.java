@@ -7,10 +7,17 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
 
+import semplest.other.DateTimeCeiling;
+import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
+import com.google.api.adwords.v201109.cm.AdGroup;
+import com.google.api.adwords.v201109.cm.AdGroupAd;
+import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
+import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
@@ -123,7 +130,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
-	public boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL,
+	public Boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL,
 			String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -138,6 +145,85 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 
 		String returnData = runMethod(BASEURLTEST, "addTextAd", json);
 		return gson.fromJson(returnData, Boolean.class);
+	}
+	@Override
+	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public String[] getClientAccounts() throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Budget[] getAccountBudgets(String customerId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void updateAccountBudget(Budget budgetForUpdate, Money money, String customerId, String orderId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount,
+			String string) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public AdGroup[] getAdGroupsByCampaignId(String customerID, Long campaignID, Boolean includeDeleted) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void resumeCampaignById(String customerId, long campaignId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
