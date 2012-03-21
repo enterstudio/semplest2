@@ -17,6 +17,7 @@ public interface GoogleAdwordsServiceInterface
 	//Campaign Data Management (cm)
 	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount) throws Exception;
 	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception;
+	public abstract boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	//optimization (o)
 	
 	//Account Management API Usage
