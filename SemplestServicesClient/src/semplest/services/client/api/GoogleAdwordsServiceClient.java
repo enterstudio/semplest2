@@ -130,7 +130,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
-	public Boolean addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL,
+	public Long addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL,
 			String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -144,7 +144,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST, "addTextAd", json);
-		return gson.fromJson(returnData, Boolean.class);
+		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
 	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
