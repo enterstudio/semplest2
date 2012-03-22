@@ -243,14 +243,24 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	@Override
 	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "getAllBiddableAdGroupCriteria", json);
+		return gson.fromJson(returnData,  BiddableAdGroupCriterion[].class);
 	}
 	@Override
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "getAllAdGroupKeywords", json);
+		return gson.fromJson(returnData, String[].class);
 	}
 	@Override
 	public AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception
@@ -278,22 +288,35 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, " deleteAdGroup", json);
+		String returnData = runMethod(BASEURLTEST, "deleteAdGroup", json);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	
 	@Override
 	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("keyword", keyword);
+		jsonHash.put("matchType", matchType.getValue());
+		jsonHash.put("numberResults",String.valueOf(numberResults));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywords", json);
+		return gson.fromJson(returnData, TargetingIdea[].class);
 	}
 	
 	@Override
 	public TargetingIdea[] GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("url", url);
+		jsonHash.put("keyword", keyword);
+		jsonHash.put("matchType", matchType.getValue());
+		jsonHash.put("numberResults",String.valueOf(numberResults));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywordsForURL", json);
+		return gson.fromJson(returnData, TargetingIdea[].class);
 	}
 	@Override
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
