@@ -1,5 +1,8 @@
 package semplest.services.client.interfaces;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 
@@ -30,7 +33,7 @@ public interface GoogleAdwordsServiceInterface
 	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
 	public abstract Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception;
 	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception;
-	public abstract Campaign[] getCampaignsByAccountId(String accountID, boolean includeDeleted) throws Exception;
+	public abstract ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
 	
 	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception;
