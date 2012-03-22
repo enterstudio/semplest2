@@ -21,8 +21,10 @@ import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
+import com.google.api.adwords.v201109.o.TargetingIdea;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -130,12 +132,12 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
-	public Long addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL,
+	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL,
 			String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
-		jsonHash.put("addGroupID", String.valueOf(addGroupID));
+		jsonHash.put("addGroupID", String.valueOf(adGroupID));
 		jsonHash.put("headline", headline);
 		jsonHash.put("description1", description1);
 		jsonHash.put("description2", description2);
@@ -221,6 +223,44 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	}
 	@Override
 	public AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public TargetingIdea[] GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
+			String displayURL, String url) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
