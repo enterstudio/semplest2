@@ -89,6 +89,10 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return webResource.queryParams(queryParams).get(String.class);
 	}
 
+	/*
+	 * Campaign
+	 * 
+	 */
 	@Override
 	public Account CreateOneAccountService(String currencyCode, String dateTimeZone, String companyName, String descriptiveName) throws Exception
 	{
@@ -104,6 +108,17 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
+	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "deleteCampaign", json);
+		return gson.fromJson(returnData, Boolean.class);
+	}
+	@Override
 	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
 			Money budgetAmount) throws Exception
 	{
@@ -118,6 +133,9 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		String returnData = runMethod(BASEURLTEST, "CreateOneCampaignForAccount", json);
 		return gson.fromJson(returnData, Campaign.class);
 	}
+	/*
+	 * AdGroup and Ads
+	 */
 	@Override
 	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception
 	{
@@ -191,18 +209,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@Override
-	public void resumeCampaignById(String customerId, long campaignId) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
+	
 	@Override
 	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception
 	{
@@ -210,13 +217,13 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return null;
 	}
 	@Override
-	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception
+	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -239,12 +246,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 	@Override
 	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
@@ -261,6 +263,42 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		jsonHash.put("status", status.getValue());
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "changeCampaignStatus", json);
+		return gson.fromJson(returnData, Boolean.class);
+	}
+	@Override
+	public Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroAmount()));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "changeCampaignBudget", json);
+		return gson.fromJson(returnData, Boolean.class);
+	}
+	@Override
+	public Campaign[] getCampaignsByAccountId(String accountID, boolean includeDeleted) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
