@@ -543,6 +543,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		AdGroupPage page = adGroupService.get(selector);
 		return page.getEntries();
 	}
+	public String deleteCampaign(String json) throws Exception
+	{
+		logger.debug("call deleteCampaign" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignID = Long.parseLong(data.get("campaignID"));
+		Boolean res = deleteCampaign(data.get("accountID"), campaignID);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
 	{
@@ -572,6 +581,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+	public String changeCampaignStatus(String json) throws Exception
+	{
+		logger.debug("call changeCampaignStatus" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignID = Long.parseLong(data.get("campaignID"));
+		Boolean res = changeCampaignStatus(data.get("accountID"), campaignID, CampaignStatus.fromString(data.get("status")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
 	{
@@ -587,6 +605,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			return false;
 		}
+	}
+	public String changeCampaignBudget(String json) throws Exception
+	{
+		logger.debug("call changeCampaignStatus" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignID = Long.parseLong(data.get("campaignID"));
+		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, new Money(null, Long.valueOf(data.get("budgetAmount"))));
+		// convert result to Json String
+		return gson.toJson(res);
 	}
 	@Override
 	public Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception
