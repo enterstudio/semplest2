@@ -314,6 +314,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return null;
 	}
 
+	public String getAllBiddableAdGroupCriteria(String json) throws Exception
+	{
+		logger.debug("call getAllBiddableAdGroupCriteria(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+
+		BiddableAdGroupCriterion[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
@@ -328,6 +338,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return result.toArray(new BiddableAdGroupCriterion[result.size()]);
 	}
 
+	public String getAllAdGroupKeywords(String json) throws Exception
+	{
+		logger.debug("call getAllAdGroupKeywords(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+
+		String[] res = getAllAdGroupKeywords(data.get("accountID"), adGroupID);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
 	{
@@ -771,6 +791,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	/*
 	 * Keywords
 	 */
+	public String GetRelatedKeywords(String json) throws Exception
+	{
+		logger.debug("call GetRelatedKeywords" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		TargetingIdea[] res = GetRelatedKeywords(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
@@ -807,6 +835,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return page.getEntries();
 	}
 
+	public String GetRelatedKeywordsForURL(String json) throws Exception
+	{
+		logger.debug("call GetRelatedKeywords" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		TargetingIdea[] res = GetRelatedKeywordsForURL(data.get("url"), data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public TargetingIdea[] GetRelatedKeywordsForURL(String url, String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
