@@ -346,6 +346,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return null;
 	}
 
+	public String deleteAD(String json) throws Exception
+	{
+		logger.debug("call deleteAd(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		Long AdID = Long.parseLong(data.get("AdID"));
+		Boolean del = deleteAD(data.get("accountID"), adGroupID, AdID);
+		// convert result to Json String
+		return gson.toJson(del);
+	}
 	@Override
 	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
@@ -377,6 +387,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 
+	public String deleteAdGroup(String json) throws Exception
+	{
+		logger.debug("call deleteAdGroup(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		Boolean del =deleteAdGroup(data.get("accountID"), adGroupID);
+		// convert result to Json String
+		return gson.toJson(del);
+	}
 	@Override
 	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
 	{
@@ -406,6 +425,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 
+	public String updateAD(String json) throws Exception
+	{
+		logger.debug("call updateAD(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		Long AdID = Long.parseLong(data.get("AdID"));
+		Boolean update = updateAD(data.get("accountID"), adGroupID, AdID,data.get("headline"),data.get("description1"),data.get("description2"),data.get("displayURL"),data.get("url"));
+		// convert result to Json String
+		return gson.toJson(update);
+	}
 	@Override
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
@@ -524,6 +553,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 
+	public String getAdGroupsByCampaignId(String json) throws Exception
+	{
+		logger.debug("call getCampaignsByAccountId" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignID = Long.parseLong(data.get("campaignID"));
+		AdGroup[] res = getAdGroupsByCampaignId(data.get("accountID"), campaignID, Boolean.valueOf(data.get("includeDeleted")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
