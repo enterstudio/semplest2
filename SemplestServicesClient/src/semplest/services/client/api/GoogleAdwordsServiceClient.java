@@ -222,10 +222,16 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		
 	}
 	@Override
-	public AdGroup[] getAdGroupsByCampaignId(String customerID, Long campaignID, Boolean includeDeleted) throws Exception
+	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		jsonHash.put("includeDeleted",  String.valueOf(includeDeleted));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "getAdGroupsByCampaignId", json);
+		return gson.fromJson(returnData, AdGroup[].class);
 	}
 	
 	@Override
@@ -255,14 +261,25 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("AdID", String.valueOf(AdID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "deleteAD", json);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
 	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, " deleteAdGroup", json);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	
 	@Override
@@ -282,8 +299,19 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("AdID", String.valueOf(AdID));
+		jsonHash.put("headline", headline);
+		jsonHash.put("description1", description1);
+		jsonHash.put("description2", description2);
+		jsonHash.put("displayURL", displayURL);
+		jsonHash.put("url", url);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, " updateAD", json);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
