@@ -80,7 +80,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
 	private static boolean useSandbox = false;
 
-	
 	public static void main(String[] args)
 	{
 
@@ -125,6 +124,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 
 	}
+
 	/*
 	 * Account
 	 */
@@ -214,7 +214,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// TODO Auto-generated method stub
 
 	}
-	
 
 	/*
 	 * Add Group and Ads
@@ -406,6 +405,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
 	@Override
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
@@ -461,8 +461,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
 	/*
-	 * Campaign 
+	 * Campaign
 	 */
 
 	public String CreateOneCampaignForAccount(String json) throws Exception
@@ -522,6 +523,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return null;
 		}
 	}
+
 	@Override
 	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
@@ -543,6 +545,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		AdGroupPage page = adGroupService.get(selector);
 		return page.getEntries();
 	}
+
 	public String deleteCampaign(String json) throws Exception
 	{
 		logger.debug("call deleteCampaign" + json);
@@ -552,6 +555,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// convert result to Json String
 		return gson.toJson(res);
 	}
+
 	@Override
 	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
 	{
@@ -581,6 +585,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
 	public String changeCampaignStatus(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus" + json);
@@ -590,6 +595,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// convert result to Json String
 		return gson.toJson(res);
 	}
+
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
 	{
@@ -606,6 +612,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
 	public String changeCampaignBudget(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus" + json);
@@ -615,6 +622,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// convert result to Json String
 		return gson.toJson(res);
 	}
+
 	@Override
 	public Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception
 	{
@@ -635,8 +643,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
+	public String getCampaignsByAccountId(String json) throws Exception
+	{
+		logger.debug("call changeCampaignStatus" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		ArrayList<HashMap<String, String>> res = getCampaignsByAccountId(data.get("accountID"), Boolean.valueOf(data.get("includeDeleted")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
+
 	@Override
-	public Campaign[] getCampaignsByAccountId(String accountID, boolean includeDeleted) throws Exception
+	public ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
 	{
 
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -656,7 +674,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{ CampaignStatus.ACTIVE.getValue(), CampaignStatus.PAUSED.getValue() }) });
 		}
 		CampaignPage page = campaignService.get(selectActiveAndPausedCampaigns);
-		return page.getEntries();
+		ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String, String>>();
+		if (page.getEntries() != null)
+		{
+			for (Campaign campaign : page.getEntries())
+			{
+				HashMap<String,String> row = new HashMap<String,String>();
+				row.put("Id", String.valueOf(campaign.getId()));
+				row.put("Name", campaign.getName());
+				row.put("Status", campaign.getStatus().getValue());
+				row.put("Amount", String.valueOf(campaign.getBudget().getAmount().getMicroAmount()));
+				list.add(row);
+			}
+			
+		}
+		return list;
 	}
 
 	@Override
@@ -676,6 +708,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return false;
 		}
 	}
+
 	private CampaignOperation[] getCampaignOp(Long campaignID, Operator op)
 	{
 		Campaign campaign = new Campaign();
@@ -687,6 +720,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return new CampaignOperation[]
 		{ operation };
 	}
+
 	/*
 	 * Keywords
 	 */
