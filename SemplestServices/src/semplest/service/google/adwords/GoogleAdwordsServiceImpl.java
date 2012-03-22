@@ -646,7 +646,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	public String getCampaignsByAccountId(String json) throws Exception
 	{
-		logger.debug("call changeCampaignStatus" + json);
+		logger.debug("call getCampaignsByAccountId" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		ArrayList<HashMap<String, String>> res = getCampaignsByAccountId(data.get("accountID"), Boolean.valueOf(data.get("includeDeleted")));
 		// convert result to Json String
@@ -691,6 +691,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return list;
 	}
 
+	public String UpdateCampaignName(String json) throws Exception
+	{
+		logger.debug("call UpdateCampaignName" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignID = Long.parseLong(data.get("campaignID"));
+		Boolean res = UpdateCampaignName(data.get("accountID"), campaignID ,data.get("newName"));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 	@Override
 	public Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception
 	{
