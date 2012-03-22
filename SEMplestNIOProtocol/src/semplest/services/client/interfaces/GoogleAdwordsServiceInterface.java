@@ -28,14 +28,15 @@ public interface GoogleAdwordsServiceInterface
 	//Campaign Data Management (cm)
 	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount) throws Exception;
 	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception;
-	public abstract Long addTextAd(String accountID, Long addGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
-	public abstract AdGroup[] getAdGroupsByCampaignId(String customerID, Long campaignID, Boolean includeDeleted) throws Exception;
+	public abstract Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
+	public abstract AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
 	public abstract Campaign[] getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
 	public abstract Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
 	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
 	public abstract TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
-	public abstract TargetingIdea[] GetRelatedKeywordsForURL(String URL, KeywordMatchType matchType, int numberResults) throws Exception;
+	public abstract TargetingIdea[] GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
+	public abstract Boolean updateAD(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	
 	
 	public abstract String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception;
