@@ -1,5 +1,7 @@
 package semplest.services.client.interfaces;
 
+import javax.xml.rpc.ServiceException;
+
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 
@@ -37,12 +39,16 @@ public interface GoogleAdwordsServiceInterface
 	public abstract TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
 	public abstract TargetingIdea[] GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
 	public abstract Boolean updateAD(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
+	//public abstract Boolean changeAdStatus(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
+	//public abstract Boolean pauseADGroup(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
+	public abstract String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception;
+	public abstract BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception;
+	public abstract Boolean changeCampaignStatus(String accountID, long campaignID, CampaignStatus status) throws Exception;
 	
 	
-	public abstract String[] getAllAdGroupKeywords(String customerId, Long adGroupId) throws Exception;
 	public abstract void resumeCampaignById(String customerId, long campaignId) throws Exception;
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
-	public abstract BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
+	
 	
 	//public GeoTargetList getCampaignGeoTargets(String customerId, long campaignId) throws Exception;
 	//optimization (o)
