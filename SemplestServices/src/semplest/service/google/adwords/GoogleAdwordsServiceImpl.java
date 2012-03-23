@@ -100,9 +100,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * for(int i = 0; i < camp.length; i++) {
 			 * System.out.println(camp[i].getName()); } }
 			 */
+			
+			String accountID = "6048920973";
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			//ArrayList<HashMap<String, String>> res = g.getCampaignsByAccountId(accountID, false);
+			//System.out.println(res.get(0).get("Name"));
 			// TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
 			// KeywordMatchType.EXACT, 20);
+			
 			String[] u =
 			{ "www.statefarm.com" };
 			TargetingIdea[] res = g.GetRelatedKeywordsForURL("www.statefarm.com", "insuranc", KeywordMatchType.EXACT, 20);
@@ -116,6 +121,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				System.out.println("Keyword with text '" + keyword.getText() + "', match type '" + keyword.getMatchType()
 						+ "', and average monthly search volume '" + averageMonthlySearches + "' was found Comp=" + String.valueOf(comp));
 			}
+			
 		}
 		catch (Exception e)
 		{

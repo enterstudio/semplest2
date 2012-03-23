@@ -23,6 +23,7 @@ public class MSNAdcenterService implements ServiceInterface
 			AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
 			TimeServer timeServer = new TimeServerImpl();
 		
+			logger.debug("Running MSN Service:" + methodName + ":" + jsonStr);
 			MsnCloudServiceImpl service = new MsnCloudServiceImpl(adCenterCredentials,timeServer);
 			Class[] parameterTypes = new Class[] {String.class};
 			Method method = service.getClass().getMethod(methodName, parameterTypes);

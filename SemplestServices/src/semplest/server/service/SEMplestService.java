@@ -82,6 +82,7 @@ public class SEMplestService
 			{
 				connectionData.setServiceName(properties.getProperty("ServiceName"));
 			}
+			logger.info("Read in Properites for service " + connectionData.getServiceName() + ":" + connectionData.getServiceOffered());
 			return true;
 		}
 		catch (Exception e)
@@ -104,12 +105,14 @@ public class SEMplestService
 
 		try
 		{
+			logger.debug("Reg with ESB " + connectionData.getServerURI() + ":" + connectionData.getServerport());
 			// create a Thread to connect via socket
 			nioClient = new NIOClient(connectionData.getServerURI(), connectionData.getServerport());
 			Thread t = new Thread(nioClient);
 			t.setDaemon(true);
 			t.start();
 			handler = new NIOResponseHandler();
+			
 			// create the register packet
 			ProtocolSocketDataObject regdata = new ProtocolSocketDataObject();
 			regdata.setHeader(ProtocolJSON.SEMplest_REGISTER);
@@ -120,30 +123,26 @@ public class SEMplestService
 			// convert to JSON
 			String jsonStr = json.createJSONFromSocketDataObj(regdata);
 			byte[] regPacket = ProtocolJSON.createBytePacketFromString(jsonStr);
+			logger.debug("Send regPacket " + jsonStr);
 			// send the Registration pacjket
 			nioClient.send(regPacket, handler);
 			// wait synchronously for response
 			byte[] response = handler.waitForResponse();
 			// create ProtocolSocketDataObject from response
 			ProtocolSocketDataObject data = json.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(response));
+			logger.debug("Response REC - " + data.getclientServiceName() + ":" + data.getServiceOffered() + ": ping Freq=" + data.getPingFrequency() + ": Header=" + data.getheader());
 			if (data.getheader() == ProtocolJSON.SEMplest_REGISTER)
 			{
 				// create a connection to the destination queue
 				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
 				mq.createProducer(data.getServiceSendQueueName());
 				mq.createConsumer(data.getServiceRecQueueName());
-				// create a MQ message
-				/*
-				 * ProtocolMQDataObject mqData = new ProtocolMQDataObject();
-				 * mqData.setTypeOP(ProtocolJSON.SEMplest_ACK); jsonStr =
-				 * json.createJSONFromMQDataObj(mqData);
-				 * mq.sendMessage(ProtocolJSON
-				 * .createBytePacketFromString(jsonStr), null);
-				 */
-				logger.info("Server registered " + data.getServiceSendQueueName());
+				
+				logger.info("Service registered " + data.getServiceSendQueueName());
 				// create a Pi thread
 				if (connectionData.getPingFrequencyMS() > 0)
 				{
+					logger.debug("Start Pinging....with Frequency=" + connectionData.getPingFrequencyMS());
 					PingService ping = new PingService(nioClient, new NIOResponseHandler(), connectionData.getServiceName(),
 							connectionData.getPingFrequencyMS());
 					Thread pingThread = new Thread(ping);
@@ -152,6 +151,7 @@ public class SEMplestService
 				}
 
 			}
+			logger.debug("Done wit Reg to ESB");
 			return true;
 		}
 		catch (Exception e)

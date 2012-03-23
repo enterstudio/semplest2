@@ -26,12 +26,14 @@ public class ServiceThread implements Runnable
 		this.methodName = methodName;
 		this.jsonStr = jsonStr;
 		this.uniqueID = uniqueID;
+		logger.debug(uniqueID + "Starting thread to execute: " + methodName + ":" + jsonStr);
 	}
 	@Override
 	public void run()
 	{
 		try
 		{
+			logger.debug("Run Service" +  methodName + ":" + uniqueID);
 			String result = myService.getService().ServiceGet(methodName, jsonStr);
 			
 			if (result == null)

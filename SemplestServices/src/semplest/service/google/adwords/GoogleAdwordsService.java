@@ -1,6 +1,5 @@
 package semplest.service.google.adwords;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.log4j.Logger;
@@ -16,36 +15,18 @@ public class GoogleAdwordsService implements ServiceInterface
 	{
 		try
 		{
+			logger.debug("Running Google Service " + methodName + ":" + jsonStr);
 			GoogleAdwordsServiceImpl service = new GoogleAdwordsServiceImpl();
 			Class[] parameterTypes = new Class[] {String.class};
 			Method method = service.getClass().getMethod(methodName, parameterTypes);
 			return (String) method.invoke(service,jsonStr);
 		}
-		catch (SecurityException e)
+		catch (Exception e)
 		{
 			logger.error(e);
 			e.printStackTrace();
 		}
-		catch (IllegalArgumentException e)
-		{
-			logger.error(e);
-			e.printStackTrace();
-		}
-		catch (NoSuchMethodException e)
-		{
-			logger.error(e);
-			e.printStackTrace();
-		}
-		catch (IllegalAccessException e)
-		{
-			logger.error(e);
-			e.printStackTrace();
-		}
-		catch (InvocationTargetException e)
-		{
-			logger.error(e);
-			e.printStackTrace();
-		}
+		
 		return "GoogleAdwordsService Error running " + methodName ;
 		
 	}

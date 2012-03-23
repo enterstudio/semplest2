@@ -171,6 +171,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	private final TimeServer timeServer;
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
+	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
 
 	@Override
@@ -427,7 +428,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		AdGroup[] adgroups = getAdGroupsByCampaignId(new Long(data.get("accountId")),new Long (data.get("campaignId")));
 		//convert result to Json String
-	
 		return gson.toJson(adgroups);
 		//return "{  \"adgroupName\" : \"" + adgroups[0].getName() + "\" }";
 	}
