@@ -17,9 +17,6 @@ import java.util.regex.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
-
-
-
 import semplest.keywords.javautils.*;
 import semplest.keywords.lda.MalletThreadObj;
 

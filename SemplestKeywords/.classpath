@@ -17,11 +17,11 @@
 	<classpathentry kind="lib" path="lib/svd.jar"/>
 	<classpathentry kind="lib" path="lib/tagsoup-1.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/trove-2.0.2.jar"/>
-	<classpathentry kind="lib" path="lib/mallet.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/hadoop-core-0.20.2.jar"/>
 	<classpathentry kind="lib" path="lib/nutch-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/scala-library.jar"/>
 	<classpathentry kind="lib" path="lib/crawler.jar"/>
+	<classpathentry kind="lib" path="lib/SemplestMalletCache.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
