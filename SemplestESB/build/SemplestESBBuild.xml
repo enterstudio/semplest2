@@ -11,7 +11,7 @@
 
   <property name="build" value="${basedir}/build"/>  
   <property file="${build}/build.properties"/>       
-  <property name="lib" value="${basedir}/lib"/>
+  <property name="lib" value="${basedir}/dist/lib"/>
   <property name="keys" value="${basedir}/keys"/>
   <property name="properties" value="${basedir}/properties"/>
   <property name="source" value="${basedir}/src"/>   
