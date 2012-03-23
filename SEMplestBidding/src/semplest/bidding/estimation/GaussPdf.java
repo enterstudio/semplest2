@@ -1,4 +1,4 @@
-package semplest.bidding.optimization;
+package semplest.bidding.estimation;
 
 public class GaussPdf extends ParametricFunction {
 
