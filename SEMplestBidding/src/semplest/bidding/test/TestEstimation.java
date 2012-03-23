@@ -18,12 +18,16 @@ public class TestEstimation {
 		ParametricFunction f = new GaussPdf();
 		double [] params = {0, 1};
 		
-		for (int i=0; i< x.length; i++){
-			x[i][0]=r.nextDouble();
-			y[i]=f.function(x[i], params);
+		try {
+			for (int i=0; i< x.length; i++){
+				x[i][0]=r.nextDouble();
+				y[i]=f.function(x[i], params);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		ParameterEstimator pe = ParameterEstimator(f, x, y);
+//		ParameterEstimator pe = ParameterEstimator(f, x, y);
 		
 		
 	}
