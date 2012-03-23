@@ -79,9 +79,9 @@ public class utils {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
-		String category = "arts";
+		String category = "reference";
 //		tmpToSemplest("/semplest/subhojit/data/dmoz/FullExtText/"+category+".txt","/tmp/"+category+".txt");
-		tmpToSemplest("/semplest/subhojit/data/dmoz/FullExtText/"+category+".txt","/semplest/data/dmoz/multiwords/"+category+".txt");
+//		tmpToSemplest("/semplest/subhojit/data/dmoz/FullExtText/"+category+".txt","/semplest/data/dmoz/multiwords/"+category+".txt");
 
 	}
 
