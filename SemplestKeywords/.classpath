@@ -23,6 +23,5 @@
 	<classpathentry kind="lib" path="lib/nutch-1.4.jar"/>
 	<classpathentry kind="lib" path="lib/scala-library.jar"/>
 	<classpathentry kind="lib" path="lib/crawler.jar"/>
-	<classpathentry kind="lib" path="lib/SemplestMalletCache.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
