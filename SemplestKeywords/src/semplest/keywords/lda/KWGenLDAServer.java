@@ -35,7 +35,7 @@ public class KWGenLDAServer {
 	private static String baseMultiWPath = "/semplest/data/dmoz/multiwords/";
 	//List of subcategories that have been trained
 	private static String[] trainHtml = {"arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};
-	private static String[] nGramsSubC = {"arts","business","computers","health","home","news","science","shopping","society","sports"};
+	private static String[] nGramsSubC = {"arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};
 	//General Description Model
 	private MalletTopic descModl;
 	//Array of models for each of the subcategories
