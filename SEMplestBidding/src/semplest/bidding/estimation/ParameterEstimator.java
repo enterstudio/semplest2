@@ -52,19 +52,7 @@ public class ParameterEstimator {
 	    min.nelderMead(lsq, startPoint, stepSize, fTol);
 	}
 	
-	
-	
-	public static void main(String [] args){
-		
-		// This is an example code to demonstrate how to use the parameter estimator
-		GaussPdf pdf = new GaussPdf();
-		
-//		ParameterEstimator pe = new ParameterEstimator(pdf);
-		
-		double [] x = {0.0};
-		double [] parameters = {0.0, 1.0};
-		System.out.println(pdf.function(x, parameters));
-	}
+
 	
 	
 

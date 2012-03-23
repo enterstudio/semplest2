@@ -6,7 +6,7 @@ import flanagan.integration.Integration;
 import flanagan.integration.IntegralFunction;
 
 
-class GaussPdf implements IntegralFunction{
+class TmpGaussPdf implements IntegralFunction{
 	private double mu = 0;
 	private double sigma = 1;
 	
@@ -31,7 +31,7 @@ public class TestIntegral {
 	public static void main(String[] arg){
 
 
-		GaussPdf f = new GaussPdf();
+		TmpGaussPdf f = new TmpGaussPdf();
 		f.setMu(1);
 		f.setSigma(2);
 		Integration intgn3 = new Integration(f);
