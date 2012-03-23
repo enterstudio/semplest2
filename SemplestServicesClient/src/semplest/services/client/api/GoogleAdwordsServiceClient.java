@@ -33,8 +33,8 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
-	private static String timeoutMS = "5000";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
+	private static String timeoutMS = "10000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceClient.class);
@@ -59,12 +59,14 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient();
 			String accountID  = "6048920973";
-			Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name");
+			Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name2");
+			/*
 			ArrayList<HashMap<String, String>> getCampaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			for (int i = 0; i < getCampaignsByAccountId.size(); i++)
 			{
 				System.out.println(getCampaignsByAccountId.get(i).get("Name"));
 			}
+			*/
 		}
 		catch (Exception e)
 		{

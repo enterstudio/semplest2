@@ -40,7 +40,7 @@ public class TestServiceClient implements TestServiceInterface
 			queryParams.add("service", "semplest.test.TestService");
 			queryParams.add("method", "TestMethod");
 
-			WebResource webResource = client.resource("http://localhost:9898/semplest");
+			WebResource webResource = client.resource("http://VMJAVA1:9898/semplest");
 			return   webResource.queryParams(queryParams).get(String.class);
 		}
 		catch (UniformInterfaceException e)

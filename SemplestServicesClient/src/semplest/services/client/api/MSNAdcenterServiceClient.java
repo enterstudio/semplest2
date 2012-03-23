@@ -37,7 +37,7 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
 	
