@@ -37,7 +37,7 @@ public class ParameterEstimator {
 	    double ftol = 1e-15;
 
 	    // Nelder and Mead minimisation procedure
-	    min.nelderMead(f, start, step, ftol);
+//	    min.nelderMead(f, start, step, ftol);
 	}
 	
 	
