@@ -178,7 +178,7 @@ public class NIOServer implements Runnable
 		else
 		// already registered
 		{
-
+			logger.info("Already Registered " + clientServiceName);
 		}
 
 		logger.info("Register " + clientServiceName);

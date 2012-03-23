@@ -41,7 +41,7 @@ public class ESBServer
 	//servicesMap for each serviceOffered have list of serviceNames
 	private ConcurrentHashMap<String, Vector<String>> servicesMap = new ConcurrentHashMap<String, Vector<String>>();
 	private ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = new ConcurrentHashMap<String, ServiceRegistrationData>();
-	private HashMap<String, AtomicInteger> currentServiceIndexMap = new HashMap<String, AtomicInteger>();
+	private ConcurrentHashMap<String, AtomicInteger> currentServiceIndexMap = new ConcurrentHashMap<String, AtomicInteger>();
 	//private AtomicInteger currentServiceIndex = new AtomicInteger(0);
 	private ConcurrentHashMap<String, AsyncContext> ServletAsynchContextMap = new ConcurrentHashMap<String, AsyncContext>();
 	
@@ -256,7 +256,7 @@ public class ESBServer
 		ServletAsynchContextMap = servletAsynchContextMap;
 	}
 
-	public HashMap<String, AtomicInteger> getCurrentServiceIndexMap()
+	public ConcurrentHashMap<String, AtomicInteger> getCurrentServiceIndexMap()
 	{
 		return currentServiceIndexMap;
 	}

@@ -51,11 +51,12 @@ public class ServicePingHandler implements Runnable
 					/*
 					 * remove client
 					 */
+					logger.debug("Removing: " + client);
 					ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
 					Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(serviceName).getServiceOffered());
 					serviceRegistrationMap.remove(client);
 					servicesList.remove(client);
-					logger.debug("Removing: " + client);
+					logger.debug("Removed: " + client);
 					return;
 				}
 				else
@@ -66,6 +67,7 @@ public class ServicePingHandler implements Runnable
 			}
 			catch (InterruptedException e)
 			{
+				logger.debug("Ping Wait for Response error " + e.getMessage());
 			}
 		}
 
