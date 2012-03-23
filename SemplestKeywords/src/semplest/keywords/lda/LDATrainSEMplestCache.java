@@ -14,7 +14,7 @@ public class LDATrainSEMplestCache {
 	 * @throws Exception 
 	 */
 	public static void main(String[] args) throws Exception {
-
+ /*
 		//Files to store model and instances
 		File pipeIOModel= new File("trainedmodelallHTML700.modl");
 		File pipeIOInstance= new File("trainedInstancesallHTML700.inst");
@@ -38,10 +38,10 @@ public class LDATrainSEMplestCache {
 		case 2:
 			lda.setNumTopics(Integer.parseInt(args[1]));
 		case 1:
-			/*//Create instances for each category
+			//Create instances for each category
 			System.out.println("Creating Training Instances...");
 			lda.CreateInstancesSEMplestCache2(args);
-			*/
+			
 			//Create instances for each category multithreaded
 			System.out.println("Creating Training Instances...");
 			lda.CreateInstancesSEMplestCacheMultiThread(args, 8);
@@ -58,7 +58,7 @@ public class LDATrainSEMplestCache {
 			//System.out.println("" + alpha + " " + beta + " " + numiter );
 		} 		
 
-		/*//Optional printing of results		
+		//Optional printing of results		
 		int InstInd = 0;		
 		System.out.println("Printing Words and Topics from Category " + InstInd);
 		lda.LDAprintTrainedInst(InstInd);

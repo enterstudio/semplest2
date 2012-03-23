@@ -19,8 +19,7 @@ import java.nio.charset.Charset;
 
 
 
-import semplest.keywords.cache.CacheObj;
-import semplest.keywords.cache.EhCache;
+
 import semplest.keywords.javautils.*;
 import semplest.keywords.lda.MalletThreadObj;
 
@@ -369,7 +368,7 @@ public class MalletTopic {
         }
         
 	}
-	
+	/*
 	public void CreateInstancesSEMplestCache(String[] directories) throws Exception {
 		// Creates Instances from a file in SEMplest format
 
@@ -414,8 +413,8 @@ public class MalletTopic {
         	i++;
         }
         
-	}
-	
+	}*/
+	/*
 	public void CreateInstancesSEMplestCacheMultiThread(String[] directories, int numThreads) throws Exception {
 		// Creates Instances from a file in SEMplest format using MultiThread
 
@@ -440,7 +439,7 @@ public class MalletTopic {
         }
         
 	}
-
+*/
 	public Alphabet createAlphabet4instance( InstanceList instList, int instIndex){
 		FeatureSequence tokens = (FeatureSequence) instList.get(instIndex).getData();
 		Alphabet dataAlphabet = instList.getDataAlphabet();
@@ -579,7 +578,7 @@ public class MalletTopic {
 		// We retrieve instances from Cache and serialize them
 		this.saveObject(serializedFile, instances);
 	}
-	
+	/*
 	public void saveLDAInstCache(File serializedFile) throws IOException {
 		//Seves current instance based on Cache implementation of InstanceListCache
 		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serializedFile));
@@ -589,7 +588,7 @@ public class MalletTopic {
 		}
 		oos.close();
 		
-	}
+	}*/
 	public void loadLDAModel(File serializedFile) throws FileNotFoundException, IOException, ClassNotFoundException{
 		// Loads the model saved in serializedFile
 		model = (ParallelTopicModel) this.loadObject(serializedFile);
@@ -600,7 +599,7 @@ public class MalletTopic {
 		// Loads the model saved in serializedFile
 		instances = (InstanceList) this.loadObject(serializedFile);
 	}
-	
+	/*
 	public void loadLDAInstCache(File serializedFile) throws ClassNotFoundException {
 		try{
 			//Loads current instance based on Cache implementation of InstanceListCache
@@ -647,7 +646,7 @@ public class MalletTopic {
 			System.out.println("Instances Loaded");
 		}
 		
-	}
+	}*/
 	//--------------------- Printing methods -----------------------------------------------------
 	public void LDAprintTrainedInst(int instIndex) throws Exception {
 		
