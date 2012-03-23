@@ -41,7 +41,6 @@ public class TestIntegral {
 		double integralSum3_1 = intgn3.trapezium(1000);
 		System.out.println("The 1000 point interval trapezium integral of Gaussian pdf between the limits -10 and 1 is " + integralSum3_1);
 
-		// Assign values to constants in the functions
 
 	}
 }
