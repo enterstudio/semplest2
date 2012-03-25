@@ -23,6 +23,7 @@
   <property name="java.debug" value="true"/>
    
 <!-- IZPACK Stuff -->
+  <property file="${basedir}/src/system.properties"/>
   <property name="product.name" value="SemplestService"/>
   <property name="product.short.name" value="SemplestService-Server"/>
   <property name="default.dest.dir" value="C:/workspace/SemplestService"/>
@@ -89,6 +90,7 @@
         </fileset>
         <fileset dir="${basedir}/properties/"/>   	
     </copy>
+  	<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}" />
   	 <!-- Add libraries to classes dir to include in jar -->
   	    <mkdir dir="${dist}/lib" />
   	    <copy todir="${dist}/lib" filtering="off">

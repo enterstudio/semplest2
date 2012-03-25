@@ -30,7 +30,7 @@
   <variables>
     <variable name="app.name" value="@{app.name}"/>
     <variable name="default.dest.dir.sql" value="@{default.dest.dir.sql}"/>
-    <variable name="UserPathPanelVariable" value="@{default.dest.dir.sql}"/>
+    <variable name="UserPathPanelVariable" value="@{default.dest.dir}"/>
     <variable name="UserPathPanelDependsName" value="Postgres Database Installation"/>
      <!-- For Post-Install Tasks -->
     <variable name="release.description" value="@{buildVersion}"/>
@@ -45,7 +45,7 @@
     <res id="ProcessPanel.Spec.xml" src="@{build}/post-install-tasks.xml"/>
     <res id="userInputSpec.xml" src="@{build}/userInputSpec.xml" />
     <res id="uninstaller.warning" src="@{install.res}/uninstall-warn.txt"/>
-    
+     <res id="TargetPanel.dir" src="@{dist}/path.txt" />
     <!-- default-dir.txt is written by the calling build.xml -->
     <!-- <res id="TargetPanel.dir" src="@{install.res}/default-dir.txt"/>
    
