@@ -45,7 +45,7 @@
     <res id="ProcessPanel.Spec.xml" src="@{build}/post-install-tasks.xml"/>
     <res id="userInputSpec.xml" src="@{build}/userInputSpec.xml" />
     <res id="uninstaller.warning" src="@{install.res}/uninstall-warn.txt"/>
-    
+    <res id="TargetPanel.dir" src="@{dist}/path.txt" />
     <!-- default-dir.txt is written by the calling build.xml -->
     <!-- <res id="TargetPanel.dir" src="@{install.res}/default-dir.txt"/>
    

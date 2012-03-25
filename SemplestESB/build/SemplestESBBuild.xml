@@ -23,6 +23,8 @@
   <property name="java.debug" value="true"/>
    
 <!-- IZPACK Stuff -->
+  <property file="${properties}/system.properties"/>	
+	
   <property name="product.name" value="SemplestESB Server"/>
   <property name="product.short.name" value="SemplestESB-Server"/>
   <property name="default.dest.dir" value="C:/workspace/SemplestESB"/>
@@ -89,6 +91,7 @@
         </fileset>
         <fileset dir="${basedir}/properties/"/>   	
     </copy>
+  	<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}" />
   	<!-- Add libraries to classes dir to include in jar -->
   	<mkdir dir="${dist}/lib" />
   	<copy todir="${dist}/lib" filtering="off">
