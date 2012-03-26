@@ -53,6 +53,21 @@ public class ParameterEstimator {
 	}
 	
 
+	public void setStartPoint(double [] startPoint){
+		this.startPoint=startPoint;
+	}
+	
+	public void setStepSize(double [] stepSize){
+		this.stepSize=stepSize;
+	}
+	
+	public double getMinimum(){
+		return min.getMinimum();
+	}
+	
+	public double [] getParamValues(){
+		return min.getParamValues();
+	}
 	
 	
 

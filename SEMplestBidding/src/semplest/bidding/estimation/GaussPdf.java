@@ -1,6 +1,6 @@
 package semplest.bidding.estimation;
 
-public class GaussPdf extends ParametricFunction {
+public class GaussPdf implements ParametricFunction {
 
 
 	@Override
