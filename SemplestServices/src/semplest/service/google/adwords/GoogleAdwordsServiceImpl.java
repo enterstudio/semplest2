@@ -22,11 +22,16 @@ import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupAdStatus;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
+import com.google.api.adwords.v201109.cm.AdGroupCriterionOperation;
+import com.google.api.adwords.v201109.cm.AdGroupCriterionPage;
+import com.google.api.adwords.v201109.cm.AdGroupCriterionReturnValue;
+import com.google.api.adwords.v201109.cm.AdGroupCriterionServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupOperation;
 import com.google.api.adwords.v201109.cm.AdGroupPage;
 import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.Bid;
 import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
 import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetDeliveryMethod;
@@ -37,9 +42,11 @@ import com.google.api.adwords.v201109.cm.CampaignPage;
 import com.google.api.adwords.v201109.cm.CampaignReturnValue;
 import com.google.api.adwords.v201109.cm.CampaignServiceInterface;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
+import com.google.api.adwords.v201109.cm.Criterion;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.ManualCPC;
+import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
@@ -181,8 +188,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
 	{
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -312,12 +318,42 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 
 	}
+	
+	public String  getAllAdGroupCriteria(String json) throws Exception
+	{
+		logger.debug("call getAllAdGroupCriteria(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+
+		AdGroupCriterion[] res = getAllAdGroupCriteria(data.get("accountID"), adGroupID);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 
 	@Override
-	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	public AdGroupCriterion[] getAllAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		// Get the AdGroupCriterionService.        
+		AdGroupCriterionServiceInterface adGroupCriterionService =  user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);                  
+		// Create selector.        
+		Selector selector = new Selector();        
+		selector.setFields(new String[] {"Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc"});        
+		selector.setOrdering(new OrderBy[] {new OrderBy("AdGroupId", SortOrder.ASCENDING)});          
+		// Create predicates.        
+		Predicate adGroupIdPredicate =  new Predicate("AdGroupId", PredicateOperator.IN, new String[] {adGroupID.toString()});        
+		selector.setPredicates(new Predicate[] {adGroupIdPredicate});         
+		// Get all ad group criteria.        
+		AdGroupCriterionPage page = adGroupCriterionService.get(selector);          
+		// Display ad group criteria.       
+		if (page.getEntries() != null && page.getEntries().length > 0) 
+		{
+			return page.getEntries();
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public String getAllBiddableAdGroupCriteria(String json) throws Exception
@@ -514,6 +550,90 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		else
 		{
 			return false;
+		}
+	}
+	public String addKeyWordToAdGroup(String json) throws Exception
+	{
+		logger.debug("call GetRelatedKeywords" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		AdGroupCriterion res = addKeyWordToAdGroup(data.get("accountID"),adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")));
+		// convert result to Json String
+		return gson.toJson(res);
+	}
+	@Override
+	public AdGroupCriterion addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
+		 // Get the AdGroupCriterionService.        
+		AdGroupCriterionServiceInterface adGroupCriterionService =  user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);          
+		// Create keyword.       
+		Keyword keywrd = new Keyword();        
+		keywrd.setText(keyword);        
+		keywrd.setMatchType(matchType);    
+		// Create biddable ad group criterion.        
+		BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();        
+		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);        
+		keywordBiddableAdGroupCriterion.setCriterion(keywrd);         
+		// Create operations.        
+		AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();        
+		keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);        
+		keywordAdGroupCriterionOperation.setOperator(Operator.ADD);          
+		AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] {keywordAdGroupCriterionOperation};          
+		// Add ad group criteria.       
+		AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);          
+		// Display ad group criteria.        
+		if (result != null && result.getValue() != null) 
+		{  
+			return result.getValue(0);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	public String setBidForKeyWord(String json) throws Exception
+	{
+		logger.debug("call setBidForKeyWord" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		Long keywordID = Long.parseLong(data.get("keywordID"));
+		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
+		AdGroupCriterion res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
+	@Override
+	public AdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
+		// Get the AdGroupCriterionService.        
+		AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);                 
+		// Create ad group criterion with updated bid.        
+		Criterion criterion = new Criterion();        
+		criterion.setId(keywordID);          
+		BiddableAdGroupCriterion biddableAdGroupCriterion = new BiddableAdGroupCriterion();        
+		biddableAdGroupCriterion.setAdGroupId(adGroupID);        
+		biddableAdGroupCriterion.setCriterion(criterion);          
+		// Create bids.        
+		ManualCPCAdGroupCriterionBids bids = new ManualCPCAdGroupCriterionBids();        
+		bids.setMaxCpc(new Bid(new Money(null, microBidAmount)));        
+		biddableAdGroupCriterion.setBids(bids);          
+		// Create operations.        
+		AdGroupCriterionOperation operation = new AdGroupCriterionOperation();        
+		operation.setOperand(biddableAdGroupCriterion);        
+		operation.setOperator(Operator.SET);          
+		AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] {operation};          
+		// Update ad group criteria.        
+		AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);         
+		// Display ad group criteria.       
+		if (result != null && result.getValue() != null) 
+		{
+			return result.getValue(0);
+		}
+		else
+		{
+			return null;
 		}
 	}
 
@@ -888,4 +1008,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		TargetingIdeaPage page = targetingIdeaService.get(selector);
 		return page.getEntries();
 	}
+
+	
+	
 }

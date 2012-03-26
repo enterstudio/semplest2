@@ -133,12 +133,6 @@ public class SEMplestService
 			logger.debug("Response REC - " + data.getclientServiceName() + ":" + data.getServiceOffered() + ": ping Freq=" + data.getPingFrequency() + ": Header=" + data.getheader());
 			if (data.getheader() == ProtocolJSON.SEMplest_REGISTER)
 			{
-				// create a connection to the destination queue
-				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
-				mq.createProducer(data.getServiceSendQueueName());
-				mq.createConsumer(data.getServiceRecQueueName());
-				
-				logger.info("Service registered " + data.getServiceSendQueueName());
 				// create a Pi thread
 				if (connectionData.getPingFrequencyMS() > 0)
 				{
@@ -149,6 +143,13 @@ public class SEMplestService
 					pingThread.setPriority(Thread.MAX_PRIORITY);
 					pingThread.start();
 				}
+				// create a connection to the destination queue
+				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
+				mq.createProducer(data.getServiceSendQueueName());
+				mq.createConsumer(data.getServiceRecQueueName());
+				
+				logger.info("Service registered " + data.getServiceSendQueueName());
+				
 
 			}
 			logger.debug("Done wit Reg to ESB");
