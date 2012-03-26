@@ -4,8 +4,8 @@ public interface KeyWordInterface {
 	
 	public String getKeyWord();
 	public double [] getBidInfo();
-	public double [][] getClickInfo();
-	public double [][] getCostInfo();
-	public double [][] getPosInfo();
+	public double [] getClickInfo();
+	public double [] getCostInfo();
+	public double [] getPosInfo();
 
 }
