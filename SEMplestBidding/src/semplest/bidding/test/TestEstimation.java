@@ -45,6 +45,10 @@ public class TestEstimation {
         for(int i=0; i<EstParams.length; i++){
         	System.out.print(EstParams[i]+" ");
         }
+        System.out.print("\nThe true parameter values were ");
+        for(int i=0; i<params.length; i++){
+        	System.out.print(params[i]+" ");
+        }
 		
 	}
 
