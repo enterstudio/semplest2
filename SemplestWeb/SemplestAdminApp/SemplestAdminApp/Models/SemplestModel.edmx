@@ -1,0 +1,1644 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+        <EntityContainer Name="SemplestModelStoreContainer">
+          <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AdGroup" EntityType="SemplestModel.Store.AdGroup" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AdGroupKeywordAssociation" EntityType="SemplestModel.Store.AdGroupKeywordAssociation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AdvertisingEngine" EntityType="SemplestModel.Store.AdvertisingEngine" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AdvertisingEngineAccount" EntityType="SemplestModel.Store.AdvertisingEngineAccount" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="AdvertisingEngineBidData" EntityType="SemplestModel.Store.AdvertisingEngineBidData" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="BidType" EntityType="SemplestModel.Store.BidType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="BillType" EntityType="SemplestModel.Store.BillType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Campaign" EntityType="SemplestModel.Store.Campaign" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CampaignAds" EntityType="SemplestModel.Store.CampaignAds" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CampaignCycleType" EntityType="SemplestModel.Store.CampaignCycleType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Credential" EntityType="SemplestModel.Store.Credential" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Customer" EntityType="SemplestModel.Store.Customer" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomerAddressAssociation" EntityType="SemplestModel.Store.CustomerAddressAssociation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomerHierarchy" EntityType="SemplestModel.Store.CustomerHierarchy" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomerPhoneAssociation" EntityType="SemplestModel.Store.CustomerPhoneAssociation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Keyword" EntityType="SemplestModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Phone" EntityType="SemplestModel.Store.Phone" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PhoneType" EntityType="SemplestModel.Store.PhoneType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="StateCode" EntityType="SemplestModel.Store.StateCode" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
+          <AssociationSet Name="Address_Rel" Association="SemplestModel.Store.Address_Rel">
+            <End Role="Address" EntitySet="Address" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="Address_StateCode" Association="SemplestModel.Store.Address_StateCode">
+            <End Role="StateCode" EntitySet="StateCode" />
+            <End Role="Address" EntitySet="Address" />
+          </AssociationSet>
+          <AssociationSet Name="AddressType_rel" Association="SemplestModel.Store.AddressType_rel">
+            <End Role="AddressType" EntitySet="AddressType" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="AdEng_Camp_rel" Association="SemplestModel.Store.AdEng_Camp_rel">
+            <End Role="AdvertisingEngine" EntitySet="AdvertisingEngine" />
+            <End Role="AdGroup" EntitySet="AdGroup" />
+          </AssociationSet>
+          <AssociationSet Name="Child_Rel" Association="SemplestModel.Store.Child_Rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="CustomerHierarchy" EntitySet="CustomerHierarchy" />
+          </AssociationSet>
+          <AssociationSet Name="Cust_Camp_rel" Association="SemplestModel.Store.Cust_Camp_rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Campaign" EntitySet="Campaign" />
+          </AssociationSet>
+          <AssociationSet Name="Customer_rel" Association="SemplestModel.Store.Customer_rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="custPhone_rel" Association="SemplestModel.Store.custPhone_rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="CustomerPhoneAssociation" EntitySet="CustomerPhoneAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="cycType_Relation" Association="SemplestModel.Store.cycType_Relation">
+            <End Role="CampaignCycleType" EntitySet="CampaignCycleType" />
+            <End Role="Customer" EntitySet="Customer" />
+          </AssociationSet>
+          <AssociationSet Name="Paraent_Rel" Association="SemplestModel.Store.Paraent_Rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="CustomerHierarchy" EntitySet="CustomerHierarchy" />
+          </AssociationSet>
+          <AssociationSet Name="PhoneCust_rel" Association="SemplestModel.Store.PhoneCust_rel">
+            <End Role="Phone" EntitySet="Phone" />
+            <End Role="CustomerPhoneAssociation" EntitySet="CustomerPhoneAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="PhoneType_rel" Association="SemplestModel.Store.PhoneType_rel">
+            <End Role="PhoneType" EntitySet="PhoneType" />
+            <End Role="Phone" EntitySet="Phone" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroup_AdGroupKeywordAssociation_3" Association="SemplestModel.Store.REL_AdGroup_AdGroupKeywordAssociation_3">
+            <End Role="AdGroup" EntitySet="AdGroup" />
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroup_CampaignAds_1" Association="SemplestModel.Store.REL_AdGroup_CampaignAds_1">
+            <End Role="AdGroup" EntitySet="AdGroup" />
+            <End Role="CampaignAds" EntitySet="CampaignAds" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroupKeywordAssociation_KeywordBid_1" Association="SemplestModel.Store.REL_AdGroupKeywordAssociation_KeywordBid_1">
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociation" />
+            <End Role="KeywordBid" EntitySet="KeywordBid" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdvertisingEngine_AdvertisingEngineAccount_2" Association="SemplestModel.Store.REL_AdvertisingEngine_AdvertisingEngineAccount_2">
+            <End Role="AdvertisingEngine" EntitySet="AdvertisingEngine" />
+            <End Role="AdvertisingEngineAccount" EntitySet="AdvertisingEngineAccount" />
+          </AssociationSet>
+          <AssociationSet Name="REL_BidType_KeywordBid_2" Association="SemplestModel.Store.REL_BidType_KeywordBid_2">
+            <End Role="BidType" EntitySet="BidType" />
+            <End Role="KeywordBid" EntitySet="KeywordBid" />
+          </AssociationSet>
+          <AssociationSet Name="REL_BillType_Customer_1" Association="SemplestModel.Store.REL_BillType_Customer_1">
+            <End Role="BillType" EntitySet="BillType" />
+            <End Role="Customer" EntitySet="Customer" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Campaign_AdGroup_1" Association="SemplestModel.Store.REL_Campaign_AdGroup_1">
+            <End Role="Campaign" EntitySet="Campaign" />
+            <End Role="AdGroup" EntitySet="AdGroup" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Customer_AdvertisingEngineAccount_1" Association="SemplestModel.Store.REL_Customer_AdvertisingEngineAccount_1">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="AdvertisingEngineAccount" EntitySet="AdvertisingEngineAccount" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Keyword_AdGroupKeywordAssociation_2" Association="SemplestModel.Store.REL_Keyword_AdGroupKeywordAssociation_2">
+            <End Role="Keyword" EntitySet="Keyword" />
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="REL_KeywordBid_AdvertisingEngineBidData_1" Association="SemplestModel.Store.REL_KeywordBid_AdvertisingEngineBidData_1">
+            <End Role="KeywordBid" EntitySet="KeywordBid" />
+            <End Role="AdvertisingEngineBidData" EntitySet="AdvertisingEngineBidData" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Users_Credential_1" Association="SemplestModel.Store.REL_Users_Credential_1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Credential" EntitySet="Credential" />
+          </AssociationSet>
+          <AssociationSet Name="UserCustomer_rel" Association="SemplestModel.Store.UserCustomer_rel">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="AddressPK" />
+          </Key>
+          <Property Name="AddressPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Address1" Type="nchar" Nullable="false" MaxLength="150" />
+          <Property Name="Address2" Type="nchar" MaxLength="150" />
+          <Property Name="City" Type="nchar" Nullable="false" MaxLength="100" />
+          <Property Name="StateAbbrFK" Type="int" Nullable="false" />
+          <Property Name="ZipCode" Type="nchar" Nullable="false" MaxLength="20" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+        </EntityType>
+        <EntityType Name="AddressType">
+          <Key>
+            <PropertyRef Name="AddressTypePK" />
+          </Key>
+          <Property Name="AddressTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="AddressType" Type="nchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="AdGroup">
+          <Key>
+            <PropertyRef Name="AdGroupPK" />
+          </Key>
+          <Property Name="AdGroupPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CampaignFK" Type="int" Nullable="false" />
+          <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AdGroupKeywordAssociation">
+          <Key>
+            <PropertyRef Name="KeywordFK" />
+            <PropertyRef Name="AdGroupFK" />
+          </Key>
+          <Property Name="KeywordFK" Type="int" Nullable="false" />
+          <Property Name="AdGroupFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AdvertisingEngine">
+          <Key>
+            <PropertyRef Name="AdvertisingEnginePK" />
+          </Key>
+          <Property Name="AdvertisingEnginePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="AdvertisingEngine" Type="nchar" Nullable="false" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="AdvertisingEngineAccount">
+          <Key>
+            <PropertyRef Name="AdvertisingEngineFK" />
+            <PropertyRef Name="CustomerFK" />
+          </Key>
+          <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="AdvertisingEngineBidData">
+          <Key>
+            <PropertyRef Name="AdvertisingEngineBidPK" />
+          </Key>
+          <Property Name="AdvertisingEngineBidPK" Type="int" Nullable="false" />
+          <Property Name="KeywordBidFK" Type="int" />
+          <Property Name="BidAmount" Type="money" Nullable="false" />
+          <Property Name="NumberImpressions" Type="int" Nullable="false" />
+          <Property Name="NumberClick" Type="int" Nullable="false" />
+          <Property Name="AveragePosition" Type="int" Nullable="false" />
+          <Property Name="AverageCPC" Type="money" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="BidType">
+          <Key>
+            <PropertyRef Name="BidTypePK" />
+          </Key>
+          <Property Name="BidTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="BidType" Type="varchar" Nullable="false" MaxLength="30" />
+        </EntityType>
+        <EntityType Name="BillType">
+          <Key>
+            <PropertyRef Name="BillTypePK" />
+          </Key>
+          <Property Name="BillTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="BillType" Type="varchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="CampaignPK" />
+          </Key>
+          <Property Name="CampaignPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="CampaignName" Type="nchar" Nullable="false" MaxLength="50" />
+          <Property Name="StartDate" Type="datetime2" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="TargetCycleBudget" Type="money" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreateDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+        </EntityType>
+        <EntityType Name="CampaignAds">
+          <Key>
+            <PropertyRef Name="CampaignAdsPK" />
+          </Key>
+          <Property Name="CampaignAdsPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="AdGroupFK" Type="int" Nullable="false" />
+          <Property Name="AdText" Type="nchar" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CampaignCycleType">
+          <Key>
+            <PropertyRef Name="CampaignCycleTypePK" />
+          </Key>
+          <Property Name="CampaignCycleTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CampaignCycleType" Type="nchar" Nullable="false" MaxLength="30" />
+          <Property Name="CycleInDays" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Credential">
+          <Key>
+            <PropertyRef Name="CredentialPK" />
+          </Key>
+          <Property Name="CredentialPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UsersFK" Type="int" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" Nullable="false" MaxLength="300" />
+          <Property Name="Password" Type="nchar" Nullable="false" MaxLength="50" />
+          <Property Name="RememberMe" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerPK" />
+          </Key>
+          <Property Name="CustomerPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="nchar" Nullable="false" MaxLength="200" />
+          <Property Name="TotalTargetCycleBudget" Type="money" Nullable="false" />
+          <Property Name="CampaignCycleTypeFK" Type="int" Nullable="false" />
+          <Property Name="BillTypeFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+        </EntityType>
+        <EntityType Name="CustomerAddressAssociation">
+          <Key>
+            <PropertyRef Name="AddressFK" />
+            <PropertyRef Name="CustomerFK" />
+          </Key>
+          <Property Name="AddressFK" Type="int" Nullable="false" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="AddressTypeFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerHierarchy">
+          <Key>
+            <PropertyRef Name="CustomerHierarchyPK" />
+          </Key>
+          <Property Name="CustomerHierarchyPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="CustomerParentFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="CustomerPhoneAssociation">
+          <Key>
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="PhoneFK" />
+          </Key>
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="PhoneFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Keyword">
+          <Key>
+            <PropertyRef Name="KeywordPK" />
+          </Key>
+          <Property Name="KeywordPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword" Type="nchar" Nullable="false" MaxLength="250" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="nchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="KeywordBid">
+          <Key>
+            <PropertyRef Name="KeywordBidPK" />
+          </Key>
+          <Property Name="KeywordBidPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="KeywordFK" Type="int" Nullable="false" />
+          <Property Name="AdGroupFK" Type="int" Nullable="false" />
+          <Property Name="StartDate" Type="datetime2" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="BidTypeFK" Type="int" Nullable="false" />
+          <Property Name="BidAmount" Type="money" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Phone">
+          <Key>
+            <PropertyRef Name="PhonePK" />
+          </Key>
+          <Property Name="PhonePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Phone" Type="nchar" Nullable="false" MaxLength="25" />
+          <Property Name="Extension" Type="nchar" MaxLength="10" />
+          <Property Name="PhoneTypeFK" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+        </EntityType>
+        <EntityType Name="PhoneType">
+          <Key>
+            <PropertyRef Name="PhoneTypePK" />
+          </Key>
+          <Property Name="PhoneTypePK" Type="int" Nullable="false" />
+          <Property Name="PhoneType" Type="nchar" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="StateCode">
+          <Key>
+            <PropertyRef Name="StateAbbrPK" />
+          </Key>
+          <Property Name="StateAbbrPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="StateAbbr" Type="nchar" Nullable="false" MaxLength="5" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="UserPK" />
+          </Key>
+          <Property Name="UserPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="int" />
+          <Property Name="FirstName" Type="nchar" Nullable="false" MaxLength="40" />
+          <Property Name="MiddleInitial" Type="nchar" MaxLength="1" />
+          <Property Name="LastName" Type="nchar" Nullable="false" MaxLength="40" />
+          <Property Name="Email" Type="nchar" Nullable="false" MaxLength="100" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <Association Name="Address_Rel">
+          <End Role="Address" Type="SemplestModel.Store.Address" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.Store.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressPK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="AddressFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Address_StateCode">
+          <End Role="StateCode" Type="SemplestModel.Store.StateCode" Multiplicity="1" />
+          <End Role="Address" Type="SemplestModel.Store.Address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StateCode">
+              <PropertyRef Name="StateAbbrPK" />
+            </Principal>
+            <Dependent Role="Address">
+              <PropertyRef Name="StateAbbrFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AddressType_rel">
+          <End Role="AddressType" Type="SemplestModel.Store.AddressType" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.Store.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AddressType">
+              <PropertyRef Name="AddressTypePK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="AddressTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AdEng_Camp_rel">
+          <End Role="AdvertisingEngine" Type="SemplestModel.Store.AdvertisingEngine" Multiplicity="1" />
+          <End Role="AdGroup" Type="SemplestModel.Store.AdGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdvertisingEngine">
+              <PropertyRef Name="AdvertisingEnginePK" />
+            </Principal>
+            <Dependent Role="AdGroup">
+              <PropertyRef Name="AdvertisingEngineFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Child_Rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="CustomerHierarchy" Type="SemplestModel.Store.CustomerHierarchy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerHierarchy">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Cust_Camp_rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="Campaign" Type="SemplestModel.Store.Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Customer_rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.Store.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="custPhone_rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="CustomerPhoneAssociation" Type="SemplestModel.Store.CustomerPhoneAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerPhoneAssociation">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="cycType_Relation">
+          <End Role="CampaignCycleType" Type="SemplestModel.Store.CampaignCycleType" Multiplicity="1" />
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CampaignCycleType">
+              <PropertyRef Name="CampaignCycleTypePK" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="CampaignCycleTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Paraent_Rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="CustomerHierarchy" Type="SemplestModel.Store.CustomerHierarchy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerHierarchy">
+              <PropertyRef Name="CustomerParentFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhoneCust_rel">
+          <End Role="Phone" Type="SemplestModel.Store.Phone" Multiplicity="1" />
+          <End Role="CustomerPhoneAssociation" Type="SemplestModel.Store.CustomerPhoneAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Phone">
+              <PropertyRef Name="PhonePK" />
+            </Principal>
+            <Dependent Role="CustomerPhoneAssociation">
+              <PropertyRef Name="PhoneFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhoneType_rel">
+          <End Role="PhoneType" Type="SemplestModel.Store.PhoneType" Multiplicity="1" />
+          <End Role="Phone" Type="SemplestModel.Store.Phone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PhoneType">
+              <PropertyRef Name="PhoneTypePK" />
+            </Principal>
+            <Dependent Role="Phone">
+              <PropertyRef Name="PhoneTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroup_AdGroupKeywordAssociation_3">
+          <End Role="AdGroup" Type="SemplestModel.Store.AdGroup" Multiplicity="1" />
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.Store.AdGroupKeywordAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroup">
+              <PropertyRef Name="AdGroupPK" />
+            </Principal>
+            <Dependent Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroup_CampaignAds_1">
+          <End Role="AdGroup" Type="SemplestModel.Store.AdGroup" Multiplicity="1" />
+          <End Role="CampaignAds" Type="SemplestModel.Store.CampaignAds" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroup">
+              <PropertyRef Name="AdGroupPK" />
+            </Principal>
+            <Dependent Role="CampaignAds">
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroupKeywordAssociation_KeywordBid_1">
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.Store.AdGroupKeywordAssociation" Multiplicity="1" />
+          <End Role="KeywordBid" Type="SemplestModel.Store.KeywordBid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="KeywordFK" />
+              <PropertyRef Name="AdGroupFK" />
+            </Principal>
+            <Dependent Role="KeywordBid">
+              <PropertyRef Name="KeywordFK" />
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdvertisingEngine_AdvertisingEngineAccount_2">
+          <End Role="AdvertisingEngine" Type="SemplestModel.Store.AdvertisingEngine" Multiplicity="1" />
+          <End Role="AdvertisingEngineAccount" Type="SemplestModel.Store.AdvertisingEngineAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdvertisingEngine">
+              <PropertyRef Name="AdvertisingEnginePK" />
+            </Principal>
+            <Dependent Role="AdvertisingEngineAccount">
+              <PropertyRef Name="AdvertisingEngineFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_BidType_KeywordBid_2">
+          <End Role="BidType" Type="SemplestModel.Store.BidType" Multiplicity="1" />
+          <End Role="KeywordBid" Type="SemplestModel.Store.KeywordBid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BidType">
+              <PropertyRef Name="BidTypePK" />
+            </Principal>
+            <Dependent Role="KeywordBid">
+              <PropertyRef Name="BidTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_BillType_Customer_1">
+          <End Role="BillType" Type="SemplestModel.Store.BillType" Multiplicity="1" />
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BillType">
+              <PropertyRef Name="BillTypePK" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="BillTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Campaign_AdGroup_1">
+          <End Role="Campaign" Type="SemplestModel.Store.Campaign" Multiplicity="1" />
+          <End Role="AdGroup" Type="SemplestModel.Store.AdGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Campaign">
+              <PropertyRef Name="CampaignPK" />
+            </Principal>
+            <Dependent Role="AdGroup">
+              <PropertyRef Name="CampaignFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Customer_AdvertisingEngineAccount_1">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="AdvertisingEngineAccount" Type="SemplestModel.Store.AdvertisingEngineAccount" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="AdvertisingEngineAccount">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Keyword_AdGroupKeywordAssociation_2">
+          <End Role="Keyword" Type="SemplestModel.Store.Keyword" Multiplicity="1" />
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.Store.AdGroupKeywordAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Keyword">
+              <PropertyRef Name="KeywordPK" />
+            </Principal>
+            <Dependent Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="KeywordFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_KeywordBid_AdvertisingEngineBidData_1">
+          <End Role="KeywordBid" Type="SemplestModel.Store.KeywordBid" Multiplicity="0..1" />
+          <End Role="AdvertisingEngineBidData" Type="SemplestModel.Store.AdvertisingEngineBidData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KeywordBid">
+              <PropertyRef Name="KeywordBidPK" />
+            </Principal>
+            <Dependent Role="AdvertisingEngineBidData">
+              <PropertyRef Name="KeywordBidFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Users_Credential_1">
+          <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="1" />
+          <End Role="Credential" Type="SemplestModel.Store.Credential" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Credential">
+              <PropertyRef Name="UsersFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserCustomer_rel">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="0..1" />
+          <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="SemplestEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Addresses" EntityType="SemplestModel.Address" />
+          <EntitySet Name="AddressTypes" EntityType="SemplestModel.AddressType" />
+          <EntitySet Name="AdGroups" EntityType="SemplestModel.AdGroup" />
+          <EntitySet Name="AdGroupKeywordAssociations" EntityType="SemplestModel.AdGroupKeywordAssociation" />
+          <EntitySet Name="AdvertisingEngines" EntityType="SemplestModel.AdvertisingEngine" />
+          <EntitySet Name="AdvertisingEngineBidDatas" EntityType="SemplestModel.AdvertisingEngineBidData" />
+          <EntitySet Name="BidTypes" EntityType="SemplestModel.BidType" />
+          <EntitySet Name="BillTypes" EntityType="SemplestModel.BillType" />
+          <EntitySet Name="Campaigns" EntityType="SemplestModel.Campaign" />
+          <EntitySet Name="CampaignAds" EntityType="SemplestModel.CampaignAd" />
+          <EntitySet Name="CampaignCycleTypes" EntityType="SemplestModel.CampaignCycleType" />
+          <EntitySet Name="Credentials" EntityType="SemplestModel.Credential" />
+          <EntitySet Name="Customers" EntityType="SemplestModel.Customer" />
+          <EntitySet Name="CustomerAddressAssociations" EntityType="SemplestModel.CustomerAddressAssociation" />
+          <EntitySet Name="CustomerHierarchies" EntityType="SemplestModel.CustomerHierarchy" />
+          <EntitySet Name="CustomerPhoneAssociations" EntityType="SemplestModel.CustomerPhoneAssociation" />
+          <EntitySet Name="Keywords" EntityType="SemplestModel.Keyword" />
+          <EntitySet Name="KeywordBids" EntityType="SemplestModel.KeywordBid" />
+          <EntitySet Name="Phones" EntityType="SemplestModel.Phone" />
+          <EntitySet Name="PhoneTypes" EntityType="SemplestModel.PhoneType" />
+          <EntitySet Name="StateCodes" EntityType="SemplestModel.StateCode" />
+          <EntitySet Name="Users" EntityType="SemplestModel.User" />
+          <AssociationSet Name="Address_Rel" Association="SemplestModel.Address_Rel">
+            <End Role="Address" EntitySet="Addresses" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="Address_StateCode" Association="SemplestModel.Address_StateCode">
+            <End Role="StateCode" EntitySet="StateCodes" />
+            <End Role="Address" EntitySet="Addresses" />
+          </AssociationSet>
+          <AssociationSet Name="AddressType_rel" Association="SemplestModel.AddressType_rel">
+            <End Role="AddressType" EntitySet="AddressTypes" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="AdEng_Camp_rel" Association="SemplestModel.AdEng_Camp_rel">
+            <End Role="AdvertisingEngine" EntitySet="AdvertisingEngines" />
+            <End Role="AdGroup" EntitySet="AdGroups" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroup_AdGroupKeywordAssociation_3" Association="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3">
+            <End Role="AdGroup" EntitySet="AdGroups" />
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroup_CampaignAds_1" Association="SemplestModel.REL_AdGroup_CampaignAds_1">
+            <End Role="AdGroup" EntitySet="AdGroups" />
+            <End Role="CampaignAds" EntitySet="CampaignAds" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Campaign_AdGroup_1" Association="SemplestModel.REL_Campaign_AdGroup_1">
+            <End Role="Campaign" EntitySet="Campaigns" />
+            <End Role="AdGroup" EntitySet="AdGroups" />
+          </AssociationSet>
+          <AssociationSet Name="REL_AdGroupKeywordAssociation_KeywordBid_1" Association="SemplestModel.REL_AdGroupKeywordAssociation_KeywordBid_1">
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociations" />
+            <End Role="KeywordBid" EntitySet="KeywordBids" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Keyword_AdGroupKeywordAssociation_2" Association="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2">
+            <End Role="Keyword" EntitySet="Keywords" />
+            <End Role="AdGroupKeywordAssociation" EntitySet="AdGroupKeywordAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="REL_KeywordBid_AdvertisingEngineBidData_1" Association="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1">
+            <End Role="KeywordBid" EntitySet="KeywordBids" />
+            <End Role="AdvertisingEngineBidData" EntitySet="AdvertisingEngineBidDatas" />
+          </AssociationSet>
+          <AssociationSet Name="REL_BidType_KeywordBid_2" Association="SemplestModel.REL_BidType_KeywordBid_2">
+            <End Role="BidType" EntitySet="BidTypes" />
+            <End Role="KeywordBid" EntitySet="KeywordBids" />
+          </AssociationSet>
+          <AssociationSet Name="REL_BillType_Customer_1" Association="SemplestModel.REL_BillType_Customer_1">
+            <End Role="BillType" EntitySet="BillTypes" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="Cust_Camp_rel" Association="SemplestModel.Cust_Camp_rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Campaign" EntitySet="Campaigns" />
+          </AssociationSet>
+          <AssociationSet Name="cycType_Relation" Association="SemplestModel.cycType_Relation">
+            <End Role="CampaignCycleType" EntitySet="CampaignCycleTypes" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Users_Credential_1" Association="SemplestModel.REL_Users_Credential_1">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Credential" EntitySet="Credentials" />
+          </AssociationSet>
+          <AssociationSet Name="Child_Rel" Association="SemplestModel.Child_Rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerHierarchy" EntitySet="CustomerHierarchies" />
+          </AssociationSet>
+          <AssociationSet Name="Customer_rel" Association="SemplestModel.Customer_rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="custPhone_rel" Association="SemplestModel.custPhone_rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerPhoneAssociation" EntitySet="CustomerPhoneAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="Paraent_Rel" Association="SemplestModel.Paraent_Rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerHierarchy" EntitySet="CustomerHierarchies" />
+          </AssociationSet>
+          <AssociationSet Name="UserCustomer_rel" Association="SemplestModel.UserCustomer_rel">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="PhoneCust_rel" Association="SemplestModel.PhoneCust_rel">
+            <End Role="Phone" EntitySet="Phones" />
+            <End Role="CustomerPhoneAssociation" EntitySet="CustomerPhoneAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="PhoneType_rel" Association="SemplestModel.PhoneType_rel">
+            <End Role="PhoneType" EntitySet="PhoneTypes" />
+            <End Role="Phone" EntitySet="Phones" />
+          </AssociationSet>
+          <AssociationSet Name="AdvertisingEngineAccount" Association="SemplestModel.AdvertisingEngineAccount">
+            <End Role="AdvertisingEngine" EntitySet="AdvertisingEngines" />
+            <End Role="Customer" EntitySet="Customers" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="Address">
+          <Key>
+            <PropertyRef Name="AddressPK" />
+          </Key>
+          <Property Name="AddressPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Address1" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="true" />
+          <Property Name="Address2" Type="String" MaxLength="150" Unicode="true" FixedLength="true" />
+          <Property Name="City" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="true" />
+          <Property Name="StateAbbrFK" Type="Int32" Nullable="false" />
+          <Property Name="ZipCode" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="DateTime" />
+          <NavigationProperty Name="CustomerAddressAssociations" Relationship="SemplestModel.Address_Rel" FromRole="Address" ToRole="CustomerAddressAssociation" />
+          <NavigationProperty Name="StateCode" Relationship="SemplestModel.Address_StateCode" FromRole="Address" ToRole="StateCode" />
+        </EntityType>
+        <EntityType Name="AddressType">
+          <Key>
+            <PropertyRef Name="AddressTypePK" />
+          </Key>
+          <Property Name="AddressTypePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AddressType1" Type="String" MaxLength="20" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="CustomerAddressAssociations" Relationship="SemplestModel.AddressType_rel" FromRole="AddressType" ToRole="CustomerAddressAssociation" />
+        </EntityType>
+        <EntityType Name="AdGroup">
+          <Key>
+            <PropertyRef Name="AdGroupPK" />
+          </Key>
+          <Property Name="AdGroupPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CampaignFK" Type="Int32" Nullable="false" />
+          <Property Name="AdvertisingEngineFK" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AdvertisingEngine" Relationship="SemplestModel.AdEng_Camp_rel" FromRole="AdGroup" ToRole="AdvertisingEngine" />
+          <NavigationProperty Name="AdGroupKeywordAssociations" Relationship="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3" FromRole="AdGroup" ToRole="AdGroupKeywordAssociation" />
+          <NavigationProperty Name="CampaignAds" Relationship="SemplestModel.REL_AdGroup_CampaignAds_1" FromRole="AdGroup" ToRole="CampaignAds" />
+          <NavigationProperty Name="Campaign" Relationship="SemplestModel.REL_Campaign_AdGroup_1" FromRole="AdGroup" ToRole="Campaign" />
+        </EntityType>
+        <EntityType Name="AdGroupKeywordAssociation">
+          <Key>
+            <PropertyRef Name="KeywordFK" />
+            <PropertyRef Name="AdGroupFK" />
+          </Key>
+          <Property Name="KeywordFK" Type="Int32" Nullable="false" />
+          <Property Name="AdGroupFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="AdGroup" Relationship="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3" FromRole="AdGroupKeywordAssociation" ToRole="AdGroup" />
+          <NavigationProperty Name="KeywordBids" Relationship="SemplestModel.REL_AdGroupKeywordAssociation_KeywordBid_1" FromRole="AdGroupKeywordAssociation" ToRole="KeywordBid" />
+          <NavigationProperty Name="Keyword" Relationship="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2" FromRole="AdGroupKeywordAssociation" ToRole="Keyword" />
+        </EntityType>
+        <EntityType Name="AdvertisingEngine">
+          <Key>
+            <PropertyRef Name="AdvertisingEnginePK" />
+          </Key>
+          <Property Name="AdvertisingEnginePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AdvertisingEngine1" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="AdGroups" Relationship="SemplestModel.AdEng_Camp_rel" FromRole="AdvertisingEngine" ToRole="AdGroup" />
+          <NavigationProperty Name="Customers" Relationship="SemplestModel.AdvertisingEngineAccount" FromRole="AdvertisingEngine" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="AdvertisingEngineBidData">
+          <Key>
+            <PropertyRef Name="AdvertisingEngineBidPK" />
+          </Key>
+          <Property Name="AdvertisingEngineBidPK" Type="Int32" Nullable="false" />
+          <Property Name="KeywordBidFK" Type="Int32" />
+          <Property Name="BidAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="NumberImpressions" Type="Int32" Nullable="false" />
+          <Property Name="NumberClick" Type="Int32" Nullable="false" />
+          <Property Name="AveragePosition" Type="Int32" Nullable="false" />
+          <Property Name="AverageCPC" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="KeywordBid" Relationship="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" FromRole="AdvertisingEngineBidData" ToRole="KeywordBid" />
+        </EntityType>
+        <EntityType Name="BidType">
+          <Key>
+            <PropertyRef Name="BidTypePK" />
+          </Key>
+          <Property Name="BidTypePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BidType1" Type="String" Nullable="false" MaxLength="30" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="KeywordBids" Relationship="SemplestModel.REL_BidType_KeywordBid_2" FromRole="BidType" ToRole="KeywordBid" />
+        </EntityType>
+        <EntityType Name="BillType">
+          <Key>
+            <PropertyRef Name="BillTypePK" />
+          </Key>
+          <Property Name="BillTypePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="BillType1" Type="String" Nullable="false" MaxLength="20" Unicode="false" FixedLength="false" />
+          <NavigationProperty Name="Customers" Relationship="SemplestModel.REL_BillType_Customer_1" FromRole="BillType" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="Campaign">
+          <Key>
+            <PropertyRef Name="CampaignPK" />
+          </Key>
+          <Property Name="CampaignPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="Int32" Nullable="false" />
+          <Property Name="CampaignName" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="true" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" />
+          <Property Name="EndDate" Type="DateTime" />
+          <Property Name="TargetCycleBudget" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreateDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="DateTime" />
+          <NavigationProperty Name="AdGroups" Relationship="SemplestModel.REL_Campaign_AdGroup_1" FromRole="Campaign" ToRole="AdGroup" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.Cust_Camp_rel" FromRole="Campaign" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="CampaignAd">
+          <Key>
+            <PropertyRef Name="CampaignAdsPK" />
+          </Key>
+          <Property Name="CampaignAdsPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AdGroupFK" Type="Int32" Nullable="false" />
+          <Property Name="AdText" Type="String" Nullable="false" MaxLength="4000" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="AdGroup" Relationship="SemplestModel.REL_AdGroup_CampaignAds_1" FromRole="CampaignAds" ToRole="AdGroup" />
+        </EntityType>
+        <EntityType Name="CampaignCycleType">
+          <Key>
+            <PropertyRef Name="CampaignCycleTypePK" />
+          </Key>
+          <Property Name="CampaignCycleTypePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CampaignCycleType1" Type="String" Nullable="false" MaxLength="30" Unicode="true" FixedLength="true" />
+          <Property Name="CycleInDays" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Customers" Relationship="SemplestModel.cycType_Relation" FromRole="CampaignCycleType" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="Credential">
+          <Key>
+            <PropertyRef Name="CredentialPK" />
+          </Key>
+          <Property Name="CredentialPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UsersFK" Type="Int32" Nullable="false" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="300" Unicode="true" FixedLength="false" />
+          <Property Name="Password" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="true" />
+          <Property Name="RememberMe" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="SemplestModel.REL_Users_Credential_1" FromRole="Credential" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="Customer">
+          <Key>
+            <PropertyRef Name="CustomerPK" />
+          </Key>
+          <Property Name="CustomerPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" Unicode="true" FixedLength="true" />
+          <Property Name="TotalTargetCycleBudget" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <Property Name="CampaignCycleTypeFK" Type="Int32" Nullable="false" />
+          <Property Name="BillTypeFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="DateTime" />
+          <NavigationProperty Name="BillType" Relationship="SemplestModel.REL_BillType_Customer_1" FromRole="Customer" ToRole="BillType" />
+          <NavigationProperty Name="Campaigns" Relationship="SemplestModel.Cust_Camp_rel" FromRole="Customer" ToRole="Campaign" />
+          <NavigationProperty Name="CampaignCycleType" Relationship="SemplestModel.cycType_Relation" FromRole="Customer" ToRole="CampaignCycleType" />
+          <NavigationProperty Name="CustomerHierarchies" Relationship="SemplestModel.Child_Rel" FromRole="Customer" ToRole="CustomerHierarchy" />
+          <NavigationProperty Name="CustomerAddressAssociations" Relationship="SemplestModel.Customer_rel" FromRole="Customer" ToRole="CustomerAddressAssociation" />
+          <NavigationProperty Name="CustomerPhoneAssociations" Relationship="SemplestModel.custPhone_rel" FromRole="Customer" ToRole="CustomerPhoneAssociation" />
+          <NavigationProperty Name="CustomerHierarchies1" Relationship="SemplestModel.Paraent_Rel" FromRole="Customer" ToRole="CustomerHierarchy" />
+          <NavigationProperty Name="Users" Relationship="SemplestModel.UserCustomer_rel" FromRole="Customer" ToRole="Users" />
+          <NavigationProperty Name="AdvertisingEngines" Relationship="SemplestModel.AdvertisingEngineAccount" FromRole="Customer" ToRole="AdvertisingEngine" />
+        </EntityType>
+        <EntityType Name="CustomerAddressAssociation">
+          <Key>
+            <PropertyRef Name="AddressFK" />
+            <PropertyRef Name="CustomerFK" />
+          </Key>
+          <Property Name="AddressFK" Type="Int32" Nullable="false" />
+          <Property Name="CustomerFK" Type="Int32" Nullable="false" />
+          <Property Name="AddressTypeFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Address" Relationship="SemplestModel.Address_Rel" FromRole="CustomerAddressAssociation" ToRole="Address" />
+          <NavigationProperty Name="AddressType" Relationship="SemplestModel.AddressType_rel" FromRole="CustomerAddressAssociation" ToRole="AddressType" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.Customer_rel" FromRole="CustomerAddressAssociation" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="CustomerHierarchy">
+          <Key>
+            <PropertyRef Name="CustomerHierarchyPK" />
+          </Key>
+          <Property Name="CustomerHierarchyPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="Int32" Nullable="false" />
+          <Property Name="CustomerParentFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.Child_Rel" FromRole="CustomerHierarchy" ToRole="Customer" />
+          <NavigationProperty Name="Customer1" Relationship="SemplestModel.Paraent_Rel" FromRole="CustomerHierarchy" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="CustomerPhoneAssociation">
+          <Key>
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="PhoneFK" />
+          </Key>
+          <Property Name="CustomerFK" Type="Int32" Nullable="false" />
+          <Property Name="PhoneFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.custPhone_rel" FromRole="CustomerPhoneAssociation" ToRole="Customer" />
+          <NavigationProperty Name="Phone" Relationship="SemplestModel.PhoneCust_rel" FromRole="CustomerPhoneAssociation" ToRole="Phone" />
+        </EntityType>
+        <EntityType Name="Keyword">
+          <Key>
+            <PropertyRef Name="KeywordPK" />
+          </Key>
+          <Property Name="KeywordPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Keyword1" Type="String" Nullable="false" MaxLength="250" Unicode="true" FixedLength="true" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="String" MaxLength="20" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="AdGroupKeywordAssociations" Relationship="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2" FromRole="Keyword" ToRole="AdGroupKeywordAssociation" />
+        </EntityType>
+        <EntityType Name="KeywordBid">
+          <Key>
+            <PropertyRef Name="KeywordBidPK" />
+          </Key>
+          <Property Name="KeywordBidPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="KeywordFK" Type="Int32" Nullable="false" />
+          <Property Name="AdGroupFK" Type="Int32" Nullable="false" />
+          <Property Name="StartDate" Type="DateTime" Nullable="false" />
+          <Property Name="EndDate" Type="DateTime" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <Property Name="BidTypeFK" Type="Int32" Nullable="false" />
+          <Property Name="BidAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
+          <NavigationProperty Name="AdGroupKeywordAssociation" Relationship="SemplestModel.REL_AdGroupKeywordAssociation_KeywordBid_1" FromRole="KeywordBid" ToRole="AdGroupKeywordAssociation" />
+          <NavigationProperty Name="AdvertisingEngineBidDatas" Relationship="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" FromRole="KeywordBid" ToRole="AdvertisingEngineBidData" />
+          <NavigationProperty Name="BidType" Relationship="SemplestModel.REL_BidType_KeywordBid_2" FromRole="KeywordBid" ToRole="BidType" />
+        </EntityType>
+        <EntityType Name="Phone">
+          <Key>
+            <PropertyRef Name="PhonePK" />
+          </Key>
+          <Property Name="PhonePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Phone1" Type="String" Nullable="false" MaxLength="25" Unicode="true" FixedLength="true" />
+          <Property Name="Extension" Type="String" MaxLength="10" Unicode="true" FixedLength="true" />
+          <Property Name="PhoneTypeFK" Type="Int32" Nullable="false" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="DateTime" />
+          <NavigationProperty Name="CustomerPhoneAssociations" Relationship="SemplestModel.PhoneCust_rel" FromRole="Phone" ToRole="CustomerPhoneAssociation" />
+          <NavigationProperty Name="PhoneType" Relationship="SemplestModel.PhoneType_rel" FromRole="Phone" ToRole="PhoneType" />
+        </EntityType>
+        <EntityType Name="PhoneType">
+          <Key>
+            <PropertyRef Name="PhoneTypePK" />
+          </Key>
+          <Property Name="PhoneTypePK" Type="Int32" Nullable="false" />
+          <Property Name="PhoneType1" Type="String" MaxLength="20" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="Phones" Relationship="SemplestModel.PhoneType_rel" FromRole="PhoneType" ToRole="Phone" />
+        </EntityType>
+        <EntityType Name="StateCode">
+          <Key>
+            <PropertyRef Name="StateAbbrPK" />
+          </Key>
+          <Property Name="StateAbbrPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="StateAbbr" Type="String" Nullable="false" MaxLength="5" Unicode="true" FixedLength="true" />
+          <NavigationProperty Name="Addresses" Relationship="SemplestModel.Address_StateCode" FromRole="StateCode" ToRole="Address" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="UserPK" />
+          </Key>
+          <Property Name="UserPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="Int32" />
+          <Property Name="FirstName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="true" />
+          <Property Name="MiddleInitial" Type="String" MaxLength="1" Unicode="true" FixedLength="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="true" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="100" Unicode="true" FixedLength="true" />
+          <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
+          <Property Name="EditedDate" Type="DateTime" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Credentials" Relationship="SemplestModel.REL_Users_Credential_1" FromRole="Users" ToRole="Credential" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.UserCustomer_rel" FromRole="Users" ToRole="Customer" />
+        </EntityType>
+        <Association Name="Address_Rel">
+          <End Role="Address" Type="SemplestModel.Address" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Address">
+              <PropertyRef Name="AddressPK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="AddressFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Address_StateCode">
+          <End Role="StateCode" Type="SemplestModel.StateCode" Multiplicity="1" />
+          <End Role="Address" Type="SemplestModel.Address" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="StateCode">
+              <PropertyRef Name="StateAbbrPK" />
+            </Principal>
+            <Dependent Role="Address">
+              <PropertyRef Name="StateAbbrFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AddressType_rel">
+          <End Role="AddressType" Type="SemplestModel.AddressType" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AddressType">
+              <PropertyRef Name="AddressTypePK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="AddressTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AdEng_Camp_rel">
+          <End Role="AdvertisingEngine" Type="SemplestModel.AdvertisingEngine" Multiplicity="1" />
+          <End Role="AdGroup" Type="SemplestModel.AdGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdvertisingEngine">
+              <PropertyRef Name="AdvertisingEnginePK" />
+            </Principal>
+            <Dependent Role="AdGroup">
+              <PropertyRef Name="AdvertisingEngineFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroup_AdGroupKeywordAssociation_3">
+          <End Role="AdGroup" Type="SemplestModel.AdGroup" Multiplicity="1" />
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.AdGroupKeywordAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroup">
+              <PropertyRef Name="AdGroupPK" />
+            </Principal>
+            <Dependent Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroup_CampaignAds_1">
+          <End Role="AdGroup" Type="SemplestModel.AdGroup" Multiplicity="1" />
+          <End Role="CampaignAds" Type="SemplestModel.CampaignAd" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroup">
+              <PropertyRef Name="AdGroupPK" />
+            </Principal>
+            <Dependent Role="CampaignAds">
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Campaign_AdGroup_1">
+          <End Role="Campaign" Type="SemplestModel.Campaign" Multiplicity="1" />
+          <End Role="AdGroup" Type="SemplestModel.AdGroup" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Campaign">
+              <PropertyRef Name="CampaignPK" />
+            </Principal>
+            <Dependent Role="AdGroup">
+              <PropertyRef Name="CampaignFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_AdGroupKeywordAssociation_KeywordBid_1">
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.AdGroupKeywordAssociation" Multiplicity="1" />
+          <End Role="KeywordBid" Type="SemplestModel.KeywordBid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="KeywordFK" />
+              <PropertyRef Name="AdGroupFK" />
+            </Principal>
+            <Dependent Role="KeywordBid">
+              <PropertyRef Name="KeywordFK" />
+              <PropertyRef Name="AdGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Keyword_AdGroupKeywordAssociation_2">
+          <End Role="Keyword" Type="SemplestModel.Keyword" Multiplicity="1" />
+          <End Role="AdGroupKeywordAssociation" Type="SemplestModel.AdGroupKeywordAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Keyword">
+              <PropertyRef Name="KeywordPK" />
+            </Principal>
+            <Dependent Role="AdGroupKeywordAssociation">
+              <PropertyRef Name="KeywordFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_KeywordBid_AdvertisingEngineBidData_1">
+          <End Role="KeywordBid" Type="SemplestModel.KeywordBid" Multiplicity="0..1" />
+          <End Role="AdvertisingEngineBidData" Type="SemplestModel.AdvertisingEngineBidData" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KeywordBid">
+              <PropertyRef Name="KeywordBidPK" />
+            </Principal>
+            <Dependent Role="AdvertisingEngineBidData">
+              <PropertyRef Name="KeywordBidFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_BidType_KeywordBid_2">
+          <End Role="BidType" Type="SemplestModel.BidType" Multiplicity="1" />
+          <End Role="KeywordBid" Type="SemplestModel.KeywordBid" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BidType">
+              <PropertyRef Name="BidTypePK" />
+            </Principal>
+            <Dependent Role="KeywordBid">
+              <PropertyRef Name="BidTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_BillType_Customer_1">
+          <End Role="BillType" Type="SemplestModel.BillType" Multiplicity="1" />
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BillType">
+              <PropertyRef Name="BillTypePK" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="BillTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Cust_Camp_rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="1" />
+          <End Role="Campaign" Type="SemplestModel.Campaign" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Campaign">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="cycType_Relation">
+          <End Role="CampaignCycleType" Type="SemplestModel.CampaignCycleType" Multiplicity="1" />
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CampaignCycleType">
+              <PropertyRef Name="CampaignCycleTypePK" />
+            </Principal>
+            <Dependent Role="Customer">
+              <PropertyRef Name="CampaignCycleTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Users_Credential_1">
+          <End Role="Users" Type="SemplestModel.User" Multiplicity="1" />
+          <End Role="Credential" Type="SemplestModel.Credential" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Credential">
+              <PropertyRef Name="UsersFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Child_Rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="1" />
+          <End Role="CustomerHierarchy" Type="SemplestModel.CustomerHierarchy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerHierarchy">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Customer_rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="1" />
+          <End Role="CustomerAddressAssociation" Type="SemplestModel.CustomerAddressAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerAddressAssociation">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="custPhone_rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="1" />
+          <End Role="CustomerPhoneAssociation" Type="SemplestModel.CustomerPhoneAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerPhoneAssociation">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Paraent_Rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="1" />
+          <End Role="CustomerHierarchy" Type="SemplestModel.CustomerHierarchy" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerHierarchy">
+              <PropertyRef Name="CustomerParentFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UserCustomer_rel">
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="0..1" />
+          <End Role="Users" Type="SemplestModel.User" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Users">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhoneCust_rel">
+          <End Role="Phone" Type="SemplestModel.Phone" Multiplicity="1" />
+          <End Role="CustomerPhoneAssociation" Type="SemplestModel.CustomerPhoneAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Phone">
+              <PropertyRef Name="PhonePK" />
+            </Principal>
+            <Dependent Role="CustomerPhoneAssociation">
+              <PropertyRef Name="PhoneFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="PhoneType_rel">
+          <End Role="PhoneType" Type="SemplestModel.PhoneType" Multiplicity="1" />
+          <End Role="Phone" Type="SemplestModel.Phone" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PhoneType">
+              <PropertyRef Name="PhoneTypePK" />
+            </Principal>
+            <Dependent Role="Phone">
+              <PropertyRef Name="PhoneTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="AdvertisingEngineAccount">
+          <End Role="AdvertisingEngine" Type="SemplestModel.AdvertisingEngine" Multiplicity="*" />
+          <End Role="Customer" Type="SemplestModel.Customer" Multiplicity="*" />
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="SemplestModelStoreContainer" CdmEntityContainer="SemplestEntities">
+          <EntitySetMapping Name="Addresses"><EntityTypeMapping TypeName="SemplestModel.Address"><MappingFragment StoreEntitySet="Address">
+            <ScalarProperty Name="AddressPK" ColumnName="AddressPK" />
+            <ScalarProperty Name="Address1" ColumnName="Address1" />
+            <ScalarProperty Name="Address2" ColumnName="Address2" />
+            <ScalarProperty Name="City" ColumnName="City" />
+            <ScalarProperty Name="StateAbbrFK" ColumnName="StateAbbrFK" />
+            <ScalarProperty Name="ZipCode" ColumnName="ZipCode" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AddressTypes"><EntityTypeMapping TypeName="SemplestModel.AddressType"><MappingFragment StoreEntitySet="AddressType">
+            <ScalarProperty Name="AddressTypePK" ColumnName="AddressTypePK" />
+            <ScalarProperty Name="AddressType1" ColumnName="AddressType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AdGroups"><EntityTypeMapping TypeName="SemplestModel.AdGroup"><MappingFragment StoreEntitySet="AdGroup">
+            <ScalarProperty Name="AdGroupPK" ColumnName="AdGroupPK" />
+            <ScalarProperty Name="CampaignFK" ColumnName="CampaignFK" />
+            <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AdGroupKeywordAssociations"><EntityTypeMapping TypeName="SemplestModel.AdGroupKeywordAssociation"><MappingFragment StoreEntitySet="AdGroupKeywordAssociation">
+            <ScalarProperty Name="KeywordFK" ColumnName="KeywordFK" />
+            <ScalarProperty Name="AdGroupFK" ColumnName="AdGroupFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AdvertisingEngines"><EntityTypeMapping TypeName="SemplestModel.AdvertisingEngine"><MappingFragment StoreEntitySet="AdvertisingEngine">
+            <ScalarProperty Name="AdvertisingEnginePK" ColumnName="AdvertisingEnginePK" />
+            <ScalarProperty Name="AdvertisingEngine1" ColumnName="AdvertisingEngine" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="AdvertisingEngineBidDatas"><EntityTypeMapping TypeName="SemplestModel.AdvertisingEngineBidData"><MappingFragment StoreEntitySet="AdvertisingEngineBidData">
+            <ScalarProperty Name="AdvertisingEngineBidPK" ColumnName="AdvertisingEngineBidPK" />
+            <ScalarProperty Name="KeywordBidFK" ColumnName="KeywordBidFK" />
+            <ScalarProperty Name="BidAmount" ColumnName="BidAmount" />
+            <ScalarProperty Name="NumberImpressions" ColumnName="NumberImpressions" />
+            <ScalarProperty Name="NumberClick" ColumnName="NumberClick" />
+            <ScalarProperty Name="AveragePosition" ColumnName="AveragePosition" />
+            <ScalarProperty Name="AverageCPC" ColumnName="AverageCPC" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="BidTypes"><EntityTypeMapping TypeName="SemplestModel.BidType"><MappingFragment StoreEntitySet="BidType">
+            <ScalarProperty Name="BidTypePK" ColumnName="BidTypePK" />
+            <ScalarProperty Name="BidType1" ColumnName="BidType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="BillTypes"><EntityTypeMapping TypeName="SemplestModel.BillType"><MappingFragment StoreEntitySet="BillType">
+            <ScalarProperty Name="BillTypePK" ColumnName="BillTypePK" />
+            <ScalarProperty Name="BillType1" ColumnName="BillType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Campaigns"><EntityTypeMapping TypeName="SemplestModel.Campaign"><MappingFragment StoreEntitySet="Campaign">
+            <ScalarProperty Name="CampaignPK" ColumnName="CampaignPK" />
+            <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+            <ScalarProperty Name="CampaignName" ColumnName="CampaignName" />
+            <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+            <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+            <ScalarProperty Name="TargetCycleBudget" ColumnName="TargetCycleBudget" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CampaignAds"><EntityTypeMapping TypeName="SemplestModel.CampaignAd"><MappingFragment StoreEntitySet="CampaignAds">
+            <ScalarProperty Name="CampaignAdsPK" ColumnName="CampaignAdsPK" />
+            <ScalarProperty Name="AdGroupFK" ColumnName="AdGroupFK" />
+            <ScalarProperty Name="AdText" ColumnName="AdText" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CampaignCycleTypes"><EntityTypeMapping TypeName="SemplestModel.CampaignCycleType"><MappingFragment StoreEntitySet="CampaignCycleType">
+            <ScalarProperty Name="CampaignCycleTypePK" ColumnName="CampaignCycleTypePK" />
+            <ScalarProperty Name="CampaignCycleType1" ColumnName="CampaignCycleType" />
+            <ScalarProperty Name="CycleInDays" ColumnName="CycleInDays" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Credentials"><EntityTypeMapping TypeName="SemplestModel.Credential"><MappingFragment StoreEntitySet="Credential">
+            <ScalarProperty Name="CredentialPK" ColumnName="CredentialPK" />
+            <ScalarProperty Name="UsersFK" ColumnName="UsersFK" />
+            <ScalarProperty Name="Username" ColumnName="Username" />
+            <ScalarProperty Name="Password" ColumnName="Password" />
+            <ScalarProperty Name="RememberMe" ColumnName="RememberMe" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Customers"><EntityTypeMapping TypeName="SemplestModel.Customer"><MappingFragment StoreEntitySet="Customer">
+            <ScalarProperty Name="CustomerPK" ColumnName="CustomerPK" />
+            <ScalarProperty Name="Name" ColumnName="Name" />
+            <ScalarProperty Name="TotalTargetCycleBudget" ColumnName="TotalTargetCycleBudget" />
+            <ScalarProperty Name="CampaignCycleTypeFK" ColumnName="CampaignCycleTypeFK" />
+            <ScalarProperty Name="BillTypeFK" ColumnName="BillTypeFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CustomerAddressAssociations"><EntityTypeMapping TypeName="SemplestModel.CustomerAddressAssociation"><MappingFragment StoreEntitySet="CustomerAddressAssociation">
+            <ScalarProperty Name="AddressFK" ColumnName="AddressFK" />
+            <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+            <ScalarProperty Name="AddressTypeFK" ColumnName="AddressTypeFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CustomerHierarchies"><EntityTypeMapping TypeName="SemplestModel.CustomerHierarchy"><MappingFragment StoreEntitySet="CustomerHierarchy">
+            <ScalarProperty Name="CustomerHierarchyPK" ColumnName="CustomerHierarchyPK" />
+            <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+            <ScalarProperty Name="CustomerParentFK" ColumnName="CustomerParentFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="CustomerPhoneAssociations"><EntityTypeMapping TypeName="SemplestModel.CustomerPhoneAssociation"><MappingFragment StoreEntitySet="CustomerPhoneAssociation">
+            <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+            <ScalarProperty Name="PhoneFK" ColumnName="PhoneFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Keywords"><EntityTypeMapping TypeName="SemplestModel.Keyword"><MappingFragment StoreEntitySet="Keyword">
+            <ScalarProperty Name="KeywordPK" ColumnName="KeywordPK" />
+            <ScalarProperty Name="Keyword1" ColumnName="Keyword" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="KeywordBids"><EntityTypeMapping TypeName="SemplestModel.KeywordBid"><MappingFragment StoreEntitySet="KeywordBid">
+            <ScalarProperty Name="KeywordBidPK" ColumnName="KeywordBidPK" />
+            <ScalarProperty Name="KeywordFK" ColumnName="KeywordFK" />
+            <ScalarProperty Name="AdGroupFK" ColumnName="AdGroupFK" />
+            <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+            <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+            <ScalarProperty Name="BidTypeFK" ColumnName="BidTypeFK" />
+            <ScalarProperty Name="BidAmount" ColumnName="BidAmount" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Phones"><EntityTypeMapping TypeName="SemplestModel.Phone"><MappingFragment StoreEntitySet="Phone">
+            <ScalarProperty Name="PhonePK" ColumnName="PhonePK" />
+            <ScalarProperty Name="Phone1" ColumnName="Phone" />
+            <ScalarProperty Name="Extension" ColumnName="Extension" />
+            <ScalarProperty Name="PhoneTypeFK" ColumnName="PhoneTypeFK" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="PhoneTypes"><EntityTypeMapping TypeName="SemplestModel.PhoneType"><MappingFragment StoreEntitySet="PhoneType">
+            <ScalarProperty Name="PhoneTypePK" ColumnName="PhoneTypePK" />
+            <ScalarProperty Name="PhoneType1" ColumnName="PhoneType" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="StateCodes"><EntityTypeMapping TypeName="SemplestModel.StateCode"><MappingFragment StoreEntitySet="StateCode">
+            <ScalarProperty Name="StateAbbrPK" ColumnName="StateAbbrPK" />
+            <ScalarProperty Name="StateAbbr" ColumnName="StateAbbr" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Users"><EntityTypeMapping TypeName="SemplestModel.User"><MappingFragment StoreEntitySet="Users">
+            <ScalarProperty Name="UserPK" ColumnName="UserPK" />
+            <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+            <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+            <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
+            <ScalarProperty Name="LastName" ColumnName="LastName" />
+            <ScalarProperty Name="Email" ColumnName="Email" />
+            <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+            <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+            <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <AssociationSetMapping Name="AdvertisingEngineAccount" TypeName="SemplestModel.AdvertisingEngineAccount" StoreEntitySet="AdvertisingEngineAccount">
+            <EndProperty Name="AdvertisingEngine">
+              <ScalarProperty Name="AdvertisingEnginePK" ColumnName="AdvertisingEngineFK" />
+            </EndProperty>
+            <EndProperty Name="Customer">
+              <ScalarProperty Name="CustomerPK" ColumnName="CustomerFK" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="SemplestModel">
+        <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="9" PointY="0.75" Height="2.9417936197916656" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="9" PointY="19.5" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.AdGroup" Width="1.5" PointX="3" PointY="13.25" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.AdGroupKeywordAssociation" Width="1.5" PointX="8.25" PointY="13.25" Height="2.1725878906249996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="0.75" PointY="13.5" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.AdvertisingEngineBidData" Width="1.5" PointX="15.75" PointY="13" Height="2.7494921874999996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.BidType" Width="1.5" PointX="11.25" PointY="16.625" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.BillType" Width="1.5" PointX="3.75" PointY="10.375" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.Campaign" Width="1.5" PointX="8.25" PointY="9.375" Height="3.1340950520833317" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.CampaignAd" Width="1.5" PointX="5.25" PointY="17.375" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.CampaignCycleType" Width="1.5" PointX="3.75" PointY="20.625" Height="1.7879850260416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.Credential" Width="1.5" PointX="10.5" PointY="22.5" Height="2.1725878906250031" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.Customer" Width="1.5" PointX="6" PointY="12.375" Height="4.0956022135416674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.CustomerAddressAssociation" Width="1.5" PointX="11.25" PointY="13.25" Height="2.3648893229166674" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.CustomerHierarchy" Width="1.5" PointX="8.25" PointY="16.375" Height="2.172587890624996" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.CustomerPhoneAssociation" Width="1.5" PointX="11.25" PointY="10.375" Height="1.9802864583333388" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.Keyword" Width="1.5" PointX="6" PointY="9.25" Height="2.1725878906250031" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.KeywordBid" Width="1.5" PointX="13.5" PointY="12.875" Height="3.1340950520833388" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.Phone" Width="1.5" PointX="9" PointY="5.125" Height="2.5571907552083388" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.PhoneType" Width="1.5" PointX="6.75" PointY="5.625" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.StateCode" Width="1.5" PointX="6.75" PointY="2.625" Height="1.5956835937500031" IsExpanded="true" />
+        <EntityTypeShape EntityType="SemplestModel.User" Width="1.5" PointX="8.25" PointY="22.125" Height="3.1340950520833388" IsExpanded="true" />
+        <AssociationConnector Association="SemplestModel.Address_Rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="10.5" PointY="3.6906387736378194" />
+          <ConnectorPoint PointX="10.875" PointY="4.0656387736378194" />
+          <ConnectorPoint PointX="10.875" PointY="14.432444661458334" />
+          <ConnectorPoint PointX="11.25" PointY="14.432444661458334" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.Address_StateCode" ManuallyRouted="false">
+          <ConnectorPoint PointX="8.25" PointY="3.1583968098958328" />
+          <ConnectorPoint PointX="9" PointY="3.1583968098958328" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.AddressType_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="10.15625" PointY="19.5" />
+          <ConnectorPoint PointX="10.15625" PointY="15.549988606770834" />
+          <ConnectorPoint PointX="11.25" PointY="15.549988606770834" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.AdEng_Camp_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="2.25" PointY="14.393992513020834" />
+          <ConnectorPoint PointX="3" PointY="14.393992513020834" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3" ManuallyRouted="false">
+          <ConnectorPoint PointX="3.75" PointY="13.25" />
+          <ConnectorPoint PointX="3.75" PointY="12.125" />
+          <ConnectorPoint PointX="4.822916666666667" PointY="12.125" />
+          <ConnectorPoint PointX="4.989583333333333" PointY="12.125" />
+          <ConnectorPoint PointX="7.875" PointY="12.125" />
+          <ConnectorPoint PointX="7.875" PointY="14.3362939453125" />
+          <ConnectorPoint PointX="8.25" PointY="14.3362939453125" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_AdGroup_CampaignAds_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="3.75" PointY="15.614889322916667" />
+          <ConnectorPoint PointX="3.75" PointY="18.268992513020834" />
+          <ConnectorPoint PointX="4.651041666666667" PointY="18.268992513020834" />
+          <ConnectorPoint PointX="4.817708333333333" PointY="18.268992513020834" />
+          <ConnectorPoint PointX="5.25" PointY="18.268992513020834" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Campaign_AdGroup_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="8.25" PointY="12.21875" />
+          <ConnectorPoint PointX="8.1458333333333339" PointY="12.21875" />
+          <ConnectorPoint PointX="7.979166666666667" PointY="12.21875" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="12.21875" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="12.21875" />
+          <ConnectorPoint PointX="4.989583333333333" PointY="12.21875" />
+          <ConnectorPoint PointX="4.822916666666667" PointY="12.21875" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="12.21875" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="12.21875" />
+          <ConnectorPoint PointX="3.34375" PointY="12.21875" />
+          <ConnectorPoint PointX="3.34375" PointY="13.25" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_AdGroupKeywordAssociation_KeywordBid_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="9" PointY="15.422587890625" />
+          <ConnectorPoint PointX="9" PointY="15.843242187500003" />
+          <ConnectorPoint PointX="10.072916666666666" PointY="15.843242187500003" />
+          <ConnectorPoint PointX="10.239583333333334" PointY="15.843242187500003" />
+          <ConnectorPoint PointX="11.916666666666666" PointY="15.843242187500003" />
+          <ConnectorPoint PointX="12.083333333333334" PointY="15.843242187500003" />
+          <ConnectorPoint PointX="13.5" PointY="15.843242187500003" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.5" PointY="11.360279198317311" />
+          <ConnectorPoint PointX="8.0625" PointY="11.922779198317311" />
+          <ConnectorPoint PointX="8.0625" PointY="13.761894972656249" />
+          <ConnectorPoint PointX="8.25" PointY="13.761894972656249" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="15" PointY="14.37474609375" />
+          <ConnectorPoint PointX="15.75" PointY="14.37474609375" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_BidType_KeywordBid_2" ManuallyRouted="false">
+          <ConnectorPoint PointX="12.75" PointY="17.422841796874998" />
+          <ConnectorPoint PointX="14.25" PointY="17.422841796874998" />
+          <ConnectorPoint PointX="14.25" PointY="16.009095052083339" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_BillType_Customer_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="4.90625" PointY="11.97068359375" />
+          <ConnectorPoint PointX="4.90625" PointY="12.78125" />
+          <ConnectorPoint PointX="6" PointY="12.78125" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.Cust_Camp_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.5" PointY="12.438460538461539" />
+          <ConnectorPoint PointX="7.6875" PointY="12.250960538461541" />
+          <ConnectorPoint PointX="7.6875" PointY="13.071595052083332" />
+          <ConnectorPoint PointX="7.8160744349011209" PointY="12.94302061718221" />
+          <ConnectorPoint PointX="7.9339255650988791" PointY="12.825169486984454" />
+          <ConnectorPoint PointX="8.00357443490112" PointY="12.75552061718221" />
+          <ConnectorPoint PointX="8.1214255650988783" PointY="12.637669486984454" />
+          <ConnectorPoint PointX="8.25" PointY="12.509095052083332" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.cycType_Relation" ManuallyRouted="false">
+          <ConnectorPoint PointX="4.734375" PointY="20.625" />
+          <ConnectorPoint PointX="4.734375" PointY="16.073995768229167" />
+          <ConnectorPoint PointX="6" PointY="16.073995768229167" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Users_Credential_1" ManuallyRouted="false">
+          <ConnectorPoint PointX="9.75" PointY="23.5862939453125" />
+          <ConnectorPoint PointX="10.5" PointY="23.5862939453125" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.Child_Rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.15625" PointY="16.470602213541667" />
+          <ConnectorPoint PointX="7.15625" PointY="16.891551606770832" />
+          <ConnectorPoint PointX="7.2760441666666669" PointY="16.891551606770832" />
+          <ConnectorPoint PointX="7.4427108333333329" PointY="16.891551606770832" />
+          <ConnectorPoint PointX="8.25" PointY="16.891551606770832" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.Customer_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.5" PointY="16.07787109375" />
+          <ConnectorPoint PointX="10.072916666666666" PointY="16.07787109375" />
+          <ConnectorPoint PointX="10.239583333333334" PointY="16.07787109375" />
+          <ConnectorPoint PointX="12" PointY="16.07787109375" />
+          <ConnectorPoint PointX="12" PointY="15.614889322916667" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.custPhone_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.5" PointY="13.418629741887013" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="13.418629741887013" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="13.418629741887013" />
+          <ConnectorPoint PointX="8" PointY="13.418629741887013" />
+          <ConnectorPoint PointX="8" PointY="13" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="13" />
+          <ConnectorPoint PointX="10.958333333333334" PointY="13" />
+          <ConnectorPoint PointX="12" PointY="13" />
+          <ConnectorPoint PointX="12" PointY="12.355286458333339" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.Paraent_Rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="7.3593775" PointY="16.470602213541667" />
+          <ConnectorPoint PointX="7.3593775" PointY="17.133278303385417" />
+          <ConnectorPoint PointX="8.25" PointY="17.133278303385417" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.UserCustomer_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="6.9531225" PointY="16.470602213541667" />
+          <ConnectorPoint PointX="6.9531225" PointY="23.692047526041669" />
+          <ConnectorPoint PointX="8.25" PointY="23.692047526041669" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.PhoneCust_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="10.5" PointY="6.4035953776041694" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="6.4035953776041685" />
+          <ConnectorPoint PointX="10.958333333333334" PointY="6.4035953776041694" />
+          <ConnectorPoint PointX="12" PointY="6.4035953776041694" />
+          <ConnectorPoint PointX="12" PointY="10.375" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.PhoneType_rel" ManuallyRouted="false">
+          <ConnectorPoint PointX="8.25" PointY="6.4228417968750016" />
+          <ConnectorPoint PointX="9" PointY="6.4228417968750016" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.AdvertisingEngineAccount" ManuallyRouted="false">
+          <ConnectorPoint PointX="1.5" PointY="15.287985026041667" />
+          <ConnectorPoint PointX="1.5" PointY="15.844440045572924" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="15.844440045572924" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="15.844440045572924" />
+          <ConnectorPoint PointX="6" PointY="15.844440045572924" />
+        </AssociationConnector>
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>
