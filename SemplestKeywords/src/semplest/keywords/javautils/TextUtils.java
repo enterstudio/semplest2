@@ -224,7 +224,7 @@ public class TextUtils
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
-    return words;
+    return validWords;
   }
   
   /*
