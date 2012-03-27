@@ -48,17 +48,17 @@ public class CampaignBid {
 	public void optimizeBids(){
 		
 		// initialize constant
-		double k = 0.01;
+		double multLagrange = 0.01;
 		bids = new double[wordList.size()];
 		while(true){
 			for(int i=0; i<bids.length;i++){
-				bids[i]=computeOptimumBidForConst(i,k);
+				bids[i]=computeOptimumBidForConst(i,multLagrange);
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedCost();
 			System.out.println("Expected Cost: "+expectedCost);
 			
 			if(Math.abs(expectedCost-maxBid) > tolMaxBid){
-				k+=stepSize;
+				multLagrange+=stepSize;
 			} else {
 				break;
 			} // if(Math.abs(expectedCost-maxBid) > tolMaxBid)
