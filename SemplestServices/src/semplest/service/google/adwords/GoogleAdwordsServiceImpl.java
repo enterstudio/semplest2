@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.google.BidObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
@@ -554,15 +555,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 	public String addKeyWordToAdGroup(String json) throws Exception
 	{
-		logger.debug("call GetRelatedKeywords" + json);
+		logger.debug("call addKeyWordToAdGroup" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		AdGroupCriterion res = addKeyWordToAdGroup(data.get("accountID"),adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")));
+		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
+		BidObject res = addKeyWordToAdGroup(data.get("accountID"),adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
+		
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public AdGroupCriterion addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception
+	public BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
 		 // Get the AdGroupCriterionService.        
@@ -575,6 +578,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();        
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);        
 		keywordBiddableAdGroupCriterion.setCriterion(keywrd);         
+		//add bid amount
+		ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
+		bid.setMaxCpc(new Bid(new Money(null, microBidAmount)));
+		keywordBiddableAdGroupCriterion.setBids(bid);
 		// Create operations.        
 		AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();        
 		keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);        
@@ -583,13 +590,20 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Add ad group criteria.       
 		AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);          
 		// Display ad group criteria.        
-		if (result != null && result.getValue() != null) 
+		if (result != null && result.getValue() != null  && (result.getValue(0) instanceof BiddableAdGroupCriterion) ) 
 		{  
-			return result.getValue(0);
+			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
+			BidObject bidRes = new BidObject();
+			bidRes.setBidID(res.getCriterion().getId());
+			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
+			bidRes.setKeyword(keyword);
+			bidRes.setMatchType(matchType.getValue());
+			bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
+			return bidRes;
 		}
 		else
 		{
-			return null;
+			return new BidObject();
 		}
 	}
 	public String setBidForKeyWord(String json) throws Exception
@@ -599,12 +613,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		AdGroupCriterion res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
+		BiddableAdGroupCriterion res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public AdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public BiddableAdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.        
@@ -627,9 +641,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Update ad group criteria.        
 		AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);         
 		// Display ad group criteria.       
-		if (result != null && result.getValue() != null) 
+		if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion)) 
 		{
-			return result.getValue(0);
+			return (BiddableAdGroupCriterion) result.getValue(0);
 		}
 		else
 		{
