@@ -19,6 +19,9 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
 
+import java.io.DataInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
@@ -227,7 +230,7 @@ public class TextUtils
     return validWords;
   }
   
-  /*
+  
   public static ArrayList<String> validTextWords( String url ){
 	    String htmlString = "";
 	    try { 
@@ -239,7 +242,7 @@ public class TextUtils
 	    ArrayList<String> validWords = validWords( words );
 	    return validWords;
   }
-  public static String FileText(String filepath){
+  public static String FileText(String filepath) throws IOException{
 	  FileInputStream fstream = new FileInputStream(filepath);
 	  // Get the object of DataInputStream
 	  DataInputStream in = new DataInputStream(fstream);
@@ -253,8 +256,8 @@ public class TextUtils
 	  }
 	  //Close the input stream
 	  in.close();
-	  return filepath;
-  }*/
+	  return data;
+  }
 
   // Return stemmed words from a web page, in our dictionary 
   public static ArrayList<String> validWords( ArrayList<String> words ){

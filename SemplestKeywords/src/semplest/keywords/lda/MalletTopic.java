@@ -319,14 +319,14 @@ public class MalletTopic {
 				// Print labels and values of 6 closest instances
 				String labelinf = (String) inferInst.get(instIndex).getTarget();
 				System.out.println("Current Instance Evaluated: " + labelinf);
-				/*
+				
 				// Print labels and values of 6 closest instances
 				System.out.println("Closest instances: " );
-				if (numCateg<100){
+				if (numCateg<30){
 					for (int j=0; j<minNelem[0].length ; j++){
 						System.out.println(minNelem[1][j]+"\t"+this.getInstanceLabel((int)minNelem[0][j]));
 					}
-				}*/
+				}
 				return minNelem;
 	}
 	//------------ Utility Methods-------------------------------------

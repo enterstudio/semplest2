@@ -14,10 +14,12 @@ public class test {
 	 * @throws ClassNotFoundException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
-		String a="auto+insure";
-		String[] b;
-		b=a.split("\\+");
-		System.out.println(b[1]);
+		String url1="http://www.subway.com/subwayroot/default.aspx";
+		ArrayList<String> words1 = TextUtils.validHtmlWords (url1);
+	    System.out.println("Words from URL1: "+ words1.size());
+	    for(String word:words1){
+	    	System.out.println(word);
+	    }
 	}
 
 }
