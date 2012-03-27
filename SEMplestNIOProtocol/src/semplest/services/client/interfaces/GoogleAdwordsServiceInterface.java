@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.google.BidObject;
 
 import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
@@ -49,8 +50,8 @@ public interface GoogleAdwordsServiceInterface
 	public abstract BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception;
 	
 	 
-	public abstract AdGroupCriterion addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception;
-	public abstract AdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
+	public abstract BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
+	public abstract BiddableAdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
 	
 	
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
