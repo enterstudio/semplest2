@@ -224,8 +224,37 @@ public class TextUtils
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
-    return validWords;
+    return words;
   }
+  
+  /*
+  public static ArrayList<String> validTextWords( String url ){
+	    String htmlString = "";
+	    try { 
+	      htmlString = FileText( url );
+	    } catch ( Exception e ){
+	      e.printStackTrace();
+	    }
+	    ArrayList<String> words = getWords( htmlString );
+	    ArrayList<String> validWords = validWords( words );
+	    return validWords;
+  }
+  public static String FileText(String filepath){
+	  FileInputStream fstream = new FileInputStream(filepath);
+	  // Get the object of DataInputStream
+	  DataInputStream in = new DataInputStream(fstream);
+	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	  String data="";
+	  String strLine;
+	  //Read File Line By Line
+	  while ((strLine = br.readLine()) != null)   {
+	  // Print the content on the console
+	  data=data+strLine;
+	  }
+	  //Close the input stream
+	  in.close();
+	  return filepath;
+  }*/
 
   // Return stemmed words from a web page, in our dictionary 
   public static ArrayList<String> validWords( ArrayList<String> words ){
