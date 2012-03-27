@@ -19,9 +19,10 @@ public class CampaignBid {
 	private double computeOptimumBidForConst(int i, double k){
 		// method TODO
 		double [] bidArray = wordList.get(i).getBidInfo();
-		double [] bidVsClick = wordList.get(i).getClickInfo();
-		double [] bidVsCost = wordList.get(i).getCostInfo();
-		double [] bidVsPos = wordList.get(i).getPosInfo();
+		double [] ClickArray = wordList.get(i).getClickInfo();
+		double [] CPCArray = wordList.get(i).getCPCInfo();
+		double [] PosArray = wordList.get(i).getPosInfo();
+		double [] DCostArray = wordList.get(i).getDCostInfo();
 		
 		
 		return 0.0;
@@ -30,6 +31,7 @@ public class CampaignBid {
 	private void computeExpectedCost(){
 		// method TODO
 	}
+	
 	
 	public void addKeyWord(KeyWordInterface keyWord){
 		wordList.add(keyWord);
@@ -42,6 +44,7 @@ public class CampaignBid {
 	
 	
 	public void optimizeBids(){
+		
 		// initialize constant
 		double k = 0.01;
 		bids = new double[wordList.size()];

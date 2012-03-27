@@ -5,7 +5,8 @@ public interface KeyWordInterface {
 	public String getKeyWord();
 	public double [] getBidInfo();
 	public double [] getClickInfo();
-	public double [] getCostInfo();
+	public double [] getCPCInfo();
 	public double [] getPosInfo();
+	public double [] getDCostInfo(); // daily cost
 
 }
