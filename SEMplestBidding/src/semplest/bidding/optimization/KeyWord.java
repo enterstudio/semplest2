@@ -120,25 +120,25 @@ public class KeyWord implements KeyWordInterface {
 	@Override
 	public double[] getClickInfo() {
 		// TODO Auto-generated method stub
-		return Clicks;
+		return ClickParams;
 	}
 
 	@Override
 	public double[] getCPCInfo() {
 		// TODO Auto-generated method stub
-		return CPC;
+		return CPCParams;
 	}
 
-	@Override
-	public double[] getPosInfo() {
-		// TODO Auto-generated method stub
-		return Pos;
-	}
-
-	@Override
-	public double[] getDCostInfo() {
-		// TODO Auto-generated method stub
-		return DCost;
-	}
+//	@Override
+//	public double[] getPosInfo() {
+//		// TODO Auto-generated method stub
+//		return Pos;
+//	}
+//
+//	@Override
+//	public double[] getDCostInfo() {
+//		// TODO Auto-generated method stub
+//		return DCost;
+//	}
 
 }

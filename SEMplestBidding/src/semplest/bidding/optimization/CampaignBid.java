@@ -21,8 +21,10 @@ public class CampaignBid {
 		double [] bidArray = wordList.get(i).getBidInfo();
 		double [] ClickArray = wordList.get(i).getClickInfo();
 		double [] CPCArray = wordList.get(i).getCPCInfo();
-		double [] PosArray = wordList.get(i).getPosInfo();
-		double [] DCostArray = wordList.get(i).getDCostInfo();
+//		double [] PosArray = wordList.get(i).getPosInfo();
+//		double [] DCostArray = wordList.get(i).getDCostInfo();
+		
+		
 		
 		
 		return 0.0;
