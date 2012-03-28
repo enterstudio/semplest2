@@ -10,13 +10,14 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.google.GoogleBidObject;
+import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
-import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
 import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
@@ -24,7 +25,6 @@ import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
-import com.google.api.adwords.v201109.o.TargetingIdea;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -59,7 +59,32 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient();
 			String accountID  = "6048920973";
-			Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name2");
+			Long campaignID = 75239229L;
+			//Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name2");
+			
+			//Long adgroupID = client.AddAdGroup(accountID, campaignID, "TestAdGroup", AdGroupStatus.PAUSED);
+			//System.out.println("Added Addgroup ID=" + String.valueOf(adgroupID));
+			//Added Addgroup ID=3380873349
+			Long adGroupID = 3380873349L;
+			GoogleBidObject newkeyword = client.addKeyWordToAdGroup(accountID, adGroupID, "MyTestKeyword6", KeywordMatchType.EXACT, 300000L);
+			System.out.println("newkeywordID = " + newkeyword.getKeyword() + ":" + newkeyword.getBidID() + ":" + String.valueOf(newkeyword.getMicroBidAmount()) + ":" + newkeyword.getApprovalStatus());
+			//Long firstAdID = client.addTextAd(accountID, adGroupID, "First Ad", "Description1: Testing out the Text Ad","Description2: Testing out the Text Ad", "www.semplest.com", "http://www.semplest.com");
+			//System.out.println("Added Addgroup ID=" + String.valueOf(firstAdID));
+			
+			//Added Addgroup ID=11384558709
+			/*
+			ArrayList<HashMap<String, String>> res = client.getCampaignsByAccountId(accountid, true);
+			for (int i = 0 ; i < res.size(); i++)
+			{
+				HashMap<String, String> data = res.get(i);
+				System.out.println(data.get("Id") + ":" + data.get("Name"));
+			}
+			
+			String[] keywords = client.getAllAdGroupKeywords(accountID, adgroupID);
+			for (int i = 0; i < keywords.length; i++)
+			{
+				System.out.println(keywords[i]);
+			}
 			/*
 			ArrayList<HashMap<String, String>> getCampaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			for (int i = 0; i < getCampaignsByAccountId.size(); i++)
@@ -243,7 +268,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		return null;
 	}
 	@Override
-	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -251,7 +276,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST, "getAllBiddableAdGroupCriteria", json);
-		return gson.fromJson(returnData,  BiddableAdGroupCriterion[].class);
+		return gson.fromJson(returnData,  GoogleBidObject[].class);
 	}
 	@Override
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
@@ -295,7 +320,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 	}
 	
 	@Override
-	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	public GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("keyword", keyword);
@@ -304,11 +329,11 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywords", json);
-		return gson.fromJson(returnData, TargetingIdea[].class);
+		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
 	
 	@Override
-	public TargetingIdea[] GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	public GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("url", url);
@@ -318,7 +343,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywordsForURL", json);
-		return gson.fromJson(returnData, TargetingIdea[].class);
+		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
 	@Override
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
@@ -385,6 +410,41 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 
 		String returnData = runMethod(BASEURLTEST, "UpdateCampaignName", json);
 		return gson.fromJson(returnData, Boolean.class);
+	}
+	@Override
+	public GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("keyword", keyword);
+		jsonHash.put("matchType", matchType.getValue());
+		if (microBidAmount != null)
+		{
+			jsonHash.put("microBidAmount", String.valueOf(microBidAmount));
+		}
+		else
+		{
+			jsonHash.put("microBidAmount", String.valueOf("0"));
+		}
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "addKeyWordToAdGroup", json);
+		System.out.println(returnData);
+		return gson.fromJson(returnData, GoogleBidObject.class);
+	}
+	@Override
+	public GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("keywordID", String.valueOf(keywordID));
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("microBidAmount",String.valueOf(microBidAmount));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "setBidForKeyWord", json);
+		return gson.fromJson(returnData, GoogleBidObject.class);
 	}
 
 }
