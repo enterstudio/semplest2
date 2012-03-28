@@ -14,8 +14,6 @@ import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
-import cc.mallet.types.Instance;
-
 public class ioUtils {
   
   // returns nth line of file (indexed from 0) as string
@@ -79,6 +77,20 @@ public class ioUtils {
         if( cols.length > col )
           arraybuf.add( cols[col] );
       }
+    } catch ( Exception e ){ e.printStackTrace();}
+    return arraybuf; 
+  }
+  
+  // same as readfile but only returns columns 
+  public static ArrayList<String[]> readCols(String file ){
+    ArrayList<String[]> arraybuf = new ArrayList<String[]>();
+    try {
+      InputStream fis = new FileInputStream(file);
+      BufferedReader br = new BufferedReader(new InputStreamReader(fis, 
+            Charset.forName("UTF-8")));
+      String line;
+      while ((line = br.readLine()) != null)
+          arraybuf.add( line.split("\\s+" ));
     } catch ( Exception e ){ e.printStackTrace();}
     return arraybuf; 
   }
@@ -176,7 +188,7 @@ public class ioUtils {
   public static void printVec(double[] m){
     System.out.printf("%d: ", m.length);  
     for(int i=0; i<m.length; i++)
-      System.out.printf("%3.1f ",m[i]);
+      System.out.printf("%7.5f ",m[i]);
     System.out.printf("\n");  
   }
   public static void printVec(int[] m){
@@ -222,7 +234,7 @@ public class ioUtils {
     for(int i = 1; i < tokens.length; i++){
       String[] wc = tokens[i].split(":");
       String word = wc[0];
-      int wcount = 0;
+      int wcount = -1;
       Integer index = dictUtils.dicti.get( word );
       if( index != null && wc.length >= 2 ){
         try {
@@ -230,13 +242,64 @@ public class ioUtils {
         } catch (Exception e ) {
           e.printStackTrace();
         }
-        if( wcount != 0 )
+        if( wcount != -1 )
           docv[ index ] = wcount;
 
       } else
-        System.out.print(".");
+        System.out.print("x");
     }
+    for(int i=0; i<100; i++)
+      if(docv[i] != 0)
+        System.out.printf("%d,%d  ",i,docv[i]);
     return docv;
+  }
+  // return a map of the words and count
+  public static HashMap<String,Integer> docWordMap(String line){
+    String[] tokens = line.split("\\s+");
+    if( tokens.length < 2) return null; 
+    
+    // words
+    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    for(int i = 1; i < tokens.length; i++){
+      String[] wc = tokens[i].split(":");
+      String word = wc[0];
+      int wcount = -1;
+      if( wc.length >= 2 ){
+        try {
+          wcount = new Integer( wc[1] ); 
+        } catch (Exception e ) {
+          e.printStackTrace();
+        }
+        if( wcount != -1 )
+          map.put( word, wcount);
+      }
+    }
+    return map;
+  }
+  // return a string of the words
+  public static String docWords(String line){
+    String[] tokens = line.split("\\s+");
+    if( tokens.length < 2) return null; 
+    
+    // words
+    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    String words = "";
+    for(int i = 1; i < tokens.length; i++)
+      words += tokens[i].split(":")[0] + " ";
+    return words;
+  }
+  public static HashMap<String,String> topWords(String file ){
+    HashMap<String,String> map = new HashMap<String, String>();
+    try {
+      BufferedReader br = new BufferedReader(new FileReader( file )); 
+      String line;
+      while ((line = br.readLine()) != null){ 
+        String id = docId( line );
+        String words = docWords( line );
+        map.put(id, words);
+      }
+    } catch ( Exception e ){ e.printStackTrace();}
+    return map;
   }
   // get us a document vector of the indexth document  
   public static int[] docVector(String file, int index){
