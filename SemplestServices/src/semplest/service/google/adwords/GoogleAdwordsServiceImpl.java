@@ -9,7 +9,8 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.server.protocol.google.BidObject;
+import semplest.server.protocol.google.GoogleBidObject;
+import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
@@ -86,7 +87,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = false;
+	private static boolean useSandbox = false;//true; //
 
 	public static void main(String[] args)
 	{
@@ -116,9 +117,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
 			// KeywordMatchType.EXACT, 20);
 			
-			String[] u =
-			{ "www.statefarm.com" };
-			TargetingIdea[] res = g.GetRelatedKeywordsForURL("www.statefarm.com", "insuranc", KeywordMatchType.EXACT, 20);
+			
+			GoogleRelatedKeywordObject res = g.GetRelatedKeywordsForURL("http://www.peanutbutter.com/", "peanut butter", KeywordMatchType.EXACT, 20);
+			ArrayList<String> keys = res.getKeywords();
+			for (int i =0; i< keys.size(); i++)
+			{
+				System.out.println(keys.get(i));
+				ArrayList<String> match = res.getMatchTypesForKeyword(keys.get(i));
+				for (int j=0; j < match.size(); j++)
+				{
+					System.out.println(match.get(j));
+				}
+			}
+			/*
 			for (int i = 0; i < res.length; i++)
 			{
 				Map<AttributeType, Attribute> data = MapUtils.toMap(res[i].getData());
@@ -129,6 +140,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				System.out.println("Keyword with text '" + keyword.getText() + "', match type '" + keyword.getMatchType()
 						+ "', and average monthly search volume '" + averageMonthlySearches + "' was found Comp=" + String.valueOf(comp));
 			}
+			*/
 			
 		}
 		catch (Exception e)
@@ -363,20 +375,20 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		BidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
+		GoogleBidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public BidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
-		List<BidObject> result = new ArrayList<BidObject>();
+		List<GoogleBidObject> result = new ArrayList<GoogleBidObject>();
 		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID))
 		{
 			if (criterion instanceof BiddableAdGroupCriterion)
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) criterion;
-				BidObject bidRes = new BidObject();
+				GoogleBidObject bidRes = new GoogleBidObject();
 				bidRes.setBidID(res.getCriterion().getId());
 				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 				Keyword keyword = ((Keyword) criterion.getCriterion());
@@ -386,7 +398,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				result.add(bidRes);
 			}
 		}
-		return result.toArray(new BidObject[result.size()]);
+		return result.toArray(new GoogleBidObject[result.size()]);
 	}
 
 	public String getAllAdGroupKeywords(String json) throws Exception
@@ -403,7 +415,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
 	{
 		List<String> keywords = new ArrayList<String>();
-		for (BidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID))
+		for (GoogleBidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID))
 		{
 			keywords.add(criterion.getKeyword());
 		}
@@ -567,13 +579,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		BidObject res = addKeyWordToAdGroup(data.get("accountID"),adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
+		GoogleBidObject res = addKeyWordToAdGroup(data.get("accountID"),adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
 		
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	public GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
 		 // Get the AdGroupCriterionService.        
@@ -601,7 +613,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		if (result != null && result.getValue() != null  && (result.getValue(0) instanceof BiddableAdGroupCriterion) ) 
 		{  
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
-			BidObject bidRes = new BidObject();
+			GoogleBidObject bidRes = new GoogleBidObject();
 			bidRes.setBidID(res.getCriterion().getId());
 			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 			bidRes.setKeyword(keyword);
@@ -611,7 +623,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			return new BidObject();
+			return new GoogleBidObject();
 		}
 	}
 	public String setBidForKeyWord(String json) throws Exception
@@ -621,12 +633,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		BidObject res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
+		GoogleBidObject res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public BidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.        
@@ -653,7 +665,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
 			Keyword keyword = ((Keyword) res.getCriterion());
-			BidObject bidRes = new BidObject();
+			GoogleBidObject bidRes = new GoogleBidObject();
 			bidRes.setBidID(res.getCriterion().getId());
 			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 			bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
@@ -662,7 +674,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			return new BidObject();
+			return new GoogleBidObject();
 		}
 	}
 
@@ -950,12 +962,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.debug("call GetRelatedKeywords" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		TargetingIdea[] res = GetRelatedKeywords(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
+		GoogleRelatedKeywordObject res = GetRelatedKeywords(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public TargetingIdea[] GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	public GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 		// Get the TargetingIdeaService.
@@ -969,7 +981,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		selector.setRequestType(RequestType.IDEAS);
 		selector.setIdeaType(IdeaType.KEYWORD);
 		selector.setRequestedAttributeTypes(new AttributeType[]
-		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.AD_SHARE, AttributeType.COMPETITION });
+		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION });
 		// Set selector paging (required for targeting idea service).
 		Paging paging = new Paging();
 		paging.setStartIndex(0);
@@ -987,19 +999,36 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ relatedToKeywordSearchParameter, keywordMatchTypeSearchParameter });
 		// Get related keywords.
 		TargetingIdeaPage page = targetingIdeaService.get(selector);
-		return page.getEntries();
+		if (page != null && page.getEntries() != null)
+		{
+			GoogleRelatedKeywordObject keyObj = new GoogleRelatedKeywordObject(keyword, null);
+			
+			for (TargetingIdea targetingIdea : page.getEntries()) {            
+				Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());            
+				Keyword kw =(Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();            
+				Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue(); 
+				Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
+				keyObj.addKeywordData(kw.getText(), kw.getMatchType().getValue(), averageMonthlySearches, comp);
+			}
+			return keyObj;
+		}
+		else
+		{
+			return new GoogleRelatedKeywordObject(keyword, null);
+		}
+		 
 	}
 
 	public String GetRelatedKeywordsForURL(String json) throws Exception
 	{
 		logger.debug("call GetRelatedKeywords" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		TargetingIdea[] res = GetRelatedKeywordsForURL(data.get("url"), data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
+		GoogleRelatedKeywordObject res = GetRelatedKeywordsForURL(data.get("url"), data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")) ,Integer.parseInt(data.get("numberResults")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public TargetingIdea[] GetRelatedKeywordsForURL(String url, String keyword, KeywordMatchType matchType, int numberResults) throws Exception
+	public GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url, String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
 		// Specifically you would use the RelatedToUrlSearchParameter, ideaType
 		// of KEYWORD, and requestType of IDEAS
@@ -1011,9 +1040,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		TargetingIdeaSelector selector = new TargetingIdeaSelector();
 		selector.setRequestType(RequestType.IDEAS);
 		selector.setIdeaType(IdeaType.KEYWORD);
-		selector.setRequestedAttributeTypes(new AttributeType[]
-		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION, AttributeType.KEYWORD_CATEGORY }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,
-																													// AttributeType.COMPETITION});
+		selector.setRequestedAttributeTypes(new AttributeType[]	{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES,  AttributeType.COMPETITION}); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,
+																													//});
 		// Set selector paging (required for targeting idea service).
 		Paging paging = new Paging();
 		paging.setStartIndex(0);
@@ -1024,24 +1052,30 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		keywrd.setMatchType(matchType);
 		// Create related to keyword search parameter.
 		RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
-		relatedToKeywordSearchParameter.setKeywords(new Keyword[]
-		{ keywrd });
+		relatedToKeywordSearchParameter.setKeywords(new Keyword[] { keywrd });
 		// Create related to URL search parameter.
 		RelatedToUrlSearchParameter relatedToUrlSearchParameter = new RelatedToUrlSearchParameter();
-		relatedToUrlSearchParameter.setUrls(new String[]
-		{ url });
-		relatedToUrlSearchParameter.setIncludeSubUrls(false);
-		selector.setSearchParameters(new SearchParameter[]
-		{ relatedToUrlSearchParameter, relatedToKeywordSearchParameter });
+		relatedToUrlSearchParameter.setUrls(new String[] { url });
+		//relatedToUrlSearchParameter.setIncludeSubUrls(true);
+		selector.setSearchParameters(new SearchParameter[]	{ relatedToKeywordSearchParameter, relatedToUrlSearchParameter }); // ,
 		// Get related placements.
 		TargetingIdeaPage page = targetingIdeaService.get(selector);
 		if (page != null && page.getEntries() != null)
 		{
-			return page.getEntries();
+			GoogleRelatedKeywordObject keyObj = new GoogleRelatedKeywordObject(keyword, null);
+			
+			for (TargetingIdea targetingIdea : page.getEntries()) {            
+				Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());            
+				Keyword kw =(Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();            
+				Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue(); 
+				Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
+				keyObj.addKeywordData(kw.getText(), kw.getMatchType().getValue(), averageMonthlySearches, comp);
+			}
+			return keyObj;
 		}
 		else
 		{
-			return new TargetingIdea[0];
+			return new GoogleRelatedKeywordObject(keyword, null);
 		}
 	}
 
