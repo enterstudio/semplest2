@@ -363,22 +363,30 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		BiddableAdGroupCriterion[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
+		BidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public BiddableAdGroupCriterion[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public BidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
 	{
-		List<BiddableAdGroupCriterion> result = new ArrayList<BiddableAdGroupCriterion>();
+		List<BidObject> result = new ArrayList<BidObject>();
 		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID))
 		{
 			if (criterion instanceof BiddableAdGroupCriterion)
 			{
-				result.add((BiddableAdGroupCriterion) criterion);
+				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) criterion;
+				BidObject bidRes = new BidObject();
+				bidRes.setBidID(res.getCriterion().getId());
+				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
+				Keyword keyword = ((Keyword) criterion.getCriterion());
+				bidRes.setKeyword((keyword.getText()));
+				bidRes.setMatchType(keyword.getMatchType().getValue());
+				bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
+				result.add(bidRes);
 			}
 		}
-		return result.toArray(new BiddableAdGroupCriterion[result.size()]);
+		return result.toArray(new BidObject[result.size()]);
 	}
 
 	public String getAllAdGroupKeywords(String json) throws Exception
@@ -395,9 +403,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
 	{
 		List<String> keywords = new ArrayList<String>();
-		for (BiddableAdGroupCriterion criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID))
+		for (BidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID))
 		{
-			keywords.add(((Keyword) criterion.getCriterion()).getText());
+			keywords.add(criterion.getKeyword());
 		}
 		return keywords.toArray(new String[keywords.size()]);
 	}
@@ -613,12 +621,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		BiddableAdGroupCriterion res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
+		BidObject res = setBidForKeyWord(data.get("accountID"),keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 	@Override
-	public BiddableAdGroupCriterion setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public BidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password,accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.        
@@ -643,11 +651,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Display ad group criteria.       
 		if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion)) 
 		{
-			return (BiddableAdGroupCriterion) result.getValue(0);
+			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
+			Keyword keyword = ((Keyword) res.getCriterion());
+			BidObject bidRes = new BidObject();
+			bidRes.setBidID(res.getCriterion().getId());
+			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
+			bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
+			bidRes.setKeyword(keyword.getText());
+			return bidRes;
 		}
 		else
 		{
-			return null;
+			return new BidObject();
 		}
 	}
 
@@ -997,7 +1012,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		selector.setRequestType(RequestType.IDEAS);
 		selector.setIdeaType(IdeaType.KEYWORD);
 		selector.setRequestedAttributeTypes(new AttributeType[]
-		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,
+		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION, AttributeType.KEYWORD_CATEGORY }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,
 																													// AttributeType.COMPETITION});
 		// Set selector paging (required for targeting idea service).
 		Paging paging = new Paging();
@@ -1020,7 +1035,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ relatedToUrlSearchParameter, relatedToKeywordSearchParameter });
 		// Get related placements.
 		TargetingIdeaPage page = targetingIdeaService.get(selector);
-		return page.getEntries();
+		if (page != null && page.getEntries() != null)
+		{
+			return page.getEntries();
+		}
+		else
+		{
+			return new TargetingIdea[0];
+		}
 	}
 
 	
