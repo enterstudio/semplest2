@@ -2,6 +2,11 @@ package semplest.bidding.optimization;
 
 import java.util.ArrayList;
 
+import flanagan.math.Minimisation;
+
+import semplest.bidding.estimation.ParametricFunction;
+import semplest.bidding.estimation.WeibullCurve;
+
 public class CampaignBid {
 	
 	private ArrayList<KeyWordInterface> wordList;
@@ -17,19 +22,24 @@ public class CampaignBid {
 	}
 	
 	private double computeOptimumBidForConst(int i, double k){
-		// method TODO
-//		double [] bidArray = wordList.get(i).getBidInfo();
-		double [] ClickParams = wordList.get(i).getClickInfo();
-//		double [] CPCArray = wordList.get(i).getCPCInfo();
-//		double [] PosArray = wordList.get(i).getPosInfo();
-		double [] DCostParams = wordList.get(i).getDCostInfo();
-		double score = wordList.get(i).getQualityScore();
 		
+		ParametricFunction f = new WeibullCurve();
+		BidLagrangeOptim Bid = new BidLagrangeOptim(wordList.get(i), f, k);
+        Minimisation min = new Minimisation();
 		
+		double[] start = {-5.0};
+        double[] step = {0.2D};
+        double ftol = 1e-15;
+
+        min.nelderMead(Bid, start, step, ftol);
+
+        // get the minimum value
+        double minimum = min.getMinimum();
+
+//        // get values of y and z at minimum
+//         double[] param = min.getParamValues();
 		
-		
-		
-		return 0.0;
+		return minimum;
 	}
 	
 	private void computeExpectedCost(){
@@ -55,7 +65,9 @@ public class CampaignBid {
 		while(true){
 			for(int i=0; i<bids.length;i++){
 				bids[i]=computeOptimumBidForConst(i,multLagrange);
+				System.out.println("Bid value: " + bids[i]);
 			} // for(int i=0; i<bids.length;i++)
+			System.exit(0);
 			computeExpectedCost();
 			System.out.println("Expected Cost: "+expectedCost);
 			
