@@ -63,7 +63,6 @@ public class ESBServer
 		serverData.setBrokerPort(properties.getProperty("BrokerPort"));
 		serverData.setBrokerIP(properties.getProperty("BrokerIP"));
 		serverData.setRegServicePort(properties.getProperty("RegServicePort"));
-		serverData.setJerseyPackage(properties.getProperty("JerseyPackage"));
 		serverData.setWebServerPort(properties.getProperty("WebServerPort"));
 		serverData.setAsynchServletCorePoolSize(Integer.parseInt(properties.getProperty("AsynchServletCorePoolSize")));
 		serverData.setAsynchServletMaxPoolSize(Integer.parseInt(properties.getProperty("AsynchServletMaxPoolSize")));
@@ -87,11 +86,12 @@ public class ESBServer
 	{
 		try
 		{
+			logger.debug("Starting NIO reg Server...");
 			// create the NIO server to handle incoming registration
 			ProcessRequestWorker worker = new ProcessRequestWorker();
 			new Thread(worker).start();
 			new Thread(new NIOServer(null, Integer.parseInt(serverData.getRegServicePort()), worker, this)).start();
-
+			logger.debug("NIO Started...");
 			return true;
 		}
 		catch (IOException e)
@@ -103,14 +103,17 @@ public class ESBServer
 
 	public void startMQ(String brokerName, String brokerIP, String brokerPort) throws JMSException
 	{
+		logger.debug("Starting ActiveMQ...");
 		MQBroker = new ActiveMQBroker(brokerName, brokerIP, brokerPort);
 		MQBroker.run();
 		MQConnection = new ActiveMQConnection(brokerIP, brokerPort);
+		logger.debug("ActiveMQ Started...");
 	}
 
 	public void runServletContainer() throws Exception
 	{
 		//setup the executor for the servlet
+		logger.debug("Starting Servlet Container...");
 		executor = new ThreadPoolExecutor(serverData.getAsynchServletCorePoolSize(), serverData.getAsynchServletMaxPoolSize(), 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(serverData.getAsynchServletMaxWorkInQueue()));
 		Server server = new Server(Integer.parseInt(serverData.getWebServerPort()));
 		ServletHolder sh = new ServletHolder(ServletContainer.class);
@@ -129,6 +132,7 @@ public class ESBServer
 		context.addServlet(sh, "/*");
 		context.addServlet("semplest.server.ESB.AsyncServlet", "/*");
 		server.setHandler(context);
+		logger.debug("Servlet Container Start...");
 		server.start();
 		server.join();
 	}
