@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 import cc.mallet.types.Instance;
 
 public class ioUtils {
-
+  
   // returns nth line of file (indexed from 0) as string
   public static String readLine(String file, int n){
     try {

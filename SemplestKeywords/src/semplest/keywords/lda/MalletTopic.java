@@ -322,11 +322,11 @@ public class MalletTopic {
 				
 				// Print labels and values of 6 closest instances
 				System.out.println("Closest instances: " );
-				if (numCateg<30){
-					for (int j=0; j<minNelem[0].length ; j++){
+				//Print out first 10 elements
+				for (int j=0; j<10 ; j++){
 						System.out.println(minNelem[1][j]+"\t"+this.getInstanceLabel((int)minNelem[0][j]));
-					}
 				}
+			
 				return minNelem;
 	}
 	//------------ Utility Methods-------------------------------------
