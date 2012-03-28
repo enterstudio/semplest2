@@ -6,27 +6,32 @@ import semplest.bidding.estimation.*;
 public class KeyWord implements KeyWordInterface {
 	
 	private String name = "";
+	private double score = 1.0;
 	private double [] bid = null;
 	private double [] Clicks = null;
 	private double [] CPC = null;
 	private double [] Pos = null;
 	private double [] DCost = null;
 	
+	
 	// model parameters
 	private double [] ClickParams = null; 
 	private double [] CPCParams = null; 
+	private double [] DCostParams = null; 
 //	private double [] ScoreParams = null;
 
 	
-	public KeyWord(String name, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
+	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
 		this.name=name;
+		this.score=score;
 		this.bid=bid;
 		this.Clicks=Clicks;
 		this.CPC=CPC;
 		this.Pos=Pos;
 		this.DCost=DCost;
 		
-		CPCParams=estimateModelParams(CPC, true);
+		CPCParams=estimateModelParams(CPC, false);
+		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
 
 	}
@@ -134,11 +139,17 @@ public class KeyWord implements KeyWordInterface {
 //		// TODO Auto-generated method stub
 //		return Pos;
 //	}
-//
-//	@Override
-//	public double[] getDCostInfo() {
-//		// TODO Auto-generated method stub
-//		return DCost;
-//	}
+
+	@Override
+	public double[] getDCostInfo() {
+		// TODO Auto-generated method stub
+		return DCostParams;
+	}	
+	
+	@Override
+	public double getQualityScore() {
+		// TODO Auto-generated method stub
+		return score;
+	}
 
 }

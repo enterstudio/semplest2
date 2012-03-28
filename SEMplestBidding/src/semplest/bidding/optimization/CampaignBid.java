@@ -18,11 +18,13 @@ public class CampaignBid {
 	
 	private double computeOptimumBidForConst(int i, double k){
 		// method TODO
-		double [] bidArray = wordList.get(i).getBidInfo();
-		double [] ClickArray = wordList.get(i).getClickInfo();
-		double [] CPCArray = wordList.get(i).getCPCInfo();
+//		double [] bidArray = wordList.get(i).getBidInfo();
+		double [] ClickParams = wordList.get(i).getClickInfo();
+//		double [] CPCArray = wordList.get(i).getCPCInfo();
 //		double [] PosArray = wordList.get(i).getPosInfo();
-//		double [] DCostArray = wordList.get(i).getDCostInfo();
+		double [] DCostParams = wordList.get(i).getDCostInfo();
+		double score = wordList.get(i).getQualityScore();
+		
 		
 		
 		

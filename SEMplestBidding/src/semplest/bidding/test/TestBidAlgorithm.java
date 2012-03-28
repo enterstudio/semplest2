@@ -23,6 +23,15 @@ public class TestBidAlgorithm {
 			keywords[i]=line;
 		}
 		
+		double [] scores = new double[keywords.length];
+		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/QualityScores.txt");
+		j=0;
+		for (String line : lines){
+			line=line.replaceAll("\n", "");
+			scores[j]=Double.parseDouble(line);
+			j++;
+		}
+		
 		// bids
 		double [] bid = null;
 		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Bid.txt");
@@ -98,7 +107,7 @@ public class TestBidAlgorithm {
 		CampaignBid bidOptimizer = new CampaignBid();
 		
 		for (i=0; i<keywords.length;i++){
-			bidOptimizer.addKeyWord(new KeyWord(keywords[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
+			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
 		}
 		bidOptimizer.setMaxBid(1000.0);
 		

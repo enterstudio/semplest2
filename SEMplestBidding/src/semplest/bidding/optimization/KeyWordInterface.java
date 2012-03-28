@@ -7,6 +7,7 @@ public interface KeyWordInterface {
 	public double [] getClickInfo();
 	public double [] getCPCInfo();
 //	public double [] getPosInfo();
-//	public double [] getDCostInfo(); // daily cost
+	public double [] getDCostInfo(); // daily cost
+	public double getQualityScore();
 
 }
