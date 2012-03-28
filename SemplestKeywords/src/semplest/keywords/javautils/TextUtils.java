@@ -9,7 +9,7 @@ import org.htmlparser.nodes.TextNode;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.NodeList;
-import org.htmlparser.util.NodeIterator;
+// import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.filters.*;
 
@@ -127,6 +127,8 @@ public class TextUtils
     
     StringBean sb = new StringBean();
     sb.setLinks( false );
+    sb.setReplaceNonBreakingSpaces( true );
+    sb.setCollapse( false );
     sb.setURL( url );
     try {
       outs = sb.getStrings();
@@ -320,8 +322,8 @@ public class TextUtils
       System.out.println( stems.get(i) + " : " + words.get(i) );
     */
 
-    String urls = HTMLLinkString( ss, 2, "www.statefarm.com" );
-    for( String u : urls.split("\\s+"))
+    String words = getWords( String url ){
+    for( String u : words )
       System.out.println( u );
 
   }
