@@ -9,7 +9,7 @@ import org.htmlparser.nodes.TextNode;
 import org.htmlparser.nodes.TagNode;
 import org.htmlparser.tags.LinkTag;
 import org.htmlparser.util.NodeList;
-// import org.htmlparser.util.NodeIterator;
+import org.htmlparser.util.NodeIterator;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.filters.*;
 
@@ -312,7 +312,6 @@ public class TextUtils
   //-------------------------------------------------------------
   public static void main (String[] args){
 
-    String ss = "http://www.statefarm.com";
 
     /*
     ArrayList<String> stems = validHtmlStems( ss );
@@ -321,10 +320,7 @@ public class TextUtils
     for(int i=0; i< stems.size(); i++)
       System.out.println( stems.get(i) + " : " + words.get(i) );
     */
-
-    String words = getWords( String url ){
-    for( String u : words )
-      System.out.println( u );
-
+    if( args.length > 0 )
+      System.out.println( HTMLText( args[0] ));
   }
 }
