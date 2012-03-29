@@ -59,6 +59,29 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		try
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient();
+
+			
+			
+			ArrayList<Double> bidLevels = new ArrayList<Double>();
+			bidLevels.add(0.9);
+			bidLevels.add(1.00);
+			bidLevels.add(1.20);
+			bidLevels.add(1.50);
+			bidLevels.add(2.00);
+			
+			// bidLevels.add(1.50);
+			// bidLevels.add(10.50);
+			// bidLevels.add(0.75);
+			GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword("wedding venue", KeywordMatchType.EXACT, bidLevels);
+			Double[] bids = o.getBidList();
+			for (int i = 0; i < bids.length; i++)
+			{
+				System.out.println(bids[i] + " Aveclicks=" + o.getMaxAveClickPerDay(bids[i]) + " AveCPC=" + o.getAveCPC(bids[i]));
+			}
+			
+			String accountID  = "6048920973";
+			Long campaignID = 75239229L;
+
 			GoogleRelatedKeywordObject resutls=client.GetRelatedKeywordsForURL("www.statefarm.com", "insurance",KeywordMatchType.EXACT, 30);
 			ArrayList<String>keywrds =resutls.getKeywords();
 			for(String kw:keywrds){
@@ -67,14 +90,15 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 			//String accountID  = "6048920973";
 			//Long campaignID = 75239229L;
 			/*
+>>>>>>> .r523
 			//Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name2");
 			
 			//Long adgroupID = client.AddAdGroup(accountID, campaignID, "TestAdGroup", AdGroupStatus.PAUSED);
 			//System.out.println("Added Addgroup ID=" + String.valueOf(adgroupID));
 			//Added Addgroup ID=3380873349
 			Long adGroupID = 3380873349L;
-			GoogleBidObject newkeyword = client.addKeyWordToAdGroup(accountID, adGroupID, "MyTestKeyword6", KeywordMatchType.EXACT, 300000L);
-			System.out.println("newkeywordID = " + newkeyword.getKeyword() + ":" + newkeyword.getBidID() + ":" + String.valueOf(newkeyword.getMicroBidAmount()) + ":" + newkeyword.getApprovalStatus());
+			//GoogleBidObject newkeyword = client.addKeyWordToAdGroup(accountID, adGroupID, "MyTestKeyword6", KeywordMatchType.EXACT, 300000L);
+			//System.out.println("newkeywordID = " + newkeyword.getKeyword() + ":" + newkeyword.getBidID() + ":" + String.valueOf(newkeyword.getMicroBidAmount()) + ":" + newkeyword.getApprovalStatus());
 			//Long firstAdID = client.addTextAd(accountID, adGroupID, "First Ad", "Description1: Testing out the Text Ad","Description2: Testing out the Text Ad", "www.semplest.com", "http://www.semplest.com");
 			//System.out.println("Added Addgroup ID=" + String.valueOf(firstAdID));
 			
@@ -466,6 +490,18 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 
 		String returnData = runMethod(BASEURLTEST, "getTrafficEstimationForOneKeyword", json);
 		return gson.fromJson(returnData,GoogleTrafficEstimatorObject.class);
+	}
+	@Override
+	public void getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
