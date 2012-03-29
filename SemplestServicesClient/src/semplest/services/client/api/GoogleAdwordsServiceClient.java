@@ -59,8 +59,14 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		try
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient();
-			String accountID  = "6048920973";
-			Long campaignID = 75239229L;
+			GoogleRelatedKeywordObject resutls=client.GetRelatedKeywordsForURL("www.statefarm.com", "insurance",KeywordMatchType.EXACT, 30);
+			ArrayList<String>keywrds =resutls.getKeywords();
+			for(String kw:keywrds){
+				System.out.println(kw);
+			}
+			//String accountID  = "6048920973";
+			//Long campaignID = 75239229L;
+			/*
 			//Boolean res= client.UpdateCampaignName(accountID, 75239229L, "Updated Name2");
 			
 			//Long adgroupID = client.AddAdGroup(accountID, campaignID, "TestAdGroup", AdGroupStatus.PAUSED);
