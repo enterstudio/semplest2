@@ -1,6 +1,7 @@
 package semplest.bidding.test;
 
 import flanagan.plot.*;
+import semplest.bidding.estimation.Erf;
 
 public class TestPlotFunction {
 	
@@ -35,8 +36,10 @@ public class TestPlotFunction {
     	for(int i=0; i<nPoints; i++){
 //    		x[i]=-10+((double)i)*0.1;
 //    		y[i]=GaussPdf(x[i],0.0,1.0);
-    		x[i]=((double)i)*0.001;
-    		y[i]=WeiBull(x[i],0.1,0.2);
+//    		x[i]=((double)i)*0.001;
+//    		y[i]=WeiBull(x[i],0.1,0.2);    		
+    		x[i]=((double)i)*0.0004;
+    		y[i]=Erf.Phi((x[i]-0.04)*500);
     	}
 
     	for (int i=0; i<nPoints; i++){
