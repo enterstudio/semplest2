@@ -7,6 +7,7 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 
 import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
@@ -19,7 +20,6 @@ import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
-import com.google.api.adwords.v201109.o.TargetingIdea;
 
 
 /*
@@ -48,11 +48,9 @@ public interface GoogleAdwordsServiceInterface
 	public abstract GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
 	public abstract String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception;
 	public abstract GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception;
-	
-	 
 	public abstract GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
 	public abstract GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
-	
+	public abstract GoogleTrafficEstimatorObject getTrafficEstimationForOneKeyword(String keyword, KeywordMatchType matchType, ArrayList<Double> bidLevels) throws Exception;
 	
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
 	

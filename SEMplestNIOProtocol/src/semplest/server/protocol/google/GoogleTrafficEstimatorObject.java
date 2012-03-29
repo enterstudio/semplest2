@@ -1,12 +1,31 @@
 package semplest.server.protocol.google;
 
 import java.util.HashMap;
-
+/*
+ * All estimates are in dollar amounts
+ */
 public class GoogleTrafficEstimatorObject
 {
+	private static long micro = 1000000;
 	private String keyword;
 	private HashMap<Double,BidData> bidDataMap = new HashMap<Double,BidData>();
 	
+	public GoogleTrafficEstimatorObject(String keyword)
+	{
+		this.keyword = keyword;
+	}
+	public void setBidData(Double bidAmount, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost) throws Exception
+	{
+		if (bidDataMap.containsKey(bidAmount))
+		{
+			throw new Exception("Already have set bid Amount " + String.valueOf(bidAmount) + " for keyword " + keyword);
+		}
+		else
+		{
+			BidData biddata = new BidData(minAveCPC,maxAveCPC,minAvePosition,maxAvePosition,minClickPerDay,maxClickPerDay,minTotalDailyMicroCost,maxTotalDailyMicroCost);
+			bidDataMap.put(bidAmount, biddata);
+		}
+	}
 	public Double[] getBidList()
 	{
 		return bidDataMap.keySet().toArray(new Double[bidDataMap.keySet().size()]);	
@@ -15,7 +34,7 @@ public class GoogleTrafficEstimatorObject
 	{
 		if (bidDataMap.containsKey(bid))
 		{
-			return bidDataMap.get(bid).getMinAveCPC();
+			return bidDataMap.get(bid).getMinAveCPC() / micro;
 		}
 		else
 		{
@@ -26,7 +45,7 @@ public class GoogleTrafficEstimatorObject
 	{
 		if (bidDataMap.containsKey(bid))
 		{
-			return bidDataMap.get(bid).getMaxAveCPC();
+			return bidDataMap.get(bid).getMaxAveCPC() / micro;
 		}
 		else
 		{
@@ -37,7 +56,7 @@ public class GoogleTrafficEstimatorObject
 	{
 		if (bidDataMap.containsKey(bid))
 		{
-			return (bidDataMap.get(bid).getMinAveCPC() + bidDataMap.get(bid).getMaxAveCPC()) /2.0 ;
+			return ((bidDataMap.get(bid).getMinAveCPC() + bidDataMap.get(bid).getMaxAveCPC()) /2.0) / micro ;
 		}
 		else
 		{
@@ -154,12 +173,10 @@ public class GoogleTrafficEstimatorObject
 	{
 		return keyword;
 	}
-
-	public void setKeyword(String keyword)
-	{
-		this.keyword = keyword;
-	}
 	
+	/*
+	 * All in micro amounts
+	 */
 	private class BidData
 	{
 		private Long minAveCPC;
@@ -170,6 +187,17 @@ public class GoogleTrafficEstimatorObject
 		private Float maxClickPerDay;
 		private Long minTotalDailyMicroCost;
 		private Long maxTotalDailyMicroCost;
+		public BidData(Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost)
+		{
+			this.minAveCPC = minAveCPC;
+			this.maxAveCPC = maxAveCPC;
+			this.minAvePosition = minAvePosition;
+			this.maxAvePosition = maxAvePosition;
+			this.minClickPerDay = minClickPerDay;
+			this.maxClickPerDay = maxClickPerDay;
+			this.minTotalDailyMicroCost = minTotalDailyMicroCost;
+			this.maxTotalDailyMicroCost = maxTotalDailyMicroCost;
+		}
 		public Long getMinAveCPC()
 		{
 			return minAveCPC;

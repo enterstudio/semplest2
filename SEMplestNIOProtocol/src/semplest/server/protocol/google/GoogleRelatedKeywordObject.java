@@ -10,6 +10,7 @@ public class GoogleRelatedKeywordObject
 	
 	private String url = null;
 	private String keywordSeed;
+	//Keyword-->MatchType(competition, aveMonthlySearch)
 	private HashMap<String, HashMap<String,MatchTypeData>> keywordMatchTypeMap = new HashMap<String, HashMap<String,MatchTypeData>>();
 	
 	public GoogleRelatedKeywordObject(String keywordSeed, String url)
