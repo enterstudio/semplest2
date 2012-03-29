@@ -488,7 +488,12 @@ public class TestKWGenLDAServer {
 		System.out.println("Please, introduce your landing page for query 1 (type \"exit\" to close) :");
 		Scanner scanUrl = new Scanner(System.in);
 		String url1 = scanUrl.nextLine(); 	    
-		
+		System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+		Scanner scanFile = new Scanner(System.in);
+		String userInfo1 = scanUrl.nextLine(); 
+		System.out.println("Please, introduce weight for user input (number from 0 to 1)");
+		Scanner scanWeight = new Scanner(System.in);
+		String userWeight = scanUrl.nextLine(); 
 		//----------------------------------------------------------------------------
 		/*//-----------------------URL2--------------------------------------------------
 		System.out.println("Please, introduce your landing page for query 2 (type \"exit\" to close) :");
@@ -497,11 +502,12 @@ public class TestKWGenLDAServer {
 		*/
 		//-----------------------------------------------------------------------------------
 		String data1,data2;
-		ArrayList<String> words1, words2, keywords1,keywords2, bikwords1, trikwords1,categories1,categories2;
+		ArrayList<String> words1, words2, userIn1, keywords1,keywords2, bikwords1, trikwords1,categories1,categories2;
 		String index,mySentence,id1, id2;
 		Scanner scan;
 		String[] indexes;
 		int[] indexInt;
+		Double weight1;
 		while (!url1.equals("exit")){ 
 			//--------------------------URL1------------------------------------------
 			// Create data from URL1
@@ -512,10 +518,45 @@ public class TestKWGenLDAServer {
 				words1 = TextUtils.validHtmlWords (url1);
 		    System.out.println("Words from URL1: "+ words1.size());
 		    data1 ="";
-		    for( String s : words1 ) {
-		    	data1 = data1+" "+s;
-		    	//System.out.print(s+"  ");
+		    
+		    //Create data from user input
+		    userIn1=TextUtils.validTextWords(userInfo1);
+		    System.out.println("Words from user input: "+userIn1.size());
+		    //Calculate multiplication factor for user input
+		    int repeatUser=1;
+		    int repeatUrl=1;
+		    weight1=Double.parseDouble(userWeight);
+		    if(words1.size()>=userIn1.size()&& weight1!=1)
+		    	repeatUser=(int) Math.round(weight1*words1.size()/(userIn1.size()*(1-weight1)));
+		    if(words1.size()<userIn1.size()&& weight1!=0)
+		    	repeatUrl=(int) Math.round(userIn1.size()*(1-weight1)/(weight1*words1.size()));
+		    if (weight1==0){
+		    	repeatUser=0;
 		    }
+		    if (weight1==1){
+		    	repeatUrl=0;
+		    }
+		    System.out.println("Number of times to repeat user data "+repeatUser);
+		    System.out.println("Number of times to repeat ulr data "+repeatUrl);
+		    double finalweight = 1.0*(userIn1.size()*repeatUser)/(words1.size()*repeatUrl+userIn1.size()*repeatUser);
+		    System.out.println("Final weight of user data"+ finalweight);
+		    //add weighted data from url
+		    for(int n=0; n<repeatUrl;n++){
+			    for( String s : words1 ) {
+			    	data1 = data1+" "+s;
+			    	//System.out.print(s+"  ");
+			    }
+		    }
+		    //add weighted data from user
+		    for(int n=0; n<repeatUser;n++){
+			    for( String s : userIn1 ) {
+			    	data1 = data1+" "+s;
+			    	//System.out.print(s+"  ");
+			    }
+		    }
+		    
+		    
+		    //Multiply user input
 		    //Infer options for user input
 			categories1=kwGenerator.getCateg(data1);
 			id1=categories1.remove(0);
@@ -611,6 +652,7 @@ public class TestKWGenLDAServer {
 			    	for(String kw:bikwords1) System.out.println(kw);
 			    	for(String kw:keywords1)System.out.println(kw);
 			    }catch(Exception e){
+			    	kwGenerator.killQuery(id1); //Remove query from list
 			    	System.out.println(e);
 			    }
 			}
@@ -648,6 +690,12 @@ public class TestKWGenLDAServer {
 			System.out.println("Please, introduce your landing page 1 (type \"exit\" to close) :");
 			scanUrl = new Scanner(System.in);
 			url1 = scanUrl.nextLine(); 
+			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+			scanFile = new Scanner(System.in);
+			userInfo1 = scanUrl.nextLine(); 
+			System.out.println("Please, introduce weight for user input (number from 0 to 1)");
+			scanWeight = new Scanner(System.in);
+			userWeight = scanUrl.nextLine(); 
 			/*System.out.println("Please, introduce your landing page 2 (type \"exit\" to close) :");
 			scanUrl = new Scanner(System.in);
 			url2 = scanUrl.nextLine(); */

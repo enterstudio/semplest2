@@ -14,12 +14,25 @@ public class test {
 	 * @throws ClassNotFoundException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException {
-		String url1="http://www.subway.com/subwayroot/default.aspx";
-		ArrayList<String> words1 = TextUtils.validHtmlWords (url1);
-	    System.out.println("Words from URL1: "+ words1.size());
-	    for(String word:words1){
-	    	System.out.println(word);
+		int repeatUser=1;
+	    int repeatUrl=1;
+	    int userIn1=19;
+	    int words1=107;
+	    double weight1=1;
+	    if(words1>=userIn1 && weight1!=1)
+	    	repeatUser=(int) Math.round(weight1*words1/(userIn1*(1-weight1)));
+	    if(words1<userIn1&& weight1!=0)
+	    	repeatUrl=(int) Math.round(userIn1*(1-weight1)/(weight1*words1));
+	    if (weight1==0){
+	    	repeatUser=0;
 	    }
+	    if (weight1==1){
+	    	repeatUrl=0;
+	    }
+	    System.out.println("Number of times to repeat user data "+repeatUser);
+	    System.out.println("Number of times to repeat ulr data "+repeatUrl);
+	    double finalweight = 1.0*(userIn1*repeatUser)/(words1*repeatUrl+userIn1*repeatUser);
+	    System.out.println("Final weight of user data"+ finalweight);
 	}
 
 }
