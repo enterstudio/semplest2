@@ -1,5 +1,8 @@
 package semplest.service.google.adwords;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,10 +18,13 @@ import semplest.other.DateTimeFloored;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
+import semplest.service.google.adwords.GoogleReportDownloader.HttpException;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsUser;
+import com.google.api.adwords.lib.AuthToken;
+import com.google.api.adwords.lib.AuthTokenException;
 import com.google.api.adwords.lib.utils.MapUtils;
 import com.google.api.adwords.v201109.cm.Ad;
 import com.google.api.adwords.v201109.cm.AdGroup;
@@ -68,6 +74,8 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.ReportDefinition;
+import com.google.api.adwords.v201109.cm.ReportDefinitionDateRangeType;
 import com.google.api.adwords.v201109.cm.ReportDefinitionField;
 import com.google.api.adwords.v201109.cm.ReportDefinitionReportType;
 import com.google.api.adwords.v201109.cm.ReportDefinitionServiceInterface;
@@ -136,15 +144,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(camp[i].getName()); } }
 			 */
 
-			String accountID = "8019925375"; // "6048920973";
+			String accountID = "5058200123";//"8019925375"; // "6048920973";
 			Long adGroupID = 3380873349L;
+			
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-			ArrayList<HashMap<String, String>> camp = g.getCampaignsByAccountId(accountID, false);
+			File f = g.getReportForAccount(accountID);
+			//f.getName();
+			/*ArrayList<HashMap<String, String>> camp = g.getCampaignsByAccountId(accountID, false);
 
 			Long campaignID = new Long(camp.get(0).get("Id"));
 			System.out.println(campaignID);
 			AdGroup[] adgroups = g.getAdGroupsByCampaignId(accountID, campaignID, false);
 			adGroupID = adgroups[0].getId();
+			*/
 			/*
 			 * GoogleBidObject[] c = g.getAllBiddableAdGroupCriteria(accountID,
 			 * adGroupID); for (int i = 0; i < c.length; i++) {
@@ -152,8 +164,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 */
 			// MyTestKeyword3:34632214029
 			Long keywordID = 41030523L; // wedding venue
-			g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
-			// g.reportfields();
+			//g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
+			//g.reportfields();
 			// ArrayList<HashMap<String, String>> res =
 			// g.getCampaignsByAccountId(accountID, false);
 			// System.out.println(res.get(0).get("Name"));
@@ -1347,6 +1359,26 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			System.out.println("NO Bid Lanscapes for Adgroup " + adGroupID);
 		}
+	}
+	private static final String DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
+			+ "<fields>CampaignId</fields><fields>Id</fields><fields>HourOfDay</fields>"
+			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields>"
+			+ "</selector><reportName>Custom ADGROUP_PERFORMANCE_REPORT for testing</reportName>"
+			+ "<reportType>ADGROUP_PERFORMANCE_REPORT</reportType>"
+			+ "<dateRangeType>LAST_7_DAYS</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
+	private static final String KEYWORD_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
+			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
+			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
+			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
+			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
+			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
+			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
+	
+	public File getReportForAccount(String accountID) throws MalformedURLException, HttpException, IOException, AuthTokenException
+	{
+		//ReportDefinitionDateRangeType.ALL_TIME;
+		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));// 
+		return report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken );
 	}
 
 }
