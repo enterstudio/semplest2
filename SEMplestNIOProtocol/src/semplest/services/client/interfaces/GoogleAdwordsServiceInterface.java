@@ -51,6 +51,8 @@ public interface GoogleAdwordsServiceInterface
 	public abstract GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
 	public abstract GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
 	public abstract GoogleTrafficEstimatorObject getTrafficEstimationForOneKeyword(String keyword, KeywordMatchType matchType, ArrayList<Double> bidLevels) throws Exception;
+	public abstract void getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception;
+	public abstract void getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception;
 	
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception;
 	
