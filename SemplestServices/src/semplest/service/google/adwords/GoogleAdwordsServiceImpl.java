@@ -1250,29 +1250,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 
-	public void reportfields() throws ServiceException, ApiException, RemoteException
-	{
-		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
-		// Get the ReportDefinitionService.
-		ReportDefinitionServiceInterface reportDefinitionService = user.getService(AdWordsService.V201109.REPORT_DEFINITION_SERVICE);
-		// Get report fields.
-		ReportDefinitionField[] reportDefinitionFields = reportDefinitionService
-				.getReportFields(ReportDefinitionReportType.KEYWORDS_PERFORMANCE_REPORT);
-		// Display report fields.
-		System.out.println("Available fields for report:");
-		for (ReportDefinitionField reportDefinitionField : reportDefinitionFields)
-		{
-			System.out.print("\t" + reportDefinitionField.getFieldName() + "(" + reportDefinitionField.getFieldType() + ") := [");
-			if (reportDefinitionField.getEnumValues() != null)
-			{
-				for (String enumValue : reportDefinitionField.getEnumValues())
-				{
-					System.out.print(enumValue + ", ");
-				}
-			}
-			System.out.println("]");
-		}
-	}
 
 	@Override
 	public void getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
