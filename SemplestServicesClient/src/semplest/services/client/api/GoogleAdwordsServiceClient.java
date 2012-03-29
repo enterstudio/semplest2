@@ -12,6 +12,7 @@ import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.v201109.cm.AdGroup;
@@ -445,6 +446,20 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 
 		String returnData = runMethod(BASEURLTEST, "setBidForKeyWord", json);
 		return gson.fromJson(returnData, GoogleBidObject.class);
+	}
+	@Override
+	public GoogleTrafficEstimatorObject getTrafficEstimationForOneKeyword(String keyword, KeywordMatchType matchType, ArrayList<Double> bidLevels)
+			throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("keyword", keyword);
+		jsonHash.put("matchType", matchType.getValue());
+		String bidLevelStr = gson.toJson(bidLevels, ArrayList.class);
+		jsonHash.put("bidLevels",bidLevelStr);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, "getTrafficEstimationForOneKeyword", json);
+		return gson.fromJson(returnData,GoogleTrafficEstimatorObject.class);
 	}
 
 }
