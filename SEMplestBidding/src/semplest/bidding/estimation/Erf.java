@@ -1,5 +1,8 @@
 package semplest.bidding.estimation;
 
+// original method downloaded from
+// http://introcs.cs.princeton.edu/java/21function/ErrorFunction.java.html
+
 public class Erf implements ParametricFunction {
 
 
@@ -45,8 +48,18 @@ public class Erf implements ParametricFunction {
 		double mu = parameters[0];
 		double sigma = parameters[1];
 		double z = (input[0]-mu)/sigma;
+		double scale = 1;
 		
-		return 0.5 * (1.0 + erf2(z / (Math.sqrt(2.0))));
+		switch (parameters.length){
+		case 2:
+			return 0.5 * (1.0 + erf2(z / (Math.sqrt(2.0))));
+		case 3:
+			scale = parameters[2];
+			return scale * 0.5 * (1.0 + erf2(z / (Math.sqrt(2.0))));
+		default:
+			return 0;
+
+		}
 	}
 
 	@Override
@@ -54,8 +67,17 @@ public class Erf implements ParametricFunction {
 		double mu = parameters[0];
 		double sigma = parameters[1];
 		double z = (input[0]-mu)/sigma;
+		double scale = 1;
 		
-		return Math.exp(-0.5*Math.pow(z,2))/(Math.sqrt(2.0));
+		switch (parameters.length){
+		case 2:
+			return Math.exp(-0.5*Math.pow(z,2))/(Math.sqrt(2.0));
+		case 3:
+			scale = parameters[2];
+			return scale * Math.exp(-0.5*Math.pow(z,2))/(Math.sqrt(2.0));
+		default:
+			return 0;
+		}
 	}
     
     
