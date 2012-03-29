@@ -9,5 +9,6 @@ public interface KeyWordInterface {
 //	public double [] getPosInfo();
 	public double [] getDCostInfo(); // daily cost
 	public double getQualityScore();
+	public double getMinBid();
 
 }

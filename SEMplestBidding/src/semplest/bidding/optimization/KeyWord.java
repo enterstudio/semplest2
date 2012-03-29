@@ -9,9 +9,10 @@ public class KeyWord implements KeyWordInterface {
 	private double score = 1.0;
 	private double [] bid = null;
 	private double [] Clicks = null;
-	private double [] CPC = null;
-	private double [] Pos = null;
-	private double [] DCost = null;
+	private double [] CPC;
+	private double [] Pos;
+	private double [] DCost;
+	private double minBid = 0.01;
 	
 	
 	// model parameters
@@ -30,7 +31,17 @@ public class KeyWord implements KeyWordInterface {
 		this.Pos=Pos;
 		this.DCost=DCost;
 		
-		CPCParams=estimateModelParams(CPC, false);
+		
+		for(int i=0; i<bid.length; i++){
+			if(Clicks[i]<0.0001){
+				minBid = bid[i];
+			} else {
+				break;
+			}
+		}
+		
+		
+//		CPCParams=estimateModelParams(CPC, false);
 		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
 
@@ -39,7 +50,7 @@ public class KeyWord implements KeyWordInterface {
 	private double [] estimateModelParams(double [] fitData, boolean plotGraphs){
 		int noValidBidDataPoints = 0;
 		for(int i=0; i<bid.length; i++){
-			if(fitData[i]>0.001){
+			if(fitData[i]>0.0001){
 				noValidBidDataPoints++;
 			}
 		}
@@ -48,7 +59,7 @@ public class KeyWord implements KeyWordInterface {
 
 		int j=0;
 		for (int i=0; i<bid.length; i++){
-			if(fitData[i]>0.001){
+			if(fitData[i]>0.0001){
 				input[j][0]=bid[i];
 				output[j]=fitData[i];
 				j++;
@@ -57,11 +68,13 @@ public class KeyWord implements KeyWordInterface {
 		
 		ParametricFunction f = new WeibullCurve();
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
-		double [] startPoint = {0.5, 1.5, 0.5, 0.0};
-		startPoint[startPoint.length-1]=0.2*output[output.length-1];
+		double [] startPoint = {0.5, 2.0, 0.5};//, 0.5};
+		startPoint[2]=output[output.length-1];
+//		startPoint[3]=0.5*output[output.length-1];
 		pe.setStartPoint(startPoint);
-		double [] stepSize = {0.01D, 0.01D, 0.01D, 0.0};
+		double [] stepSize = {0.01D, 0.01D, 0.01D};//, 0.01D};
 		pe.setStepSize(stepSize);
+		pe.suppressNoConvergenceMessage();
 		pe.estimateParams();
 		
 		// get the minimum value
@@ -74,11 +87,11 @@ public class KeyWord implements KeyWordInterface {
         	return EstParams;
         }
         
-        System.out.println("The minimum value is "+minimum);
-        System.out.print("The minimum occurs at ");
-        for(int i=0; i<EstParams.length; i++){
-        	System.out.print(EstParams[i]+" ");
-        }
+//        System.out.println("The minimum value is "+minimum);
+//        System.out.print("The minimum occurs at ");
+//        for(int i=0; i<EstParams.length; i++){
+//        	System.out.print(EstParams[i]+" ");
+//        }
 //        System.out.println("");
         
         double [][] data = PlotGraph.data(2,bid.length);
@@ -142,14 +155,17 @@ public class KeyWord implements KeyWordInterface {
 
 	@Override
 	public double[] getDCostInfo() {
-		// TODO Auto-generated method stub
 		return DCostParams;
 	}	
 	
 	@Override
 	public double getQualityScore() {
-		// TODO Auto-generated method stub
 		return score;
+	}
+
+	@Override
+	public double getMinBid() {
+		return minBid;
 	}
 
 }

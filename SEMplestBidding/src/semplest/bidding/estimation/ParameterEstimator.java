@@ -23,7 +23,10 @@ class LeastSquares implements MinimisationFunction{
 		try {
 			for(int i=0; i<input.length; i++){
 				sum+=Math.pow(pf.function(input[i], param)-output[i],2);
-
+				if(Double.isNaN(sum)){
+					System.out.println(sum+": x="+input[0][0]+" " + param[0]+ " "+ param[1]+" "+param[2]+" "+param[3]);
+					break;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -50,6 +53,10 @@ public class ParameterEstimator {
 	public void estimateParams(){				
 	    // Nelder and Mead minimisation procedure
 	    min.nelderMead(lsq, startPoint, stepSize, fTol);
+	}
+	
+	public void suppressNoConvergenceMessage(){
+		min.suppressNoConvergenceMessage();
 	}
 	
 

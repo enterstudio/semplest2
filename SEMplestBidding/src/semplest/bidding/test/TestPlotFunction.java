@@ -36,7 +36,7 @@ public class TestPlotFunction {
 //    		x[i]=-10+((double)i)*0.1;
 //    		y[i]=GaussPdf(x[i],0.0,1.0);
     		x[i]=((double)i)*0.001;
-    		y[i]=WeiBull(x[i],0.1,4.0);
+    		y[i]=WeiBull(x[i],0.1,0.2);
     	}
 
     	for (int i=0; i<nPoints; i++){
