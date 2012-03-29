@@ -1,9 +1,12 @@
 package semplest.service.google.adwords;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 
@@ -24,6 +27,8 @@ import com.google.api.adwords.v201109.cm.AdGroupAdOperation;
 import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupAdStatus;
+import com.google.api.adwords.v201109.cm.AdGroupBidLandscape;
+import com.google.api.adwords.v201109.cm.AdGroupBidLandscapePage;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupCriterionOperation;
 import com.google.api.adwords.v201109.cm.AdGroupCriterionPage;
@@ -34,7 +39,9 @@ import com.google.api.adwords.v201109.cm.AdGroupPage;
 import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.ApiException;
 import com.google.api.adwords.v201109.cm.Bid;
+import com.google.api.adwords.v201109.cm.BidLandscapeLandscapePoint;
 import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
 import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetDeliveryMethod;
@@ -46,6 +53,9 @@ import com.google.api.adwords.v201109.cm.CampaignReturnValue;
 import com.google.api.adwords.v201109.cm.CampaignServiceInterface;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.Criterion;
+import com.google.api.adwords.v201109.cm.CriterionBidLandscape;
+import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
+import com.google.api.adwords.v201109.cm.DataServiceInterface;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
@@ -58,6 +68,9 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.ReportDefinitionField;
+import com.google.api.adwords.v201109.cm.ReportDefinitionReportType;
+import com.google.api.adwords.v201109.cm.ReportDefinitionServiceInterface;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -123,8 +136,24 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(camp[i].getName()); } }
 			 */
 
-			String accountID = "6048920973";
+			String accountID = "8019925375"; // "6048920973";
+			Long adGroupID = 3380873349L;
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			ArrayList<HashMap<String, String>> camp = g.getCampaignsByAccountId(accountID, false);
+
+			Long campaignID = new Long(camp.get(0).get("Id"));
+			System.out.println(campaignID);
+			AdGroup[] adgroups = g.getAdGroupsByCampaignId(accountID, campaignID, false);
+			adGroupID = adgroups[0].getId();
+			/*
+			 * GoogleBidObject[] c = g.getAllBiddableAdGroupCriteria(accountID,
+			 * adGroupID); for (int i = 0; i < c.length; i++) {
+			 * System.out.println(c[i].getKeyword() + ":" + c[i].getBidID()); }
+			 */
+			// MyTestKeyword3:34632214029
+			Long keywordID = 41030523L; // wedding venue
+			g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
+			// g.reportfields();
 			// ArrayList<HashMap<String, String>> res =
 			// g.getCampaignsByAccountId(accountID, false);
 			// System.out.println(res.get(0).get("Name"));
@@ -139,37 +168,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(keys.get(i)); ArrayList<String> match =
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
-			 */
-			ArrayList<Double> bidLevels = new ArrayList<Double>();
-			bidLevels.add(0.9);
-			bidLevels.add(1.00);
-			bidLevels.add(1.20);
-			bidLevels.add(1.50);
-			bidLevels.add(2.00);
-			
-			// bidLevels.add(1.50);
-			// bidLevels.add(10.50);
-			// bidLevels.add(0.75);
-			GoogleTrafficEstimatorObject o = g.getTrafficEstimationForOneKeyword("wedding venue", KeywordMatchType.EXACT, bidLevels);
-			Double[] bids = o.getBidList();
-			for (int i = 0; i < bids.length; i++)
-			{
-				System.out.println(bids[i] + " Aveclicks=" + o.getMaxAveClickPerDay(bids[i]) + " AveCPC=" + o.getAveCPC(bids[i]));
-			}
-			/*
-			 * for (int i = 0; i < res.length; i++) { Map<AttributeType,
-			 * Attribute> data = MapUtils.toMap(res[i].getData()); Keyword
-			 * keyword = (Keyword) ((CriterionAttribute)
-			 * data.get(AttributeType.CRITERION)).getValue(); Long
-			 * averageMonthlySearches = ((LongAttribute)
-			 * data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES
-			 * )).getValue(); Double comp = ((DoubleAttribute)
-			 * data.get(AttributeType.COMPETITION)).getValue();
 			 * 
-			 * System.out.println("Keyword with text '" + keyword.getText() +
-			 * "', match type '" + keyword.getMatchType() +
-			 * "', and average monthly search volume '" + averageMonthlySearches
-			 * + "' was found Comp=" + String.valueOf(comp)); }
+			 * ArrayList<Double> bidLevels = new ArrayList<Double>();
+			 * bidLevels.add(0.9); bidLevels.add(1.00); bidLevels.add(1.20);
+			 * bidLevels.add(1.50); bidLevels.add(2.00);
+			 * 
+			 * // bidLevels.add(1.50); // bidLevels.add(10.50); //
+			 * bidLevels.add(0.75); GoogleTrafficEstimatorObject o =
+			 * g.getTrafficEstimationForOneKeyword("wedding venue",
+			 * KeywordMatchType.EXACT, bidLevels); Double[] bids =
+			 * o.getBidList(); for (int i = 0; i < bids.length; i++) {
+			 * System.out.println(bids[i] + " Aveclicks=" +
+			 * o.getMaxAveClickPerDay(bids[i]) + " AveCPC=" +
+			 * o.getAveCPC(bids[i])); }
 			 */
 
 		}
@@ -1145,10 +1156,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call getTrafficEstimationForOneKeyword" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		ArrayList<Double> bidLevels = gson.fromJson(data.get("bidLevels"), ArrayList.class);
-		GoogleTrafficEstimatorObject res = getTrafficEstimationForOneKeyword(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), bidLevels);
+		GoogleTrafficEstimatorObject res = getTrafficEstimationForOneKeyword(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")),
+				bidLevels);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
+
 	@Override
 	public GoogleTrafficEstimatorObject getTrafficEstimationForOneKeyword(String keyword, KeywordMatchType matchType, ArrayList<Double> bidLevels)
 			throws Exception
@@ -1156,16 +1169,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 		// Get the TrafficEstimatorService.
 		TrafficEstimatorServiceInterface trafficEstimatorService = user.getService(AdWordsService.V201109.TRAFFIC_ESTIMATOR_SERVICE);
-		//Save the addgroup requests
+		// Save the addgroup requests
 		List<AdGroupEstimateRequest> adGroupEstimateRequests = new ArrayList<AdGroupEstimateRequest>();
 		List<CampaignEstimateRequest> campaignEstimateRequests = new ArrayList<CampaignEstimateRequest>();
 
-		//Use same keyword
+		// Use same keyword
 		Keyword keywrd = new Keyword();
 		keywrd.setText(keyword);
 		keywrd.setMatchType(matchType);
 
-		//Sets up one Campaign EStimate for each Keyword/bid - Campaign budget is unlimited
+		// Sets up one Campaign EStimate for each Keyword/bid - Campaign budget
+		// is unlimited
 		for (Double bidamount : bidLevels)
 		{
 			// one keyword estimate request
@@ -1175,17 +1189,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupEstimateRequest adGroupEstimateRequest = new AdGroupEstimateRequest();
 			adGroupEstimateRequest.setKeywordEstimateRequests(new KeywordEstimateRequest[]
 			{ keywordEstimateRequest });
-			//Set Bid Amount
+			// Set Bid Amount
 			adGroupEstimateRequest.setMaxCpc(new Money(null, new Long((long) (bidamount * 1000000.0))));
 			adGroupEstimateRequests.add(adGroupEstimateRequest);
 
 			CampaignEstimateRequest campaignEstimateRequest = new CampaignEstimateRequest();
-			campaignEstimateRequest.setAdGroupEstimateRequests(new AdGroupEstimateRequest[]	{ adGroupEstimateRequest });
+			campaignEstimateRequest.setAdGroupEstimateRequests(new AdGroupEstimateRequest[]
+			{ adGroupEstimateRequest });
 			Location unitedStates = new Location();
 			unitedStates.setId(2840L);
 			Language english = new Language();
 			english.setId(1000L);
-			campaignEstimateRequest.setCriteria(new Criterion[]	{ unitedStates, english });
+			campaignEstimateRequest.setCriteria(new Criterion[]
+			{ unitedStates, english });
 			campaignEstimateRequests.add(campaignEstimateRequest);
 
 		}
@@ -1220,6 +1236,117 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return new GoogleTrafficEstimatorObject(keyword);
 		}
 
+	}
+
+	public void reportfields() throws ServiceException, ApiException, RemoteException
+	{
+		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+		// Get the ReportDefinitionService.
+		ReportDefinitionServiceInterface reportDefinitionService = user.getService(AdWordsService.V201109.REPORT_DEFINITION_SERVICE);
+		// Get report fields.
+		ReportDefinitionField[] reportDefinitionFields = reportDefinitionService
+				.getReportFields(ReportDefinitionReportType.KEYWORDS_PERFORMANCE_REPORT);
+		// Display report fields.
+		System.out.println("Available fields for report:");
+		for (ReportDefinitionField reportDefinitionField : reportDefinitionFields)
+		{
+			System.out.print("\t" + reportDefinitionField.getFieldName() + "(" + reportDefinitionField.getFieldType() + ") := [");
+			if (reportDefinitionField.getEnumValues() != null)
+			{
+				for (String enumValue : reportDefinitionField.getEnumValues())
+				{
+					System.out.print(enumValue + ", ");
+				}
+			}
+			System.out.println("]");
+		}
+	}
+
+	@Override
+	public void getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		// Get the DataService.
+		DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
+
+		// Create selector.
+		Selector selector = new Selector();
+		selector.setFields(new String[]
+		{ "AdGroupId", "CriterionId", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc", "LocalImpressions" });
+		// Create predicates.
+		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
+		{ adGroupID.toString() });
+		Predicate criterionIdPredicate = new Predicate("CriterionId", PredicateOperator.IN, new String[]
+		{ keywordID.toString() });
+		selector.setPredicates(new Predicate[]
+		{ adGroupIdPredicate, criterionIdPredicate });
+		// Get bid landscape for ad group criteria.
+		CriterionBidLandscapePage page = dataService.getCriterionBidLandscape(selector);
+		// Display bid landscapes.
+		if (page.getEntries() != null)
+		{
+			for (CriterionBidLandscape criterionBidLandscape : page.getEntries())
+			{
+				System.out.println("Criterion bid landscape with ad group id \"" + criterionBidLandscape.getAdGroupId() + "\", criterion id \""
+						+ criterionBidLandscape.getCriterionId() + "\", start date \"" + criterionBidLandscape.getStartDate() + "\", end date \""
+						+ criterionBidLandscape.getEndDate() + "\", with landscape points: ");
+				for (BidLandscapeLandscapePoint bidLanscapePoint : criterionBidLandscape.getLandscapePoints())
+				{
+					System.out.println("\t{bid: " + bidLanscapePoint.getBid().getMicroAmount() + " clicks: " + bidLanscapePoint.getClicks()
+							+ " cost: " + bidLanscapePoint.getCost().getMicroAmount() + " marginalCpc: "
+							+ bidLanscapePoint.getMarginalCpc().getMicroAmount() + " impressions: " + bidLanscapePoint.getImpressions() + "}");
+				}
+				System.out.println(" was found.");
+			}
+		}
+		else
+		{
+			System.out.println("No criterion bid landscapes were found.");
+		}
+
+	}
+
+	@Override
+	public void getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		// Get the DataService.
+		DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
+		
+		// Create selector.
+		Selector selector = new Selector();
+		selector.setFields(new String[]
+		{ "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
+				"LocalImpressions" });
+		// Create predicates.
+		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
+		{ adGroupID.toString() });
+		selector.setPredicates(new Predicate[]
+		{ adGroupIdPredicate });
+		// Get bid landscape for ad group criteria.
+		AdGroupBidLandscapePage page = dataService.getAdGroupBidLandscape(selector);
+		// Display bid landscapes.
+		if (page.getEntries() != null)
+		{
+			for (AdGroupBidLandscape adGroupBidLandscape : page.getEntries())
+			{
+				System.out.println("Ad group bid landscape with ad group id \"" + adGroupBidLandscape.getAdGroupId() + "\", type \""
+						+ adGroupBidLandscape.getType() + "\", current \"" + adGroupBidLandscape.getLandscapeCurrent() + "\", start date \""
+						+ adGroupBidLandscape.getStartDate() + "\", end date \"" + adGroupBidLandscape.getEndDate() + "\", with landscape points: ");
+				for (BidLandscapeLandscapePoint bidLanscapePoint : adGroupBidLandscape.getLandscapePoints())
+				{
+					System.out.println("\t{bid: " + bidLanscapePoint.getBid().getMicroAmount() + " clicks: " + bidLanscapePoint.getClicks()
+							+ " cost: " + bidLanscapePoint.getCost().getMicroAmount() + " marginalCpc: "
+							+ bidLanscapePoint.getMarginalCpc().getMicroAmount() + " impressions: " + bidLanscapePoint.getImpressions() + "}");
+				}
+				System.out.println(" was found.");
+			}
+
+		}
+		else
+		{
+			System.out.println("NO Bid Lanscapes for Adgroup " + adGroupID);
+		}
 	}
 
 }
