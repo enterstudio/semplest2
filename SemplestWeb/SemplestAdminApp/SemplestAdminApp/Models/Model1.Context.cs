@@ -47,5 +47,8 @@ namespace SemplestAdminApp.Models
         public DbSet<PhoneType> PhoneTypes { get; set; }
         public DbSet<StateCode> StateCodes { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Right> Rights { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<sysdiagram> sysdiagrams { get; set; }
     }
 }

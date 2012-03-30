@@ -99,7 +99,7 @@ namespace SemplestAdminApp.Controllers
         //
         // GET: /Account/ChangePassword
 
-        [Authorize]
+        //[Authorize]
         public ActionResult ChangePassword()
         {
             return View();
@@ -108,7 +108,7 @@ namespace SemplestAdminApp.Controllers
         //
         // POST: /Account/ChangePassword
 
-        [Authorize]
+        //[Authorize]
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordModel model)
         {

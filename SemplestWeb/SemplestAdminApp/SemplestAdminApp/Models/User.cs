@@ -17,6 +17,7 @@ namespace SemplestAdminApp.Models
         public User()
         {
             this.Credentials = new HashSet<Credential>();
+            this.Roles = new HashSet<Role>();
         }
     
         public int UserPK { get; set; }
@@ -31,5 +32,6 @@ namespace SemplestAdminApp.Models
     
         public virtual ICollection<Credential> Credentials { get; set; }
         public virtual Customer Customer { get; set; }
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

@@ -8,6 +8,12 @@ using System.Web.Security;
 namespace SemplestAdminApp.Models
 {
 
+
+    public class AddUserModel
+    {
+ 
+    }
+
     public class ChangePasswordModel
     {
         [Required]
