@@ -110,7 +110,7 @@ public class CampaignBid {
 		while(true){
 			for(int i=0; i<bids.length;i++){
 				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
-				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
+//				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedValues();
 			System.out.format("Iteration %d:: Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,expectedCost,expectedClicks,expectedQualityMetric);
