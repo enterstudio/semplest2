@@ -303,6 +303,8 @@ public class TextUtils
   public static String timeElapsed(double msCount){
 	  return ((int)(msCount/60000)) + "min "+ ((msCount%60000/1000))+"sec";
   }
+  
+
   //-----------------
   // Stem a word 
   public static String stem (String word){

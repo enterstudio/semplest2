@@ -20,9 +20,9 @@ public class look4URL {
 		//Path to the dmoz url file
 		
 		FileInputStream fstream = new FileInputStream("/semplest/data/dmoz/all.urls");
-		String url="http://www.statefarm.com";
+		String url="-- http://www.laserblazers.com ";
 		String[] urlparts = url.split("/");
-		String mainURL=args[0];
+		String mainURL=url;
 		ArrayList<String> categories;
 
 		for (String part :urlparts){
