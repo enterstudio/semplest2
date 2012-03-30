@@ -40,6 +40,8 @@ public class KeyWord implements KeyWordInterface {
 			}
 		}
 		
+//		System.out.println(minBid);
+		
 		
 //		CPCParams=estimateModelParams(CPC, false);
 		DCostParams=estimateModelParams(DCost, false);
@@ -66,7 +68,8 @@ public class KeyWord implements KeyWordInterface {
 			}
 		}
 		
-		ParametricFunction f = new WeibullCurve();
+//		ParametricFunction f = new WeibullCurve();
+		ParametricFunction f = new Erf();
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
 		double [] startPoint = {0.5, 2.0, 0.5};//, 0.5};
 		startPoint[2]=output[output.length-1];

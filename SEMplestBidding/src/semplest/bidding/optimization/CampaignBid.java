@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import flanagan.math.Minimisation;
 
 import semplest.bidding.estimation.ParametricFunction;
-import semplest.bidding.estimation.WeibullCurve;
+//import semplest.bidding.estimation.WeibullCurve;
+import semplest.bidding.estimation.Erf;
 
 public class CampaignBid {
 	
@@ -16,8 +17,8 @@ public class CampaignBid {
 	private double expectedQualityMetric =0;
 	private double [] bids;
 	private double stepSize = 0.001D;
-	private double toldailyBudget = 20;
-	private double dampingFactor = 0.9D;
+	private double toldailyBudget = 1;
+	private double dampingFactor = 1.0D;
 	
 	
 	public CampaignBid(){
@@ -26,7 +27,8 @@ public class CampaignBid {
 	
 	private double computeOptimumBidForConst(int i, double k){
 		
-		ParametricFunction f = new WeibullCurve();
+//		ParametricFunction f = new WeibullCurve();
+		ParametricFunction f = new Erf();
 		BidLagrangeOptim Bid = new BidLagrangeOptim(wordList.get(i), f, k);
         Minimisation min = new Minimisation();
 		
@@ -53,7 +55,8 @@ public class CampaignBid {
 		expectedCost=0;
 		expectedClicks=0;
 		expectedQualityMetric=0;
-		ParametricFunction f = new WeibullCurve();
+//		ParametricFunction f = new WeibullCurve();
+		ParametricFunction f = new Erf();
 		double [] input = new double[1];
 		double [] params = null;
 		int i=0;
@@ -88,7 +91,8 @@ public class CampaignBid {
 		boolean highCost=true;
 		bids = new double[wordList.size()];
 		
-		ParametricFunction f = new WeibullCurve();
+//		ParametricFunction f = new WeibullCurve();
+		ParametricFunction f = new Erf();
 		double [] input = new double[1];
 		KeyWordInterface key = null;
 		
