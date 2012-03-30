@@ -69,7 +69,8 @@ public class KeyWord implements KeyWordInterface {
 		}
 		
 //		ParametricFunction f = new WeibullCurve();
-		ParametricFunction f = new Erf();
+//		ParametricFunction f = new Erf();
+		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
 		double [] startPoint = {0.5, 2.0, 0.5};//, 0.5};
 		startPoint[2]=output[output.length-1];

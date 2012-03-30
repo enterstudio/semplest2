@@ -70,6 +70,12 @@ public class WeibullCurve implements ParametricFunction {
 			return 0;
 		}
 	}
+
+	@Override
+	public void setMinBid(double minBid) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 //package semplest.bidding.estimation;

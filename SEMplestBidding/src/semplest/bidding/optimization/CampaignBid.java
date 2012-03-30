@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import flanagan.math.Minimisation;
 
 import semplest.bidding.estimation.ParametricFunction;
+import semplest.bidding.estimation.TruncatedSmoothSCurve;
 //import semplest.bidding.estimation.WeibullCurve;
 import semplest.bidding.estimation.Erf;
 
@@ -18,7 +19,7 @@ public class CampaignBid {
 	private double [] bids;
 	private double stepSize = 0.001D;
 	private double toldailyBudget = 1;
-	private double dampingFactor = 1.0D;
+	private double dampingFactor = 0.1D;
 	
 	
 	public CampaignBid(){
@@ -28,7 +29,10 @@ public class CampaignBid {
 	private double computeOptimumBidForConst(int i, double k){
 		
 //		ParametricFunction f = new WeibullCurve();
-		ParametricFunction f = new Erf();
+//		ParametricFunction f = new Erf();
+		ParametricFunction f = new TruncatedSmoothSCurve();
+		f.setMinBid(wordList.get(i).getMinBid());
+
 		BidLagrangeOptim Bid = new BidLagrangeOptim(wordList.get(i), f, k);
         Minimisation min = new Minimisation();
 		
@@ -56,19 +60,22 @@ public class CampaignBid {
 		expectedClicks=0;
 		expectedQualityMetric=0;
 //		ParametricFunction f = new WeibullCurve();
-		ParametricFunction f = new Erf();
+//		ParametricFunction f = new Erf();
+		ParametricFunction f = new TruncatedSmoothSCurve();
+
 		double [] input = new double[1];
 		double [] params = null;
 		int i=0;
 		for (KeyWordInterface key : wordList){
-			if(bids[i]>=key.getMinBid()+0.01){
+//			if(bids[i]>=key.getMinBid()+0.01){
+				f.setMinBid(key.getMinBid());
 				params = key.getDCostInfo();
 				input[0] = bids[i];
 				expectedCost+=f.function(input, params);
 				params = key.getClickInfo();
 				expectedClicks+=f.function(input, params);
 				expectedQualityMetric+=key.getQualityScore()*f.function(input, params);
-			}
+//			}
 			i++;
 		}
 	}
@@ -92,7 +99,9 @@ public class CampaignBid {
 		bids = new double[wordList.size()];
 		
 //		ParametricFunction f = new WeibullCurve();
-		ParametricFunction f = new Erf();
+//		ParametricFunction f = new Erf();
+		ParametricFunction f = new TruncatedSmoothSCurve();
+
 		double [] input = new double[1];
 		KeyWordInterface key = null;
 		
@@ -109,6 +118,7 @@ public class CampaignBid {
 			if (j>0){ 
 				if (expectedCost<dailyBudget && highCost){
 					stepSize=stepSize*dampingFactor;
+					System.out.println("Step-size reduced!");
 				} else if (expectedCost>dailyBudget && (!highCost)){
 					stepSize=stepSize*dampingFactor;
 				}
@@ -134,12 +144,16 @@ public class CampaignBid {
 
 		for(int i=0; i<bids.length;i++){
 			key=wordList.get(i);
-			if(bids[i]>=key.getMinBid()+0.01) { 
-				input[0]=bids[i];
-				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.1f\n", bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
-			} else {
-				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: 0.0, expected daily cost: 0.0\n", key.getMinBid(),key.getMinBid());
-			}
+			input[0]=bids[i];
+			f.setMinBid(key.getMinBid());
+			System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.1f\n", bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
+
+//			if(bids[i]>=key.getMinBid()+0.01) { 
+//				input[0]=bids[i];
+//				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.1f\n", bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
+//			} else {
+//				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: 0.0, expected daily cost: 0.0\n", key.getMinBid(),key.getMinBid());
+//			}
 		} // for(int i=0; i<bids.length;i++)
 		
 	} // public void optimizeBids()

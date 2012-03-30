@@ -19,4 +19,10 @@ public class GaussPdf implements ParametricFunction {
 		return -(x-mu/sigma)*Math.exp(-0.5*Math.pow((x-mu)/sigma,2))/Math.sqrt(2*Math.PI)/sigma;
 	}
 
+	@Override
+	public void setMinBid(double minBid) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

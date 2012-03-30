@@ -3,7 +3,7 @@ package semplest.bidding.estimation;
 // original method downloaded from
 // http://introcs.cs.princeton.edu/java/21function/ErrorFunction.java.html
 
-public class Erf implements ParametricFunction {
+public class Erf {
 
 
     // fractional error in math formula less than 1.2 * 10 ^ -7.
@@ -43,8 +43,7 @@ public class Erf implements ParametricFunction {
         return 0.5 * (1.0 + erf(z / (Math.sqrt(2.0))));
     }
 
-	@Override
-	public double function(double[] input, double[] parameters) {
+	public static double function(double[] input, double[] parameters) {
 		double mu = parameters[0];
 		double sigma = parameters[1];
 		double z = (input[0]-mu)/sigma;
@@ -62,8 +61,7 @@ public class Erf implements ParametricFunction {
 		}
 	}
 
-	@Override
-	public double derivative(double[] input, double[] parameters) {
+	public static double derivative(double[] input, double[] parameters) {
 		double mu = parameters[0];
 		double sigma = parameters[1];
 		double z = (input[0]-mu)/sigma;
