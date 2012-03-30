@@ -8,46 +8,45 @@ public class KeyWord implements KeyWordInterface {
 	private String name = "";
 	private double score = 1.0;
 	private double [] bid = null;
-	private double [] Clicks = null;
-	private double [] CPC;
-	private double [] Pos;
-	private double [] DCost;
 	private double minBid = 0.01;
+//	private double bidValue = 0.01;
 	
 	
 	// model parameters
 	private double [] ClickParams = null; 
 	private double [] CPCParams = null; 
 	private double [] DCostParams = null; 
-//	private double [] ScoreParams = null;
 
 	
 	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
 		this.name=name;
 		this.score=score;
-		this.bid=bid;
-		this.Clicks=Clicks;
-		this.CPC=CPC;
-		this.Pos=Pos;
-		this.DCost=DCost;
+//		this.bid=bid;
 		
 		
 		for(int i=0; i<bid.length; i++){
 			if(Clicks[i]<0.0001){
 				minBid = bid[i];
 			} else {
+				minBid = bid[i];
 				break;
 			}
 		}
 		
-//		System.out.println(minBid);
 		
-		
-//		CPCParams=estimateModelParams(CPC, false);
+//		CPCParams=estimateModelParams(CPC, true);
 		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
 
 	}
+	
+//	public void setBidValue(double bidValue){
+//		this.bidValue=bidValue;
+//	}	
+//	
+//	public double getBidValue(double bidValue){
+//		return bidValue;
+//	}
 	
 	private double [] estimateModelParams(double [] fitData, boolean plotGraphs){
 		int noValidBidDataPoints = 0;
@@ -68,21 +67,19 @@ public class KeyWord implements KeyWordInterface {
 			}
 		}
 		
-//		ParametricFunction f = new WeibullCurve();
-//		ParametricFunction f = new Erf();
+
 		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
 		double [] startPoint = {0.5, 2.0, 0.5};//, 0.5};
 		startPoint[2]=output[output.length-1];
-//		startPoint[3]=0.5*output[output.length-1];
 		pe.setStartPoint(startPoint);
 		double [] stepSize = {0.01D, 0.01D, 0.01D};//, 0.01D};
 		pe.setStepSize(stepSize);
 		pe.suppressNoConvergenceMessage();
 		pe.estimateParams();
 		
-		// get the minimum value
-        double minimum = pe.getMinimum();
+//		 get the minimum value
+//        double minimum = pe.getMinimum();
 
         // get values of y and z at minimum
         double [] EstParams = pe.getParamValues();
@@ -91,12 +88,7 @@ public class KeyWord implements KeyWordInterface {
         	return EstParams;
         }
         
-//        System.out.println("The minimum value is "+minimum);
-//        System.out.print("The minimum occurs at ");
-//        for(int i=0; i<EstParams.length; i++){
-//        	System.out.print(EstParams[i]+" ");
-//        }
-//        System.out.println("");
+
         
         double [][] data = PlotGraph.data(2,bid.length);
         double [] in = new double[1];

@@ -7,7 +7,7 @@ public class TruncatedSmoothSCurve implements ParametricFunction {
 	
 	public TruncatedSmoothSCurve(){
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid+0.01;
+		TruncatedParameters[0]=minBid;//+0.1;
 		TruncatedParameters[1]=0.002;
 	}
 	
@@ -15,7 +15,7 @@ public class TruncatedSmoothSCurve implements ParametricFunction {
 		
 		this.minBid = minBid;
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid+0.01;
+		TruncatedParameters[0]=minBid;//+0.1;
 		TruncatedParameters[1]=0.002;
 	}
 	
@@ -23,7 +23,7 @@ public class TruncatedSmoothSCurve implements ParametricFunction {
 	@Override
 	public void setMinBid(double minBid){
 		this.minBid = minBid;
-		TruncatedParameters[0]=minBid+0.01;
+		TruncatedParameters[0]=minBid;//+0.1;
 		TruncatedParameters[1]=0.002;
 	}
 	

@@ -17,7 +17,7 @@ public class CampaignBid {
 	private double expectedClicks =0;
 	private double expectedQualityMetric =0;
 	private double [] bids;
-	private double stepSize = 0.001D;
+	private double stepSize = 1.0D;
 	private double toldailyBudget = 1;
 	private double dampingFactor = 0.1D;
 	
@@ -36,13 +36,13 @@ public class CampaignBid {
 		BidLagrangeOptim Bid = new BidLagrangeOptim(wordList.get(i), f, k);
         Minimisation min = new Minimisation();
 		
-		double[] start = {2.0};
-        double[] step = {0.001D};
+		double[] start = {1.5};
+        double[] step = {0.1D};
         double ftol = 1e-15;
-        int iterMax = 10000;
+        int iterMax = 1000;
         
         
-        min.suppressNoConvergenceMessage();
+//        min.suppressNoConvergenceMessage();
         min.nelderMead(Bid, start, step, ftol, iterMax);
 
 //        // get the minimum value
@@ -51,6 +51,8 @@ public class CampaignBid {
 
         // get values of y and z at minimum
          double[] param = min.getParamValues();
+         
+//         wordList.get(i).setBidValue(param[0]);
 		
 		return param[0];
 	}
@@ -106,8 +108,8 @@ public class CampaignBid {
 		KeyWordInterface key = null;
 		
 		int j=0;
-//		while(j<1){
-		while(true){
+		while(j<20){
+//		while(true){
 			for(int i=0; i<bids.length;i++){
 				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
@@ -146,15 +148,12 @@ public class CampaignBid {
 			key=wordList.get(i);
 			input[0]=bids[i];
 			f.setMinBid(key.getMinBid());
-			System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.1f\n", bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
+			System.out.print(key.getKeyWord()+":: ");
+			System.out.format("%d :: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.2f\n", i, bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
 
-//			if(bids[i]>=key.getMinBid()+0.01) { 
-//				input[0]=bids[i];
-//				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.1f\n", bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
-//			} else {
-//				System.out.format(key.getKeyWord()+":: Bid value: %.2f, min bid: %.2f, expected clicks: 0.0, expected daily cost: 0.0\n", key.getMinBid(),key.getMinBid());
-//			}
+
 		} // for(int i=0; i<bids.length;i++)
+		
 		
 	} // public void optimizeBids()
 

@@ -27,21 +27,8 @@ public class BidLagrangeOptim implements MinimisationFunction {
 
 	@Override
 	public double function(double[] param) {
-//		if (param[0] <= minBid) {
-//			return 0;
-//		} else {
-//			return Math.pow(lambda-score*f.derivative(param, ClickParams)/f.derivative(param, DCostParams),2);
-//		}	
 		
 		return Math.pow(lambda-score*f.derivative(param, ClickParams)/f.derivative(param, DCostParams),2);
-
-		
-//		if (param[0] < minBid) {
-////			System.out.println("Min bid substitution");
-//			param[0] = minBid;
-//		}
-//		return Math.pow(lambda-score*f.derivative(param, ClickParams)/f.derivative(param, DCostParams),2);
-
 	}
 
 }
