@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SemplestWebApp.Models;
 
 namespace SemplestWebApp.Areas.Campign.Controllers
 {
@@ -14,6 +15,16 @@ namespace SemplestWebApp.Areas.Campign.Controllers
         public ActionResult CampignSetup()
         {
             return View();
+        }
+
+        [HttpPost]
+        public ActionResult CampignSetup(CampignSetupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // need to call wcf service to save data here
+            }
+            return View(model);
         }
 
     }

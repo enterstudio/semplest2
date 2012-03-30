@@ -1,11 +1,12 @@
 /*
-* Kendo UI Beta v2012.1.229 (http://kendoui.com)
+* Kendo UI Web v2012.1.322 (http://kendoui.com)
 * Copyright 2012 Telerik AD. All rights reserved.
 *
-* Kendo UI Beta license terms available at
-* http://www.kendoui.com/purchase/license-agreement/kendo-ui-beta.aspx
+* Kendo UI Web commercial licenses may be obtained at http://kendoui.com/web-license
+* If you do not own a commercial license, this file shall be governed by the
+* GNU General Public License (GPL) version 3.
+* For GPL requirements, please review: http://www.gnu.org/copyleft/gpl.html
 */
-
 .fake
 {
     color: red;
@@ -62,9 +63,9 @@
 {
     display: inline-block;
     margin: 0;
-    padding: 0 7px 1px;
+    padding: 2px 7px 2px;
     font-family: inherit;
-    line-height: 1.9;
+    line-height: 1.66em;
     text-align: center;
     cursor: pointer;
     outline: 0;
@@ -313,6 +314,10 @@ html body .k-button-bare
     background-position: -32px -240px;
 }
 .k-custom
+{
+    background-position: -115px -113px;
+}
+.k-editor .k-custom
 {
     background-position: -112px -110px;
 }
@@ -667,10 +672,6 @@ div.k-window-content
 {
     z-index: 1;
 }
-.k-tabstrip-items .k-state-hover
-{
-    z-index: 2;
-}
 .k-tabstrip-items .k-link, .k-panelbar .k-tabstrip-items .k-link
 {
     display: inline-block;
@@ -710,7 +711,7 @@ div.k-window-content
 {
     zoom: 1;
 }
-.k-panelbar .k-item
+.k-panelbar > .k-item, .k-panel > .k-item
 {
     list-style-type: none;
     display: block;
@@ -728,11 +729,7 @@ div.k-window-content
     margin-right: 5px;
     vertical-align: middle;
 }
-.k-panelbar .k-group .k-image, .k-panelbar .k-group .k-sprite
-{
-    margin-top: 1px;
-}
-.k-panelbar .k-link
+.k-panelbar > .k-item > .k-link, .k-panel > .k-item > .k-link
 {
     display: block;
     position: relative;
@@ -749,7 +746,7 @@ div.k-window-content
     top: 5px;
     right: 2px;
 }
-.k-panelbar .k-group, .k-panelbar .k-content
+.k-panelbar .k-panel, .k-panelbar .k-content
 {
     position: relative;
     border-bottom-style: solid;
@@ -758,17 +755,17 @@ div.k-window-content
     padding: 0;
     zoom: 1;
 }
-.k-panelbar .k-group .k-link
+.k-panel > .k-item > .k-link
 {
     border-bottom: 0;
     font-size: .95em;
     line-height: 2.2;
 }
-.k-panelbar .k-group .k-arrow-up, .k-panelbar .k-group .k-arrow-down
+.k-panel .k-arrow-up, .k-panel .k-arrow-down
 {
     top: 4px;
 }
-.k-panelbar .k-group .k-group .k-link
+.k-panel .k-panel > .k-item > .k-link
 {
     padding-left: 2em;
 }
@@ -776,7 +773,7 @@ div.k-window-content
 {
     border-bottom: 0;
 }
-.k-panelbar .k-group .k-group
+.k-panel .k-panel
 {
     border-bottom: 0;
 }
@@ -805,7 +802,7 @@ div.k-window-content
 {
     content: '\A0';
     display: block;
-    width: 100%;
+    width: 99%;
     height: 0;
     overflow: hidden;
 }
@@ -819,16 +816,24 @@ div.k-window-content
 {
     zoom: normal;
 }
-.k-menu .k-image, .k-menu .k-sprite
+.k-menu .k-icon, .k-menu .k-image, .k-menu .k-sprite
 {
-    margin: 0 4px 0 -4px;
-    vertical-align: top;
+    margin: -2px 4px 0 -4px;
+    vertical-align: middle;
+}
+.k-menu .k-icon
+{
+    margin: -2px 0 0;
+}
+* + html .k-menu .k-icon, * + html .k-menu .k-image, * + html .k-menu .k-sprite
+{
+    margin-top: 0;
 }
 .k-menu .k-link
 {
     display: block;
-    padding: .5em .9em;
-    line-height: 1.34;
+    padding: .5em .9em .4em;
+    line-height: 1.34em;
 }
 .k-menu .k-group
 {
@@ -854,12 +859,12 @@ div.k-window-content
 .k-menu .k-arrow-down
 {
     margin-right: -8px;
-    vertical-align: top;
 }
 .k-menu .k-arrow-next
 {
     position: absolute;
-    top: 3px;
+    top: 50%;
+    margin-top: -8px;
     right: 2px;
 }
 .k-menu .k-animation-container
@@ -969,6 +974,11 @@ div.k-window-content
 {
     text-overflow: clip;
 }
+.k-grid-edit-row .k-textbox
+{
+    margin-top: 0;
+    margin-bottom: 0;
+}
 .k-grid-header-wrap, .k-grid-footer-wrap
 {
     position: relative;
@@ -988,6 +998,10 @@ div.k-grid-header, div.k-grid-footer
 div.k-grid-header .k-header
 {
     border-bottom-width: 0;
+}
+.k-grid
+{
+    outline: 0;
 }
 .k-grid-content
 {
@@ -1340,12 +1354,16 @@ html body .k-grid tbody .k-button-icon
 .k-edit-cell .k-textbox, .k-edit-cell .k-widget, .k-grid-edit-row .k-textbox, .k-grid-edit-row .k-widget
 {
     width: 100%;
+}
+.k-edit-cell .k-widget, .k-grid-edit-row .k-widget
+{
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
 * + html .k-edit-cell .k-textbox, * + html .k-edit-cell .k-widget, * + html .k-grid-edit-row .k-textbox, * + html .k-grid-edit-row .k-widget
 {
-    width: 96%;
+    display: inline;
+    width: 90%;
 }
 html .k-edit-cell .k-tooltip, html .k-grid-edit-row .k-tooltip
 {
@@ -1536,12 +1554,16 @@ span.k-datetimepicker .k-select + .k-select
 }
 .k-autocomplete .k-input, .k-picker-wrap .k-input, .k-numeric-wrap .k-input, .k-dropdown-wrap .k-input, .k-selectbox .k-input
 {
-    min-height: 1.31em;
+    height: 1.31em;
     line-height: 1.31em;
     padding: .18em 0;
     text-indent: 4px;
     border: 0;
     margin: 0;
+}
+* + html .k-autocomplete .k-input, * + html .k-picker-wrap .k-input, * + html .k-numeric-wrap .k-input, * + html .k-dropdown-wrap .k-input, * + html .k-selectbox .k-input
+{
+    text-indent: 0;
 }
 .k-picker-wrap .k-select, .k-numeric-wrap .k-select, .k-dropdown-wrap .k-select
 {
@@ -1638,8 +1660,8 @@ body .k-datetimepicker .k-select
 {
     display: inline-block;
     width: 75%;
-    margin: .3em 0;
-    padding: .28em 0;
+    height: 29px;
+    line-height: 29px;
 }
 .k-calendar .k-nav-fast .k-icon
 {
@@ -1671,7 +1693,9 @@ body .k-datetimepicker .k-select
 }
 .k-calendar .k-content .k-link
 {
-    padding: .26em .45em .26em .1em;
+    height: 22px;
+    line-height: 22px;
+    padding: 0 .45em 0 .1em;
 }
 .k-calendar .k-meta-view .k-link
 {
@@ -1699,7 +1723,7 @@ span.k-timepicker, span.k-datetimepicker, span.k-datepicker
 {
     cursor: pointer;
 }
-.k-timepicker, .k-datepicker, .k-datetimepicker
+.k-button, .k-textbox, .k-timepicker, .k-datepicker, .k-datetimepicker
 {
     display: inline-block;
     vertical-align: middle;
@@ -1737,7 +1761,7 @@ div.k-treeview
 {
     height: auto !important;
 }
-.k-treeview .k-icon, .k-treeview .k-image, .k-treeview .k-sprite, .k-treeview .k-in
+.k-treeview .k-icon, .k-treeview .k-image, .k-treeview .k-sprite, .k-treeview .k-checkbox, .k-treeview .k-in
 {
     display: inline-block;
     vertical-align: top;
@@ -1788,12 +1812,21 @@ div.k-treeview
 .k-input
 {
     padding: .25em 0;
-    -webkit-tap-highlight-color: rgba(0,0,0,0);
     outline: 0;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 .k-textbox
 {
-    padding: .4em .2em;
+    outline: 0;
+    height: 1.66em;
+    line-height: 1.66em;
+    padding: 2px 0;
+    text-indent: .3em;
+}
+* + html .k-textbox
+{
+    padding: 1px 0;
+    text-indent: 0;
 }
 span.k-numerictextbox
 {
@@ -2077,12 +2110,16 @@ span.k-numerictextbox
 .k-editor-dialog ol
 {
     margin: 0;
-    padding: 0;
+    padding: 1em 0 0;
     list-style: none;
 }
 .k-form-text-row, .k-form-checkbox-row
 {
-    padding-bottom: 1em;
+    padding-bottom: .3em;
+}
+.k-form-text-row input
+{
+    margin-right: 1em;
 }
 .k-form-text-row label
 {
@@ -2093,7 +2130,7 @@ span.k-numerictextbox
 }
 .k-form-checkbox-row input
 {
-    margin-left: 7em;
+    margin-left: 7.5em;
     padding: 0;
     font-size: inherit;
 }
@@ -2109,14 +2146,22 @@ span.k-numerictextbox
 {
     width: 20em;
 }
-.k-editor-dialog .k-button-wrapper
-{
-    padding-top: .5em;
-    text-align: right;
-}
-.k-editor-dialog .k-button
+.k-editor-dialog .k-form-text-row label, .k-editor-dialog .k-button
 {
     display: inline-block;
+}
+.k-editor-dialog .k-button-wrapper
+{
+    padding: 1em;
+    text-align: right;
+}
+.k-editor-dialog .k-button-wrapper button
+{
+    vertical-align: baseline;
+}
+.k-button-wrapper .k-link:hover
+{
+    text-decoration: underline;
 }
 div.k-slider
 {
@@ -3102,4 +3147,43 @@ html input.k-breadcrumbs-input
 {
     display: inline;
     zoom: 1;
+}
+.km-scroll-container
+{
+    -moz-user-select: -moz-none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-margin-collapse: separate;
+    -webkit-transform: translatez(0);
+}
+.k-widget .km-scroll-wrapper
+{
+    position: relative;
+    padding-bottom: 0;
+}
+.km-touch-scrollbar
+{
+    position: absolute;
+    visibility: hidden;
+    z-index: 200000;
+    height: .3em;
+    width: .3em;
+    background-color: rgba(0,0,0,.7);
+    opacity: 0;
+    -webkit-transition: opacity .3s linear;
+    -moz-transition: opacity .3s linear;
+    -ms-transition: opacity .3s linear;
+    -o-transition: opacity .3s linear;
+}
+.km-vertical-scrollbar
+{
+    height: 100%;
+    right: 2px;
+    top: 2px;
+}
+.km-horizontal-scrollbar
+{
+    width: 100%;
+    left: 2px;
+    bottom: 2px;
 }

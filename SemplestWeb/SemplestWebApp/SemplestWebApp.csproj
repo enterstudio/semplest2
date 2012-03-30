@@ -69,7 +69,9 @@
     <Compile Include="Areas\Campign\CampignAreaRegistration.cs" />
     <Compile Include="Areas\Campign\Controllers\CampignController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\EntityController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -107,6 +109,7 @@
     <Compile Include="Models\CampaignCycleType.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\CampignSetupModel.cs" />
     <Compile Include="Models\Credential.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -149,6 +152,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SemplestModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Models\SemplestWebAppContext.cs" />
     <Compile Include="Models\StateCode.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -164,52 +168,19 @@
     <Content Include="Content\example.css" />
     <Content Include="Content\kendo.common.min.css" />
     <Content Include="Content\kendo.dataviz.min.css" />
-    <Content Include="Content\kendo.default.min.css" />
     <Content Include="Content\kendo.metro.min.css" />
+    <Content Include="Content\Metro\editor.png" />
+    <Content Include="Content\Metro\imagebrowser.png" />
+    <Content Include="Content\Metro\loading-image.gif" />
+    <Content Include="Content\Metro\loading.gif" />
+    <Content Include="Content\Metro\slider-h.gif" />
+    <Content Include="Content\Metro\slider-v.gif" />
+    <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\themes\base\images\logo.png" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\console.js" />
-    <Content Include="Scripts\example1.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\kendo.all.min.js" />
-    <Content Include="Scripts\kendo.autocomplete.min.js" />
-    <Content Include="Scripts\kendo.binder.min.js" />
-    <Content Include="Scripts\kendo.calendar.min.js" />
-    <Content Include="Scripts\kendo.chart.min.js" />
-    <Content Include="Scripts\kendo.combobox.min.js" />
-    <Content Include="Scripts\kendo.core.min.js" />
-    <Content Include="Scripts\kendo.data.min.js" />
-    <Content Include="Scripts\kendo.data.odata.min.js" />
-    <Content Include="Scripts\kendo.data.xml.min.js" />
-    <Content Include="Scripts\kendo.dataviz.min.js" />
-    <Content Include="Scripts\kendo.datepicker.min.js" />
-    <Content Include="Scripts\kendo.draganddrop.min.js" />
-    <Content Include="Scripts\kendo.dropdownlist.min.js" />
-    <Content Include="Scripts\kendo.editable.min.js" />
-    <Content Include="Scripts\kendo.filtermenu.min.js" />
-    <Content Include="Scripts\kendo.fx.min.js" />
-    <Content Include="Scripts\kendo.grid.min.js" />
-    <Content Include="Scripts\kendo.groupable.min.js" />
-    <Content Include="Scripts\kendo.list.min.js" />
-    <Content Include="Scripts\kendo.menu.min.js" />
-    <Content Include="Scripts\kendo.model.min.js" />
-    <Content Include="Scripts\kendo.numerictextbox.min.js" />
-    <Content Include="Scripts\kendo.pager.min.js" />
-    <Content Include="Scripts\kendo.panelbar.min.js" />
-    <Content Include="Scripts\kendo.popup.min.js" />
-    <Content Include="Scripts\kendo.resizable.min.js" />
-    <Content Include="Scripts\kendo.selectable.min.js" />
-    <Content Include="Scripts\kendo.slider.min.js" />
-    <Content Include="Scripts\kendo.sortable.min.js" />
-    <Content Include="Scripts\kendo.splitter.min.js" />
-    <Content Include="Scripts\kendo.tabstrip.min.js" />
-    <Content Include="Scripts\kendo.timepicker.min.js" />
-    <Content Include="Scripts\kendo.treeview.min.js" />
-    <Content Include="Scripts\kendo.upload.min.js" />
-    <Content Include="Scripts\kendo.validator.min.js" />
-    <Content Include="Scripts\kendo.web.min.js" />
-    <Content Include="Scripts\kendo.window.min.js" />
     <Content Include="Scripts\pretty.js" />
     <Content Include="Services\SemplestDataService.svc" />
     <Content Include="Web.config" />
@@ -288,6 +259,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model1.cs</LastGenOutput>
     </None>
+    <Content Include="Views\Entity\BillType.cshtml" />
+    <Content Include="Views\Entity\Create.cshtml" />
+    <Content Include="Views\Test\Index.cshtml" />
+    <Content Include="Views\Test\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -309,7 +284,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>6088</DevelopmentServerPort>
+          <DevelopmentServerPort>62002</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

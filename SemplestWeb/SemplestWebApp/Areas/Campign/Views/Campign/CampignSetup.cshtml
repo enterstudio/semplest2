@@ -1,4 +1,5 @@
-﻿@{
+﻿@model SemplestWebApp.Models.CampignSetupModel
+@{
     ViewBag.Title = "Campign";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -30,6 +31,43 @@
 
     </script>
 }
+<script type="text/x-kendo-tmpl" id="template">        
+    <div class="product-view">            
+        <dl>                
+            <dt>Product Name</dt>                
+            <dd>${ProductName}</dd>                
+            <dt>Unit Price</dt>                
+            <dd>${kendo.toString(UnitPrice, "c")}</dd>                
+            <dt>Units In Stock</dt>                
+            <dd>${UnitsInStock}</dd>                
+            <dt>Discontinued</dt>                
+            <dd>${Discontinued}</dd>            
+        </dl>            
+        <div class="edit-buttons">                
+        <a class="k-button k-button-icontext k-edit-button" href="\\#"><span class="k-icon k-edit"></span>Edit</a>                
+        <a class="k-button k-button-icontext k-delete-button" href="\\#"><span class="k-icon k-delete"></span>Delete</a>            
+        </div>        
+    </div>    
+</script>
+<script type="text/x-kendo-tmpl" id="editTemplate">        
+    <div class="product-view">            
+        <dl>                
+            <dt>Product Name</dt>                
+            <dd><input type="text" data-bind="value:ProductName" name="ProductName" required="required" validationMessage="required" /> 
+            <span data-for="ProductName" class="k-invalid-msg"></span></dd>
+            <dt>Unit Price</dt>
+            <dd><input type="text" data-bind="value:UnitPrice" data-role="numerictextbox" data-type="number" name="UnitPrice" required="required" min="1" validationMessage="required" /><span data-for="UnitPrice" class="k-invalid-msg"></span></dd>                
+            <dt>Units In Stock</dt>
+            <dd><input type="text" data-bind="value:UnitsInStock" data-role="numerictextbox" name="UnitsInStock" required="required" data-type="number" min="0" validationMessage="required" /><span data-for="UnitsInStock" class="k-invalid-msg"></span></dd>                
+            <dt>Discontinued</dt>
+            <dd><input type="checkbox" name="Discontinued" data-bind="checked:Discontinued"></dd>
+        </dl>
+        <div class="edit-buttons">                
+            <a class="k-button k-button-icontext k-update-button" href="\\#"><span class="k-icon k-update"></span>Save</a>
+            <a class="k-button k-button-icontext k-cancel-button" href="\\#"><span class="k-icon k-cancel"></span>Cancel</a>
+        </div>
+    </div>    
+</script>
 <div id="exampleTitleBg">
     <h1 id="exampleTitle">
         <span class="exampleIcon overviewIcon"></span>Ad Setup
@@ -44,124 +82,289 @@
 </div>
 <div id="exampleWrap">
     <div id="example" class="k-content">
-        <div class="configuration">
-            <span class="infoHead">Helpful Links</span>
-            <ul>
-                <li>@Html.ActionLink("What are SEM Ads?", "/About");</li>
-                <li>@Html.ActionLink("What is a Product Group?", "/About");</li>
-                <li>@Html.ActionLink("What is a Product?", "/About");</li>
-                <li>@Html.ActionLink("Ad Creation Tips", "/About");</li>
-                <li>@Html.ActionLink("Why should i create morethan one Ad?", "/About"); </li>
-            </ul>
-        </div>
-        <div id="tabstrip">
-            <ul>
-                <li class="k-state-active">DEFINE PRODUCT</li>
-                <li>CREATE ADS</li>
-                <li>Additional Click Through Links("SiteLinks")</li>
-                <li>Negative Keywords</li>
-            </ul>
-            <div id="cap-view" class="k-header">
-                <div id="cap" class="black-cap">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active">DEFINE PRODUCT</li>
+                    <li>CREATE ADS</li>
+                    <li>Additional Click Through Links("SiteLinks")</li>
+                    <li>Negative Keywords</li>
+                </ul>
+                <div id="cap-view" class="k-header">
+                    <div class="configuration">
+                        <span class="infoHead">Helpful Links</span>
+                        <ul>
+                            <li>@Html.ActionLink("What are SEM Ads?", "/About")</li>
+                            <li>@Html.ActionLink("What is a Product Group?", "/About")</li>
+                            <li>@Html.ActionLink("What is a Product?", "/About")</li>
+                            <li>@Html.ActionLink("Ad Creation Tips", "/About")</li>
+                            <li>@Html.ActionLink("Why should i create morethan one Ad?", "/About") </li>
+                        </ul>
+                    </div>
+                    <div class="configuration1">
+                        <ul class="options">
+                            <li>
+                                <label for="productGroupName" class="required">
+                                    Product Group Name
+                                </label>
+                                <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
+                                    placeholder="Product Group Name" required validationmessage="Please enter {0}" />
+                                
+                            </li>
+                            <li>
+                                <label for="productPromotionName" class="required">
+                                    Product / Promotion Name
+                                </label>
+                                <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
+                                    placeholder="Product / Promotion Name" required validationmessage="Please enter {0}" />
+                            </li>
+                            <li>
+                                <h4 class="required">
+                                    Please type in several words or phrases that describe your business or what you
+                                    sell or are promoting (separated by commas) to help us build your search campaign:
+                                </h4>
+                                <label>
+                                </label>
+                                <input type="text" id="Words" name="Words" class="k-textbox" placeholder="words"
+                                    required validationmessage="Please enter {0}" />
+                            </li>
+                            <li>
+                                <label for="Budget" class="required">
+                                    Budget
+                                </label>
+                                <input type="text" id="Budget" name="Budget" class="k-textbox" placeholder="Budget"
+                                    required validationmessage="Please enter {0}" />
+                            </li>
+                            <li>
+                                <label for="StartDate" class="required">
+                                    Product Start Date
+                                </label>
+                                <input type="text" id="StartDate" name="StartDate" class="k-textbox" placeholder="Start"
+                                    required validationmessage="Please select {0}" />
+                            </li>
+                            <li>
+                                <label for="StartEndDate" class="required">
+                                    Product End Date
+                                </label>
+                                <input type="text" id="EndDate" name="EndDate" class="k-textbox" placeholder="End"
+                                    required validationmessage="Please selectd {0}" />
+                            </li>
+                            <li>
+                                <label for="SearchEngines" class="required">
+                                    Search Engines
+                                </label>
+                                <input id="Google" name="Google" type="checkbox" value="true">Google</input>
+                                <input id="Yahoo" name="Yahoo" type="checkbox" value="true">Yahoo</input>
+                                <input id="Bing" name="Bing" type="checkbox" value="true">Bing</input>
+                            </li>
+                            <li>
+                                <button class="k-button" id="save1" type="submit">
+                                    <span class="k-update k-icon"></span>Save And Continue
+                                </button>
+                            </li>
+                            <li class="status"></li>
+                        </ul>
+                    </div>
+                    rewtf
                 </div>
-                <div id="options">
-                    <h4>
-                        Product Group Name</h4>
-                    <input id="color" />
-                    <h4>
-                        Product / Promotion Name</h4>
-                    <input id="temppwd" />
-                    <h4>
-                        Please type in several words or phrases that describe your business or what you
-                        sell or are promoting (separated by commas) to help us build your search campaign:
-                    </h4>
-                    <input id="color1" />
-                    <h4>
-                        Budget</h4>
-                    <input id="temppwd1" />
-                    <h4>
-                        Product Start / End Date</h4>
-                    <label for="start">
-                        Start date:</label>
-                    <input id="start" value="10/10/2011" />
-                    <label for="end" style="margin-left: 3em">
-                        End date:</label>
-                    <input id="end" value="10/10/2012" />
-                    <h4>
-                        Search Engines</h4>
-                    <input type="checkbox"> Google</input>
-                    <input type="checkbox"> Yahoo</input>
-                    <input type="checkbox"> Bing</input>
-                    <br />
-                    <br />
-                    <button class="k-button" id="get">
-                        Save And Continue</button>
+                <div id="product-view" class="k-header">
+                    <div class="configuration">
+                        <span class="infoHead">Helpful Links</span>
+                        <ul>
+                            <li>@Html.ActionLink("Ad Creation Tips", "/About")</li>
+                            <li>@Html.ActionLink("Why should I Create morethan one Ad?", "/About")</li>
+                            <li>@Html.ActionLink("What are site links?", "/About")</li>
+                            <li>@Html.ActionLink("What are negative keywords?", "/About") </li>
+                        </ul>
+                    </div>
+                    <div class="configuration1">
+                        <span class="infoHead">Location (Enter Address,City,State or Zip)</span>
+                        <table>
+                            <tr>
+                                <td style="vertical-align: top">
+                                    <span>Business Address</span>
+                                </td>
+                                <td>
+                                    <textarea id="Address_Address1" name="Address.Address1" cols="20" rows="3" class="k-textbox1"></textarea>
+                                </td>
+                                <td rowspan="3" style="background-color: #333fff;">
+                                    MAP
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <a style="vertical-align: top;" href="#">+ Add Additional Business Location</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span style="margin-right: 10px">Proxmity </span>
+                                    <input id="Proxmity" name="Proxmity" class="k-textbox" style="width: 2.3em" />
+                                </td>
+                                <td>
+                                    <span>miles or less from business</span>
+                                </td>
+                            </tr>
+                        </table>
+                        <div id="addressListView"></div>
+                    </div>
+                    <div class="configuration1">
+                        <span class="infoHead">Ad Copy</span>
+                        <table>
+                            <tr>
+                                <td>
+                                    <span>URL</span>
+                                </td>
+                                <td>
+                                    <input id="Url" name="Url" class="k-textbox" />
+                                </td>
+                                <td>
+                                    <span>This url will appears in all of your ads</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ad #1
+                                </td>
+                                <td>
+                                </td>
+                                <td>
+                                    Ad #1 Preview
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Title
+                                </td>
+                                <td>
+                                    <input id="Title" name="Title" class="k-textbox" />
+                                </td>
+                                <td rowspan="2" style="background-color: #333fff;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Ad Copy
+                                </td>
+                                <td>
+                                    <input id="description" class="k-textbox" />
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="configuration1">
+                        <ul class="options">
+                            <li>@Html.ActionLink("Click to add additional click through options", "/About")</li>
+                            <li>@Html.ActionLink("Click to identify keywords to avoid in association with your business", "/About")</li>
+                            <li>@Html.ActionLink("Create Another Ad", "/About")</li>
+                        </ul>
+                    </div>
+                    <div class="configuration1">
+                        <span class="infoHead">How Would you Classify Your Product</span>
+                        <div class="options">
+                            <input id="dropDownList" />
+                        </div>
+                        <div class="options">
+                            <button class="k-button" id="back1">
+                                <span class="k-back k-icon"></span>back</button>
+                            <button class="k-button" id="save2">
+                                <span class="k-update k-icon"></span>Save And Continue</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="k-header" style="padding-bottom: 20px">
+                    <div class="configuration">
+                        <span class="infoHead">Helpful Links</span>
+                        <ul>
+                            <li>@Html.ActionLink("What are site links?", "/About")</li>
+                            <li>@Html.ActionLink("Why are sitelinks useful?", "/About")</li>
+                            <li>@Html.ActionLink("Examples of sitelinks", "/About")</li>
+                        </ul>
+                    </div>
+                    <span class="infoHead">Sitelinks is a feature that lets you include additional links
+                        to other content on your site that's not on the main landing page. They appear below
+                        your ad copy in the search results</span>
+                    <div class="configuration1">
+                        <span>you can enter upto 10 additional links that may be shown with your Ad</span>
+                        <div id="grid" style="margin-right: 280px;">
+                        </div>
+                    </div>
+                    <div class="options" style="margin-top: 100px">
+                        <button class="k-button" id="back2">
+                            <span class="k-back k-icon"></span>back</button>
+                        <button class="k-button" id="save3">
+                            <span class="k-update k-icon"></span>Save And Continue</button>
+                    </div>
+                </div>
+                <div class="k-header">
+                    <div class="configuration">
+                        <span class="infoHead">Helpful Links</span>
+                        <ul>
+                            <li>@Html.ActionLink("What are Negative Keywords?", "/About")</li>
+                            <li>@Html.ActionLink("Why would I want to designate Keywords to avoid?", "/About")</li>
+                            <li>@Html.ActionLink("Examples of Negative Keywords", "/About")</li>
+                        </ul>
+                    </div>
+                    <span class="infoHead">Adding a negative keyword to your product group means that your
+                        ads won't show for searches containing that term. By filtering out unwanted impressions,
+                        negative keywords can help you reach the most appropriate prospects. </span>
+                    <div class="configuration1">
+                        <span>Please type in several words or phrases that you never want associated with your
+                            ad (separated by commas): </span>
+                        <input id="negvalues" class="k-textbox" style="width: 42.3em" />
+                    </div>
+                    <div class="options" style="margin-top: 100px">
+                        <button class="k-button" id="back3">
+                            <span class="k-back k-icon"></span>back</button>
+                        <button class="k-button" id="save">
+                            <span class="k-update k-icon"></span>Save And Continue</button>
+                    </div>
                 </div>
             </div>
-            <div id="product-view" class="k-header">
-                <div id="options1">
-                    <ul class="widgets">
-                        <li>
-                            <h3>
-                                Location (Enter Address,City,State or Zip)</h3>
-                            <p>
-                                <input type="text" /></p>
-                        </li>
-                        <li>
-                            <h3>
-                                Preview</h3>
-                            <p>
-                                MAP </p>
-                        </li>
-                        <li>
-                            <h3>
-                                Ad Copy</h3>
-                            <p>
-                                <label class="heading">URL</label>
-                                <input type="text" />
-                                <br />
-                                <label class="heading">Ad#</label>
-                                <br />
-                                <label class="heading">Title   </label>
-                                <input type="text" />
-                                <br />
-                                <label class="heading">Description</label>
-                                <input type="text" /></p>
-                        </li>
-                        <li>
-                            <h3>
-                                Preview</h3>
-                            <p>
-                                </p>
-                        </li>
-                        <li>
-                            <h3>
-                                </h3>
-                            <p>
-                                </p>
-                        </li>
-                        <li>
-                            <h3>
-                                </h3>
-                            <p>
-                               </p>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div>
-                <p>
-                    Additional Click Through Links Content                
-                </p>
-            </div>
-            <div>
-                <p>
-                    Negative Keywords Content                   
-                </p>
-            </div>
-        </div>
+        }
         <script type="text/javascript">
             $(document).ready(function () {
+
+                var listView = $("#addressListView").kendoListView({
+                    dataSource: dataSource,
+                    template: kendo.template($("#template").html()),
+                    editTemplate: kendo.template($("#editTemplate").html())
+                }).delegate(".k-edit-button", "click", function (e) {
+                    listView.edit($(this).closest(".product-view"));
+                    e.preventDefault();
+                }).delegate(".k-delete-button", "click", function (e) {
+                    listView.remove($(this).closest(".product-view"));
+                    e.preventDefault();
+                }).delegate(".k-update-button", "click", function (e) {
+                    listView.save();
+                    e.preventDefault();
+                }).delegate(".k-cancel-button", "click", function (e) {
+                    listView.cancel();
+                    e.preventDefault();
+                }).data("kendoListView");
+                $(".k-add-button").click(function (e) { listView.add(); e.preventDefault(); });
+
+                var validator = $("#cap-view").kendoValidator().data("kendoValidator"), status = $(".status");
+                $("#save1").click(function () {
+                    if (validator.validate()) {
+                        status.text("Hooray! Your tickets has been booked!").addClass("valid");
+                        tabStrip.select(1)
+                    } else {
+                        status.text("Oops! There is invalid data in the form.").addClass("invalid");
+
+                    }
+                });
+                $("#save2").click(function () { tabStrip.select(2) });
+                $("#save3").click(function () { tabStrip.select(3) });
+                $("#back1").click(function () { tabStrip.select(0) });
+                $("#back2").click(function () { tabStrip.select(1) });
+                $("#back3").click(function () { tabStrip.select(2) });
+                $("#save").click(function () { tabStrip.select(0) });
+                $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
                 function startChange() {
                     var startDate = start.value();
 
@@ -182,11 +385,11 @@
                     }
                 }
 
-                var start = $("#start").kendoDatePicker({
+                var start = $("#StartDate").kendoDatePicker({
                     change: startChange
                 }).data("kendoDatePicker");
 
-                var end = $("#end").kendoDatePicker({
+                var end = $("#EndDate").kendoDatePicker({
                     change: endChange
                 }).data("kendoDatePicker");
 
@@ -221,52 +424,75 @@
                     }
                     // access the selected item via e.item (HTMLElement)
                 };
-                var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate
-                }).css({ marginRight: "220px" }).data("kendoTabStrip");
+                var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
                 $("input[type='button']#btnOne").addClass("k-button rounded");
-
-                var tab = tabStrip.select(1);
-                //                tabStrip.disable(tab);
+                var crudServiceBaseUrl = "http://demos.kendoui.com/service",
+                dataSource = new kendo.data.DataSource({ transport: { read: { url: crudServiceBaseUrl + "/Products", dataType: "jsonp" },
+                    update: { url: crudServiceBaseUrl + "/Products/Update", dataType: "jsonp" },
+                    destroy: { url: crudServiceBaseUrl + "/Products/Destroy", dataType: "jsonp" },
+                    create: { url: crudServiceBaseUrl + "/Products/Create", dataType: "jsonp" },
+                    parameterMap: function (options, operation) { if (operation !== "read" && options.models) { return { models: kendo.stringify(options.models) }; } }
+                },
+                    batch: true,
+                    pageSize: 30,
+                    schema: {
+                        model:
+                            {
+                                id: "ProductID",
+                                fields: {
+                                    ProductID: { editable: false, nullable: true },
+                                    Name: { validation: { required: true} },
+                                    Url: { validation: { required: true, min: 1} }
+                                }
+                            }
+                    }
+                });
+                $("#grid").kendoGrid({
+                    dataSource: dataSource,
+                    pageable: false, height: 200,
+                    toolbar: ["create", "save", "cancel"],
+                    columns: ["Name", { field: "Url", width: "300px" }, { command: ["edit", "destroy"], title: " ", width: "190px"}], editable: "inline"
+                });
             });
         </script>
         <style scoped>
-            .widgets
+            .configuration1
             {
-                overflow: hidden;
-                list-style-type: none;
-                margin: 40px 0 0 0;
-                padding: 0 0 0 10%;
+                margin: 0 0 0 15px;
+                padding: 10px;
+                border: 1px solid inherit;
+                background-image: none;
+                -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
+                -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
+                -webkit-border-radius: 8px;
+                -moz-border-radius: 8px;
+                border-radius: 8px;
+                min-width: 170px;
             }
-            
-            .widgets li
+            .configuration1 table
             {
-                width: 44%;
-                float: left;
-                padding-right: 20px;
+                background-color: #fffbff;
             }
-            
-            .widgets h3, .widgets a
+            .configuration1 .infoHead
             {
-                text-decoration: none;
-                font-weight: normal;
+                display: inline-block;
+                font-size: 14px;
+                margin-top: 0;
+                text-indent: 0;
+                margin-bottom: 10px;
+                padding-bottom: 5px;
+                border-bottom: 1px solid #999;
+                background-position: 0 -178px;
             }
-            
-            .widgets a:hover
+            .configuration1 .k-textbox1
             {
-                text-decoration: underline;
+                margin-left: 7px;
             }
-            
-            .widgets p
+            .configuration1 .options li
             {
-                padding: 0;
-            }
-            
-            .widgets img
-            {
-                float: left;
-                width: 100px;
-                height: 100px;
-                margin-right: 19px;
+                display: block;
+                margin: 0;
+                padding: 0.2em 0;
             }
             #example h3
             {
@@ -285,41 +511,6 @@
                 width: 24%;
                 margin-left: 4%;
                 float: left;
-            }
-            #datasource-views
-            {
-                padding: 20px;
-                border-radius: 10px;
-                border-style: solid;
-                border-width: 1px;
-                overflow: hidden;
-            }
-            
-            .selector
-            {
-                text-align: right;
-            }
-            * + html .selector
-            {
-                margin-bottom: 25px;
-            }
-            
-            .selector h3
-            {
-                float: left;
-                margin: 0;
-                font-size: 16px;
-                font-weight: normal;
-            }
-            
-            .selector h3, .k-dropdown
-            {
-                vertical-align: middle;
-            }
-            
-            .k-dropdown
-            {
-                text-align: left;
             }
         </style>
     </div>
