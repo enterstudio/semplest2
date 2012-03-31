@@ -1,4 +1,4 @@
-﻿@model SemplestWebApp.Models.CampignSetupModel
+﻿@model SemplestWebApp.Models.CampaignSetupModel
 @{
     ViewBag.Title = "Campign";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -96,6 +96,7 @@
                     <div class="configuration">
                         <span class="infoHead">Helpful Links</span>
                         <ul>
+                            <li>@Url.Action("/AdditionalLinks")</li>
                             <li>@Html.ActionLink("What are SEM Ads?", "/About")</li>
                             <li>@Html.ActionLink("What is a Product Group?", "/About")</li>
                             <li>@Html.ActionLink("What is a Product?", "/About")</li>
@@ -111,7 +112,6 @@
                                 </label>
                                 <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
                                     placeholder="Product Group Name" required validationmessage="Please enter {0}" />
-                                
                             </li>
                             <li>
                                 <label for="productPromotionName" class="required">
@@ -160,14 +160,13 @@
                                 <input id="Bing" name="Bing" type="checkbox" value="true">Bing</input>
                             </li>
                             <li>
-                                <button class="k-button" id="save1" type="submit">
+                                <button class="k-button" id="save1" type="button">
                                     <span class="k-update k-icon"></span>Save And Continue
                                 </button>
                             </li>
                             <li class="status"></li>
                         </ul>
                     </div>
-                    rewtf
                 </div>
                 <div id="product-view" class="k-header">
                     <div class="configuration">
@@ -187,7 +186,21 @@
                                     <span>Business Address</span>
                                 </td>
                                 <td>
-                                    <textarea id="Address_Address1" name="Address.Address1" cols="20" rows="3" class="k-textbox1"></textarea>
+                                    <div id="businessLocationGrid">
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <textarea id="Address_Address1" name="Address.Address1" cols="20" rows="3" class="k-textbox1" placeholder="Enter name" data-bind="value: Location"></textarea>
+                                                </td>
+                                                <td>
+                                                    <button data-bind="click: addBusinessLocation" type="button" class="k-button">
+                                                        <span class="k-add k-icon"></span>Add</button>
+                                                </td>
+                                            </tr>
+                                            <tbody data-template="businessLocationrow-template" data-bind="source: businessLocations">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </td>
                                 <td rowspan="3" style="background-color: #333fff;">
                                     MAP
@@ -195,22 +208,16 @@
                             </tr>
                             <tr>
                                 <td>
-                                </td>
-                                <td>
-                                    <a style="vertical-align: top;" href="#">+ Add Additional Business Location</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span style="margin-right: 10px">Proxmity </span>
-                                    <input id="Proxmity" name="Proxmity" class="k-textbox" style="width: 2.3em" />
+                                    <span style="margin-right: 10px">Proximity </span>
+                                    <input id="Proxmity" name="Proxmity" class="k-textbox" style="width: 4.3em" />
                                 </td>
                                 <td>
                                     <span>miles or less from business</span>
                                 </td>
                             </tr>
                         </table>
-                        <div id="addressListView"></div>
+                        <div id="addressListView">
+                        </div>
                     </div>
                     <div class="configuration1">
                         <span class="infoHead">Ad Copy</span>
@@ -251,7 +258,7 @@
                                     Ad Copy
                                 </td>
                                 <td>
-                                    <input id="description" class="k-textbox" />
+                                    <input id="AdCopy" name="AdCopy" class="k-textbox" />
                                 </td>
                             </tr>
                         </table>
@@ -269,9 +276,9 @@
                             <input id="dropDownList" />
                         </div>
                         <div class="options">
-                            <button class="k-button" id="back1">
+                            <button class="k-button" id="back1" type="button">
                                 <span class="k-back k-icon"></span>back</button>
-                            <button class="k-button" id="save2">
+                            <button class="k-button" id="save2" type="button">
                                 <span class="k-update k-icon"></span>Save And Continue</button>
                         </div>
                     </div>
@@ -291,12 +298,41 @@
                     <div class="configuration1">
                         <span>you can enter upto 10 additional links that may be shown with your Ad</span>
                         <div id="grid" style="margin-right: 280px;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th align="left">
+                                            Name
+                                        </th>
+                                        <th align='left'>
+                                            Url
+                                        </th>
+                                        <th align="right">
+                                            Delete
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tr>
+                                    <td>
+                                        <input type="text" placeholder="Enter name" data-bind="value: Name" />
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="Enter Url" data-bind="value: Url" />
+                                    </td>
+                                    <td>
+                                        <button data-bind="click: addLink" type="button" class="k-button">
+                                            <span class="k-add k-icon"></span>Add</button>
+                                    </td>
+                                </tr>
+                                <tbody data-template="row-template" data-bind="source: additionalLinks">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                     <div class="options" style="margin-top: 100px">
-                        <button class="k-button" id="back2">
+                        <button class="k-button" id="back2" type="button">
                             <span class="k-back k-icon"></span>back</button>
-                        <button class="k-button" id="save3">
+                        <button class="k-button" id="save3" type="button">
                             <span class="k-update k-icon"></span>Save And Continue</button>
                     </div>
                 </div>
@@ -318,48 +354,43 @@
                         <input id="negvalues" class="k-textbox" style="width: 42.3em" />
                     </div>
                     <div class="options" style="margin-top: 100px">
-                        <button class="k-button" id="back3">
+                        <button class="k-button" id="back3" type="button">
                             <span class="k-back k-icon"></span>back</button>
-                        <button class="k-button" id="save">
+                        <button class="k-button" id="save" type="submit">
                             <span class="k-update k-icon"></span>Save And Continue</button>
                     </div>
                 </div>
             </div>
         }
+        <script id="row-template" type="text/x-kendo-template">    
+            <tr>        
+                <td data-bind="text: Name"></td>        
+                <td data-bind="text: Url"></td>        
+                <td><button data-bind="click: deleteLink" type="button" class="k-button"><span class="k-delete k-icon"></span>Delete</button></td>
+            </tr>
+        </script>
+        <script id="businessLocationrow-template" type="text/x-kendo-template">    
+            <tr>        
+                <td data-bind="text: Location"></td>        
+                <td><button data-bind="click: deleteBusinessLocation" type="button" class="k-button"><span class="k-delete k-icon"></span>Delete</button></td>
+            </tr>
+        </script>
         <script type="text/javascript">
             $(document).ready(function () {
-
-                var listView = $("#addressListView").kendoListView({
-                    dataSource: dataSource,
-                    template: kendo.template($("#template").html()),
-                    editTemplate: kendo.template($("#editTemplate").html())
-                }).delegate(".k-edit-button", "click", function (e) {
-                    listView.edit($(this).closest(".product-view"));
-                    e.preventDefault();
-                }).delegate(".k-delete-button", "click", function (e) {
-                    listView.remove($(this).closest(".product-view"));
-                    e.preventDefault();
-                }).delegate(".k-update-button", "click", function (e) {
-                    listView.save();
-                    e.preventDefault();
-                }).delegate(".k-cancel-button", "click", function (e) {
-                    listView.cancel();
-                    e.preventDefault();
-                }).data("kendoListView");
-                $(".k-add-button").click(function (e) { listView.add(); e.preventDefault(); });
-
+                $("#Proxmity").kendoNumericTextBox();
                 var validator = $("#cap-view").kendoValidator().data("kendoValidator"), status = $(".status");
                 $("#save1").click(function () {
                     if (validator.validate()) {
                         status.text("Hooray! Your tickets has been booked!").addClass("valid");
-                        tabStrip.select(1)
+                        tabStrip.select(1);
+                        tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
                     } else {
                         status.text("Oops! There is invalid data in the form.").addClass("invalid");
 
                     }
                 });
-                $("#save2").click(function () { tabStrip.select(2) });
-                $("#save3").click(function () { tabStrip.select(3) });
+                $("#save2").click(function () { tabStrip.select(2); tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled")); });
+                $("#save3").click(function () { tabStrip.select(3); tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled")); });
                 $("#back1").click(function () { tabStrip.select(0) });
                 $("#back2").click(function () { tabStrip.select(1) });
                 $("#back3").click(function () { tabStrip.select(2) });
@@ -422,37 +453,48 @@
                             $("input[type='button']#btnFour").addClass('k-state-btnerror');
                             break;
                     }
-                    // access the selected item via e.item (HTMLElement)
                 };
                 var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
+
+                // Start Enable tabs region
+                var tab = tabStrip.select();
+                tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
+                tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
+                tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
+                // end Enable tabs Region
+
                 $("input[type='button']#btnOne").addClass("k-button rounded");
-                var crudServiceBaseUrl = "http://demos.kendoui.com/service",
-                dataSource = new kendo.data.DataSource({ transport: { read: { url: crudServiceBaseUrl + "/Products", dataType: "jsonp" },
-                    update: { url: crudServiceBaseUrl + "/Products/Update", dataType: "jsonp" },
-                    destroy: { url: crudServiceBaseUrl + "/Products/Destroy", dataType: "jsonp" },
-                    create: { url: crudServiceBaseUrl + "/Products/Create", dataType: "jsonp" },
-                    parameterMap: function (options, operation) { if (operation !== "read" && options.models) { return { models: kendo.stringify(options.models) }; } }
-                },
-                    batch: true,
-                    pageSize: 30,
-                    schema: {
-                        model:
-                            {
-                                id: "ProductID",
-                                fields: {
-                                    ProductID: { editable: false, nullable: true },
-                                    Name: { validation: { required: true} },
-                                    Url: { validation: { required: true, min: 1} }
-                                }
-                            }
-                    }
+
+                var additionalLinksViewModel = kendo.observable({
+                    Name: "",
+                    Url: "",
+                    addLink: function () {
+                        this.get("additionalLinks").push({ Name: this.get("Name"), Url: this.get("Url") });
+                    },
+                    deleteLink: function (e) {
+                        var additionalLink = e.data;
+                        var additionalLinks = this.get("additionalLinks");
+                        var index = additionalLinks.indexOf(additionalLink);
+                        additionalLinks.splice(index, 1);
+                    },
+                    additionalLinks: []
                 });
-                $("#grid").kendoGrid({
-                    dataSource: dataSource,
-                    pageable: false, height: 200,
-                    toolbar: ["create", "save", "cancel"],
-                    columns: ["Name", { field: "Url", width: "300px" }, { command: ["edit", "destroy"], title: " ", width: "190px"}], editable: "inline"
+                kendo.bind($("#grid"), additionalLinksViewModel);
+
+                var businessLocationsViewModel = kendo.observable({
+                    Location: "",
+                    addBusinessLocation: function () {
+                        this.get("businessLocations").push({ Location: this.get("Location") });
+                    },
+                    deleteBusinessLocation: function (e) {
+                        var businessLocation = e.data;
+                        var businessLocations = this.get("businessLocations");
+                        var index = businessLocations.indexOf(businessLocation);
+                        businessLocations.splice(index, 1);
+                    },
+                    businessLocations: []
                 });
+                kendo.bind($("#businessLocationGrid"), businessLocationsViewModel);
             });
         </script>
         <style scoped>
