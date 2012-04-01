@@ -57,8 +57,10 @@ public class NIOClient implements Runnable
 		SocketChannel socket = this.initiateConnection();
 
 		// Register the response handler
-		this.rspHandlers.put(socket, handler);
-
+		if (handler != null)
+		{	
+			this.rspHandlers.put(socket, handler);
+		}
 		// And queue the data we want written
 		synchronized (this.pendingData)
 		{

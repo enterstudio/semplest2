@@ -23,7 +23,7 @@ public class SEMplestService
 	private NIOResponseHandler handler = null;
 	private ServiceActiveMQConnection mq = null;
 	private ProtocolJSON json = new ProtocolJSON();
-	static final Logger logger = Logger.getLogger(SEMplestService.class);
+	private static final Logger logger = Logger.getLogger(SEMplestService.class);
 
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
@@ -112,7 +112,10 @@ public class SEMplestService
 			t.setDaemon(true);
 			t.start();
 			handler = new NIOResponseHandler();
-			
+			//add shutdown hook
+			ServiceShutdown shutdown = new ServiceShutdown(nioClient, connectionData.getServiceName(), connectionData.getServiceOffered());
+			Thread shutdownHook = new Thread(shutdown);
+			Runtime.getRuntime().addShutdownHook(shutdownHook);
 			// create the register packet
 			ProtocolSocketDataObject regdata = new ProtocolSocketDataObject();
 			regdata.setHeader(ProtocolJSON.SEMplest_REGISTER);
