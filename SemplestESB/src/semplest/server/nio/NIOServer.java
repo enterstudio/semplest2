@@ -173,7 +173,7 @@ public class NIOServer implements Runnable
 			String jsonStr = json.createJSONFromSocketDataObj(returndata);
 			byte[] returnData =ProtocolJSON.createBytePacketFromString(jsonStr);
 			send(socket,returnData);
-			
+			logger.info("Register " + clientServiceName);
 		}
 		else
 		// already registered
@@ -181,9 +181,30 @@ public class NIOServer implements Runnable
 			logger.info("Already Registered " + clientServiceName);
 		}
 
-		logger.info("Register " + clientServiceName);
+		
 	}
 
+	public void ShutdownFromClient(ProtocolSocketDataObject socketDataObject)
+	{
+		String client = socketDataObject.getclientServiceName();
+		logger.debug("Received Shutdown request from " + client);
+		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
+		if (serviceRegistrationMap.containsKey(client))
+		{
+			serviceRegistrationMap.remove(client);
+			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size() );
+			if (servicesList.contains(client))
+			{	
+				servicesList.remove(client);
+			}
+			logger.debug("Removed: " + client);
+		}
+		else
+		{
+			logger.debug(client + "not in registrationMap" );
+		}
+	}
 	public void ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
 	{
 		

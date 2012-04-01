@@ -40,6 +40,7 @@ public class ESBServer
 	private ActiveMQConnection MQConnection = null;
 	//servicesMap for each serviceOffered have list of serviceNames
 	private ConcurrentHashMap<String, Vector<String>> servicesMap = new ConcurrentHashMap<String, Vector<String>>();
+	//for each serviceName - serviceRegistration Data
 	private ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = new ConcurrentHashMap<String, ServiceRegistrationData>();
 	private ConcurrentHashMap<String, AtomicInteger> currentServiceIndexMap = new ConcurrentHashMap<String, AtomicInteger>();
 	//private AtomicInteger currentServiceIndex = new AtomicInteger(0);

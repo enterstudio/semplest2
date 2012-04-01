@@ -4,6 +4,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.util.log.Log;
 
 import semplest.server.ESB.ESBServer;
 import semplest.server.ESB.ServiceRegistrationData;
@@ -51,12 +52,7 @@ public class ServicePingHandler implements Runnable
 					/*
 					 * remove client
 					 */
-					logger.debug("Removing: " + client);
-					ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-					Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(serviceName).getServiceOffered());
-					serviceRegistrationMap.remove(client);
-					servicesList.remove(client);
-					logger.debug("Removed: " + client);
+					removeClient();
 					return;
 				}
 				else
@@ -68,9 +64,32 @@ public class ServicePingHandler implements Runnable
 			catch (InterruptedException e)
 			{
 				logger.debug("Ping Wait for Response error " + e.getMessage());
+				removeClient();
+				return;
 			}
 		}
 
+	}
+	private void removeClient()
+	{
+		logger.debug("Removing: " + client);
+		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
+		if (serviceRegistrationMap.containsKey(client))
+		{
+			serviceRegistrationMap.remove(client);
+			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size() );
+			if (servicesList.contains(client))
+			{	
+				servicesList.remove(client);
+			}
+			logger.debug("Removed: " + client);
+		}
+		else
+		{
+			logger.debug(client + "not in registrationMap" );
+		}
+		
 	}
 	@Override
 	public void run()

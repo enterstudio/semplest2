@@ -72,6 +72,10 @@ public class ProcessRequestWorker implements Runnable
 					{
 						dataEvent.server.ClientPing(dataEvent.socket, socketDataObject);
 					}
+					else if (typeRequest == ProtocolJSON.SEMplest_SHUTDOWN)
+					{
+						dataEvent.server.ShutdownFromClient(socketDataObject);
+					}
 					else
 					{
 						// Return to sender
