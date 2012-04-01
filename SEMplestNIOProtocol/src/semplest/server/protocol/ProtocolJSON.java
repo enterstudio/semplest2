@@ -14,6 +14,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 	public static final byte SEMplest_PING = 2;
 	public static final byte SEMplest_ERROR = 3;
 	public static final byte SEMplest_ACK = 4;
+	public static final byte SEMplest_SHUTDOWN = 5;
 	
 	public ProtocolJSON()
 	{
