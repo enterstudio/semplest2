@@ -145,6 +145,24 @@ public class ioUtils {
     } catch ( Exception e ){ e.printStackTrace();}
     return map; 
   }
+  
+  // Returns the dmoz descriptions as a Map<category><description> 
+  static HashMap<String,String> readDescs( String f){
+    HashMap<String,String> map = new HashMap<String,String>();
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      while(( line =  r.readLine()) != null ){
+        String[] cols = line.split(" : ");
+        if( cols.length >= 2 )
+          map.put( cols[0].trim(), cols[1].trim() );
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
+  }
+
 
   // read a matrix of numbers
   public static double[][] readMatrix(String file){
