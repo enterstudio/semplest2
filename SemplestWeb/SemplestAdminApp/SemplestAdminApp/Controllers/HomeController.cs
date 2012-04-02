@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
+
 namespace SemplestAdminApp.Controllers
 {
     public class HomeController : Controller
@@ -22,14 +23,14 @@ namespace SemplestAdminApp.Controllers
 
         public ActionResult GetUsers(string query)
         {
-            //var users = (from u in 
-            //             where u.Name.StartsWith(query)
-            //             orderby u.Name // optional but it'll look nicer 
-            //             select u.Name).Distinct().ToArray();
+  
+            string[] users = new string[] { "Elegant Details", "Flower Allie", "Flowers by Color", "Nature's Petals", "Nicole's Flowers", "Manik's Flowers", "Tudor's Flowers", "Andre's Petals", "Mark's Tulips" };
 
-            string[] users = new string[] { "Elegant Details","Flower Allie", "Flowers by Color" }; 
+            var quer = from u in users
+                       where u.ToLower().Contains(query.ToLower())
+                       select u;
 
-            return Json(users);
+            return Json(quer);
         } 
 
 
