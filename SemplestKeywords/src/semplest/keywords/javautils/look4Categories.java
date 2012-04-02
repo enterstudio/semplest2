@@ -18,7 +18,7 @@ import org.htmlparser.util.ParserException;
 public class look4Categories {
 
 	/**
-	 * This class will use dmoz search to get the categories for some keywords
+	 * This class will use dmoz search to get the categories for some keywords, generates a file with the categories
 	 * args[0] = input keywords file;
 	 * args[1] = report file; (optional)
 	 * @param args
@@ -52,10 +52,7 @@ public class look4Categories {
 		while ((strLine = br.readLine()) != null)   {
 				patternL.add(strLine);
 		}
-		
-		if(args.length==2){
-			
-		}
+
 		
 		for(String pattern:patternL){
 			categMap = new HashMap<String, Double>();
@@ -82,7 +79,7 @@ public class look4Categories {
 						if(catUtils.validcat(categories)){
 							if(categMap.containsKey(categories)){
 								value=(Double) categMap.get(categories);
-								value=value+1; //Set new score for category
+								value=value+new Double(1); //Set new score for category
 							} else{
 								value= new Double(results-numresults);
 							}

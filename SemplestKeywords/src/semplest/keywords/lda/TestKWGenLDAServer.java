@@ -490,10 +490,10 @@ public class TestKWGenLDAServer {
 		String url1 = scanUrl.nextLine(); 	    
 		System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
 		Scanner scanFile = new Scanner(System.in);
-		String userInfo1 = scanUrl.nextLine(); 
+		String userInfo1 = scanFile.nextLine(); 
 		System.out.println("Please, introduce weight for user input (number from 0 to 1)");
 		Scanner scanWeight = new Scanner(System.in);
-		String userWeight = scanUrl.nextLine(); 
+		String userWeight = scanWeight.nextLine(); 
 		//----------------------------------------------------------------------------
 		/*//-----------------------URL2--------------------------------------------------
 		System.out.println("Please, introduce your landing page for query 2 (type \"exit\" to close) :");

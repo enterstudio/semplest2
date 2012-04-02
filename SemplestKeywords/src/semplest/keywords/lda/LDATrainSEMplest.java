@@ -17,7 +17,7 @@ public class LDATrainSEMplest {
 	public static void main(String[] args) throws Exception {
 
 		//Files to store model and instances
-		File pipeIOModel= new File("traineDescAllbutR.modl");
+		File pipeIOModel= new File("trainetest.modl");
 		File pipeIOInstance= new File("traineDescAllbutR.inst");
 		
 		//Instance LDA Topic Modelling

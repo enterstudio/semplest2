@@ -331,6 +331,7 @@ public class MalletTopic {
 	}
 	//------------ Utility Methods-------------------------------------
 	
+	
 	public void CreateInstances(String[] directories) throws Exception {
 
         // Begin by importing documents from text to feature sequences
@@ -344,7 +345,15 @@ public class MalletTopic {
 	}
 	
 	public void CreateInstancesSEMplest(String[] directories) throws Exception {
-		// Creates Instances from a file in SEMplest format
+		// Creates Instances from a file in SEMplest format with file containing traning data in directories[0]
+        String file = "/semplest/data/dmoz/small/hCounts.txt";
+        if ( directories.length > 0 ) file = directories[0];
+        ArrayList<String> lines = ioUtils.readFile( file );
+        this.CreateInstancesSEMplest(lines);
+        
+	}
+	public void CreateInstancesSEMplest(ArrayList<String> lines){
+// Creates Instances from a file in SEMplest format
 		
         // Begin by importing documents from text to feature sequences
         ArrayList<Pipe> pipeList = this.initPipeList();
@@ -352,10 +361,6 @@ public class MalletTopic {
         int i=0;
 
         instances = new InstanceList (new SerialPipes(pipeList));
-        
-        String file = "/semplest/data/dmoz/small/hCounts.txt";
-        if ( directories.length > 0 ) file = directories[0];
-        ArrayList<String> lines = ioUtils.readFile( file );
         System.out.println("Number of lines: "+lines.size());
         for( String line : lines ){
         	System.out.println("Adding Category " + i);
@@ -363,7 +368,6 @@ public class MalletTopic {
         	instances.addThruPipe(new Instance(tokens.get(2),tokens.get(0),tokens.get(1),null));
         	i++;
         }
-        
 	}
 	/*
 	public void CreateInstancesSEMplestCache(String[] directories) throws Exception {
