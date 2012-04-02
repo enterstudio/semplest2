@@ -1,0 +1,17 @@
+﻿@model SemplestWebApp.Models.Address
+<div id="businessLocationGrid">
+    <table>
+        <tr>
+            <td>
+                <textarea id="Address1" name="Address1" cols="20" rows="3" class="k-textbox1"
+                    placeholder="Enter name" data-bind="value: Location"></textarea>
+            </td>
+            <td>
+                <button data-bind="click: addBusinessLocation" type="button" class="k-button">
+                    <span class="k-add k-icon"></span>Add</button>
+            </td>
+        </tr>
+        <tbody data-template="businessLocationrow-template" data-bind="source: businessLocations">
+        </tbody>
+    </table>
+</div>

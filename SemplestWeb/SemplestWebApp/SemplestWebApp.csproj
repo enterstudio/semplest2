@@ -42,6 +42,7 @@
       <HintPath>..\packages\KendoGridBinder.1.3\lib\KendoGridBinder.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Practices.EnterpriseLibrary.Logging, Version=5.0.414.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
@@ -79,8 +80,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Areas\Campign\CampignAreaRegistration.cs" />
-    <Compile Include="Areas\Campign\Controllers\CampignController.cs" />
+    <Compile Include="Areas\Campaign\CampignAreaRegistration.cs" />
+    <Compile Include="Areas\Campaign\Controllers\CampaignController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\EntityController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
@@ -180,7 +181,7 @@
   <ItemGroup>
     <Content Include="Content\example.css" />
     <Content Include="Content\kendo.common.min.css" />
-    <Content Include="Content\kendo.dataviz.min.css" />
+    <Content Include="Areas\Campaign\Views\Shared\Editor Templates\kendo.dataviz.min.css" />
     <Content Include="Content\kendo.metro.min.css" />
     <Content Include="Content\Metro\editor.png" />
     <Content Include="Content\Metro\imagebrowser.png" />
@@ -249,14 +250,13 @@
     <Content Include="Views\Home\Contact.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Campign\Views\Web.config" />
+    <Content Include="Areas\Campaign\Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Campign\Models\" />
-    <Folder Include="Areas\Campign\Views\Shared\" />
+    <Folder Include="Areas\Campaign\Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Areas\Campign\Views\Campign\CampignSetup.cshtml" />
+    <Content Include="Areas\Campaign\Views\Campaign\CampaignSetup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="Models\SemplestModel.edmx">
@@ -265,6 +265,7 @@
     </EntityDeploy>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Areas\Campaign\Views\Shared\Editor Templates\Address.cshtml" />
     <None Include="Models\Model1.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Model1.Context.cs</LastGenOutput>

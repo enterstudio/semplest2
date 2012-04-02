@@ -10,6 +10,7 @@ namespace SemplestWebApp.Models
     {
         public CampaignSetupModel()
         {
+            Addresses = new List<Address> { new Address { Address1 = "" } };
         }
 
         //[Required]
@@ -22,6 +23,9 @@ namespace SemplestWebApp.Models
         public bool Google { get; set; }
         public bool Yahoo { get; set; }
         public bool Bing { get; set; }
+
+        public List<Address> Addresses { get; set; }
+
         public double Proximity { get; set; }
 
         public string Url { get; set; }
