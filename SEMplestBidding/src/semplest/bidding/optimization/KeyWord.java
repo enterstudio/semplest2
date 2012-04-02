@@ -1,5 +1,9 @@
 package semplest.bidding.optimization;
 
+import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+import org.apache.commons.math3.optimization.fitting.CurveFitter;
+import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+
 import flanagan.plot.PlotGraph;
 import semplest.bidding.estimation.*;
 
@@ -16,12 +20,14 @@ public class KeyWord implements KeyWordInterface {
 	private double [] ClickParams = null; 
 	private double [] CPCParams = null; 
 	private double [] DCostParams = null; 
+	private double [] DCostParams2 = null; 
+	private double [] ClickParams2 = null; 
 
 	
 	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
 		this.name=name;
 		this.score=score;
-//		this.bid=bid;
+		this.bid=bid;
 		
 		
 		for(int i=0; i<bid.length; i++){
@@ -32,11 +38,32 @@ public class KeyWord implements KeyWordInterface {
 				break;
 			}
 		}
-		
+				
 		
 //		CPCParams=estimateModelParams(CPC, true);
 		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
+		
+		CurveFitter fitter = new CurveFitter(new LevenbergMarquardtOptimizer());
+		for(int i=0; i<bid.length; i++){
+			if(bid[i]>minBid){
+				fitter.addObservedPoint(bid[i],DCost[i]);
+			}
+		}
+		double[] initialGuess = {0.5, 2.0, 0.5};
+		initialGuess[2]=DCost[DCost.length-1];
+		ParametricUnivariateFunction f = new Weibull();
+		DCostParams2 = fitter.fit(f, initialGuess);
+		fitter.clearObservations();
+		for(int i=0; i<bid.length; i++){
+			if(bid[i]>minBid){
+				fitter.addObservedPoint(bid[i],Clicks[i]);
+			}
+		}
+		initialGuess[2]=DCost[DCost.length-1];
+		ClickParams2 = fitter.fit(f, initialGuess);
+		
+		
 
 	}
 	
