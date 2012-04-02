@@ -23,5 +23,6 @@
 	<classpathentry kind="lib" path="lib/scala-library.jar"/>
 	<classpathentry kind="lib" path="lib/crawler.jar"/>
 	<classpathentry kind="lib" path="lib/SemplestMalletCache.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
