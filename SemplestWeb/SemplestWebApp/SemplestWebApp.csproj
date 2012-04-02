@@ -224,7 +224,9 @@
     <Content Include="Scripts\kendo.all.min.js" />
     <Content Include="Scripts\pretty.js" />
     <Content Include="Services\SemplestDataService.svc" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
