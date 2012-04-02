@@ -14,16 +14,28 @@
 
 <h2>User Account Search:</h2>
 
+<input type="text" id="user" />
+<script type="text/jscript">
+$("input#user").autocomplete({ 
+    source: function (request, response) { 
+        // define a function to call your Action (assuming UserController) 
+        $.ajax({ 
+            url: '/home/GetUsers', type: "POST", dataType: "json", 
+ 
+            // query will be the param used by your action method 
+            data: { query: request.term }, 
+            success: function (data) { 
+                response($.map(data, function (item) { 
+                    return { label: item, value: item }; 
+                })) 
+            } 
+        }) 
+    }, 
+    minLength: 1, // require at least one character from the user 
+});  
 
-<select>
-   <option value="Elegant Details">Elegant Details</option>
-   <option value="Flower Allie">Flower Allie</option>
-   <option value="Flowers by Color">Flowers by Color</option>
-   <option value="Nature's Petals">Nature's Petals</option>
-   <option value="Nicole's Flowers">Nicole's Flowers</option>
- </select> 
 
-
+</script>
 
 <br />
 <br />
