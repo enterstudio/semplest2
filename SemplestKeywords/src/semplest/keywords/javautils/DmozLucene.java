@@ -33,8 +33,8 @@ final static String dfile = "/semplest/data/dmoz/all/all.descs";
   Directory index;
 
   DmozLucene(){
-    // 0. Specify the analyzer for tokenizing text.
-    //    The same analyzer should be used for indexing and searching
+    // Specify the analyzer for tokenizing text.
+    // (The same analyzer should be used for indexing and searching)
     try {
       analyzer = new StandardAnalyzer(Version.LUCENE_35);
 
@@ -50,6 +50,7 @@ final static String dfile = "/semplest/data/dmoz/all/all.descs";
   }
 
   // --------
+  // add the description data to the database
   void add( String cat, String desc ){
     try {
       Document doc = new Document();
