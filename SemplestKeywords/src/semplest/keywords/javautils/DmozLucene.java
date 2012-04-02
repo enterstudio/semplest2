@@ -112,7 +112,7 @@ final static String dfile = "/semplest/data/dmoz/all/all.descs";
       while( true ){
         c.printf(" > ");
         String q = c.readLine();
-        if( q.length > 5 ) {
+        if( q.length() > 5 ) {
           String[] res = dl.search( q );
           for( String re : res )
             c.printf("%s\n", re );
