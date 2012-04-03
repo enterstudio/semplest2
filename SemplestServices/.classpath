@@ -33,5 +33,6 @@
 	<classpathentry kind="lib" path="lib/adwords-api-8.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestKeywords"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
