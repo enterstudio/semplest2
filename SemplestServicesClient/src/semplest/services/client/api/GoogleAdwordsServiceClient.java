@@ -3,8 +3,6 @@ package semplest.services.client.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
@@ -27,18 +25,29 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
+public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
-	private static String timeoutMS = "10000";
+	private String timeoutMS = "10000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceClient.class);
+	
+	private final String baseurl;
+	
+	public GoogleAdwordsServiceClient(String baseurl)
+	{
+		if (baseurl == null)
+		{
+			this.baseurl = BASEURLTEST;
+		}
+		else
+		{
+			this.baseurl = baseurl;
+		}
+	}
 
 	/**
 	 * @param args
@@ -58,7 +67,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 
 		try
 		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient();
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
 
 			
 			
@@ -153,6 +162,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		// logger.debug("Campaign=" + c.get("value"));
 
 	}
+	/*
 	private String runMethod(String baseURL, String methodName, String jsonStr)
 	{
 		Client client = Client.create();
@@ -164,6 +174,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		WebResource webResource = client.resource(baseURL);
 		return webResource.queryParams(queryParams).get(String.class);
 	}
+	*/
 
 	/*
 	 * Campaign
@@ -179,7 +190,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("descriptiveName", descriptiveName);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "CreateOneAccountService", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "CreateOneAccountService", json, timeoutMS);
 		return gson.fromJson(returnData, Account.class);
 	}
 
@@ -191,7 +202,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "deleteCampaign", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "deleteCampaign", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -206,7 +217,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroAmount()));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "CreateOneCampaignForAccount", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "CreateOneCampaignForAccount", json,timeoutMS);
 		return gson.fromJson(returnData, Campaign.class);
 	}
 	/*
@@ -222,7 +233,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("status", status.getValue());
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "AddAdGroup", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "AddAdGroup", json,timeoutMS);
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
@@ -239,7 +250,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "addTextAd", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "addTextAd", json,timeoutMS);
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
@@ -288,7 +299,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("includeDeleted",  String.valueOf(includeDeleted));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "getAdGroupsByCampaignId", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getAdGroupsByCampaignId", json,timeoutMS);
 		return gson.fromJson(returnData, AdGroup[].class);
 	}
 	
@@ -306,7 +317,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "getAllBiddableAdGroupCriteria", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getAllBiddableAdGroupCriteria", json,timeoutMS);
 		return gson.fromJson(returnData,  GoogleBidObject[].class);
 	}
 	@Override
@@ -317,7 +328,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "getAllAdGroupKeywords", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getAllAdGroupKeywords", json,timeoutMS);
 		return gson.fromJson(returnData, String[].class);
 	}
 	@Override
@@ -335,7 +346,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("AdID", String.valueOf(AdID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "deleteAD", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "deleteAD", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -346,7 +357,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "deleteAdGroup", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "deleteAdGroup", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	
@@ -359,7 +370,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("numberResults",String.valueOf(numberResults));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywords", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "GetRelatedKeywords", json,timeoutMS);
 		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
 	
@@ -373,7 +384,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("numberResults",String.valueOf(numberResults));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "GetRelatedKeywordsForURL", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "GetRelatedKeywordsForURL", json,timeoutMS);
 		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
 	@Override
@@ -391,7 +402,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, " updateAD", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, " updateAD", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -403,7 +414,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("status", status.getValue());
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "changeCampaignStatus", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "changeCampaignStatus", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -415,7 +426,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroAmount()));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "changeCampaignBudget", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "changeCampaignBudget", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -426,7 +437,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("includeDeleted", String.valueOf(includeDeleted));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		
-		String returnData = runMethod(BASEURLTEST, "getCampaignsByAccountId", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getCampaignsByAccountId", json,timeoutMS);
 		System.out.println(returnData);
 		return gson.fromJson(returnData, ArrayList.class);
 	}
@@ -439,7 +450,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("newName", newName);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "UpdateCampaignName", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "UpdateCampaignName", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
@@ -460,7 +471,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		}
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "addKeyWordToAdGroup", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "addKeyWordToAdGroup", json,timeoutMS);
 		System.out.println(returnData);
 		return gson.fromJson(returnData, GoogleBidObject.class);
 	}
@@ -474,7 +485,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("microBidAmount",String.valueOf(microBidAmount));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "setBidForKeyWord", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "setBidForKeyWord", json,timeoutMS);
 		return gson.fromJson(returnData, GoogleBidObject.class);
 	}
 	@Override
@@ -488,7 +499,7 @@ public class GoogleAdwordsServiceClient implements GoogleAdwordsServiceInterface
 		jsonHash.put("bidLevels",bidLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, "getTrafficEstimationForOneKeyword", json);
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getTrafficEstimationForOneKeyword", json,timeoutMS);
 		return gson.fromJson(returnData,GoogleTrafficEstimatorObject.class);
 	}
 	@Override

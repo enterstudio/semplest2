@@ -33,7 +33,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 
-public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
+public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterServiceInterface
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
@@ -41,7 +41,7 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
 	
-	private final String baseURL;
+	private final String baseurl;
 	
 	public static void main(String[] args)
 	{
@@ -59,10 +59,18 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 		}
 
 	}
-	public MSNAdcenterServiceClient(String baseURL)
+	public MSNAdcenterServiceClient(String baseurl)
 	{
-		this.baseURL = baseURL;
+		if (baseurl == null)
+		{
+			this.baseurl = BASEURLTEST;
+		}
+		else
+		{
+			this.baseurl = baseurl;
+		}
 	}
+	/*
 	private String runMethod(String methodName, String jsonStr)
 	{
 		Client client = Client.create();
@@ -74,6 +82,7 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 		WebResource webResource = client.resource(baseURL);
 		return   webResource.queryParams(queryParams).get(String.class);
 	}
+	*/
 	@Override
 	public boolean isProduction()
 	{
@@ -190,7 +199,7 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod("getAdGroupsByCampaignId", json);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupsByCampaignId", json, null);
 		AdGroup[] adgroups = gson.fromJson(returnData, AdGroup[].class);
 		for (int i = 0; i < adgroups.length; i++)
 		{
