@@ -84,27 +84,39 @@ final static String dfile = "/semplest/data/dmoz/all/all.descs";
     // when no field is explicitly specified in the query.
     String[] res = new String[0];
     try {
-      Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
-
-      // Search
-      int hitsPerPage = 10;
-      IndexSearcher searcher = new IndexSearcher(index, true);
-      TopScoreDocCollector collector = TopScoreDocCollector.
-        create(hitsPerPage, true);
-      searcher.search(qp, collector);
-      ScoreDoc[] hits = collector.topDocs().scoreDocs;
-
-      res = new String[hits.length];
-      for(int i=0;i<hits.length;++i) {
-        int docId = hits[i].doc;
-        Document d = searcher.doc(docId);
-        res[i] = d.get("cat");
-      }
-      searcher.close();
+    	res = search(qs, 10);
     } catch (Exception e ){
       e.printStackTrace();
     }
     return res;
+  }
+  
+  public String[] search(String qs, int hitsPerPage){
+	// Query returning any number of results.the "desc" arg specifies the default field to use
+	// when no field is explicitly specified in the query.
+	  String[] res = new String[0];
+	    try {
+	      Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
+
+	      // Search
+
+	      IndexSearcher searcher = new IndexSearcher(index, true);
+	      TopScoreDocCollector collector = TopScoreDocCollector.
+	        create(hitsPerPage, true);
+	      searcher.search(qp, collector);
+	      ScoreDoc[] hits = collector.topDocs().scoreDocs;
+
+	      res = new String[hits.length];
+	      for(int i=0;i<hits.length;++i) {
+	        int docId = hits[i].doc;
+	        Document d = searcher.doc(docId);
+	        res[i] = d.get("cat");
+	      }
+	      searcher.close();
+	    } catch (Exception e ){
+	      e.printStackTrace();
+	    }
+	    return res;
   }
 
   // ---------------------

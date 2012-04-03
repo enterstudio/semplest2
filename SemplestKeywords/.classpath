@@ -24,5 +24,6 @@
 	<classpathentry kind="lib" path="lib/crawler.jar"/>
 	<classpathentry kind="lib" path="lib/SemplestMalletCache.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
