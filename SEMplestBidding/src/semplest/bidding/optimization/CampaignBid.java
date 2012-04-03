@@ -1,12 +1,13 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
-import java.util.Random;
+//import java.util.Random;
 
-import org.apache.commons.math3.analysis.solvers.NewtonSolver;
-import org.apache.commons.math3.optimization.GoalType;
-import org.apache.commons.math3.optimization.univariate.BrentOptimizer;
-import org.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
+//import org.apache.commons.math3.analysis.solvers.NewtonSolver;
+//import org.apache.commons.math3.optimization.GoalType;
+//import org.apache.commons.math3.optimization.univariate.BrentOptimizer;
+//import org.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
+
 //import org.apache.commons.math3.optimization.general.ConjugateGradientFormula;
 //import org.apache.commons.math3.optimization.general.NonLinearConjugateGradientOptimizer;
 //import org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer;
@@ -17,7 +18,7 @@ import flanagan.math.Minimisation;
 import semplest.bidding.estimation.ParametricFunction;
 import semplest.bidding.estimation.TruncatedSmoothSCurve;
 //import semplest.bidding.estimation.WeibullCurve;
-import semplest.bidding.estimation.Erf;
+//import semplest.bidding.estimation.Erf;
 
 public class CampaignBid {
 	
@@ -36,27 +37,27 @@ public class CampaignBid {
 		wordList = new ArrayList<KeyWordInterface>();
 	}
 	
-	private double computeOptimumBidForFixedLagrangleMult(int i, double k){
-		KeyWordInterface key = wordList.get(i);
-		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getQualityScore(), key.getMinBid(), k);
-		
-//		int noStart = 5;
-//		RandomGenerator r = new RandomGenerator();
-//		UnivariateMultiStartOptimizer<LagrangeBidFunction> optim = new UnivariateMultiStartOptimizer<LagrangeBidFunction>(noStart, new Random());
-		
-//		NewtonSolver solver = new NewtonSolver();
-//		int maxIter =100;
+//	private double computeOptimumBidForFixedLagrangleMult(int i, double k){
+//		KeyWordInterface key = wordList.get(i);
+//		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getQualityScore(), key.getMinBid(), k);
+//		
+////		int noStart = 5;
+////		RandomGenerator r = new RandomGenerator();
+////		UnivariateMultiStartOptimizer<LagrangeBidFunction> optim = new UnivariateMultiStartOptimizer<LagrangeBidFunction>(noStart, new Random());
+//		
+////		NewtonSolver solver = new NewtonSolver();
+////		int maxIter =100;
+////		double maxBid = 3.0;
+////		return solver.solve(maxIter, fL, key.getMinBid(), maxBid);
+//		
+//		int maxIter =1000;
 //		double maxBid = 3.0;
-//		return solver.solve(maxIter, fL, key.getMinBid(), maxBid);
-		
-		int maxIter =1000;
-		double maxBid = 3.0;
-		BrentOptimizer optim = new BrentOptimizer(1e-6,1e-6);
-		UnivariatePointValuePair output = optim.optimize(maxIter, fL, GoalType.MAXIMIZE, key.getMinBid(), maxBid, maxBid-0.01);
-		return output.getPoint();
-		
-		
-	}
+//		BrentOptimizer optim = new BrentOptimizer(1e-6,1e-6);
+//		UnivariatePointValuePair output = optim.optimize(maxIter, fL, GoalType.MAXIMIZE, key.getMinBid(), maxBid, maxBid-0.01);
+//		return output.getPoint();
+//		
+//		
+//	}
 	
 	private double computeOptimumBidForConst(int i, double k){
 		
@@ -131,6 +132,7 @@ public class CampaignBid {
 		double multLagrange = 0.01;
 		boolean highCost=true;
 		bids = new double[wordList.size()];
+		double prevCost=Double.MIN_VALUE;
 		
 //		ParametricFunction f = new WeibullCurve();
 //		ParametricFunction f = new Erf();
@@ -140,10 +142,11 @@ public class CampaignBid {
 		KeyWordInterface key = null;
 		
 		int j=0;
-		while(j<20){
-//		while(true){
+//		while(j<20){
+		while(true){
 			for(int i=0; i<bids.length;i++){
-				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
+//				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
+				bids[i]=computeOptimumBidForConst(i,multLagrange);
 //				bids[i]=computeOptimumBidForFixedLagrangleMult(i,multLagrange);
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
@@ -153,10 +156,14 @@ public class CampaignBid {
 			if (j>0){ 
 				if (expectedCost<dailyBudget && highCost){
 					stepSize=stepSize*dampingFactor;
-					System.out.println("Step-size reduced!");
+//					System.out.println("Step-size reduced!");
 				} else if (expectedCost>dailyBudget && (!highCost)){
 					stepSize=stepSize*dampingFactor;
+//					System.out.println("Step-size reduced!");
 				}
+				
+				if(Math.abs(expectedCost-prevCost) < 1e-6)
+					break;
 			}
 			
 			if (expectedCost<dailyBudget){
@@ -174,6 +181,8 @@ public class CampaignBid {
 			} // if(Math.abs(expectedCost-dailyBudget) < toldailyBudget)
 			j++;
 			
+			prevCost=expectedCost;
+			
 		} // while(true)
 		
 
@@ -181,11 +190,15 @@ public class CampaignBid {
 			key=wordList.get(i);
 			input[0]=bids[i];
 			f.setMinBid(key.getMinBid());
-			System.out.print(key.getKeyWord()+":: ");
-			System.out.format("%d :: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.2f\n", i+1, bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
-
-
+//			System.out.print(key.getKeyWord()+":: ");
+			System.out.format("%2d :: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
+					i+1, bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
+					key.getQualityScore()*f.function(input, key.getClickInfo()),
+					f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
+//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
 		} // for(int i=0; i<bids.length;i++)
+		System.out.format("Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f, expected CPC: %.2f \n",
+				expectedCost,expectedClicks,expectedQualityMetric, expectedCost/expectedClicks);
 		
 		
 	} // public void optimizeBids()

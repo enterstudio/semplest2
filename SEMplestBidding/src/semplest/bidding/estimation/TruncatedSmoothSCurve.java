@@ -10,7 +10,7 @@ package semplest.bidding.estimation;
 	
 	public TruncatedSmoothSCurve(){
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid;//+0.1;
+		TruncatedParameters[0]=minBid+0.006;
 		TruncatedParameters[1]=0.002;
 	}
 	
@@ -18,7 +18,7 @@ package semplest.bidding.estimation;
 		
 		this.minBid = minBid;
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid;//+0.1;
+		TruncatedParameters[0]=minBid+0.006;
 		TruncatedParameters[1]=0.002;
 	}
 	
@@ -26,7 +26,7 @@ package semplest.bidding.estimation;
 	@Override
 	public void setMinBid(double minBid){
 		this.minBid = minBid;
-		TruncatedParameters[0]=minBid;//+0.1;
+		TruncatedParameters[0]=minBid+0.006;
 		TruncatedParameters[1]=0.002;
 	}
 	
