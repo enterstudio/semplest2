@@ -4,44 +4,44 @@
     ViewBag.Title = "Index";
 }
 
-<h1>
+<h2>
     Create New Client Account:
-</h1>
+</h2>
 
-<h2>Super Parent Name:</h2><input type="text" /> <br />
+<label>Super Parent Name:<input type="text" /></label> <br />
 
-<h2>Parent Name:</h2><input type="text" /> <br />
+<label>Parent Name:<input type="text" /></label> <br />
 
-<h2>Contact Name:</h2> <br />
-<h2>First Name:</h2><input type="text" /> <br />
-<h2>Last Name:</h2><input type="text" /> <br />
-<h2>Phone:</h2><input type="text" value="(  )" /><input type="text" /> <br />
-<h2>Email:</h2><input type="text" /> <br />
-<h2>Set up Date:</h2><input type="text" /> <br />
+<h3>Contact Name:</h3> <br />
+<label>First Name:<br /><input type="text" /></label> <br />
+<label>Last Name:<br /><input type="text" /></label> <br />
+<label>Phone:</h3><input type="text" value="(  )" /><input type="text" /></label> <br />
+<label>Email:<input type="text" /></label> <br />
+<label>Set up Date:</h3><input type="text" /></label> <br />
 
-<label>Rep Name/ID:</label> 
+<label>Rep Name/ID:
     <select>
     <option value="Rep1">Rep1</option>
     <option value="Rep2">Rep2</option>
     <option value="Rep3">Rep3</option>
     <option value="Rep4">Rep4</option>
-</select> <br />
+</select></label>  <br />
 
 
-<label>ASR Name/ID:</label> 
+<label>ASR Name/ID: 
     <select>
     <option value="ASR1">ASR1</option>
     <option value="ASR2">ASR2</option>
     <option value="ASR3">ASR3</option>
     <option value="ASR4">ASR4</option>
-</select> <br />
+</select></label> <br />
 
 
-<h2>Billing Address:</h2><input type="text" /> <input type="text" value="Address 2" /> <br />
-<h2>City:</h2><input type="text" /> <br />
+<label>Billing Address:<input type="text" /> <input type="text" value="Address 2" /></label> <br />
+<label>City:<input type="text" /></label> <br />
 
 
-<h2>State:</h2>
+<label>State:
 <select name="state">
 	<option value="AL">AL</option>
 	<option value="AK">AK</option>
@@ -95,13 +95,77 @@
 	<option value="WI">WI</option>
 	<option value="WY">WY</option>
 </select>
+</label>
+<br />
 
-<h2>Zip:</h2><input type="text" /> <br />
+<label>Zip:<input type="text" /></label> <br /><br /><br />
 
-<h2>Billing:</h2><br />
-<input type="checkbox" id="check1"  title="Invoice" /><input type="checkbox" id="check2"  title="Credit Card" />
 
-<h2>Enter Your Creditcard Information:</h2>
+<h3>Billing:</h3><br />
+<input type="checkbox" id="check1"  title="Invoice" value="Invoice" >Invoice</input><input type="checkbox" id="check2"  title="Credit Card" value="Credit Card"> Credit Card</input> 
+
+<h3>Enter Your Creditcard Information:</h3>
 <label>Card number <input type="text" /></label> 
 <label>Name on card <input type="text" /></label> 
-<label>Expiration</label>
+<label>Expiration date:
+<br /><select name="Month">
+	<option value="1">1</option>
+	<option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    </select>
+
+    <select name="Year">
+	<option value="2012">2012</option>
+	<option value="2013">2013</option>
+    <option value="2014">2014</option>
+    <option value="2015">2015</option>
+    <option value="2016">2016</option>
+    <option value="2017">2017</option>
+    <option value="2018">2018</option>
+    <option value="2019">2019</option>
+    <option value="2020">2020</option>
+    <option value="2021">2021</option>
+    </select>
+
+    </label>
+
+<br />
+<br />
+<br />
+<br />
+
+<label>Logo Upload:  <a href="url">Browse</a></label> <br /><br />
+
+
+<label>Style Sheet Edits:<input type="text" /></label> <br /><br /><br />
+
+<label>Type Of Accounts:
+<br />
+<input type="checkbox" id="Parent Pay/Parent Create"  >Invoice</input><br />
+<input type="checkbox" id="check1"  >Parent Pay/Child Create</input><br />
+<input type="checkbox" id="check1"  >Child Pay/Child Create</input><br />
+</label>
+<br />
+<br />
+<br />
+
+
+<input type="button"  value="Create Account" > </input>
+<br />
+<br />
+<br />
+
+
+
+
+
+
