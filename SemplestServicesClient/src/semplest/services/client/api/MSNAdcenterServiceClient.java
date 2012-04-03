@@ -49,7 +49,8 @@ public class MSNAdcenterServiceClient implements MsnAdcenterServiceInterface
 		{
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
-			test.getAdGroupsByCampaignId(800609L, 50346956L);
+			AdGroup[] res = test.getAdGroupsByCampaignId(800609L, 50346956L);
+			System.out.println(res[0].getName());
 		}
 		catch (Exception e)
 		{
