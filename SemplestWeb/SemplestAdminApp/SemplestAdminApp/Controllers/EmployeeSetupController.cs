@@ -4,6 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SemplestAdminApp.Models;
+using System.Data.Entity.Validation;
+
+
 
 namespace SemplestAdminApp.Controllers
 {
