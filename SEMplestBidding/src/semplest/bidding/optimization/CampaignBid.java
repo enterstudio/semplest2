@@ -134,7 +134,8 @@ public class CampaignBid {
 		while(j<20){
 //		while(true){
 			for(int i=0; i<bids.length;i++){
-				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
+//				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
+				bids[i]=computeOptimumBidForFixedLagrangleMult(i,multLagrange);
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedValues();

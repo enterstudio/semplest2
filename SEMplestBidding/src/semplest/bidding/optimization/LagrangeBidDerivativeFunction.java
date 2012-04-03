@@ -15,7 +15,7 @@ public class LagrangeBidDerivativeFunction implements UnivariateFunction {
 	private Weibull wf = null;
 	
 	
-	private LagrangeBidDerivativeFunction(double [] ClickParams, double [] DCostParams, double score, double minBid, double multLagrange){
+	public LagrangeBidDerivativeFunction(double [] ClickParams, double [] DCostParams, double score, double minBid, double multLagrange){
 		this.ClickParams = ClickParams;
 		this.DCostParams = DCostParams;
 		this.score = score;
@@ -26,8 +26,7 @@ public class LagrangeBidDerivativeFunction implements UnivariateFunction {
 	// this method returns the derivative of the bid optimization function
 	@Override
 	public double value(double b) {
-		// TODO Auto-generated method stub
-		return 0;
+		return score*wf.derivative(b, ClickParams) - multLagrange*wf.derivative(b, DCostParams);
 	}
 
 }

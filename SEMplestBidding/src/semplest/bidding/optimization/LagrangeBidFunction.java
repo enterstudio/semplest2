@@ -33,7 +33,7 @@ public class LagrangeBidFunction implements UnivariateFunction, DifferentiableUn
 
 	@Override
 	public UnivariateFunction derivative() {
-		return null;
+		return new LagrangeBidDerivativeFunction(ClickParams, DCostParams, score, minBid, multLagrange);
 	}
 
 
