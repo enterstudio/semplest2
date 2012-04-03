@@ -162,19 +162,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		// logger.debug("Campaign=" + c.get("value"));
 
 	}
-	/*
-	private String runMethod(String baseURL, String methodName, String jsonStr)
-	{
-		Client client = Client.create();
-		MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-		queryParams.add("jsonStr", jsonStr);
-		queryParams.add("service", SERVICEOFFERED);
-		queryParams.add("method", methodName);
-		queryParams.add("timeout", timeoutMS);
-		WebResource webResource = client.resource(baseURL);
-		return webResource.queryParams(queryParams).get(String.class);
-	}
-	*/
+	
 
 	/*
 	 * Campaign
