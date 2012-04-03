@@ -1,6 +1,13 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
+import java.util.Random;
+
+import org.apache.commons.math3.analysis.solvers.NewtonSolver;
+//import org.apache.commons.math3.optimization.general.ConjugateGradientFormula;
+//import org.apache.commons.math3.optimization.general.NonLinearConjugateGradientOptimizer;
+//import org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer;
+//import org.apache.commons.math3.random.RandomGenerator;
 
 import flanagan.math.Minimisation;
 
@@ -24,6 +31,22 @@ public class CampaignBid {
 	
 	public CampaignBid(){
 		wordList = new ArrayList<KeyWordInterface>();
+	}
+	
+	private double computeOptimumBidForFixedLagrangleMult(int i, double k){
+		KeyWordInterface key = wordList.get(i);
+		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getMinBid(), k);
+		
+//		int noStart = 5;
+//		RandomGenerator r = new RandomGenerator();
+//		UnivariateMultiStartOptimizer<LagrangeBidFunction> optim = new UnivariateMultiStartOptimizer<LagrangeBidFunction>(noStart, new Random());
+		
+		NewtonSolver solver = new NewtonSolver();
+		
+		int iter =1000;
+		double maxBid = 5.0;
+		return solver.solve(iter, fL, key.getMinBid(), maxBid);
+		
 	}
 	
 	private double computeOptimumBidForConst(int i, double k){

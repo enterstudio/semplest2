@@ -54,6 +54,9 @@ public class KeyWord implements KeyWordInterface {
 		initialGuess[2]=DCost[DCost.length-1];
 		ParametricUnivariateFunction f = new Weibull();
 		DCostParams2 = fitter.fit(f, initialGuess);
+		
+		
+		
 		fitter.clearObservations();
 		for(int i=0; i<bid.length; i++){
 			if(bid[i]>minBid){
@@ -62,7 +65,6 @@ public class KeyWord implements KeyWordInterface {
 		}
 		initialGuess[2]=DCost[DCost.length-1];
 		ClickParams2 = fitter.fit(f, initialGuess);
-		
 		
 
 	}
