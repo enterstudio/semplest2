@@ -43,7 +43,7 @@ public class look4CategoriesFromFile {
 		int topresults;
 		//File containing sorted words for each category
 		String wordsFile = "/semplest/data/dmoz/all/hCounts.txt.tw";
-		String trainCategFile ="/semplest/data/dmoz/allbutr/hCounts.txt";
+		String trainCategFile ="/semplest/data/dmoz/all/hCounts.txt.f";
 		DataInputStream in;
 		BufferedReader br;
 		String strLine;
