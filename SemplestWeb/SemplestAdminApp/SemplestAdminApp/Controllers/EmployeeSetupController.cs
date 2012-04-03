@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SemplestAdminApp.Models;
 
 namespace SemplestAdminApp.Controllers
 {
@@ -16,5 +17,24 @@ namespace SemplestAdminApp.Controllers
             return View();
         }
 
+
+        public ActionResult Edit()
+        {
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult Edit(User model)
+        {
+            using (SemplestEntities dbContext = new SemplestEntities())
+            {
+                dbContext.Users.Add(model);
+                dbContext.SaveChanges();
+            }
+
+            return View(model);
+
+        }
     }
 }
