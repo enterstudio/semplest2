@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.commons.math3.analysis.solvers.NewtonSolver;
+import org.apache.commons.math3.optimization.GoalType;
+import org.apache.commons.math3.optimization.univariate.BrentOptimizer;
+import org.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
 //import org.apache.commons.math3.optimization.general.ConjugateGradientFormula;
 //import org.apache.commons.math3.optimization.general.NonLinearConjugateGradientOptimizer;
 //import org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer;
@@ -41,11 +44,17 @@ public class CampaignBid {
 //		RandomGenerator r = new RandomGenerator();
 //		UnivariateMultiStartOptimizer<LagrangeBidFunction> optim = new UnivariateMultiStartOptimizer<LagrangeBidFunction>(noStart, new Random());
 		
-		NewtonSolver solver = new NewtonSolver();
+//		NewtonSolver solver = new NewtonSolver();
+//		int maxIter =100;
+//		double maxBid = 3.0;
+//		return solver.solve(maxIter, fL, key.getMinBid(), maxBid);
 		
-		int iter =1000;
-		double maxBid = 5.0;
-		return solver.solve(iter, fL, key.getMinBid(), maxBid);
+		int maxIter =1000;
+		double maxBid = 3.0;
+		BrentOptimizer optim = new BrentOptimizer(1e-6,1e-6);
+		UnivariatePointValuePair output = optim.optimize(maxIter, fL, GoalType.MAXIMIZE, key.getMinBid(), maxBid, maxBid-0.01);
+		return output.getPoint();
+		
 		
 	}
 	
@@ -134,8 +143,8 @@ public class CampaignBid {
 		while(j<20){
 //		while(true){
 			for(int i=0; i<bids.length;i++){
-//				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
-				bids[i]=computeOptimumBidForFixedLagrangleMult(i,multLagrange);
+				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
+//				bids[i]=computeOptimumBidForFixedLagrangleMult(i,multLagrange);
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedValues();
@@ -173,7 +182,7 @@ public class CampaignBid {
 			input[0]=bids[i];
 			f.setMinBid(key.getMinBid());
 			System.out.print(key.getKeyWord()+":: ");
-			System.out.format("%d :: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.2f\n", i, bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
+			System.out.format("%d :: Bid value: %.2f, min bid: %.2f, expected clicks: %.1f, expected daily cost: %.2f\n", i+1, bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()));
 
 
 		} // for(int i=0; i<bids.length;i++)

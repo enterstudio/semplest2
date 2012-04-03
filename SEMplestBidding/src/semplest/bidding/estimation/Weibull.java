@@ -42,6 +42,20 @@ public class Weibull implements ParametricUnivariateFunction {
 		}	
 		
 	}
+	
+	
+	public double doublederivative(double x, double... parameters) {
+		double lambda = parameters[0];
+		double theta = parameters[1];
+		double scaling = parameters[2];
+
+		if (x<=0) {
+			return 1e-6;
+		} else {
+			return scaling*Math.exp(-Math.pow((x/lambda),theta))*(theta/lambda)*Math.pow(x/lambda, theta-2)*(theta-1-theta*Math.pow(x/lambda, theta));
+		}	
+		
+	}
 
 
 }

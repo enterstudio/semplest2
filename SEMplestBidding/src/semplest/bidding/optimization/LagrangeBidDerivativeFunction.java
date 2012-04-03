@@ -26,7 +26,11 @@ public class LagrangeBidDerivativeFunction implements UnivariateFunction {
 	// this method returns the derivative of the bid optimization function
 	@Override
 	public double value(double b) {
-		return score*wf.derivative(b, ClickParams) - multLagrange*wf.derivative(b, DCostParams);
+//		double x = score*wf.derivative(b, ClickParams) - multLagrange*wf.derivative(b, DCostParams);
+		double x = wf.doublederivative(b, ClickParams);
+
+		System.out.println("Derivative: b="+b +", deriv=" + x);
+		return score*wf.doublederivative(b, ClickParams) - multLagrange*wf.doublederivative(b, DCostParams);
 	}
 
 }

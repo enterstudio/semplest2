@@ -110,7 +110,7 @@ public class TestBidAlgorithm {
 		for (i=0; i<keywords.length;i++){
 			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
 		}
-		bidOptimizer.setDailyBudget(1000.0);
+		bidOptimizer.setDailyBudget(2000.0);
 		bidOptimizer.optimizeBids();
 		
 		
