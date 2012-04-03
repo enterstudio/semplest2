@@ -1,12 +1,10 @@
 package semplest.bidding.optimization;
 
-
-import org.apache.commons.math3.analysis.DifferentiableUnivariateFunction;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 
 import semplest.bidding.estimation.Weibull;
 
-public class LagrangeBidFunction implements UnivariateFunction, DifferentiableUnivariateFunction {
+public class LagrangeBidDerivativeFunction implements UnivariateFunction {
 
 	private double [] ClickParams = null;
 	private double [] DCostParams = null;
@@ -17,7 +15,7 @@ public class LagrangeBidFunction implements UnivariateFunction, DifferentiableUn
 	private Weibull wf = null;
 	
 	
-	public LagrangeBidFunction (double [] ClickParams, double [] DCostParams, double score, double minBid, double multLagrange) {
+	private LagrangeBidDerivativeFunction(double [] ClickParams, double [] DCostParams, double score, double minBid, double multLagrange){
 		this.ClickParams = ClickParams;
 		this.DCostParams = DCostParams;
 		this.score = score;
@@ -25,16 +23,11 @@ public class LagrangeBidFunction implements UnivariateFunction, DifferentiableUn
 		this.multLagrange = multLagrange;
 		this.wf = new Weibull();
 	}
-	
+	// this method returns the derivative of the bid optimization function
 	@Override
 	public double value(double b) {
-		return score*wf.value(b, ClickParams) - multLagrange*wf.value(b, DCostParams);
+		// TODO Auto-generated method stub
+		return 0;
 	}
-
-	@Override
-	public UnivariateFunction derivative() {
-		return null;
-	}
-
 
 }

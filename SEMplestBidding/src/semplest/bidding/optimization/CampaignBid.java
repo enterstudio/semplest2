@@ -35,7 +35,7 @@ public class CampaignBid {
 	
 	private double computeOptimumBidForFixedLagrangleMult(int i, double k){
 		KeyWordInterface key = wordList.get(i);
-		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getMinBid(), k);
+		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getQualityScore(), key.getMinBid(), k);
 		
 //		int noStart = 5;
 //		RandomGenerator r = new RandomGenerator();
