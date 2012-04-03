@@ -26,14 +26,14 @@ import java.util.Map;
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
 
-final static String dfile = "/semplest/data/dmoz/all/hCounts.new";
-//final static String dfile = "/semplest/data/dmoz/all/all.descs";
+final static String hfile = "dmoz/all/hCounts.new";
+final static String dfile = "/semplest/data/dmoz/all/all.descs";
 
   IndexWriter w;
   StandardAnalyzer analyzer;
   Directory index;
 
-  DmozLucene(){
+  public DmozLucene(){
     // Specify the analyzer for tokenizing text.
     // (The same analyzer should be used for indexing and searching)
     try {
@@ -70,9 +70,15 @@ final static String dfile = "/semplest/data/dmoz/all/hCounts.new";
       e.printStackTrace();
     }
   }
-
+  public void loadDesc(){
+	  //Indexes description information
+	    HashMap<String,String> map = ioUtils.readDescs( dfile );
+	    for(Map.Entry<String,String> e : map.entrySet())
+	      this.add( e.getKey(), e.getValue() );
+	    this.done();
+  }
   // ---------
-  String[] search(String qs ){
+  public String[] search(String qs ){
 
     // the "desc" arg specifies the default field to use
     // when no field is explicitly specified in the query.
@@ -104,7 +110,7 @@ final static String dfile = "/semplest/data/dmoz/all/hCounts.new";
   // ---------------------
   public static void main(String[] args) throws IOException, ParseException {
     DmozLucene dl = new DmozLucene();
-    HashMap<String,String> map = ioUtils.readDescs( dfile );
+    HashMap<String,String> map = ioUtils.readDescs( hfile );
     for(Map.Entry<String,String> e : map.entrySet())
       dl.add( e.getKey(), e.getValue() );
     dl.done();
