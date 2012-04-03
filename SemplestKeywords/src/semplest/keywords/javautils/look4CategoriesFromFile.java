@@ -49,6 +49,7 @@ public class look4CategoriesFromFile {
 		String strLine;
 		String dmozSearch = "/semplest/data/dmozTest/dmozsearchresults.txt";
 		PrintStream testlog = new PrintStream(new FileOutputStream("/semplest/lluis/testlog.txt"));
+		testlog = System.out;
 		PrintStream stdoutG = System.out;
 		
 		// Read keywords to test
@@ -65,7 +66,7 @@ public class look4CategoriesFromFile {
 			bvcAux = new ValueComparator(categMap);
 			sorted_opt = new TreeMap<String,Double>(bvcAux);
 			System.setOut(stdoutG);
-			System.out.println(pattern);
+			//System.out.println(pattern);
 			System.setOut(testlog);
 			System.out.println(pattern);
 			pattern = brResults.readLine();
