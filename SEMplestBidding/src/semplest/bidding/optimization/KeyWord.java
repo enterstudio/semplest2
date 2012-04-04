@@ -1,8 +1,8 @@
 package semplest.bidding.optimization;
 
-import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
-import org.apache.commons.math3.optimization.fitting.CurveFitter;
-import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+//import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
+//import org.apache.commons.math3.optimization.fitting.CurveFitter;
+//import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
 
 import flanagan.plot.PlotGraph;
 import semplest.bidding.estimation.*;
@@ -20,8 +20,8 @@ public class KeyWord implements KeyWordInterface {
 	private double [] ClickParams = null; 
 	private double [] CPCParams = null; 
 	private double [] DCostParams = null; 
-	private double [] DCostParams2 = null; 
-	private double [] ClickParams2 = null; 
+//	private double [] DCostParams2 = null; 
+//	private double [] ClickParams2 = null; 
 
 	
 	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
