@@ -30,6 +30,7 @@ public class SEMplestService
 
 	public static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 	public static ExecutorService executor = null;
+	private static String INITMETHODNAME = "initializeService";
 
 	private ServiceInterface service;
 
@@ -54,8 +55,15 @@ public class SEMplestService
 			if (service.registerServiceWithESB())
 			{
 				logger.info("Registered Service");
+				 
 			}
 		}
+	}
+	
+	//Call the initializeService method on the Service
+	private void initializeService()
+	{
+		//String result = myService.getService().ServiceGet(methodName, jsonStr);
 	}
 
 	private boolean readProperties(String ServiceNameOveride)

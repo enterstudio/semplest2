@@ -1358,4 +1358,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken );
 	}
 
+	@Override
+	public void initializeService() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
+
 }

@@ -32,7 +32,20 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 			kwGen =  new KWGenDmozLDAServer();
 		}
 		ArrayList<String> categOpt = kwGen.getCategories(searchTerm);
+		if (categOpt == null)
+		{
+			logger.info("No categories found for " + searchTerm[0]);
+			categOpt = new ArrayList<String>();
+		}
 		return categOpt;
+	}
+
+
+	@Override
+	public void initializeService() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
