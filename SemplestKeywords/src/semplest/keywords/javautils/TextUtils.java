@@ -273,8 +273,6 @@ public class TextUtils
     return goodWords;
   }
 
-
-
   // get words from string  
   public static ArrayList<String> getWords( String text ){
     String lower    = text.toLowerCase(); 
@@ -301,14 +299,22 @@ public class TextUtils
     return mixedWordSet;
   }
   public static String timeElapsed(double msCount){
-	  return ((int)(msCount/60000)) + "min "+ ((msCount%60000/1000))+"sec";
+    return ((int)(msCount/60000)) + "min "+ ((msCount%60000/1000))+"sec";
   }
-  
+
+
 
   //-----------------
   // Stem a word 
   public static String stem (String word){
     return (new Stemmer()).stem( word );
+  }
+  // Stem a string (of words) and return a string of *valid* english words
+  public static String stemvString( String raws){
+    String os = "";
+    for( String w: raws.split("\\s+"))
+      os = os + dictUtils.getStemWord( w ) + " ";
+    return os;
   }
 
   //-------------------------------------------------------------
@@ -316,12 +322,12 @@ public class TextUtils
 
 
     /*
-    ArrayList<String> stems = validHtmlStems( ss );
-    ArrayList<String> words = validHtmlWords( ss );
-    assert( stems.size() == words.size() );
-    for(int i=0; i< stems.size(); i++)
-      System.out.println( stems.get(i) + " : " + words.get(i) );
-    */
+       ArrayList<String> stems = validHtmlStems( ss );
+       ArrayList<String> words = validHtmlWords( ss );
+       assert( stems.size() == words.size() );
+       for(int i=0; i< stems.size(); i++)
+       System.out.println( stems.get(i) + " : " + words.get(i) );
+     */
     if( args.length > 0 )
       System.out.println( HTMLText( args[0] ));
   }
