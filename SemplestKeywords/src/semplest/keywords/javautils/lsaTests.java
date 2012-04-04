@@ -60,11 +60,13 @@ public class lsaTests {
     System.out.printf("RDoc words: %s\n",getTopWords( rdoc, 8)); 
     
     printDocInfo(doc);
+    /*
     System.out.printf("%orig %d %s\n", 0, doci, dictUtils.docs[ doci ] );
     for(int i = 0; i < n; i++){
       System.out.printf("%4d %d %s\n\t%s\n", i, bestDocs[i], 
         dictUtils.docs[ bestDocs[i] ], getTopWords( bestDocs[i] ));
     }
+    */
   }
   public void printDocInfo( int[] doc ){
     System.out.printf("words(uniq,tot): %d,%d\n", vecUtils.nonzero( doc),
