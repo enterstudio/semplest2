@@ -18,17 +18,8 @@ import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	//Search index for categories
-	private DmozLucene dl; //Index of categories
-	private HashMap<String,String> TrainingData; 
+	private static KWGenDmozLDAdata data;
 	public KWGenDmozLDAServer(){
-		// Index description information
-		 dl = new DmozLucene();
-		 System.out.println("Indexing dmoz description data...");
-		 dl.loadDesc();
-		 System.out.println("Data indexed!");
-		 System.out.println("Loading training data...");
-		 TrainingData = ioUtils.file2Hash("dmoz/all/all.descs");
-		 System.out.println("Data loaded");
 	}
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception {
@@ -41,7 +32,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		for(int i=0; i<searchTerm.length;i++){
 			qs=qs+searchTerm[i]+" ";
 		}
-		res = dl.search(qs,numresults);
+		res = data.dl.search(qs,numresults);
 		for(int i=0; i<res.length; i++){
 			categories = res[i].replaceAll("\\s", "");
 			if(catUtils.validcat(categories))
@@ -57,7 +48,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	public ArrayList<String> getKeywords(ArrayList<String> categories,int numkw, int nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user
 		ArrayList<String> optCateg = new ArrayList<String>();
-		Set<String> labels = TrainingData.keySet();
+		Set<String> labels = data.TrainingData.keySet();
 		String cataux;
 		int numNod;
 	    for (String label : labels){
@@ -142,8 +133,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    
 	}
 	
+	@Override
+	public void initializeService(String str) throws Exception {
+		data = new KWGenDmozLDAdata();
+		Thread thread = new Thread(data);
+		thread.start();
+	}
+	
 	public static void main(String[] args) throws Exception {
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
+		kwGen.initializeService(null);
 		String[] searchTerm = {"fine wine liquor wine tasting upper west side"};
 		String aux="";
 		for(int i=0; i< searchTerm.length;i++){
@@ -160,11 +159,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		categories.add(categOpt.get(0));
 		kwGen.getKeywords(categories,0, 0);
 	}
-	@Override
-	public void initializeService() throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
+
 
 
 }
