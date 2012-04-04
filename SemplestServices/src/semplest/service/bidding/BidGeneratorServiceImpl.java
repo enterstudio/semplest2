@@ -47,7 +47,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		logger.info("Computing bids ...");
 
-		// first get the bid information from ad campaign
+		
+		// get the bid information from ad campaign
 		
 		
 		try
@@ -58,9 +59,9 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			for (double b = 1.0; b<1.6; b=b+0.1){
 				bidLevels.add(new Double(b));
 			}
-			System.out.println(bidLevels.size());
+			System.out.println("Number of points on bid axis: "+bidLevels.size());
 			for(int i=0; i< bidLevels.size(); i++){
-				System.out.println("Bid: "+bidLevels.get(i));
+				System.out.format("Bid: %.1f\n",bidLevels.get(i));
 			}
 			
 //			bidLevels.add(0.9);
