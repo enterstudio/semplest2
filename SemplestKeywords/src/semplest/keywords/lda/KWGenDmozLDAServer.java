@@ -1,28 +1,23 @@
 package semplest.keywords.lda;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Properties;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
-
 import org.apache.log4j.Logger;
 
-import semplest.keywords.javautils.DmozLucene;
+import cc.mallet.types.InstanceList;
+
+
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
-import semplest.keywords.javautils.ioUtils;
+
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
-import semplest.server.service.SEMplestService;
-
-
 
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
@@ -57,25 +52,55 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		return optList;
 	}
 	@Override
-	public ArrayList<String> getKeywords(ArrayList<String> categories,int numkw, int nGrams) throws Exception {
-		//Create a ArrayList of the categories that satisfy options selected by the user
+	public ArrayList<String> getKeywords(ArrayList<String> categories, String data1, int numkw, int nGrams) throws Exception {
+		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
+		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
+		ArrayList<String> keywords = new ArrayList<String>();
 		Set<String> labels = data.TrainingData.keySet();
 		String cataux;
 		int numNod;
+		ArrayList<String> trainLines = new ArrayList<String>();
 	    for (String label : labels){
 	    	for (int n=0; n<categories.size();n++){
 	    		cataux=categories.get(n);
 	    		numNod = catUtils.nodes(cataux);
 	    		if(catUtils.take(label, numNod).equals(catUtils.take(cataux,numNod))){
-	    			if (!optCateg.contains(label))
-	    				optCateg.add(label);
+	    			if (!optCateg.contains(label)){
 	    				System.out.println(label);
+	    				optCateg.add(label);
+	    				//Gather training data
+	    				trainLines.add(data.TrainingData.get(label));
+	    			}
 	    		}
 	    	}
 	    }
-	    
-		return null;
+		//Train LDA for categories selected and return sorted keywords
+		
+		//Instanciate topic model
+		MalletTopic lda = new MalletTopic();
+		double alpha=0.01;
+		double beta=0.01;
+		int numiter=100;
+		System.out.println("Number of categories" + trainLines.size());
+		lda.CreateInstances(trainLines);
+		lda.setNumTopics(5);
+		lda.LDAcreateModel(alpha, beta, numiter);
+		InstanceList inferInst;
+		double[][] categInd;
+		TreeMap<String, Double> wordM;
+	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
+	    wordM = lda.inferWordprob(inferInst, 0); 
+	    Set<String> keyS = wordM.keySet();
+	    System.out.println("wordMap Size: "+ wordM.size());
+	    int i=0;
+	    for(String keys2 : keyS){
+	    	if(i>=numkw)break;
+	    	//System.out.print(" "+keys2+",");
+	    	keywords.add(keys2);
+	    	i++;
+	    }
+		return keywords;
 	}
 	
 	private static ArrayList<String> selectOptions(ArrayList<String> optKeys) throws IOException{
@@ -169,7 +194,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	public static void main(String[] args) throws Exception {
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
 		kwGen.initializeService(null);
-		String[] searchTerm = {"insurance"};
+		String[] searchTerm = {"peanut butter"};
 		String aux="";
 		for(int i=0; i< searchTerm.length;i++){
 			aux=aux+searchTerm[i]+" ";
@@ -183,7 +208,24 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		System.out.println("\nSubcategories form selected :");
 		ArrayList<String> categories = new ArrayList<String>();
 		categories.add(categOpt.get(0));
-		kwGen.getKeywords(categories,0, 0);
+		
+		System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+		Scanner scanFile = new Scanner(System.in);
+		String userInfo1 = scanFile.nextLine(); 
+		ArrayList<String> words1;
+		if(userInfo1.contains(".clean"))
+			words1 = TextUtils.validTextWords (userInfo1);
+		else	
+			words1 = TextUtils.validHtmlWords (userInfo1);
+		String data1="";
+		for( String s : words1 ) {
+	    	data1 = data1+" "+s;
+	    	//System.out.print(s+"  ");
+	    }
+		ArrayList<String> kw = kwGen.getKeywords(categories,data1,50, 1);
+		for(String k: kw){
+			System.out.println(k);
+		}
 	}
 
 

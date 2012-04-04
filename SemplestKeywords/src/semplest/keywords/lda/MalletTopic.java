@@ -364,11 +364,31 @@ public class MalletTopic {
         System.out.println("Number of lines: "+lines.size());
         for( String line : lines ){
         	System.out.println("Adding Category " + i);
+        	System.out.println(line);
         	ArrayList<String> tokens = ioUtils.malletizeLine( line );
         	instances.addThruPipe(new Instance(tokens.get(2),tokens.get(0),tokens.get(1),null));
         	i++;
         }
 	}
+	
+	public void CreateInstances(ArrayList<String> lines){
+		// Creates Instances from a file in SEMplest format
+				
+		        // Begin by importing documents from text to feature sequences
+		        ArrayList<Pipe> pipeList = this.initPipeList();
+		        // Temporal instance were we will transform SEMplest data to Mallet data 
+		        int i=0;
+
+		        instances = new InstanceList (new SerialPipes(pipeList));
+		        System.out.println("Number of lines: "+lines.size());
+		        for( String line : lines ){
+		        	System.out.println("Adding Category " + i);
+		        	String[] elem = line.split(":");
+		        	instances.addThruPipe(new Instance(elem[1],""+i,elem[0],null));
+		        	i++;
+		        }
+			}
+	
 	/*
 	public void CreateInstancesSEMplestCache(String[] directories) throws Exception {
 		// Creates Instances from a file in SEMplest format

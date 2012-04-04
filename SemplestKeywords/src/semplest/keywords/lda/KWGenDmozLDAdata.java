@@ -1,15 +1,12 @@
 package semplest.keywords.lda;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Properties;
+
 
 import semplest.keywords.javautils.DmozLucene;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
-import semplest.server.service.SEMplestService;
 
 public class KWGenDmozLDAdata implements Runnable{
 	
