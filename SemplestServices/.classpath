@@ -32,6 +32,8 @@
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
 	<classpathentry kind="lib" path="lib/adwords-api-8.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-pool-1.6.jar"/>
+	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestKeywords"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestBidding"/>
