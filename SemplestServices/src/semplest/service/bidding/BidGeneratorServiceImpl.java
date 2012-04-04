@@ -1,10 +1,15 @@
 package semplest.service.bidding;
 
+
+import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
+import semplest.services.client.api.GoogleAdwordsServiceClient;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.gson.Gson;
 
 //import com.google.gson.Gson;
@@ -44,6 +49,45 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 		// first get the bid information from ad campaign
 		
+		
+		try
+		{
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+
+			ArrayList<Double> bidLevels = new ArrayList<Double>();
+			for (double b = 1.0; b<1.6; b=b+0.1){
+				bidLevels.add(new Double(b));
+			}
+			System.out.println(bidLevels.size());
+			for(int i=0; i< bidLevels.size(); i++){
+				System.out.println("Bid: "+bidLevels.get(i));
+			}
+			
+//			bidLevels.add(0.9);
+//			bidLevels.add(1.00);
+//			bidLevels.add(1.20);
+//			bidLevels.add(1.50);
+//			bidLevels.add(2.00);
+
+//			 bidLevels.add(1.50);
+//			 bidLevels.add(10.50);
+//			 bidLevels.add(0.75);
+			
+			GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword("wedding venue", KeywordMatchType.EXACT, bidLevels);
+			Double[] bids = o.getBidList();
+			for (int i = 0; i < bids.length; i++)
+			{
+				System.out.println(bids[i] + " Aveclicks=" + o.getMaxAveClickPerDay(bids[i]) + " AveCPC=" + o.getAveCPC(bids[i]));
+			}
+
+
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		// decide which keywords to are competitive and which ones are not
 		
 		HashMap<String,Double> bidData = new HashMap<String,Double>();
@@ -57,6 +101,28 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 		// TODO Auto-generated method stub
 		return bidData;
+	}
+	
+	public static void main(String[] args){
+		
+		Integer customerID = new Integer(0);
+		Integer campaignID = new Integer(0);
+		Integer adGroupID = new Integer(0);
+		ArrayList<String> keywords = new ArrayList<String>();
+		keywords.add("wedding venues");
+		keywords.add("ice");
+		
+
+		try {
+
+			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
+			bidGenerator.getBid(customerID, campaignID, adGroupID, keywords);
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
