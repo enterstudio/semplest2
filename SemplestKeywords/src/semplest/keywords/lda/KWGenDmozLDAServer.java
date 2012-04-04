@@ -1,6 +1,7 @@
 package semplest.keywords.lda;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,20 +20,17 @@ import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
+import semplest.server.service.SEMplestService;
 
 
 
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
-	
 	//Search index for categories
 	private static KWGenDmozLDAdata data;
-	public KWGenDmozLDAServer(){
-	/*	properties = new Properties();
-		FileInputStream is = new FileInputStream(PROPSFILE);
-		properties.load(is);
-		is.close();*/
+	public KWGenDmozLDAServer() {
+
 	}
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception {
@@ -160,7 +158,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		thread.start();
 	}
 	
-	public static String stemvString( String raws, dictUtils dict){
+	public String stemvString( String raws, dictUtils dict){
 		//Returns the stemmed version of a word
 	    String os = "";
 	    for( String w: raws.split("\\s+"))

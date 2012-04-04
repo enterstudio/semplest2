@@ -1,19 +1,39 @@
 package semplest.keywords.lda;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 
 import semplest.keywords.javautils.DmozLucene;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
+import semplest.server.service.SEMplestService;
 
 public class KWGenDmozLDAdata implements Runnable{
 	
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
-	private String dfile = "dmoz/all/all.descs";
+	private String dfile = "data/dmoz/all/all.descs";
+	private static final boolean serviceCall = true; //true if the object is instanciated by a service call
 	
-	public KWGenDmozLDAdata() {
+	public KWGenDmozLDAdata() throws IOException {
+		//Load property file if necessary for paths
+		if(!serviceCall){
+			String PROPSFILE = "../SemplestServices/bin/system.properties";
+			SEMplestService.properties = new Properties();
+			FileInputStream is = new FileInputStream(PROPSFILE);
+			SEMplestService.properties.load(is);
+			is.close();
+		}
+		
+		dfile = SEMplestService.properties.getProperty("ESBServerIP");
+		
+		
+		
+		
 		dl = new DmozLucene();
 		System.out.println("Indexing dmoz description data...");
 		DmozLucene.loadDesc(dl,dfile);
@@ -24,6 +44,8 @@ public class KWGenDmozLDAdata implements Runnable{
 		System.out.println("Loading stem dictionary...");
 		dict = new dictUtils();
 		System.out.println("Dictionary loaded");
+		
+		
 	}
 
 	@Override

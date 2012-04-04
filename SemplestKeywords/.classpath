@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServices"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
