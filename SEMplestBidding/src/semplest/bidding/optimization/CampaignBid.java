@@ -89,7 +89,7 @@ public class CampaignBid {
 	
 	
 	
-	public void optimizeBids(){
+	public double [] optimizeBids(){
 		
 		// initialize constant
 		double multLagrange = 0.01;
@@ -161,6 +161,11 @@ public class CampaignBid {
 				expectedCost,expectedClicks,expectedQualityMetric, expectedCost/expectedClicks);
 		
 		
+		for(int i=0; i<bids.length;i++){
+			wordList.get(i).setBidValue(bids[i]);
+		}
+		
+		return bids;
 	} // public void optimizeBids()
 
 }

@@ -10,5 +10,8 @@ public interface KeyWordInterface {
 	public double [] getDCostInfo(); // daily cost
 	public double getQualityScore();
 	public double getMinBid();
+	public double getBidValue();
+	public void setBidValue(double bidValue);
+
 
 }

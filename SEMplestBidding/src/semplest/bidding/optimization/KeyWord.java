@@ -11,7 +11,7 @@ public class KeyWord implements KeyWordInterface {
 	private double score = 1.0;
 	private double [] bid = null;
 	private double minBid = 0.01;
-//	private double bidValue = 0.01;
+	private double bidValue = Double.MIN_VALUE;
 	
 	
 	// model parameters
@@ -46,13 +46,15 @@ public class KeyWord implements KeyWordInterface {
 
 	}
 	
-//	public void setBidValue(double bidValue){
-//		this.bidValue=bidValue;
-//	}	
-//	
-//	public double getBidValue(double bidValue){
-//		return bidValue;
-//	}
+	@Override
+	public void setBidValue(double bidValue){
+		this.bidValue=bidValue;
+	}	
+	
+	@Override
+	public double getBidValue(){
+		return bidValue;
+	}
 	
 	private double [] estimateModelParams(double [] fitData, boolean plotGraphs){
 		int noValidBidDataPoints = 0;
