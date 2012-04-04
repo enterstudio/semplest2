@@ -30,6 +30,7 @@ public class DmozLucene {
   StandardAnalyzer analyzer;
   Directory index;
 
+  // Ctr --------------
   public DmozLucene(){
     // Specify the analyzer for tokenizing text.
     // (The same analyzer should be used for indexing and searching)
@@ -82,15 +83,14 @@ public class DmozLucene {
     return res;
   }
 
+  // -----
   public String[] search(String qs, int hitsPerPage){
-    // Query returning any number of results.the "desc" arg specifies the default field to use
-    // when no field is explicitly specified in the query.
+
     String[] res = new String[0];
     try {
       Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
 
       // Search
-
       IndexSearcher searcher = new IndexSearcher(index, true);
       TopScoreDocCollector collector = TopScoreDocCollector.
         create(hitsPerPage, true);
@@ -110,11 +110,15 @@ public class DmozLucene {
     return res;
   }
 
-  // ---------------------
+  // -------------------------------------------------------------------
+  // [Important Note:] Make sure that text and the query are *both* either
+  // o stemmed
+  // o or unstemmed
+  // Search will not work if one is stemmed and the other is not.
+
   public static void main(String[] args) throws IOException, ParseException {
-    // final String dfile = "/semplest/data/dmoz/all/all.descs";
-    // final String dfile = "/semplest/data/dmoz/all/hCounts.new";
-    final String dfile = "/tmp/100.descs";
+    final String dfile = "dmoz/all/all.descs";
+    // final String dfile = "dmoz/all/hCounts.new";
     
     DmozLucene dl = new DmozLucene();
     loadDesc( dl, dfile);
@@ -123,13 +127,15 @@ public class DmozLucene {
     while( true ){
       c.printf(" > ");
       String q = c.readLine();
-      if( q.length() > 0 ) {
-        String[] res = dl.search( q );
+      String sq = TextUtils.stemvString( q );
+      if( sq.length() > 0 ) {
+        String[] res = dl.search( sq );
         for( String re : res )
           c.printf("%s\n", re );
       }
     }
   }
+  // Static Helpers ---------------
   public static void loadDesc( DmozLucene dl, String f){
     HashMap<String,String> map = ioUtils.readDescs( f );
     for(Map.Entry<String,String> e : map.entrySet())
