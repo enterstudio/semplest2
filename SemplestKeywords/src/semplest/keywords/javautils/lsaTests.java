@@ -13,15 +13,13 @@ import java.util.Iterator;
 // Class to test LSA implementation
 public class lsaTests {
 
-  public static final String suffix = ".st";
-
   public String file;
   public LSA lsa;
 
   // ctor
   public lsaTests(String f){
     file = f;
-    lsa = new LSA(f + suffix);
+    lsa = new LSA(f);
   }
 
   //-----------------------------------------------------
@@ -51,43 +49,22 @@ public class lsaTests {
   public void printMatches(int doci, int n){
     System.out.printf("\n\nDoc Matches :: ");
     int[] doc = ioUtils.docVector(file, doci );
-    int[] rdoc = lsa.svd.document(doci);
     int[] bestDocs = lsa.similarDocs( doc );
-    long error = vecUtils.absdiff( doc, rdoc );
-    int perror = (int) Math.ceil( error * 100 / vecUtils.sum( doc ));
-    System.out.printf("Doc  error: (p %d, abs %d)\n", perror, error ); 
-    System.out.printf("Doc  words: %s\n",getTopWords(  doc, 8)); 
-    System.out.printf("RDoc words: %s\n",getTopWords( rdoc, 8)); 
-    
     printDocInfo(doc);
-    /*
-    System.out.printf("%orig %d %s\n", 0, doci, dictUtils.docs[ doci ] );
+    String cat = dictUtils.docis.get( doci );
+    System.out.printf("%orig %d %s\n", 0, doci, cat );
     for(int i = 0; i < n; i++){
-      System.out.printf("%4d %d %s\n\t%s\n", i, bestDocs[i], 
-        dictUtils.docs[ bestDocs[i] ], getTopWords( bestDocs[i] ));
+      String bcat   = dictUtils.docis.get( bestDocs[i] );
+      String bwords = dictUtils.docs.get(  bestDocs[i] );
+      System.out.printf("%4d %d %s\n", i, bestDocs[i], bcat ); 
+      System.out.printf("\t%60s\n", bwords );
     }
-    */
   }
   public void printDocInfo( int[] doc ){
     System.out.printf("words(uniq,tot): %d,%d\n", vecUtils.nonzero( doc),
         vecUtils.sum( doc )); 
   }
-  // Get the top words for a document/category (mci)
-  public String getTopWords (int di){
-    int[] mci = lsa.topWords( di );
-    String os = "";
-    for(int i=0; i<mci.length; i++)
-      os = os + dictUtils.dictwi.get(mci[i]) + ",";
-    return os;
-  }
-  // Get the top words for a document/category (subspace)
-  public String getTopWords (int di, int no){
-    int[] topWi = lsa.topWords( di );
-    String os = "";
-    for(int i = topWi.length-1; i > topWi.length - no; i--)
-      os = os + dictUtils.dictwi.get(topWi[i] ) + ",";
-    return os;
-  }
+  
   // Get the top words for a document
   public String getTopWords (int[] doc, int no){
     int[] topWi = vecUtils.sortIndices( doc);
@@ -100,6 +77,12 @@ public class lsaTests {
   // a doc's distance to itself in the subspace (rounding error)
   public double distanceToItself(int di){
     int[] doc = ioUtils.docVector( file, di );
+    for(int i=0; i<100; i++)
+      if( doc[i] != 0)
+        System.out.printf("%d,%d  ", i, doc[i] );
+    ioUtils.printVec( lsa.svd.toSSDoc( doc ) );
+    ioUtils.printVec( lsa.svd.dmat[ di ] );
+
     double dist = vecUtils.ncdist( lsa.svd.toSSDoc(doc), lsa.svd.dmat[di] );
     return dist;
   }
@@ -110,7 +93,7 @@ public class lsaTests {
   public double ccError(int no){
     double d[][]   = new double[ no ][];
     double dss[][] = new double[ no ][];
-    for(int i = 0; i< no; i++){
+    for(int i = 0; i< 1; i++){
       d[i]  = lsa.svd.toSSDoc( ioUtils.docVector(file, i ));
       dss[i] = lsa.svd.dmat[ i ];
     }
@@ -121,7 +104,7 @@ public class lsaTests {
         double sd = vecUtils.ncdist( dss[i], dss[j] );
         osum += dd;
         ssum += sd;
-        //        System.out.printf("%d,%d : %8.2f, %8.2f\n", i,j, dd, sd );
+//        System.out.printf("%d,%d : %8.2f, %8.2f\n", i,j, dd, sd );
       }
     return  Math.abs( osum - ssum ) / (no * no * 1.0);
   }
@@ -161,10 +144,10 @@ public class lsaTests {
     lsaTests t = new lsaTests( file );
     //    t.lsa.svd.tfIdf();
 
-    //    t.printCCE( num );
-    //    t.printDI( num );
-    t.printWCE( num );
-    for( int i = 0; i < 10; i++ )
+    t.printDI( 0 );
+    t.printCCE( num );
+//    t.printWCE( num );
+    for( int i = 0; i < 2; i++ )
       t.printMatches( t.lsa.randomDoc(), num );
     //      t.printMatches( i,  num );
   }
