@@ -16,8 +16,9 @@ public class dictUtils
   // 2) dicti ::  word => index
   // 3) dictwi::  index => word
   // a word is valid if its stem is in the dictionary
-  static final String dictfile = "/semplest/data/stemword.txt";
+  static final String dictfile = "/semplest/data/stemword.dict";
   static final String docfile  = "/semplest/data/dmoz/all.cats";
+  static final String twfile   = "/semplest/data/dmoz/all.tw";
   
   public static HashMap<String,Integer> dicti = 
     ioUtils.readFileIndex(dictfile, 1);
@@ -25,11 +26,10 @@ public class dictUtils
   public static HashMap<String,String> dict = ioUtils.readPair(dictfile);
   public static HashMap<String,Integer> docsi = 
     ioUtils.readFileIndex(docfile);
-  public static final String[] docs = 
-    ioUtils.readFile(docfile).toArray( new String[docsi.size()]);
-
-  // 
-  // ********* [Note:] Temporaryy solution. Need to restructure
+  public static Map<Integer,String> docis = invert(docsi);
+  public static final HashMap<String,String> docs = ioUtils.topWords(twfile);
+   
+  // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
 
   // a word is valid if its stem is in the dictionary
@@ -85,22 +85,7 @@ public class dictUtils
   //-------------------------------------------------------------
   public static void main (String[] args){
     System.out.println( dicti.size());
-    String[] keys = {"insul", "insur", "insurg"};
-    String[] values = {"insulate", "insure", "insurgent"};
-    for(String key: keys)
-      System.out.println( dict.get( key ));
-    for(String value: values)
-      System.out.println( dict.containsValue( value ));
-    for(String value: values)
-      System.out.println( dict.containsValue( value ));
-
-    /*
-       Set<String> ks = dicti.keySet();
-       for(String key: ks){
-       System.out.println( key + " : " + dicti.get( key ));
-       }
-     */
-
-
+    for(Entry<String,String> e: docs.entrySet())
+      System.out.println( e.getKey() + " : " + e.getValue() );
   }
 }
