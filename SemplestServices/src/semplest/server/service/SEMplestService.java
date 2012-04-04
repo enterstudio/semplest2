@@ -1,6 +1,7 @@
 package semplest.server.service;
 
 import java.io.FileInputStream;
+import java.lang.reflect.Constructor;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,35 +44,48 @@ public class SEMplestService
 	 */
 	public static void main(String[] args)
 	{
-		// startup the service by registering the instance with the semplest ESB
-		String serviceNameOverride = null;
-		if (args.length == 1)
+		try
 		{
-			serviceNameOverride = args[0];
-		}
-		SEMplestService service = new SEMplestService();
-		service.configureLogging();
-		if (service.readProperties(serviceNameOverride))
-		{
-			executor = Executors.newFixedThreadPool(service.connectionData.getNumberServiceThreads());
-			if (service.registerServiceWithESB())
+			// startup the service by registering the instance with the semplest ESB
+			String serviceNameOverride = null;
+			if (args.length == 1)
 			{
-				logger.info("Registered Service");
-				service.initializeService();
-				logger.info("called Init Service");
-				
+				serviceNameOverride = args[0];
 			}
+			SEMplestService service = new SEMplestService();
+			service.configureLogging();
+			if (service.readProperties(serviceNameOverride))
+			{
+				executor = Executors.newFixedThreadPool(service.connectionData.getNumberServiceThreads());
+				if (service.registerServiceWithESB())
+				{
+					logger.info("Registered Service");
+					service.initializeService(service);
+					logger.info("called Init Service");
+					
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			logger.error(e);
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
 		}
 	}
 	
 	//Call the initializeService method on the Service
-	private void initializeService()
+	private void initializeService(SEMplestService service) throws Exception
 	{
-		SemplestServiceTemplate myService = (SemplestServiceTemplate) SEMplestService.appContext.getBean("semplestService");
-		String[] emptyParams = new String[] {};
+		Class initClass = Class.forName(service.connectionData.getServiceOffered());
+		Constructor constructor =initClass.getConstructor();
+		ServiceInterface myService = (ServiceInterface) constructor.newInstance();
+		String [] empty = new String[] {};
 		Gson gson = new Gson();
-		String json = gson.toJson(emptyParams);
-		myService.ServiceGet(INITMETHODNAME, json);
+		String json = gson.toJson(empty);
+		String ret = myService.ServiceGet(INITMETHODNAME, json);
+		logger.debug("Ret = " + ret);
 	}
 
 	private boolean readProperties(String ServiceNameOveride)

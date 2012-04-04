@@ -1412,7 +1412,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public void initializeService() throws Exception
+	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
 		

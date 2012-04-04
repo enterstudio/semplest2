@@ -1359,7 +1359,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public void initializeService() throws Exception
+	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
 		
