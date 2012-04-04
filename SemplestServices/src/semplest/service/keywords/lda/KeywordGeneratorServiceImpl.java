@@ -47,5 +47,12 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public ArrayList<String> getKeywords(ArrayList<String> categories,
+			int numKw, int nGrams) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }
