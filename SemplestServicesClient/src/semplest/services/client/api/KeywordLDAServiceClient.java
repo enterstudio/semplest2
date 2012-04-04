@@ -81,7 +81,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public ArrayList<String> getKeywords(ArrayList<String> categories,
+	public ArrayList<String> getKeywords(ArrayList<String> categories, String data,
 			int numKw, int nGrams) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
