@@ -12,18 +12,12 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CampaignAd
+    public partial class TransactionHistory
     {
-        public CampaignAd()
-        {
-            this.SiteLinks = new HashSet<SiteLink>();
-        }
-    
-        public int CampaignAdsPK { get; set; }
-        public int AdGroupFK { get; set; }
-        public string AdText { get; set; }
-    
-        public virtual AdGroup AdGroup { get; set; }
-        public virtual ICollection<SiteLink> SiteLinks { get; set; }
+        public int transactionID { get; set; }
+        public Nullable<int> UserFK { get; set; }
+        public string TransactionType { get; set; }
+        public string TransactionDescription { get; set; }
+        public Nullable<System.DateTime> Date { get; set; }
     }
 }

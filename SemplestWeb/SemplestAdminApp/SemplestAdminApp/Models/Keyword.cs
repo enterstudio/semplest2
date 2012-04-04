@@ -24,6 +24,7 @@ namespace SemplestAdminApp.Models
         public bool IsActive { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string EditedDate { get; set; }
+        public bool ISNegative { get; set; }
     
         public virtual ICollection<AdGroupKeywordAssociation> AdGroupKeywordAssociations { get; set; }
     }

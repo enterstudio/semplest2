@@ -18,10 +18,36 @@
           <EntitySet Name="Campaign" EntityType="SemplestModel.Store.Campaign" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CampaignAds" EntityType="SemplestModel.Store.CampaignAds" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CampaignCycleType" EntityType="SemplestModel.Store.CampaignCycleType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Configuration" EntityType="SemplestModel.Store.Configuration" store:Type="Tables" store:Schema="dbo" store:Name="Configuration">
+            <DefiningQuery>SELECT 
+      [Configuration].[CustomerMinOrderAmount] AS [CustomerMinOrderAmount], 
+      [Configuration].[CustomerDefaultMonthlyFlatFeeAmount] AS [CustomerDefaultMonthlyFlatFeeAmount], 
+      [Configuration].[CustomerDefaultPerCampaignFlatFeeAmount] AS [CustomerDefaultPerCampaignFlatFeeAmount], 
+      [Configuration].[CustomerDefaultPerAdGroupFlatFeeAmount] AS [CustomerDefaultPerAdGroupFlatFeeAmount], 
+      [Configuration].[DefaultMediaComissionPercentage] AS [DefaultMediaComissionPercentage], 
+      [Configuration].[DefaultSalesPersonCommissionPercentage] AS [DefaultSalesPersonCommissionPercentage], 
+      [Configuration].[MinSalespersonCommissionPercentage] AS [MinSalespersonCommissionPercentage], 
+      [Configuration].[MaxSalespersonCommissionPercentage] AS [MaxSalespersonCommissionPercentage], 
+      [Configuration].[DefalutBudgetMixPercentageGoogle] AS [DefalutBudgetMixPercentageGoogle], 
+      [Configuration].[DefalutBudgetMixPercentageBing] AS [DefalutBudgetMixPercentageBing], 
+      [Configuration].[DefaultSemplestBannerImageUrl] AS [DefaultSemplestBannerImageUrl], 
+      [Configuration].[DefaultSemplestStyleSheetUrl] AS [DefaultSemplestStyleSheetUrl], 
+      [Configuration].[MaxNumberOfSitelinks] AS [MaxNumberOfSitelinks], 
+      [Configuration].[LastAccountNumberUsed] AS [LastAccountNumberUsed], 
+      [Configuration].[LastSEMplestEmployeeIDused] AS [LastSEMplestEmployeeIDused], 
+      [Configuration].[DefaultEmailContactUs] AS [DefaultEmailContactUs], 
+      [Configuration].[DefalutEmailContactMe] AS [DefalutEmailContactMe], 
+      [Configuration].[DefaultProductGroupName] AS [DefaultProductGroupName], 
+      [Configuration].[DefaultProductPromotionName] AS [DefaultProductPromotionName], 
+      [Configuration].[SamplestDevelopmentEmail] AS [SamplestDevelopmentEmail], 
+      [Configuration].[SemplestDefaultBudgetMarkUpOrDown] AS [SemplestDefaultBudgetMarkUpOrDown]
+      FROM [dbo].[Configuration] AS [Configuration]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="Credential" EntityType="SemplestModel.Store.Credential" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Customer" EntityType="SemplestModel.Store.Customer" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomerAddressAssociation" EntityType="SemplestModel.Store.CustomerAddressAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomerHierarchy" EntityType="SemplestModel.Store.CustomerHierarchy" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CustomerNotes" EntityType="SemplestModel.Store.CustomerNotes" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomerPhoneAssociation" EntityType="SemplestModel.Store.CustomerPhoneAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Keyword" EntityType="SemplestModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
@@ -29,8 +55,10 @@
           <EntitySet Name="PhoneType" EntityType="SemplestModel.Store.PhoneType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Rights" EntityType="SemplestModel.Store.Rights" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Roles" EntityType="SemplestModel.Store.Roles" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SiteLinks" EntityType="SemplestModel.Store.SiteLinks" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StateCode" EntityType="SemplestModel.Store.StateCode" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="sysdiagrams" EntityType="SemplestModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="TransactionHistory" EntityType="SemplestModel.Store.TransactionHistory" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <AssociationSet Name="Address_Rel" Association="SemplestModel.Store.Address_Rel">
@@ -109,9 +137,17 @@
             <End Role="Campaign" EntitySet="Campaign" />
             <End Role="AdGroup" EntitySet="AdGroup" />
           </AssociationSet>
+          <AssociationSet Name="REL_CampaignAds_SiteLinks_1" Association="SemplestModel.Store.REL_CampaignAds_SiteLinks_1">
+            <End Role="CampaignAds" EntitySet="CampaignAds" />
+            <End Role="SiteLinks" EntitySet="SiteLinks" />
+          </AssociationSet>
           <AssociationSet Name="REL_Customer_AdvertisingEngineAccount_1" Association="SemplestModel.Store.REL_Customer_AdvertisingEngineAccount_1">
             <End Role="Customer" EntitySet="Customer" />
             <End Role="AdvertisingEngineAccount" EntitySet="AdvertisingEngineAccount" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Customer_CustomerNotes_1" Association="SemplestModel.Store.REL_Customer_CustomerNotes_1">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="CustomerNotes" EntitySet="CustomerNotes" />
           </AssociationSet>
           <AssociationSet Name="REL_Keyword_AdGroupKeywordAssociation_2" Association="SemplestModel.Store.REL_Keyword_AdGroupKeywordAssociation_2">
             <End Role="Keyword" EntitySet="Keyword" />
@@ -169,6 +205,7 @@
           <Property Name="AdGroupPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="CampaignFK" Type="int" Nullable="false" />
           <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+          <Property Name="LandingPageURL" Type="nchar" Nullable="false" MaxLength="35" />
         </EntityType>
         <EntityType Name="AdGroupKeywordAssociation">
           <Key>
@@ -251,6 +288,41 @@
           <Property Name="CampaignCycleType" Type="nchar" Nullable="false" MaxLength="30" />
           <Property Name="CycleInDays" Type="int" Nullable="false" />
         </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.Configuration' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="CustomerMinOrderAmount" />
+            <PropertyRef Name="CustomerDefaultMonthlyFlatFeeAmount" />
+            <PropertyRef Name="CustomerDefaultPerCampaignFlatFeeAmount" />
+            <PropertyRef Name="CustomerDefaultPerAdGroupFlatFeeAmount" />
+            <PropertyRef Name="DefaultMediaComissionPercentage" />
+            <PropertyRef Name="DefaultSalesPersonCommissionPercentage" />
+            <PropertyRef Name="MinSalespersonCommissionPercentage" />
+          </Key>
+          <Property Name="CustomerMinOrderAmount" Type="money" Nullable="false" />
+          <Property Name="CustomerDefaultMonthlyFlatFeeAmount" Type="money" Nullable="false" />
+          <Property Name="CustomerDefaultPerCampaignFlatFeeAmount" Type="money" Nullable="false" />
+          <Property Name="CustomerDefaultPerAdGroupFlatFeeAmount" Type="money" Nullable="false" />
+          <Property Name="DefaultMediaComissionPercentage" Type="decimal" Nullable="false" Precision="5" Scale="4" />
+          <Property Name="DefaultSalesPersonCommissionPercentage" Type="decimal" Nullable="false" Precision="5" Scale="4" />
+          <Property Name="MinSalespersonCommissionPercentage" Type="decimal" Nullable="false" Precision="5" Scale="4" />
+          <Property Name="MaxSalespersonCommissionPercentage" Type="decimal" Precision="5" Scale="4" />
+          <Property Name="DefalutBudgetMixPercentageGoogle" Type="decimal" Precision="5" Scale="4" />
+          <Property Name="DefalutBudgetMixPercentageBing" Type="decimal" Precision="5" Scale="4" />
+          <Property Name="DefaultSemplestBannerImageUrl" Type="nchar" MaxLength="1024" />
+          <Property Name="DefaultSemplestStyleSheetUrl" Type="nchar" MaxLength="1024" />
+          <Property Name="MaxNumberOfSitelinks" Type="int" />
+          <Property Name="LastAccountNumberUsed" Type="int" />
+          <Property Name="LastSEMplestEmployeeIDused" Type="int" />
+          <Property Name="DefaultEmailContactUs" Type="nchar" MaxLength="150" />
+          <Property Name="DefalutEmailContactMe" Type="nchar" MaxLength="150" />
+          <Property Name="DefaultProductGroupName" Type="nchar" MaxLength="256" />
+          <Property Name="DefaultProductPromotionName" Type="nchar" MaxLength="256" />
+          <Property Name="SamplestDevelopmentEmail" Type="nchar" MaxLength="150" />
+          <Property Name="SemplestDefaultBudgetMarkUpOrDown" Type="nchar" MaxLength="20" />
+        </EntityType>
         <EntityType Name="Credential">
           <Key>
             <PropertyRef Name="CredentialPK" />
@@ -292,6 +364,17 @@
           <Property Name="CustomerParentFK" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
         </EntityType>
+        <EntityType Name="CustomerNotes">
+          <Key>
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="NotePK" />
+          </Key>
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="NotePK" Type="int" Nullable="false" />
+          <Property Name="DateAdded" Type="datetime" />
+          <Property Name="DateEdited" Type="datetime" />
+          <Property Name="Note" Type="nvarchar" />
+        </EntityType>
         <EntityType Name="CustomerPhoneAssociation">
           <Key>
             <PropertyRef Name="CustomerFK" />
@@ -308,6 +391,7 @@
           <Property Name="KeywordPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="Keyword" Type="nchar" Nullable="false" MaxLength="250" />
           <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="ISNegative" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="EditedDate" Type="nchar" MaxLength="20" />
         </EntityType>
@@ -358,6 +442,15 @@
           <Property Name="RolePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="RoleName" Type="nchar" Nullable="false" MaxLength="100" />
         </EntityType>
+        <EntityType Name="SiteLinks">
+          <Key>
+            <PropertyRef Name="SiteLInkPK" />
+          </Key>
+          <Property Name="SiteLInkPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CampaignAdsFK" Type="int" Nullable="false" />
+          <Property Name="LinkText" Type="nchar" Nullable="false" MaxLength="35" />
+          <Property Name="LinkURL" Type="nchar" Nullable="false" MaxLength="1024" />
+        </EntityType>
         <EntityType Name="StateCode">
           <Key>
             <PropertyRef Name="StateAbbrPK" />
@@ -374,6 +467,16 @@
           <Property Name="diagram_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="TransactionHistory">
+          <Key>
+            <PropertyRef Name="transactionID" />
+          </Key>
+          <Property Name="transactionID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="UserFK" Type="int" />
+          <Property Name="TransactionType" Type="nchar" MaxLength="10" />
+          <Property Name="TransactionDescription" Type="varchar(max)" />
+          <Property Name="Date" Type="datetime" />
         </EntityType>
         <EntityType Name="UserRolesAssociation">
           <Key>
@@ -626,6 +729,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_CampaignAds_SiteLinks_1">
+          <End Role="CampaignAds" Type="SemplestModel.Store.CampaignAds" Multiplicity="1" />
+          <End Role="SiteLinks" Type="SemplestModel.Store.SiteLinks" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CampaignAds">
+              <PropertyRef Name="CampaignAdsPK" />
+            </Principal>
+            <Dependent Role="SiteLinks">
+              <PropertyRef Name="CampaignAdsFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Customer_AdvertisingEngineAccount_1">
           <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
           <End Role="AdvertisingEngineAccount" Type="SemplestModel.Store.AdvertisingEngineAccount" Multiplicity="*" />
@@ -634,6 +749,18 @@
               <PropertyRef Name="CustomerPK" />
             </Principal>
             <Dependent Role="AdvertisingEngineAccount">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Customer_CustomerNotes_1">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
+          <End Role="CustomerNotes" Type="SemplestModel.Store.CustomerNotes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerNotes">
               <PropertyRef Name="CustomerFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -852,6 +979,18 @@
             <End Role="Role" EntitySet="Roles" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <EntitySet Name="Configurations" EntityType="SemplestModel.Configuration" />
+          <EntitySet Name="CustomerNotes" EntityType="SemplestModel.CustomerNote" />
+          <EntitySet Name="SiteLinks" EntityType="SemplestModel.SiteLink" />
+          <EntitySet Name="TransactionHistories" EntityType="SemplestModel.TransactionHistory" />
+          <AssociationSet Name="REL_CampaignAds_SiteLinks_1" Association="SemplestModel.REL_CampaignAds_SiteLinks_1">
+            <End Role="CampaignAd" EntitySet="CampaignAds" />
+            <End Role="SiteLink" EntitySet="SiteLinks" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Customer_CustomerNotes_1" Association="SemplestModel.REL_Customer_CustomerNotes_1">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="CustomerNote" EntitySet="CustomerNotes" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -887,6 +1026,7 @@
           <NavigationProperty Name="AdGroupKeywordAssociations" Relationship="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3" FromRole="AdGroup" ToRole="AdGroupKeywordAssociation" />
           <NavigationProperty Name="CampaignAds" Relationship="SemplestModel.REL_AdGroup_CampaignAds_1" FromRole="AdGroup" ToRole="CampaignAds" />
           <NavigationProperty Name="Campaign" Relationship="SemplestModel.REL_Campaign_AdGroup_1" FromRole="AdGroup" ToRole="Campaign" />
+          <Property Type="String" Name="LandingPageURL" Nullable="false" MaxLength="35" FixedLength="true" Unicode="true" />
         </EntityType>
         <EntityType Name="AdGroupKeywordAssociation">
           <Key>
@@ -963,6 +1103,7 @@
           <Property Name="AdGroupFK" Type="Int32" Nullable="false" />
           <Property Name="AdText" Type="String" Nullable="false" MaxLength="4000" Unicode="true" FixedLength="true" />
           <NavigationProperty Name="AdGroup" Relationship="SemplestModel.REL_AdGroup_CampaignAds_1" FromRole="CampaignAds" ToRole="AdGroup" />
+          <NavigationProperty Name="SiteLinks" Relationship="SemplestModel.REL_CampaignAds_SiteLinks_1" FromRole="CampaignAd" ToRole="SiteLink" />
         </EntityType>
         <EntityType Name="CampaignCycleType">
           <Key>
@@ -1004,6 +1145,7 @@
           <NavigationProperty Name="CustomerHierarchies1" Relationship="SemplestModel.Paraent_Rel" FromRole="Customer" ToRole="CustomerHierarchy" />
           <NavigationProperty Name="Users" Relationship="SemplestModel.UserCustomer_rel" FromRole="Customer" ToRole="Users" />
           <NavigationProperty Name="AdvertisingEngines" Relationship="SemplestModel.AdvertisingEngineAccount" FromRole="Customer" ToRole="AdvertisingEngine" />
+          <NavigationProperty Name="CustomerNotes" Relationship="SemplestModel.REL_Customer_CustomerNotes_1" FromRole="Customer" ToRole="CustomerNote" />
         </EntityType>
         <EntityType Name="CustomerAddressAssociation">
           <Key>
@@ -1050,6 +1192,7 @@
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
           <Property Name="EditedDate" Type="String" MaxLength="20" Unicode="true" FixedLength="true" />
           <NavigationProperty Name="AdGroupKeywordAssociations" Relationship="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2" FromRole="Keyword" ToRole="AdGroupKeywordAssociation" />
+          <Property Type="Boolean" Name="ISNegative" Nullable="false" />
         </EntityType>
         <EntityType Name="KeywordBid">
           <Key>
@@ -1428,6 +1571,94 @@
           <End Type="SemplestModel.Role" Role="Role" Multiplicity="*" />
           <End Type="SemplestModel.User" Role="User" Multiplicity="0..1" />
         </Association>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="CustomerMinOrderAmount" />
+            <PropertyRef Name="CustomerDefaultMonthlyFlatFeeAmount" />
+            <PropertyRef Name="CustomerDefaultPerCampaignFlatFeeAmount" />
+            <PropertyRef Name="CustomerDefaultPerAdGroupFlatFeeAmount" />
+            <PropertyRef Name="DefaultMediaComissionPercentage" />
+            <PropertyRef Name="DefaultSalesPersonCommissionPercentage" />
+            <PropertyRef Name="MinSalespersonCommissionPercentage" />
+          </Key>
+          <Property Type="Decimal" Name="CustomerMinOrderAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultMonthlyFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultPerCampaignFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultPerAdGroupFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="DefaultMediaComissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefaultSalesPersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="MinSalespersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="MaxSalespersonCommissionPercentage" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefalutBudgetMixPercentageGoogle" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefalutBudgetMixPercentageBing" Precision="5" Scale="4" />
+          <Property Type="String" Name="DefaultSemplestBannerImageUrl" MaxLength="1024" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="DefaultSemplestStyleSheetUrl" MaxLength="1024" FixedLength="true" Unicode="true" />
+          <Property Type="Int32" Name="MaxNumberOfSitelinks" />
+          <Property Type="Int32" Name="LastAccountNumberUsed" />
+          <Property Type="Int32" Name="LastSEMplestEmployeeIDused" />
+          <Property Type="String" Name="DefaultEmailContactUs" MaxLength="150" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="DefalutEmailContactMe" MaxLength="150" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="DefaultProductGroupName" MaxLength="256" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="DefaultProductPromotionName" MaxLength="256" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="SamplestDevelopmentEmail" MaxLength="150" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="SemplestDefaultBudgetMarkUpOrDown" MaxLength="20" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <EntityType Name="CustomerNote">
+          <Key>
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="NotePK" />
+          </Key>
+          <Property Type="Int32" Name="CustomerFK" Nullable="false" />
+          <Property Type="Int32" Name="NotePK" Nullable="false" />
+          <Property Type="DateTime" Name="DateAdded" />
+          <Property Type="DateTime" Name="DateEdited" />
+          <Property Type="String" Name="Note" MaxLength="4000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.REL_Customer_CustomerNotes_1" FromRole="CustomerNote" ToRole="Customer" />
+        </EntityType>
+        <EntityType Name="SiteLink">
+          <Key>
+            <PropertyRef Name="SiteLInkPK" />
+          </Key>
+          <Property Type="Int32" Name="SiteLInkPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="CampaignAdsFK" Nullable="false" />
+          <Property Type="String" Name="LinkText" Nullable="false" MaxLength="35" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="LinkURL" Nullable="false" MaxLength="1024" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="CampaignAd" Relationship="SemplestModel.REL_CampaignAds_SiteLinks_1" FromRole="SiteLink" ToRole="CampaignAd" />
+        </EntityType>
+        <EntityType Name="TransactionHistory">
+          <Key>
+            <PropertyRef Name="transactionID" />
+          </Key>
+          <Property Type="Int32" Name="transactionID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="UserFK" />
+          <Property Type="String" Name="TransactionType" MaxLength="10" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="TransactionDescription" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Type="DateTime" Name="Date" />
+        </EntityType>
+        <Association Name="REL_CampaignAds_SiteLinks_1">
+          <End Type="SemplestModel.CampaignAd" Role="CampaignAd" Multiplicity="1" />
+          <End Type="SemplestModel.SiteLink" Role="SiteLink" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CampaignAd">
+              <PropertyRef Name="CampaignAdsPK" />
+            </Principal>
+            <Dependent Role="SiteLink">
+              <PropertyRef Name="CampaignAdsFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Customer_CustomerNotes_1">
+          <End Type="SemplestModel.Customer" Role="Customer" Multiplicity="1" />
+          <End Type="SemplestModel.CustomerNote" Role="CustomerNote" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="CustomerNote">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1449,7 +1680,8 @@
             <ScalarProperty Name="AddressType1" ColumnName="AddressType" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="AdGroups"><EntityTypeMapping TypeName="SemplestModel.AdGroup"><MappingFragment StoreEntitySet="AdGroup">
-            <ScalarProperty Name="AdGroupPK" ColumnName="AdGroupPK" />
+            <ScalarProperty Name="LandingPageURL" ColumnName="LandingPageURL" />
+                <ScalarProperty Name="AdGroupPK" ColumnName="AdGroupPK" />
             <ScalarProperty Name="CampaignFK" ColumnName="CampaignFK" />
             <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
@@ -1535,7 +1767,8 @@
             <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Keywords"><EntityTypeMapping TypeName="SemplestModel.Keyword"><MappingFragment StoreEntitySet="Keyword">
-            <ScalarProperty Name="KeywordPK" ColumnName="KeywordPK" />
+            <ScalarProperty Name="ISNegative" ColumnName="ISNegative" />
+                <ScalarProperty Name="KeywordPK" ColumnName="KeywordPK" />
             <ScalarProperty Name="Keyword1" ColumnName="Keyword" />
             <ScalarProperty Name="IsActive" ColumnName="IsActive" />
             <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -1623,6 +1856,65 @@
             </EndProperty>
             <Condition ColumnName="UsersFK" IsNull="false" />
           </AssociationSetMapping>
+          <EntitySetMapping Name="Configurations">
+            <EntityTypeMapping TypeName="SemplestModel.Configuration">
+              <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="SemplestDefaultBudgetMarkUpOrDown" ColumnName="SemplestDefaultBudgetMarkUpOrDown" />
+                <ScalarProperty Name="SamplestDevelopmentEmail" ColumnName="SamplestDevelopmentEmail" />
+                <ScalarProperty Name="DefaultProductPromotionName" ColumnName="DefaultProductPromotionName" />
+                <ScalarProperty Name="DefaultProductGroupName" ColumnName="DefaultProductGroupName" />
+                <ScalarProperty Name="DefalutEmailContactMe" ColumnName="DefalutEmailContactMe" />
+                <ScalarProperty Name="DefaultEmailContactUs" ColumnName="DefaultEmailContactUs" />
+                <ScalarProperty Name="LastSEMplestEmployeeIDused" ColumnName="LastSEMplestEmployeeIDused" />
+                <ScalarProperty Name="LastAccountNumberUsed" ColumnName="LastAccountNumberUsed" />
+                <ScalarProperty Name="MaxNumberOfSitelinks" ColumnName="MaxNumberOfSitelinks" />
+                <ScalarProperty Name="DefaultSemplestStyleSheetUrl" ColumnName="DefaultSemplestStyleSheetUrl" />
+                <ScalarProperty Name="DefaultSemplestBannerImageUrl" ColumnName="DefaultSemplestBannerImageUrl" />
+                <ScalarProperty Name="DefalutBudgetMixPercentageBing" ColumnName="DefalutBudgetMixPercentageBing" />
+                <ScalarProperty Name="DefalutBudgetMixPercentageGoogle" ColumnName="DefalutBudgetMixPercentageGoogle" />
+                <ScalarProperty Name="MaxSalespersonCommissionPercentage" ColumnName="MaxSalespersonCommissionPercentage" />
+                <ScalarProperty Name="MinSalespersonCommissionPercentage" ColumnName="MinSalespersonCommissionPercentage" />
+                <ScalarProperty Name="DefaultSalesPersonCommissionPercentage" ColumnName="DefaultSalesPersonCommissionPercentage" />
+                <ScalarProperty Name="DefaultMediaComissionPercentage" ColumnName="DefaultMediaComissionPercentage" />
+                <ScalarProperty Name="CustomerDefaultPerAdGroupFlatFeeAmount" ColumnName="CustomerDefaultPerAdGroupFlatFeeAmount" />
+                <ScalarProperty Name="CustomerDefaultPerCampaignFlatFeeAmount" ColumnName="CustomerDefaultPerCampaignFlatFeeAmount" />
+                <ScalarProperty Name="CustomerDefaultMonthlyFlatFeeAmount" ColumnName="CustomerDefaultMonthlyFlatFeeAmount" />
+                <ScalarProperty Name="CustomerMinOrderAmount" ColumnName="CustomerMinOrderAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerNotes">
+            <EntityTypeMapping TypeName="SemplestModel.CustomerNote">
+              <MappingFragment StoreEntitySet="CustomerNotes">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="DateEdited" ColumnName="DateEdited" />
+                <ScalarProperty Name="DateAdded" ColumnName="DateAdded" />
+                <ScalarProperty Name="NotePK" ColumnName="NotePK" />
+                <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SiteLinks">
+            <EntityTypeMapping TypeName="SemplestModel.SiteLink">
+              <MappingFragment StoreEntitySet="SiteLinks">
+                <ScalarProperty Name="LinkURL" ColumnName="LinkURL" />
+                <ScalarProperty Name="LinkText" ColumnName="LinkText" />
+                <ScalarProperty Name="CampaignAdsFK" ColumnName="CampaignAdsFK" />
+                <ScalarProperty Name="SiteLInkPK" ColumnName="SiteLInkPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TransactionHistories">
+            <EntityTypeMapping TypeName="SemplestModel.TransactionHistory">
+              <MappingFragment StoreEntitySet="TransactionHistory">
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="TransactionDescription" ColumnName="TransactionDescription" />
+                <ScalarProperty Name="TransactionType" ColumnName="TransactionType" />
+                <ScalarProperty Name="UserFK" ColumnName="UserFK" />
+                <ScalarProperty Name="transactionID" ColumnName="transactionID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -1670,8 +1962,8 @@
         <AssociationConnector Association="SemplestModel.Address_Rel" ManuallyRouted="false">
           <ConnectorPoint PointX="10.5" PointY="3.6906387736378194" />
           <ConnectorPoint PointX="10.875" PointY="4.0656387736378194" />
-          <ConnectorPoint PointX="10.875" PointY="14.432444661458334" />
           <ConnectorPoint PointX="11.25" PointY="14.432444661458334" />
+          <ConnectorPoint PointX="11.625" PointY="14.432444661458334" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Address_StateCode" ManuallyRouted="false">
           <ConnectorPoint PointX="8.25" PointY="3.1583968098958328" />
@@ -1689,31 +1981,31 @@
           <ConnectorPoint PointX="3" PointY="14.393992513020834" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdGroup_AdGroupKeywordAssociation_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.75" PointY="13.25" />
-          <ConnectorPoint PointX="3.75" PointY="12.125" />
-          <ConnectorPoint PointX="4.822916666666667" PointY="12.125" />
-          <ConnectorPoint PointX="4.989583333333333" PointY="12.125" />
+          <ConnectorPoint PointX="3.953127" PointY="13.25" />
+          <ConnectorPoint PointX="3.953127" PointY="12.125" />
+          <ConnectorPoint PointX="4.908854166666667" PointY="12.125" />
+          <ConnectorPoint PointX="5.075520833333333" PointY="12.125" />
           <ConnectorPoint PointX="7.875" PointY="12.125" />
-          <ConnectorPoint PointX="7.875" PointY="14.3362939453125" />
-          <ConnectorPoint PointX="8.25" PointY="14.3362939453125" />
+          <ConnectorPoint PointX="7.875" PointY="14.623493431640625" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="14.623493431640625" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="14.623493431640625" />
+          <ConnectorPoint PointX="8.25" PointY="14.623493431640625" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_AdGroup_CampaignAds_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.75" PointY="15.614889322916667" />
-          <ConnectorPoint PointX="3.75" PointY="18.268992513020834" />
-          <ConnectorPoint PointX="4.651041666666667" PointY="18.268992513020834" />
-          <ConnectorPoint PointX="4.817708333333333" PointY="18.268992513020834" />
-          <ConnectorPoint PointX="5.25" PointY="18.268992513020834" />
+          <ConnectorPoint PointX="3.75" PointY="15.807190755208332" />
+          <ConnectorPoint PointX="3.75" PointY="18.365143229166669" />
+          <ConnectorPoint PointX="4.694010416666667" PointY="18.365143229166669" />
+          <ConnectorPoint PointX="4.860677083333333" PointY="18.365143229166669" />
+          <ConnectorPoint PointX="5.25" PointY="18.365143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Campaign_AdGroup_1" ManuallyRouted="false">
           <ConnectorPoint PointX="8.25" PointY="12.21875" />
-          <ConnectorPoint PointX="8.1458333333333339" PointY="12.21875" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="12.21875" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="12.21875" />
-          <ConnectorPoint PointX="7.791666666666667" PointY="12.21875" />
-          <ConnectorPoint PointX="4.989583333333333" PointY="12.21875" />
-          <ConnectorPoint PointX="4.822916666666667" PointY="12.21875" />
-          <ConnectorPoint PointX="3.8333333333333335" PointY="12.21875" />
-          <ConnectorPoint PointX="3.6666666666666665" PointY="12.21875" />
+          <ConnectorPoint PointX="8.0208333333333339" PointY="12.218749999999998" />
+          <ConnectorPoint PointX="7.605223358974361" PointY="12.21875" />
+          <ConnectorPoint PointX="5.075520833333333" PointY="12.21875" />
+          <ConnectorPoint PointX="4.908854166666667" PointY="12.21875" />
+          <ConnectorPoint PointX="4.0364603333333333" PointY="12.21875" />
+          <ConnectorPoint PointX="3.8697936666666664" PointY="12.21875" />
           <ConnectorPoint PointX="3.34375" PointY="12.21875" />
           <ConnectorPoint PointX="3.34375" PointY="13.25" />
         </AssociationConnector>
@@ -1722,15 +2014,13 @@
           <ConnectorPoint PointX="9" PointY="15.843242187500003" />
           <ConnectorPoint PointX="10.072916666666666" PointY="15.843242187500003" />
           <ConnectorPoint PointX="10.239583333333334" PointY="15.843242187500003" />
-          <ConnectorPoint PointX="11.916666666666666" PointY="15.843242187500003" />
-          <ConnectorPoint PointX="12.083333333333334" PointY="15.843242187500003" />
           <ConnectorPoint PointX="13.5" PointY="15.843242187500003" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Keyword_AdGroupKeywordAssociation_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.5" PointY="11.360279198317311" />
-          <ConnectorPoint PointX="8.0625" PointY="11.922779198317311" />
-          <ConnectorPoint PointX="8.0625" PointY="13.761894972656249" />
-          <ConnectorPoint PointX="8.25" PointY="13.761894972656249" />
+          <ConnectorPoint PointX="7.5" PointY="11.552580630608976" />
+          <ConnectorPoint PointX="7.9375" PointY="11.990080630608976" />
+          <ConnectorPoint PointX="7.9375" PointY="13.989809086763819" />
+          <ConnectorPoint PointX="8.25" PointY="13.989809086763819" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" ManuallyRouted="false">
           <ConnectorPoint PointX="15" PointY="14.37474609375" />
@@ -1742,62 +2032,66 @@
           <ConnectorPoint PointX="14.25" PointY="16.009095052083339" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_BillType_Customer_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.90625" PointY="11.97068359375" />
-          <ConnectorPoint PointX="4.90625" PointY="12.78125" />
+          <ConnectorPoint PointX="4.9921875" PointY="11.97068359375" />
+          <ConnectorPoint PointX="4.9921875" PointY="12.78125" />
           <ConnectorPoint PointX="6" PointY="12.78125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Cust_Camp_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.5" PointY="12.438460538461539" />
-          <ConnectorPoint PointX="7.6875" PointY="12.250960538461541" />
-          <ConnectorPoint PointX="7.6875" PointY="13.071595052083332" />
-          <ConnectorPoint PointX="7.8160744349011209" PointY="12.94302061718221" />
-          <ConnectorPoint PointX="7.9339255650988791" PointY="12.825169486984454" />
-          <ConnectorPoint PointX="8.00357443490112" PointY="12.75552061718221" />
-          <ConnectorPoint PointX="8.1214255650988783" PointY="12.637669486984454" />
+          <ConnectorPoint PointX="7.5" PointY="12.407306692307694" />
+          <ConnectorPoint PointX="7.78125" PointY="12.126056692307692" />
+          <ConnectorPoint PointX="7.78125" PointY="12.977845052083332" />
+          <ConnectorPoint PointX="7.81607443490112" PointY="12.94302061718221" />
+          <ConnectorPoint PointX="7.9964255650988791" PointY="12.762669486984454" />
           <ConnectorPoint PointX="8.25" PointY="12.509095052083332" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.cycType_Relation" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.734375" PointY="20.625" />
-          <ConnectorPoint PointX="4.734375" PointY="16.073995768229167" />
-          <ConnectorPoint PointX="6" PointY="16.073995768229167" />
+          <ConnectorPoint PointX="4.77734375" PointY="20.625" />
+          <ConnectorPoint PointX="4.77734375" PointY="16.318299560125723" />
+          <ConnectorPoint PointX="6" PointY="16.318299560125723" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Credential_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9.75" PointY="23.5862939453125" />
           <ConnectorPoint PointX="10.5" PointY="23.5862939453125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Child_Rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.15625" PointY="16.470602213541667" />
-          <ConnectorPoint PointX="7.15625" PointY="16.891551606770832" />
-          <ConnectorPoint PointX="7.2760441666666669" PointY="16.891551606770832" />
-          <ConnectorPoint PointX="7.4427108333333329" PointY="16.891551606770832" />
-          <ConnectorPoint PointX="8.25" PointY="16.891551606770832" />
+          <ConnectorPoint PointX="7.15625" PointY="16.662903645833335" />
+          <ConnectorPoint PointX="7.15625" PointY="17.254141651692709" />
+          <ConnectorPoint PointX="7.3776079166666664" PointY="17.254141651692709" />
+          <ConnectorPoint PointX="7.5442745833333325" PointY="17.254141651692709" />
+          <ConnectorPoint PointX="8.25" PointY="17.254141651692709" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Customer_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.5" PointY="16.07787109375" />
-          <ConnectorPoint PointX="10.072916666666666" PointY="16.07787109375" />
-          <ConnectorPoint PointX="10.239583333333334" PointY="16.07787109375" />
-          <ConnectorPoint PointX="12" PointY="16.07787109375" />
-          <ConnectorPoint PointX="12" PointY="15.614889322916667" />
+          <ConnectorPoint PointX="7.5" PointY="12.785797526041666" />
+          <ConnectorPoint PointX="7.697916666666667" PointY="12.785797526041664" />
+          <ConnectorPoint PointX="8.056630859375" PointY="12.785797526041666" />
+          <ConnectorPoint PointX="10.791666666666666" PointY="12.785797526041666" />
+          <ConnectorPoint PointX="10.958333333333334" PointY="12.785797526041666" />
+          <ConnectorPoint PointX="11.625" PointY="12.785797526041666" />
+          <ConnectorPoint PointX="11.625" PointY="13.25" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.custPhone_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.5" PointY="13.418629741887013" />
-          <ConnectorPoint PointX="7.791666666666667" PointY="13.418629741887013" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="13.418629741887013" />
-          <ConnectorPoint PointX="8" PointY="13.418629741887013" />
+          <ConnectorPoint PointX="7.5" PointY="15.64319803873698" />
+          <ConnectorPoint PointX="8" PointY="15.64319803873698" />
           <ConnectorPoint PointX="8" PointY="13" />
           <ConnectorPoint PointX="10.791666666666666" PointY="13" />
           <ConnectorPoint PointX="10.958333333333334" PointY="13" />
-          <ConnectorPoint PointX="12" PointY="13" />
-          <ConnectorPoint PointX="12" PointY="12.355286458333339" />
+          <ConnectorPoint PointX="11.541666666666666" PointY="13" />
+          <ConnectorPoint PointX="11.708333333333334" PointY="13" />
+          <ConnectorPoint PointX="12.187499500000001" PointY="13" />
+          <ConnectorPoint PointX="12.187499500000001" PointY="12.355286458333339" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Paraent_Rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.3593775" PointY="16.470602213541667" />
-          <ConnectorPoint PointX="7.3593775" PointY="17.133278303385417" />
-          <ConnectorPoint PointX="8.25" PointY="17.133278303385417" />
+          <ConnectorPoint PointX="7.3593775" PointY="16.662903645833335" />
+          <ConnectorPoint PointX="7.3593775" PointY="16.958522648763015" />
+          <ConnectorPoint PointX="7.3776079166666664" PointY="16.958522648763015" />
+          <ConnectorPoint PointX="7.5442745833333325" PointY="16.958522648763015" />
+          <ConnectorPoint PointX="8.25" PointY="16.958522648763015" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.UserCustomer_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.9531225" PointY="16.470602213541667" />
+          <ConnectorPoint PointX="6.9531225" PointY="16.662903645833335" />
           <ConnectorPoint PointX="6.9531225" PointY="23.7881982421875" />
+          <ConnectorPoint PointX="7.3776079166666664" PointY="23.7881982421875" />
+          <ConnectorPoint PointX="7.5442745833333325" PointY="23.7881982421875" />
           <ConnectorPoint PointX="8.25" PointY="23.7881982421875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneCust_rel" ManuallyRouted="false">
@@ -1813,12 +2107,12 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.AdvertisingEngineAccount" ManuallyRouted="false">
           <ConnectorPoint PointX="1.5" PointY="15.287985026041667" />
-          <ConnectorPoint PointX="1.5" PointY="15.844440045572924" />
-          <ConnectorPoint PointX="2.5416666666666665" PointY="15.844440045572924" />
-          <ConnectorPoint PointX="2.7083333333333335" PointY="15.844440045572924" />
-          <ConnectorPoint PointX="4.041666666666667" PointY="15.844440045572924" />
-          <ConnectorPoint PointX="4.208333333333333" PointY="15.844440045572924" />
-          <ConnectorPoint PointX="6" PointY="15.844440045572924" />
+          <ConnectorPoint PointX="1.5" PointY="16.062742657667034" />
+          <ConnectorPoint PointX="2.5416666666666665" PointY="16.062742657667034" />
+          <ConnectorPoint PointX="2.7083333333333335" PointY="16.062742657667034" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="16.062742657667034" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="16.062742657667034" />
+          <ConnectorPoint PointX="6" PointY="16.062742657667034" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.Right" Width="1.5" PointX="3" PointY="0.875" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="SemplestModel.Role" Width="1.5" PointX="0.75" PointY="0.875" Height="1.7879850260416674" />
@@ -1831,7 +2125,25 @@
           <ConnectorPoint PointX="2.25" PointY="2.6629850260416674" />
           <ConnectorPoint PointX="2.625" PointY="3.0379850260416674" />
           <ConnectorPoint PointX="2.625" PointY="24.651049363281246" />
+          <ConnectorPoint PointX="5.947916666666667" PointY="24.651049363281246" />
+          <ConnectorPoint PointX="6.114583333333333" PointY="24.651049363281246" />
+          <ConnectorPoint PointX="7.3776079166666664" PointY="24.651049363281246" />
+          <ConnectorPoint PointX="7.5442745833333325" PointY="24.651049363281246" />
           <ConnectorPoint PointX="8.25" PointY="24.651049363281246" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.Configuration" Width="1.5" PointX="0.75" PointY="6.75" Height="5.05710937500001" />
+        <EntityTypeShape EntityType="SemplestModel.CustomerNote" Width="1.5" PointX="8.625" PointY="26.375" Height="2.172587890624996" />
+        <EntityTypeShape EntityType="SemplestModel.SiteLink" Width="1.5" PointX="7.875" PointY="29.375" Height="1.9802864583333246" />
+        <EntityTypeShape EntityType="SemplestModel.TransactionHistory" Width="1.5" PointX="3.75" PointY="3.75" Height="1.9802864583333246" />
+        <AssociationConnector Association="SemplestModel.REL_CampaignAds_SiteLinks_1" >
+          <ConnectorPoint PointX="6.03125" PointY="19.355286458333335" />
+          <ConnectorPoint PointX="6.03125" PointY="30.365143229166662" />
+          <ConnectorPoint PointX="7.875" PointY="30.365143229166662" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Customer_CustomerNotes_1" >
+          <ConnectorPoint PointX="7.4609412499999994" PointY="16.662903645833335" />
+          <ConnectorPoint PointX="7.4609412499999994" PointY="27.461293945312498" />
+          <ConnectorPoint PointX="8.625" PointY="27.461293945312498" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

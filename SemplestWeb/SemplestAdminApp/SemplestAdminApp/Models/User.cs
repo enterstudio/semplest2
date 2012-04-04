@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-
-
 namespace SemplestAdminApp.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel.DataAnnotations;
     
     public partial class User
     {
@@ -22,11 +19,9 @@ namespace SemplestAdminApp.Models
             this.Credentials = new HashSet<Credential>();
             this.Roles = new HashSet<Role>();
         }
-        
+    
         public int UserPK { get; set; }
-        
         public Nullable<int> CustomerFK { get; set; }
-        [Required]
         public string FirstName { get; set; }
         public string MiddleInitial { get; set; }
         public string LastName { get; set; }

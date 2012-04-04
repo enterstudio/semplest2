@@ -12,18 +12,13 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CampaignAd
+    public partial class SiteLink
     {
-        public CampaignAd()
-        {
-            this.SiteLinks = new HashSet<SiteLink>();
-        }
+        public int SiteLInkPK { get; set; }
+        public int CampaignAdsFK { get; set; }
+        public string LinkText { get; set; }
+        public string LinkURL { get; set; }
     
-        public int CampaignAdsPK { get; set; }
-        public int AdGroupFK { get; set; }
-        public string AdText { get; set; }
-    
-        public virtual AdGroup AdGroup { get; set; }
-        public virtual ICollection<SiteLink> SiteLinks { get; set; }
+        public virtual CampaignAd CampaignAd { get; set; }
     }
 }

@@ -50,5 +50,9 @@ namespace SemplestAdminApp.Models
         public DbSet<Right> Rights { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<sysdiagram> sysdiagrams { get; set; }
+        public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<CustomerNote> CustomerNotes { get; set; }
+        public DbSet<SiteLink> SiteLinks { get; set; }
+        public DbSet<TransactionHistory> TransactionHistories { get; set; }
     }
 }

@@ -27,11 +27,11 @@ namespace SemplestAdminApp.Controllers
             List<string> users = new List<string>();
             using (SemplestEntities dbContext = new SemplestEntities())
             {
-                System.Data.Entity.DbSet dusers = dbContext.Users;
-                foreach (User du in dusers)
-                {
-                    users.Add(du.FirstName + " "  + du.LastName);
-                }
+                //System.Data.Entity.DbSet dusers = dbContext.Users;
+                //foreach (User du in dusers)
+                //{
+                //    users.Add(du.FirstName + " "  + du.LastName);
+                //}
             }
             var quer = from u in users
                        where u.ToLower().Contains(query.ToLower())

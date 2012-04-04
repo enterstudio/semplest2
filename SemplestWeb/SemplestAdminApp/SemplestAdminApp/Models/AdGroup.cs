@@ -23,6 +23,7 @@ namespace SemplestAdminApp.Models
         public int AdGroupPK { get; set; }
         public int CampaignFK { get; set; }
         public int AdvertisingEngineFK { get; set; }
+        public string LandingPageURL { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual ICollection<AdGroupKeywordAssociation> AdGroupKeywordAssociations { get; set; }
