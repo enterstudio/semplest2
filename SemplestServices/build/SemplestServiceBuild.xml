@@ -2,10 +2,9 @@
 
    <!-- artifactsDir and buildVersion passed in for the build machine-->
 	<property environment="env"/>
-	<!-- 
 	<property name="product.version" value="${env.BUILD_VERSION}"/>
-	-->
-	<property name="product.version" value="1.0.x"/>
+   <!--	switch when build locally
+   <property name="product.version" value="1.0.x"/>  -->
 	
 	 <condition property="output.dir" value="${artifactsDir}" 
 	             else="${basedir}">
