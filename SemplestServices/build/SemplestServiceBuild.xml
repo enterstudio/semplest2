@@ -27,7 +27,7 @@
 <!-- IZPACK Stuff -->
   <property file="${basedir}/src/system.properties"/>
   <property name="product.name" value="SemplestService"/>
-  <property name="product.short.name" value="SemplestService-Server"/>
+  <property name="product.short.name" value="SemplestService"/>
   <property name="default.dest.dir" value="C:/workspace/SemplestService"/>
  	
   <property name="install.builder.dir" value="${basedir}/../izpack"/>            
@@ -51,7 +51,7 @@
 	        </linecontains>
 	      </filterchain>
 	    </loadproperties>	
-
+  
   <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
   <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
 	
@@ -248,10 +248,15 @@
 
 	<target name="build-installer" depends="compileProtocol,compile,deps" description="Create distribution executable">
 
+		<propertyregex property="service.name" input="${semplest.service}" 
+			regexp="([^\.]*)$" 
+		    select="\0" 
+		    defaultvalue="Service" 
+		    override="true"/>
 	    <!-- Run installer build with install-definition -->
 	    <echo message="Running IzPack to build the installer(s)..."/>  
 	    <izpack input="${install.xml}"
-	            output="${output.dir}/${product.short.name}-${product.version}-install.jar"
+	            output="${output.dir}/${product.short.name}-${service.name}-${product.version}-install.jar"
 	            installerType="standard"
 	            inheritAll="true"
 	            basedir="${dist}"
