@@ -28,9 +28,8 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception
 	{
-		if(kwGen==null){
-			kwGen =  new KWGenDmozLDAServer();
-		}
+		
+		kwGen =  new KWGenDmozLDAServer();
 		ArrayList<String> categOpt = kwGen.getCategories(searchTerm);
 		if (categOpt == null)
 		{
@@ -45,6 +44,8 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	public void initializeService(String input) throws Exception
 	{
 		logger.info("Initialized Keyword generator...");
+		kwGen =  new KWGenDmozLDAServer();
+		kwGen.initializeService(null);
 		
 	}
 
