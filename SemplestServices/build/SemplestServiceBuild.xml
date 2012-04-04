@@ -118,12 +118,20 @@
   	      <fileset dir="${semplest.protocol.lib}" includes="**/*.jar" />
   	    </copy>
   	
-  	<!-- If it's a Keyword service, then create JAR for the Keyword class and put it to dist/lib -->
+  	<!-- If it's a Keyword service, then 1) create JAR for the Keyword class and put it to dist/lib 2) copy dmoz folder to dist/bin -->
   	<if>
   	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
   	 <then>  	   
-  	 	<echo message="This is KeywordGeneratorService. Creating Jar for the service class..."/>
+  	 	<echo message="This is KeywordGeneratorService."/>
+  	 	<!-- Copy dmoz folder -->
+  	 	<echo message="Copying dmoz folder..."/>
+  	 	<copy todir="${dist}/lib" filtering="off">
+  	 		<flattenmapper />
+  	 	  	<fileset dir="${semplest.keywords.dir}/dmoz" />
+  	 	</copy>
+  	 	
   	 	<!-- Compile the Keyword class base on the Protocol class -->
+  	 	<echo message="Creating Jar for the service class..."/>
   	 	<mkdir dir="${semplest.keywords.dir}/build/classes"/>
   	 	<javac srcdir="${semplest.protocol.dir}" destdir="${semplest.keywords.dir}/build/classes" classpathref="class.path"
   	 	      target="1.6"
