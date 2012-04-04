@@ -15,6 +15,8 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
 
+import com.google.gson.Gson;
+
 public class SEMplestService
 {
 	private Properties properties = null;
@@ -55,7 +57,9 @@ public class SEMplestService
 			if (service.registerServiceWithESB())
 			{
 				logger.info("Registered Service");
-				 
+				service.initializeService();
+				logger.info("called Init Service");
+				
 			}
 		}
 	}
@@ -63,7 +67,11 @@ public class SEMplestService
 	//Call the initializeService method on the Service
 	private void initializeService()
 	{
-		//String result = myService.getService().ServiceGet(methodName, jsonStr);
+		SemplestServiceTemplate myService = (SemplestServiceTemplate) SEMplestService.appContext.getBean("semplestService");
+		String[] emptyParams = new String[] {};
+		Gson gson = new Gson();
+		String json = gson.toJson(emptyParams);
+		myService.ServiceGet(INITMETHODNAME, json);
 	}
 
 	private boolean readProperties(String ServiceNameOveride)
