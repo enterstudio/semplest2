@@ -26,9 +26,6 @@ import java.util.Map;
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
 
-final static String hfile = "../SemplestKeywords/dmoz/all/hCounts.new";
-final static String dfile = "../SemplestKeywords/dmoz/all/all.descs";
-
   IndexWriter w;
   StandardAnalyzer analyzer;
   Directory index;
@@ -70,13 +67,7 @@ final static String dfile = "../SemplestKeywords/dmoz/all/all.descs";
       e.printStackTrace();
     }
   }
-  public void loadDesc(){
-	  //Indexes description information
-	    HashMap<String,String> map = ioUtils.readDescs( dfile );
-	    for(Map.Entry<String,String> e : map.entrySet())
-	      this.add( e.getKey(), e.getValue() );
-	    this.done();
-  }
+  
   // ---------
   public String[] search(String qs ){
 
@@ -84,58 +75,65 @@ final static String dfile = "../SemplestKeywords/dmoz/all/all.descs";
     // when no field is explicitly specified in the query.
     String[] res = new String[0];
     try {
-    	res = search(qs, 10);
+      res = search(qs, 10);
     } catch (Exception e ){
       e.printStackTrace();
     }
     return res;
   }
-  
+
   public String[] search(String qs, int hitsPerPage){
-	// Query returning any number of results.the "desc" arg specifies the default field to use
-	// when no field is explicitly specified in the query.
-	  String[] res = new String[0];
-	    try {
-	      Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
+    // Query returning any number of results.the "desc" arg specifies the default field to use
+    // when no field is explicitly specified in the query.
+    String[] res = new String[0];
+    try {
+      Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
 
-	      // Search
+      // Search
 
-	      IndexSearcher searcher = new IndexSearcher(index, true);
-	      TopScoreDocCollector collector = TopScoreDocCollector.
-	        create(hitsPerPage, true);
-	      searcher.search(qp, collector);
-	      ScoreDoc[] hits = collector.topDocs().scoreDocs;
+      IndexSearcher searcher = new IndexSearcher(index, true);
+      TopScoreDocCollector collector = TopScoreDocCollector.
+        create(hitsPerPage, true);
+      searcher.search(qp, collector);
+      ScoreDoc[] hits = collector.topDocs().scoreDocs;
 
-	      res = new String[hits.length];
-	      for(int i=0;i<hits.length;++i) {
-	        int docId = hits[i].doc;
-	        Document d = searcher.doc(docId);
-	        res[i] = d.get("cat");
-	      }
-	      searcher.close();
-	    } catch (Exception e ){
-	      e.printStackTrace();
-	    }
-	    return res;
+      res = new String[hits.length];
+      for(int i=0;i<hits.length;++i) {
+        int docId = hits[i].doc;
+        Document d = searcher.doc(docId);
+        res[i] = d.get("cat");
+      }
+      searcher.close();
+    } catch (Exception e ){
+      e.printStackTrace();
+    }
+    return res;
   }
 
   // ---------------------
   public static void main(String[] args) throws IOException, ParseException {
+    // final String dfile = "/semplest/data/dmoz/all/all.descs";
+    // final String dfile = "/semplest/data/dmoz/all/hCounts.new";
+    final String dfile = "/tmp/100.descs";
+    
     DmozLucene dl = new DmozLucene();
-    HashMap<String,String> map = ioUtils.readDescs( hfile );
+    loadDesc( dl, dfile);
+
+    Console c = System.console();
+    while( true ){
+      c.printf(" > ");
+      String q = c.readLine();
+      if( q.length() > 0 ) {
+        String[] res = dl.search( q );
+        for( String re : res )
+          c.printf("%s\n", re );
+      }
+    }
+  }
+  public static void loadDesc( DmozLucene dl, String f){
+    HashMap<String,String> map = ioUtils.readDescs( f );
     for(Map.Entry<String,String> e : map.entrySet())
       dl.add( e.getKey(), e.getValue() );
     dl.done();
-
-      Console c = System.console();
-      while( true ){
-        c.printf(" > ");
-        String q = c.readLine();
-        if( q.length() > 5 ) {
-          String[] res = dl.search( q );
-          for( String re : res )
-            c.printf("%s\n", re );
-        }
-      }
   }
 }
