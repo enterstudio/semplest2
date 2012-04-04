@@ -20,7 +20,7 @@ import com.google.gson.Gson;
 
 public class SEMplestService
 {
-	private Properties properties = null;
+	public static Properties properties = null;
 	private ESBConnectionData connectionData = null;
 	private NIOClient nioClient = null;
 	private NIOResponseHandler handler = null;
