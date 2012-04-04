@@ -125,7 +125,8 @@
   	 	<echo message="This is KeywordGeneratorService."/>
   	 	<!-- Copy dmoz folder -->
   	 	<echo message="Copying dmoz folder..."/>
-  	 	<copy todir="${dist}/bin" filtering="off">
+  	 	<mkdir dir="${dist}/bin/dmoz"/>
+  	 	<copy todir="${dist}/bin/dmoz" filtering="off">
   	 		<flattenmapper />
   	 	  	<fileset dir="${semplest.keywords.dir}/dmoz" />
   	 	</copy>
