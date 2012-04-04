@@ -98,7 +98,7 @@ public class SEMplestService
 			is.close();
 
 			connectionData = new ESBConnectionData();
-			connectionData.setServerURI(properties.getProperty("ESBServerIP"));
+			connectionData.setServerURI(properties.getProperty("data.dmoz.all.alldescs"));
 			connectionData.setServerport(properties.getProperty("ESBServerPort"));
 			connectionData.setPingFrequencyMS(Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 			connectionData.setServiceOffered(properties.getProperty("semplest.service"));
