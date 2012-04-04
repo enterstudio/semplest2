@@ -122,9 +122,10 @@
   	<if>
   	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
   	 <then>  	   
+  	 	<echo message="This is KeywordGeneratorService. Creating Jar for the service class..."/>
   	 	<!-- Compile the Keyword class base on the Protocol class -->
   	 	<mkdir dir="${semplest.keywords.dir}/build/classes"/>
-  	 	<javac srcdir="${semplest.protocol.dir}/src" destdir="${semplest.keywords.dir}/build/classes" classpathref="class.path"
+  	 	<javac srcdir="${semplest.protocol.dir}" destdir="${semplest.keywords.dir}/build/classes" classpathref="class.path"
   	 	      target="1.6"
   	 	      source="1.6"
   	 	      debug="${java.debug}"   	
