@@ -125,10 +125,10 @@
   	 	<echo message="This is KeywordGeneratorService."/>
   	 	<!-- Copy dmoz folder -->
   	 	<echo message="Copying dmoz folder..."/>
-  	 	<mkdir dir="${dist}/bin/dmoz"/>
-  	 	<copy todir="${dist}/bin/dmoz" filtering="off">
+  	 	<mkdir dir="${dist}/bin/data"/>
+  	 	<copy todir="${dist}/bin/data" filtering="off">
   	 		<flattenmapper />
-  	 	  	<fileset dir="${semplest.keywords.dir}/dmoz" />
+  	 	  	<fileset dir="${semplest.keywords.dir}/data" />
   	 	</copy>
   	 	
   	 	<!-- Compile the Keyword class base on the Protocol class -->
