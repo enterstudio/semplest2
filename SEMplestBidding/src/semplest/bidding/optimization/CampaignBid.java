@@ -1,24 +1,13 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
-//import java.util.Random;
 
-//import org.apache.commons.math3.analysis.solvers.NewtonSolver;
-//import org.apache.commons.math3.optimization.GoalType;
-//import org.apache.commons.math3.optimization.univariate.BrentOptimizer;
-//import org.apache.commons.math3.optimization.univariate.UnivariatePointValuePair;
-
-//import org.apache.commons.math3.optimization.general.ConjugateGradientFormula;
-//import org.apache.commons.math3.optimization.general.NonLinearConjugateGradientOptimizer;
-//import org.apache.commons.math3.optimization.univariate.UnivariateMultiStartOptimizer;
-//import org.apache.commons.math3.random.RandomGenerator;
 
 import flanagan.math.Minimisation;
 
 import semplest.bidding.estimation.ParametricFunction;
 import semplest.bidding.estimation.TruncatedSmoothSCurve;
-//import semplest.bidding.estimation.WeibullCurve;
-//import semplest.bidding.estimation.Erf;
+
 
 public class CampaignBid {
 	
@@ -37,32 +26,9 @@ public class CampaignBid {
 		wordList = new ArrayList<KeyWordInterface>();
 	}
 	
-//	private double computeOptimumBidForFixedLagrangleMult(int i, double k){
-//		KeyWordInterface key = wordList.get(i);
-//		LagrangeBidFunction fL = new LagrangeBidFunction(key.getClickInfo(), key.getDCostInfo(), key.getQualityScore(), key.getMinBid(), k);
-//		
-////		int noStart = 5;
-////		RandomGenerator r = new RandomGenerator();
-////		UnivariateMultiStartOptimizer<LagrangeBidFunction> optim = new UnivariateMultiStartOptimizer<LagrangeBidFunction>(noStart, new Random());
-//		
-////		NewtonSolver solver = new NewtonSolver();
-////		int maxIter =100;
-////		double maxBid = 3.0;
-////		return solver.solve(maxIter, fL, key.getMinBid(), maxBid);
-//		
-//		int maxIter =1000;
-//		double maxBid = 3.0;
-//		BrentOptimizer optim = new BrentOptimizer(1e-6,1e-6);
-//		UnivariatePointValuePair output = optim.optimize(maxIter, fL, GoalType.MAXIMIZE, key.getMinBid(), maxBid, maxBid-0.01);
-//		return output.getPoint();
-//		
-//		
-//	}
 	
 	private double computeOptimumBidForConst(int i, double k){
 		
-//		ParametricFunction f = new WeibullCurve();
-//		ParametricFunction f = new Erf();
 		ParametricFunction f = new TruncatedSmoothSCurve();
 		f.setMinBid(wordList.get(i).getMinBid());
 
@@ -94,23 +60,20 @@ public class CampaignBid {
 		expectedCost=0;
 		expectedClicks=0;
 		expectedQualityMetric=0;
-//		ParametricFunction f = new WeibullCurve();
-//		ParametricFunction f = new Erf();
+
 		ParametricFunction f = new TruncatedSmoothSCurve();
 
 		double [] input = new double[1];
 		double [] params = null;
 		int i=0;
 		for (KeyWordInterface key : wordList){
-//			if(bids[i]>=key.getMinBid()+0.01){
-				f.setMinBid(key.getMinBid());
-				params = key.getDCostInfo();
-				input[0] = bids[i];
-				expectedCost+=f.function(input, params);
-				params = key.getClickInfo();
-				expectedClicks+=f.function(input, params);
-				expectedQualityMetric+=key.getQualityScore()*f.function(input, params);
-//			}
+			f.setMinBid(key.getMinBid());
+			params = key.getDCostInfo();
+			input[0] = bids[i];
+			expectedCost+=f.function(input, params);
+			params = key.getClickInfo();
+			expectedClicks+=f.function(input, params);
+			expectedQualityMetric+=key.getQualityScore()*f.function(input, params);
 			i++;
 		}
 	}
@@ -134,8 +97,7 @@ public class CampaignBid {
 		bids = new double[wordList.size()];
 		double prevCost=Double.MIN_VALUE;
 		
-//		ParametricFunction f = new WeibullCurve();
-//		ParametricFunction f = new Erf();
+
 		ParametricFunction f = new TruncatedSmoothSCurve();
 
 		double [] input = new double[1];
@@ -145,9 +107,7 @@ public class CampaignBid {
 //		while(j<20){
 		while(true){
 			for(int i=0; i<bids.length;i++){
-//				bids[i]=Math.max(computeOptimumBidForConst(i,multLagrange),wordList.get(i).getMinBid());
 				bids[i]=computeOptimumBidForConst(i,multLagrange);
-//				bids[i]=computeOptimumBidForFixedLagrangleMult(i,multLagrange);
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedValues();

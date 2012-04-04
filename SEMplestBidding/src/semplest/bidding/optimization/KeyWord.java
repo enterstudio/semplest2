@@ -1,8 +1,6 @@
 package semplest.bidding.optimization;
 
-//import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
-//import org.apache.commons.math3.optimization.fitting.CurveFitter;
-//import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+
 
 import flanagan.plot.PlotGraph;
 import semplest.bidding.estimation.*;
@@ -44,27 +42,6 @@ public class KeyWord implements KeyWordInterface {
 		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
 		
-//		CurveFitter fitter = new CurveFitter(new LevenbergMarquardtOptimizer());
-//		for(int i=0; i<bid.length; i++){
-//			if(bid[i]>minBid){
-//				fitter.addObservedPoint(bid[i],DCost[i]);
-//			}
-//		}
-//		double[] initialGuess = {0.5, 0.25, 0.5};
-//		initialGuess[2]=DCost[DCost.length-1];
-//		ParametricUnivariateFunction f = new Weibull();
-//		DCostParams = fitter.fit(f, initialGuess);
-//		
-//		
-//		
-//		fitter.clearObservations();
-//		for(int i=0; i<bid.length; i++){
-//			if(bid[i]>minBid){
-//				fitter.addObservedPoint(bid[i],Clicks[i]);
-//			}
-//		}
-//		initialGuess[2]=DCost[DCost.length-1];
-//		ClickParams = fitter.fit(f, initialGuess);
 		
 
 	}
