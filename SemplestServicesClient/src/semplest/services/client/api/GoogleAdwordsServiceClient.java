@@ -503,4 +503,11 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		
 	}
 
+	@Override
+	public void initializeService() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -34,7 +34,10 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		try
 		{
 			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
-			ArrayList<String> res = client.getCategories(new String[] {"Peanut Butter"});
+			long start = System.currentTimeMillis();
+			ArrayList<String> res = client.getCategories(new String[] {"insurance"});
+			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
+			System.out.println("categories took " + sec + " seconds");
 			for (int i = 0; i < res.size(); i++)
 			{
 				System.out.println(res.get(i));
@@ -68,6 +71,13 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getCategories", json, timeoutMS);
 		return gson.fromJson(returnData,ArrayList.class);
+	}
+
+	@Override
+	public void initializeService() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

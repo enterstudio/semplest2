@@ -422,5 +422,11 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		// TODO Auto-generated method stub
 		return null;
 	}
+	@Override
+	public void initializeService() throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 }
