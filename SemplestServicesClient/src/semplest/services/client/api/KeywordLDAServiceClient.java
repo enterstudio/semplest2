@@ -74,7 +74,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public void initializeService() throws Exception
+	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
 		

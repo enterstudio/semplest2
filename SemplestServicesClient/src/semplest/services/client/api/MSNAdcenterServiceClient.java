@@ -423,7 +423,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return null;
 	}
 	@Override
-	public void initializeService() throws Exception
+	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
 		
