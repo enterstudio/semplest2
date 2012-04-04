@@ -33,14 +33,25 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		HashMap<String,Double> res = getBid(customerID,campaignID,adGroupID, keywords);
 		return gson.toJson(res);
 	}
+	
+	
 	@Override
 	public HashMap<String,Double> getBid(Integer customerID,
 			Integer campaignID, Integer adGroupID, ArrayList<String> keywords)
 			throws Exception {
 		
-		
 		logger.info("Computing bids ...");
+
+		// first get the bid information from ad campaign
+		
+		// decide which keywords to are competitive and which ones are not
+		
 		HashMap<String,Double> bidData = new HashMap<String,Double>();
+
+		// bid by a pre-determined strategy for the keywords that are non-competitive
+		
+		// compute optimum bids for the competitive keywords
+		
 		for(String s : keywords){
 			bidData.put(s, new Double(1.0));
 		}
