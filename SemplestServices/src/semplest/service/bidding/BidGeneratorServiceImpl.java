@@ -56,7 +56,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
 
 			ArrayList<Double> bidLevels = new ArrayList<Double>();
-			for (double b = 1.0; b<1.6; b=b+0.1){
+			for (double b = 1.0; b<1.5; b=b+0.1){
 				bidLevels.add(new Double(b));
 			}
 			System.out.println("Number of points on bid axis: "+bidLevels.size());
@@ -74,7 +74,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //			 bidLevels.add(10.50);
 //			 bidLevels.add(0.75);
 			
-			GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword("wedding venue", KeywordMatchType.EXACT, bidLevels);
+			GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword("red shoe", KeywordMatchType.EXACT, bidLevels);
 			Double[] bids = o.getBidList();
 			for (int i = 0; i < bids.length; i++)
 			{

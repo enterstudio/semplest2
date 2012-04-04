@@ -37,5 +37,6 @@
 	<classpathentry kind="lib" path="dist/lib/SemplestKeywords.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestBidding"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
