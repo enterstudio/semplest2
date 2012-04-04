@@ -1,11 +1,13 @@
 package semplest.services.client.api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.Logger;
 
+import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
@@ -16,15 +18,35 @@ import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
-	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
+	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
-	private static String timeoutMS = "10000";
+	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordLDAServiceClient.class);
 	
 	private String baseurl;
 	
+	
+	public static void main(String[] args)
+	{
+
+		try
+		{
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
+			ArrayList<String> res = client.getCategories(new String[] {"Peanut Butter"});
+			for (int i = 0; i < res.size(); i++)
+			{
+				System.out.println(res.get(i));
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+		
 	public KeywordLDAServiceClient(String baseurl)
 	{
 		if (baseurl == null)
@@ -40,8 +62,12 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("searchTerm", searchTerm[0]);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getCategories", json, timeoutMS);
+		return gson.fromJson(returnData,ArrayList.class);
 	}
 
 }
