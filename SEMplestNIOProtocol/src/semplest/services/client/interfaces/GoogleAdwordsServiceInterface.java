@@ -25,7 +25,7 @@ import com.google.api.adwords.v201109.mcm.Account;
 /*
  * interface for Adwords API 8.5
  */
-public interface GoogleAdwordsServiceInterface
+public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 {
 	//management console (mcm)
 	public abstract Account CreateOneAccountService(String currencyCode, String dateTimeZone,String companyName, String descriptiveName) throws Exception;

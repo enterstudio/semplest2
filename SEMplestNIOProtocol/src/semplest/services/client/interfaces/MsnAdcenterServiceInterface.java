@@ -22,7 +22,7 @@ import com.microsoft.adcenter.v8.Keyword;
 import com.microsoft.adcenter.v8.ReportAggregation;
 import com.microsoft.adcenter.v8.Target;
 
-public interface MsnAdcenterServiceInterface {
+public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	
 	// ============================
 	// Info 
