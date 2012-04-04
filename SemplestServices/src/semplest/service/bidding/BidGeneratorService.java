@@ -17,7 +17,7 @@ public class BidGeneratorService implements ServiceInterface {
 	{
 		try
 		{
-			logger.debug("Running bid generation service " + methodName + ":" + jsonStr);
+			logger.debug("Running BidGeneratorService " + methodName + ":" + jsonStr);
 			BidGeneratorServiceImpl service = new BidGeneratorServiceImpl();
 			Class[] parameterTypes = new Class[] {String.class};
 			Method method = service.getClass().getMethod(methodName, parameterTypes);
@@ -29,7 +29,7 @@ public class BidGeneratorService implements ServiceInterface {
 			e.printStackTrace();
 		}
 		
-		return "Bid Generation Service Error running " + methodName ;
+		return "BidGeneratorService Error running " + methodName ;
 	}
 
 }
