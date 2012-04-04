@@ -162,6 +162,22 @@ public class ioUtils {
     }
     return map;
   }
+  //Returns the lines of a file as a HashMap with the key as the category of the line
+  public static HashMap<String,String> file2Hash(String f){
+	  HashMap<String,String> map = new HashMap<String,String>();
+	    try {
+	      BufferedReader r = new BufferedReader(new FileReader(f));
+	      String line;
+	      while(( line =  r.readLine()) != null ){
+	        String[] cols = line.split(" : ");
+	        if( cols.length >= 2 )
+	          map.put( cols[0].trim(), line );
+	      }
+	    } catch (Exception e) {
+	      e.printStackTrace();
+	    }
+	    return map;
+  }
 
 
   // read a matrix of numbers

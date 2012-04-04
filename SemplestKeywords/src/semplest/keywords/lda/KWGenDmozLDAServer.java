@@ -3,6 +3,7 @@ package semplest.keywords.lda;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -18,12 +19,16 @@ import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	//Search index for categories
 	private DmozLucene dl; //Index of categories
+	private HashMap<String,String> TrainingData; 
 	public KWGenDmozLDAServer(){
 		// Index description information
 		 dl = new DmozLucene();
 		 System.out.println("Indexing dmoz description data...");
 		 dl.loadDesc();
 		 System.out.println("Data indexed!");
+		 System.out.println("Loading training data...");
+		 TrainingData = ioUtils.file2Hash("dmoz/all/all.descs");
+		 System.out.println("Data loaded");
 	}
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception {
@@ -48,6 +53,28 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		ArrayList<String> optList= selectOptions(optInitial);
 		return optList;
 	}
+	@Override
+	public ArrayList<String> getKeywords(ArrayList<String> categories,int numkw, int nGrams) throws Exception {
+		//Create a ArrayList of the categories that satisfy options selected by the user
+		ArrayList<String> optCateg = new ArrayList<String>();
+		Set<String> labels = TrainingData.keySet();
+		String cataux;
+		int numNod;
+	    for (String label : labels){
+	    	for (int n=0; n<categories.size();n++){
+	    		cataux=categories.get(n);
+	    		numNod = catUtils.nodes(cataux);
+	    		if(catUtils.take(label, numNod).equals(catUtils.take(cataux,numNod))){
+	    			if (!optCateg.contains(label))
+	    				optCateg.add(label);
+	    				System.out.println(label);
+	    		}
+	    	}
+	    }
+	    
+		return null;
+	}
+	
 	private static ArrayList<String> selectOptions(ArrayList<String> optKeys) throws IOException{
 		//Selects patterns from top categories list to generate options for the user based on pre-defined crieteria
 
@@ -128,6 +155,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		for (String opt:categOpt){
 			System.out.println(opt);
 		}
+		System.out.println("\nSubcategories form selected :");
+		ArrayList<String> categories = new ArrayList<String>();
+		categories.add(categOpt.get(0));
+		kwGen.getKeywords(categories,0, 0);
 	}
+	@Override
+	public void initializeService() throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 }
