@@ -26,8 +26,8 @@ import java.util.Map;
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
 
-final static String hfile = "dmoz/all/hCounts.new";
-final static String dfile = "/semplest/data/dmoz/all/all.descs";
+final static String hfile = "../SemplestKeywords/dmoz/all/hCounts.new";
+final static String dfile = "../SemplestKeywords/dmoz/all/all.descs";
 
   IndexWriter w;
   StandardAnalyzer analyzer;
