@@ -1,12 +1,17 @@
 package semplest.keywords.javautils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import semplest.server.service.SEMplestService;
 
 public class dictUtils
 {
@@ -16,22 +21,40 @@ public class dictUtils
   // 2) dicti ::  word => index
   // 3) dictwi::  index => word
   // a word is valid if its stem is in the dictionary
-  static final String dictfile = "/semplest/data/stemword.dict";
-  static final String docfile  = "/semplest/data/dmoz/all.cats";
-  static final String twfile   = "/semplest/data/dmoz/all.tw";
+  static String dictfile = "data/stemword.dict";
+  static String docfile  = "data/dmoz/all.cats";
+  static String twfile   = "data/dmoz/all.tw";
   
-  public static HashMap<String,Integer> dicti = 
-    ioUtils.readFileIndex(dictfile, 1);
+  public static HashMap<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
   public static Map<Integer,String> dictwi = invert(dicti);
   public static HashMap<String,String> dict = ioUtils.readPair(dictfile);
-  public static HashMap<String,Integer> docsi = 
-    ioUtils.readFileIndex(docfile);
+  public static HashMap<String,Integer> docsi =  ioUtils.readFileIndex(docfile);
   public static Map<Integer,String> docis = invert(docsi);
   public static final HashMap<String,String> docs = ioUtils.topWords(twfile);
    
   // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
-
+  
+  /*
+  // static methods to load paths from property file
+  static {
+	  if(SEMplestService.properties==null){
+		  try{
+			String PROPSFILE = "../SemplestServices/bin/system.properties";
+			SEMplestService.properties = new Properties();
+			FileInputStream is;
+			is = new FileInputStream(PROPSFILE);
+			SEMplestService.properties.load(is);
+			is.close();
+		  } catch (Exception e){ e.printStackTrace();}
+	}
+	  dictfile= SEMplestService.properties.getProperty("data.stemworddict");
+	  docfile = SEMplestService.properties.getProperty("data.dmoz.allcats");
+	  twfile = SEMplestService.properties.getProperty("data.dmoz.alltw");;
+	  
+  } 
+  */
+  
   // a word is valid if its stem is in the dictionary
   public static boolean validWord( String word ){
     return dict.containsKey( getRoot( word ) ) && 
