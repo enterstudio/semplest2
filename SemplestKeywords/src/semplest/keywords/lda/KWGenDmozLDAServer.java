@@ -1,25 +1,38 @@
 package semplest.keywords.lda;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.DmozLucene;
+import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
+import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
 
 
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
+	
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
+	
 	//Search index for categories
 	private static KWGenDmozLDAdata data;
 	public KWGenDmozLDAServer(){
+	/*	properties = new Properties();
+		FileInputStream is = new FileInputStream(PROPSFILE);
+		properties.load(is);
+		is.close();*/
 	}
 	@Override
 	public ArrayList<String> getCategories(String[] searchTerm) throws Exception {
@@ -32,7 +45,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		for(int i=0; i<searchTerm.length;i++){
 			qs=qs+searchTerm[i]+" ";
 		}
-		res = data.dl.search(qs,numresults);
+		String qsStem = this.stemvString( qs, data.dict );
+		res = data.dl.search(qsStem,numresults);
 		for(int i=0; i<res.length; i++){
 			categories = res[i].replaceAll("\\s", "");
 			if(catUtils.validcat(categories))
@@ -120,8 +134,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    	numtop=5;
 	    else
 	    	numtop=3;
-	    for(int i=0; i<numtop; i++){
-	    	arrayOpt.add(catUtils.init(optKeys.get(i)));
+	    int numresults=0;
+	    for(int i=0; i<optKeys.size(); i++){
+	    	if(numresults>=numtop) break;
+	    	String key = catUtils.init(optKeys.get(i));
+	    	if(!arrayOpt.contains(key)){
+	    		arrayOpt.add(key);
+	    		numresults++;
+	    	}
 	    }
 	    //Add rest of the patterns
 	    for(String key: sorted_optKeys2){
@@ -140,10 +160,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		thread.start();
 	}
 	
+	public static String stemvString( String raws, dictUtils dict){
+		//Returns the stemmed version of a word
+	    String os = "";
+	    for( String w: raws.split("\\s+"))
+	      os = os + dict.getStemWord( w ) + " ";
+	    return os;
+	  }
+	
 	public static void main(String[] args) throws Exception {
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
 		kwGen.initializeService(null);
-		String[] searchTerm = {"fine wine liquor wine tasting upper west side"};
+		String[] searchTerm = {"insurance"};
 		String aux="";
 		for(int i=0; i< searchTerm.length;i++){
 			aux=aux+searchTerm[i]+" ";
