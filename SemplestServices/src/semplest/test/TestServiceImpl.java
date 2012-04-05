@@ -7,13 +7,12 @@ public class TestServiceImpl implements TestServiceInterface
 {
 
 	@Override
-	public String TestMethod(String jsonStr) throws Exception
+	public String TestMethod(String jsonStr)
 	{
 		
 		long start = System.currentTimeMillis();
 		for (int i =0; i < 2000; i++) doWork();
 		long total =  System.currentTimeMillis() - start;
-		if (total > 0) throw new Exception("Error");
 		//interpret the jsoStr for the method
 		return "Result from " + jsonStr + " time ms=" + String.valueOf(total);
 	}
@@ -25,11 +24,6 @@ public class TestServiceImpl implements TestServiceInterface
 			x = Math.pow(x, 2.0);
 		}
 	}
-	@Override
-	public void initializeService(String input) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
+
 
 }
