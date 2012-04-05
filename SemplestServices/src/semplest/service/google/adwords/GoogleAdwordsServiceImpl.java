@@ -164,13 +164,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 */
 			// MyTestKeyword3:34632214029
 			Long keywordID = 41030523L; // wedding venue
-			//g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
-			//g.reportfields();
-			// ArrayList<HashMap<String, String>> res =
-			// g.getCampaignsByAccountId(accountID, false);
-			// System.out.println(res.get(0).get("Name"));
-			// TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
-			// KeywordMatchType.EXACT, 20);
+			g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
+//			g.reportfields();
+			 ArrayList<HashMap<String, String>> res =
+			 g.getCampaignsByAccountId(accountID, false);
+			 System.out.println(res.get(0).get("Name"));
+//			 TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
+//			 KeywordMatchType.EXACT, 20);
 
 			/*
 			 * GoogleRelatedKeywordObject res =
