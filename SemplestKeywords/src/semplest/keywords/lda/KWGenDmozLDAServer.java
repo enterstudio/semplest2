@@ -170,7 +170,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 							kwrd=kwrd+subWrds[n]+" ";
 						}
 						
-						if(wProb>0){
+						if(!in && wProb>0){
 							multWMap.put(kwrd, wProb);
 						}
 						
@@ -332,7 +332,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,data1,50,nGrams );
 			
 			for(int n=0; n<nGrams.length; n++){
-				System.out.println("\n"+ (n+1)+" word keywords:\n");
+				System.out.println("\n"+ (n+1)+" word keywords:");
 				for(String k: kw.get(n)){
 					System.out.print(k+", ");
 				}
