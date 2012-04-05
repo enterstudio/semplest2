@@ -4,6 +4,7 @@ package semplest.keywords.lda;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,6 +13,7 @@ import org.apache.log4j.Logger;
 import cc.mallet.types.InstanceList;
 
 
+import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
@@ -52,11 +54,11 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		return optList;
 	}
 	@Override
-	public ArrayList<String> getKeywords(ArrayList<String> categories, String data1, int numkw, int nGrams) throws Exception {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data1, int numkw, int[] nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
-		ArrayList<String> keywords = new ArrayList<String>();
+		ArrayList<ArrayList<String>> keywords = new ArrayList<ArrayList<String>>();
 		Set<String> labels = data.TrainingData.keySet();
 		String cataux;
 		int numNod;
@@ -67,7 +69,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    		numNod = catUtils.nodes(cataux);
 	    		if(catUtils.take(label, numNod).equals(catUtils.take(cataux,numNod))){
 	    			if (!optCateg.contains(label)){
-	    				System.out.println(label);
+	    				//System.out.println(label);
 	    				optCateg.add(label);
 	    				//Gather training data
 	    				trainLines.add(data.TrainingData.get(label));
@@ -90,19 +92,109 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		double[][] categInd;
 		TreeMap<String, Double> wordM;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
-	    wordM = lda.inferWordprob(inferInst, 0); 
+	    HashMap<String, Double> wordMap = new HashMap<String, Double>();
+	    
+	    //Infer word probability based on input data
+	    wordM = lda.inferWordprob(inferInst, 0,wordMap); 
 	    Set<String> keyS = wordM.keySet();
 	    System.out.println("wordMap Size: "+ wordM.size());
 	    int i=0;
-	    for(String keys2 : keyS){
-	    	if(i>=numkw)break;
-	    	//System.out.print(" "+keys2+",");
-	    	keywords.add(keys2);
-	    	i++;
+	    for(int n=0;n<nGrams.length;n++){
+	    	ArrayList<String> kwds=new ArrayList<String>();
+	    	if(nGrams[n] == 1){
+			    for(String keys2 : keyS){
+			    	if(i>=numkw)break;
+			    	//System.out.print(" "+keys2+",");
+			    	kwds.add(keys2);
+			    	i++;
+			    }
+		    }else
+		    	kwds = getKwMulti(optCateg,numkw,wordMap,nGrams[n]);
+	    	keywords.add(kwds);
 	    }
+	    
 		return keywords;
 	}
-	
+
+	public ArrayList<String> getKwMulti(ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
+		//Generates keywords with nGrams words
+
+		MultiWordCollect[] nGramsA=data.biGrams;
+		ArrayList<String> keywords = new ArrayList<String>();
+		//Select bigrams or trigrams based on nGrams value
+		switch (nGrams){
+		case 2: nGramsA=data.biGrams; break;
+		case 3: nGramsA=data.triGrams; break;
+		default: throw new Exception("nGrams value not valid");
+		}
+		
+
+		  //**************************************************************************************
+			// Now that we have generated a selection of categories that we want to use to generate our alphabet,
+			// we need to generate that alphabet and infer the word probabilities for each of the words in the alphabet
+			HashMap<String, Double> multWMap = new HashMap<String, Double>();
+			ValueComparator bvc =  new ValueComparator(multWMap);
+			TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
+			int i=0;
+			Set<String> keySet;
+			java.util.Iterator<String> iterator;
+			ArrayList<String> mWords= new ArrayList<String>();
+			String[] subWrds;
+			String kwrd;
+			double wProb;
+			boolean in=true;
+			// Generating Multiword alphabet
+			// Extract multiword for each category in the list and multiply probabilities of each subword
+			for(String optKey: optCateg){
+				int mIndex= data.getnGramSubCatInd(optKey);
+				mWords = nGramsA[mIndex].getwordsInCateg(optKey);
+				if (mWords != null){
+					for(String mWrd:mWords){
+						subWrds=mWrd.split("\\+");
+						wProb=1.0;
+						kwrd="";
+						for(int n=0;n<subWrds.length;n++){
+							if(kwrd.contains(subWrds[n])){
+								in=true;
+								break;
+							}
+							in=false;
+							if(wordMap.containsKey(subWrds[n])){
+								wProb=wProb*wordMap.get(subWrds[n]);
+							}else {
+								//System.out.println(subWrds[n]+" is not in wordmap");
+								wProb=wProb*0.0;
+							}
+							kwrd=kwrd+subWrds[n]+" ";
+						}
+						
+						if(wProb>0){
+							multWMap.put(kwrd, wProb);
+							System.out.println(wProb+kwrd);
+						}
+						
+					}
+				}
+			}
+			//Once the alphabet and probabilities have been generated, sort by probability.
+			sorted_map.putAll(multWMap);
+			
+			//Generating Keywords
+		    keySet=sorted_map.keySet();
+		    iterator=keySet.iterator();
+		    
+		    String keyword;
+		    i=0;
+		    iterator=keySet.iterator();
+		    while(i<numkw){
+		    		if(iterator.hasNext())keyword =iterator.next();
+		    		else keyword=null;
+		    		keywords.add(keyword);
+				    i++;
+		    }
+		    return keywords;
+		
+	}
 	private static ArrayList<String> selectOptions(ArrayList<String> optKeys) throws IOException{
 		//Selects patterns from top categories list to generate options for the user based on pre-defined crieteria
 
@@ -194,37 +286,59 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	public static void main(String[] args) throws Exception {
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
 		kwGen.initializeService(null);
-		String[] searchTerm = {"peanut butter"};
-		String aux="";
-		for(int i=0; i< searchTerm.length;i++){
-			aux=aux+searchTerm[i]+" ";
-		}
-		System.out.println("Search Terms: "+aux);
-		ArrayList<String> categOpt = kwGen.getCategories(searchTerm);
-		System.out.println("\nCategory options:");
-		for (String opt:categOpt){
-			System.out.println(opt);
-		}
-		System.out.println("\nSubcategories form selected :");
-		ArrayList<String> categories = new ArrayList<String>();
-		categories.add(categOpt.get(0));
-		
-		System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
-		Scanner scanFile = new Scanner(System.in);
-		String userInfo1 = scanFile.nextLine(); 
-		ArrayList<String> words1;
-		if(userInfo1.contains(".clean"))
-			words1 = TextUtils.validTextWords (userInfo1);
-		else	
-			words1 = TextUtils.validHtmlWords (userInfo1);
-		String data1="";
-		for( String s : words1 ) {
-	    	data1 = data1+" "+s;
-	    	//System.out.print(s+"  ");
-	    }
-		ArrayList<String> kw = kwGen.getKeywords(categories,data1,50, 1);
-		for(String k: kw){
-			System.out.println(k);
+		String[] searchTerm = new String[1];
+		String userInfo1="";
+		while (!userInfo1.equals("exit")){
+			try{
+			System.out.println("\nPlease, introduce search terms:");
+			Scanner scanFile = new Scanner(System.in);
+			searchTerm[0] = scanFile.nextLine();
+			
+			System.out.println("Search Terms: "+searchTerm[0]);
+			ArrayList<String> categOpt = kwGen.getCategories(searchTerm);
+			System.out.println("\nCategory options:");
+			int m=0;
+			for (String opt:categOpt){
+				System.out.println(m+"- "+opt);
+				m++;
+			}
+			System.out.println("Please, type indexes of categories to select separated by ',':");
+			Scanner scan = new Scanner(System.in);
+		    String mySentence = scan.nextLine(); 
+		    String[] indexes = mySentence.split(",");
+		    
+		    ArrayList<String> categories = new ArrayList<String>();
+		    for (int v=0; v<indexes.length;v++){
+		    	System.out.println(categOpt.get(Integer.parseInt(indexes[v])));
+		    	categories.add(categOpt.get(Integer.parseInt(indexes[v])));
+		    }
+			categories.add(categOpt.get(0));
+			
+			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+			scanFile = new Scanner(System.in);
+			userInfo1 = scanFile.nextLine(); 
+			ArrayList<String> words1;
+			if(userInfo1.contains(".clean"))
+				words1 = TextUtils.validTextWords (userInfo1);
+			else	
+				words1 = TextUtils.validHtmlWords (userInfo1);
+			String data1="";
+			for( String s : words1 ) {
+		    	data1 = data1+" "+s;
+		    	//System.out.print(s+"  ");
+		    }
+			int[] nGrams = {1,2,3};
+			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,data1,50,nGrams );
+			
+			for(int n=0; n<nGrams.length; n++){
+				System.out.println((n+1)+" word keywords:\n");
+				for(String k: kw.get(n)){
+					System.out.print(k+", ");
+				}
+			}
+			}catch(Exception e){
+				System.out.println(e);
+			}
 		}
 	}
 

@@ -245,6 +245,57 @@ public class MalletTopic {
 		//System.out.println("Size of sorted_map in inferWord: "+ wordMap.size());
 		return sorted_map;
 	}
+	
+	public TreeMap<String, Double> inferWordprob( double[] topicDistribution, Alphabet specdataAlphabet, HashMap<String, Double> wordMap ){
+		//Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
+		//inferInst InstanceList.
+		// A sorted TreeMap with all the words and the infered probabilities is returned
+		//Takes any alphabet to compute the word probability
+			
+		Alphabet dataAlphabet = instances.getDataAlphabet(); //Full data alphabet
+
+		// Get an array of sorted sets of word ID/count pairs
+		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
+		//System.out.println(dataAlphabet.size());
+		wordMap = new HashMap<String, Double>(dataAlphabet.size());
+		ValueComparator bvc =  new ValueComparator(wordMap);
+		TreeMap<String,Double> sorted_map = new TreeMap(bvc);
+		double wordProb;
+		String word;
+		// Show top numwords words in topics with proportions for the instIndex document
+		for (int topic = 0; topic < numTopics; topic++) {
+		     
+			Iterator<IDSorter> iterator = topicSortedWords.get(topic).iterator();
+				            
+		     double topicProb=topicDistribution[topic];
+		     double sum = 0;
+		     //System.out.println(topicDistribution.length + "\t"+topicProb);
+		     IDSorter idCountPair;
+		     while (iterator.hasNext()) {
+		    	 idCountPair = iterator.next();
+		    	 word =(String) dataAlphabet.lookupObject(idCountPair.getID());
+		    	 if(specdataAlphabet.contains(word)) sum = sum + idCountPair.getWeight();
+		     }
+		     Iterator<IDSorter> iterator2 = topicSortedWords.get(topic).iterator();
+		     //System.out.println("Size of Topic Sorted words :"+topicSortedWords.get(topic).size());
+		     while (iterator2.hasNext()){
+		    	 idCountPair = iterator2.next();
+		    	 wordProb = topicProb*(idCountPair.getWeight()/sum);
+		    	 //System.out.println(wordProb);
+		    	 word =(String) dataAlphabet.lookupObject(idCountPair.getID());
+		    	 if(specdataAlphabet.contains(word)){
+			    	 if(wordMap.containsKey(word)){
+			    		 wordMap.put(word, new Double((Double)wordMap.get(word)+wordProb));
+			    	 }
+			    	 else{wordMap.put(word, new Double(wordProb));}
+		    	 }
+		     }
+		}
+		//System.out.println("Size of wordMap in inferWord: "+ wordMap.size());
+		sorted_map.putAll(wordMap);
+		//System.out.println("Size of sorted_map in inferWord: "+ wordMap.size());
+		return sorted_map;
+	}
 	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex){
 		//Calculates the probability of each word in the full alphabet to belong to the instIndex Instance of the
 		//inferInst InstanceList.
@@ -253,6 +304,18 @@ public class MalletTopic {
 		//System.out.println("Alphabet size "+dataAlphabet.size());
         TreeMap<String,Double> sorted_map;
         sorted_map = this.inferWordprob(inferInst, instIndex, dataAlphabet);
+        
+		return sorted_map;
+	}
+	
+	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex,HashMap<String,Double> wordMap){
+		//Calculates the probability of each word in the full alphabet to belong to the instIndex Instance of the
+		//inferInst InstanceList.
+		// A sorted TreeMap with all the words and the infered probabilities is returned
+		Alphabet dataAlphabet = instances.getDataAlphabet();
+		//System.out.println("Alphabet size "+dataAlphabet.size());
+        TreeMap<String,Double> sorted_map;
+        sorted_map = this.inferWordprob(inferInst, instIndex, dataAlphabet, wordMap);
         
 		return sorted_map;
 	}
@@ -268,7 +331,18 @@ public class MalletTopic {
 		        
 		return sorted_map;
 	}
+	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex, Alphabet specdataAlphabet, HashMap<String,Double> wordMap){
+		//Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
+		//inferInst InstanceList.
+		// A sorted TreeMap with all the words and the infered probabilities is returned
+		//Takes any alphabet to compute the word probability
 	
+		double[] topicDistribution = this.InferFromTestInstance(inferInst, instIndex);
+		TreeMap<String,Double> sorted_map;
+		sorted_map = this.inferWordprob(topicDistribution, specdataAlphabet,wordMap);
+		        
+		return sorted_map;
+	}
 	public void InstanceClassifier(int instIndex){
 		this.InstanceClassifier(instances, instIndex);
 	}
