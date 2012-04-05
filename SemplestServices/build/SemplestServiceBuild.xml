@@ -141,6 +141,11 @@
   	 	      includes="**/*.java"
   	 	      excludes="**/*.svn"
   	 	/>  	 	
+  	 	<copy todir="${classes}" filtering="off">
+  	 		<flattenmapper />
+  	 	  	<fileset dir="${semplest.keywords.dir}/build/classes" />
+  	 	</copy>
+  	 	
   	 	<path id="keyword.classpath">
   	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
   	 	</path>  	 	
@@ -188,18 +193,8 @@
     <delete file="${output.dir}/*.jar" failonerror="false"/>
   </target>
 
-
-<target name="compileProtocol" depends="init" description="Compile protocol source files">
-    <javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="class.path"
-      target="1.6"
-      source="1.6"
-      debug="${java.debug}"   	
-      includes="**/*.java"
-      excludes="**/*.svn"
-    />
-   </target>
    
-  <target name="compile" depends="compileProtocol" description="Compile all source files">
+  <target name="compile" depends="init" description="Compile all source files">
     <javac srcdir="${source}" destdir="${classes}" classpathref="class.path"
       target="1.6"
       source="1.6"
@@ -255,7 +250,7 @@
     </copy>
 	</target>
 
-	<target name="build-installer" depends="compileProtocol,compile,deps" description="Create distribution executable">
+	<target name="build-installer" depends="compile,deps" description="Create distribution executable">
 
 		<propertyregex property="service.name" input="${semplest.service}" 
 			regexp="([^\.]*)$" 
