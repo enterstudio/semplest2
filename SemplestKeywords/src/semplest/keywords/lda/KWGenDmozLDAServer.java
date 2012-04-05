@@ -90,12 +90,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		lda.LDAcreateModel(alpha, beta, numiter);
 		InstanceList inferInst;
 		double[][] categInd;
-		TreeMap<String, Double> wordM;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
 	    HashMap<String, Double> wordMap = new HashMap<String, Double>();
 	    
 	    //Infer word probability based on input data
-	    wordM = lda.inferWordprob(inferInst, 0,wordMap); 
+	    wordMap = lda.inferWordprob(inferInst, 0,true);
+	    ValueComparator bvc =  new ValueComparator(wordMap);
+		TreeMap<String,Double> wordM = new TreeMap(bvc);
+		wordM.putAll(wordMap);
 	    Set<String> keyS = wordM.keySet();
 	    System.out.println("wordMap Size: "+ wordM.size());
 	    int i=0;
@@ -170,7 +172,6 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 						
 						if(wProb>0){
 							multWMap.put(kwrd, wProb);
-							System.out.println(wProb+kwrd);
 						}
 						
 					}
@@ -331,7 +332,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,data1,50,nGrams );
 			
 			for(int n=0; n<nGrams.length; n++){
-				System.out.println((n+1)+" word keywords:\n");
+				System.out.println("\n"+ (n+1)+" word keywords:\n");
 				for(String k: kw.get(n)){
 					System.out.print(k+", ");
 				}

@@ -246,7 +246,7 @@ public class MalletTopic {
 		return sorted_map;
 	}
 	
-	public TreeMap<String, Double> inferWordprob( double[] topicDistribution, Alphabet specdataAlphabet, HashMap<String, Double> wordMap ){
+	public HashMap<String, Double> inferWordprob( double[] topicDistribution, Alphabet specdataAlphabet, boolean tag){
 		//Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
@@ -257,7 +257,7 @@ public class MalletTopic {
 		// Get an array of sorted sets of word ID/count pairs
 		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		//System.out.println(dataAlphabet.size());
-		wordMap = new HashMap<String, Double>(dataAlphabet.size());
+		HashMap<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
 		ValueComparator bvc =  new ValueComparator(wordMap);
 		TreeMap<String,Double> sorted_map = new TreeMap(bvc);
 		double wordProb;
@@ -291,10 +291,8 @@ public class MalletTopic {
 		    	 }
 		     }
 		}
-		//System.out.println("Size of wordMap in inferWord: "+ wordMap.size());
-		sorted_map.putAll(wordMap);
-		//System.out.println("Size of sorted_map in inferWord: "+ wordMap.size());
-		return sorted_map;
+
+		return wordMap;
 	}
 	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex){
 		//Calculates the probability of each word in the full alphabet to belong to the instIndex Instance of the
@@ -308,17 +306,19 @@ public class MalletTopic {
 		return sorted_map;
 	}
 	
-	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex,HashMap<String,Double> wordMap){
+	public HashMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex, boolean tag){
 		//Calculates the probability of each word in the full alphabet to belong to the instIndex Instance of the
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		Alphabet dataAlphabet = instances.getDataAlphabet();
 		//System.out.println("Alphabet size "+dataAlphabet.size());
-        TreeMap<String,Double> sorted_map;
-        sorted_map = this.inferWordprob(inferInst, instIndex, dataAlphabet, wordMap);
+        HashMap<String,Double> map;
+        map = this.inferWordprob(inferInst, instIndex, dataAlphabet,true);
         
-		return sorted_map;
+		return map;
 	}
+	
+
 	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex, Alphabet specdataAlphabet){
 		//Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
 		//inferInst InstanceList.
@@ -331,18 +331,20 @@ public class MalletTopic {
 		        
 		return sorted_map;
 	}
-	public TreeMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex, Alphabet specdataAlphabet, HashMap<String,Double> wordMap){
+	
+	public HashMap<String, Double> inferWordprob( InstanceList inferInst, int instIndex, Alphabet specdataAlphabet,boolean flag){
 		//Calculates the probability of each word in the specdataAlphabet to belong to the instIndex Instance of the
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		//Takes any alphabet to compute the word probability
 	
 		double[] topicDistribution = this.InferFromTestInstance(inferInst, instIndex);
-		TreeMap<String,Double> sorted_map;
-		sorted_map = this.inferWordprob(topicDistribution, specdataAlphabet,wordMap);
+		HashMap<String,Double> map;
+		map = this.inferWordprob(topicDistribution, specdataAlphabet,true);
 		        
-		return sorted_map;
+		return map;
 	}
+
 	public void InstanceClassifier(int instIndex){
 		this.InstanceClassifier(instances, instIndex);
 	}
