@@ -24,6 +24,11 @@ public class TestServiceImpl implements TestServiceInterface
 			x = Math.pow(x, 2.0);
 		}
 	}
+	@Override
+	public void initializeService(String input) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 }
