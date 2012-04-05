@@ -29,7 +29,7 @@ import com.google.gson.Gson;
 public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
 	private String timeoutMS = "10000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -80,7 +80,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			
 			// bidLevels.add(1.50);
 			// bidLevels.add(10.50);
-			// bidLevels.add(0.75);
+			 bidLevels.add(2.75);
 			GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword("wedding venue", KeywordMatchType.EXACT, bidLevels);
 			Double[] bids = o.getBidList();
 			for (int i = 0; i < bids.length; i++)
@@ -90,12 +90,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			
 			String accountID  = "6048920973";
 			Long campaignID = 75239229L;
-
+/*
 			GoogleRelatedKeywordObject resutls=client.GetRelatedKeywordsForURL("www.statefarm.com", "insurance",KeywordMatchType.EXACT, 30);
 			ArrayList<String>keywrds =resutls.getKeywords();
 			for(String kw:keywrds){
 				System.out.println(kw);
 			}
+			*/
 			//String accountID  = "6048920973";
 			//Long campaignID = 75239229L;
 			/*
