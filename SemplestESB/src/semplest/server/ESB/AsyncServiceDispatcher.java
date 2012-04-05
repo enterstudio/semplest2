@@ -1,5 +1,7 @@
 package semplest.server.ESB;
 
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -14,6 +16,7 @@ import semplest.server.queue.ActiveMQConnection;
 public class AsyncServiceDispatcher implements Runnable
 {
 	private static final Logger logger = Logger.getLogger(AsyncServiceDispatcher.class);
+	private static ProtocolJSON json = new ProtocolJSON();
 
 	private AsyncContext asyncContext;
 
@@ -53,8 +56,26 @@ public class AsyncServiceDispatcher implements Runnable
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//If service is not available (service not registered with ESB), send client error message
+			HashMap<String, String> errorMap = new HashMap<String, String>();
+			errorMap.put("errorMessage", e.getMessage());
+			errorMap.put("errorType", "Exception");
+			errorMap.put("errorID", uniqueID);
+			String ret = json.createJSONHashmap(errorMap);
+
+			asyncContext.getResponse().setContentType("text/html");
+			try
+			{
+				PrintWriter out = asyncContext.getResponse().getWriter();
+				out.print(ret);
+			}
+			catch (Exception err)
+			{
+				logger.error(err.getMessage(), err);
+			}
+			asyncContext.complete();
+
+
 		}
 	}
 	
