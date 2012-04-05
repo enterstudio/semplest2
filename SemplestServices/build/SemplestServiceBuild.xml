@@ -123,6 +123,17 @@
   	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
   	 <then>  	   
   	 	<echo message="This is KeywordGeneratorService."/>
+  	 	<delete includeEmptyDirs="true" quiet="true">
+  	 	      <fileset dir="${dist}/bin/data">
+  	 	        <include name="**/**"/>
+  	 	      </fileset>
+  	 	    </delete>
+  	 	<delete includeEmptyDirs="true" quiet="true">
+  	 	      <fileset dir="${semplest.keywords.dir}/build">
+  	 	        <include name="**/**"/>
+  	 	      </fileset>
+  	 	    </delete>
+ 	 	
   	 	<!-- Copy dmoz folder -->
   	 	<echo message="Copying dmoz folder..."/>
   	 	<mkdir dir="${dist}/bin/data"/>
@@ -164,8 +175,8 @@
   	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
   	 	    </manifest>
   	 	</jar>
-  	 	<!-- Copy the jar file to dist folder of semplest service -->
-  	 	<copy todir="${dist}/lib" filtering="off">
+  	 	<!-- Copy the jar file to lib of semplest service -->
+  	 	<copy todir="${basedir}/lib" filtering="off">
   	 		<flattenmapper />
   	 	  	<fileset dir="${semplest.keywords.dir}/build/jar" includes="SemplestKeywords.jar" />
   	 	</copy>
@@ -250,7 +261,8 @@
     </copy>
 	</target>
 
-	<target name="build-installer" depends="compile,deps" description="Create distribution executable">
+	<target name="build-installer" depends="
+		compile,deps" description="Create distribution executable">
 
 		<propertyregex property="service.name" input="${semplest.service}" 
 			regexp="([^\.]*)$" 
