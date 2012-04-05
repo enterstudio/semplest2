@@ -60,7 +60,8 @@ public class catUtils
   // Operations on pairstriplets of categories
 
   // common ancestor
-  //  top/recreation/pets/parrots and top/recreation/pets/dogs/breeds/ will yield
+  //  top/recreation/pets/parrots and top/recreation/pets/dogs/breeds/ 
+  // will yield
   //  top/recreation/pets
   public static String ancestor( String cat1, String cat2){
     int mind = Math.min( nodes( cat1), nodes( cat2)  );
@@ -149,62 +150,63 @@ public class catUtils
     return outs.substring(0,outs.length() -1);
   }
   //Operations with categories
-  //Given a URL, finds it in the dmoz database and returns the categories were it belong
+  //Given a URL, finds it in the dmoz database and returns the categories 
+  // were it belong
   public static ArrayList<String> look4URL(String url) throws IOException {
-		//Path to the dmoz url file
-		FileInputStream fstream = new FileInputStream("/semplest/data/dmoz/all.urls");
-		//String url="-- http://www.laserblazers.com";
-		String[] urlparts = url.split("/");
-		String mainURL=url;
-		ArrayList<String> categories=new ArrayList<String>();
+    //Path to the dmoz url file
+    FileInputStream fstream = new FileInputStream("/semplest/data/dmoz/all.urls");
+    //String url="-- http://www.laserblazers.com";
+    String[] urlparts = url.split("/");
+    String mainURL=url;
+    ArrayList<String> categories=new ArrayList<String>();
 
-		for (String part :urlparts){
-			if(!part.contains("http:")&& part.length()!=0){
-				mainURL=part;
-				break;
-			}
-		}
-		// Get the object of DataInputStream
-		DataInputStream in = new DataInputStream(fstream);
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		String strLine;
-		String[] lineParts;
-		//Read File Line By Line
-		while ((strLine = br.readLine()) != null)   {
-		  	if (strLine.contains(mainURL)){
-		  		lineParts=strLine.split(":");
-		  		categories.add(lineParts[0]);
-		  	}
-		}
-		return categories;
-	}
+    for (String part :urlparts){
+      if(!part.contains("http:")&& part.length()!=0){
+        mainURL=part;
+        break;
+      }
+    }
+    // Get the object of DataInputStream
+    DataInputStream in = new DataInputStream(fstream);
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    String strLine;
+    String[] lineParts;
+    //Read File Line By Line
+    while ((strLine = br.readLine()) != null)   {
+      if (strLine.contains(mainURL)){
+        lineParts=strLine.split(":");
+        categories.add(lineParts[0]);
+      }
+    }
+    return categories;
+  }
   //Checks if the category is valid
   public static boolean validcat(String category) throws Exception{
-	  String[] validcat ={ "arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};	  
-	  String[] parts = category.split("/");
-	  if(parts.length<2) return false;
-	  for (int i=0;i<validcat.length;i++){
-		  if(validcat[i].equals(parts[1]))
-			  return true;
-	  }
-	  return false;
+    String[] validcat ={ "arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};	  
+    String[] parts = category.split("/");
+    if(parts.length<2) return false;
+    for (int i=0;i<validcat.length;i++){
+      if(validcat[i].equals(parts[1]))
+        return true;
+    }
+    return false;
   }
   //-------------------------------------------------------------
   public static void main (String[] args){
 
     String[] cats = { 
-                  "a/b/c/d/e/f", 
-                  "a/b/c/d/e", 
-                  "a/b/c/d", 
-                  "a/b/c", 
-                  "a/b" };
+      "a/b/c/d/e/f", 
+      "a/b/c/d/e", 
+      "a/b/c/d", 
+      "a/b/c", 
+      "a/b" };
 
 
-   String a   = ancestor( cats );   
-   String la  = longestAncestor( cats );   
-   String la3 = longestAncestor3( cats );   
+    String a   = ancestor( cats );   
+    String la  = longestAncestor( cats );   
+    String la3 = longestAncestor3( cats );   
 
-   System.out.println( a + " : " + la + " : " + la3 );
+    System.out.println( a + " : " + la + " : " + la3 );
 
   }
 }
