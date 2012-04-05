@@ -155,7 +155,7 @@ public class vecUtils {
   public static int[][] toint( double[][] v){
     int[][] out = new int[v.length][v[0].length];
     for(int i = 0; i < v.length; i++)
-      for(int j = 0; j < v.length; j++)
+      for(int j = 0; j < v[i].length; j++)
         out[i][j] = (int) v[i][j];
     return out;
   }
