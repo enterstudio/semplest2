@@ -29,7 +29,7 @@ public class sampleWords {
     if( cleanq.length() < 2 ) return "";
     String[] res = dl.search( cleanq );
     if( res.length < 1 ) return "";
-    System.out.println( res[0] );
+//    System.out.println( res[0] );
     return wcs.get( res[0] );
   }
 
