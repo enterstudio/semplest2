@@ -162,6 +162,76 @@ public class ioUtils {
     }
     return map;
   }
+  
+  // Returns the dmoz wordcounts as a Map<category><counts> 
+  static HashMap<String,String> readWcounts( String f){
+    HashMap<String,String> map = new HashMap<String,String>();
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      while(( line =  r.readLine()) != null ){
+        String[] cols = line.split("\\s+");
+        if( cols.length >= 2 ){
+          String cat = cols[0].split(":")[0];
+          String tail = mkString( 
+              java.util.Arrays.copyOfRange( cols, 1, cols.length)," ");
+          map.put( cat, tail );
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
+  }
+  // Returns the dmoz wordcounts as a Map<category, Map<word,count>> 
+  static HashMap<String,HashMap<String,Integer>> readWcs( String f ){
+    HashMap<String,HashMap<String,Integer>> map = 
+      new HashMap<String,HashMap<String,Integer>>();
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      while(( line =  r.readLine()) != null ){
+        String[] cols = line.split("\\s+");
+        if( cols.length >= 2 ){
+          String tail = mkString( 
+              java.util.Arrays.copyOfRange( cols, 1, cols.length)," ");
+          map.put( cols[0].split(":")[0], toWc( tail ) );
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
+  }
+  //-------------------------------------------------- 
+  // Convert an array of strings to one string.
+  // Put the 'separator' string between each element.
+  public static String mkString(String[] a, String separator) {
+    StringBuffer result = new StringBuffer();
+    if (a.length > 0) {
+      result.append(a[0]);
+      for (int i=1; i<a.length; i++) {
+        result.append(separator);
+        result.append(a[i]);
+      }
+    }
+    return result.toString();
+  }
+  // convert a semplest wordcount String to a Hashmap<String,Integer>
+  public static HashMap<String,Integer> toWc (String s){
+    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    String[] wcs = s.split("\\s+");
+    for(String wc: wcs){
+      String[] wca = wc.split(":");
+      if( wca.length < 2 ) continue;
+      String w = wca[0];
+      Integer c = new Integer(wca[1]);
+      map.put( w, c );
+    }
+    return map;
+  }
+
+
   //Returns the lines of a file as a HashMap with the key as the category of the line
   public static HashMap<String,String> file2Hash(String f){
 	  HashMap<String,String> map = new HashMap<String,String>();
@@ -428,11 +498,10 @@ public class ioUtils {
   //-------------------------------------------------------------
   public static void main (String[] args){
 
-    double[][] smat = readMatrix( "/semplest/data/dmoz/all/S.mat");
-    System.out.println( smat.length + " : " + smat[0].length );
-    for(int i=0; i<10; i++)
-      System.out.println( smat[i][i] );
-
+    String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
+    String h = "top/sports/equestrian/breeds/spanish_horses";
+    HashMap<String,String> wcs = readWcounts(f);
+    System.out.println( wcs.get( h ));
 
   }
 }
