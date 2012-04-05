@@ -110,19 +110,19 @@ public class DmozLucene {
     return res;
   }
 
-  // -------------------------------------------------------------------
-  // [Important Note:] Make sure that text and the query are *both* either
-  // o stemmed
-  // o or unstemmed
-  // Search will not work if one is stemmed and the other is not.
-
-  public static void main(String[] args) throws IOException, ParseException {
+  // Static Helpers ---------------
+  public static void loadDesc( DmozLucene dl, String f){
+    HashMap<String,String> map = ioUtils.readDescs( f );
+    for(Map.Entry<String,String> e : map.entrySet())
+      dl.add( e.getKey(), e.getValue() );
+    dl.done();
+  }
+  public static void interactiveTest(){
     final String dfile = "dmoz/all/all.descs";
     // final String dfile = "dmoz/all/hCounts.new";
     
     DmozLucene dl = new DmozLucene();
     loadDesc( dl, dfile);
-
     Console c = System.console();
     while( true ){
       c.printf(" > ");
@@ -135,11 +135,14 @@ public class DmozLucene {
       }
     }
   }
-  // Static Helpers ---------------
-  public static void loadDesc( DmozLucene dl, String f){
-    HashMap<String,String> map = ioUtils.readDescs( f );
-    for(Map.Entry<String,String> e : map.entrySet())
-      dl.add( e.getKey(), e.getValue() );
-    dl.done();
+  // -------------------------------------------------------------------
+  // [Important Note:] Make sure that text and the query are *both* either
+  // o stemmed
+  // o or unstemmed
+  // Search will not work if one is stemmed and the other is not.
+
+  //-------------------------------
+  public static void main(String[] args) throws IOException, ParseException {
+    interactiveTest();
   }
 }
