@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
 
 import java.io.DataInputStream;
 import java.io.FileNotFoundException;
@@ -105,11 +106,11 @@ public class TextUtils
     }
     return strArray;
   }
-  
+
   // Return links from a url 
   public static URL[] HTMLLinks( String url ){
     URL[] outlinks = null;
-    
+
     LinkBean sb = new LinkBean();
     sb.setURL( url );
     try {
@@ -124,7 +125,7 @@ public class TextUtils
   // Return strings from a url 
   public static String HTMLText( String url ){
     String outs = "";
-    
+
     StringBean sb = new StringBean();
     sb.setLinks( false );
     sb.setReplaceNonBreakingSpaces( true );
@@ -146,7 +147,7 @@ public class TextUtils
       urls = urls + link.toString() + " "; 
     return urls.trim();
   }
-  
+
   // Get a list of all the urls upto <levels> deep within  
   public static String HTMLLinkString(String root, int level ){
     String urls = "";
@@ -231,34 +232,34 @@ public class TextUtils
     ArrayList<String> validWords = validWords( words );
     return validWords;
   }
-  
-  
+
+
   public static ArrayList<String> validTextWords( String url ){
-	    String htmlString = "";
-	    try { 
-	      htmlString = FileText( url );
-	    } catch ( Exception e ){
-	      e.printStackTrace();
-	    }
-	    ArrayList<String> words = getWords( htmlString );
-	    ArrayList<String> validWords = validWords( words );
-	    return validWords;
+    String htmlString = "";
+    try { 
+      htmlString = FileText( url );
+    } catch ( Exception e ){
+      e.printStackTrace();
+    }
+    ArrayList<String> words = getWords( htmlString );
+    ArrayList<String> validWords = validWords( words );
+    return validWords;
   }
   public static String FileText(String filepath) throws IOException{
-	  FileInputStream fstream = new FileInputStream(filepath);
-	  // Get the object of DataInputStream
-	  DataInputStream in = new DataInputStream(fstream);
-	  BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	  String data="";
-	  String strLine;
-	  //Read File Line By Line
-	  while ((strLine = br.readLine()) != null)   {
-	  // Print the content on the console
-	  data=data+strLine;
-	  }
-	  //Close the input stream
-	  in.close();
-	  return data;
+    FileInputStream fstream = new FileInputStream(filepath);
+    // Get the object of DataInputStream
+    DataInputStream in = new DataInputStream(fstream);
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    String data="";
+    String strLine;
+    //Read File Line By Line
+    while ((strLine = br.readLine()) != null)   {
+      // Print the content on the console
+      data=data+strLine;
+    }
+    //Close the input stream
+    in.close();
+    return data;
   }
 
   // Return stemmed words from a web page, in our dictionary 
