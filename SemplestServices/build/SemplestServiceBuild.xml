@@ -177,12 +177,11 @@
   	 	</jar>
 
   	 	<!-- Copy the jar file to lib of semplest service -->
-  	 	<!--
   	 	<copy todir="${basedir}/lib" filtering="off">
   	 		<flattenmapper />
   	 	  	<fileset dir="${semplest.keywords.dir}/build/jar" includes="SemplestKeywords.jar" />
   	 	</copy>
-  	 	-->
+
   	 </then>
   	</if>
   	
