@@ -11,24 +11,14 @@ public class GoogleAdwordsService implements ServiceInterface
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsService.class);
 
 	@Override
-	public String ServiceGet(String methodName, String jsonStr)
+	public String ServiceGet(String methodName, String jsonStr) throws Exception
 	{
-		try
-		{
-			logger.debug("Running Google Service " + methodName + ":" + jsonStr);
-			GoogleAdwordsServiceImpl service = new GoogleAdwordsServiceImpl();
-			Class[] parameterTypes = new Class[] {String.class};
-			Method method = service.getClass().getMethod(methodName, parameterTypes);
-			return (String) method.invoke(service,jsonStr);
-		}
-		catch (Exception e)
-		{
-			logger.error(e);
-			e.printStackTrace();
-		}
-		
-		return "GoogleAdwordsService Error running " + methodName ;
-		
+		logger.debug("Running Google Service " + methodName + ":" + jsonStr);
+		GoogleAdwordsServiceImpl service = new GoogleAdwordsServiceImpl();
+		Class[] parameterTypes = new Class[]
+		{ String.class };
+		Method method = service.getClass().getMethod(methodName, parameterTypes);
+		return (String) method.invoke(service, jsonStr);
 	}
 
 }
