@@ -1,9 +1,9 @@
 <project name="SemplestESB Server" default="build-installer" basedir="..">
 
    <!-- artifactsDir and buildVersion passed in for the build machine-->
-	 <condition property="product.version" value="${buildVersion}" else="1.0.x">
-	    <isset property="buildVersion"/>
-	  </condition>
+	<property environment="env"/>
+		<property name="product.version" value="${env.BUILD_VERSION}"/>
+	
 	 <condition property="output.dir" value="${artifactsDir}" 
 	             else="${basedir}">
 	    <isset property="artifactsDir"/>
