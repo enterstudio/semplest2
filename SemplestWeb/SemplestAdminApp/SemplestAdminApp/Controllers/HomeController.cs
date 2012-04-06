@@ -13,25 +13,18 @@ namespace SemplestAdminApp.Controllers
         public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
         {
 
-
-
-            if (usersearch == null) usersearch = "";
-            if (accountnumbersearch == null) accountnumbersearch = "";
-            if (emailsearch == null) emailsearch = "";
-
-
-
+            
 
 
             ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
             SemplestEntities dbcontext = new SemplestEntities();
 
+            //FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
 
             var viewModel =
                 from u in dbcontext.Users
                 join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-                where (c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch) || u.Email.Contains(emailsearch))
-                //where (u.FirstName.Contains("mi") || u.LastName.Contains("mi")) 
+                where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)) )
                 select new HomeModel
                 {
                     Customer = c.Name,
@@ -44,52 +37,6 @@ namespace SemplestAdminApp.Controllers
             return View(viewModel);
         }
 
-        //     [ActionName("Search")]
-        [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Search()
-        {
-            ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-            SemplestEntities dbcontext = new SemplestEntities();
-
-            var viewModel =
-                from u in dbcontext.Users
-                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-                select new HomeModel
-                {
-                    Customer = c.Name,
-                    AccountNumber = c.CustomerPK,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email
-                };
-
-            return View(viewModel);
-        }
-
-        ////[HttpPost]
-        //public ActionResult Search()
-        //{
-        //   //
-        //    ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-        //    SemplestEntities dbcontext = new SemplestEntities();
-
-        //    var viewModel =
-        //        from u in dbcontext.Users
-        //        join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-        //        select new HomeModel
-        //        {
-        //            Customer = c.Name,
-        //            AccountNumber = c.CustomerPK,
-        //            FirstName = u.FirstName,
-        //            LastName = u.LastName,
-        //            Email = u.Email
-        //        };
-
-        //    return View(viewModel);
-
-
-
-        //}
 
 
 
