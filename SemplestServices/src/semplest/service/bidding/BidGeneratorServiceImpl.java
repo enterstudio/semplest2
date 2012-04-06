@@ -2,7 +2,7 @@ package semplest.service.bidding;
 import java.util.Arrays;
 
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
-//import semplest.services.client.api.GoogleAdwordsServiceClient;
+import semplest.services.client.api.GoogleAdwordsServiceClient;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,52 +50,52 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		
 		
-//		// ************************************************************************** 
-//		
-//		// A. get the bid information from ad campaign
-//		
-//		// what i can get now: bid related info from google
-//		// TBD: 1. MSN/yahoo 
-//		//      2. quality/relevance score for keywords? can we get from keyword gen process?
-//		//      3. how to get competition info? data which return all zeros are non-competitive? 
-//		
-//		
-//		try
-//		{
-////			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
-//
-//			ArrayList<Double> bidLevels = new ArrayList<Double>();
-//
-//			for (double b = 1.1; b<3.5; b=b+0.5){
-//				bidLevels.add(new Double(b));
+		// ************************************************************************** 
+		
+		// A. get the bid information from ad campaign
+		
+		// what i can get now: bid related info from google
+		// TBD: 1. MSN/yahoo 
+		//      2. quality/relevance score for keywords? can we get from keyword gen process?
+		//      3. how to get competition info? data which return all zeros are non-competitive? 
+		
+		
+		try
+		{
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+
+			ArrayList<Double> bidLevels = new ArrayList<Double>();
+
+			for (double b = 1.1; b<3.5; b=b+0.5){
+				bidLevels.add(new Double(b));
+			}
+//			System.out.println("Number of points on bid axis: "+bidLevels.size());
+//			for(int i=0; i< bidLevels.size(); i++){
+//				System.out.format("Bid: %.1f\n",bidLevels.get(i));
 //			}
-////			System.out.println("Number of points on bid axis: "+bidLevels.size());
-////			for(int i=0; i< bidLevels.size(); i++){
-////				System.out.format("Bid: %.1f\n",bidLevels.get(i));
-////			}
-//			
-//			for (String word : keywords){
-//				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword(word, KeywordMatchType.EXACT, bidLevels);
-//				Double[] bids = o.getBidList();
-//				Arrays.sort(bids);
-//
-//				logger.info(word);
-//				for (int i = 0; i < bids.length; i++) {
-//					System.out.println(bids[i]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[i])
-//							+ " Avg CPC="+ o.getAveCPC(bids[i]) + " Avg Pos=" + o.getAvePosition(bids[i]));
-//				}
-//				
-//			}
-//			
-//			
-//
-//
-//		}
-//		catch (Exception e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+			
+			for (String word : keywords){
+				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword(word, KeywordMatchType.EXACT, bidLevels);
+				Double[] bids = o.getBidList();
+				Arrays.sort(bids);
+
+				logger.info(word);
+				for (int i = 0; i < bids.length; i++) {
+					System.out.println(bids[i]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[i])
+							+ " Avg CPC="+ o.getAveCPC(bids[i]) + " Avg Pos=" + o.getAvePosition(bids[i]));
+				}
+				
+			}
+			
+			
+
+
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		 // ************************************************************************** 
 
