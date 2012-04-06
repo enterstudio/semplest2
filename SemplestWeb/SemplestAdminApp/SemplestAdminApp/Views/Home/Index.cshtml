@@ -57,9 +57,6 @@ else
             Email
         </th>
     </tr>
-
-
-
 @foreach (var item in Model)
 {
     <tr>
@@ -78,10 +75,10 @@ else
         <td>
             @Html.RouteLink(item.Email, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
         </td>        
-        
     </tr>
 }
 </table>
+    
 }
 
 @*<input type="text" id="user" />

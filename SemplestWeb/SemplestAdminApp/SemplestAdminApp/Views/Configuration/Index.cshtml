@@ -16,7 +16,6 @@
 @using (Html.BeginForm()) {
     @Html.ValidationSummary(true)
     <fieldset>
-        <legend>Configuration</legend>
 
         <div class="editor-label">
             @Html.LabelFor(model => model.CustomerMinOrderAmount)
@@ -193,6 +192,3 @@
     </fieldset>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Web.Mvc;
+
 
 
 namespace SemplestAdminApp.Models
@@ -49,6 +51,17 @@ namespace SemplestAdminApp.Models
         public string SamplestDevelopmentEmail { get; set; }
         public string SemplestDefaultBudgetMarkUpOrDown { get; set; }
     }
+
+
+    [MetadataType(typeof(RoleMetaData))]
+    public partial class Role{}
+        public class RoleMetaData
+        {
+            [HiddenInput(DisplayValue=false)]
+            public int RolePK { get; set; }
+            [DisplayName("Role Name:")]
+            public string RoleName { get; set; }
+        }
 
 }
 

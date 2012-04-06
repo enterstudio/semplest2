@@ -18,13 +18,9 @@ namespace SemplestAdminApp.Controllers
             return View(_dbContext.Configurations.First<Configuration>());
         }
 
-        public ActionResult Edit()
-        {
-            return View(_dbContext.Configurations.First<Configuration>());
-        }
-
+        
         [HttpPost]
-        public ActionResult Edit(Configuration c2)
+        public ActionResult Index(Configuration c2)
         {
             Configuration c = _dbContext.Configurations.First<Configuration>();
             c.CustomerMinOrderAmount = c2.CustomerMinOrderAmount;

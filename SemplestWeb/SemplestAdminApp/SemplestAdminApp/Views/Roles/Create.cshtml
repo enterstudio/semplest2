@@ -1,0 +1,81 @@
+﻿@model IEnumerable<SemplestAdminApp.Models.RoleModel>
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+    <fieldset>
+        <legend>Role</legend>
+         <div class="editor-label">
+            New Role:
+        </div>
+        <div class="editor-field">
+            @*@Html.EditorFor(model => model.RoleName)*@
+        </div>
+        <div class="editor-label">
+            Duplicate Rights of:
+        </div>
+        <div class="editor-field">
+        @*Html.DropDownListFor(null, ViewData["Roles"], new { id = "RightPK" })*@
+        @*Html.DropDownListFor(x => x.SelectedValue, ViewData["Roles"] as SelectList, new { id = "items" })*@
+        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = string.Format("doSomething({0}); return false;", "Models") })  
+
+         
+
+            @*Html.DropDownList("Roles")*@
+        </div>
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+
+
+<table>
+    <tr>
+        <th>
+            Page / Object
+        </th>
+    </tr>
+@foreach (var item in Model)
+{
+    <tr>
+        <td>
+        @Html.CheckBox(item.RightName)@Html.Label(item.RightName)
+        </td>
+    </tr>
+}
+</table>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+    </fieldset>
+}
+
+<script type="text/jscript">
+    $(function () {
+        // Register for the change event of the drop down
+        $('#Roles').change(function () {
+            // When the value changes, get send an AJAX request to the
+            // Filter action passing the selected value and update the
+            // contents of some result div with the partial html returned
+            // by the controller action
+            $('#result').load('<%: Url.Action("Models") %>',
+            { selectedValue: $(this).val() }
+        );
+        });
+    });
+
+    $('._select_change').change(function () { $.post(ctrlUrl); })
+
+    function doSomething(action) {
+        window.location.href = action;
+    } 
+
+
+</script>
