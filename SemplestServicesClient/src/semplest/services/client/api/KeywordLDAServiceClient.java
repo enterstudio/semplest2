@@ -68,6 +68,8 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("companyName", companyName);
 		jsonHash.put("searchTerm", searchTerm);
+		String jsonAdds = gson.toJson(adds, String[].class);
+		jsonHash.put("adds", jsonAdds);
 		jsonHash.put("description", description);
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
@@ -84,9 +86,22 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception{
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String jsonCategories = gson.toJson(categories, ArrayList.class);
+		jsonHash.put("categories", jsonCategories);
+		jsonHash.put("companyName", companyName);
+		jsonHash.put("searchTerm", searchTerm);
+		String jsonAdds = gson.toJson(adds, String[].class);
+		jsonHash.put("adds", jsonAdds);
+		jsonHash.put("description", description);
+		jsonHash.put("url", url);
+		String jsonNgrams =  gson.toJson(nGrams, Integer[].class);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getKeywords", json, timeoutMS);
+		return gson.fromJson(returnData,ArrayList.class);
 	}
 
 }
