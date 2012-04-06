@@ -8,7 +8,8 @@ using System.Web.Security;
 namespace SemplestAdminApp.Models
 {
 
-   
+
+    
     public class HomeModel
     {
         public string Customer { get; set; }
@@ -17,6 +18,14 @@ namespace SemplestAdminApp.Models
         public string LastName { get; set; }
         public string Email { get; set; }
     }
+
+
+    public class AccountServiceModel
+    {
+ 
+    }
+
+
 
     public class RoleModel
     {
