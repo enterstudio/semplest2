@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using SemplestAdminApp.Models;
 
 namespace SemplestAdminApp.Controllers
 {
@@ -11,10 +12,11 @@ namespace SemplestAdminApp.Controllers
         //
         // GET: /Roles/
 
+        SemplestEntities _dbContext = new SemplestEntities();
         public ActionResult Index()
         {
-            
-            return View();
+            var model = _dbContext.Roles;
+            return View(model);
         }
 
         //
@@ -31,7 +33,7 @@ namespace SemplestAdminApp.Controllers
         public ActionResult Create()
         {
             return View();
-        } 
+        }
 
         //
         // POST: /Roles/Create
@@ -50,10 +52,10 @@ namespace SemplestAdminApp.Controllers
                 return View();
             }
         }
-        
+
         //
         // GET: /Roles/Edit/5
- 
+
         public ActionResult Edit(int id)
         {
             return View();
@@ -68,7 +70,7 @@ namespace SemplestAdminApp.Controllers
             try
             {
                 // TODO: Add update logic here
- 
+
                 return RedirectToAction("Index");
             }
             catch
@@ -79,7 +81,7 @@ namespace SemplestAdminApp.Controllers
 
         //
         // GET: /Roles/Delete/5
- 
+
         public ActionResult Delete(int id)
         {
             return View();
@@ -94,7 +96,7 @@ namespace SemplestAdminApp.Controllers
             try
             {
                 // TODO: Add delete logic here
- 
+
                 return RedirectToAction("Index");
             }
             catch

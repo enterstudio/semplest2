@@ -131,6 +131,7 @@
     <Compile Include="Models\CustomerPhoneAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\EFMetaData.cs" />
     <Compile Include="Models\Keyword.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

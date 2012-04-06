@@ -3,12 +3,15 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
-
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("System Defaults", "../Configuration") |
+    @Html.ActionLink("Security", "../Roles") 
 </p>
+<h2>Security</h2>
+
+@*<p>
+    @Html.ActionLink("Create New", "Create")
+</p>*@
 <table>
     <tr>
         <th>
@@ -22,11 +25,11 @@
         <td>
             @Html.DisplayFor(modelItem => item.RoleName)
         </td>
-        <td>
+@*        <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.RolePK }) |
             @Html.ActionLink("Details", "Details", new { id=item.RolePK }) |
             @Html.ActionLink("Delete", "Delete", new { id=item.RolePK })
-        </td>
+        </td>*@
     </tr>
 }
 
