@@ -153,19 +153,20 @@
 	
 	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
 	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
+		<echo message="Creating Jar for SemplestServicesClient..."/>
 		<path id="api.path">
 			<pathelement location="${classes}"/>
 			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
 		</path>
-		<echo message="Creating Jar for SemplestServicesClient..."/>
-		<javac srcdir="${semplest.clientapi.dir}" destdir="${classes}" classpathref="api.path"
+		<mkdir dir="${semplest.clientapi.dir}/temp"/>
+		<javac srcdir="${semplest.clientapi.dir}" destdir="${semplest.clientapi.dir}/temp" classpathref="api.path"
 			target="1.6"
 			source="1.6"
 			debug="${java.debug}"   	
 			includes="**/*.java" >
 			<exclude name="**/*.svn"/>
 		</javac>
-		<jar destfile="${dist}/lib/SemplestServicesClient.jar" basedir="${classes}">
+		<jar destfile="${dist}/lib/SemplestServicesClient.jar" basedir="${semplest.clientapi.dir}/temp">
 			 <manifest>
 			 <attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
@@ -182,7 +183,8 @@
 	  	 		<pathelement location="${classes}"/>
 	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
 	  	 	</path>
-	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="keywords.path"
+	  	 	<mkdir dir="${semplest.keywords.dir}/temp"/>
+	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
 	  	 		target="1.6"
 	  	 	  	source="1.6"
 	  	 	  	debug="${java.debug}"   	
@@ -193,7 +195,7 @@
 	  	 		<exclude name="data/*.*"/> -->
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
-	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${classes}">
+	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">
 	  	 		<manifest>
 	  	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
 	  	 	    </manifest>
