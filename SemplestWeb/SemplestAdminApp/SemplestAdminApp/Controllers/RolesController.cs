@@ -30,26 +30,6 @@ namespace SemplestAdminApp.Controllers
         //
         // GET: /Roles/Create
 
-
-
-        public ActionResult Index2()
-        {
-            var model = new MyViewModel
-            {
-                Values = new[] 
-            {
-                new SelectListItem { Value = "1", Text = "Item 1" },
-                new SelectListItem { Value = "2", Text = "Item 2" },
-                new SelectListItem { Value = "3", Text = "Item 3" }
-            }
-            };
-            return View(model);
-        }
-
-
-
-
-
         public ActionResult Create()
         {
             ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
@@ -64,12 +44,6 @@ namespace SemplestAdminApp.Controllers
                 {
                     RightName = grp.FirstOrDefault().RightName,
                     RightPK = grp.FirstOrDefault().RightsPK,
-                    Values = new[] 
-            {
-                new SelectListItem { Value = "1", Text = "Item 1" },
-                new SelectListItem { Value = "2", Text = "Item 2" },
-                new SelectListItem { Value = "3", Text = "Item 3" }
-            }
                 };
 
             return View(viewModel);
