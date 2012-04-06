@@ -154,6 +154,7 @@
 	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
 	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
 		<path id="api.path">
+			<pathelement location="${classes}"/>
 			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
 		</path>
 		<echo message="Creating Jar for SemplestServicesClient..."/>
@@ -181,6 +182,7 @@
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
 	  	 	<path id="keywords.path">
+	  	 		<pathelement location="${classes}"/>
 	  	 		<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
 	  	 	</path>
 	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="keywords.path"
