@@ -338,7 +338,7 @@ public class TextUtils
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    if( args.length > 0 )
+    if( args.length > 2 )
       System.out.println( HTMLLinkString(args[0], new Integer(args[1]),args[2] ));
   }
 }
