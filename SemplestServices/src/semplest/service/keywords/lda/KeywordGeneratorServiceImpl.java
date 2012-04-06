@@ -21,11 +21,11 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		logger.debug("call  getCategories(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		String companyName = data.get("companyName");
-		String productSubcategory = data.get("searchTerm");
+		String searchTerm = data.get("searchTerm");
 		String description = data.get("description");
 		String[] adds = new String[]{data.get("adds")};
 		String url = data.get("url");
-		ArrayList<String> res = getCategories(companyName,productSubcategory,description,adds, url);
+		ArrayList<String> res = getCategories(companyName,searchTerm,description,adds, url);
 		return gson.toJson(res);
 	}
 
@@ -52,12 +52,32 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		kwGen.initializeService(null);
 		
 	}
+	
+	public String getKeywords(String json) throws Exception
+	{
+		logger.debug("call  getCategories(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		ArrayList<String> categories = data.get("categories");
+		String companyName = data.get("companyName");
+		String searchTerm = data.get("searchTerm");
+		String description = data.get("description");
+		String[] adds = new String[]{data.get("adds")};
+		String url = data.get("url");
+		Integer[] nGrams = data.get("nGrams");
+		ArrayList<ArrayList<String>> res = getKeywords(categories,companyName, searchTerm, description, adds, url, nGrams);
+		return gson.toJson(res);
+	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) {
-		// TODO Auto-generated method stub
-		//coment
-		return null;
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception {
+		kwGen =  new KWGenDmozLDAServer();
+		ArrayList<ArrayList<String>> keywords = kwGen.getKeywords(categories,companyName, searchTerm,description, adds, url, nGrams);
+		if (keywords == null)
+		{
+			logger.info("No categories found for " + searchTerm);
+			keywords = new ArrayList<ArrayList<String>>();
+		}
+		return keywords;
 	}
 	
 }
