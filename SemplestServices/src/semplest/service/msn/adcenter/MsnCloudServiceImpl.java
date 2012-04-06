@@ -206,12 +206,23 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	// Account Methods
 	// ==================================
-	@Override
-	public MsnManagementIds createAccount(String name) throws MsnCloudException
+	
+	public String createAccount(String json) throws Exception
 	{
-		Customer customer = aNew().adCenterCustomer().withCustomerName(name).build();
-		User user = aNew().adCenterUser().withUserName(name).build();
-		Account account = aNew().adCenterAccount().withAccountName(name).build();
+		logger.debug("call createAccount(String[] json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		String[] input = {data.get("name"),null};
+		MsnManagementIds mngId = createAccount(input);
+		//convert result to Json String
+		return gson.toJson(mngId);
+	}
+	
+	@Override
+	public MsnManagementIds createAccount(String[] name) throws MsnCloudException
+	{
+		Customer customer = aNew().adCenterCustomer().withCustomerName(name[0]).build();
+		User user = aNew().adCenterUser().withUserName(name[0]).build();
+		Account account = aNew().adCenterAccount().withAccountName(name[0]).build();
 
 		try
 		{
