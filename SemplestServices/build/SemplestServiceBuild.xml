@@ -57,6 +57,9 @@
 	
   <property name="semplest.keywords.dir" value="${basedir}/../SemplestKeywords" />
   <property name="semplest.keywords.lib" value="${basedir}/../SemplestKeywords/lib" />
+	
+  <property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />
+  <property name="semplest.clientapi.lib" value="${basedir}/../SemplestServicesClient/lib" />
 
  	
   <property name="ant.contrib.dir" value="${basedir}/../ant-contrib" />
@@ -86,6 +89,12 @@
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
     </fileset>
+  	<fileset dir="${semplest.keywords.lib}">
+  		<include name="**/*.jar"/>
+  	</fileset>
+  	<fileset dir="${semplest.clientapi.lib}">
+  		<include name="**/*.jar"/>
+  	</fileset>
   </path>
  
   
@@ -113,79 +122,11 @@
   	      <flattenmapper />
   	      <fileset dir="${basedir}/lib" includes="**/*.jar" />
   	    </copy>
-  	     <copy todir="${dist}/lib" filtering="off">
+  	    <copy todir="${dist}/lib" filtering="off">
   	      <flattenmapper />
   	      <fileset dir="${semplest.protocol.lib}" includes="**/*.jar" />
   	    </copy>
-  	
-  	<!-- If it's a Keyword service, then 1) create JAR for the Keyword class and put it to dist/lib 2) copy dmoz folder to dist/bin -->
-  	<if>
-  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
-  	 <then>  	   
-  	 	<echo message="This is KeywordGeneratorService."/>
-  	 	<delete includeEmptyDirs="true" quiet="true">
-  	 	      <fileset dir="${dist}/bin/data">
-  	 	        <include name="**/**"/>
-  	 	      </fileset>
-  	 	    </delete>
-  	 	<delete includeEmptyDirs="true" quiet="true">
-  	 	      <fileset dir="${semplest.keywords.dir}/build">
-  	 	        <include name="**/**"/>
-  	 	      </fileset>
-  	 	    </delete>
- 	 	
-  	 	<!-- Copy dmoz folder -->
-  	 	<echo message="Copying dmoz folder..."/>
-  	 	<mkdir dir="${dist}/bin/data"/>
-  	 	<copy todir="${dist}/bin/data" filtering="off">
-  	 		<flattenmapper />
-  	 	  	<fileset dir="${semplest.keywords.dir}/data" />
-  	 	</copy>
-  	 	
-  	 	<!-- Compile the Keyword class base on the Protocol class -->
-  	 	<echo message="Creating Jar for the service class..."/>
-  	 	<mkdir dir="${semplest.keywords.dir}/build/classes"/>
-  	 	<javac srcdir="${semplest.protocol.dir}" destdir="${semplest.keywords.dir}/build/classes" classpathref="class.path"
-  	 	      target="1.6"
-  	 	      source="1.6"
-  	 	      debug="${java.debug}"   	
-  	 	      includes="**/*.java"
-  	 	      excludes="**/*.svn"
-  	 	/>  	 	
-  	 	<copy todir="${classes}" filtering="off">
-  	 		<flattenmapper />
-  	 	  	<fileset dir="${semplest.keywords.dir}/build/classes" />
-  	 	</copy>
-  	 	
-  	 	<path id="keyword.classpath">
-  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
-  	 	</path>  	 	
-  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/build/classes" classpathref="keyword.classpath"
-  	 		target="1.6"
-  	 	  	source="1.6"
-  	 	  	debug="${java.debug}"   	
-  	 	  	includes="**/*.java" >
-  	 		<exclude name="**/*.svn"/>
-  	 		<exclude name="dmoz"/>
-  	 	</javac>
-  	 	<!-- Create Jar for the Keyword class, but exclude the dmoz folder -->
-  	 	<mkdir dir="${semplest.keywords.dir}/build/jar"/>
-  	 	<jar destfile="${semplest.keywords.dir}/build/jar/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/build/classes">
-  	 		<manifest>
-  	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
-  	 	    </manifest>
-  	 	</jar>
-
-  	 	<!-- Copy the jar file to lib of semplest service -->
-  	 	<copy todir="${basedir}/lib" filtering="off">
-  	 		<flattenmapper />
-  	 	  	<fileset dir="${semplest.keywords.dir}/build/jar" includes="SemplestKeywords.jar" />
-  	 	</copy>
-
-  	 </then>
-  	</if>
-  	
-    </target>
+</target>
 
 
   <target name="clean" description="Cleans out the output directory">
@@ -215,8 +156,48 @@
 	      excludes="**/*.svn"
 	    />
 	</target>
+	
+	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
+	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
+		<echo message="Creating Jar for SemplestServicesClient..."/>
+		<javac srcdir="${semplest.clientapi.dir}" destdir="${classes}" classpathref="class.path"
+			target="1.6"
+			source="1.6"
+			debug="${java.debug}"   	
+			includes="**/*.java" >
+			<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestServicesClient.jar" basedir="${classes}">
+			 <manifest>
+			 <attribute name="Main-Class" value="semplest.services.client.api"/>
+			 </manifest>
+		</jar>  	
+	  	
+	  	<!-- If it's a Keyword service, then create JAR for SemplestKeywords and put it to SemplestServices/lib -->
+	  	<if>
+	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
+	  	 <then>  	   
+	  	 	<echo message="This is KeywordGeneratorService."/>	  	 	
+	  	 	<!-- Compile SemplestKeywords -->
+	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
+	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="class.path"
+	  	 		target="1.6"
+	  	 	  	source="1.6"
+	  	 	  	debug="${java.debug}"   	
+	  	 	  	includes="**/*.java" >
+	  	 		<exclude name="**/*.svn"/>
+	  	 	</javac>
+	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
+	  	 	<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${classes}">
+	  	 		<manifest>
+	  	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
+	  	 	    </manifest>
+	  	 	</jar>
+	  	 </then>
+	  	</if>
+	</target>
    
-  <target name="compile" depends="compileProtocol" description="Compile all source files">
+  <target name="compile" depends="depJars" description="Compile all source files">
     <javac srcdir="${source}" destdir="${classes}" classpathref="class.path"
       target="1.6"
       source="1.6"
@@ -272,7 +253,7 @@
     </copy>
 	</target>
 
-	<target name="build-installer" depends="compileProtocol,compile,deps" description="Create distribution executable">
+	<target name="build-installer" depends="compileProtocol,depJars,compile,deps" description="Create distribution executable">
 
 		<propertyregex property="service.name" input="${semplest.service}" 
 			regexp="([^\.]*)$" 
