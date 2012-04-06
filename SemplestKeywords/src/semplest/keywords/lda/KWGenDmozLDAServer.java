@@ -57,7 +57,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String productSubcategory, String description, String[] adds, String url, int[] nGrams) throws Exception {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception {
 		
 		//Add all data from inputs
 		ArrayList<String> dataUrl= new ArrayList<String>();
@@ -73,14 +73,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				data1= data1+" "+ adds;
 			}
 		}
-		data1 = data1+" "+companyName+" "+productSubcategory+" "+description;
+		data1 = data1+" "+companyName+" "+searchTerm+" "+description;
 		String stemdata1 = this.stemvString( data1, data.dict );
 		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, stemdata1, 50, nGrams);
 		return keywords;
 	}
 	
 	
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data1, int numkw, int[] nGrams) throws Exception {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data1, int numkw, Integer[] nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
@@ -354,7 +354,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				}
 			}else	
 				url = userInfo1;	
-			int[] nGrams = {1,2,3};
+			Integer[] nGrams = {1,2,3};
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, null, url,nGrams);
 			
 			for(int n=0; n<nGrams.length; n++){
