@@ -186,6 +186,7 @@
 	  	 	  	debug="${java.debug}"   	
 	  	 	  	includes="**/*.java" >
 	  	 		<exclude name="**/*.svn"/>
+	  	 		<exclude name="data/*.*"/>
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
 	  	 	<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${classes}">
