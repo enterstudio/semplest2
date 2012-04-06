@@ -164,7 +164,7 @@
 			includes="**/*.java" >
 			<exclude name="**/*.svn"/>
 		</javac>
-		<jar destfile="${basedir}/lib/SemplestServicesClient.jar" basedir="${classes}">
+		<jar destfile="${dist}/lib/SemplestServicesClient.jar" basedir="${classes}">
 			 <manifest>
 			 <attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
@@ -183,7 +183,7 @@
 	  	 	<path id="keywords.path">
 	  	 		<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
 	  	 	</path>
-	  	 	<javac srcdir="${semplest.keywords.lib}" destdir="${classes}" classpathref="keywords.path"
+	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="keywords.path"
 	  	 		target="1.6"
 	  	 	  	source="1.6"
 	  	 	  	debug="${java.debug}"   	
