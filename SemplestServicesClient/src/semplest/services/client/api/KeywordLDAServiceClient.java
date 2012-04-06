@@ -63,11 +63,11 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 	
 	@Override
-	public ArrayList<String>  getCategories(String companyName, String productSubcategory, String description, String[] adds, String url) throws Exception
+	public ArrayList<String>  getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("companyName", companyName);
-		jsonHash.put("productSubcategory", productSubcategory);
+		jsonHash.put("searchTerm", searchTerm);
 		jsonHash.put("description", description);
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
@@ -84,7 +84,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String productSubcategory, String description, String[] adds, String url, int[] nGrams) throws Exception{
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception{
 		// TODO Auto-generated method stub
 		return null;
 	}
