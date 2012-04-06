@@ -57,13 +57,13 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	{
 		logger.debug("call  getCategories(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		ArrayList<String> categories = data.get("categories");
+		ArrayList<String> categories = gson.fromJson(data.get("categories"), ArrayList.class);
 		String companyName = data.get("companyName");
 		String searchTerm = data.get("searchTerm");
 		String description = data.get("description");
-		String[] adds = new String[]{data.get("adds")};
+		String[] adds =  gson.fromJson(data.get("adds"), String[].class);
 		String url = data.get("url");
-		Integer[] nGrams = data.get("nGrams");
+		Integer[] nGrams = gson.fromJson(data.get("nGrams"), Integer[].class);
 		ArrayList<ArrayList<String>> res = getKeywords(categories,companyName, searchTerm, description, adds, url, nGrams);
 		return gson.toJson(res);
 	}
