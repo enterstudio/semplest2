@@ -21,7 +21,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		logger.debug("call  getCategories(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		String companyName = data.get("companyName");
-		String productSubcategory = data.get("productSubcategory");
+		String productSubcategory = data.get("searchTerm");
 		String description = data.get("description");
 		String[] adds = new String[]{data.get("adds")};
 		String url = data.get("url");
@@ -30,14 +30,14 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	}
 
 	@Override
-	public ArrayList<String> getCategories(String companyName, String productSubcategory, String description, String[] adds, String url) throws Exception
+	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception
 	{
 		
 		kwGen =  new KWGenDmozLDAServer();
-		ArrayList<String> categOpt = kwGen.getCategories(companyName,productSubcategory,description,adds, url);
+		ArrayList<String> categOpt = kwGen.getCategories(companyName,searchTerm,description,adds, url);
 		if (categOpt == null)
 		{
-			logger.info("No categories found for " + productSubcategory);
+			logger.info("No categories found for " + searchTerm);
 			categOpt = new ArrayList<String>();
 		}
 		return categOpt;
@@ -54,7 +54,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String productSubcategory, String description, String[] adds, String url, int[] nGrams) {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) {
 		// TODO Auto-generated method stub
 		//coment
 		return null;

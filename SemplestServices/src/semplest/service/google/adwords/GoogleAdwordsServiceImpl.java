@@ -144,19 +144,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(camp[i].getName()); } }
 			 */
 
-			String accountID = "5058200123";//"8019925375"; // "6048920973";
+			String accountID = "5058200123";// "8019925375"; // "6048920973";
 			Long adGroupID = 3380873349L;
-			
+
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 			File f = g.getReportForAccount(accountID);
-			//f.getName();
-			/*ArrayList<HashMap<String, String>> camp = g.getCampaignsByAccountId(accountID, false);
-
-			Long campaignID = new Long(camp.get(0).get("Id"));
-			System.out.println(campaignID);
-			AdGroup[] adgroups = g.getAdGroupsByCampaignId(accountID, campaignID, false);
-			adGroupID = adgroups[0].getId();
-			*/
+			// f.getName();
+			/*
+			 * ArrayList<HashMap<String, String>> camp =
+			 * g.getCampaignsByAccountId(accountID, false);
+			 * 
+			 * Long campaignID = new Long(camp.get(0).get("Id"));
+			 * System.out.println(campaignID); AdGroup[] adgroups =
+			 * g.getAdGroupsByCampaignId(accountID, campaignID, false);
+			 * adGroupID = adgroups[0].getId();
+			 */
 			/*
 			 * GoogleBidObject[] c = g.getAllBiddableAdGroupCriteria(accountID,
 			 * adGroupID); for (int i = 0; i < c.length; i++) {
@@ -164,13 +166,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 */
 			// MyTestKeyword3:34632214029
 			Long keywordID = 41030523L; // wedding venue
-			g.getBidLandscapeForAdgroup(accountID, adGroupID); //, keywordID);
-//			g.reportfields();
-			 ArrayList<HashMap<String, String>> res =
-			 g.getCampaignsByAccountId(accountID, false);
-			 System.out.println(res.get(0).get("Name"));
-//			 TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
-//			 KeywordMatchType.EXACT, 20);
+			g.getBidLandscapeForAdgroup(accountID, adGroupID); // , keywordID);
+			// g.reportfields();
+			ArrayList<HashMap<String, String>> res = g.getCampaignsByAccountId(accountID, false);
+			System.out.println(res.get(0).get("Name"));
+			// TargetingIdea[] res = g.GetRelatedKeywords("Red Shoes",
+			// KeywordMatchType.EXACT, 20);
 
 			/*
 			 * GoogleRelatedKeywordObject res =
@@ -1250,7 +1251,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 
-
 	@Override
 	public void getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
 	{
@@ -1261,14 +1261,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Create selector.
 		Selector selector = new Selector();
 		selector.setFields(new String[]
-		{ "AdGroupId", "CriterionId", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc", "LocalImpressions" });
+		{ "AdGroupId", "CriterionId", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc", "LocalImpressions", "QualityScore" });
 		// Create predicates.
 		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
 		{ adGroupID.toString() });
+
 		Predicate criterionIdPredicate = new Predicate("CriterionId", PredicateOperator.IN, new String[]
 		{ keywordID.toString() });
 		selector.setPredicates(new Predicate[]
 		{ adGroupIdPredicate, criterionIdPredicate });
+
 		// Get bid landscape for ad group criteria.
 		CriterionBidLandscapePage page = dataService.getCriterionBidLandscape(selector);
 		// Display bid landscapes.
@@ -1301,17 +1303,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the DataService.
 		DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
-		
+
 		// Create selector.
 		Selector selector = new Selector();
 		selector.setFields(new String[]
 		{ "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
-				"LocalImpressions" });
+				"LocalImpressions", "QualityScore" });
 		// Create predicates.
-		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
-		{ adGroupID.toString() });
-		selector.setPredicates(new Predicate[]
-		{ adGroupIdPredicate });
+		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { adGroupID.toString() });
+		selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 		// Get bid landscape for ad group criteria.
 		AdGroupBidLandscapePage page = dataService.getAdGroupBidLandscape(selector);
 		// Display bid landscapes.
@@ -1337,6 +1337,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			System.out.println("NO Bid Lanscapes for Adgroup " + adGroupID);
 		}
 	}
+
 	private static final String DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 			+ "<fields>CampaignId</fields><fields>Id</fields><fields>HourOfDay</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields>"
@@ -1347,24 +1348,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
-			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
-			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
+			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
-	
+
 	public File getReportForAccount(String accountID) throws MalformedURLException, HttpException, IOException, AuthTokenException
 	{
-		//ReportDefinitionDateRangeType.ALL_TIME;
-		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));// 
-		return report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken );
+		// ReportDefinitionDateRangeType.ALL_TIME;
+		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));//
+		return report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);
 	}
 
 	@Override
 	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
-		
-	}
 
-	
+	}
 
 }
