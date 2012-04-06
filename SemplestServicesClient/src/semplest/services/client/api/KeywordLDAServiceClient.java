@@ -35,7 +35,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		{
 			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
 			long start = System.currentTimeMillis();
-			ArrayList<String> res = client.getCategories(new String[] {"insurance"});
+			ArrayList<String> res = client.getCategories(null, "insurance", null, null, null);
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
 			System.out.println("categories took " + sec + " seconds");
 			for (int i = 0; i < res.size(); i++)
@@ -63,10 +63,13 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 	
 	@Override
-	public ArrayList<String> getCategories(String[] searchTerm) throws Exception
+	public ArrayList<String>  getCategories(String companyName, String productSubcategory, String description, String[] adds, String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("searchTerm", searchTerm[0]);
+		jsonHash.put("companyName", companyName);
+		jsonHash.put("productSubcategory", productSubcategory);
+		jsonHash.put("description", description);
+		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getCategories", json, timeoutMS);
@@ -81,8 +84,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data,
-			int numKw, int[] nGrams) throws Exception {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String productSubcategory, String description, String[] adds, String url, int[] nGrams) throws Exception{
 		// TODO Auto-generated method stub
 		return null;
 	}
