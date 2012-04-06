@@ -89,12 +89,6 @@
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
     </fileset>
-  	<fileset dir="${semplest.clientapi.lib}">
-  		<include name="**/*.jar"/>
-  	</fileset>
-  	<fileset dir="${semplest.keywords.lib}">
-  	  	<include name="**/*.*"/>
-  	</fileset>
   </path>
  
   
@@ -159,8 +153,11 @@
 	
 	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
 	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
+		<path id="api.path">
+			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
+		</path>
 		<echo message="Creating Jar for SemplestServicesClient..."/>
-		<javac srcdir="${semplest.clientapi.dir}" destdir="${classes}" classpathref="class.path"
+		<javac srcdir="${semplest.clientapi.dir}" destdir="${classes}" classpathref="api.path"
 			target="1.6"
 			source="1.6"
 			debug="${java.debug}"   	
@@ -183,7 +180,10 @@
 	  	  	</fileset>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
-	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="class.path"
+	  	 	<path id="keywords.path">
+	  	 		<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
+	  	 	</path>
+	  	 	<javac srcdir="${semplest.keywords.lib}" destdir="${classes}" classpathref="keywords.path"
 	  	 		target="1.6"
 	  	 	  	source="1.6"
 	  	 	  	debug="${java.debug}"   	
