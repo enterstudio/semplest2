@@ -93,7 +93,7 @@
   		<include name="**/*.jar"/>
   	</fileset>
   	<fileset dir="${semplest.keywords.lib}">
-  	  	<include name="**/*.jar"/>
+  	  	<include name="**/*.*"/>
   	</fileset>
   </path>
  
@@ -194,7 +194,7 @@
 	  	 		<exclude name="data/*.*"/> -->
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
-	  	 	<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${classes}">
+	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${classes}">
 	  	 		<manifest>
 	  	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
 	  	 	    </manifest>
