@@ -38,10 +38,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		String qs="";
 		String[] res;
 		String categories;
+		ArrayList<String> optList = new ArrayList<String>();
 		ArrayList<String> optInitial = new ArrayList<String>();
 		int numresults = 100; // Number of results from the query
 		qs=searchTerm;
 		String qsStem = this.stemvString( qs, data.dict );
+		if(qsStem !=null && qsStem.length()>0){
 		res = data.dl.search(qsStem,numresults);
 		for(int i=0; i<res.length; i++){
 			categories = res[i].replaceAll("\\s", "");
@@ -51,7 +53,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		}
 
 		//Select repeated patterns
-		ArrayList<String> optList= selectOptions(optInitial);
+		optList= selectOptions(optInitial);
+		}
 		return optList;
 	}
 	
@@ -73,7 +76,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 		data1 = data1+" "+companyName+" "+searchTerm+" "+description;
-		String stemdata1 = this.stemvString( data1, data.dict );
+		String stemdata1 = new String();
+		stemdata1 = this.stemvString( data1, data.dict );
 		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, stemdata1, 50, nGrams);
 		return keywords;
 	}
@@ -214,7 +218,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    iterator=keySet.iterator();
 		    while(i<numkw){
 		    		if(iterator.hasNext())keyword =iterator.next();
-		    		else keyword=null;
+		    		else break;
 		    		keywords.add(keyword);
 				    i++;
 		    }
