@@ -89,9 +89,6 @@
     <fileset dir="${lib}">
       <include name="**/*.jar"/>
     </fileset>
-  	<fileset dir="${semplest.keywords.lib}">
-  		<include name="**/*.jar"/>
-  	</fileset>
   	<fileset dir="${semplest.clientapi.lib}">
   		<include name="**/*.jar"/>
   	</fileset>
@@ -177,7 +174,10 @@
 	  	<if>
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
-	  	 	<echo message="This is KeywordGeneratorService."/>	  	 	
+	  	 	<echo message="This is KeywordGeneratorService."/>	  	 
+	  	  	<fileset dir="${semplest.keywords.lib}">
+	  	  		<include name="**/*.jar"/>
+	  	  	</fileset>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
 	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="class.path"
