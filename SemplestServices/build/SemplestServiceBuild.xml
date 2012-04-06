@@ -168,7 +168,7 @@
 		</javac>
 		<jar destfile="${dist}/lib/SemplestServicesClient.jar" basedir="${semplest.clientapi.dir}/temp">
 			 <manifest>
-			 <attribute name="Main-Class" value="semplest.services.client.api"/>
+			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
 		</jar>  	
 	  	
@@ -190,15 +190,13 @@
 	  	 	  	debug="${java.debug}"   	
 	  	 	  	includes="**/*.java" >
 	  	 		<exclude name="**/*.svn"/>
-	  	 		<!-- Take out DATA folder -->
-	  	 		<!--
-	  	 		<exclude name="data/*.*"/> -->
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
 	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">
 	  	 		<manifest>
-	  	 	    <attribute name="Main-Class" value="semplest.keywords.lda"/>
+	  	 	    	<attribute name="Main-Class" value="semplest.keywords.lda"/>
 	  	 	    </manifest>
+	  	 		<zipfileset dir="${semplest.keywords.dir}/data" includes="." prefix="data"/>
 	  	 	</jar>
 	  	 </then>
 	  	</if>
