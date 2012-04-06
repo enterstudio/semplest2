@@ -196,7 +196,7 @@
 	  	 		<manifest>
 	  	 	    	<attribute name="Main-Class" value="semplest.keywords.lda"/>
 	  	 	    </manifest>
-	  	 		<zipfileset dir="${semplest.keywords.dir}/data" includes="." prefix="data"/>
+	  	 		<fileset dir="${semplest.keywords.dir}/." includes="data/**" />
 	  	 	</jar>
 	  	 </then>
 	  	</if>
