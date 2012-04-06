@@ -35,12 +35,24 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		{
 			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
 			long start = System.currentTimeMillis();
-			ArrayList<String> res = client.getCategories(null, "insurance", null, null, null);
+			ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
 			System.out.println("categories took " + sec + " seconds");
 			for (int i = 0; i < res.size(); i++)
 			{
 				System.out.println(res.get(i));
+			}
+			start = System.currentTimeMillis();
+			ArrayList<String> selectCateg = new ArrayList<String>();
+			selectCateg.add(res.get(1));
+			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "coffee machine", null, null, "http://www.wholelattelove.com/", new Integer[]{1,2,3});
+			sec = (double) (System.currentTimeMillis() - start)/1000.0;
+			System.out.println("keywords took " + sec + " seconds");
+			for(int n=0; n<2; n++){
+				System.out.println("\n"+ (n+1)+" word keywords:");
+				for(String k: kw.get(n)){
+					System.out.print(k+", ");
+				}
 			}
 		}
 		catch (Exception e)
