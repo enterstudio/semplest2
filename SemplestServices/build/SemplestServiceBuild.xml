@@ -190,7 +190,8 @@
 	  	 	  	includes="**/*.java" >
 	  	 		<exclude name="**/*.svn"/>
 	  	 		<!-- Take out DATA folder -->
-	  	 		<exclude name="data/*.*"/>
+	  	 		<!--
+	  	 		<exclude name="data/*.*"/> -->
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
 	  	 	<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${classes}">
