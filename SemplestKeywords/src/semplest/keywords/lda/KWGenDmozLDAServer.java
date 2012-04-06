@@ -30,16 +30,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 
 	}
 	@Override
-	public ArrayList<String> getCategories(String[] searchTerm) throws Exception {
+	public ArrayList<String> getCategories(String companyName, String productSubcategory, String description, String[] adds, String url) throws Exception {
+		ArrayList<String> categories = this.getCategories(productSubcategory);
+		return categories;
+	}
+	public ArrayList<String> getCategories(String searchTerm) throws Exception {
 		//Get category results from dmoz query
 		String qs="";
 		String[] res;
 		String categories;
 		ArrayList<String> optInitial = new ArrayList<String>();
 		int numresults = 100; // Number of results from the query
-		for(int i=0; i<searchTerm.length;i++){
-			qs=qs+searchTerm[i]+" ";
-		}
+		qs=searchTerm;
 		String qsStem = this.stemvString( qs, data.dict );
 		res = data.dl.search(qsStem,numresults);
 		for(int i=0; i<res.length; i++){
@@ -53,7 +55,31 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		ArrayList<String> optList= selectOptions(optInitial);
 		return optList;
 	}
+	
 	@Override
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String productSubcategory, String description, String[] adds, String url, int[] nGrams) throws Exception {
+		
+		//Add all data from inputs
+		ArrayList<String> dataUrl= new ArrayList<String>();
+		if(url!=null)
+			dataUrl = TextUtils.validHtmlWords(url);
+		String data1 =  "";
+		System.out.println("Words from url:"+ dataUrl.size());
+		for( String s : dataUrl ) {
+	    	data1 = data1+" "+s;
+	    }
+		if(adds!=null){
+			for(int i=0; i< adds.length; i++){
+				data1= data1+" "+ adds;
+			}
+		}
+		data1 = data1+" "+companyName+" "+productSubcategory+" "+description;
+		String stemdata1 = this.stemvString( data1, data.dict );
+		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, stemdata1, 50, nGrams);
+		return keywords;
+	}
+	
+	
 	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data1, int numkw, int[] nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
@@ -296,7 +322,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			searchTerm[0] = scanFile.nextLine();
 			
 			System.out.println("Search Terms: "+searchTerm[0]);
-			ArrayList<String> categOpt = kwGen.getCategories(searchTerm);
+			ArrayList<String> categOpt = kwGen.getCategories(null, searchTerm[0], null, null, null);
 			System.out.println("\nCategory options:");
 			int m=0;
 			for (String opt:categOpt){
@@ -319,17 +345,17 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
 			ArrayList<String> words1;
-			if(userInfo1.contains(".clean"))
+			String url=null;
+			String uInf="";
+			if(userInfo1.contains(".clean")){
 				words1 = TextUtils.validTextWords (userInfo1);
-			else	
-				words1 = TextUtils.validHtmlWords (userInfo1);
-			String data1="";
-			for( String s : words1 ) {
-		    	data1 = data1+" "+s;
-		    	//System.out.print(s+"  ");
-		    }
+				for(String word: words1){
+					uInf=uInf+" "+word;
+				}
+			}else	
+				url = userInfo1;	
 			int[] nGrams = {1,2,3};
-			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,data1,50,nGrams );
+			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, null, url,nGrams);
 			
 			for(int n=0; n<nGrams.length; n++){
 				System.out.println("\n"+ (n+1)+" word keywords:");
