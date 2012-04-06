@@ -4,6 +4,7 @@ package semplest.keywords.lda;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -20,12 +21,12 @@ import semplest.keywords.javautils.dictUtils;
 
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
-public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
+public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterface{
 	
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServerTest.class);
 	//Search index for categories
 	private static KWGenDmozLDAdata data;
-	public KWGenDmozLDAServer() {
+	public KWGenDmozLDAServerTest() {
 
 	}
 	@Override
@@ -310,7 +311,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	  }
 	
 	public static void main(String[] args) throws Exception {
-		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
+		KWGenDmozLDAServerTest kwGen =  new KWGenDmozLDAServerTest();
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
 		String userInfo1="";

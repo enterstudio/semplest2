@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import semplest.keywords.properties.*;
 
 
 
@@ -21,9 +22,9 @@ public class dictUtils
   // 2) dicti ::  word => index
   // 3) dictwi::  index => word
   // a word is valid if its stem is in the dictionary
-  static String dictfile = "data/stemword.dict";
-  static String docfile  = "data/dmoz/all.cats";
-  static String twfile   = "data/dmoz/all.tw";
+  static String dictfile = ProjectProperties.dictfile;
+  static String docfile  = ProjectProperties.docfile;
+  static String twfile   = ProjectProperties.twfile;
   
   public static HashMap<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
   public static Map<Integer,String> dictwi = invert(dicti);

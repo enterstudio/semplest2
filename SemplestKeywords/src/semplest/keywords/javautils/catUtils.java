@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import semplest.keywords.properties.ProjectProperties;
+
 /* 
  * Utilities to manipulate the dmoz category hierarchy
  * eg: top/recreation/pets/dogs/breeds/herding_group/welsh_corgi/pembroke/pets
@@ -182,7 +184,7 @@ public class catUtils
   }
   //Checks if the category is valid
   public static boolean validcat(String category) throws Exception{
-    String[] validcat ={ "arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};	  
+    String[] validcat = ProjectProperties.validCat;	  
     String[] parts = category.split("/");
     if(parts.length<2) return false;
     for (int i=0;i<validcat.length;i++){

@@ -1,5 +1,6 @@
 package semplest.keywords.javautils;
 
+
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -22,6 +23,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
+
+import semplest.keywords.properties.*;
 
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
@@ -118,7 +121,7 @@ public class DmozLucene {
     dl.done();
   }
   public static void interactiveTest(){
-    final String dfile = "dmoz/all/all.descs";
+    final String dfile = ProjectProperties.lucenedfile;
     // final String dfile = "dmoz/all/hCounts.new";
     
     DmozLucene dl = new DmozLucene();

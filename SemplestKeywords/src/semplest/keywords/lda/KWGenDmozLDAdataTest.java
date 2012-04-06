@@ -9,20 +9,19 @@ import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
-import semplest.keywords.properties.ProjectProperties;
 
-public class KWGenDmozLDAdata implements Runnable{
-	
+public class KWGenDmozLDAdataTest implements Runnable{
+	//test to try other datasets
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
-	private static String dfile = ProjectProperties.dfile;
-	private static String baseMultiWPath = ProjectProperties.baseMultiWPath;
+	private static String dfile = "data/dmoz/all/hCounts.txt.tw";
+	private static String baseMultiWPath = "data/dmoz/multiwords/";
 	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
 	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
-	private static String[] nGramsSubC = ProjectProperties.nGramsSubC;
+	private static String[] nGramsSubC = {"arts","business", "computers","games", "health", "home", "news", "recreation", "reference", "science", "shopping","society","sports"};
 	
-	public KWGenDmozLDAdata() throws IOException {
+	public KWGenDmozLDAdataTest() throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){
 			String PROPSFILE = "../SemplestServices/bin/system.properties";
@@ -35,6 +34,7 @@ public class KWGenDmozLDAdata implements Runnable{
 		dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc"); */
 		
 		dl = new DmozLucene();
+		
 		System.out.println("Indexing dmoz description data...");
 		DmozLucene.loadDesc(dl,dfile);
 		System.out.println("Data indexed!");

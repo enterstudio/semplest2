@@ -19,6 +19,7 @@ import java.nio.charset.Charset;
 
 import semplest.keywords.javautils.*;
 import semplest.keywords.lda.MalletThreadObj;
+import semplest.keywords.properties.ProjectProperties;
 
 
 //Find variable numThreads for multiple thread execution
@@ -422,7 +423,7 @@ public class MalletTopic {
 	
 	public void CreateInstancesSEMplest(String[] directories) throws Exception {
 		// Creates Instances from a file in SEMplest format with file containing traning data in directories[0]
-        String file = "/semplest/data/dmoz/small/hCounts.txt";
+        String file = ProjectProperties.smallhCounts;
         if ( directories.length > 0 ) file = directories[0];
         ArrayList<String> lines = ioUtils.readFile( file );
         this.CreateInstancesSEMplest(lines);
@@ -639,11 +640,11 @@ public class MalletTopic {
     public ArrayList<Pipe> initPipeList(){
     	// Creates the list of pipes that will be used in all the InstanceList across the object
     	 ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
-    	 
+    	 String stoplist = ProjectProperties.stoplist;
 	    // Pipes: lowercase, tokenize, remove stopwords, map to features
 	    pipeList.add( new CharSequenceLowercase() );
 	    pipeList.add( new CharSequence2TokenSequence(Pattern.compile("\\p{L}[\\p{L}\\p{P}]+\\p{L}")) );
-	    pipeList.add( new TokenSequenceRemoveStopwords(new File("stoplists/en.txt"), "UTF-8", false, false, false) );
+	    pipeList.add( new TokenSequenceRemoveStopwords(new File(stoplist), "UTF-8", false, false, false) );
 	    pipeList.add( new TokenSequence2FeatureSequence());
 	    
 	    return pipeList;
