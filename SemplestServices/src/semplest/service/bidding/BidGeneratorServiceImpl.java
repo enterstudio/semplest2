@@ -62,7 +62,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		try
 		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient("http://localhost:9898/semplest");
 
 			ArrayList<Double> bidLevels = new ArrayList<Double>();
 
