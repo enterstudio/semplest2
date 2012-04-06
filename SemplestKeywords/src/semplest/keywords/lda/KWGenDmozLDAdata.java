@@ -21,7 +21,7 @@ public class KWGenDmozLDAdata implements Runnable{
 	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
 	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
 	private static String[] nGramsSubC = ProjectProperties.nGramsSubC;
-	
+	public static ProjectProperties pr; 
 	public KWGenDmozLDAdata() throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){
@@ -33,7 +33,7 @@ public class KWGenDmozLDAdata implements Runnable{
 		}
 		
 		dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc"); */
-		
+		pr=new ProjectProperties();
 		dl = new DmozLucene();
 		System.out.println("Indexing dmoz description data...");
 		DmozLucene.loadDesc(dl,dfile);
