@@ -56,12 +56,13 @@ public class SEMplestService
 			service.configureLogging();
 			if (service.readProperties(serviceNameOverride))
 			{
+				service.initializeService(service);
+				logger.info("called Init Service");
 				executor = Executors.newFixedThreadPool(service.connectionData.getNumberServiceThreads());
 				if (service.registerServiceWithESB())
 				{
 					logger.info("Registered Service");
-					service.initializeService(service);
-					logger.info("called Init Service");
+					
 					
 				}
 			}
