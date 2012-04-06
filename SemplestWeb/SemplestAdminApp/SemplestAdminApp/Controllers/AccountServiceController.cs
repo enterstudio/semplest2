@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace SemplestAdminApp.Controllers
 {
-    public class ClientAccountController : Controller
+    public class AccountServiceController : Controller
     {
         //
         // GET: /ClientAccount/

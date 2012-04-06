@@ -67,7 +67,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminUserAccountController.cs" />
-    <Compile Include="Controllers\ClientAccountController.cs" />
+    <Compile Include="Controllers\AccountServiceController.cs" />
     <Compile Include="Controllers\ConfigurationController.cs" />
     <Compile Include="Controllers\CreateNewClientAccountController.cs" />
     <Compile Include="Controllers\EmployeeSetupController.cs" />
