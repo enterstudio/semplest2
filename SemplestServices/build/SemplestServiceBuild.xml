@@ -176,14 +176,11 @@
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
 	  	 	<echo message="This is KeywordGeneratorService."/>	  	 
-	  	  	<fileset dir="${semplest.keywords.lib}">
-	  	  		<include name="**/*.jar"/>
-	  	  	</fileset>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
 	  	 	<path id="keywords.path">
 	  	 		<pathelement location="${classes}"/>
-	  	 		<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
+	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
 	  	 	</path>
 	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${classes}" classpathref="keywords.path"
 	  	 		target="1.6"
