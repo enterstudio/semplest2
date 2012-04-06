@@ -35,8 +35,8 @@
 	<classpathentry kind="lib" path="lib/commons-pool-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar"/>
 	<classpathentry kind="lib" path="dist/lib/SemplestKeywords.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestBidding"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
