@@ -394,10 +394,20 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public MsnManagementIds createAccount(String name) throws Exception
+	public MsnManagementIds createAccount(String[] name) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		//Only name[0] is a valid parameter for the actual method!
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("name", name[0]);
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAccount", json, null);
+		MsnManagementIds mngId = gson.fromJson(returnData, MsnManagementIds.class);
+		logger.debug("accountId = " + mngId.getAccountId() 
+				+ "; customerId = " + mngId.getCustomerId()
+				+ "; userId = " + mngId.getUserId());
+
+		return mngId;
 	}
 
 	@Override
