@@ -17,19 +17,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-
 import java.io.DataInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-
 import java.net.URL;
+import java.net.URI;
 
 
 public class TextUtils
@@ -108,19 +102,33 @@ public class TextUtils
   }
 
   // Return links from a url 
+  // Make sure that the links are fully qualified
   public static URL[] HTMLLinks( String url ){
-    URL[] outlinks = null;
-
+    // Get the links
     LinkBean sb = new LinkBean();
     sb.setURL( url );
+    URL[] outlinks = sb.getLinks();
+    
+    // make links fully qualified
+    URI baseURI = null;
     try {
-      outlinks = sb.getLinks();
-    } catch (Exception e) {
-      e.printStackTrace();
+      baseURI = new URI( url );
+    } catch (Exception e) { e.printStackTrace(); 
+      return new URL[0];
     }
-    return outlinks;
-  }
 
+    // ----
+    ArrayList<URL> fqurls = new ArrayList<URL>();
+    for(int i=0; i< outlinks.length; i++){
+      URL fqurl = null;  
+      try {
+        fqurl = baseURI.resolve( outlinks[i].toURI() ).toURL();  
+      } catch (Exception e) { e.printStackTrace(); }
+      if( fqurl != null )
+        fqurls.add( fqurl ); 
+    }
+    return fqurls.toArray( new URL[ fqurls.size()] );
+  }
 
   // Return strings from a url 
   public static String HTMLText( String url ){
@@ -147,27 +155,37 @@ public class TextUtils
       urls = urls + link.toString() + " "; 
     return urls.trim();
   }
+  // Return links from a url as a string of space separated urls
+  public static String HTMLLinkString( String url, String filter ){
+    URL[] links = HTMLLinks( url );
+    String urls = "";
+    for( URL link : links){
+      String slink = link.toString();
+      if( slink.contains( filter ))
+        urls = urls + slink + " "; 
+    }
+    return urls.trim();
+  }
 
   // Get a list of all the urls upto <levels> deep within  
   public static String HTMLLinkString(String root, int level ){
     String urls = "";
     if( 0 == level) return urls;
-    String myurls = HTMLLinkString( root );
-    urls = urls + myurls;
-    for( String u: myurls.split("\\s+"))
-      urls += HTMLLinkString( u, level-1);
-    return urls;
+    urls = HTMLLinkString( root );
+    for( String u: urls.split("\\s+"))
+      urls = urls + " " + HTMLLinkString( u, level-1);
+    return urls.trim();
   } 
-  // Get a list of all the urls upto <levels> deep with filter  
+  // Get a list of all the urls upto <levels> deep
+  // But only the urls that contain the string "filter" 
   public static String HTMLLinkString(String root, int level, String filter ){
     String urls = "";
     if( 0 == level) return urls;
-    String myurls = HTMLLinkString( root );
-    urls = urls + myurls;
-    for( String u: myurls.split("\\s+"))
-      if( u.matches( filter ))
-        urls += HTMLLinkString( u, level-1);
-    return urls;
+    urls = HTMLLinkString( root, filter );
+    for( String u: urls.split("\\s+"))
+      if( u.contains( filter ))
+        urls = urls + " " + HTMLLinkString( u, level-1, filter);
+    return urls.trim();
   } 
 
   // Return a list/Array of text strings from a web-page inside tag "filter"
@@ -320,16 +338,7 @@ public class TextUtils
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-
-
-    /*
-       ArrayList<String> stems = validHtmlStems( ss );
-       ArrayList<String> words = validHtmlWords( ss );
-       assert( stems.size() == words.size() );
-       for(int i=0; i< stems.size(); i++)
-       System.out.println( stems.get(i) + " : " + words.get(i) );
-     */
     if( args.length > 0 )
-      System.out.println( HTMLText( args[0] ));
+      System.out.println( HTMLLinkString(args[0], new Integer(args[1]),args[2] ));
   }
 }
