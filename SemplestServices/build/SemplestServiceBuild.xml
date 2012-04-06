@@ -92,6 +92,9 @@
   	<fileset dir="${semplest.clientapi.lib}">
   		<include name="**/*.jar"/>
   	</fileset>
+  	<fileset dir="${semplest.keywords.lib}">
+  	  	<include name="**/*.jar"/>
+  	</fileset>
   </path>
  
   
@@ -186,6 +189,7 @@
 	  	 	  	debug="${java.debug}"   	
 	  	 	  	includes="**/*.java" >
 	  	 		<exclude name="**/*.svn"/>
+	  	 		<!-- Take out DATA folder -->
 	  	 		<exclude name="data/*.*"/>
 	  	 	</javac>
 	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
