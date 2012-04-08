@@ -3,18 +3,12 @@ package semplest.services.client.api;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.log4j.Logger;
-
-import com.google.api.adwords.v201109.mcm.Account;
-import com.google.gson.Gson;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
+
+import com.google.gson.Gson;
 
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
@@ -33,7 +27,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://VMJAVA1:9898/semplest");
 			long start = System.currentTimeMillis();
 			ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
@@ -42,6 +36,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 			{
 				System.out.println(res.get(i));
 			}
+			
 			start = System.currentTimeMillis();
 			ArrayList<String> selectCateg = new ArrayList<String>();
 			selectCateg.add(res.get(1));
@@ -54,6 +49,8 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 					System.out.print(k+", ");
 				}
 			}
+
+			
 		}
 		catch (Exception e)
 		{
@@ -86,7 +83,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getCategories", json, timeoutMS);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCategories", json, timeoutMS);
 		return gson.fromJson(returnData,ArrayList.class);
 	}
 
@@ -110,9 +107,10 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		jsonHash.put("description", description);
 		jsonHash.put("url", url);
 		String jsonNgrams =  gson.toJson(nGrams, Integer[].class);
+		jsonHash.put("nGrams", jsonNgrams);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
-		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getKeywords", json, timeoutMS);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywords", json, timeoutMS);
 		return gson.fromJson(returnData,ArrayList.class);
 	}
 
