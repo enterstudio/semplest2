@@ -82,7 +82,7 @@ public class SEMplestService
 		Class initClass = Class.forName(service.connectionData.getServiceOffered());
 		Constructor constructor =initClass.getConstructor();
 		ServiceInterface myService = (ServiceInterface) constructor.newInstance();
-		String [] empty = new String[] {};
+		String empty = ""; //new String[] {};
 		Gson gson = new Gson();
 		String json = gson.toJson(empty);
 		String ret = myService.ServiceGet(INITMETHODNAME, json);
