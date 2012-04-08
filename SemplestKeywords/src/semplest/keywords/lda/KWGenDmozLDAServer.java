@@ -7,18 +7,17 @@ import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
+
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-
-import cc.mallet.types.InstanceList;
-
 
 import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
-
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
+import cc.mallet.types.InstanceList;
 
 public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
@@ -269,6 +268,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    		}
 	    	}
 	    }
+
 	    sorted_opt2.putAll(optList2);
 	    // Present sorted pattern form most relevant to less relevant
 	    Set<String> sorted_optKeys2 = sorted_opt2.keySet();
@@ -318,6 +318,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
 		String userInfo1="";
+		BasicConfigurator.configure();
 		while (!userInfo1.equals("exit")){
 			try{
 			System.out.println("\nPlease, introduce search terms:");
