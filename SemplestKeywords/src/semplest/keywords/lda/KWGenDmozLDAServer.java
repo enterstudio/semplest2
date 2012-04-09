@@ -51,7 +51,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				categories = res[i].replaceAll("\\s", "");
 				if(catUtils.validcat(categories))
 						optInitial.add(categories);
-						System.out.println(categories);
+						//System.out.println(categories);
 			}
 			//Select repeated patterns
 			optList= selectOptions(optInitial);
