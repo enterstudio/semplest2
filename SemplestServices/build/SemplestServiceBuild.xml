@@ -177,9 +177,9 @@
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
 	  	 	<echo message="This is KeywordGeneratorService."/>	  	
-	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices root -->
-	  	 	<mkdir dir="${basedir}/data"/>
-	  	 	<copy todir="${basedir}/data" filtering="off">
+	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices/dist -->
+	  	 	<mkdir dir="${dist}/data"/>
+	  	 	<copy todir="${dist}/data" filtering="off">
 	  	 		<flattenmapper />
 	  	 	  	<fileset dir="${semplest.keywords.dir}/data" includes="**/*.*" />
 	  	 	</copy>
