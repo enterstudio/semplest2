@@ -27,7 +27,7 @@ public class ProjectProperties {
 	
 
 	//load properties
-	ProjectProperties(){
+	public ProjectProperties(){
 		String PROPSFILE = "data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
 		properties = new Properties();
 		try {
