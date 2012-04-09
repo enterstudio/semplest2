@@ -39,6 +39,7 @@ namespace SemplestWebApp.Services
         {
             Dictionary<string, string> jsonHash = new Dictionary<string, string>();
             String jsonCategories = JsonConvert.SerializeObject(categories);
+            jsonHash.Add("categories", jsonCategories);
             jsonHash.Add("companyName", companyName);
             jsonHash.Add("searchTerm", searchTerm);
             string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
@@ -52,7 +53,19 @@ namespace SemplestWebApp.Services
 
             //string returnData = string.Empty;
             string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
-            return JsonConvert.DeserializeObject<List<string>>(returnData);
+            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+
+            List<List<string>> listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+            List<string> newstrlist = new List<string>();
+
+            foreach(List<string> strlis in listoflist)
+            {
+                newstrlist.AddRange(strlis);
+            }
+
+            return newstrlist;
         }
 
 

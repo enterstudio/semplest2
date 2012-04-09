@@ -32,26 +32,28 @@ namespace SemplestWebApp.Controllers
         {
             try 
 	        {
-                //SemplestWebApp.Helpers.ServiceHelper.CallSemplestTestGetMethod();
-                SemplestWebApp.Services.ServiceClientWrapper scw = new Services.ServiceClientWrapper();
-                List<string> categories = scw.GetCategories("coffeecompany", "coffee machine", null, null, null);
-                if (categories != null && categories.Count > 0)
+                if (ModelState.IsValid)
                 {
-                    int i = 0;
-                    foreach (string cate in categories)
+                    SemplestWebApp.Services.ServiceClientWrapper scw = new Services.ServiceClientWrapper();
+                    List<string> categories = scw.GetCategories(null, model.Product, null, null, null);
+                    if (categories != null && categories.Count > 0)
                     {
-                        SearchKeywordsModel.CategoriesModel cm = new SearchKeywordsModel.CategoriesModel { Id = i, Name = cate };
-                        i++;
-                        model.AllCategories.Add(cm);
+                        int i = 0;
+                        foreach (string cate in categories)
+                        {
+                            SearchKeywordsModel.CategoriesModel cm = new SearchKeywordsModel.CategoriesModel { Id = i, Name = cate };
+                            i++;
+                            model.AllCategories.Add(cm);
+                        }
                     }
-                }
-                else
-                {
-                    CreateDummyModel(model);
-                }
+                    else
+                    {
+                        CreateDummyModel(model);
+                    }
 
-                // save this some how while getting the keywords this is becoming null
-                Session.Add("AllCategories", model.AllCategories);
+                    // save this some how while getting the keywords this is becoming null
+                    Session.Add("AllCategories", model.AllCategories);
+                }
                 return View(model);
 	        }
 	        catch (Exception ex)
@@ -71,46 +73,54 @@ namespace SemplestWebApp.Controllers
         {
             try
             {
-                //SemplestWebApp.Helpers.ServiceHelper.CallSemplestTestGetMethod();
-                if (model.AllCategories.Count == 0)
+                if (ModelState.IsValid)
                 {
-                    model.AllCategories = (List<SearchKeywordsModel.CategoriesModel>)Session["AllCategories"];
-                }
-
-                List<string> catList = new List<string>();
-
-                foreach (SearchKeywordsModel.CategoriesModel cat in model.AllCategories)
-                {
-                    for (int i = 0; i < model.ItemIds.Length; i++)
+                    //SemplestWebApp.Helpers.ServiceHelper.CallSemplestTestGetMethod();
+                    if (model.AllCategories.Count == 0)
                     {
-                        if (cat.Id == model.ItemIds[i])
+                        model.AllCategories = (List<SearchKeywordsModel.CategoriesModel>)Session["AllCategories"];
+                    }
+
+                    if (model.AllCategories.Count <= 0)
+                    {
+                    }
+
+                    List<string> catList = new List<string>();
+
+                    foreach (SearchKeywordsModel.CategoriesModel cat in model.AllCategories)
+                    {
+                        for (int i = 0; i < model.ItemIds.Length; i++)
                         {
-                            catList.Add(cat.Name);
+                            if (cat.Id == model.ItemIds[i])
+                            {
+                                catList.Add(cat.Name);
+                            }
                         }
                     }
-                }
 
-                
-                SemplestWebApp.Services.ServiceClientWrapper scw = new Services.ServiceClientWrapper();
-                //var query = from c in model.AllCategories
-                //            let i = c.Id
-                //            where model.ItemIds.Contains(i)
-                //            select  c.Name ;
-                //List<string> catList = model.AllCategories.Select(m => m.Name).Where(
-                List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, null, null);
-                if (keywords != null && keywords.Count > 0)
-                {
-                    int i = 0;
-                    foreach (string key in keywords)
+
+                    SemplestWebApp.Services.ServiceClientWrapper scw = new Services.ServiceClientWrapper();
+                    //var query = from c in model.AllCategories
+                    //            let i = c.Id
+                    //            where model.ItemIds.Contains(i)
+                    //            select  c.Name ;
+                    //List<string> catList = model.AllCategories.Select(m => m.Name).Where(
+                    //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
+                    List<string> keywords = scw.GetKeywords(catList, null, model.Product, null, null, model.LandingPage, null);
+                    if (keywords != null && keywords.Count > 0)
                     {
-                        SearchKeywordsModel.KeywordsModel kwm = new SearchKeywordsModel.KeywordsModel();
-                        kwm.Name = key;
-                        model.AllKeywords.Add(kwm);
+                        int i = 0;
+                        foreach (string key in keywords)
+                        {
+                            SearchKeywordsModel.KeywordsModel kwm = new SearchKeywordsModel.KeywordsModel();
+                            kwm.Name = key;
+                            model.AllKeywords.Add(kwm);
+                        }
                     }
-                }
-                else
-                {
-                    CreateDummyModel(model);
+                    else
+                    {
+                        CreateDummyModel(model);
+                    }
                 }
 
                 return View(model);

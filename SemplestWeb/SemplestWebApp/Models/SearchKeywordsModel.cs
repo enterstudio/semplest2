@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace SemplestWebApp.Models
 {
@@ -32,13 +33,14 @@ namespace SemplestWebApp.Models
  
         }
 
+        [Required(ErrorMessage="required field")]
         public string Product { get; set; }
+        [Required(ErrorMessage = "required field")]
         public string LandingPage { get; set; }
 
         public MultiSelectList CategoriesList { get; private set; }
 
  
-
         public int[] ItemIds { get; set; }
         public List<CategoriesModel> SelectedCategories{ get; set; }
 
