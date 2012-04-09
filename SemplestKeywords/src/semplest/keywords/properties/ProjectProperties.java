@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;  //temp
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 public class ProjectProperties {
 	
 	public static Properties properties;
@@ -25,7 +27,7 @@ public class ProjectProperties {
 	public static String smallhCounts;
 	public static String stoplist;
 	
-
+	private static final Logger logger = Logger.getLogger(ProjectProperties.class);
 	//load properties
 	public ProjectProperties(){
 		String PROPSFILE = "data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
