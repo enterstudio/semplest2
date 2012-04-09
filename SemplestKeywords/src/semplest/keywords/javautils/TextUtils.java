@@ -41,7 +41,13 @@ public class TextUtils
         e.nextNode().collectInto( list, filter );
     return list;
   }
-
+	//Returns a fully formed url
+	 public static String formURL (String url){
+	   String newurl;
+	   if(url.contains("http://")) newurl = url;
+	   else newurl = "http://"+url;
+	   return newurl;
+	 }
   // Return a list/Array of text strings from a web-page inside tag "filter"
   public static ArrayList<String> getLinks (String url, NodeFilter filter)
     throws ParserException {

@@ -1,7 +1,9 @@
 package semplest.keywords.lda;
 
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
@@ -30,6 +32,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	@Override
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
 		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
+		if(url!=null) url = TextUtils.formURL(url);
 		ArrayList<String> categories = this.getCategories(searchTerm);
 		return categories;
 	}
@@ -67,11 +70,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		}
 		if(nGrams==null || nGrams.length==0){
 			throw new Exception("No nGrams provided");
-		}
+		} 
+		
 		//Add all data from inputs
 		ArrayList<String> dataUrl= new ArrayList<String>();
-		if(url!=null)
+		if(url!=null){
+			url = TextUtils.formURL(url);
 			dataUrl = TextUtils.validHtmlWords(url);
+		}
 		String data1 =  "";
 		System.out.println("Words from url:"+ dataUrl.size());
 		for( String s : dataUrl ) {
@@ -87,7 +93,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		String[] datacount = data1.split("\\s");
 		if(datacount.length<30) throw new Exception("Not enough data provided");
 		stemdata1 = this.stemvString( data1, data.dict );
-		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 10000, nGrams);
+		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 50, nGrams);
 		return keywords;
 	}
 	
@@ -233,9 +239,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    String keyword;
 		    i=0;
 		    iterator=keySet.iterator();
+		    double baseProb = 1.0;
 		    while(i<numkw){
 		    		if(iterator.hasNext())keyword =iterator.next();
 		    		else break;
+		    		if(baseProb>=1.0 && multWMap.get(keyword)<1.0)
+		    			baseProb = multWMap.get(keyword);
+		    		double diff = baseProb- multWMap.get(keyword);
+		    		//if(nGrams==2 && diff>0.01718787) break;
+		    		//if(nGrams==3 && diff>0.001718787) break;
+		    		//System.out.println(diff+"\t"+keyword);
 		    		keywords.add(keyword);
 				    i++;
 		    }
@@ -244,6 +257,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	}
 	private static ArrayList<String> selectOptions(ArrayList<String> optKeys) throws IOException{
 		//Selects patterns from top categories list to generate options for the user based on pre-defined crieteria
+
 
 		int numNEval=20;
 	  	HashMap<String,Double> optList = new HashMap<String,Double>();
@@ -380,7 +394,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				}
 			}else	
 				url = userInfo1;
-			/*
+			
 			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
@@ -400,7 +414,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					adds[0]=adds[0]+" "+word;
 				}
 			}
-			*/
+			
 			
 			
 			Integer[] nGrams = {1,2,3};
@@ -413,6 +427,15 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					System.out.print(k+", ");
 				}
 			}
+			PrintStream stdout = System.out;
+			//System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/Test1/keywords.txt")));
+			for(int n=1; n<nGrams.length; n++){
+				for(String k: kw.get(n)){
+					k=k.replaceAll("wed", "wedding");
+					System.out.println(k);
+				}
+			}
+			System.setOut(stdout);
 			}catch(Exception e){
 				System.out.println(e);
 			}
