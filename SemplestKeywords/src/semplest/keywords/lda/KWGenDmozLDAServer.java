@@ -51,7 +51,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				categories = res[i].replaceAll("\\s", "");
 				if(catUtils.validcat(categories))
 						optInitial.add(categories);
-						//System.out.println(categories);
+						System.out.println(categories);
 			}
 			//Select repeated patterns
 			optList= selectOptions(optInitial);
@@ -296,11 +296,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    if(sorted_optKeys2.size()<5)
 	    	numtop=5;
 	    else
-	    	numtop=3;
+	    	numtop=4;
 	    int numresults=0;
 	    for(int i=0; i<optKeys.size(); i++){
 	    	if(numresults>=numtop) break;
-	    	String key = catUtils.init(optKeys.get(i));
+	    	//String key = catUtils.init(optKeys.get(i));
+	    	String key = optKeys.get(i);
 	    	if(!arrayOpt.contains(key)){
 	    		arrayOpt.add(key);
 	    		numresults++;
