@@ -14,10 +14,14 @@ namespace SemplestAdminApp.Models
     
     public partial class TransactionHistory
     {
-        public int transactionID { get; set; }
-        public Nullable<int> UserFK { get; set; }
-        public string TransactionType { get; set; }
-        public string TransactionDescription { get; set; }
-        public Nullable<System.DateTime> Date { get; set; }
+        public int TransactionHistoryPK { get; set; }
+        public int UserFK { get; set; }
+        public System.DateTime TransactionDate { get; set; }
+        public string TableName { get; set; }
+        public string Field { get; set; }
+        public string OldValue { get; set; }
+        public string NewValue { get; set; }
+    
+        public virtual User User { get; set; }
     }
 }

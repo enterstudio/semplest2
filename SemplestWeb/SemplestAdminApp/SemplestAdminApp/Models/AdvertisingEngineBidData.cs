@@ -21,6 +21,7 @@ namespace SemplestAdminApp.Models
         public int NumberClick { get; set; }
         public int AveragePosition { get; set; }
         public decimal AverageCPC { get; set; }
+        public Nullable<int> QualityScore { get; set; }
         public System.DateTime CreatedDate { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }

@@ -12,17 +12,13 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class CampaignCycleType
+    public partial class AdvertisingEngineCampaign
     {
-        public CampaignCycleType()
-        {
-            this.Customers = new HashSet<Customer>();
-        }
+        public string AdvertisingEngineCampaignPK { get; set; }
+        public Nullable<int> PromotionFK { get; set; }
+        public string AdvertisingEngineAccountFK { get; set; }
     
-        public int CampaignCycleTypePK { get; set; }
-        public string CampaignCycleType1 { get; set; }
-        public int CycleInDays { get; set; }
-    
-        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }

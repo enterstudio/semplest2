@@ -12,22 +12,19 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdGroup
+    public partial class AdvertisingEngineAccount
     {
-        public AdGroup()
+        public AdvertisingEngineAccount()
         {
-            this.AdGroupKeywordAssociations = new HashSet<AdGroupKeywordAssociation>();
-            this.CampaignAds = new HashSet<CampaignAd>();
+            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
         }
     
-        public int AdGroupPK { get; set; }
-        public int CampaignFK { get; set; }
+        public string AdvertisingEngineAccountPK { get; set; }
         public int AdvertisingEngineFK { get; set; }
-        public string LandingPageURL { get; set; }
+        public int CustomerFK { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        public virtual ICollection<AdGroupKeywordAssociation> AdGroupKeywordAssociations { get; set; }
-        public virtual ICollection<CampaignAd> CampaignAds { get; set; }
-        public virtual Campaign Campaign { get; set; }
+        public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

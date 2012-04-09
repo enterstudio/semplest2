@@ -12,24 +12,23 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Campaign
+    public partial class ProductGroup
     {
-        public Campaign()
+        public ProductGroup()
         {
-            this.AdGroups = new HashSet<AdGroup>();
+            this.Promotions = new HashSet<Promotion>();
         }
     
-        public int CampaignPK { get; set; }
+        public int ProductGroupPK { get; set; }
         public int CustomerFK { get; set; }
-        public string CampaignName { get; set; }
+        public string ProductGroupName { get; set; }
         public System.DateTime StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
-        public decimal TargetCycleBudget { get; set; }
         public bool IsActive { get; set; }
         public System.DateTime CreateDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        public virtual ICollection<AdGroup> AdGroups { get; set; }
         public virtual Customer Customer { get; set; }
+        public virtual ICollection<Promotion> Promotions { get; set; }
     }
 }

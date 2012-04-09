@@ -12,16 +12,10 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisingEngine
+    public partial class Error
     {
-        public AdvertisingEngine()
-        {
-            this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
-        }
-    
-        public int AdvertisingEnginePK { get; set; }
-        public string AdvertisingEngine1 { get; set; }
-    
-        public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
+        public int ErrorPK { get; set; }
+        public string ErrorMessage { get; set; }
+        public Nullable<int> ErrorID { get; set; }
     }
 }

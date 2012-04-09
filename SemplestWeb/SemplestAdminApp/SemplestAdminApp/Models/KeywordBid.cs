@@ -21,15 +21,15 @@ namespace SemplestAdminApp.Models
     
         public int KeywordBidPK { get; set; }
         public int KeywordFK { get; set; }
-        public int AdGroupFK { get; set; }
+        public int PromotionFK { get; set; }
         public System.DateTime StartDate { get; set; }
         public Nullable<System.DateTime> EndDate { get; set; }
         public bool IsActive { get; set; }
         public int BidTypeFK { get; set; }
         public decimal BidAmount { get; set; }
     
-        public virtual AdGroupKeywordAssociation AdGroupKeywordAssociation { get; set; }
         public virtual ICollection<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
         public virtual BidType BidType { get; set; }
+        public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
     }
 }

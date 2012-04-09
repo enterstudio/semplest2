@@ -14,10 +14,15 @@ namespace SemplestAdminApp.Models
     
     public partial class Right
     {
-        public int RightsPK { get; set; }
-        public int RolesFK { get; set; }
-        public string RightName { get; set; }
+        public Right()
+        {
+            this.Roles = new HashSet<Role>();
+        }
     
-        public virtual Role Role { get; set; }
+        public int RightsPK { get; set; }
+        public string Controller { get; set; }
+        public string Label { get; set; }
+    
+        public virtual ICollection<Role> Roles { get; set; }
     }
 }

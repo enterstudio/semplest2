@@ -12,16 +12,19 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisingEngine
+    public partial class PromotionKeywordAssociation
     {
-        public AdvertisingEngine()
+        public PromotionKeywordAssociation()
         {
-            this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
+            this.KeywordBids = new HashSet<KeywordBid>();
         }
     
-        public int AdvertisingEnginePK { get; set; }
-        public string AdvertisingEngine1 { get; set; }
+        public int KeywordFK { get; set; }
+        public int PromotionFK { get; set; }
+        public System.DateTime CreatedDate { get; set; }
     
-        public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
+        public virtual Keyword Keyword { get; set; }
+        public virtual ICollection<KeywordBid> KeywordBids { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }

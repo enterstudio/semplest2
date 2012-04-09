@@ -14,6 +14,7 @@ namespace SemplestAdminApp.Models
     
     public partial class Configuration
     {
+        public int ConfigurationPK { get; set; }
         public decimal CustomerMinOrderAmount { get; set; }
         public decimal CustomerDefaultMonthlyFlatFeeAmount { get; set; }
         public decimal CustomerDefaultPerCampaignFlatFeeAmount { get; set; }

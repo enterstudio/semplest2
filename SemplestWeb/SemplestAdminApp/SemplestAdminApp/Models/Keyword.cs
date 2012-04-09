@@ -16,16 +16,16 @@ namespace SemplestAdminApp.Models
     {
         public Keyword()
         {
-            this.AdGroupKeywordAssociations = new HashSet<AdGroupKeywordAssociation>();
+            this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
         }
     
         public int KeywordPK { get; set; }
         public string Keyword1 { get; set; }
         public bool IsActive { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public string EditedDate { get; set; }
         public bool ISNegative { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     
-        public virtual ICollection<AdGroupKeywordAssociation> AdGroupKeywordAssociations { get; set; }
+        public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
     }
 }

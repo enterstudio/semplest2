@@ -20,7 +20,7 @@ namespace SemplestAdminApp.Models
         }
     
         public int PhoneTypePK { get; set; }
-        public string PhoneType1 { get; set; }
+        public Nullable<float> PhoneType1 { get; set; }
     
         public virtual ICollection<Phone> Phones { get; set; }
     }

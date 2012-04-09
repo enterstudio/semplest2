@@ -15,10 +15,10 @@ namespace SemplestAdminApp.Models
     public partial class SiteLink
     {
         public int SiteLInkPK { get; set; }
-        public int CampaignAdsFK { get; set; }
+        public int PromotionAdsFK { get; set; }
         public string LinkText { get; set; }
         public string LinkURL { get; set; }
     
-        public virtual CampaignAd CampaignAd { get; set; }
+        public virtual PromotionAd PromotionAd { get; set; }
     }
 }
