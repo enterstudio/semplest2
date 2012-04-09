@@ -204,8 +204,15 @@
     <Content Include="Content\kendo.common.min.css" />
     <Content Include="Content\kendo.dataviz.min.css" />
     <Content Include="Content\kendo.metro.min.css" />
-    <Content Include="Content\Site1.css" />
-    <Content Include="Content\themes\base\images\semplestlogo.png" />
+    <Content Include="Content\Metro\editor.png" />
+    <Content Include="Content\Metro\imagebrowser.png" />
+    <Content Include="Content\Metro\loading-image.gif" />
+    <Content Include="Content\Metro\loading.gif" />
+    <Content Include="Content\Metro\semplest_logo.jpg" />
+    <Content Include="Content\Metro\semplest_logo.png" />
+    <Content Include="Content\Metro\slider-h.gif" />
+    <Content Include="Content\Metro\slider-v.gif" />
+    <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_glass_55_fbf9ee_1x400.png" />
@@ -234,16 +241,15 @@
     <Content Include="Content\themes\base\jquery.ui.tabs.css" />
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\jquery-1.5.1-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.5.1.js" />
-    <Content Include="Scripts\jquery-1.5.1.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.11.js" />
-    <Content Include="Scripts\jquery-ui-1.8.11.min.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery-ui.js" />
+    <Content Include="Scripts\jquery-ui.min.js" />
+    <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
-    <Content Include="Scripts\modernizr-1.7.js" />
-    <Content Include="Scripts\modernizr-1.7.min.js" />
+    <Content Include="Scripts\kendo.all.min.js" />
+    <Content Include="Scripts\PanelBar.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -316,6 +322,7 @@
       <LastGenOutput>Model1.cs</LastGenOutput>
     </None>
     <Content Include="Views\Roles\Create.cshtml" />
+    <Content Include="Views\Shared\TopMenu.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
