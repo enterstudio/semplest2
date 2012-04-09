@@ -28,7 +28,7 @@ public class ProjectProperties {
 	
 	//load properties
 	static{
-		String PROPSFILE = "C:/SEMplestServiceKeywords/data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
+		String PROPSFILE = "./data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
 		properties = new Properties();
 		try {
 			FileInputStream is = new FileInputStream(PROPSFILE);
