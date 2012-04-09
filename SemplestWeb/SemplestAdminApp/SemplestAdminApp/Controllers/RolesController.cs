@@ -34,34 +34,36 @@ namespace SemplestAdminApp.Controllers
         {
             ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
 
-            var viewModel =
-                from ri in _dbContext.Rights
-                group ri by new 
-                {
-                    ri.RightName,
-                } into grp
-                select new RoleModel
-                {
-                    RightName = grp.FirstOrDefault().RightName,
-                    RightPK = grp.FirstOrDefault().RightsPK,
-                };
+            //var viewModel =
+            //    from ri in _dbContext.Rights
+            //    //group ri by new 
+            //    //{
+            //    //    ri.RightName,
+            //    //} into grp
+            //    select new RoleModel
+            //    {
+            //        RightName = grp.FirstOrDefault().RightName,
+            //        RightPK = grp.FirstOrDefault().RightsPK,
+            //    };
 
-            return View(viewModel);
+            //return View(viewModel);
+            return View();
         }
 
 
         public ActionResult Models(int id)
         {
-            var viewModel =
-                            from ro in _dbContext.Roles
-                            join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
-                            where ro.RolePK == id
-                            select new RoleModel
-                             {
-                                 RightPK = ri.RightsPK,
-                                 RightName = ri.RightName
-                             }; 
-            return Json(viewModel.ToList());
+            //var viewModel =
+            //                from ro in _dbContext.Roles
+            //                join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
+            //                where ro.RolePK == id
+            //                select new RoleModel
+            //                 {
+            //                     RightPK = ri.RightsPK,
+            //                     RightName = ri.RightName
+            //                 }; 
+            //return Json(viewModel.ToList());
+            return View();
         }
      
         //

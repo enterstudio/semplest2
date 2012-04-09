@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Home Page";
+    
 }
 
 @*<h1>@ViewBag.Message</h1>*@
@@ -61,19 +62,19 @@ else
 {
     <tr>
         <td>
-            @Html.RouteLink(item.Customer, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+            @Html.RouteLink(item.Customer, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
         </td>
         <td>
-            @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+            @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
         </td>
         <td>
-            @Html.RouteLink(item.FirstName, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+            @Html.RouteLink(item.FirstName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
         </td>
         <td>
-            @Html.RouteLink(item.LastName, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+            @Html.RouteLink(item.LastName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
         </td>
         <td>
-            @Html.RouteLink(item.Email, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+            @Html.RouteLink(item.Email, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
         </td>        
     </tr>
 }

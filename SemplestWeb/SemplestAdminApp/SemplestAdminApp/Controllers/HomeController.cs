@@ -13,9 +13,6 @@ namespace SemplestAdminApp.Controllers
         public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
         {
 
-            
-
-
             ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
             SemplestEntities dbcontext = new SemplestEntities();
 
@@ -36,8 +33,6 @@ namespace SemplestAdminApp.Controllers
 
             return View(viewModel);
         }
-
-
 
 
 

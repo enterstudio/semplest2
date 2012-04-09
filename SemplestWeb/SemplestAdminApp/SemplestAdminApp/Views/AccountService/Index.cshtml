@@ -1,31 +1,56 @@
-﻿@{
+﻿@model SemplestAdminApp.Models.AccountServiceModel
+@{
     ViewBag.Title = "Index";
 }
 
 <h1>
-    Client Account:
+    Account Service:
 </h1>
 
-<h2>Flower Allie - Account ID 12345</h2>
+<h2>@Model.Customer - Account ID @Model.AccountNumber</h2>
+
+<br />
+
+<h3>Contact<br />
+@Model.FirstName&nbsp;@Model.LastName <br />
+@Model.Address1<br />
+@Model.City,@Model.State&nbsp;@Model.Zip<br />
+@Model.Email<br />
+</h3>
+
+<h3>
+<label>Rep Name: <input type="text" name="repname" /></label><br />
+<label>Salesperson: <input type="text" name="salesperson" /></label><br />
+<label>Parent: <input type="text" name="parent" /></label><br />
+<label>Super Parent: <input type="text" name="superparent" /></label><br />
+</h3>
 
 <br />
 <br />
+<a href="url">Update Account</a>&nbsp; &nbsp;
+<a href="url">Delete Account</a> 
+<br />
 <br />
 
-<h2>Flower Allie - Account ID 12345</h2>
-<a href="url">Impresonate Account</a> <br />
-<a href="url">Disable Account</a> <br />
-<a href="url">Enable Account</a> <br />
-<a href="url">Refund Account</a> <br />
-<a href="url">Edit Start or End Date</a> <br />
+<h2>Account Actions</h2>
+<a href="url">Impresonate</a> &nbsp; &nbsp; 
+<a href="url">Disable</a> &nbsp; &nbsp;
+<a href="url">Enable</a> &nbsp; &nbsp; 
+<a href="url">Pause</a> &nbsp; &nbsp; 
+<a href="url">Issue Refund</a> &nbsp; &nbsp;
+<a href="url">Excel Import Customer Data</a> &nbsp; &nbsp;
+<a href="url">Edit Start or End Date</a> 
 <br />
 <br />
 <br />
 
 
 <h2>Reporting</h2>
-<a href="url">Downlaod User Summary Report</a> <br />
-<a href="url">Downlaod User Billing Report</a> <br />
+<a href="url">Customer Summary Report</a> <br />
+<br />
+<a href="url">Customer Billing Report</a> <br />
+<br />
+<a href="url">Account Detailed Audit History</a> <br />
 <br />
 <br />
 <br />
@@ -33,6 +58,8 @@
 <h2>Billing Info</h2>
 <p>VISA ending in 8971   Expires 8/24/14</p> 
 <p>or</p>
-<a href="url">Add a new card</a> <br />
+<a href="url">Add a new card</a> 
+<br />
+<br />
 
 
