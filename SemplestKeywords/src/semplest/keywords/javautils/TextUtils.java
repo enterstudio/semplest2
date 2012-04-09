@@ -321,7 +321,18 @@ public class TextUtils
     return ((int)(msCount/60000)) + "min "+ ((msCount%60000/1000))+"sec";
   }
 
+  // Synonyms from words.bighugelabs.com
+  public static String getSynonyms( String word ){
+    final String prefix = "http://words.bighugelabs.com/api/2/";
+    final String apikey = "febc1a7d186b265748dac5331d603093/";
+    final String url = prefix + apikey + word + "/";
+    final String text = HTMLText( url );
+    String res = "";
+    for( String s : text.split("[\\n\\r\\f]+"))
+      res = res + s.substring( s.lastIndexOf('|')+1 ) +  ",";
 
+    return res;
+  }
 
   //-----------------
   // Stem a word 
@@ -338,7 +349,7 @@ public class TextUtils
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    if( args.length > 2 )
-      System.out.println( HTMLLinkString(args[0], new Integer(args[1]),args[2] ));
+    if( args.length > 0 )
+      System.out.println( getSynonyms( args[0] ));
   }
 }
