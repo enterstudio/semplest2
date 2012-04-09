@@ -3,11 +3,17 @@
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>
-    Create New Client Account:
-</h2>
-
+@section Title{
+Create New Client Account:
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+@using (Html.BeginForm("Index"))
+{
 <label>Super Parent Name:<input type="text" /></label> <br />
 
 <label>Parent Name:<input type="text" /></label> <br />
@@ -15,9 +21,9 @@
 <h3>Contact Name:</h3> <br />
 <label>First Name:<br /><input type="text" /></label> <br />
 <label>Last Name:<br /><input type="text" /></label> <br />
-<label>Phone:</h3><input type="text" value="(  )" /><input type="text" /></label> <br />
+<label>Phone:<input type="text" value="(  )" /><input type="text" /></label> <br />
 <label>Email:<input type="text" /></label> <br />
-<label>Set up Date:</h3><input type="text" /></label> <br />
+<label>Set up Date:<input type="text" /></label> <br />
 
 <label>Rep Name/ID:
     <select>
@@ -166,6 +172,6 @@
 
 
 
-
+}
 
 

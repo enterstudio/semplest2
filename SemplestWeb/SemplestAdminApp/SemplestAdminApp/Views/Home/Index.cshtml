@@ -18,13 +18,13 @@ Customer Accounts
     <div class="configuration1">
         <ul class="options">
             <li>Search
-                <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
+                <input type="text" id="ProductGroupName" name="usersearch" class="k-textbox"
                     required validationmessage="Please enter {0}" />
                 Account #
-                <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
+                <input type="text" id="ProductPromotionName" name="accountnumbersearch" class="k-textbox"
                     required validationmessage="Please enter {0}" />
                 Email
-                <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
+                <input type="text" id="ProductPromotionName" name="emailsearch" class="k-textbox"
                     required validationmessage="Please enter {0}" />
                 <input type="submit" value="Go" class="k-button" />
             </li>
@@ -37,7 +37,7 @@ Customer Accounts
 }
 else
 { 
-<<<<<<< .mine
+
     <table>
         <tr>
             <th>
@@ -58,64 +58,26 @@ else
         </tr>
         @foreach (var item in Model)
         {
-            <tr>
+             <tr>
                 <td>
-                    @Html.RouteLink(item.Customer, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+                    @Html.RouteLink(item.Customer, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.AccountNumber.ToString(CultureInfo.InvariantCulture), new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+                    @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.FirstName, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+                    @Html.RouteLink(item.FirstName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.LastName, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
+                    @Html.RouteLink(item.LastName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.Email, new { Controller = "ClientAccount", action = "Index", id = item.AccountNumber })
-                </td>
-            </tr>
+                    @Html.RouteLink(item.Email, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
+                </td>        
+    </tr>
         }
     </table>
-=======
-<table>
-    <tr>
-        <th>
-            Customer
-        </th>
-        <th>
-            Account #
-        </th>
-        <th>
-            First Name
-        </th>
-        <th>
-            Last Name
-        </th>
-        <th>
-            Email
-        </th>
-    </tr>
-@foreach (var item in Model)
-{
-    <tr>
-        <td>
-            @Html.RouteLink(item.Customer, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
-        </td>
-        <td>
-            @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
-        </td>
-        <td>
-            @Html.RouteLink(item.FirstName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
-        </td>
-        <td>
-            @Html.RouteLink(item.LastName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
-        </td>
-        <td>
-            @Html.RouteLink(item.Email, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
-        </td>        
-    </tr>
->>>>>>> .r394
+
 }
 @*<input type="text" id="user" />
 <script type="text/jscript">
