@@ -179,10 +179,10 @@
 	  	 	<echo message="This is KeywordGeneratorService."/>	  	
 	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices/dist -->
 	  	 	<mkdir dir="${dist}/data"/>
-	  	 	<copy todir="${dist}/data" filtering="off">
-	  	 		<flattenmapper />
-	  	 	  	<fileset dir="${semplest.keywords.dir}/data" includes="**/*.*" />
-	  	 	</copy>
+	  	 	<copydir src="${semplest.keywords.dir}/data"
+	  	 		dest="${dist}/data"
+	  	 	    includes="**/*.*"
+	  	 	/>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
 	  	 	<path id="keywords.path">
