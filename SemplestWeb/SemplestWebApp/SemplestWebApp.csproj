@@ -73,6 +73,9 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\Downloads\JSon\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Services" />
     <Reference Include="System.Data.Services.Client" />
@@ -187,6 +190,7 @@
     <Compile Include="Models\PhoneType.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\SearchKeywordsModel.cs" />
     <Compile Include="Models\SemplestModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -203,6 +207,8 @@
     <Compile Include="Services\SemplestDataService.svc.cs">
       <DependentUpon>SemplestDataService.svc</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\ServiceHelper.cs" />
+    <Compile Include="Services\ServiceClientWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\example.css" />
@@ -307,6 +313,7 @@
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Test\Create.cshtml" />
     <Content Include="packages.config" />
+    <Content Include="Views\Home\SearchKeywords.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
