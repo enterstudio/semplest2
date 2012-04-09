@@ -176,7 +176,13 @@
 	  	<if>
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
-	  	 	<echo message="This is KeywordGeneratorService."/>	  	 
+	  	 	<echo message="This is KeywordGeneratorService."/>	  	
+	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices root -->
+	  	 	<mkdir dir="${basedir}/data"/>
+	  	 	<copy todir="${basedir}/data" filtering="off">
+	  	 		<flattenmapper />
+	  	 	  	<fileset dir="${semplest.keywords.dir}/data" includes="**/*.*" />
+	  	 	</copy>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
 	  	 	<path id="keywords.path">
@@ -191,12 +197,11 @@
 	  	 	  	includes="**/*.java" >
 	  	 		<exclude name="**/*.svn"/>
 	  	 	</javac>
-	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/lib -->
+	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/dist/lib -->
 	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">
 	  	 		<manifest>
 	  	 	    	<attribute name="Main-Class" value="semplest.keywords.lda"/>
 	  	 	    </manifest>
-	  	 		<fileset dir="${semplest.keywords.dir}/." includes="data/**" />
 	  	 	</jar>
 	  	 </then>
 	  	</if>
