@@ -25,6 +25,8 @@
 	<classpathentry kind="lib" path="lib/SemplestMalletCache.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-core-3.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="lib/json_simple-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-client-1.9.1.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -28,12 +28,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 
 	}
 	@Override
-	public ArrayList<String> getCategories(String companyName, String productSubcategory, String description, String[] adds, String url) throws Exception {
-		ArrayList<String> categories = this.getCategories(productSubcategory);
+	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
+		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
+		ArrayList<String> categories = this.getCategories(searchTerm);
 		return categories;
 	}
 	public ArrayList<String> getCategories(String searchTerm) throws Exception {
 		//Get category results from dmoz query
+		
 		String qs="";
 		String[] res;
 		String categories;
@@ -43,16 +45,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		qs=searchTerm;
 		String qsStem = this.stemvString( qs, data.dict );
 		if(qsStem !=null && qsStem.length()>0){
-		res = data.dl.search(qsStem,numresults);
-		for(int i=0; i<res.length; i++){
-			categories = res[i].replaceAll("\\s", "");
-			if(catUtils.validcat(categories))
-					optInitial.add(categories);
-					//System.out.println(categories);
-		}
-
-		//Select repeated patterns
-		optList= selectOptions(optInitial);
+			System.out.println(qsStem);
+			res = data.dl.search(qsStem,numresults);
+			for(int i=0; i<res.length; i++){
+				categories = res[i].replaceAll("\\s", "");
+				if(catUtils.validcat(categories))
+						optInitial.add(categories);
+						//System.out.println(categories);
+			}
+			//Select repeated patterns
+			optList= selectOptions(optInitial);
 		}
 		return optList;
 	}
@@ -60,6 +62,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	@Override
 	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception {
 		
+		if(categories==null || categories.size()==0){
+			throw new Exception("No categories provided");
+		}
+		if(nGrams==null || nGrams.length==0){
+			throw new Exception("No nGrams provided");
+		}
 		//Add all data from inputs
 		ArrayList<String> dataUrl= new ArrayList<String>();
 		if(url!=null)
@@ -76,13 +84,15 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		}
 		data1 = data1+" "+companyName+" "+searchTerm+" "+description;
 		String stemdata1 = new String();
+		String[] datacount = data1.split("\\s");
+		if(datacount.length<30) throw new Exception("Not enough data provided");
 		stemdata1 = this.stemvString( data1, data.dict );
-		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, stemdata1, 50, nGrams);
+		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 10000, nGrams);
 		return keywords;
 	}
 	
 	
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String data1, int numkw, Integer[] nGrams) throws Exception {
+	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String searchTerm, String data1, int numkw, Integer[] nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
@@ -123,6 +133,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
+	    String qsStem = this.stemvString( searchTerm, data.dict ); 
+	    if(searchTerm!=null){
+		    String[] terms = qsStem.split("\\s");
+		    for(int n=0; n<terms.length; n++){
+		    	wordMap.put(terms[n], new Double(1.0));
+		    }
+	    }
+	    
 	    ValueComparator bvc =  new ValueComparator(wordMap);
 		TreeMap<String,Double> wordM = new TreeMap(bvc);
 		wordM.putAll(wordMap);
@@ -324,6 +342,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			System.out.println("\nPlease, introduce search terms:");
 			Scanner scanFile = new Scanner(System.in);
 			searchTerm[0] = scanFile.nextLine();
+			String[] adds= new String[1];
+			adds[0] = "";
+			String description="";
 			
 			System.out.println("Search Terms: "+searchTerm[0]);
 			ArrayList<String> categOpt = kwGen.getCategories(null, searchTerm[0], null, null, null);
@@ -345,7 +366,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    }
 			categories.add(categOpt.get(0));
 			
-			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+			System.out.println("Please, introduce path to file containing landing page (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
 			ArrayList<String> words1;
@@ -357,13 +378,37 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					uInf=uInf+" "+word;
 				}
 			}else	
-				url = userInfo1;	
+				url = userInfo1;
+			/*
+			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+			scanFile = new Scanner(System.in);
+			userInfo1 = scanFile.nextLine(); 
+			if(userInfo1.contains(".info")){
+				words1 = TextUtils.validTextWords (userInfo1);
+				for(String word: words1){
+					description=description+" "+word;
+				}
+			}
+			
+			System.out.println("Please, introduce path to file containing adds (type \"exit\" to close) :");
+			scanFile = new Scanner(System.in);
+			userInfo1 = scanFile.nextLine(); 
+			if(userInfo1.contains(".add")){
+				words1 = TextUtils.validTextWords (userInfo1);
+				for(String word: words1){
+					adds[0]=adds[0]+" "+word;
+				}
+			}
+			*/
+			
+			
 			Integer[] nGrams = {1,2,3};
-			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, null, url,nGrams);
+			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, adds, url,nGrams);
 			
 			for(int n=0; n<nGrams.length; n++){
 				System.out.println("\n"+ (n+1)+" word keywords:");
 				for(String k: kw.get(n)){
+					k=k.replaceAll("wed", "wedding");
 					System.out.print(k+", ");
 				}
 			}
