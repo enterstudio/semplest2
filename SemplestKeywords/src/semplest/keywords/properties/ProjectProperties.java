@@ -1,8 +1,8 @@
 package semplest.keywords.properties;
 
-import java.io.File;  //temp
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;  //temp
 import java.util.Properties;
 
 public class ProjectProperties {
@@ -25,14 +25,14 @@ public class ProjectProperties {
 	public static String smallhCounts;
 	public static String stoplist;
 	
-	
-	
+
 	//load properties
-	static{
-		String PROPSFILE = "./data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
+	ProjectProperties(){
+		String PROPSFILE = "data/SemplestKeywords.properties";  //"data/SemplestKeywords.properties"
 		properties = new Properties();
 		try {
-			FileInputStream is = new FileInputStream(new File(PROPSFILE));  //FileInputStream is = new FileInputStream(PROPSFILE);
+			//FileInputStream is = new FileInputStream(PROPSFILE);
+			InputStream is = this.getClass().getResourceAsStream( PROPSFILE );
 			properties.load(is);
 			is.close();
 		} catch (IOException e) {
