@@ -101,6 +101,20 @@ public class TextUtils
     return strArray;
   }
 
+  //--
+  public Boolean isValidUrl( String url ){
+    try {
+      java.net.URLConnection conn = (new java.net.URL( url )).openConnection();
+      conn.setConnectTimeout( 1000 );
+      conn.setReadTimeout( 1000 );
+      java.io.InputStream is = conn.getInputStream();
+    } catch (Exception e) {
+      e.printStackTrace();
+      return false;
+    }
+    return true;
+  }
+
   // Return links from a url 
   // Make sure that the links are fully qualified
   public static URL[] HTMLLinks( String url ){
@@ -108,7 +122,7 @@ public class TextUtils
     LinkBean sb = new LinkBean();
     sb.setURL( url );
     URL[] outlinks = sb.getLinks();
-    
+
     // make links fully qualified
     URI baseURI = null;
     try {
