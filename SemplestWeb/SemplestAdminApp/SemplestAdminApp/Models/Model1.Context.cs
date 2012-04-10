@@ -41,6 +41,8 @@ namespace SemplestAdminApp.Models
         public DbSet<CustomerNote> CustomerNotes { get; set; }
         public DbSet<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
         public DbSet<CustomerStyle> CustomerStyles { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeType> EmployeeTypes { get; set; }
         public DbSet<Error> Errors { get; set; }
         public DbSet<HelpDefinition> HelpDefinitions { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
@@ -54,6 +56,8 @@ namespace SemplestAdminApp.Models
         public DbSet<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
         public DbSet<Right> Rights { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<RolesRightsAssociation> RolesRightsAssociations { get; set; }
+        public DbSet<SEMCustomerDetail> SEMCustomerDetails { get; set; }
         public DbSet<SiteLink> SiteLinks { get; set; }
         public DbSet<StateCode> StateCodes { get; set; }
         public DbSet<sysdiagram> sysdiagrams { get; set; }

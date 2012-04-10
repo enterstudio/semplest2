@@ -12,17 +12,14 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Right
+    public partial class RolesRightsAssociation
     {
-        public Right()
-        {
-            this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
-        }
+        public int RolesFK { get; set; }
+        public int RightsFK { get; set; }
+        public bool IsVisible { get; set; }
+        public bool IsReadonly { get; set; }
     
-        public int RightsPK { get; set; }
-        public string Controller { get; set; }
-        public string Label { get; set; }
-    
-        public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
+        public virtual Right Right { get; set; }
+        public virtual Role Role { get; set; }
     }
 }

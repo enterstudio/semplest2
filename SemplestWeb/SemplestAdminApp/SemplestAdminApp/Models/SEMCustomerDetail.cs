@@ -12,17 +12,17 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Right
+    public partial class SEMCustomerDetail
     {
-        public Right()
-        {
-            this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
-        }
-    
-        public int RightsPK { get; set; }
-        public string Controller { get; set; }
-        public string Label { get; set; }
-    
-        public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
+        public int SEMCustomerDetailsPK { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Company { get; set; }
+        public string Phone { get; set; }
+        public string email { get; set; }
+        public bool CallMe { get; set; }
+        public bool EmailMe { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     }
 }
