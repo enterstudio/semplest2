@@ -9,6 +9,14 @@
         <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
         <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"></script>
         <script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"></script>
+        <script type="text/jscript">
+            $(document).ready(function () {
+                var inputs = $(':input');
+                inputs.each(function () {
+                    $.ajax({ type: "GET", url: "/Roles/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} });
+                });
+            });
+    </script>
     </head>
     <body class="centerWrap">
         <div id="header">

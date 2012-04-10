@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SemplestAdminApp.Models.RoleModel>
+﻿@model IEnumerable<SemplestAdminApp.Models.Right>
 @{
     ViewBag.Title = "Create";
 }
@@ -16,65 +16,49 @@ Role
 @using (Html.BeginForm())
 {
     @Html.ValidationSummary(true)
-    <div class="editor-label">
-        New Role:
-    </div>
-    <div class="editor-field">
-        @*@Html.EditorFor(model => model.RoleName)*@
-    </div>
-    <div class="editor-label">
-        Duplicate Rights of:
-    </div>
-    <div class="editor-field">
-        @*Html.DropDownListFor(null, ViewData["Roles"], new { id = "RightPK" })*@ @*Html.DropDownListFor(x => x.SelectedValue, ViewData["Roles"] as SelectList, new { id = "items" })*@
-        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = string.Format("doSomething({0}); return false;", "Models") })
-        @*Html.DropDownList("Roles")*@
-    </div>
-    <p>
-        <input type="submit" value="Create" />
-    </p>
+         <div class="editor-label">
+            New Role: 
+        </div>  
+        <div class="editor-field">
+        <input name="blah" />
+       @Html.Editor("cc",  "blah", new   { @title =  "true"})
+        </div>
+        <div class="editor-field">
+            @*@Html.EditorFor(model => model.RoleName)*@
+        </div>
+        <div class="editor-label">
+            Duplicate Rights of:
+        </div>
+        <div class="editor-field">
+        @*Html.DropDownListFor(null, ViewData["Roles"], new { id = "RightPK" })*@
+        @*Html.DropDownListFor(x => x.SelectedValue, ViewData["Roles"] as SelectList, new { id = "items" })*@
+        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = "doSomething({Models}); return false;)" })  
 
+         
 
+            @*Html.DropDownList("Roles")*@
+        </div>
     <table>
-        <tr>
-            <th>
-                Page / Object
-            </th>
-        </tr>
+    <tr>
+        <th>
+            Page / Object
+        </th>
+    </tr>
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.CheckBox(item.RightName)@Html.Label(item.RightName)
-                </td>
-            </tr>
+    <tr>
+        <td>
+        @Html.CheckBox(item.RightsPK.ToString())@Html.Label(item.Controller)  @Html.Label(item.Label)
+        
+        </td>
+    </tr>
         }
     </table>
-
+        <p>
+            <input type="submit" value="Create" />
+        </p>
     <div>
-        @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Back to List", "Index")
     </div>
 
 }
-<script type="text/jscript">
-    $(function () {
-        // Register for the change event of the drop down
-        $('#Roles').change(function () {
-            // When the value changes, get send an AJAX request to the
-            // Filter action passing the selected value and update the
-            // contents of some result div with the partial html returned
-            // by the controller action
-            $('#result').load('<%: Url.Action("Models") %>',
-            { selectedValue: $(this).val() }
-        );
-        });
-    });
-
-    $('._select_change').change(function () { $.post(ctrlUrl); })
-
-    function doSomething(action) {
-        window.location.href = action;
-    } 
-
-
-</script>

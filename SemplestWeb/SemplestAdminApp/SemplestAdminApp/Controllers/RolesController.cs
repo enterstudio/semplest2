@@ -4,6 +4,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SemplestAdminApp.Models;
+using System.Reflection;
+using System.Data.Entity.Validation;
 
 namespace SemplestAdminApp.Controllers
 {
@@ -13,6 +15,30 @@ namespace SemplestAdminApp.Controllers
         // GET: /Roles/
 
         SemplestEntities _dbContext = new SemplestEntities();
+
+        public void AddRightToDatabase(string label, string controllerName, string vAction)
+        {
+            bool found = false;
+            string myController = ControllerContext.RouteData.Values["Controller"].ToString();
+            string controllerActionName = controllerName + "." + vAction;
+            if (controllerName != myController && !string.IsNullOrEmpty(label))
+            {
+                foreach (Right r in _dbContext.Rights)
+                {
+                    if (label == r.Label && controllerActionName == r.Controller)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    _dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
+                    _dbContext.SaveChanges();
+                }
+            }
+        }
+
         public ActionResult Index()
         {
             var model = _dbContext.Roles;
@@ -35,24 +61,28 @@ namespace SemplestAdminApp.Controllers
             ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
 
             //var viewModel =
-            //    from ri in _dbContext.Rights
-            //    //group ri by new 
-            //    //{
-            //    //    ri.RightName,
-            //    //} into grp
+            //    from ro in _dbContext.Roles
+            //    join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
+            //    group ri by new 
+            //    {
+            //        ri.r,
+            //    } into grp
             //    select new RoleModel
             //    {
-            //        RightName = grp.FirstOrDefault().RightName,
+            //        //RightName = grp.FirstOrDefault().RightName,
             //        RightPK = grp.FirstOrDefault().RightsPK,
             //    };
 
-            //return View(viewModel);
-            return View();
+            return View(_dbContext.Rights);
         }
+
+        static public int MMk()
+        { return 1; }
 
 
         public ActionResult Models(int id)
         {
+            return View();
             //var viewModel =
             //                from ro in _dbContext.Roles
             //                join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
@@ -63,11 +93,18 @@ namespace SemplestAdminApp.Controllers
             //                     RightName = ri.RightName
             //                 }; 
             //return Json(viewModel.ToList());
-            return View();
         }
      
         //
         // POST: /Roles/Create
+        delegate int c();
+
+        public static void hgas()
+        {
+            //c j = new c(MMk);
+            //j.BeginInvoke()
+                
+        }
 
         [HttpPost]
         public ActionResult Create(FormCollection collection)
@@ -75,7 +112,10 @@ namespace SemplestAdminApp.Controllers
             try
             {
                 // TODO: Add insert logic here
-
+                foreach (Object j in collection)
+                {
+                    Console.WriteLine(j.ToString());
+                }
                 return RedirectToAction("Index");
             }
             catch

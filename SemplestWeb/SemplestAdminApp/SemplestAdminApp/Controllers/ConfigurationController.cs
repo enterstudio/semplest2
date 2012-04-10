@@ -14,7 +14,6 @@ namespace SemplestAdminApp.Controllers
         SemplestEntities _dbContext = new SemplestEntities();
         public ActionResult Index()
         {
-            var model = _dbContext.Configurations;
             return View(_dbContext.Configurations.First<Configuration>());
         }
 
