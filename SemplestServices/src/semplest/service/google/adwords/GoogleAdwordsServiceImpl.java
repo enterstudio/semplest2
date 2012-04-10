@@ -13,7 +13,6 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.google.GoogleAdGroupObject;
-import semplest.server.protocol.google.GoogleAdGroupObject.adGroupStats;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
@@ -21,6 +20,7 @@ import semplest.service.google.adwords.GoogleReportDownloader.HttpException;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
+import com.google.api.adwords.lib.AdWordsServiceLogger;
 import com.google.api.adwords.lib.AdWordsUser;
 import com.google.api.adwords.lib.AuthToken;
 import com.google.api.adwords.lib.AuthTokenException;
@@ -648,6 +648,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
 			throws Exception
 	{
+		AdWordsServiceLogger.log(); //SOAP XML Logger
+		
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.
 		AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
@@ -991,6 +993,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
 	{
 
+		AdWordsServiceLogger.log(); //SOAP XML Logger
+		
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 
