@@ -34,10 +34,6 @@ namespace SemplestAdminApp.Controllers
             return View(viewModel);
         }
 
-
-
-
-
         //public ActionResult GetUsers(string query)
         //{
         //    List<string> users = new List<string>();
