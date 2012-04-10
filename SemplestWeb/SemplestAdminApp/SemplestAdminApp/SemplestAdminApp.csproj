@@ -328,6 +328,7 @@
     <Content Include="Views\Shared\TopMenu.cshtml" />
     <Content Include="Views\CustomerAccount\Edit.cshtml" />
     <Content Include="Views\CustomerAccount\Create.cshtml" />
+    <Content Include="Views\AccountService\Finance.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
