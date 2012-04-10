@@ -32,14 +32,15 @@ public class KeyWord implements KeyWordInterface {
 			if(Clicks[i]<0.0001){
 				minBid = bid[i];
 			} else {
-				minBid = bid[i];
+//				minBid = bid[i];
 				break;
 			}
 		}
+		
 				
 		
 //		CPCParams=estimateModelParams(CPC, true);
-		DCostParams=estimateModelParams(DCost, false);
+		DCostParams=estimateModelParams(DCost, true);
 		ClickParams=estimateModelParams(Clicks, false);
 		
 		
@@ -78,10 +79,11 @@ public class KeyWord implements KeyWordInterface {
 
 		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
-		double [] startPoint = {0.5, 2.0, 0.5};//, 0.5};
+		double [] startPoint = {1.5, 2.0, 0.5};//, 0.5};
+		startPoint[0]=minBid;
 		startPoint[2]=output[output.length-1];
 		pe.setStartPoint(startPoint);
-		double [] stepSize = {0.01D, 0.01D, 0.01D};//, 0.01D};
+		double [] stepSize = {0.001D, 0.001D, 0.001D};//, 0.01D};
 		pe.setStepSize(stepSize);
 		pe.suppressNoConvergenceMessage();
 		pe.estimateParams();
@@ -91,6 +93,7 @@ public class KeyWord implements KeyWordInterface {
 
         // get values of y and z at minimum
         double [] EstParams = pe.getParamValues();
+        System.out.format("Param0: %.2f, param1: %.2f, param2: %.2f\n",EstParams[0],EstParams[1],EstParams[2]);
         
         if (!plotGraphs){
         	return EstParams;

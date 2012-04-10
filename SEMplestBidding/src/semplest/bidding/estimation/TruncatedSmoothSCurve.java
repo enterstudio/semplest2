@@ -7,27 +7,29 @@ package semplest.bidding.estimation;
 	
 	private double minBid = 0.01;
 	private double [] TruncatedParameters; 
+	private double muC = -0.05;
+	private double sigmaC = 0.01;
 	
 	public TruncatedSmoothSCurve(){
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid+0.006;
-		TruncatedParameters[1]=0.002;
+		TruncatedParameters[0]=minBid+muC;
+		TruncatedParameters[1]=sigmaC;
 	}
 	
 	public TruncatedSmoothSCurve(double minBid){
 		
 		this.minBid = minBid;
 		TruncatedParameters = new double [2];
-		TruncatedParameters[0]=minBid+0.006;
-		TruncatedParameters[1]=0.002;
+		TruncatedParameters[0]=minBid+muC;
+		TruncatedParameters[1]=sigmaC;
 	}
 	
 	
 	@Override
 	public void setMinBid(double minBid){
 		this.minBid = minBid;
-		TruncatedParameters[0]=minBid+0.006;
-		TruncatedParameters[1]=0.002;
+		TruncatedParameters[0]=minBid+muC;
+		TruncatedParameters[1]=sigmaC;
 	}
 	
 
@@ -42,7 +44,41 @@ package semplest.bidding.estimation;
 	public double derivative(double[] input, double[] parameters) {
 		return Erf.derivative(input, parameters)*Erf.function(input, TruncatedParameters) + Erf.function(input, parameters)*Erf.derivative(input, TruncatedParameters);
 	}
+	
+//	@Override
+//	public double function(double[] input, double[] parameters) {
+//		if(input[0]<=minBid)
+//			return 0;
+//		return Erf.function(input, parameters);
+//	}
+//
+//	@Override
+//	public double derivative(double[] input, double[] parameters) {
+//		if(input[0]<=minBid)
+//			return 0;
+//		return Erf.derivative(input, parameters);
+//	}
+	
+//	@Override
+//	public double derivative(double[] input, double[] parameters) {
+//		return Erf.derivative(input, parameters);
+//	}
 
+	
+
+//	// this is INCORRECT with the following DERIVATIVE
+//	@Override
+//	public double function(double[] input, double[] parameters) {
+//		return Erf.function(input, parameters)*Erf.function(input, TruncatedParameters);
+//	}
+//
+//	@Override
+//	public double derivative(double[] input, double[] parameters) {
+//		return Erf.derivative(input, parameters)*Erf.function(input, TruncatedParameters);
+//	}
+	
+	
+	
 //	@Override
 //	public double[] gradient(double x, double ... parameters) {
 //		double [] input = new double[1];

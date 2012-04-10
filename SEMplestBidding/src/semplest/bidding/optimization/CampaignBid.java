@@ -17,7 +17,7 @@ public class CampaignBid {
 	private double expectedClicks =0;
 	private double expectedQualityMetric =0;
 	private double [] bids;
-	private double stepSize = 1.0D;
+	private double stepSize = 0.1D;
 	private double toldailyBudget = 1;
 	private double dampingFactor = 0.1D;
 	
@@ -34,18 +34,23 @@ public class CampaignBid {
 
 		BidLagrangeOptim Bid = new BidLagrangeOptim(wordList.get(i), f, k);
         Minimisation min = new Minimisation();
+        
+        min.addConstraint(0, -1, wordList.get(i).getMinBid());
+        min.addConstraint(0, +1, 5.00); // max bid allowed
+//        min.setNrestartsMax(10);
 		
-		double[] start = {1.5};
+		double[] start = {wordList.get(i).getMinBid()+0.6};
         double[] step = {0.1D};
         double ftol = 1e-15;
-        int iterMax = 1000;
+        int iterMax = 10000;
         
         
-//        min.suppressNoConvergenceMessage();
+        min.suppressNoConvergenceMessage();
         min.nelderMead(Bid, start, step, ftol, iterMax);
 
 //        // get the minimum value
 //        double minimum = min.getMinimum();
+//        System.out.println("***** Minimum value: "+minimum);
         
 
         // get values of y and z at minimum
@@ -104,22 +109,22 @@ public class CampaignBid {
 		KeyWordInterface key = null;
 		
 		int j=0;
-//		while(j<20){
+//		while(j<200){
 		while(true){
 			for(int i=0; i<bids.length;i++){
 				bids[i]=computeOptimumBidForConst(i,multLagrange);
 //				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<bids.length;i++)
 			computeExpectedValues();
-			System.out.format("Iteration %d:: Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,expectedCost,expectedClicks,expectedQualityMetric);
+			System.out.format("Iteration %d:: Lagrange mult: %f, Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,multLagrange,expectedCost,expectedClicks,expectedQualityMetric);
 			
 			if (j>0){ 
 				if (expectedCost<dailyBudget && highCost){
 					stepSize=stepSize*dampingFactor;
-//					System.out.println("Step-size reduced!");
+//					System.out.println("1: Step-size reduced!");
 				} else if (expectedCost>dailyBudget && (!highCost)){
 					stepSize=stepSize*dampingFactor;
-//					System.out.println("Step-size reduced!");
+//					System.out.println("2: Step-size reduced!");
 				}
 				
 				if(Math.abs(expectedCost-prevCost) < 1e-6)
@@ -132,13 +137,17 @@ public class CampaignBid {
 				highCost=true;
 			}
 			
+			System.out.println("Expected cost: "+expectedCost+", Daily cost: "+dailyBudget);
 			if(Math.abs(expectedCost-dailyBudget) < toldailyBudget){
 				break;
 			} else if (expectedCost<dailyBudget){
 				multLagrange-=stepSize;
+//				System.out.println("Lagrange mult reduced!");
 			} else {
 				multLagrange+=stepSize;
+//				System.out.println("Lagrange mult increased!");
 			} // if(Math.abs(expectedCost-dailyBudget) < toldailyBudget)
+			multLagrange=Math.max(multLagrange, 0.01);
 			j++;
 			
 			prevCost=expectedCost;
