@@ -1,7 +1,6 @@
 package semplest.keywords.lda;
 
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -333,6 +332,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	@Override
 	public void initializeService(String str) throws Exception {
+		logger.info("Initialize Service.  Ceating KWGenDmozLDAdata object");
 		data = new KWGenDmozLDAdata();
 		Thread thread = new Thread(data);
 		thread.start();

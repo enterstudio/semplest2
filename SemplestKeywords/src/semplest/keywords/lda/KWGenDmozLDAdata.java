@@ -3,6 +3,7 @@ package semplest.keywords.lda;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 
 import semplest.keywords.javautils.DmozLucene;
 import semplest.keywords.javautils.MultiWordCollect;
@@ -11,8 +12,10 @@ import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.properties.ProjectProperties;
 
+
 public class KWGenDmozLDAdata implements Runnable{
 	
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata.class);
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
@@ -33,33 +36,43 @@ public class KWGenDmozLDAdata implements Runnable{
 		}
 		
 		dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc"); */
-		pr=new ProjectProperties();
-		dl = new DmozLucene();
-		System.out.println("Indexing dmoz description data...");
-		DmozLucene.loadDesc(dl,dfile);
-		System.out.println("Data indexed!");
-		
-		System.out.println("Loading training data...");
-		TrainingData = ioUtils.file2Hash(dfile);
-		System.out.println("Data loaded");
-		
-		System.out.println("Loading stem dictionary...");
-		dict = new dictUtils();
-		System.out.println("Dictionary loaded");
-		
-		System.out.println("Loading Bigrams for each subcategory");
-		biGrams= new MultiWordCollect[nGramsSubC.length];
-		for (int i=0; i< nGramsSubC.length; i++){
-			String biPath = baseMultiWPath+nGramsSubC[i]+".txt.2";
-			System.out.println("Loading"+biPath);
-			biGrams[i]= new MultiWordCollect(nGramsSubC[i],biPath);
+		try
+		{
+			pr=new ProjectProperties();
+			logger.info("create DmozLucene()");
+			dl = new DmozLucene();
+			logger.info("Indexing dmoz description data...");
+			DmozLucene.loadDesc(dl,dfile);
+			logger.info("Data indexed!");
+			
+			logger.info("Loading training data...");
+			TrainingData = ioUtils.file2Hash(dfile);
+			logger.info("Data loaded");
+			
+			logger.info("Loading stem dictionary...");
+			dict = new dictUtils();
+			logger.info("Dictionary loaded");
+			
+			logger.info("Loading Bigrams for each subcategory");
+			biGrams= new MultiWordCollect[nGramsSubC.length];
+			for (int i=0; i< nGramsSubC.length; i++){
+				String biPath = baseMultiWPath+nGramsSubC[i]+".txt.2";
+				logger.info("Loading"+biPath);
+				biGrams[i]= new MultiWordCollect(nGramsSubC[i],biPath);
+			}
+			logger.info("Loading Trigrams for each subcategory");
+			triGrams= new MultiWordCollect[nGramsSubC.length];
+			for (int i=0; i< nGramsSubC.length; i++){
+				String triPath = baseMultiWPath+nGramsSubC[i]+".txt.3";
+				logger.info("Loading"+triPath);
+				triGrams[i]= new MultiWordCollect(nGramsSubC[i],triPath);
+			}
 		}
-		System.out.println("Loading Trigrams for each subcategory");
-		triGrams= new MultiWordCollect[nGramsSubC.length];
-		for (int i=0; i< nGramsSubC.length; i++){
-			String triPath = baseMultiWPath+nGramsSubC[i]+".txt.3";
-			System.out.println("Loading"+triPath);
-			triGrams[i]= new MultiWordCollect(nGramsSubC[i],triPath);
+		catch (Exception e)
+		{
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new IOException(e);
 		}
 		
 	}

@@ -1,6 +1,7 @@
 package semplest.keywords.javautils;
 
 
+import org.apache.log4j.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -29,6 +30,7 @@ import semplest.keywords.properties.*;
 // Uses Lucene to search the Dmoz description database
 public class DmozLucene {
 
+  private static final Logger logger = Logger.getLogger(DmozLucene.class);
   IndexWriter w;
   StandardAnalyzer analyzer;
   Directory index;
@@ -38,6 +40,7 @@ public class DmozLucene {
     // Specify the analyzer for tokenizing text.
     // (The same analyzer should be used for indexing and searching)
     try {
+    	logger.info("DmozLucene()");
       analyzer = new StandardAnalyzer(Version.LUCENE_35);
 
       // 1. create the index
@@ -47,7 +50,9 @@ public class DmozLucene {
           Version.LUCENE_35, analyzer);
       w = new IndexWriter(index, config);
     } catch (Exception e ){
-      e.printStackTrace();
+    	
+    	logger.error(e.getMessage());
+        e.printStackTrace();
     }
   }
 
