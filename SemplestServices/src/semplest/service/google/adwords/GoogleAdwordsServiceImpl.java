@@ -3,18 +3,17 @@ package semplest.service.google.adwords;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.rpc.ServiceException;
-
 import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleAdGroupObject.adGroupStats;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
@@ -45,7 +44,6 @@ import com.google.api.adwords.v201109.cm.AdGroupPage;
 import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
-import com.google.api.adwords.v201109.cm.ApiException;
 import com.google.api.adwords.v201109.cm.Bid;
 import com.google.api.adwords.v201109.cm.BidLandscapeLandscapePoint;
 import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
@@ -74,11 +72,6 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
-import com.google.api.adwords.v201109.cm.ReportDefinition;
-import com.google.api.adwords.v201109.cm.ReportDefinitionDateRangeType;
-import com.google.api.adwords.v201109.cm.ReportDefinitionField;
-import com.google.api.adwords.v201109.cm.ReportDefinitionReportType;
-import com.google.api.adwords.v201109.cm.ReportDefinitionServiceInterface;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -817,13 +810,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call getCampaignsByAccountId" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
-		AdGroup[] res = getAdGroupsByCampaignId(data.get("accountID"), campaignID, Boolean.valueOf(data.get("includeDeleted")));
+		GoogleAdGroupObject[] res = getAdGroupsByCampaignId(data.get("accountID"), campaignID, Boolean.valueOf(data.get("includeDeleted")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
+	public GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupService.
@@ -841,7 +834,50 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ campaignIdPredicate });
 		// Get all ad groups.
 		AdGroupPage page = adGroupService.get(selector);
-		return page.getEntries();
+		AdGroup[] pages = page.getEntries();
+		GoogleAdGroupObject[] res =
+		{ new GoogleAdGroupObject() };
+		if (pages.length > 0)
+		{
+			res = new GoogleAdGroupObject[pages.length];
+			for (int i = 0; i < pages.length; i++)
+			{
+				GoogleAdGroupObject obj = new GoogleAdGroupObject();
+				obj.setAdGroupID(pages[i].getId());
+				obj.setAdGroupName(pages[i].getName());
+				obj.setCampaignId(pages[i].getCampaignId());
+				obj.setCampaignName(pages[i].getCampaignName());
+				/*
+				adGroupStats s = obj.new adGroupStats();
+				if (pages[i].getStats().getAverageCpc() != null)
+				{
+					s.setAverageCpc(pages[i].getStats().getAverageCpc().getMicroAmount());
+				}
+				if (pages[i].getStats().getAverageCpm() != null)
+				{
+					s.setAverageCpm(pages[i].getStats().getAverageCpm().getMicroAmount());
+				}
+				s.setAveragePosition(pages[i].getStats().getAveragePosition());
+				s.setAvgCallDurationSecs(pages[i].getStats().getAvgCallDurationSecs());
+				s.setClicks(pages[i].getStats().getClicks());
+				s.setConversionRate(pages[i].getStats().getConversionRate());
+				if (pages[i].getStats().getCost() != null)
+				{
+					s.setCost(pages[i].getStats().getCost().getMicroAmount());
+				}
+				if (pages[i].getStats().getCostPerConversion() != null)
+				{
+					s.setCostPerConversion(pages[i].getStats().getCostPerConversion().getMicroAmount());
+				}
+				s.setCtr(pages[i].getStats().getCtr());
+				obj.setStats(s);
+				*/
+				obj.setStatus(pages[i].getStatus());
+				res[i] = obj;
+			}
+		}
+
+		return res;
 	}
 
 	public String deleteCampaign(String json) throws Exception
@@ -1310,8 +1346,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
 				"LocalImpressions", "QualityScore" });
 		// Create predicates.
-		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { adGroupID.toString() });
-		selector.setPredicates(new Predicate[] { adGroupIdPredicate });
+		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
+		{ adGroupID.toString() });
+		selector.setPredicates(new Predicate[]
+		{ adGroupIdPredicate });
 		// Get bid landscape for ad group criteria.
 		AdGroupBidLandscapePage page = dataService.getAdGroupBidLandscape(selector);
 		// Display bid landscapes.
