@@ -1,6 +1,8 @@
 package semplest.service.bidding;
 import java.util.Arrays;
 
+import semplest.bidding.test.ioUtils;
+import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.api.GoogleAdwordsServiceClient;
 
@@ -9,7 +11,10 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
+import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
+import com.google.api.adwords.v201109.cm.Money;
+
 import com.google.gson.Gson;
 
 //import com.google.gson.Gson;
@@ -62,7 +67,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		try
 		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient("http://localhost:9898/semplest");
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
 
 			ArrayList<Double> bidLevels = new ArrayList<Double>();
 
@@ -74,8 +79,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //				System.out.format("Bid: %.1f\n",bidLevels.get(i));
 //			}
 			
+			
+			
 			for (String word : keywords){
 				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword(word, KeywordMatchType.EXACT, bidLevels);
+				
 				Double[] bids = o.getBidList();
 				Arrays.sort(bids);
 
@@ -88,7 +96,6 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			}
 			
 			
-
 
 		}
 		catch (Exception e)
@@ -127,20 +134,77 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	public static void main(String[] args){
 		
-		Integer customerID = new Integer(0);
-		Integer campaignID = new Integer(0);
-		Integer adGroupID = new Integer(0);
+//		Integer customerID = new Integer(0);
+
+		String accountID = "2188810777";
+
+//		Long campaignID = new Long(2188810777L);
+//		Integer adGroupID = new Integer(0);
+		
+		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
 		ArrayList<String> keywords = new ArrayList<String>();
-		keywords.add("wedding venues");
-		keywords.add("ice");
-		keywords.add("wedding florist");
-		keywords.add("florist supplies");
+		
+		for (String line : lines){
+			keywords.add(line.replaceAll("\n",""));
+		}
+//		keywords.add("wedding venues");
+//		keywords.add("ice");
+//		keywords.add("wedding florist");
+//		keywords.add("florist supplies");
 		
 
 		try {
+			
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+			
+			GoogleBidObject bidObject;
+			Long maxCPC;
 
-			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
-			bidGenerator.getBid(customerID, campaignID, adGroupID, keywords);
+			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
+			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
+			System.out.println(campaignID);
+			
+			Long adGroupID = 3074331030L;
+//			maxCPC = 100000L; // bid in microBidAmount
+//			int count=0;
+//			for(String word : keywords){
+//				count++;
+//				System.out.println(count+": "+word);
+//				Thread.sleep(500);
+//				try {
+//					bidObject = client.addKeyWordToAdGroup(accountID, adGroupID, word , KeywordMatchType.EXACT, maxCPC);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					System.out.println("Skipping keyword: "+word);
+//				}
+//			}
+			
+			GoogleBidObject[] bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
+			System.out.println(bidObjects[1900].getKeyword());
+			
+			
+//			maxCPC = 200000L;
+//			bidObject=client.setBidForKeyWord(accountID, 16748361L, adGroupID, maxCPC);
+//			System.out.println(bidObject.getMicroBidAmount());
+
+			
+			
+			String [] words = client.getAllAdGroupKeywords(accountID, adGroupID);
+			System.out.println(words.length);
+			
+//			client.UpdateCampaignName(accountID, campaignID, "Test 1");
+//			campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
+
+//			Money m =new Money();
+//			m.setMicroAmount(360000L);
+//			client.changeCampaignBudget(accountID, campaignID, m); //doesn't work
+//			campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
+			
+//			AdGroup[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
+//			client.
+
+//			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
+//			bidGenerator.getBid(customerID, campaignID, adGroupID, keywords);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
