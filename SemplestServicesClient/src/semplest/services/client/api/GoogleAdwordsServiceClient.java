@@ -8,12 +8,13 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleAdGroupObject.adGroupStats;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
-import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
@@ -68,8 +69,20 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		try
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
-
 			
+			String accountID = "2188810777";
+			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
+
+
+			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
+			System.out.println(campaignID);
+			            
+
+			            
+			GoogleAdGroupObject[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
+			System.out.println(adGroups[0].getAdGroupID());
+			
+			/*
 			
 			ArrayList<Double> bidLevels = new ArrayList<Double>();
 			bidLevels.add(0.9);
@@ -90,6 +103,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			
 			String accountID  = "6048920973";
 			Long campaignID = 75239229L;
+			*/
 /*
 			GoogleRelatedKeywordObject resutls=client.GetRelatedKeywordsForURL("www.statefarm.com", "insurance",KeywordMatchType.EXACT, 30);
 			ArrayList<String>keywrds =resutls.getKeywords();
@@ -280,7 +294,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		
 	}
 	@Override
-	public AdGroup[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
+	public GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -289,7 +303,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST,SERVICEOFFERED, "getAdGroupsByCampaignId", json,timeoutMS);
-		return gson.fromJson(returnData, AdGroup[].class);
+		return gson.fromJson(returnData, GoogleAdGroupObject[].class);
 	}
 	
 	@Override
