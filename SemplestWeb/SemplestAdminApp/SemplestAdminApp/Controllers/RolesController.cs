@@ -18,6 +18,7 @@ namespace SemplestAdminApp.Controllers
 
         public void AddRightToDatabase(string label, string controllerName, string vAction)
         {
+
             bool found = false;
             string myController = ControllerContext.RouteData.Values["Controller"].ToString();
             string controllerActionName = controllerName + "." + vAction;
@@ -73,16 +74,25 @@ namespace SemplestAdminApp.Controllers
             //        RightPK = grp.FirstOrDefault().RightsPK,
             //    };
 
-            return View(_dbContext.Rights);
+            var viewModel = 
+                   from ra in _dbContext.RolesRightsAssociations
+                   join r in  _dbContext.Rights on ra.RightsFK equals r.RightsPK
+                   where ra.RolesFK==1
+                   select new UserRoleModel
+                   {
+                       Controller = r.Controller,
+                       Label = r.Controller,
+                       IsVisible = ra.IsVisible,
+                       IsReadonly = ra.IsReadonly
+                   };
+
+
+            return View(viewModel);
         }
 
-        static public int MMk()
-        { return 1; }
-
-
-        public ActionResult Models(int id)
+        public void Models(string RoleId)
         {
-            return View();
+            //return View();
             //var viewModel =
             //                from ro in _dbContext.Roles
             //                join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
@@ -97,15 +107,6 @@ namespace SemplestAdminApp.Controllers
      
         //
         // POST: /Roles/Create
-        delegate int c();
-
-        public static void hgas()
-        {
-            //c j = new c(MMk);
-            //j.BeginInvoke()
-                
-        }
-
         [HttpPost]
         public ActionResult Create(FormCollection collection)
         {

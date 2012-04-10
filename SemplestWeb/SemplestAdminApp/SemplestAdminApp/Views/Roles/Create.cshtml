@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SemplestAdminApp.Models.Right>
+﻿@model IEnumerable<SemplestAdminApp.Models.UserRoleModel>
 @{
     ViewBag.Title = "Create";
 }
@@ -16,49 +16,33 @@ Role
 @using (Html.BeginForm())
 {
     @Html.ValidationSummary(true)
-         <div class="editor-label">
-            New Role: 
-        </div>  
-        <div class="editor-field">
-        <input name="blah" />
-       @Html.Editor("cc",  "blah", new   { @title =  "true"})
-        </div>
-        <div class="editor-field">
-            @*@Html.EditorFor(model => model.RoleName)*@
-        </div>
         <div class="editor-label">
             Duplicate Rights of:
         </div>
         <div class="editor-field">
-        @*Html.DropDownListFor(null, ViewData["Roles"], new { id = "RightPK" })*@
-        @*Html.DropDownListFor(x => x.SelectedValue, ViewData["Roles"] as SelectList, new { id = "items" })*@
-        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = "doSomething({Models}); return false;)" })  
-
-         
-
-            @*Html.DropDownList("Roles")*@
+        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = "document.form.submit();" })  
         </div>
-    <table>
-    <tr>
-        <th>
-            Page / Object
-        </th>
-    </tr>
-        @foreach (var item in Model)
-        {
-    <tr>
-        <td>
-        @Html.CheckBox(item.RightsPK.ToString())@Html.Label(item.Controller)  @Html.Label(item.Label)
-        
-        </td>
-    </tr>
-        }
-    </table>
+         <div class="editor-label">
+            New Role: 
+        </div>  
+        <div class="editor-field">
+       @Html.Editor("cc", "blah", new { @title = "true" })
+        </div>
+        @Html.Partial("_RolesRightsAssociation", Model)
         <p>
             <input type="submit" value="Create" />
         </p>
     <div>
     @Html.ActionLink("Back to List", "Index")
     </div>
+    
+ 
 
 }
+   <script>
+       //$("select").change(function () { var str = ""; $("select option:selected").each(function () { str += $(this).text() + " "; }); $("div").text(str); })
+       //$("select").change(function () {
+           //$.ajax({ type: "GET", url: "/Roles/Models", data: { RoleId: $(this).attr('value')} });
+           //$.post("/Configuration", function(data) {   alert("Data Loaded: " + data)});
+       //})
+    </script>

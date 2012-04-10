@@ -40,10 +40,13 @@ namespace SemplestAdminApp.Models
 
 
 
-    public class RoleModel
+    public class UserRoleModel
     {
         public int RightPK { get; set; }
-        public string RightName { get; set; }
+        public string Controller { get; set; }
+        public string Label { get; set; }
+        public bool IsVisible { get; set; }
+        public bool IsReadonly { get; set; }
 
     }
 
