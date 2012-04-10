@@ -154,6 +154,10 @@
 	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
 	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
 		<echo message="Creating Jar for SemplestServicesClient..."/>
+		<copy todir="${dist}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar" />
+		</copy>
 		<path id="api.path">
 			<pathelement location="${classes}"/>
 			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
@@ -176,7 +180,12 @@
 	  	<if>
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
-	  	 	<echo message="This is KeywordGeneratorService."/>	  	
+	  	 	<echo message="This is KeywordGeneratorService."/>	 
+	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
+	  	 	<copy todir="${dist}/lib" filtering="off">
+	  	 		<flattenmapper />
+	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
+	  	 	</copy>
 	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices/dist -->
 	  	 	<mkdir dir="${dist}/data"/>
 	  	 	<copydir src="${semplest.keywords.dir}/data"
