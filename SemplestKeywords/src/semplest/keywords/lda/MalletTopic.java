@@ -17,6 +17,8 @@ import java.util.regex.*;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.*;
 import semplest.keywords.lda.MalletThreadObj;
 import semplest.keywords.properties.ProjectProperties;
@@ -30,7 +32,7 @@ public class MalletTopic {
 	private int numTopics;
 	private double initalpha;
 	private double initbeta;
-	
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
 	private double[] testprobab; //Probability distribution of the last test data infered from this model;
 	
 	
@@ -129,7 +131,7 @@ public class MalletTopic {
 		double fscore, precision, recall;
 		for (int i=0; i< numIter; i++){
 			classResult=this.InstanceClassifier(testInst, randIndex[i]);
-			System.out.println("Iteration "+ i);
+			logger.info("Iteration "+ i);
 			if(classResult.equals((String) testInst.get(randIndex[i]).getTarget())) {
 				tp=tp+1;
 			} else { 
@@ -155,14 +157,14 @@ public class MalletTopic {
 		newLDA.setInstances((InstanceList) instances.clone());
 		newLDA.setNumTopics(numTopics);
 		int numInst= instances.size();
-		System.out.println("Size of newLDA"+ newLDA.getInstances().size()+"\t"+ numInst);
+		logger.info("Size of newLDA"+ newLDA.getInstances().size()+"\t"+ numInst);
 		int[] randIndex;
 		randIndex=MathUtils.randIntArray(numRemove, 0, numInst);
 		// Instances have to be extracted from last to first, otherwise, indexes will not correspond
 		// to the original ones
 		Arrays.sort(randIndex);
 		for(int i =0; i<numRemove; i++){
-			System.out.println("Index"+ randIndex[numRemove-i-1]);
+			logger.info("Index"+ randIndex[numRemove-i-1]);
 			newLDA.removeInstance(randIndex[numRemove-i-1]);
 		}
 		// Train new model with removed instances and create instanceList to infer
@@ -182,7 +184,7 @@ public class MalletTopic {
 			}
 		}
 		System.setOut(stdout);
-		System.out.println("Report successfuly created");
+		logger.info("Report successfuly created");
 	}
 	
 	public Instance getStringInstancefromFeatureSequenceInstance(Instance inst){
@@ -241,9 +243,9 @@ public class MalletTopic {
 		    	 }
 		     }
 		}
-		//System.out.println("Size of wordMap in inferWord: "+ wordMap.size());
+		//logger.debug("Size of wordMap in inferWord: "+ wordMap.size());
 		sorted_map.putAll(wordMap);
-		//System.out.println("Size of sorted_map in inferWord: "+ wordMap.size());
+		//logger.debug("Size of sorted_map in inferWord: "+ wordMap.size());
 		return sorted_map;
 	}
 	
@@ -257,7 +259,7 @@ public class MalletTopic {
 
 		// Get an array of sorted sets of word ID/count pairs
 		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
-		//System.out.println(dataAlphabet.size());
+		//logger.debug(dataAlphabet.size());
 		HashMap<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
 		ValueComparator bvc =  new ValueComparator(wordMap);
 		TreeMap<String,Double> sorted_map = new TreeMap(bvc);
@@ -270,7 +272,7 @@ public class MalletTopic {
 				            
 		     double topicProb=topicDistribution[topic];
 		     double sum = 0;
-		     //System.out.println(topicDistribution.length + "\t"+topicProb);
+		     //logger.debug(topicDistribution.length + "\t"+topicProb);
 		     IDSorter idCountPair;
 		     while (iterator.hasNext()) {
 		    	 idCountPair = iterator.next();
@@ -278,11 +280,11 @@ public class MalletTopic {
 		    	 if(specdataAlphabet.contains(word)) sum = sum + idCountPair.getWeight();
 		     }
 		     Iterator<IDSorter> iterator2 = topicSortedWords.get(topic).iterator();
-		     //System.out.println("Size of Topic Sorted words :"+topicSortedWords.get(topic).size());
+		     //logger.debug("Size of Topic Sorted words :"+topicSortedWords.get(topic).size());
 		     while (iterator2.hasNext()){
 		    	 idCountPair = iterator2.next();
 		    	 wordProb = topicProb*(idCountPair.getWeight()/sum);
-		    	 //System.out.println(wordProb);
+		    	 //logger.debug(wordProb);
 		    	 word =(String) dataAlphabet.lookupObject(idCountPair.getID());
 		    	 if(specdataAlphabet.contains(word)){
 			    	 if(wordMap.containsKey(word)){
@@ -300,7 +302,7 @@ public class MalletTopic {
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		Alphabet dataAlphabet = instances.getDataAlphabet();
-		//System.out.println("Alphabet size "+dataAlphabet.size());
+		//logger.debug("Alphabet size "+dataAlphabet.size());
         TreeMap<String,Double> sorted_map;
         sorted_map = this.inferWordprob(inferInst, instIndex, dataAlphabet);
         
@@ -312,7 +314,7 @@ public class MalletTopic {
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		Alphabet dataAlphabet = instances.getDataAlphabet();
-		//System.out.println("Alphabet size "+dataAlphabet.size());
+		//logger.debug("Alphabet size "+dataAlphabet.size());
         HashMap<String,Double> map;
         map = this.inferWordprob(inferInst, instIndex, dataAlphabet,true);
         
@@ -375,33 +377,33 @@ public class MalletTopic {
 				TrainedTopicDistr=this.getTrainTopicDist();
 				InstanceDiv = new double[TrainedTopicDistr.length];
 				
-				//System.out.println("INFERED IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
+				//logger.debug("INFERED IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
 				//timetest1= System.currentTimeMillis();
 				
-				System.out.println("Number of Instances Trained " + InstanceDiv.length);
+				logger.info("Number of Instances Trained " + InstanceDiv.length);
 				for( int i=0; i < TrainedTopicDistr.length ; i++ ){
 					//InstanceDiv[i] = SimilMeas.KLDiv(TrainedTopicDistr[i], InferTopicDistr);
 					InstanceDiv[i] = 1-SimilMeas.cosDist(TrainedTopicDistr[i], InferTopicDistr);
-					//System.out.println(""+InstanceDiv[i]);
+					//logger.debug(""+InstanceDiv[i]);
 				}
 				
-				//System.out.println("DISTANCES CALC IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
+				//logger.debug("DISTANCES CALC IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
 				//timetest1= System.currentTimeMillis();
 				
 				// Find the 6 closer instances to the one infered
 				minNelem= MathUtils.minNelem(InstanceDiv,numCateg);
 				
-				//System.out.println("TOP 100 OBTAINED IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
+				//logger.debug("TOP 100 OBTAINED IN :"+TextUtils.timeElapsed(System.currentTimeMillis()-timetest1));
 				
 				// Print labels and values of 6 closest instances
 				String labelinf = (String) inferInst.get(instIndex).getTarget();
-				System.out.println("Current Instance Evaluated: " + labelinf);
+				logger.info("Current Instance Evaluated: " + labelinf);
 				
 				// Print labels and values of 6 closest instances
-				System.out.println("Closest instances: " );
+				logger.info("Closest instances: " );
 				//Print out first 10 elements
 				for (int j=0; j<10 ; j++){
-						System.out.println(minNelem[1][j]+"\t"+this.getInstanceLabel((int)minNelem[0][j]));
+						logger.info(minNelem[1][j]+"\t"+this.getInstanceLabel((int)minNelem[0][j]));
 				}
 			
 				return minNelem;
@@ -438,10 +440,10 @@ public class MalletTopic {
         int i=0;
 
         instances = new InstanceList (new SerialPipes(pipeList));
-        System.out.println("Number of lines: "+lines.size());
+        logger.debug("Number of lines: "+lines.size());
         for( String line : lines ){
-        	System.out.println("Adding Category " + i);
-        	System.out.println(line);
+        	logger.debug("Adding Category " + i);
+        	logger.debug(line);
         	ArrayList<String> tokens = ioUtils.malletizeLine( line );
         	instances.addThruPipe(new Instance(tokens.get(2),tokens.get(0),tokens.get(1),null));
         	i++;
@@ -457,9 +459,9 @@ public class MalletTopic {
 		        int i=0;
 
 		        instances = new InstanceList (new SerialPipes(pipeList));
-		        System.out.println("Number of lines: "+lines.size());
+		        logger.debug("Number of lines: "+lines.size());
 		        for( String line : lines ){
-		        	System.out.println("Adding Category " + i);
+		        	logger.debug("Adding Category " + i);
 		        	String[] elem = line.split(":");
 		        	instances.addThruPipe(new Instance(elem[1],""+i,elem[0],null));
 		        	i++;
@@ -548,9 +550,9 @@ public class MalletTopic {
         }
 		Alphabet alph = new Alphabet(words);
 		/*
-		System.out.print("Words in category "+this.getInstanceLabel(instIndex)+" : ");
-		for (int i=0;i<words.length;i++) System.out.print(words[i]+"\t");
-		System.out.print("\n");
+		logger.debug("Words in category "+this.getInstanceLabel(instIndex)+" : ");
+		for (int i=0;i<words.length;i++) logger.debug(words[i]+"\t");
+		logger.debug("\n");
 		*/
 		return alph;
 	}
@@ -574,7 +576,7 @@ public class MalletTopic {
 		initbeta = beta_w;
 		int numThreads=8;
 		model = new ParallelTopicModel(numTopics, 1.0, 0.01);
-		System.out.println("Loading Instances into Model");
+		logger.info("Loading Instances into Model");
         model.addInstances(instances);
 
         // Use two parallel samplers, which each look at one half the corpus and combine
@@ -585,7 +587,7 @@ public class MalletTopic {
         //  for real applications, use 1000 to 2000 iterations)
         model.setNumIterations(numIter);
         if(numThreads>1)model.setNumThreads(numThreads);
-        System.out.println("Estimating Model...");
+        logger.info("Estimating Model...");
         model.estimate();
 	}
     
@@ -594,7 +596,7 @@ public class MalletTopic {
     	// Prints out the probability of the Top Topic in the distribution
         TopicInferencer inferencer = model.getInferencer();
         double[] testProbabilities = inferencer.getSampledDistribution(testing.get(TestIndex), 100, 1, 5);
-        //System.out.println("0 \t" + testProbabilities[0]);
+        //logger.debug("0 \t" + testProbabilities[0]);
         testprobab = testProbabilities;
         return testProbabilities;
     }
@@ -760,7 +762,7 @@ public class MalletTopic {
         for (int position = 0; position < tokens.getLength(); position++) {
             out.format("%s-%d ", dataAlphabet.lookupObject(tokens.getIndexAtPosition(position)), topics.getIndexAtPosition(position));
         }
-        System.out.println(out);
+        logger.info(out);
         
 	}
 
@@ -792,7 +794,7 @@ public class MalletTopic {
                 out.format("%s (%.0f) ", dataAlphabet.lookupObject(idCountPair.getID()), idCountPair.getWeight());
                 rank++;
             }
-            System.out.println(out);
+            logger.info(out);
         }
 	}
 	

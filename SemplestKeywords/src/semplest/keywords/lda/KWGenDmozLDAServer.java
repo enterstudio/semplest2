@@ -1,6 +1,7 @@
 package semplest.keywords.lda;
 
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -47,13 +48,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		qs=searchTerm;
 		String qsStem = this.stemvString( qs, data.dict );
 		if(qsStem !=null && qsStem.length()>0){
-			System.out.println(qsStem);
+			logger.debug(qsStem);
 			res = data.dl.search(qsStem,numresults);
 			for(int i=0; i<res.length; i++){
 				categories = res[i].replaceAll("\\s", "");
 				if(catUtils.validcat(categories))
 						optInitial.add(categories);
-						//System.out.println(categories);
+						//logger.debug(categories);
 			}
 			//Select repeated patterns
 			optList= selectOptions(optInitial);
@@ -78,7 +79,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			dataUrl = TextUtils.validHtmlWords(url);
 		}
 		String data1 =  "";
-		System.out.println("Words from url:"+ dataUrl.size());
+		logger.info("Words from url:"+ dataUrl.size());
 		for( String s : dataUrl ) {
 	    	data1 = data1+" "+s;
 	    }
@@ -112,7 +113,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    		numNod = catUtils.nodes(cataux);
 	    		if(catUtils.take(label, numNod).equals(catUtils.take(cataux,numNod))){
 	    			if (!optCateg.contains(label)){
-	    				//System.out.println(label);
+	    				//logger.debug(label);
 	    				optCateg.add(label);
 	    				//Gather training data
 	    				trainLines.add(data.TrainingData.get(label));
@@ -127,7 +128,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		double alpha=0.01;
 		double beta=0.01;
 		int numiter=100;
-		System.out.println("Number of categories" + trainLines.size());
+		logger.info("Number of categories" + trainLines.size());
 		lda.CreateInstances(trainLines);
 		lda.setNumTopics(5);
 		lda.LDAcreateModel(alpha, beta, numiter);
@@ -150,14 +151,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		TreeMap<String,Double> wordM = new TreeMap(bvc);
 		wordM.putAll(wordMap);
 	    Set<String> keyS = wordM.keySet();
-	    System.out.println("wordMap Size: "+ wordM.size());
+	    logger.info("wordMap Size: "+ wordM.size());
 	    int i=0;
 	    for(int n=0;n<nGrams.length;n++){
 	    	ArrayList<String> kwds=new ArrayList<String>();
 	    	if(nGrams[n] == 1){
 			    for(String keys2 : keyS){
 			    	if(i>=numkw)break;
-			    	//System.out.print(" "+keys2+",");
+			    	//logger.debug(" "+keys2+",");
 			    	kwds.add(keys2);
 			    	i++;
 			    }
@@ -215,7 +216,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 							if(wordMap.containsKey(subWrds[n])){
 								wProb=wProb*wordMap.get(subWrds[n]);
 							}else {
-								//System.out.println(subWrds[n]+" is not in wordmap");
+								//logger.debug(subWrds[n]+" is not in wordmap");
 								wProb=wProb*0.0;
 							}
 							kwrd=kwrd+subWrds[n]+" ";
@@ -247,7 +248,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    		double diff = baseProb- multWMap.get(keyword);
 		    		//if(nGrams==2 && diff>0.01718787) break;
 		    		//if(nGrams==3 && diff>0.001718787) break;
-		    		//System.out.println(diff+"\t"+keyword);
+		    		//logger.debug(diff+"\t"+keyword);
 		    		keywords.add(keyword);
 				    i++;
 		    }
@@ -332,7 +333,6 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	@Override
 	public void initializeService(String str) throws Exception {
-		logger.info("Initialize Service.  Ceating KWGenDmozLDAdata object");
 		data = new KWGenDmozLDAdata();
 		Thread thread = new Thread(data);
 		thread.start();
@@ -354,34 +354,34 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		BasicConfigurator.configure();
 		while (!userInfo1.equals("exit")){
 			try{
-			System.out.println("\nPlease, introduce search terms:");
+			logger.info("\nPlease, introduce search terms:");
 			Scanner scanFile = new Scanner(System.in);
 			searchTerm[0] = scanFile.nextLine();
 			String[] adds= new String[1];
 			adds[0] = "";
 			String description="";
 			
-			System.out.println("Search Terms: "+searchTerm[0]);
+			logger.info("Search Terms: "+searchTerm[0]);
 			ArrayList<String> categOpt = kwGen.getCategories(null, searchTerm[0], null, null, null);
-			System.out.println("\nCategory options:");
+			logger.info("\nCategory options:");
 			int m=0;
 			for (String opt:categOpt){
-				System.out.println(m+"- "+opt);
+				logger.info(m+"- "+opt);
 				m++;
 			}
-			System.out.println("Please, type indexes of categories to select separated by ',':");
+			logger.info("Please, type indexes of categories to select separated by ',':");
 			Scanner scan = new Scanner(System.in);
 		    String mySentence = scan.nextLine(); 
 		    String[] indexes = mySentence.split(",");
 		    
 		    ArrayList<String> categories = new ArrayList<String>();
 		    for (int v=0; v<indexes.length;v++){
-		    	System.out.println(categOpt.get(Integer.parseInt(indexes[v])));
+		    	logger.info(categOpt.get(Integer.parseInt(indexes[v])));
 		    	categories.add(categOpt.get(Integer.parseInt(indexes[v])));
 		    }
 			categories.add(categOpt.get(0));
 			
-			System.out.println("Please, introduce path to file containing landing page (type \"exit\" to close) :");
+			logger.info("Please, introduce path to file containing landing page (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
 			ArrayList<String> words1;
@@ -395,7 +395,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}else	
 				url = userInfo1;
 			
-			System.out.println("Please, introduce path to file containing user info (type \"exit\" to close) :");
+			logger.info("Please, introduce path to file containing user info (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
 			if(userInfo1.contains(".info")){
@@ -405,7 +405,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				}
 			}
 			
-			System.out.println("Please, introduce path to file containing adds (type \"exit\" to close) :");
+			logger.info("Please, introduce path to file containing adds (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
 			if(userInfo1.contains(".add")){
@@ -427,17 +427,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					System.out.print(k+", ");
 				}
 			}
+			/*
 			PrintStream stdout = System.out;
 			//System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/Test1/keywords.txt")));
 			for(int n=1; n<nGrams.length; n++){
 				for(String k: kw.get(n)){
 					k=k.replaceAll("wed", "wedding");
-					System.out.println(k);
+					logger.info(k);
 				}
 			}
-			System.setOut(stdout);
+			System.setOut(stdout);*/
 			}catch(Exception e){
-				System.out.println(e);
+				logger.error(e);
 			}
 		}
 	}

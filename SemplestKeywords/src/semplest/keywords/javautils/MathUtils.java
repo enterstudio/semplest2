@@ -2,7 +2,12 @@ package semplest.keywords.javautils;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
+import semplest.keywords.lda.KWGenDmozLDAServer;
+
 public class MathUtils {
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
 	public static double[][] minNelem(double vect[], int N){
 		// Find the N minimum elements in an array and return values and index (sorted) 
 		// Not an efficient implementation for large N, efficient for large vect.length
@@ -52,7 +57,7 @@ public class MathUtils {
 	
 	public static void print2Darray(double [][] matrix){
 		for (int i=0; i< matrix[0].length; i++){
-			System.out.println( matrix[0][i] + "\t" + matrix[1][i] );
+			logger.info( matrix[0][i] + "\t" + matrix[1][i] );
 		}
 	}
 	
