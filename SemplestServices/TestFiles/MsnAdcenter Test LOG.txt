@@ -3,15 +3,23 @@ MSN service testing LOG
 
 Name = acc_nan
 accountId = 1595249
+customerId = 13061731
+userId = 1667566
 
 campaignName = msn_test_nan
 campaignId = 130129414
+adGroupId = 754813047
+adGroupId = 754813055
 
 campaignName = msn_test_nan_2
 campaignId = 130129426
 
-==========================================
+//have to manually select options from DailyBudget and MonthlyBudget on MSN AdCenter page (https://adcenter.microsoft.com/). Once set, API would work on only one of them.
 
+==========================================
+(#: start to code on this method; ##: finished coding on the method; ###: passed testing and done on the method)
+
+>>>>>04/10/2012
 
 createAccount  ###
 ------------------------------------------
@@ -38,37 +46,105 @@ getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
 getCampaignsByAccountId  ###
 ------------------------------------------
 getCampaignsByAccountId: numOfCampaigns = 1
-0: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
-//Test for multipul campaigns
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+//Test for multiple campaigns
 getCampaignsByAccountId: numOfCampaigns = 2
-0: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
-1: DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+
+>>>>>04/11/2012
+	
+pauseCampaignById  ###
+------------------------------------------
+pauseCampaignById: (if successful returns 0) 0
+
+
+pauseCampaignsByAccountId  ###
+------------------------------------------
+pauseCampaignsByAccountId: (if successful returns 0) 0
+
+
+resumeCampaignById  ###
+------------------------------------------
+resumeCampaignById: (if successful returns 0) 0
+//check status - OK
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Active
+//pause it and check status again
+pauseCampaignById: (if successful returns 0) 0
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+
+
+deleteCampaignById  ###
+------------------------------------------
+createCampaign: campaignId = 130129920
+getCampaignsByAccountId: numOfCampaigns = 3
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+2: Name = msn_test_nan_3; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+deleteCampaignById: (if successful returns 0) 0
+getCampaignsByAccountId: numOfCampaigns = 2
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+
+
+updateCampaignBudget  ###
+------------------------------------------
+getCampaignById: : Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+updateCampaignBudget: (if successful returns 0) 0
+getCampaignById: : Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 10.0; CampaignStatus = Paused
+
+
+setCampaignStateTargets  ##		??????????
+------------------------------------------
+What is <states> variable? 
+don't know how to set API parameter "states". Always gets Exception: java.lang.Exception: aa33007b:Invalid client data. Check the SOAP fault details for more information
+
+
+deleteCampaignTargets  ###
+------------------------------------------
+getCampaignTargets: ok
+Target is not null
+deleteCampaignTargets: (if successful returns 0) 0
+getCampaignTargets: ok
+Target is null
+//Also checked on MSN AdCenter page - ok.
+
+
+getCampaignTargets  ###
+------------------------------------------
+getCampaignTargets: ok
+state = US-MA
+state = US-NH
+state = US-NY
+
+
+createAdGroup  ###
+------------------------------------------
+createAdGroup: adGroupId = 754813047
+
+
+getAdGroupsByCampaignId  ###
+------------------------------------------
+getAdGroupsByCampaignId: Name = A1334181236897
+getAdGroupsByCampaignId: Name = A1334181636164
 
 	
-pauseCampaignById
-	
-pauseCampaignsByAccountId
+getAdGroupById  ###
+------------------------------------------
+getAdGroupById: Id = 754813047; Name = A1334181236897
 
-resumeCampaignById
 	
-deleteCampaignById
-	
-updateCampaignBudget
-	
-setCampaignStateTargets
-	
-deleteCampaignTargets
+deleteAdGroupById  ###
+------------------------------------------
+createAdGroup: adGroupId = 754813107
+getAdGroupsByCampaignId: Name = A1334181236897; adGroupId = 754813047
+getAdGroupsByCampaignId: Name = A1334181636164; adGroupId = 754813055
+getAdGroupsByCampaignId: Name = A1334183361205; adGroupId = 754813107
+deleteAdGroupById: (if successful returns 0) 0
+getAdGroupsByCampaignId: Name = A1334181236897; adGroupId = 754813047
+getAdGroupsByCampaignId: Name = A1334181636164; adGroupId = 754813055
 
-getCampaignTargets
-	
-createAdGroup
-	
-getAdGroupsByCampaignId
-	
-getAdGroupById
-	
-deleteAdGroupById
-	
+
 setAdGroupStateTargets
 	
 setAdGroupCityTargets
