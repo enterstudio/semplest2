@@ -416,7 +416,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			return null;
+			return new AdGroupCriterion[0];
 		}
 	}
 
