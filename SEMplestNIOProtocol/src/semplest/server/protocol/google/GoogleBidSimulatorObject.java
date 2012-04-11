@@ -1,70 +1,91 @@
 package semplest.server.protocol.google;
 
-import com.google.api.adwords.v201109.cm.Money;
+import java.util.HashMap;
+
 
 public class GoogleBidSimulatorObject
 {
 	private Long AdGroupId;
 	private Long CriterionId;
-	private java.util.Date StartDate;
-	private java.util.Date EndDate;
+	private String StartDate;
+	private String EndDate;
+	private HashMap<Long,BidPoint> bidPoints = new HashMap<Long,BidPoint>();
 	
-	public class BidPoints
+	public void addBidPoint(Long bid,Long clicks,Long cost,Long marginalCpc,Long impressions)
 	{
-		private Long LocalClicks;
-		private Money LocalCost;
-		private Money MarginalCpc;
-		private Long LocalImpressions; 
-		private Integer QualityScore;
-		private Double Bid;
-		public Double getBid()
+		BidPoint onebid = new BidPoint();
+		onebid.setBid(bid);
+		onebid.setClicks(clicks);
+		onebid.setCost(cost);
+		onebid.setImpressions(impressions);
+		onebid.setMarginalCpc(marginalCpc);
+		bidPoints.put(bid,onebid);
+	}
+	public BidPoint getBidPoint(Long bid)
+	{
+		if (bidPoints.containsKey(bid))
 		{
-			return Bid;
+			return bidPoints.get(bid);
 		}
-		public void setBid(Double bid)
+		else
 		{
-			Bid = bid;
+			return null;
 		}
-		public Long getLocalClicks()
+	}
+	/*
+	 * {bid: " + bidLanscapePoint.getBid().getMicroAmount() + " clicks: " + bidLanscapePoint.getClicks()
+							+ " cost: " + bidLanscapePoint.getCost().getMicroAmount() + " marginalCpc: "
+							+ bidLanscapePoint.getMarginalCpc().getMicroAmount() + " impressions:
+	 */
+	
+	public class BidPoint
+	{
+		private Long bid;
+		private Long clicks;
+		private Long cost;
+		private Long marginalCpc;
+		private Long impressions;
+		public Long getBid()
 		{
-			return LocalClicks;
+			return bid;
 		}
-		public void setLocalClicks(Long localClicks)
+		public void setBid(Long bid)
 		{
-			LocalClicks = localClicks;
+			this.bid = bid;
 		}
-		public Money getLocalCost()
+		public Long getClicks()
 		{
-			return LocalCost;
+			return clicks;
 		}
-		public void setLocalCost(Money localCost)
+		public void setClicks(Long clicks)
 		{
-			LocalCost = localCost;
+			this.clicks = clicks;
 		}
-		public Money getMarginalCpc()
+		public Long getCost()
 		{
-			return MarginalCpc;
+			return cost;
 		}
-		public void setMarginalCpc(Money marginalCpc)
+		public void setCost(Long cost)
 		{
-			MarginalCpc = marginalCpc;
+			this.cost = cost;
 		}
-		public Long getLocalImpressions()
+		public Long getMarginalCpc()
 		{
-			return LocalImpressions;
+			return marginalCpc;
 		}
-		public void setLocalImpressions(Long localImpressions)
+		public void setMarginalCpc(Long marginalCpc)
 		{
-			LocalImpressions = localImpressions;
+			this.marginalCpc = marginalCpc;
 		}
-		public Integer getQualityScore()
+		public Long getImpressions()
 		{
-			return QualityScore;
+			return impressions;
 		}
-		public void setQualityScore(Integer qualityScore)
+		public void setImpressions(Long impressions)
 		{
-			QualityScore = qualityScore;
+			this.impressions = impressions;
 		}
+		
 		
 	}
 
@@ -88,24 +109,26 @@ public class GoogleBidSimulatorObject
 		CriterionId = criterionId;
 	}
 
-	public java.util.Date getStartDate()
+	public String getStartDate()
 	{
 		return StartDate;
 	}
 
-	public void setStartDate(java.util.Date startDate)
+	public void setStartDate(String startDate)
 	{
 		StartDate = startDate;
 	}
 
-	public java.util.Date getEndDate()
+	public String getEndDate()
 	{
 		return EndDate;
 	}
 
-	public void setEndDate(java.util.Date endDate)
+	public void setEndDate(String endDate)
 	{
 		EndDate = endDate;
 	}
+
+	
 
 }
