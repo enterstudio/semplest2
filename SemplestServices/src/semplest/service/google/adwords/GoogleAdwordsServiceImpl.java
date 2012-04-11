@@ -15,14 +15,12 @@ import semplest.other.DateTimeFloored;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleBidSimulatorObject;
-import semplest.server.protocol.google.GoogleBidSimulatorObject.BidPoint;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.service.google.adwords.GoogleReportDownloader.HttpException;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
-import com.google.api.adwords.lib.AdWordsServiceLogger;
 import com.google.api.adwords.lib.AdWordsUser;
 import com.google.api.adwords.lib.AuthToken;
 import com.google.api.adwords.lib.AuthTokenException;
@@ -1352,9 +1350,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return res;
 
 	}
+	
+	public String getBidLandscapeForAdgroup(String json) throws Exception
+	{
+		logger.debug("call  getBidLandscapeForAdgroup" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		GoogleBidSimulatorObject[] res =  getBidLandscapeForAdgroup(data.get("accountID"), adGroupID);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 
 	@Override
-	public void getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	public GoogleBidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the DataService.
@@ -1364,7 +1372,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Selector selector = new Selector();
 		selector.setFields(new String[]
 		{ "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
-				"LocalImpressions", "QualityScore" });
+				"LocalImpressions" });
 		// Create predicates.
 		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
 		{ adGroupID.toString() });
@@ -1372,29 +1380,32 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ adGroupIdPredicate });
 		// Get bid landscape for ad group criteria.
 		AdGroupBidLandscapePage page = dataService.getAdGroupBidLandscape(selector);
-		// Display bid landscapes.
-		if (page.getEntries() != null)
+		GoogleBidSimulatorObject[] res;
+		if (page.getEntries() != null  && page.getEntries().length > 0)
 		{
+			res = new GoogleBidSimulatorObject[page.getEntries().length];
+			int i=0;
 			for (AdGroupBidLandscape adGroupBidLandscape : page.getEntries())
 			{
-				System.out.println("Ad group bid landscape with ad group id \"" + adGroupBidLandscape.getAdGroupId() + "\", type \""
-						+ adGroupBidLandscape.getType() + "\", current \"" + adGroupBidLandscape.getLandscapeCurrent() + "\", start date \""
-						+ adGroupBidLandscape.getStartDate() + "\", end date \"" + adGroupBidLandscape.getEndDate() + "\", with landscape points: ");
+				GoogleBidSimulatorObject obj = new GoogleBidSimulatorObject();
+				obj.setAdGroupId(adGroupBidLandscape.getAdGroupId());
+				obj.setEndDate(adGroupBidLandscape.getEndDate());
+				obj.setStartDate(adGroupBidLandscape.getStartDate());
+				
 				for (BidLandscapeLandscapePoint bidLanscapePoint : adGroupBidLandscape.getLandscapePoints())
 				{
-					
-					System.out.println("\t{bid: " + bidLanscapePoint.getBid().getMicroAmount() + " clicks: " + bidLanscapePoint.getClicks()
-							+ " cost: " + bidLanscapePoint.getCost().getMicroAmount() + " marginalCpc: "
-							+ bidLanscapePoint.getMarginalCpc().getMicroAmount() + " impressions: " + bidLanscapePoint.getImpressions() + "}");
+					obj.addBidPoint(bidLanscapePoint.getBid().getMicroAmount(), bidLanscapePoint.getClicks(), bidLanscapePoint.getCost().getMicroAmount(), bidLanscapePoint.getMarginalCpc().getMicroAmount(), bidLanscapePoint.getImpressions());
 				}
-				System.out.println(" was found.");
+				res[i]=obj;
+				i++;
 			}
-
 		}
 		else
 		{
-			System.out.println("NO Bid Lanscapes for Adgroup " + adGroupID);
+			res = new GoogleBidSimulatorObject[0];
+			logger.info("No Adgroup bid landscapes were found.");
 		}
+		return res;
 	}
 
 	private static final String DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
