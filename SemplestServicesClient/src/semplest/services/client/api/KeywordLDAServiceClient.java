@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -27,7 +27,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://VMJAVA1:9898/semplest");
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://localhost:9898/semplest");
 			long start = System.currentTimeMillis();
 			ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
@@ -40,11 +40,11 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 			start = System.currentTimeMillis();
 			ArrayList<String> selectCateg = new ArrayList<String>();
 			selectCateg.add(res.get(1));
-			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "coffee machine", null, null, "http://www.wholelattelove.com/", new Integer[]{1,2,3});
+			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "peanut butter", null, null, "http://www.peanutbutter.com/", new Integer[]{50,50});
 			sec = (double) (System.currentTimeMillis() - start)/1000.0;
 			System.out.println("keywords took " + sec + " seconds");
-			for(int n=0; n<2; n++){
-				System.out.println("\n"+ (n+1)+" word keywords:");
+			for(int n=0; n<kw.size(); n++){
+				System.out.println("\n"+ (n+2)+" word keywords:");
 				for(String k: kw.get(n)){
 					System.out.print(k+", ");
 				}
@@ -54,7 +54,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
+			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
 			e.printStackTrace();
 		}
 	}

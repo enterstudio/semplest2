@@ -68,7 +68,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 		try
 		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient("http://VMJAVA1:9898/semplest");
 			
 			String accountID = "2188810777";
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
@@ -82,7 +82,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			GoogleBidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID); 
 			for (int i = 0; i < c.length; i++) 
 			{
-				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":" +  c[i].getFirstPageCpc() + ';' + c[i].getQualityScore()); 
+				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":"  + c[i].getQualityScore() + ":" + c[i].getFirstPageCpc());
 			}
 			//String[] keys = client.getAllAdGroupKeywords(accountID, adGroupID);
 			
