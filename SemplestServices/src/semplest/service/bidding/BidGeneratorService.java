@@ -13,7 +13,7 @@ public class BidGeneratorService implements ServiceInterface {
 	private static final Logger logger = Logger.getLogger(BidGeneratorService.class);
 
 	@Override
-	public String ServiceGet(String methodName, String jsonStr)
+	public String ServiceGet(String methodName, String jsonStr) throws Exception
 	{
 		try
 		{
@@ -25,11 +25,10 @@ public class BidGeneratorService implements ServiceInterface {
 		}
 		catch (Exception e)
 		{
-			logger.error(e);
+			logger.error(e.getMessage());
 			e.printStackTrace();
+			throw e;
 		}
-		
-		return "BidGeneratorService Error running " + methodName ;
 	}
 
 }

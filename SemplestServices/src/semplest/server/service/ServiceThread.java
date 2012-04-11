@@ -87,7 +87,7 @@ public class ServiceThread implements Runnable
 		}
 		else
 		{
-			errorMap.put("errorMessage", e.getStackTrace()[0].getClassName());
+			errorMap.put("errorMessage", e.getCause().getMessage());
 			errorMap.put("errorType", "Exception");
 		}
 		

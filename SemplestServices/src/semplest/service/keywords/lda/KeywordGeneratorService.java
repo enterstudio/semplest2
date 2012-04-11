@@ -11,7 +11,7 @@ public class KeywordGeneratorService implements ServiceInterface
 	private static final Logger logger = Logger.getLogger(KeywordGeneratorService.class);
 
 	@Override
-	public String ServiceGet(String methodName, String jsonStr)
+	public String ServiceGet(String methodName, String jsonStr) throws Exception
 	{
 		try
 		{
@@ -23,11 +23,10 @@ public class KeywordGeneratorService implements ServiceInterface
 		}
 		catch (Exception e)
 		{
-			logger.error(e);
+			logger.error("ServiceGet:" + e.getMessage());
 			e.printStackTrace();
+			throw e;	
 		}
-		
-		return "Keyword LDA Service Error running " + methodName ;
 	}
 
 }

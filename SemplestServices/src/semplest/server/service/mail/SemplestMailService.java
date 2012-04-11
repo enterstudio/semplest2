@@ -1,8 +1,11 @@
 package semplest.server.service.mail;
 
+import java.lang.reflect.Method;
+
 import org.apache.log4j.Logger;
 
 import semplest.server.service.ServiceInterface;
+
 
 public class SemplestMailService implements ServiceInterface
 {
@@ -11,8 +14,21 @@ public class SemplestMailService implements ServiceInterface
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+			logger.debug("Running Semplest Mail Service " + methodName + ":" + jsonStr);
+			SemplestMailServiceImpl service = new SemplestMailServiceImpl();
+			Class[] parameterTypes = new Class[]
+			{ String.class };
+			Method method = service.getClass().getMethod(methodName, parameterTypes);
+			return (String) method.invoke(service, jsonStr);
+		}
+		catch (Exception e)
+		{
+			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 
