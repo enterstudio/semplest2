@@ -4,11 +4,9 @@ package semplest.server.service.mail;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -17,7 +15,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
-import semplest.server.service.SEMplestService;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
 import com.google.gson.Gson;
@@ -49,8 +46,10 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		{
 			throw new Exception("Session is Null");
 		}
+		
 		MimeMessage msg = new MimeMessage(sessionObj.getSession());
 		msg.setRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(recipient) });
+		msg.setFrom(new InternetAddress(from));
 		msg.setSubject(subject);
 		// create and fill the text message part
 		MimeBodyPart mbp1 = new MimeBodyPart();
