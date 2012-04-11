@@ -28,11 +28,13 @@ import semplest.other.AdCenterCredentials;
 import semplest.other.KeywordEstimate;
 import semplest.other.Maybe;
 import semplest.other.Money;
+import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.SemplestError;
 import semplest.other.TimeServer;
-import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.msn.MsnAccountObject;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.Gson;
@@ -208,21 +210,26 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	
 	public String createAccount(String json) throws Exception
-	{
-		logger.debug("call createAccount(String[] json)" + json);
+	{	
+		logger.debug("call createAccount(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		String[] input = {data.get("name"),null};
-		MsnManagementIds mngId = createAccount(input);
-		//convert result to Json String
-		return gson.toJson(mngId);
-	}
+		MsnManagementIds ret = null;
+		try {
+			SemplestString in = new SemplestString();
+			in.setSemplestString(data.get("name"));
+			ret = createAccount(in);
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	} 
 	
 	@Override
-	public MsnManagementIds createAccount(String[] name) throws MsnCloudException
+	public MsnManagementIds createAccount(SemplestString name) throws MsnCloudException
 	{
-		Customer customer = aNew().adCenterCustomer().withCustomerName(name[0]).build();
-		User user = aNew().adCenterUser().withUserName(name[0]).build();
-		Account account = aNew().adCenterAccount().withAccountName(name[0]).build();
+		Customer customer = aNew().adCenterCustomer().withCustomerName(name.getSemplestString()).build();
+		User user = aNew().adCenterUser().withUserName(name.getSemplestString()).build();
+		Account account = aNew().adCenterAccount().withAccountName(name.getSemplestString()).build();
 
 		try
 		{
@@ -246,15 +253,29 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 	}
 
+
+	public String getAccountById(String json) throws Exception
+	{	
+		logger.debug("call getAccountById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		MsnAccountObject ret = null;
+		try {
+			ret = getAccountById(new Long(data.get("accountId")));
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	} 
+	
 	@Override
-	public Account getAccountById(Long accountId) throws MsnCloudException
+	public MsnAccountObject getAccountById(Long accountId) throws MsnCloudException
 	{
 		GetAccountResponse account;
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();
 			account = customerManagementService.getAccount(new GetAccountRequest(accountId));
-			return account.getAccount();
+			return new MsnAccountObject(account.getAccount());
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -273,6 +294,24 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	// Campaign Methods
 	// ==================================
+	
+	public String createCampaign(String json) throws Exception
+	{	
+		logger.debug("call createCampaign(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Long ret = null;
+		try {
+			ret = createCampaign(new Long(data.get("accountId")), 
+					data.get("campaignName"), 
+					Double.valueOf(data.get("dailyBudget")),  
+					Double.valueOf(data.get("monthlyBudget")),
+					CampaignStatus.fromString(data.get("CampaignStatus")));
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
 	public Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
 			throws MsnCloudException
@@ -283,8 +322,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			Campaign newCampaign = aNew().campaign().withName(campaignName).with(CampaignStatus)
 					.with(BudgetLimitType.MonthlyBudgetSpendUntilDepleted).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 			AddCampaignsResponse addCampaigns;
-			addCampaigns = campaignManagement.addCampaigns(new AddCampaignsRequest((long) accountId, new Campaign[]
-			{ newCampaign }));
+			Campaign[] campaign = new Campaign[1]; campaign[0] = newCampaign;
+			addCampaigns = campaignManagement.addCampaigns(new AddCampaignsRequest((long) accountId, campaign));
 			return addCampaigns.getCampaignIds()[0];
 		}
 		catch (AdApiFaultDetail e)
@@ -301,6 +340,19 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 	}
 
+	public String getCampaignById(String json) throws Exception
+	{	
+		logger.debug("call getCampaignById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Campaign ret = null;
+		try {
+			ret = getCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
 	public Campaign getCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
@@ -310,6 +362,19 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return campaignsById.getCampaigns()[0];
 	}
 
+	public String getCampaignsByAccountId(String json) throws Exception
+	{	
+		logger.debug("call getCampaignsByAccountId(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Campaign[] ret = null;
+		try {
+			ret = getCampaignsByAccountId(new Long(data.get("accountId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
 	public Campaign[] getCampaignsByAccountId(Long accountId) throws RemoteException
 	{
