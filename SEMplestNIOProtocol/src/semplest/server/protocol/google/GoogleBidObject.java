@@ -8,6 +8,8 @@ public class GoogleBidObject
 	private Long microBidAmount;
 	private String approvalStatus;
 	private String matchType;
+	private Long firstPageCpc;
+	private Integer qualityScore;
 	public Long getBidID()
 	{
 		return bidID;
@@ -47,6 +49,22 @@ public class GoogleBidObject
 	public void setMatchType(String matchType)
 	{
 		this.matchType = matchType;
+	}
+	public Long getFirstPageCpc()
+	{
+		return firstPageCpc;
+	}
+	public void setFirstPageCpc(Long firstPageCpc)
+	{
+		this.firstPageCpc = firstPageCpc;
+	}
+	public Integer getQualityScore()
+	{
+		return qualityScore;
+	}
+	public void setQualityScore(Integer qualityScore)
+	{
+		this.qualityScore = qualityScore;
 	}
 	
 }
