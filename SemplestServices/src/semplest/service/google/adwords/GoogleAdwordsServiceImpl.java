@@ -441,6 +441,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) criterion;
 				GoogleBidObject bidRes = new GoogleBidObject();
+				if (res.getQualityInfo() != null)
+				{
+					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
+				}
+				if (res.getFirstPageCpc() != null)
+				{
+					bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
+				}
 				bidRes.setBidID(res.getCriterion().getId());
 				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 				Keyword keyword = ((Keyword) criterion.getCriterion());
@@ -678,6 +686,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
 			GoogleBidObject bidRes = new GoogleBidObject();
+			if (res.getQualityInfo() != null)
+			{
+				bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
+			}
+			if (res.getFirstPageCpc() != null)
+			{
+				bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
+			}
 			bidRes.setBidID(res.getCriterion().getId());
 			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 			bidRes.setKeyword(keyword);
@@ -733,6 +749,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
 			Keyword keyword = ((Keyword) res.getCriterion());
 			GoogleBidObject bidRes = new GoogleBidObject();
+			if (res.getQualityInfo() != null)
+			{
+				bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
+			}
+			if (res.getFirstPageCpc() != null)
+			{
+				bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
+			}
 			bidRes.setBidID(res.getCriterion().getId());
 			bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 			bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
