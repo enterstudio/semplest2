@@ -399,7 +399,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Create selector.
 		Selector selector = new Selector();
 		selector.setFields(new String[]
-		{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc" });
+		{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc" });
 		selector.setOrdering(new OrderBy[]
 		{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
 		// Create predicates.
