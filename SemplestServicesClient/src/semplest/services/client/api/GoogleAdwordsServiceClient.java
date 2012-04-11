@@ -81,7 +81,8 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			//String[] keys = client.getAllAdGroupKeywords(accountID, adGroupID);
 			GoogleBidObject[] bids = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
 			
-			GoogleBidSimulatorObject[] bidObj = client.getBidLandscapeForKeyword(accountID, adGroupID, bids[0].getBidID());
+			//GoogleBidSimulatorObject[] bidObj = client.getBidLandscapeForKeyword(accountID, adGroupID, bids[0].getBidID());
+			GoogleBidSimulatorObject[] bidObj = client.getBidLandscapeForAdgroup(accountID, adGroupID);
 			if (bidObj!=null && bidObj.length>0)
 			{
 				System.out.println(bidObj[0].getBidPoint(bids[0].getBidID()).getCost());
@@ -534,9 +535,15 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		
 	}
 	@Override
-	public void getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	public GoogleBidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getBidLandscapeForAdgroup", json,timeoutMS);
+		return gson.fromJson(returnData, GoogleBidSimulatorObject[].class);
 		
 	}
 
