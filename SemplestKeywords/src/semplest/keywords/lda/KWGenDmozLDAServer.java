@@ -68,8 +68,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		if(categories==null || categories.size()==0){
 			throw new Exception("No categories provided");
 		}
-		if(nGrams==null || nGrams.length==0){
-			throw new Exception("No nGrams provided");
+		if(nGrams==null || nGrams.length!=2){
+			throw new Exception("Wrong number nGrams provided");
 		} 
 		
 		//Add all data from inputs
@@ -93,7 +93,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		String[] datacount = data1.split("\\s");
 		if(datacount.length<30) throw new Exception("Not enough data provided");
 		stemdata1 = this.stemvString( data1, data.dict );
-		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 50, nGrams);
+		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 5000, nGrams);
 		return keywords;
 	}
 	
@@ -102,6 +102,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
+		ArrayList<ArrayList<String>> keywordsfull = new ArrayList<ArrayList<String>>();
 		ArrayList<ArrayList<String>> keywords = new ArrayList<ArrayList<String>>();
 		Set<String> labels = data.TrainingData.keySet();
 		String cataux;
@@ -122,7 +123,50 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    	}
 	    }
 		//Train LDA for categories selected and return sorted keywords
-		
+	    //and obtain word probability
+	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
+	    //Rank monograms by probability
+	    ValueComparator bvc =  new ValueComparator(wordMap);
+		TreeMap<String,Double> wordM = new TreeMap(bvc);
+		wordM.putAll(wordMap);
+	    Set<String> keyS = wordM.keySet();
+	    logger.info("wordMap Size: "+ wordM.size());
+	    
+	    logger.info("Generating Kewyords");
+	    
+	    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
+	    keywordsfull= this.getKwMultiCombined(optCateg, nGrams, wordMap, 5);
+	    int kwCount = 0;
+	    int iter = 0;
+	    ArrayList<String> finalkwList;
+	    for(ArrayList<String> kwList: keywordsfull){
+	    	if(iter<2){
+	    		finalkwList = kwList;
+	    	}else{
+	    		finalkwList = new ArrayList<String>();
+	    	}
+	    	int remain = numkw - kwCount;
+	    	int num2Gen=0;
+	    	//fourgrams and fivegrams 
+		    if(iter==2)
+		   		num2Gen = remain/2;
+		    if(iter==3) num2Gen = remain;
+		    int j=0;
+		    for(String keyw: kwList){
+		    		if(j>= num2Gen) break;
+		    		finalkwList.add(keyw);
+		    		j++;
+		    }
+		    
+		    kwCount = kwCount+finalkwList.size();
+	    	iter++;
+	    	keywords.add(finalkwList);
+	    }
+		return keywords;
+	}
+	
+	private HashMap<String, Double> createWordMap(String data1, ArrayList<String> trainLines, String searchTerm) throws Exception{
+		HashMap<String, Double> wordMap = new HashMap<String, Double>();
 		//Instanciate topic model
 		MalletTopic lda = new MalletTopic();
 		double alpha=0.01;
@@ -135,42 +179,102 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		InstanceList inferInst;
 		double[][] categInd;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
-	    HashMap<String, Double> wordMap = new HashMap<String, Double>();
-	    
+			    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
 	    String qsStem = this.stemvString( searchTerm, data.dict ); 
 	    if(searchTerm!=null){
-		    String[] terms = qsStem.split("\\s");
+	    	String[] terms = qsStem.split("\\s");
 		    for(int n=0; n<terms.length; n++){
 		    	wordMap.put(terms[n], new Double(1.0));
 		    }
 	    }
-	    
-	    ValueComparator bvc =  new ValueComparator(wordMap);
-		TreeMap<String,Double> wordM = new TreeMap(bvc);
-		wordM.putAll(wordMap);
-	    Set<String> keyS = wordM.keySet();
-	    logger.info("wordMap Size: "+ wordM.size());
-	    int i=0;
-	    for(int n=0;n<nGrams.length;n++){
-	    	ArrayList<String> kwds=new ArrayList<String>();
-	    	if(nGrams[n] == 1){
-			    for(String keys2 : keyS){
-			    	if(i>=numkw)break;
-			    	//logger.debug(" "+keys2+",");
-			    	kwds.add(keys2);
-			    	i++;
-			    }
-		    }else
-		    	kwds = getKwMulti(optCateg,numkw,wordMap,nGrams[n]);
-	    	keywords.add(kwds);
-	    }
-	    
-		return keywords;
+		return wordMap;
 	}
-
-	public ArrayList<String> getKwMulti(ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
+	
+	private ArrayList<ArrayList<String>> getKwMultiCombined(ArrayList<String> optCateg, Integer[] nGrams, HashMap<String, Double> wordMap, int nGramsmax) throws Exception{
+		
+		//Returns 4 grams combining 2 and 3 grams
+		ArrayList<String> bigrams = getKwMulti(optCateg, nGrams[0], wordMap, 2);
+		ArrayList<String> trigrams = getKwMulti(optCateg, nGrams[1], wordMap, 3);
+		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		results.add(bigrams);
+		results.add(trigrams);
+		
+		HashMap<String,ArrayList<String>> biGMap= new HashMap<String,ArrayList<String>>();
+		// Create Hashmap of biwords;
+		for(String base: bigrams){
+			String[] words = base.split("\\s");
+			ArrayList<String> aux;
+			for(int i=0; i<words.length; i++){
+				if(biGMap.containsKey(words[i])){
+					aux = biGMap.get(words[i]);
+					aux.add(base);
+				}else{
+					aux = new ArrayList<String>();
+					aux.add(base);
+					biGMap.put(words[i], aux);
+				}
+			}
+		}
+		
+		
+		logger.info("Creating nGrams bigger than 3...");
+		//Extend keyword list
+		if(nGramsmax>=4){
+			for(int m = 4; m<=nGramsmax; m++){
+				ArrayList<String> tempArray = new ArrayList<String>();
+				HashMap<String,Double> temp = new HashMap<String,Double>();
+				ValueComparator bvc =  new ValueComparator(temp);
+				TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
+				ArrayList<String> baseList = results.get(m-3);
+				for(String base: baseList){
+					String[] words = base.split("\\s");
+					ArrayList<String> aux;
+					for(int i=0; i<words.length; i++){
+						if(biGMap.containsKey(words[i])){
+							aux=biGMap.get(words[i]);
+							for(String gr: aux){
+								boolean flag=false;
+								String[] prts = gr.split("\\s");
+								for(int n=0;n<prts.length;n++){
+									if(!prts[n].equals(words[i]) && base.contains(prts[n])){
+										flag=true;
+										break;
+									}
+								}
+								if(!flag){
+									String kwnew = base.replace(words[i],gr);
+									temp.put(kwnew,this.calculateKWProb(kwnew, wordMap));
+								}
+							}
+						}
+					}
+				}
+				sorted_map.putAll(temp);
+				Set<String> keySet = sorted_map.keySet();
+				for(String key: keySet){
+					tempArray.add(key);
+				}
+				results.add(tempArray);
+			}
+		}
+		return results;
+	}
+	private Double calculateKWProb(String keyword, HashMap<String,Double> wordMap){
+	  String[] kwPart = keyword.split("\\s");
+	  double wProb = 1;
+	  for(int i=0; i< kwPart.length;i++){
+		  if(wordMap.containsKey(kwPart[i])){
+			  wProb = wProb*wordMap.get(kwPart[i]);
+		  } else { 
+			  wProb = 0; break;
+		  }
+	  }
+	  return new Double(wProb);
+	}
+	
+	private ArrayList<String> getKwMulti(ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
 		//Generates keywords with nGrams words
 
 		MultiWordCollect[] nGramsA=data.biGrams;
@@ -394,7 +498,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				}
 			}else	
 				url = userInfo1;
-			
+			/*
 			logger.info("Please, introduce path to file containing user info (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
@@ -414,29 +518,29 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					adds[0]=adds[0]+" "+word;
 				}
 			}
+			*/
 			
 			
-			
-			Integer[] nGrams = {1,2,3};
+			Integer[] nGrams = {50,50};
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, adds, url,nGrams);
 			
-			for(int n=0; n<nGrams.length; n++){
-				System.out.println("\n"+ (n+1)+" word keywords:");
+			for(int n=0; n<4; n++){
+				System.out.println("\n"+ (n+2)+" word keywords:");
 				for(String k: kw.get(n)){
 					k=k.replaceAll("wed", "wedding");
 					System.out.print(k+", ");
 				}
 			}
-			/*
+			
 			PrintStream stdout = System.out;
-			//System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/Test1/keywords.txt")));
-			for(int n=1; n<nGrams.length; n++){
+			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
+			for(int n=0; n<4; n++){
+				System.out.println("\n"+ (n+2)+" word keywords:");
 				for(String k: kw.get(n)){
-					k=k.replaceAll("wed", "wedding");
-					logger.info(k);
+					System.out.println(k);
 				}
 			}
-			System.setOut(stdout);*/
+			System.setOut(stdout);
 			}catch(Exception e){
 				logger.error(e);
 			}
