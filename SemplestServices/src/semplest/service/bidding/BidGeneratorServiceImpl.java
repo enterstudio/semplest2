@@ -141,28 +141,34 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //		Long campaignID = new Long(2188810777L);
 //		Integer adGroupID = new Integer(0);
 		
-		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
-		ArrayList<String> keywords = new ArrayList<String>();
+//		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
+//		ArrayList<String> keywords = new ArrayList<String>();
+//		
+//		for (String line : lines){
+//			keywords.add(line.replaceAll("\n",""));
+//		}
 		
-		for (String line : lines){
-			keywords.add(line.replaceAll("\n",""));
-		}
-//		keywords.add("wedding venues");
-//		keywords.add("ice");
-//		keywords.add("wedding florist");
-//		keywords.add("florist supplies");
+////		keywords.add("wedding venues");
+////		keywords.add("ice");
+////		keywords.add("wedding florist");
+////		keywords.add("florist supplies");
+		
+		ArrayList<Double> bidLevels; 
+
 		
 
 		try {
 			
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+			GoogleTrafficEstimatorObject o;
+
 			
 			GoogleBidObject bidObject;
 			Long maxCPC;
 
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
-			System.out.println(campaignID);
+//			System.out.println(campaignID);
 			
 			Long adGroupID = 3074331030L;
 //			maxCPC = 100000L; // bid in microBidAmount
@@ -180,7 +186,48 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //			}
 			
 			GoogleBidObject[] bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
-			System.out.println(bidObjects[1900].getKeyword());
+//			System.out.println(bidObjects[1000].getKeyword());
+			
+			for(int i=0; i<bidObjects.length; i++){
+//			for(int i=10; i<12; i++){
+				bidObject = bidObjects[i];
+//				client.getBidLandscapeForKeyword(accountID, adGroupID, bidObjects[i].getBidID());
+//				System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
+				if(bidObject.getFirstPageCpc()<8000000L) {
+					System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
+					try {
+						bidObject=client.setBidForKeyWord(accountID, bidObject.getBidID(), adGroupID,bidObject.getFirstPageCpc()+250000L );
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					Thread.sleep(500);
+				}
+//				System.out.println(bidObject.getMicroBidAmount());
+				
+				
+//				bidLevels = new ArrayList<Double>();
+//				for (double b = bidObject.getFirstPageCpc()*1e-6+0.05; b<bidObject.getFirstPageCpc()*1e-6+0.5; b=b+0.5){
+////					bidLevels.add(new Double(b/bidObject.getQualityScore()));
+//					bidLevels.add(new Double(b));
+//				}
+//				
+//				o = client.getTrafficEstimationForOneKeyword(bidObject.getKeyword(), KeywordMatchType.EXACT, bidLevels);
+//				Double[] bids = o.getBidList();
+//				Arrays.sort(bids);
+//
+//				logger.info(bidObject.getKeyword());
+//				for (int j = 0; j < bids.length; j++) {
+//					logger.info(bids[j]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[j])
+//							+ " Avg CPC="+ o.getAveCPC(bids[j]) + " Avg Pos=" + o.getAvePosition(bids[j]));
+//				}
+				
+			}
+			
+//			System.out.println(bidObjects.length);
+//			bidObject = bidObjects[0];
+//			System.out.println(bidObject.getKeyword()+": "+bidObject.getFirstPageCpc() + ": " + bidObject.getQualityScore());
 			
 			
 //			maxCPC = 200000L;
@@ -189,8 +236,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 			
 			
-			String [] words = client.getAllAdGroupKeywords(accountID, adGroupID);
-			System.out.println(words.length);
+//			String [] words = client.getAllAdGroupKeywords(accountID, adGroupID);
+//			System.out.println(words.length);
 			
 //			client.UpdateCampaignName(accountID, campaignID, "Test 1");
 //			campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
