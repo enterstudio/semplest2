@@ -3,6 +3,7 @@ package semplest.server.service.mail;
 
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -16,16 +17,39 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.service.SEMplestService;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
+
+import com.google.gson.Gson;
 
 public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 {
-	private Session session = null;
+	
 	private static final Logger logger = Logger.getLogger(SemplestMailServiceImpl.class);
+	private static Gson gson = new Gson();
+	private static MailSessionObject sessionObj = null;
+	
+	
+	public String SendEmail(String json) throws Exception
+	{
+		logger.debug("call  SendEmail(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String subject = data.get("subject");
+		String from = data.get("from");
+		String recipient = data.get("recipient");
+		String msgTxt = data.get("msgTxt");
+		Boolean res = SendEmail(subject, from, recipient, msgTxt);
+		return gson.toJson(res);
+	}
 	@Override
 	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt) throws Exception
 	{
-		MimeMessage msg = new MimeMessage(session);
+		
+		if (sessionObj.getSession() == null)
+		{
+			throw new Exception("Session is Null");
+		}
+		MimeMessage msg = new MimeMessage(sessionObj.getSession());
 		msg.setRecipients(Message.RecipientType.TO, new InternetAddress[] { new InternetAddress(recipient) });
 		msg.setSubject(subject);
 		// create and fill the text message part
@@ -37,7 +61,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		msg.setContent(mp);
 		// set the Date: header
 		msg.setSentDate(new Date());
-		Transport transport = session.getTransport("smtp");
+		Transport transport = sessionObj.getSession().getTransport("smtp");
 		try
 		{
 			transport.connect();
@@ -61,9 +85,9 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		Properties props = new Properties();
-		props.put("mail.smtp.host", input);
-		session = Session.getInstance(props, null);
-		
+		sessionObj = new MailSessionObject();
+		Thread t = new Thread(sessionObj);
+		t.start();
+		logger.info("Started Session thread...");
 	}
 }
