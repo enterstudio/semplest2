@@ -11,6 +11,8 @@ import semplest.other.Maybe;
 import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
+import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.msn.MsnAccountObject;
 
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
@@ -46,9 +48,9 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	 * @return Msn keeps three distinct account "manager" type objects: Account, User and Customer. Save the ids
 	 *         returned here since obtaining them otherwise is difficult.
 	 */
-	public abstract MsnManagementIds createAccount(String[] name) throws Exception;
+	public abstract MsnManagementIds createAccount(SemplestString name) throws Exception;  
 	
-	public abstract Account getAccountById(Long accountId) throws Exception;
+	public abstract MsnAccountObject getAccountById(Long accountId) throws Exception;
 	
 	// ==================================
 	// Campaign Methods
