@@ -58,6 +58,9 @@
   <property name="semplest.keywords.dir" value="${basedir}/../SemplestKeywords" />
   <property name="semplest.keywords.lib" value="${basedir}/../SemplestKeywords/lib" />
 	
+  <property name="semplest.bidding.dir" value="${basedir}/../SEMplestBidding" />
+  <property name="semplest.bidding.lib" value="${basedir}/../SEMplestBidding/lib" />	
+	
   <property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />
   <property name="semplest.clientapi.lib" value="${basedir}/../SemplestServicesClient/lib" />
 
@@ -175,6 +178,28 @@
 			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
 		</jar>  	
+		
+		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestServices/lib -->
+		<echo message="Creating Jar for SemplestBidding..."/>
+			<copy todir="${dist}/lib" filtering="off">
+				<flattenmapper />
+				<fileset dir="${semplest.Bidding.lib}" includes="**/*.jar" />
+			</copy>
+			<path id="api.path">
+				<pathelement location="${classes}"/>
+					<fileset dir="${semplest.Bidding.lib}" includes="**/*.jar"/>
+				</path>
+				<mkdir dir="${semplest.Bidding.dir}/temp"/>
+			<javac srcdir="${semplest.Bidding.dir}" destdir="${semplest.Bidding.dir}/temp" classpathref="api.path"
+					target="1.6"
+					source="1.6"
+					debug="${java.debug}"   	
+					includes="**/*.java" >
+					<exclude name="**/*.svn"/>
+			</javac>
+			<jar destfile="${dist}/lib/SemplestServicesBidding.jar" basedir="${semplest.Bidding.dir}/temp">
+					 
+			</jar>  
 	  	
 	  	<!-- If it's a Keyword service, then create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 	  	<if>
