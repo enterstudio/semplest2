@@ -19,6 +19,7 @@ public class ProjectProperties {
 	public static String dfile;
 	public static String baseMultiWPath;
 	public static String[] nGramsSubC; 
+	public static String nGramsC; 
 	//for CatUtils
 	public static String[] validCat; 
 	//for DmozLucene
@@ -48,6 +49,7 @@ public class ProjectProperties {
 			dfile = properties.getProperty("dfile"); 
 			baseMultiWPath = properties.getProperty("baseMultiWPath");
 			nGramsSubC = loadStringArray("nGramsSubC");
+			nGramsC = properties.getProperty("nGramsC");; 
 			validCat = loadStringArray("validcat");
 			lucenedfile = properties.getProperty("lucenedfile");
 			smallhCounts = properties.getProperty("smallhCounts");

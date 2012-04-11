@@ -17,11 +17,17 @@ public class test {
 	 * @throws ParserException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
-		String pattern = "wed service";
-		pattern = pattern.replace("wed", "wedding");
-		System.out.println(pattern);
-		
-		
+		String a = "wedding      flowers";
+		String b = " ";
+		System.out.println(a.contains(""));
+		System.out.println(a.replaceAll("\\s+", " "));
 	}
+	private static String stemvString( String raws){
+		//Returns the stemmed version of a word
+	    String os = "";
+	    for( String w: raws.split("\\s+"))
+	      os = os + dictUtils.getStemWord( w ) + " ";
+	    return os;
+	  }
 
 }

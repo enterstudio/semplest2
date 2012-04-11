@@ -51,7 +51,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			logger.debug(qsStem);
 			res = data.dl.search(qsStem,numresults);
 			for(int i=0; i<res.length; i++){
-				categories = res[i].replaceAll("\\s", "");
+				categories = res[i].replaceAll("\\s+", "");
 				if(catUtils.validcat(categories))
 						optInitial.add(categories);
 						//logger.debug(categories);
@@ -90,7 +90,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		}
 		data1 = data1+" "+companyName+" "+searchTerm+" "+description;
 		String stemdata1 = new String();
-		String[] datacount = data1.split("\\s");
+		String[] datacount = data1.split("\\s+");
 		if(datacount.length<30) throw new Exception("Not enough data provided");
 		stemdata1 = this.stemvString( data1, data.dict );
 		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 5000, nGrams);
@@ -162,6 +162,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    	iter++;
 	    	keywords.add(finalkwList);
 	    }
+		PrintStream stdout = System.out;
+
 		return keywords;
 	}
 	
@@ -174,7 +176,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		int numiter=100;
 		logger.info("Number of categories" + trainLines.size());
 		lda.CreateInstances(trainLines);
-		lda.setNumTopics(5);
+		lda.setNumTopics(10);
 		lda.LDAcreateModel(alpha, beta, numiter);
 		InstanceList inferInst;
 		double[][] categInd;
@@ -184,7 +186,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
 	    String qsStem = this.stemvString( searchTerm, data.dict ); 
 	    if(searchTerm!=null){
-	    	String[] terms = qsStem.split("\\s");
+	    	String[] terms = qsStem.split("\\s+");
 		    for(int n=0; n<terms.length; n++){
 		    	wordMap.put(terms[n], new Double(1.0));
 		    }
@@ -204,7 +206,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		HashMap<String,ArrayList<String>> biGMap= new HashMap<String,ArrayList<String>>();
 		// Create Hashmap of biwords;
 		for(String base: bigrams){
-			String[] words = base.split("\\s");
+			String[] words = base.split("\\s+");
 			ArrayList<String> aux;
 			for(int i=0; i<words.length; i++){
 				if(biGMap.containsKey(words[i])){
@@ -229,14 +231,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
 				ArrayList<String> baseList = results.get(m-3);
 				for(String base: baseList){
-					String[] words = base.split("\\s");
+					String[] words = base.split("\\s+");
 					ArrayList<String> aux;
 					for(int i=0; i<words.length; i++){
 						if(biGMap.containsKey(words[i])){
 							aux=biGMap.get(words[i]);
 							for(String gr: aux){
 								boolean flag=false;
-								String[] prts = gr.split("\\s");
+								String[] prts = gr.split("\\s+");
 								for(int n=0;n<prts.length;n++){
 									if(!prts[n].equals(words[i]) && base.contains(prts[n])){
 										flag=true;
@@ -245,6 +247,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 								}
 								if(!flag){
 									String kwnew = base.replace(words[i],gr);
+									kwnew=kwnew.replaceAll("\\s+", " ");
 									temp.put(kwnew,this.calculateKWProb(kwnew, wordMap));
 								}
 							}
@@ -262,13 +265,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		return results;
 	}
 	private Double calculateKWProb(String keyword, HashMap<String,Double> wordMap){
-	  String[] kwPart = keyword.split("\\s");
+	  String[] kwPart = keyword.split("\\s+");
 	  double wProb = 1;
 	  for(int i=0; i< kwPart.length;i++){
 		  if(wordMap.containsKey(kwPart[i])){
 			  wProb = wProb*wordMap.get(kwPart[i]);
 		  } else { 
-			  wProb = 0; break;
+				  wProb = 0; break;
 		  }
 	  }
 	  return new Double(wProb);
@@ -442,7 +445,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		thread.start();
 	}
 	
-	public String stemvString( String raws, dictUtils dict){
+	private String stemvString( String raws, dictUtils dict){
 		//Returns the stemmed version of a word
 	    String os = "";
 	    for( String w: raws.split("\\s+"))
@@ -498,7 +501,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				}
 			}else	
 				url = userInfo1;
-			/*
+			
 			logger.info("Please, introduce path to file containing user info (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
 			userInfo1 = scanFile.nextLine(); 
@@ -518,7 +521,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 					adds[0]=adds[0]+" "+word;
 				}
 			}
-			*/
+			
 			
 			
 			Integer[] nGrams = {50,50};
