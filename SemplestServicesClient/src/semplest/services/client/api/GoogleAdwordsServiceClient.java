@@ -31,7 +31,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
 	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
-	private String timeoutMS = "10000";
+	private String timeoutMS = "20000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceClient.class);
@@ -74,13 +74,28 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 
 
-			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
+			Long campaignID = 77290470L; //new Long(campaignsByAccountId.get(0).get("Id"));
 			System.out.println(campaignID);
-			            
+			
+			Long adGroupID= 3074331030L;
+			//String[] keys = client.getAllAdGroupKeywords(accountID, adGroupID);
+			GoogleBidObject[] bids = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
+			
+			GoogleBidSimulatorObject[] bidObj = client.getBidLandscapeForKeyword(accountID, adGroupID, bids[0].getBidID());
+			if (bidObj!=null && bidObj.length>0)
+			{
+				System.out.println(bidObj[0].getBidPoint(bids[0].getBidID()).getCost());
+			}
+			else
+			{
+				System.out.println("no landscape for " + bids[0].getKeyword());
+			}
+					
 
 			            
-			GoogleAdGroupObject[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
-			System.out.println(adGroups[0].getAdGroupID());
+			//GoogleAdGroupObject[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
+			//System.out.println(adGroups[0].getAdGroupID());
+			
 			
 			/*
 			
