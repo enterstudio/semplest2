@@ -1,0 +1,125 @@
+MSN service testing LOG
+==========================================
+
+Name = acc_nan
+accountId = 1595249
+
+campaignName = msn_test_nan
+campaignId = 130129414
+
+campaignName = msn_test_nan_2
+campaignId = 130129426
+
+==========================================
+
+
+createAccount  ###
+------------------------------------------
+* Created account "acc_nan"
+createAccount: accountId = 1595249; customerId = 13061731; userId = 1667566
+
+
+getAccountById  ###
+------------------------------------------
+getAccountById: Name = acc_nan; ParentCustomerId = 13061731; PrimaryUserId = 656014
+
+
+createCampaign ###
+------------------------------------------
+createCampaign: campaignId = 130129414
+createCampaign: campaignId = 130129426
+
+	
+getCampaignById  ###
+------------------------------------------
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+
+	
+getCampaignsByAccountId  ###
+------------------------------------------
+getCampaignsByAccountId: numOfCampaigns = 1
+0: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+//Test for multipul campaigns
+getCampaignsByAccountId: numOfCampaigns = 2
+0: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+
+	
+pauseCampaignById
+	
+pauseCampaignsByAccountId
+
+resumeCampaignById
+	
+deleteCampaignById
+	
+updateCampaignBudget
+	
+setCampaignStateTargets
+	
+deleteCampaignTargets
+
+getCampaignTargets
+	
+createAdGroup
+	
+getAdGroupsByCampaignId
+	
+getAdGroupById
+	
+deleteAdGroupById
+	
+setAdGroupStateTargets
+	
+setAdGroupCityTargets
+	
+setAdGroupMetroAreaTargets
+	
+deleteAdGroupTargets
+	
+getAdGroupTargets
+	
+createAd
+	
+getAdById
+	
+getAdsByAdGroupId
+	
+updateAdById
+	
+pauseAdById
+	
+resumeAdById
+	
+deleteAdById
+	
+createKeyword
+	
+createKeywords
+	
+getKeywordById
+	
+getKeywordByAdGroupId
+	
+updateKeywordBidById
+	
+updateKeywordBidsByIds
+	
+pauseKeywordById
+	
+deleteKeywordById
+	
+deleteKeywordsById
+	
+getKeywordEstimateByBids
+	
+getKeywordEstimateByBid
+
+getKeywordEstimateByBids
+	
+getReportData
+	
+requestCampaignReport
+	
+requestKeywordReport
+
