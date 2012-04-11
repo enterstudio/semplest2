@@ -73,12 +73,20 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			String accountID = "2188810777";
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 
+			
 
 			Long campaignID = 77290470L; //new Long(campaignsByAccountId.get(0).get("Id"));
 			System.out.println(campaignID);
 			
 			Long adGroupID= 3074331030L;
+			GoogleBidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID); 
+			for (int i = 0; i < c.length; i++) 
+			{
+				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":" +  c[i].getFirstPageCpc() + ';' + c[i].getQualityScore()); 
+			}
 			//String[] keys = client.getAllAdGroupKeywords(accountID, adGroupID);
+			
+			/*
 			GoogleBidObject[] bids = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
 			
 			//GoogleBidSimulatorObject[] bidObj = client.getBidLandscapeForKeyword(accountID, adGroupID, bids[0].getBidID());
@@ -92,7 +100,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 				System.out.println("no landscape for " + bids[0].getKeyword());
 			}
 					
-
+			*/
 			            
 			//GoogleAdGroupObject[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
 			//System.out.println(adGroups[0].getAdGroupID());
