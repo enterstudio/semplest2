@@ -11,6 +11,7 @@ import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
+import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 
@@ -27,7 +28,7 @@ public class TestMSN
 	private MsnAdcenterServiceInterface msnCloudService;
 	private Long msnCloudAccountId;
 	private Long msnCustomerId;
-	private Account account;
+	private MsnAccountObject account;
 	private Campaign[] campaigns;
 	private List<AdGroup> adGroups;
 	private Set<Keyword> keywords = new HashSet<Keyword>();
