@@ -16,6 +16,8 @@ import semplest.other.Maybe;
 import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
+import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 
 import com.google.gson.Gson;
@@ -37,7 +39,8 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
 	
@@ -49,8 +52,30 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		{
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
-			AdGroup[] res = test.getAdGroupsByCampaignId(800609L, 50346956L);
-			System.out.println(res[0].getName());
+								
+			/*
+			//AdGroup[] res = test.getAdGroupsByCampaignId(800609L, 50346956L);	
+			
+			//createAccount
+			SemplestString in = new SemplestString();
+			in.setSemplestString("acc_nan");
+			MsnManagementIds ret = test.createAccount(in);			
+			
+			//getAccountById
+			MsnAccountObject ret = test.getAccountById(new Long(1595249));
+				
+			//createCampaign
+			CampaignStatus cpst = null;
+			Long ret = test.createCampaign(new Long(1595249), "msn_test_nan", 0.01, 5.00, cpst.Paused);
+			
+			//getCampaignById
+			Campaign ret = test.getCampaignById(new Long(1595249), new Long(130129414));
+			
+			//getCampaignsByAccountId
+			Campaign[] ret = test.getCampaignsByAccountId(new Long(1595249));
+			*/
+
+			
 		}
 		catch (Exception e)
 		{
@@ -100,32 +125,71 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	
 
 	@Override
-	public Account getAccountById(Long accountId) throws Exception
+	public MsnAccountObject getAccountById(Long accountId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountById", json, null);
+		MsnAccountObject account = gson.fromJson(returnData, MsnAccountObject.class);
+		logger.debug("getAccountById: Name = " + account.getName()
+				+ "; ParentCustomerId = " + account.getParentCustomerId()
+				+ "; PrimaryUserId = " + account.getPrimaryUserId());
+		return account;
 	}
 
 	@Override
 	public Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignName", campaignName);
+		jsonHash.put("dailyBudget", Double.toString(dailyBudget));
+		jsonHash.put("monthlyBudget", Double.toString(monthlyBudget));
+		jsonHash.put("CampaignStatus", CampaignStatus.toString());
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createCampaign", json, null);
+		Long campaignId = gson.fromJson(returnData, Long.class);		
+		logger.debug("createCampaign: campaignId = " + campaignId.toString());		
+		return campaignId;
 	}
 
 	@Override
 	public Campaign getCampaignById(Long accountId, Long campaignId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignById", json, null);
+		Campaign campaign = gson.fromJson(returnData, Campaign.class);		
+		logger.debug("getCampaignById: DailyBudget = " + campaign.getDailyBudget().toString()
+				+ "; MonthlyBudget = " + campaign.getMonthlyBudget().toString()
+				+ "; CampaignStatus = " + campaign.getStatus().toString());		
+		return campaign;
 	}
 
 	@Override
 	public Campaign[] getCampaignsByAccountId(Long accountId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignsByAccountId", json, null);
+		Campaign[] campaigns = gson.fromJson(returnData, Campaign[].class);	
+		logger.debug("getCampaignsByAccountId: numOfCampaigns = " + campaigns.length);
+		for (int i = 0; i < campaigns.length; i++)
+		{
+			logger.debug(i + ": DailyBudget = " + campaigns[i].getDailyBudget().toString()
+					+ "; MonthlyBudget = " + campaigns[i].getMonthlyBudget().toString()
+					+ "; CampaignStatus = " + campaigns[i].getStatus().toString());		
+		}		
+		return campaigns;
 	}
 
 	@Override
@@ -203,7 +267,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		AdGroup[] adgroups = gson.fromJson(returnData, AdGroup[].class);
 		for (int i = 0; i < adgroups.length; i++)
 		{
-			logger.debug("Name = " + adgroups[i].getName());
+			logger.debug("getAdGroupsByCampaignId: Name = " + adgroups[i].getName());
 		}
 		return adgroups;
 	}
@@ -394,16 +458,16 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public MsnManagementIds createAccount(String[] name) throws Exception
+	public MsnManagementIds createAccount(SemplestString name) throws Exception
 	{
 		//Only name[0] is a valid parameter for the actual method!
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("name", name[0]);
+		jsonHash.put("name", name.getSemplestString());
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAccount", json, null);
 		MsnManagementIds mngId = gson.fromJson(returnData, MsnManagementIds.class);
-		logger.debug("accountId = " + mngId.getAccountId() 
+		logger.debug("createAccount: accountId = " + mngId.getAccountId() 
 				+ "; customerId = " + mngId.getCustomerId()
 				+ "; userId = " + mngId.getUserId());
 
