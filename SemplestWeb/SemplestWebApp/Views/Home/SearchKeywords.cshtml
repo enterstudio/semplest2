@@ -30,6 +30,10 @@
     </h1>
 </div>
 
+<span unselectable="on" class="k-select"><span unselectable="on" class="k-icon k-icon-clock">
+    select</span>
+</span>
+
 <div id="exampleWrap">
     <div id="example" class="k-content">
         @using (Html.BeginForm())
@@ -42,17 +46,23 @@
                 <div id="cap" class="black-cap">
                 </div>
                 <div id ="product" style="background-color: #f2f2f2">
-                    <h3>Product</h3> 
-@*                    <input type="text" id="Product" name="Product" class="k-textbox" />
-*@                  @Html.TextBoxFor(m => m.Product, new { style = "width:250px" })
+                    <h3>Product Promotion</h3> 
+                    @Html.TextBoxFor(m => m.Product, new { style = "width:250px" })
                     @Html.ValidationMessageFor(m => m.Product,null, new { @class = "error" })
-@*                    @Html.ValidationMessageFor(m => m.Product)
-*@                    <br />
-                    <h3>Landing Page</h3> 
-@*                    <input type="text" id="LandingPage" name="LandingPage" class="k-textbox" />
-*@                    
-                    @Html.TextBoxFor(m => m.LandingPage, new { style = "width:250px" })
                     <br />
+                    <h3>Landing Page</h3> 
+                    @Html.TextBoxFor(m => m.LandingPage, new { style = "width:250px" })
+                    @Html.ValidationMessageFor(m => m.LandingPage,null, new { @class = "error" })
+                    <br />
+                    <h3>Description</h3> 
+                    @Html.TextBoxFor(m => m.Description, new { style = "width:250px" })
+                    @Html.ValidationMessageFor(m => m.Description,null, new { @class = "error" })
+
+                    <br />
+                    <h3>Ad Copy</h3> 
+                    @Html.TextBoxFor(m => m.AdCopy, new { style = "width:250px" })
+                    @Html.ValidationMessageFor(m => m.AdCopy,null, new { @class = "error" })
+
                     <br />
                     <br />
                     <button type="submit" class="k-button" id="getCategories" name="Command" value="GetCategories">Get Categories</button>
@@ -68,7 +78,7 @@
                          //@Html.ListBoxFor(t => t.SelectedCategory, new SelectList(Model.AllCategories, "Name", "Name"))
                          //@Html.ListBox("CategoryList", new MultiSelectList(Model.AllCategories.ToList(), "Name", "Name"));
 
-                         @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:150px;width:400px"});
+                         @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:400px"});
                          //@Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple" });
                          //@Html.ListBoxFor(m => m.ItemIds, (IEnumerable<SelectListItem>)(new[] { new SelectListItem() { Value = "1", Text = "text1" }, new SelectListItem() { Value = "2", Text = "text2" } }));
                          //@Html.ListBoxFor(m => m.ItemIds, Model.CategoriesList, new { Multiple = "multiple" });
@@ -87,7 +97,7 @@
                     @if (Model != null)
                     {
 
-                        @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllKeywords, "Name", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:150px;width:400px" });
+                        @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllKeywords, "Name", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:400px" });
                     }
 
                 </div>
@@ -97,6 +107,26 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
+                var LOADING = "k-loading";
+                var arrow = $('<span unselectable="on" class="k-select"><span unselectable="on" class="k-icon k-icon-clock">select</span></span>')
+                function hideBusy() {
+                    var that = this;
+                    clearTimeout(that._busy);
+                    that._arrow.removeClass(LOADING);
+
+                function _showBusy() {
+                    var that = this;
+
+                    if (that._busy) {
+                        return;
+                    }
+
+                    that._busy = setTimeout(function () {
+                        arrow.addClass(LOADING);
+                    }, 100);
+                };
+                _showBusy();
+
 //                $("#listView").kendoListView({
 //                    pageable: true,
 //                    selectable: true,

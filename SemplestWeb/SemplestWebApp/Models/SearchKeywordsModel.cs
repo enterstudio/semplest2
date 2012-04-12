@@ -37,6 +37,13 @@ namespace SemplestWebApp.Models
         public string Product { get; set; }
         [Required(ErrorMessage = "required field")]
         public string LandingPage { get; set; }
+        [Required(ErrorMessage = "required field")]
+        public string Description { get; set; }
+        [Required(ErrorMessage = "required field")]
+        public string AdCopy { get; set; }
+
+        // this message will be used to show the status of the service while getting Categories and Keywords from the service
+        public string StatusMessage { get; set; }
 
         public MultiSelectList CategoriesList { get; private set; }
 

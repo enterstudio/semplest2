@@ -35,7 +35,8 @@ namespace SemplestWebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     SemplestWebApp.Services.ServiceClientWrapper scw = new Services.ServiceClientWrapper();
-                    List<string> categories = scw.GetCategories(null, model.Product, null, null, null);
+                    string[] addcopies = new string[] {model.AdCopy};
+                    List<string> categories = scw.GetCategories(null, model.Product, model.Description, addcopies, model.LandingPage);
                     if (categories != null && categories.Count > 0)
                     {
                         int i = 0;
@@ -59,9 +60,9 @@ namespace SemplestWebApp.Controllers
 	        catch (Exception ex)
 	        {
                 string err = ex.Message + "\\r\\n" + ex.StackTrace;
-                CreateDummyModel(model);
-                ViewBag.AllCategories = model.AllCategories;
-                Session.Add("AllCategories", model.AllCategories);
+                //CreateDummyModel(model);
+                //ViewBag.AllCategories = model.AllCategories;
+                //Session.Add("AllCategories", model.AllCategories);
                 return View(model);
 	        }
         }
@@ -106,7 +107,8 @@ namespace SemplestWebApp.Controllers
                     //            select  c.Name ;
                     //List<string> catList = model.AllCategories.Select(m => m.Name).Where(
                     //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
-                    List<string> keywords = scw.GetKeywords(catList, null, model.Product, null, null, model.LandingPage, null);
+                    string[] addcopies = new string[] { model.AdCopy };
+                    List<string> keywords = scw.GetKeywords(catList, null, model.Product, model.Description, addcopies, model.LandingPage, null);
                     if (keywords != null && keywords.Count > 0)
                     {
                         int i = 0;
@@ -126,9 +128,10 @@ namespace SemplestWebApp.Controllers
                 return View(model);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                CreateDummyModel(model);
+                string err = ex.Message + "\\r\\n" + ex.StackTrace;
+                //CreateDummyModel(model);
                 return View(model);
             }
         }
