@@ -46,7 +46,8 @@ namespace SemplestWebApp.Services
             jsonHash.Add("adds", jsonAdds);
             jsonHash.Add("description", description);
             jsonHash.Add("url", url);
-            nGrams = new Int32[] { 1, 2, 3 };
+            nGrams = new Int32[] { 50, 50 };
+            //nGrams = new Int32[] { 1,2,3 };
             string jsonNgrams = JsonConvert.SerializeObject(nGrams);
             jsonHash.Add("nGrams", jsonNgrams);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
