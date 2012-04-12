@@ -357,9 +357,18 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public Campaign getCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetCampaignsByIdsResponse campaignsById = campaignManagement.getCampaignsByIds(new GetCampaignsByIdsRequest((long) accountId, new long[]
-		{ campaignId }));
+		GetCampaignsByIdsResponse campaignsById = null;
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			campaignsById = campaignManagement.getCampaignsByIds(new GetCampaignsByIdsRequest((long) accountId, new long[]
+					{ campaignId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return campaignsById.getCampaigns()[0];
 	}
 
@@ -379,8 +388,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public Campaign[] getCampaignsByAccountId(Long accountId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetCampaignsByAccountIdResponse campaigns = campaignManagement.getCampaignsByAccountId(new GetCampaignsByAccountIdRequest((long) accountId));
+		GetCampaignsByAccountIdResponse campaigns = null;
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			campaigns = campaignManagement.getCampaignsByAccountId(new GetCampaignsByAccountIdRequest((long) accountId));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return campaigns.getCampaigns();
 	}
 
@@ -399,9 +417,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public void pauseCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.pauseCampaigns(new PauseCampaignsRequest((long) accountId, new long[]
-		{ campaignId }));
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			campaignManagement.pauseCampaigns(new PauseCampaignsRequest((long) accountId, new long[]
+					{ campaignId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String pauseCampaignsByAccountId(String json) throws Exception
@@ -428,8 +454,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			campaignIds[i] = campaigns[i].getId();
 		}
-
-		campaignManagement.pauseCampaigns(new PauseCampaignsRequest((long) accountId, campaignIds));
+		
+		try{
+			campaignManagement.pauseCampaigns(new PauseCampaignsRequest((long) accountId, campaignIds));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String resumeCampaignById(String json) throws Exception
@@ -447,9 +481,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public void resumeCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.resumeCampaigns(new ResumeCampaignsRequest((long) accountId, new long[]
-		{ campaignId }));
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			campaignManagement.resumeCampaigns(new ResumeCampaignsRequest((long) accountId, new long[]
+					{ campaignId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String deleteCampaignById(String json) throws Exception
@@ -467,9 +509,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public void deleteCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.deleteCampaigns(new DeleteCampaignsRequest((long) accountId, new long[]
-		{ campaignId }));
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			campaignManagement.deleteCampaigns(new DeleteCampaignsRequest((long) accountId, new long[]
+					{ campaignId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String setCampaignStateTargets(String json) throws Exception
@@ -495,7 +545,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 
 		long statesTargetId = addTargetsToLibrary(campaignManagement, targets);
 		SetTargetToCampaignRequest setTargetToCampaignRequest = new SetTargetToCampaignRequest(campaignId, statesTargetId);
-		campaignManagement.setTargetToCampaign(setTargetToCampaignRequest);
+		
+		try{
+			campaignManagement.setTargetToCampaign(setTargetToCampaignRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String deleteCampaignTargets(String json) throws Exception
@@ -513,12 +572,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public void deleteCampaignTargets(Long accountId, long customerId, Long campaignId) throws RemoteException
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
-		Target campaignTargets = getCampaignTargets(accountId, customerId, campaignId);
-		campaignManagement.deleteTargetFromCampaign(new DeleteTargetFromCampaignRequest(campaignId));
-		DeleteTargetsFromLibraryRequest deleteTargetsFromLibraryRequest = new DeleteTargetsFromLibraryRequest(new long[]
-		{ campaignTargets.getId() });
-		campaignManagement.deleteTargetsFromLibrary(deleteTargetsFromLibraryRequest);
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
+			Target campaignTargets = getCampaignTargets(accountId, customerId, campaignId);
+			campaignManagement.deleteTargetFromCampaign(new DeleteTargetFromCampaignRequest(campaignId));
+			DeleteTargetsFromLibraryRequest deleteTargetsFromLibraryRequest = new DeleteTargetsFromLibraryRequest(new long[]
+					{ campaignTargets.getId() });
+			campaignManagement.deleteTargetsFromLibrary(deleteTargetsFromLibraryRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public String getCampaignTargets(String json) throws Exception
@@ -536,12 +603,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	
 	@Override
 	public Target getCampaignTargets(Long accountId, long customerId, Long campaignId) throws RemoteException
-	{
+	{		
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		long[] campaignIds =
 		{ campaignId };
 		GetTargetsByCampaignIdsRequest getTargetsByCampaignIdsRequest = new GetTargetsByCampaignIdsRequest(campaignIds);
-		GetTargetsByCampaignIdsResponse targetsByCampaignIds = campaignManagement.getTargetsByCampaignIds(getTargetsByCampaignIdsRequest);
+		GetTargetsByCampaignIdsResponse targetsByCampaignIds = null;
+		try{
+			targetsByCampaignIds = campaignManagement.getTargetsByCampaignIds(getTargetsByCampaignIdsRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		Target[] targets = targetsByCampaignIds.getTargets();
 		if ((targets == null) || (targets.length == 0))
 		{
@@ -581,7 +657,15 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		updateCampaignsRequest.setAccountId((long) accountId);
 		updateCampaignsRequest.setCampaigns(campaigns);
 
-		campaignManagement.updateCampaigns(updateCampaignsRequest);
+		try{
+			campaignManagement.updateCampaigns(updateCampaignsRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	// ==================================
@@ -594,8 +678,15 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		long ret = -1;
 		try {
 			ret = createAdGroup(new Long(data.get("accountId")), new Long(data.get("campaignId")));
-		} catch (RemoteException e) {
-			throw new Exception(e);
+		}
+		catch(ApiFaultDetail e1){
+			throw new Exception(e1);
+		}
+		catch(AdApiFaultDetail e2){
+			throw new Exception(e2);
+		}
+		catch (RemoteException e3) {
+			throw new Exception(e3);
 		}
 		return gson.toJson(ret);
 	}
@@ -633,7 +724,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		logger.debug("accountid=" + accountId + " campaignId =" + campaignId);
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetAdGroupsByCampaignIdResponse adGroups = campaignManagement.getAdGroupsByCampaignId(new GetAdGroupsByCampaignIdRequest(campaignId));
+		GetAdGroupsByCampaignIdResponse adGroups = null;
+		try{
+			adGroups = campaignManagement.getAdGroupsByCampaignId(new GetAdGroupsByCampaignIdRequest(campaignId));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return adGroups.getAdGroups();
 	}
 
@@ -654,8 +754,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public AdGroup getAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetAdGroupsByIdsResponse adGroupsByIds = campaignManagement.getAdGroupsByIds(new GetAdGroupsByIdsRequest(campaignId, new long[]
-		{ adGroupId }));
+		GetAdGroupsByIdsResponse adGroupsByIds = null;
+		try{
+			adGroupsByIds = campaignManagement.getAdGroupsByIds(new GetAdGroupsByIdsRequest(campaignId, new long[]
+					{ adGroupId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return adGroupsByIds.getAdGroups()[0];
 	}
 	
@@ -675,16 +784,47 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public void deleteAdGroupById(Long accountId, Long campaignId, Long adGroupId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.deleteAdGroups(new DeleteAdGroupsRequest(campaignId, new long[]
-		{ adGroupId }));
+		try{
+			campaignManagement.deleteAdGroups(new DeleteAdGroupsRequest(campaignId, new long[]
+					{ adGroupId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
+	public String setAdGroupStateTargets(String json) throws Exception
+	{
+		logger.debug("call setAdGroupStateTargets(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			setAdGroupStateTargets(new Long(data.get("accountId")), 
+					new Long(data.get("customerId")), 
+					new Long(data.get("adGroupId")), 
+					Arrays.asList(data.get("states").split(",")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
+	}
+	
 	@Override
 	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		Target[] targets = makeStateTargets(states);
-		addTargetsToAdGroup(adGroupId, campaignManagement, targets);
+		try{
+			addTargetsToAdGroup(adGroupId, campaignManagement, targets);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
@@ -723,11 +863,19 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			return;
 		}
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
-		campaignManagement.deleteTargetFromAdGroup(new DeleteTargetFromAdGroupRequest(adGroupId));
-		DeleteTargetsFromLibraryRequest deleteTargetsFromLibraryRequest = new DeleteTargetsFromLibraryRequest(new long[]
-		{ adGroupTargets.getId() });
-		campaignManagement.deleteTargetsFromLibrary(deleteTargetsFromLibraryRequest);
+		try{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
+			campaignManagement.deleteTargetFromAdGroup(new DeleteTargetFromAdGroupRequest(adGroupId));
+			DeleteTargetsFromLibraryRequest deleteTargetsFromLibraryRequest = new DeleteTargetsFromLibraryRequest(new long[]
+					{ adGroupTargets.getId() });
+			campaignManagement.deleteTargetsFromLibrary(deleteTargetsFromLibraryRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
@@ -735,7 +883,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		GetTargetByAdGroupIdRequest getTargetByAdGroupIdRequest = new GetTargetByAdGroupIdRequest(adGroupId);
-		GetTargetByAdGroupIdResponse targetByAdGroupId = campaignManagement.getTargetByAdGroupId(getTargetByAdGroupIdRequest);
+		GetTargetByAdGroupIdResponse targetByAdGroupId = null;
+		try{
+			targetByAdGroupId = campaignManagement.getTargetByAdGroupId(getTargetByAdGroupIdRequest);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return targetByAdGroupId.getTarget();
 	}
 
@@ -764,8 +921,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public Ad getAdById(Long accountId, Long adGroupId, long adId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetAdsByIdsResponse adsByIds = campaignManagement.getAdsByIds(new GetAdsByIdsRequest(adGroupId, new long[]
-		{ adId }));
+		GetAdsByIdsResponse adsByIds = null;
+		try{
+			adsByIds = campaignManagement.getAdsByIds(new GetAdsByIdsRequest(adGroupId, new long[]
+					{ adId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return adsByIds.getAds()[0];
 	}
 
@@ -773,7 +939,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public Ad[] getAdsByAdGroupId(Long accountId, Long adGroupId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetAdsByAdGroupIdResponse ads = campaignManagement.getAdsByAdGroupId(new GetAdsByAdGroupIdRequest(adGroupId));
+		GetAdsByAdGroupIdResponse ads = null;
+		try{
+			ads = campaignManagement.getAdsByAdGroupId(new GetAdsByAdGroupIdRequest(adGroupId));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return ads.getAds();
 	}
 
@@ -802,24 +977,48 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public void pauseAdById(Long accountId, Long adGroupId, long adId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.pauseAds(new PauseAdsRequest(adGroupId, new long[]
-		{ adId }));
+		try{
+			campaignManagement.pauseAds(new PauseAdsRequest(adGroupId, new long[]
+					{ adId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
 	public void resumeAdById(Long accountId, Long adGroupId, long adId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.resumeAds(new ResumeAdsRequest(adGroupId, new long[]
-		{ adId }));
+		try{
+			campaignManagement.resumeAds(new ResumeAdsRequest(adGroupId, new long[]
+					{ adId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
 	public void deleteAdById(Long accountId, Long adGroupId, long adId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.deleteAds(new DeleteAdsRequest(adGroupId, new long[]
-		{ adId }));
+		try{
+			campaignManagement.deleteAds(new DeleteAdsRequest(adGroupId, new long[]
+					{ adId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	// ==================================
@@ -858,8 +1057,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public Maybe<Keyword> getKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetKeywordsByIdsResponse keywordsByIds = campaignManagement.getKeywordsByIds(new GetKeywordsByIdsRequest(adGroupId, new long[]
-		{ keywordId }));
+		GetKeywordsByIdsResponse keywordsByIds = null;
+		try{
+			keywordsByIds = campaignManagement.getKeywordsByIds(new GetKeywordsByIdsRequest(adGroupId, new long[]
+					{ keywordId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		Keyword[] keywords = keywordsByIds.getKeywords();
 		if (keywords.length == 1 && keywords[0] != null)
 		{
@@ -872,7 +1080,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		GetKeywordsByAdGroupIdResponse keywordsByAdGroupId = campaignManagement.getKeywordsByAdGroupId(new GetKeywordsByAdGroupIdRequest(adGroupId));
+		GetKeywordsByAdGroupIdResponse keywordsByAdGroupId = null;
+		try{
+			keywordsByAdGroupId = campaignManagement.getKeywordsByAdGroupId(new GetKeywordsByAdGroupIdRequest(adGroupId));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return keywordsByAdGroupId.getKeywords();
 	}
 
@@ -928,29 +1145,61 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.pauseKeywords(new PauseKeywordsRequest(adGroupId, new long[]
-		{ keywordId }));
+		try{
+			campaignManagement.pauseKeywords(new PauseKeywordsRequest(adGroupId, new long[]
+					{ keywordId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	public void pauseKeywordsByIds(Long accountId, Long adGroupId, long[] keywordIds) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.pauseKeywords(new PauseKeywordsRequest(adGroupId, keywordIds));
+		try{
+			campaignManagement.pauseKeywords(new PauseKeywordsRequest(adGroupId, keywordIds));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
 	public void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.deleteKeywords(new DeleteKeywordsRequest(adGroupId, new long[]
-		{ keywordId }));
+		try{
+			campaignManagement.deleteKeywords(new DeleteKeywordsRequest(adGroupId, new long[]
+					{ keywordId }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	@Override
 	public void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		campaignManagement.deleteKeywords(new DeleteKeywordsRequest(adGroupId, keywordIds));
+		try{
+			campaignManagement.deleteKeywords(new DeleteKeywordsRequest(adGroupId, keywordIds));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	// ==================================
