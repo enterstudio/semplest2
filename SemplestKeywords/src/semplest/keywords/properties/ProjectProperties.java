@@ -27,6 +27,9 @@ public class ProjectProperties {
 	//for MalletTopic
 	public static String smallhCounts;
 	public static String stoplist;
+	//for KWGenDmozLDAServer
+	public static int numTopics;
+	public static double userInfoWeight;
 	private static final Logger logger = Logger.getLogger(ProjectProperties.class);
 	
 	
@@ -54,6 +57,8 @@ public class ProjectProperties {
 			lucenedfile = properties.getProperty("lucenedfile");
 			smallhCounts = properties.getProperty("smallhCounts");
 			stoplist = properties.getProperty("stoplist");
+			numTopics = Integer.parseInt(properties.getProperty("numTopics"));
+			userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
 			logger.info("Set all property data...");
 		} catch (Exception e) {
 			logger.error(e.getMessage());
