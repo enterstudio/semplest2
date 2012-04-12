@@ -140,16 +140,16 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 
 		
-//		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
-		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywordsProb.txt");
-
-		ArrayList<String> keywords = new ArrayList<String>();
-		
-		for (String line : lines){
-			line=line.replaceFirst("\\S+\\s+", "") ; // for the new format
-			keywords.add(line.replaceAll("\n",""));
-//			System.out.println(line);
-		}
+////		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
+//		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywordsProb.txt");
+//
+//		ArrayList<String> keywords = new ArrayList<String>();
+//		
+//		for (String line : lines){
+//			line=line.replaceFirst("\\S+\\s+", "") ; // for the new format
+//			keywords.add(line.replaceAll("\n",""));
+////			System.out.println(line);
+//		}
 		
 //		System.exit(0);
 		
