@@ -1,14 +1,11 @@
 package semplest.services.client.api;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-
-import org.apache.log4j.BasicConfigurator;
-
-import com.google.gson.Gson;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
+
+import com.google.gson.Gson;
 
 public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface
 {
@@ -25,8 +22,8 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 
 		try
 		{
-			SemplestMailServiceClient client = new SemplestMailServiceClient(null);
-			Boolean ret = client.SendEmail("Test", "mitch@semplest.com", "mitch@semplest.com", "Hello there");
+			SemplestMailServiceClient client = new SemplestMailServiceClient("http://VMJAVA1:9898/semplest");
+			Boolean ret = client.SendEmail("Test", "mberg@semplest.com", "mitch@semplest.com", "Hello there");
 		}
 		catch (Exception e)
 		{
