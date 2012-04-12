@@ -12,14 +12,9 @@ namespace SemplestAdminApp.Controllers
         //
         // GET: /ClientAccount/
 
-       
-
         public ActionResult Index(int id)
         {
             SemplestEntities dbcontext = new SemplestEntities();
-
-            
-
 
             var viewModel =
                from u in dbcontext.Users
@@ -49,7 +44,6 @@ namespace SemplestAdminApp.Controllers
                     BillType  = b.BillType1 
                };
 
-
             var viewModel2 =
                 from e in dbcontext.Employees 
                 join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK 
@@ -65,8 +59,6 @@ namespace SemplestAdminApp.Controllers
                 LastName = u.LastName,
                 EmployeeUserPK = u.UserPK
             };
-
-
 
             AccountServiceWithEmployeeModel x = new AccountServiceWithEmployeeModel();
             x.AccountServiceModel = viewModel.Single(c=>c.AccountNumber==id);

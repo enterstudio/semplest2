@@ -56,7 +56,6 @@ namespace SemplestAdminApp.Models
     }
 
 
-
     public class UserRoleModel
     {
         public int RightPK { get; set; }

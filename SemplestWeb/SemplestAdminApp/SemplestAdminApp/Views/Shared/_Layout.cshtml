@@ -16,7 +16,12 @@
                     $.ajax({ type: "GET", url: "/Roles/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} });
                 });
             });
-    </script>
+           
+    </script> 
+    
+    @*this will inject individual script in the head tags (added by:tudor)*@
+    @RenderSection("headscript", required: false)
+    
     </head>
     <body class="centerWrap">
         <div id="header">
