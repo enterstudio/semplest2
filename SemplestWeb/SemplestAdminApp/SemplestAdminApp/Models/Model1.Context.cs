@@ -42,6 +42,7 @@ namespace SemplestAdminApp.Models
         public DbSet<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
         public DbSet<CustomerStyle> CustomerStyles { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
         public DbSet<EmployeeType> EmployeeTypes { get; set; }
         public DbSet<Error> Errors { get; set; }
         public DbSet<HelpDefinition> HelpDefinitions { get; set; }

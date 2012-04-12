@@ -1,4 +1,4 @@
-﻿@model SemplestAdminApp.Models.AccountServiceModel
+﻿@model SemplestAdminApp.Models.AccountServiceWithEmployeeModel 
 @{
     ViewBag.Title = "Index";
 }
@@ -14,22 +14,24 @@ Account Service:
 @using (Html.BeginForm("Index"))
 {
 
-<h2>@Model.Customer - Account ID @Model.AccountNumber</h2>
+<h2>@Model.AccountServiceModel.Customer - Account ID @Model.AccountServiceModel.AccountNumber</h2>
+    
 
 <br />
 
 <h3>Contact<br />
-@Model.FirstName&nbsp;@Model.LastName <br />
-@Model.Address1<br />
-@Model.City,@Model.State&nbsp;@Model.Zip<br />
-@Model.Email<br />
+
+@Model.AccountServiceModel.FirstName&nbsp;@Model.AccountServiceModel.LastName <br />
+@Model.AccountServiceModel.Address1<br />
+@Model.AccountServiceModel.City,@Model.AccountServiceModel.State&nbsp;@Model.AccountServiceModel.Zip<br />
+@Model.AccountServiceModel.Email<br />
 </h3>
 
 <h3>
-<label>Rep Name: <input type="text" name="repname" /></label><br />
-<label>Salesperson: <input type="text" name="salesperson" /></label><br />
-<label>Parent: <input type="text" name="parent" /></label><br />
-<label>Super Parent: <input type="text" name="superparent" /></label><br />
+<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").LastName"/></label><br />
+<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").LastName" /></label><br />
+<label>Parent: <input type="text" name="parent" disabled="true"/></label><br />
+<label>Super Parent: <input type="text" name="superparent" disabled="true"/></label><br />
 </h3>
 
 <br />

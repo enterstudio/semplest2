@@ -20,6 +20,17 @@ namespace SemplestAdminApp.Models
     }
 
 
+    public class EmployeeCustomerAssociaitionModel
+    {
+                public int AccountNumber { get; set; }
+                public string EmployeeType { get; set; }
+                public int employeePK { get; set; }
+                public string FirstName { get; set; }
+                public string LastName  { get; set; }
+                public int EmployeeUserPK { get; set; }
+    }
+
+
     public class AccountServiceModel
     {
         public int AccountNumber { get; set; }
@@ -37,6 +48,12 @@ namespace SemplestAdminApp.Models
         //no credit table in the database --> need to add these
         //no rep, salesperson  
       }
+
+    public class AccountServiceWithEmployeeModel
+    {
+        public AccountServiceModel AccountServiceModel { get; set; }
+        public IEnumerable<EmployeeCustomerAssociaitionModel> EmployeeCustomerAssociaitionModel { get; set; }
+    }
 
 
 

@@ -23,8 +23,8 @@ namespace SemplestAdminApp.Models
             this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
             this.CustomerHierarchies1 = new HashSet<CustomerHierarchy>();
             this.CustomerNotes = new HashSet<CustomerNote>();
+            this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
             this.Users = new HashSet<User>();
-            this.Employees = new HashSet<Employee>();
         }
     
         public int CustomerPK { get; set; }
@@ -45,7 +45,7 @@ namespace SemplestAdminApp.Models
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies1 { get; set; }
         public virtual ICollection<CustomerNote> CustomerNotes { get; set; }
         public virtual CustomerStyle CustomerStyle { get; set; }
+        public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
         public virtual ICollection<User> Users { get; set; }
-        public virtual ICollection<Employee> Employees { get; set; }
     }
 }
