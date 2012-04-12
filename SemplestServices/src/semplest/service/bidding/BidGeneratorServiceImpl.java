@@ -2,6 +2,7 @@ package semplest.service.bidding;
 import java.util.Arrays;
 
 import semplest.bidding.test.ioUtils;
+import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.api.GoogleAdwordsServiceClient;
@@ -134,24 +135,25 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	public static void main(String[] args){
 		
-//		Integer customerID = new Integer(0);
 
 		String accountID = "2188810777";
 
-//		Long campaignID = new Long(2188810777L);
-//		Integer adGroupID = new Integer(0);
+
 		
 //		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
-//		ArrayList<String> keywords = new ArrayList<String>();
-//		
-//		for (String line : lines){
-//			keywords.add(line.replaceAll("\n",""));
-//		}
+		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywordsProb.txt");
+
+		ArrayList<String> keywords = new ArrayList<String>();
 		
-////		keywords.add("wedding venues");
-////		keywords.add("ice");
-////		keywords.add("wedding florist");
-////		keywords.add("florist supplies");
+		for (String line : lines){
+			line=line.replaceFirst("\\S+\\s+", "") ; // for the new format
+			keywords.add(line.replaceAll("\n",""));
+//			System.out.println(line);
+		}
+		
+//		System.exit(0);
+		
+
 		
 		ArrayList<Double> bidLevels; 
 
@@ -164,66 +166,91 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 			
 			GoogleBidObject bidObject;
+			GoogleBidObject[] bidObjects = null;
 			Long maxCPC;
 
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
 //			System.out.println(campaignID);
 			
-			Long adGroupID = 3074331030L;
+
+			GoogleAdGroupObject[] adGroups = null;
+			
+			try {
+				adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
+				for (int i=0; i< adGroups.length; i++)
+					System.out.println(adGroups[i].getAdGroupName()+": "+adGroups[i].getAdGroupID());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+				
+			Long adGroupID = adGroups[0].getAdGroupID();
+			
+			
 //			maxCPC = 100000L; // bid in microBidAmount
 //			int count=0;
 //			for(String word : keywords){
 //				count++;
 //				System.out.println(count+": "+word);
-//				Thread.sleep(500);
 //				try {
 //					bidObject = client.addKeyWordToAdGroup(accountID, adGroupID, word , KeywordMatchType.EXACT, maxCPC);
+//					Thread.sleep(500);
 //				} catch (Exception e) {
 //					e.printStackTrace();
 //					System.out.println("Skipping keyword: "+word);
 //				}
 //			}
+//			
+//			Thread.sleep(10000);
 			
-			GoogleBidObject[] bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
+			
+			try {
+				bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println(bidObjects.length);
+			System.exit(0);
+
+			
 //			System.out.println(bidObjects[1000].getKeyword());
 			
-			for(int i=0; i<bidObjects.length; i++){
-//			for(int i=10; i<12; i++){
-				bidObject = bidObjects[i];
-//				client.getBidLandscapeForKeyword(accountID, adGroupID, bidObjects[i].getBidID());
-//				System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
-				if(bidObject.getFirstPageCpc()<8000000L) {
-					System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
-					try {
-						bidObject=client.setBidForKeyWord(accountID, bidObject.getBidID(), adGroupID,bidObject.getFirstPageCpc()+250000L );
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					Thread.sleep(500);
-				}
-//				System.out.println(bidObject.getMicroBidAmount());
-				
-				
-//				bidLevels = new ArrayList<Double>();
-//				for (double b = bidObject.getFirstPageCpc()*1e-6+0.05; b<bidObject.getFirstPageCpc()*1e-6+0.5; b=b+0.5){
-////					bidLevels.add(new Double(b/bidObject.getQualityScore()));
-//					bidLevels.add(new Double(b));
+//			for(int i=0; i<bidObjects.length; i++){
+////			for(int i=10; i<12; i++){
+//				bidObject = bidObjects[i];
+////				client.getBidLandscapeForKeyword(accountID, adGroupID, bidObjects[i].getBidID());
+////				System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
+//				if(bidObject.getFirstPageCpc()<8000000L) {
+//					System.out.println((i+1)+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
+//					try {
+//						bidObject=client.setBidForKeyWord(accountID, bidObject.getBidID(), adGroupID,bidObject.getFirstPageCpc()+250000L );
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+//					
+//					Thread.sleep(500);
 //				}
+////				System.out.println(bidObject.getMicroBidAmount());
 //				
-//				o = client.getTrafficEstimationForOneKeyword(bidObject.getKeyword(), KeywordMatchType.EXACT, bidLevels);
-//				Double[] bids = o.getBidList();
-//				Arrays.sort(bids);
-//
-//				logger.info(bidObject.getKeyword());
-//				for (int j = 0; j < bids.length; j++) {
-//					logger.info(bids[j]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[j])
-//							+ " Avg CPC="+ o.getAveCPC(bids[j]) + " Avg Pos=" + o.getAvePosition(bids[j]));
-//				}
-				
-			}
+//				
+////				bidLevels = new ArrayList<Double>();
+////				for (double b = bidObject.getFirstPageCpc()*1e-6+0.05; b<bidObject.getFirstPageCpc()*1e-6+0.5; b=b+0.5){
+//////					bidLevels.add(new Double(b/bidObject.getQualityScore()));
+////					bidLevels.add(new Double(b));
+////				}
+////				
+////				o = client.getTrafficEstimationForOneKeyword(bidObject.getKeyword(), KeywordMatchType.EXACT, bidLevels);
+////				Double[] bids = o.getBidList();
+////				Arrays.sort(bids);
+////
+////				logger.info(bidObject.getKeyword());
+////				for (int j = 0; j < bids.length; j++) {
+////					logger.info(bids[j]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[j])
+////							+ " Avg CPC="+ o.getAveCPC(bids[j]) + " Avg Pos=" + o.getAvePosition(bids[j]));
+////				}
+//				
+//			} // for(int i=0; i<bidObjects.length; i++)
 			
 //			System.out.println(bidObjects.length);
 //			bidObject = bidObjects[0];
