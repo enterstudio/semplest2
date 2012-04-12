@@ -27,7 +27,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://localhost:9898/semplest");
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://VMJAVA1:9898/semplest");
 			long start = System.currentTimeMillis();
 			ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
