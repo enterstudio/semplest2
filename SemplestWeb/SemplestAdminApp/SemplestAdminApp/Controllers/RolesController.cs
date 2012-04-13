@@ -11,39 +11,41 @@ namespace SemplestAdminApp.Controllers
 {
     public class RolesController : Controller
     {
+        SemplestEntities _dbContext = new SemplestEntities();
         //
         // GET: /Roles/
 
-        SemplestEntities _dbContext = new SemplestEntities();
-
         public void AddRightToDatabase(string label, string controllerName, string vAction)
         {
-
+            
             bool found = false;
             string myController = ControllerContext.RouteData.Values["Controller"].ToString();
             string controllerActionName = controllerName + "." + vAction;
             if (controllerName != myController && !string.IsNullOrEmpty(label))
             {
-                foreach (Right r in _dbContext.Rights)
+                using (SemplestEntities dbContext = new SemplestEntities())
                 {
-                    if (label == r.Label && controllerActionName == r.Controller)
+                    foreach (Right r in dbContext.Rights)
                     {
-                        found = true;
-                        break;
+                        if (label == r.Label && controllerActionName == r.Controller)
+                        {
+                            found = true;
+                            break;
+                        }
                     }
-                }
-                if (!found)
-                {
-                    _dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
-                    _dbContext.SaveChanges();
+                    if (!found)
+                    {
+                        dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
+                        dbContext.SaveChanges();
+                    }
                 }
             }
         }
 
         public ActionResult Index()
         {
-            var model = _dbContext.Roles;
-            return View(model);
+            IEnumerable<SemplestAdminApp.Models.Role> viewModel = _dbContext.Roles;
+            return View(viewModel);
         }
 
         //
@@ -59,39 +61,102 @@ namespace SemplestAdminApp.Controllers
 
         public ActionResult Create()
         {
-            ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
-
+                ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
+                return View(_dbContext.sp_GetRigtsRolesInteraction(null));
+            
             //var viewModel =
-            //    from ro in _dbContext.Roles
-            //    join ri in _dbContext.Rights on ro.RolePK equals ri.RolesFK
-            //    group ri by new 
-            //    {
-            //        ri.r,
-            //    } into grp
-            //    select new RoleModel
-            //    {
-            //        //RightName = grp.FirstOrDefault().RightName,
-            //        RightPK = grp.FirstOrDefault().RightsPK,
-            //    };
+            //       from ra in _dbContext.RolesRightsAssociations
+            //       join r in _dbContext.Rights on ra.RightsFK equals r.RightsPK
+            //       group r by new
+            //       {
+            //           r.Controller,
+            //           r.Label
+            //       } into grp
+            //       select new UserRoleModel
+            //       {
+            //           Controller = grp.FirstOrDefault().Controller,
+            //           Label = grp.FirstOrDefault().Label,
+            //           IsVisible = false,
+            //           IsReadonly = false
+            //       };
+            //IEnumerable<SemplestAdminApp.Models.sp_GetRigtsRolesInteraction_Result> viewModel = _dbContext.sp_GetRigtsRolesInteraction(null);
+            
 
-            var viewModel = 
-                   from ra in _dbContext.RolesRightsAssociations
-                   join r in  _dbContext.Rights on ra.RightsFK equals r.RightsPK
-                   where ra.RolesFK==1
-                   select new UserRoleModel
-                   {
-                       Controller = r.Controller,
-                       Label = r.Controller,
-                       IsVisible = ra.IsVisible,
-                       IsReadonly = ra.IsReadonly
-                   };
-
-
-            return View(viewModel);
+            
         }
 
-        public void Models(string RoleId)
+        //
+        // POST: /Roles/Create
+        [HttpPost]
+        public ActionResult Create(IEnumerable<sp_GetRigtsRolesInteraction_Result> userRights, FormCollection f)
         {
+            // TODO: Add insert logic here
+                Role ro = _dbContext.Roles.Add(new Role { RoleName = f["roleName"].ToString() });
+                _dbContext.SaveChanges();
+                foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
+                {
+                    RolesRightsAssociation ra = new RolesRightsAssociation
+                    {
+                        IsReadonly = s.IsReadonly == null ? false : bool.Parse(s.IsReadonly.ToString()),
+                        IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString()),
+                        RightsFK = s.RightsPK,
+                        RolesFK = ro.RolePK
+                    };
+                    _dbContext.RolesRightsAssociations.Add(ra);
+                }
+                _dbContext.SaveChanges();
+
+                /*update code*/
+                //foreach (RolesRightsAssociation r in _dbContext.RolesRightsAssociations)
+                //{
+
+                //    r.IsReadonly = ur.IsReadonly == null ? false : bool.Parse(ur.IsReadonly.ToString());
+                //    r.IsVisible = ur.IsVisible  == null ? false : bool.Parse(ur.IsVisible.ToString());
+                //    r.RolesFK = ro.RolePK;
+                //    r.RightsFK = ur.RightsPK;
+                //}
+                _dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Models(string RoleId)
+        {
+
+            int role = int.Parse(RoleId);
+            RolesRightsAssociation a = new RolesRightsAssociation();
+            a.IsVisible = false;
+            a.IsReadonly = false;
+            //Right ri = new Right();
+            //ri.Controller ="DefaultController";
+            //ri.Label ="DefaultLabel";
+            //a.Right=ri;
+            //var viewModel =
+            //    from ra in _dbContext.RolesRightsAssociations
+            //    join r in _dbContext.Rights on ra.RightsFK equals r.RightsPK into tl_j
+            //    where ra.RolesFK == role
+            //    from j in tl_j.DefaultIfEmpty()
+            //    select new UserRoleModel
+            //    {
+            //        Controller = j.Controller,
+            //        Label = j.Label,
+            //        IsVisible = ra.IsVisible == null ? false : ra.IsVisible,
+            //        IsReadonly = ra.IsReadonly == null ? false : ra.IsReadonly
+            //    };
+
+            /*from r in _dbContext.Rights
+            join ra in _dbContext.RolesRightsAssociations on r.RightsPK equals ra.RightsFK
+            where ra.RolesFK == role
+            select new UserRoleModel
+            {
+                Controller = r.Controller,
+                Label = r.Controller,
+                IsVisible = ra.IsVisible,
+                IsReadonly = ra.IsReadonly
+            };*/
+                return PartialView("_RolesRightsAssociation", _dbContext.sp_GetRigtsRolesInteraction(role));
+            //sp_GetRigtsRolesInteraction_Result model = _dbContext.sp_GetRigtsRolesInteraction(role);
+
+            
             //return View();
             //var viewModel =
             //                from ro in _dbContext.Roles
@@ -103,26 +168,6 @@ namespace SemplestAdminApp.Controllers
             //                     RightName = ri.RightName
             //                 }; 
             //return Json(viewModel.ToList());
-        }
-     
-        //
-        // POST: /Roles/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-                foreach (Object j in collection)
-                {
-                    Console.WriteLine(j.ToString());
-                }
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
         }
 
         //

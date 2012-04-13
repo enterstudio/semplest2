@@ -1,24 +1,29 @@
-﻿    @model IEnumerable<SemplestAdminApp.Models.UserRoleModel>
-    <div class= "rights">
-    <table>
+﻿@model  IEnumerable<SemplestAdminApp.Models.sp_GetRigtsRolesInteraction_Result>
+
+            <table>
     <tr>
     <th>IsVisible</th>
     <th>ReadOnly</th>
         <th>Page</th>
         <th>Object</th>
     </tr>
-        @foreach (var item in Model)
+    @using (Html.BeginCollectionItem("userRights"))
+    {
+
+        foreach (var item in Model)
         {
-    <tr>
-        <td>
-        @Html.CheckBox(item.RightPK.ToString(), item.IsVisible)
-        </td>
-        <td>
-        @Html.CheckBox(item.RightPK.ToString(), item.IsReadonly)
-        </td>
+            bool IsVisible = item.IsVisible == null ? false : item.IsVisible.Value;
+
+            bool IsReadonly = item.IsReadonly == null ? false : item.IsReadonly.Value;
+            int RolesFK = item.RolesFK == null ? -1 : item.RolesFK.Value;
+        <tr>
+        <td>@Html.CheckBoxFor(x => IsVisible)</td>
+        <td>@Html.CheckBoxFor(x => IsReadonly)</td>
         <td>@Html.Label(item.Controller.ToString().Replace(".", "/"))</td>
         <td>@Html.Label(item.Label)</td>
-    </tr>
+        </tr>
+                @Html.HiddenFor(x => item.RightsPK)
+        @Html.HiddenFor(x => RolesFK)
         }
+    }
     </table>
-    </div>

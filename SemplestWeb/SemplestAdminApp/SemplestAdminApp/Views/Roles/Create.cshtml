@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SemplestAdminApp.Models.UserRoleModel>
+﻿@model IEnumerable<SemplestAdminApp.Models.sp_GetRigtsRolesInteraction_Result>
 @{
     ViewBag.Title = "Create";
 }
@@ -20,15 +20,24 @@ Role
             Duplicate Rights of:
         </div>
         <div class="editor-field">
-        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList, new { onchange = "document.form.submit();" })  
+        @Html.DropDownList("ddl", ViewData["Roles"] as SelectList)  
         </div>
          <div class="editor-label">
             New Role: 
         </div>  
         <div class="editor-field">
-       @Html.Editor("cc", "blah", new { @title = "true" })
+       @Html.Editor("roleName")
         </div>
+        <div class= "rights">
+
+    
+
         @Html.Partial("_RolesRightsAssociation", Model)
+                
+        
+    
+    
+    </div>
         <p>
             <input type="submit" value="Create" />
         </p>
@@ -40,9 +49,7 @@ Role
 
 }
    <script>
-       //$("select").change(function () { var str = ""; $("select option:selected").each(function () { str += $(this).text() + " "; }); $("div").text(str); })
-       //$("select").change(function () {
-           //$.ajax({ type: "GET", url: "/Roles/Models", data: { RoleId: $(this).attr('value')} });
-           //$.post("/Configuration", function(data) {   alert("Data Loaded: " + data)});
-       //})
+       $("select").change(function () {
+           $.ajax({ type: "GET", url: "/Roles/Models", data: { RoleId: $(this).attr('value') }, success: function (data) { $('.rights').html(data); } });
+       })
     </script>
