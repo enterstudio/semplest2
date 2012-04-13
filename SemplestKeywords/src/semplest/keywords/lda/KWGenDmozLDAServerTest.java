@@ -1,5 +1,8 @@
 package semplest.keywords.lda;
 
+/**
+ * Test version of the keyword generation process
+ */
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -161,6 +164,7 @@ public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterfac
 	    	iter++;
 	    	keywords.add(finalkwList);
 	    }
+	    
 		return keywords;
 	}
 	
@@ -253,6 +257,7 @@ public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterfac
 								}
 								if(!flag){
 									String kwnew = base.replace(words[i],gr);
+									kwnew = kwnew.replaceAll("\\s+", " ");
 									temp.put(kwnew,this.calculateKWProb(kwnew, wordMap));
 								}
 							}

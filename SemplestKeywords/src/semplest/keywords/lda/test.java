@@ -17,10 +17,14 @@ public class test {
 	 * @throws ParserException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
-		String a = "wedding      flowers";
-		String b = " ";
-		System.out.println(a.contains(""));
-		System.out.println(a.replaceAll("\\s+", " "));
+		String a = "flower";
+		String b = "florist";
+		String c = "floral";
+		String d = "flowers";
+		System.out.println(stemvString(a));
+		System.out.println(stemvString(b));
+		System.out.println(stemvString(c));
+		System.out.println(stemvString(d));
 	}
 	private static String stemvString( String raws){
 		//Returns the stemmed version of a word

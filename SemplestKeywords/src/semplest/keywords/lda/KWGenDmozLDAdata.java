@@ -24,7 +24,11 @@ public class KWGenDmozLDAdata implements Runnable{
 	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
 	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
 	private static String[] nGramsSubC = ProjectProperties.nGramsSubC;
+	public int numTopics = ProjectProperties.numTopics;
+	public double userInfoWeight = ProjectProperties.userInfoWeight;
+	public int numKeywords = ProjectProperties.numKeywords;
 	public static ProjectProperties pr; 
+	
 	public KWGenDmozLDAdata() throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){

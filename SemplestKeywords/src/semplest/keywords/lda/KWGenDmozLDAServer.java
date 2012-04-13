@@ -1,5 +1,7 @@
 package semplest.keywords.lda;
-
+/**
+ * Production version of the Keyword Generation Server
+ */
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -72,28 +74,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			throw new Exception("Wrong number nGrams provided");
 		} 
 		
-		//Add all data from inputs
-		ArrayList<String> dataUrl= new ArrayList<String>();
-		if(url!=null){
-			url = TextUtils.formURL(url);
-			dataUrl = TextUtils.validHtmlWords(url);
-		}
 		String data1 =  "";
-		logger.info("Words from url:"+ dataUrl.size());
-		for( String s : dataUrl ) {
-	    	data1 = data1+" "+s;
-	    }
-		if(adds!=null){
-			for(int i=0; i< adds.length; i++){
-				data1= data1+" "+ adds;
-			}
-		}
-		data1 = data1+" "+companyName+" "+searchTerm+" "+description;
+		
+		data1 = this.weightData(data.userInfoWeight, url, adds,companyName,searchTerm, description);
+		String[] dataCount = data1.split("\\s+");
+		if(dataCount.length<30) throw new Exception("Not enough data provided");
 		String stemdata1 = new String();
-		String[] datacount = data1.split("\\s+");
-		if(datacount.length<30) throw new Exception("Not enough data provided");
 		stemdata1 = this.stemvString( data1, data.dict );
-		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, 5000, nGrams);
+		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, data.numKeywords, nGrams);
 		return keywords;
 	}
 	
@@ -122,6 +110,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    		}
 	    	}
 	    }
+	    logger.info("Number of categories to add " + trainLines.size());
 		//Train LDA for categories selected and return sorted keywords
 	    //and obtain word probability
 	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
@@ -129,7 +118,6 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    ValueComparator bvc =  new ValueComparator(wordMap);
 		TreeMap<String,Double> wordM = new TreeMap(bvc);
 		wordM.putAll(wordMap);
-	    Set<String> keyS = wordM.keySet();
 	    logger.info("wordMap Size: "+ wordM.size());
 	    
 	    logger.info("Generating Kewyords");
@@ -162,8 +150,19 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    	iter++;
 	    	keywords.add(finalkwList);
 	    }
-		PrintStream stdout = System.out;
-
+	    /*
+	    //******************************** Print report with probabilities *********************************************
+	    PrintStream stdout = System.out;
+		System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/Test1/keywordsProb500.txt")));
+		for(int n=0; n<4; n++){
+			for(String k: keywords.get(n)){
+				double prob = this.calculateKWProb(k, wordMap);
+				k=k.replaceAll("wed", "wedding");
+				System.out.println(prob+"\t"+k);
+			}
+		}
+		System.setOut(stdout);
+		//**************************************************************************/
 		return keywords;
 	}
 	
@@ -176,10 +175,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		int numiter=100;
 		logger.info("Number of categories" + trainLines.size());
 		lda.CreateInstances(trainLines);
-		lda.setNumTopics(10);
+		int numTopics = data.numTopics;
+		if(trainLines.size()<numTopics)
+			numTopics = trainLines.size();
+		lda.setNumTopics(numTopics);
 		lda.LDAcreateModel(alpha, beta, numiter);
 		InstanceList inferInst;
-		double[][] categInd;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
 			    
 	    //Infer word probability based on input data
@@ -350,12 +351,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    while(i<numkw){
 		    		if(iterator.hasNext())keyword =iterator.next();
 		    		else break;
-		    		if(baseProb>=1.0 && multWMap.get(keyword)<1.0)
+		    		/*if(baseProb>=1.0 && multWMap.get(keyword)<1.0)
 		    			baseProb = multWMap.get(keyword);
 		    		double diff = baseProb- multWMap.get(keyword);
 		    		//if(nGrams==2 && diff>0.01718787) break;
 		    		//if(nGrams==3 && diff>0.001718787) break;
-		    		//logger.debug(diff+"\t"+keyword);
+		    		//logger.debug(diff+"\t"+keyword);*/
 		    		keywords.add(keyword);
 				    i++;
 		    }
@@ -436,6 +437,69 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	  
 	    return arrayOpt;
 	    
+	}
+	
+	private String weightData(double weight, String url, String[] adds, String companyName,String searchTerm, String description) throws Exception{
+		//Combine all data from url, description, ads... and weight them differently
+		
+		//Add all data from inputs
+		ArrayList<String> dataUrl= new ArrayList<String>();
+		if(url!=null){
+			url = TextUtils.formURL(url);
+			dataUrl = TextUtils.validHtmlWords(url);
+		}
+
+		logger.info("Words from url:"+ dataUrl.size());
+		//Text from adds
+		String userData="";
+		if(adds!=null){
+			for(int i=0; i< adds.length; i++){
+				userData= userData+" "+ adds[i];
+			}
+		}
+		//Adding all user data
+		userData = userData+" "+companyName+" "+searchTerm+" "+description;
+		String[] userCount = userData.split("\\s+");
+		//If not user data provided, or too few, it will not be used.
+		logger.info("Words from user: "+ userCount.length);
+		if((userCount.length)<10) {
+			logger.info("No user data provided");
+			weight = 0;
+		}
+		if((userCount.length+dataUrl.size())<30) throw new Exception("Not enough data provided");
+		
+		//Calculate number of repetitions for each set to meet weight criteria
+		
+	    int repeatUser=1;
+	    int repeatUrl=1;
+	    
+	    if(dataUrl.size()>=userCount.length&& weight!=1)
+	    	repeatUser=(int) Math.round(weight*dataUrl.size()/(userCount.length*(1-weight)));
+	    if(dataUrl.size()<userCount.length&& weight!=0)
+	    	repeatUrl=(int) Math.round(userCount.length*(1-weight)/(weight*dataUrl.size()));
+	    if (weight==0){
+	    	repeatUser=0;
+	    }
+	    if (weight==1){
+	    	repeatUrl=0;
+	    }
+	    logger.info("Number of times to repeat user data "+repeatUser);
+	    logger.info("Number of times to repeat ulr data "+repeatUrl);
+	    double finalweight = 1.0*(userCount.length*repeatUser)/(dataUrl.size()*repeatUrl+userCount.length*repeatUser);
+	    logger.info("Final weight of user data"+ finalweight);
+	    //add weighted data from url
+	    String totaldata = "";
+	    for(int n=0; n<repeatUrl;n++){
+		    for( String s : dataUrl ) {
+		    	totaldata = totaldata+" "+s;
+		    }
+	    }
+	    //add weighted data from user
+	    for(int n=0; n<repeatUser;n++){
+		    	totaldata = totaldata+" "+userData;
+	    }
+	    
+		return totaldata;
 	}
 	
 	@Override
@@ -524,7 +588,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			
 			
-			Integer[] nGrams = {50,50};
+			Integer[] nGrams = {100,100};
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, adds, url,nGrams);
 			
 			for(int n=0; n<4; n++){
