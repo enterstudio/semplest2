@@ -12,6 +12,7 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
+    using System.Data.Objects;
     
     public partial class SemplestEntities : DbContext
     {
@@ -64,5 +65,16 @@ namespace SemplestAdminApp.Models
         public DbSet<sysdiagram> sysdiagrams { get; set; }
         public DbSet<TransactionHistory> TransactionHistories { get; set; }
         public DbSet<User> Users { get; set; }
+    
+        public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
+        {
+            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(sp_GetRigtsRolesInteraction_Result).Assembly);
+    
+            var roleIdParameter = roleId.HasValue ?
+                new ObjectParameter("roleId", roleId) :
+                new ObjectParameter("roleId", typeof(int));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_GetRigtsRolesInteraction_Result>("sp_GetRigtsRolesInteraction", roleIdParameter);
+        }
     }
 }
