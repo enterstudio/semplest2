@@ -373,7 +373,7 @@
           <Key>
             <PropertyRef Name="EmployeeCustomerAssociationPK" />
           </Key>
-          <Property Name="EmployeeCustomerAssociationPK" Type="int" Nullable="false" />
+          <Property Name="EmployeeCustomerAssociationPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="EmployeeFK" Type="int" Nullable="false" />
           <Property Name="CustomerFK" Type="int" Nullable="false" />
         </EntityType>
@@ -1055,6 +1055,9 @@
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
         </Function>
+        <Function Name="sp_GetRigtsRolesInteraction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="roleId" Type="int" Mode="In" />
+        </Function>
         <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -1257,6 +1260,9 @@
             <End Role="Role" EntitySet="Roles" />
             <End Role="User" EntitySet="Users" />
           </AssociationSet>
+          <FunctionImport Name="sp_GetRigtsRolesInteraction" ReturnType="Collection(SemplestModel.sp_GetRigtsRolesInteraction_Result)">
+          <Parameter Name="roleId" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -2146,6 +2152,14 @@
           <End Type="SemplestModel.Role" Role="Role" Multiplicity="*" />
           <End Type="SemplestModel.User" Role="User" Multiplicity="0..1" />
         </Association>
+        <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
+          <Property Type="Int32" Name="RolesFK" Nullable="true" />
+          <Property Type="String" Name="Controller" Nullable="false" MaxLength="40" />
+          <Property Type="String" Name="Label" Nullable="false" MaxLength="40" />
+          <Property Type="Boolean" Name="IsVisible" Nullable="true" />
+          <Property Type="Boolean" Name="IsReadonly" Nullable="true" />
+          <Property Type="Int32" Name="RightsPK" Nullable="false" />
+        </ComplexType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2585,6 +2599,18 @@
             </EndProperty>
             <Condition ColumnName="UsersFK" IsNull="false" />
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetRigtsRolesInteraction" FunctionName="SemplestModel.Store.sp_GetRigtsRolesInteraction">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SemplestModel.sp_GetRigtsRolesInteraction_Result">
+                <ScalarProperty Name="RolesFK" ColumnName="RolesFK" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
+                <ScalarProperty Name="IsReadonly" ColumnName="IsReadonly" />
+                <ScalarProperty Name="RightsPK" ColumnName="RightsPK" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
