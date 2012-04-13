@@ -40,7 +40,8 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 			start = System.currentTimeMillis();
 			ArrayList<String> selectCateg = new ArrayList<String>();
 			selectCateg.add(res.get(1));
-			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "peanut butter", null, null, "http://www.peanutbutter.com/", new Integer[]{50,50});
+			System.out.println("Selected:"+res.get(1));
+			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "coffee machine", null, null, "http://www.wholelattelove.com/", new Integer[]{50,50});
 			sec = (double) (System.currentTimeMillis() - start)/1000.0;
 			System.out.println("keywords took " + sec + " seconds");
 			for(int n=0; n<kw.size(); n++){
