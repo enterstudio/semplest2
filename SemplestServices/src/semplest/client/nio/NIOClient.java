@@ -283,7 +283,7 @@ public class NIOClient implements Runnable
 		{
 			// NIOClient client = new
 			// NIOClient(InetAddress.getByName("www.google.com"), 80);
-			NIOClient client = new NIOClient(null, 9999);
+			NIOClient client = new NIOClient(InetAddress.getByName("172.18.9.34"), 9999);
 			Thread t = new Thread(client);
 			t.setDaemon(true);
 			t.start();

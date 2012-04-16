@@ -37,18 +37,18 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	{
 		logger.debug("call  getBid(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Integer customerID = Integer.parseInt(data.get("customerID"));
-		Integer campaignID = Integer.parseInt(data.get("campaignID")); 
-		Integer adGroupID = Integer.parseInt(data.get("adGroupID"));
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		ArrayList<String> keywords = gson.fromJson(data.get("keywords"), ArrayList.class);
-		HashMap<String,Double> res = getBid(customerID,campaignID,adGroupID, keywords);
+		HashMap<String,Double> res = getBid(accountID,campaignID,adGroupID, keywords);
 		return gson.toJson(res);
 	}
 	
 	
 	@Override
-	public HashMap<String,Double> getBid(Integer customerID,
-			Integer campaignID, Integer adGroupID, ArrayList<String> keywords)
+	public HashMap<String,Double> getBid(String accountID,
+			Long campaignID, Long adGroupID, ArrayList<String> keywords)
 			throws Exception {
 		
 		logger.info("Computing bids ...");
@@ -81,9 +81,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //			}
 			
 			
-			
+			HashMap<String, Double > keywordbids = new HashMap<String, Double >();
+			/*
 			for (String word : keywords){
-				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForOneKeyword(word, KeywordMatchType.EXACT, bidLevels);
+				keywordbids.put(word, bidLevels.get(0)); //THIS NEEDS TO BE FIXED
+				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, keywordbids);
 				
 				Double[] bids = o.getBidList();
 				Arrays.sort(bids);
@@ -95,6 +97,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				}
 				
 			}
+			*/
 			
 			
 
