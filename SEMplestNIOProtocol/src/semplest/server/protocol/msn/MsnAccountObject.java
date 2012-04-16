@@ -11,12 +11,12 @@ public class MsnAccountObject {
 	private AccountFinancialStatus AccountFinancialStatus;
 	private AccountLifeCycleStatus AccountLifeCycleStatus;
 	private AccountType AccountType;
-	private Long BillToCustomerId;
+	private String BillToCustomerId;  //make it from Long to String, just in case it's the same value as ParentCustomerId
 	private String CountryCode;
 	private CurrencyType CurrencyType;
 	private Long Id;
 	private LanguageType Language;
-	private Long LastModifiedByUserId;
+	//private Long LastModifiedByUserId;
 	private Calendar LastModifiedTime;
 	private String Name;
 	private String Number;
@@ -25,19 +25,27 @@ public class MsnAccountObject {
 	private Long PaymentMethodId;
 	private PaymentMethodType PaymentMethodType;
 	private Long PrimaryUserId;
-	// private byte[] TimeStamp;  //This array will cause json crash. Need to convert it to a plain number, such as Long.
+	// private byte[] TimeStamp;  //This array may cause json crash. Need to convert it to a plain number, such as Long.
 	private TimeZoneType TimeZone;
 	
+	public MsnAccountObject(){
+		
+	}
+	
 	public MsnAccountObject(Account account){
+		this.fromAccount(account);		
+	}
+	
+	public void fromAccount(Account account){
 		AccountFinancialStatus = account.getAccountFinancialStatus();
 		AccountLifeCycleStatus = account.getAccountLifeCycleStatus();
 		AccountType = account.getAccountType();
-		BillToCustomerId = account.getBillToCustomerId();
+		BillToCustomerId = account.getBillToCustomerId().toString();
 		CountryCode = account.getCountryCode();
 		CurrencyType = account.getCurrencyType();
 		Id = account.getId();
 		Language = account.getLanguage();
-		LastModifiedByUserId = account.getLastModifiedByUserId();
+		//LastModifiedByUserId = account.getLastModifiedByUserId();
 		LastModifiedTime = account.getLastModifiedTime();
 		Name = account.getName();
 		Number = account.getNumber();
@@ -47,7 +55,31 @@ public class MsnAccountObject {
 		PaymentMethodType = account.getPaymentMethodType();
 		PrimaryUserId = account.getPrimaryUserId();
 		TimeZone = account.getTimeZone();
+	}
+	
+	public Account toAccount(){
+		Account ret = new Account();
 		
+		ret.setAccountFinancialStatus(AccountFinancialStatus);
+		ret.setAccountLifeCycleStatus(AccountLifeCycleStatus);
+		ret.setAccountType(AccountType);
+		ret.setBillToCustomerId(Long.valueOf(BillToCustomerId));
+		ret.setCountryCode(CountryCode);
+		ret.setCurrencyType(CurrencyType);
+		ret.setId(Id);
+		ret.setLanguage(Language);
+		//ret.setLastModifiedByUserId(LastModifiedByUserId);
+		ret.setLastModifiedTime(LastModifiedTime);
+		ret.setName(Name);
+		ret.setNumber(Number);
+		ret.setParentCustomerId(ParentCustomerId);
+		ret.setPauseReason(PauseReason);
+		ret.setPaymentMethodId(PaymentMethodId);
+		ret.setPaymentMethodType(PaymentMethodType);
+		ret.setPrimaryUserId(PrimaryUserId);
+		ret.setTimeZone(TimeZone);
+		
+		return ret;
 	}
 	
 	public AccountFinancialStatus getAccountFinancialStatus() {
@@ -70,10 +102,10 @@ public class MsnAccountObject {
 	public void setAccountType(AccountType accountType) {
 		AccountType = accountType;
 	}
-	public Long getBillToCustomerId() {
+	public String getBillToCustomerId() {
 		return BillToCustomerId;
 	}
-	public void setBillToCustomerId(Long billToCustomerId) {
+	public void setBillToCustomerId(String billToCustomerId) {
 		BillToCustomerId = billToCustomerId;
 	}
 	public String getCountryCode() {
@@ -100,12 +132,14 @@ public class MsnAccountObject {
 	public void setLanguage(LanguageType language) {
 		Language = language;
 	}
+	/*
 	public Long getLastModifiedByUserId() {
 		return LastModifiedByUserId;
 	}
 	public void setLastModifiedByUserId(Long lastModifiedByUserId) {
 		LastModifiedByUserId = lastModifiedByUserId;
 	}
+	*/
 	public Calendar getLastModifiedTime() {
 		return LastModifiedTime;
 	}

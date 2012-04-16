@@ -12,7 +12,6 @@ import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.msn.MsnAccountObject;
 
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
@@ -50,7 +49,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	 */
 	public abstract MsnManagementIds createAccount(SemplestString name) throws Exception;  
 	
-	public abstract MsnAccountObject getAccountById(Long accountId) throws Exception;
+	public abstract Account getAccountById(Long accountId) throws Exception;
 	
 	// ==================================
 	// Campaign Methods
@@ -122,7 +121,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	
 	public abstract long[] createKeywords(Long accountId, Long adGroupId, MsnCloudKeywordProxy... keywords) throws Exception;
 	
-	public abstract Maybe<Keyword> getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;
+	public abstract Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;
 	
 	public abstract Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws Exception;
 	
