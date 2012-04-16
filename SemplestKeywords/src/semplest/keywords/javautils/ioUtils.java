@@ -239,9 +239,11 @@ public class ioUtils {
 	      BufferedReader r = new BufferedReader(new FileReader(f));
 	      String line;
 	      while(( line =  r.readLine()) != null ){
-	        String[] cols = line.split(" : ");
-	        if( cols.length >= 2 )
-	          map.put( cols[0].trim(), line );
+	        String[] cols = line.split(":");
+	        if( cols.length >= 2 ){
+	        	cols[0] = cols[0].replaceAll("\\s+", "");
+	        	map.put( cols[0].trim(), line );
+	        }
 	      }
 	    } catch (Exception e) {
 	      e.printStackTrace();
