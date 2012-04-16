@@ -439,7 +439,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Selector selector = new Selector();
 		
 		selector.setFields(new String[]
-		{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc" });
+		{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc", "SystemServingStatus" });
 		selector.setOrdering(new OrderBy[]
 		{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
 		// Create predicates. 
@@ -498,6 +498,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
 				}
 				bidRes.setBidID(res.getCriterion().getId());
+				if(res.getSystemServingStatus()!=null){
+					bidRes.setStatus(res.getSystemServingStatus().getValue());
+				}
 				if (res.getApprovalStatus() != null)
 				{
 					bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
