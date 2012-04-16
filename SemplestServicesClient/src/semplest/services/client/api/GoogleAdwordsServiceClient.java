@@ -79,7 +79,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			System.out.println(campaignID);
 			
 			Long adGroupID= 3074331030L;
-			GoogleBidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID); 
+			GoogleBidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true); 
 			for (int i = 0; i < c.length; i++) 
 			{
 				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":"  + c[i].getQualityScore() + ":" + c[i].getFirstPageCpc());
@@ -331,28 +331,30 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	
 	@Override
-	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId) throws Exception
+	public AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId, Boolean ActiveOnly) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 	@Override
-	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("ActiveOnly",  String.valueOf(ActiveOnly));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAllBiddableAdGroupCriteria", json,timeoutMS);
 		return gson.fromJson(returnData,  GoogleBidObject[].class);
 	}
 	@Override
-	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
+	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID,  Boolean ActiveOnly) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("ActiveOnly",  String.valueOf(ActiveOnly));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAllAdGroupKeywords", json,timeoutMS);
