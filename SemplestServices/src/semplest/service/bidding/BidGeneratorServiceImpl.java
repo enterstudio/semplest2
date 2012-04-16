@@ -208,7 +208,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			
 			
 			try {
-				bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID);
+				bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

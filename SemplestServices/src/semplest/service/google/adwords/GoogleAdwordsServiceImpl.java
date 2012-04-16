@@ -415,14 +415,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call getAllAdGroupCriteria(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-
-		AdGroupCriterion[] res = getAllAdGroupCriteria(data.get("accountID"), adGroupID);
+		AdGroupCriterion[] res = getAllAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public AdGroupCriterion[] getAllAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public AdGroupCriterion[] getAllAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.
@@ -434,11 +433,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc" });
 		selector.setOrdering(new OrderBy[]
 		{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
-		// Create predicates.
+		// Create predicates. 
 		Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
 		{ adGroupID.toString() });
-		selector.setPredicates(new Predicate[]
-		{ adGroupIdPredicate });
+		if (ActiveOnly)
+		{
+			Predicate statusPredicate = new Predicate("Status", PredicateOperator.IN, new String[] {"ACTIVE"}); 
+			selector.setPredicates(new Predicate[] { adGroupIdPredicate, statusPredicate });
+		}
+		else
+		{
+			selector.setPredicates(new Predicate[] { adGroupIdPredicate });
+		}
+		selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 		
 		// Get all ad group criteria.
 		AdGroupCriterionPage page = adGroupCriterionService.get(selector);
@@ -459,16 +466,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		GoogleBidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID);
+		GoogleBidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID) throws Exception
+	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
 	{
 		List<GoogleBidObject> result = new ArrayList<GoogleBidObject>();
-		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID))
+		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			if (criterion instanceof BiddableAdGroupCriterion)
 			{
@@ -491,7 +498,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				bidRes.setKeyword((keyword.getText()));
 				
 				bidRes.setMatchType(keyword.getMatchType().getValue());
-				bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
+				if (res.getBids() != null)	
+				{
+					bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
+				}
 				result.add(bidRes);
 			}
 		}
@@ -504,16 +514,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		String[] res = getAllAdGroupKeywords(data.get("accountID"), adGroupID);
+		String[] res = getAllAdGroupKeywords(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID) throws Exception
+	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		List<String> keywords = new ArrayList<String>();
-		for (GoogleBidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID))
+		for (GoogleBidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			keywords.add(criterion.getKeyword());
 		}
