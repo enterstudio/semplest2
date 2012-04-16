@@ -119,7 +119,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	public abstract long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid, Bid phraseMatchBid) throws Exception;
 	
-	public abstract long[] createKeywords(Long accountId, Long adGroupId, MsnCloudKeywordProxy... keywords) throws Exception;
+	public abstract long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception;
 	
 	public abstract Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;
 	

@@ -37,6 +37,8 @@ public class MsnAccountObject {
 	}
 	
 	public void fromAccount(Account account){
+		if(account == null) return;
+		
 		AccountFinancialStatus = account.getAccountFinancialStatus();
 		AccountLifeCycleStatus = account.getAccountLifeCycleStatus();
 		AccountType = account.getAccountType();

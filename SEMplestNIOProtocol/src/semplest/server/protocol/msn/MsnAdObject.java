@@ -26,6 +26,8 @@ public class MsnAdObject {
 	}
 	
 	public void fromAd(Ad ad){
+		if (ad == null) return;
+		
 		Id = ad.getId();
 		Type = ad.getType();
 		Status = ad.getStatus();
