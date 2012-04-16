@@ -10,6 +10,8 @@ public class GoogleBidObject
 	private String matchType;
 	private Long firstPageCpc;
 	private Integer qualityScore;
+	private String status;
+	
 	public Long getBidID()
 	{
 		return bidID;
@@ -65,6 +67,12 @@ public class GoogleBidObject
 	public void setQualityScore(Integer qualityScore)
 	{
 		this.qualityScore = qualityScore;
+	}
+	public void setStatus(String status){
+		this.status=status;
+	}
+	public String getStatus(){
+		return status;
 	}
 	
 }
