@@ -7,6 +7,10 @@ import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.api.GoogleAdwordsServiceClient;
 
+
+//import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -58,7 +62,22 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		// ************************************************************************** 
 		
-		// A. get the bid information from ad campaign
+		
+		
+		GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+//		GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+		
+		GoogleBidObject[] bidObjects = null;
+		GoogleBidObject bidObject;
+		
+		// A. Add the keywords to the campaign
+		
+//		Long maxCPC = 1000000L; // bid in microBidAmount;
+//		addWords(accountID,	campaignID, adGroupID, keywords, maxCPC);
+		
+		
+		
+		// B. get the bid information from ad campaign
 		
 		// what i can get now: bid related info from google
 		// TBD: 1. MSN/yahoo 
@@ -66,47 +85,38 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		//      3. how to get competition info? data which return all zeros are non-competitive? 
 		
 		
-		try
-		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
-
-			ArrayList<Double> bidLevels = new ArrayList<Double>();
-
-			for (double b = 1.1; b<3.5; b=b+0.5){
-				bidLevels.add(new Double(b));
-			}
-//			System.out.println("Number of points on bid axis: "+bidLevels.size());
-//			for(int i=0; i< bidLevels.size(); i++){
-//				System.out.format("Bid: %.1f\n",bidLevels.get(i));
-//			}
-			
-			
-			HashMap<String, Double > keywordbids = new HashMap<String, Double >();
-			/*
-			for (String word : keywords){
-				keywordbids.put(word, bidLevels.get(0)); //THIS NEEDS TO BE FIXED
-				GoogleTrafficEstimatorObject o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, keywordbids);
-				
-				Double[] bids = o.getBidList();
-				Arrays.sort(bids);
-
-				logger.info(word);
-				for (int i = 0; i < bids.length; i++) {
-					System.out.println(bids[i]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[i])
-							+ " Avg CPC="+ o.getAveCPC(bids[i]) + " Avg Pos=" + o.getAvePosition(bids[i]));
-				}
-				
-			}
-			*/
-			
-			
-
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
+		// get info about the keywords from GOOGLE
+		try {
+			bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		
+		HashMap<String,Double> firstPageCPCMap = new HashMap<String,Double>();
+		HashMap<String,Double> qualityScoreMap = new HashMap<String,Double>();
+		
+		for(int i=0; i<bidObjects.length; i++){
+				bidObject = bidObjects[i];
+				logger.info((i+1)+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore()+ ", Status: "+ bidObject.getStatus());
+				firstPageCPCMap.put(bidObject.getKeyword(), new Double(bidObject.getFirstPageCpc()*1e-6));
+				qualityScoreMap.put(bidObject.getKeyword(), new Double(bidObject.getQualityScore()));
+				
+
+//					bidObject
+//					try {
+//						bidObject=client.setBidForKeyWord(accountID, bidObject.getBidID(), adGroupID,bidObject.getFirstPageCpc()+250000L );
+//						Thread.sleep(500);
+//					} catch (Exception e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}					
+//		}
+
+				
+			} // for(int i=0; i<bidObjects.length; i++)
+		
+		
 		
 		 // ************************************************************************** 
 
@@ -136,6 +146,30 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		return bidData;
 	}
 	
+	
+	
+	private void addWords(String accountID,
+			Long campaignID, Long adGroupID, ArrayList<String> keywords, Long maxCPC){
+
+		GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
+//		GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+				
+		for(String word : keywords){
+			try {
+				client.addKeyWordToAdGroup(accountID, adGroupID, word , KeywordMatchType.EXACT, maxCPC);
+//				logger.info(bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
+				logger.info("Added keyword: "+word+"to the account.");
+				Thread.sleep(500);
+			} catch (Exception e) {
+				e.printStackTrace();
+				logger.info("Couldn't add keyword: "+word+"to the account. Exception received.");
+			}
+		}
+
+	}
+
+	
+	
 	public static void main(String[] args){
 		
 
@@ -145,36 +179,28 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 ////		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywords.txt");
 //		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywordsProb.txt");
-//
-//		ArrayList<String> keywords = new ArrayList<String>();
-//		
-//		for (String line : lines){
-//			line=line.replaceFirst("\\S+\\s+", "") ; // for the new format
-//			keywords.add(line.replaceAll("\n",""));
-////			System.out.println(line);
-//		}
+		ArrayList<String> lines = ioUtils.readFile("/semplest/data/biddingTest/Test1/keywordsProb500.txt");
+
+		ArrayList<String> keywords = new ArrayList<String>();
+
+		for (String line : lines){
+			line=line.replaceFirst("\\S+\\s+", "") ; // for the new format
+			keywords.add(line.replaceAll("\n",""));
+//			System.out.println(line);
+		}
 		
 //		System.exit(0);
-		
-
-		
-		ArrayList<Double> bidLevels; 
-
 		
 
 		try {
 			
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(null);
-			GoogleTrafficEstimatorObject o;
+//			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 
-			
-			GoogleBidObject bidObject;
-			GoogleBidObject[] bidObjects = null;
-			Long maxCPC;
 
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
-//			System.out.println(campaignID);
+			System.out.println(campaignID);
 			
 
 			GoogleAdGroupObject[] adGroups = null;
@@ -189,99 +215,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				
 			Long adGroupID = adGroups[0].getAdGroupID();
 			
-			
-//			maxCPC = 100000L; // bid in microBidAmount
-//			int count=0;
-//			for(String word : keywords){
-//				count++;
-//				System.out.println(count+": "+word);
-//				try {
-//					bidObject = client.addKeyWordToAdGroup(accountID, adGroupID, word , KeywordMatchType.EXACT, maxCPC);
-//					Thread.sleep(500);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//					System.out.println("Skipping keyword: "+word);
-//				}
-//			}
-//			
-//			Thread.sleep(10000);
-			
-			
-			try {
-				bidObjects = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			System.out.println(bidObjects.length);
-			System.exit(0);
 
-			
-//			System.out.println(bidObjects[1000].getKeyword());
-			
-//			for(int i=0; i<bidObjects.length; i++){
-////			for(int i=10; i<12; i++){
-//				bidObject = bidObjects[i];
-////				client.getBidLandscapeForKeyword(accountID, adGroupID, bidObjects[i].getBidID());
-////				System.out.println(i+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
-//				if(bidObject.getFirstPageCpc()<8000000L) {
-//					System.out.println((i+1)+": "+bidObject.getKeyword()+": "+bidObject.getFirstPageCpc()*1e-6 + ": " + bidObject.getQualityScore());
-//					try {
-//						bidObject=client.setBidForKeyWord(accountID, bidObject.getBidID(), adGroupID,bidObject.getFirstPageCpc()+250000L );
-//					} catch (Exception e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//					
-//					Thread.sleep(500);
-//				}
-////				System.out.println(bidObject.getMicroBidAmount());
-//				
-//				
-////				bidLevels = new ArrayList<Double>();
-////				for (double b = bidObject.getFirstPageCpc()*1e-6+0.05; b<bidObject.getFirstPageCpc()*1e-6+0.5; b=b+0.5){
-//////					bidLevels.add(new Double(b/bidObject.getQualityScore()));
-////					bidLevels.add(new Double(b));
-////				}
-////				
-////				o = client.getTrafficEstimationForOneKeyword(bidObject.getKeyword(), KeywordMatchType.EXACT, bidLevels);
-////				Double[] bids = o.getBidList();
-////				Arrays.sort(bids);
-////
-////				logger.info(bidObject.getKeyword());
-////				for (int j = 0; j < bids.length; j++) {
-////					logger.info(bids[j]/1e6 + " Avg Clicks=" + o.getMaxAveClickPerDay(bids[j])
-////							+ " Avg CPC="+ o.getAveCPC(bids[j]) + " Avg Pos=" + o.getAvePosition(bids[j]));
-////				}
-//				
-//			} // for(int i=0; i<bidObjects.length; i++)
-			
-//			System.out.println(bidObjects.length);
-//			bidObject = bidObjects[0];
-//			System.out.println(bidObject.getKeyword()+": "+bidObject.getFirstPageCpc() + ": " + bidObject.getQualityScore());
-			
-			
-//			maxCPC = 200000L;
-//			bidObject=client.setBidForKeyWord(accountID, 16748361L, adGroupID, maxCPC);
-//			System.out.println(bidObject.getMicroBidAmount());
 
-			
-			
-//			String [] words = client.getAllAdGroupKeywords(accountID, adGroupID);
-//			System.out.println(words.length);
-			
-//			client.UpdateCampaignName(accountID, campaignID, "Test 1");
-//			campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
-
-//			Money m =new Money();
-//			m.setMicroAmount(360000L);
-//			client.changeCampaignBudget(accountID, campaignID, m); //doesn't work
-//			campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
-			
-//			AdGroup[] adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
-//			client.
-
-//			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
-//			bidGenerator.getBid(customerID, campaignID, adGroupID, keywords);
+			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
+			bidGenerator.getBid(accountID, campaignID, adGroupID, keywords);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
