@@ -63,7 +63,7 @@ public class TestMSN
 		this.msnCloudService = msnCloudService;
 		this.msnCloudAccountId = msnCloudAccountId;
 		this.msnCustomerId = msnCustomerId;
-		account = msnCloudService.getAccountById(msnCloudAccountId);
+		account.fromAccount(msnCloudService.getAccountById(msnCloudAccountId));
 		System.out.println("account: " + account.getName() + ":" + account.getId());
 		campaigns = msnCloudService.getCampaignsByAccountId(msnCloudAccountId);
 
