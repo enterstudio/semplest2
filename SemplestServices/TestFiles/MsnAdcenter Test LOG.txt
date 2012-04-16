@@ -8,9 +8,16 @@ userId = 1667566
 
 campaignId = 130129414
 	campaignName = msn_test_nan
+	
 	adGroupId = 754813047
 		Name = A1334181236897 
+		
 		AdId = 937776925
+		AdId = 937778709
+		
+		KeywordId = 8099371830
+		KeywordId = 8099371836
+		
 	adGroupId = 754813055
 		Name = A1334181636164
 		
@@ -19,7 +26,7 @@ campaignId = 130129426
 
 
 //have to manually select options from DailyBudget and MonthlyBudget on MSN AdCenter page (https://adcenter.microsoft.com/). Once set, API would work on only one of them.
-//same for 
+//same for "campaign level settings for targeting and exclusions" and "group level settings for targeting and exclusions". Note that when use Campaign APIs and AdGroup APIs.
 
 ==========================================
 (#: start to code on this method; ##: finished coding on the method; ###: passed testing and done on the method)
@@ -206,23 +213,77 @@ createAd  ###
 createAd: AdId = 937776925
 	
 
-getAdById
+getAdById  ###
+------------------------------------------
+//Create AdObject to resolve json conflict of DisplayUrl and DestinationUrl
+getAdById: ok
+AdId = 937776925; status = Active; EditorialStatus = Active; Type = Text
+Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+
 	
-getAdsByAdGroupId
+getAdsByAdGroupId  ###
+------------------------------------------
+getAdsByAdGroupId: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+Id = 937778709; Title = nan ad test 2; Text = semplest test num 2; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+
 	
-updateAdById
+updateAdById  ###
+------------------------------------------
+getAdById: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+updateAdById: (if successful returns 0) 0
+getAdById: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://adcenter.microsoft.com/; DestinationUrl = https://adcenter.microsoft.com/
+
+
+>>>>>04/16/2012
+
+
+pauseAdById  ###
+------------------------------------------
+pauseAdById: (if successful returns 0) 0
+getAdById: ok
+AdId = 937776925; status = Paused
+
 	
-pauseAdById
+resumeAdById  ###
+------------------------------------------
+resumeAdById: (if successful returns 0) 0
+getAdById: ok
+AdId = 937776925; status = Active
+pauseAdById: (if successful returns 0) 0
+
 	
-resumeAdById
+deleteAdById  ###
+------------------------------------------
+createAd: AdId = 937930374
+getAdsByAdGroupId: ok
+Id = 937776925
+Id = 937778709
+Id = 937930374
+deleteAdById: (if successful returns 0) 0
+getAdsByAdGroupId: ok
+Id = 937776925
+Id = 937778709
+
 	
-deleteAdById
+createKeyword  ###
+------------------------------------------
+createKeyword: KeywordId = 8099371836
+getKeywordById: ok
+Id = 8099371836; text = nan keyword test 2
+
+
+createKeywords  
+------------------------------------------
+
 	
-createKeyword
-	
-createKeywords
-	
-getKeywordById
+getKeywordById  ###
+------------------------------------------
+getKeywordById: ok
+Id = 8099371836; text = nan keyword test 2
+
 	
 getKeywordByAdGroupId
 	

@@ -33,9 +33,8 @@ import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.SemplestError;
 import semplest.other.TimeServer;
-import semplest.server.protocol.ProtocolJSON;
-import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.server.protocol.*;
+import semplest.server.protocol.msn.*;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.Gson;
@@ -176,6 +175,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	private static Gson gson = new Gson();
 	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
+	
+	private static String seperator = "#";
 
 	@Override
 	public boolean isProduction()
@@ -259,24 +260,24 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{	
 		logger.debug("call getAccountById(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		MsnAccountObject ret = null;
+		Account ret = null;
 		try {
 			ret = getAccountById(new Long(data.get("accountId")));
 		} catch (MsnCloudException e) {
 			throw new Exception(e);
 		}
-		return gson.toJson(ret);
+		return gson.toJson(new MsnAccountObject(ret));
 	} 
 	
 	@Override
-	public MsnAccountObject getAccountById(Long accountId) throws MsnCloudException
+	public Account getAccountById(Long accountId) throws MsnCloudException
 	{
 		GetAccountResponse account;
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();
 			account = customerManagementService.getAccount(new GetAccountRequest(accountId));
-			return new MsnAccountObject(account.getAccount());
+			return account.getAccount();
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -530,7 +531,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setCampaignStateTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("campaignId")), 
-					Arrays.asList(data.get("states").split(",")));
+					Arrays.asList(data.get("states").split(seperator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -804,7 +805,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setAdGroupStateTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("adGroupId")), 
-					Arrays.asList(data.get("states").split(",")));
+					Arrays.asList(data.get("states").split(seperator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -825,6 +826,24 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		catch(ApiFaultDetail e2){
 			throw new RemoteException(e2.dumpToString());
 		}
+		catch(EditorialApiFaultDetail e3){
+			throw new RemoteException(e3.dumpToString());
+		}
+	}
+	
+	public String setAdGroupCityTargets(String json) throws Exception
+	{
+		logger.debug("call setAdGroupCityTargets(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			setAdGroupCityTargets(new Long(data.get("accountId")), 
+					new Long(data.get("customerId")), 
+					new Long(data.get("adGroupId")), 
+					Arrays.asList(data.get("cities").split(seperator)));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -833,7 +852,33 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		Target[] targets = makeCityTargets(cities);
-		addTargetsToAdGroup(adGroupId, campaignManagement, targets);
+		try{
+			addTargetsToAdGroup(adGroupId, campaignManagement, targets);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
+		catch(EditorialApiFaultDetail e3){
+			throw new RemoteException(e3.dumpToString());
+		}
+	}
+	
+	public String setAdGroupMetroAreaTargets(String json) throws Exception
+	{
+		logger.debug("call setAdGroupMetroAreaTargets(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			setAdGroupMetroAreaTargets(new Long(data.get("accountId")), 
+					new Long(data.get("customerId")), 
+					new Long(data.get("msnAdGroupId")), 
+					Arrays.asList(data.get("metroTargets").split(seperator)));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -842,7 +887,18 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		Target[] targets = makeMetroAreaTargets(metroTargets);
-		addTargetsToAdGroup(msnAdGroupId, campaignManagement, targets);
+		try{
+			addTargetsToAdGroup(msnAdGroupId, campaignManagement, targets);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
+		catch(EditorialApiFaultDetail e3){
+			throw new RemoteException(e3.dumpToString());
+		}
 	}
 
 	
@@ -853,6 +909,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 
 		SetTargetToAdGroupRequest setTargetToCampaignRequest = new SetTargetToAdGroupRequest(adGroupId, targetId);
 		campaignManagement.setTargetToAdGroup(setTargetToCampaignRequest);
+	}
+	
+	public String deleteAdGroupTargets(String json) throws Exception
+	{
+		logger.debug("call deleteAdGroupTargets(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			deleteAdGroupTargets(new Long(data.get("accountId")), 
+					new Long(data.get("customerId")), 
+					new Long(data.get("adGroupId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -877,6 +947,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new RemoteException(e2.dumpToString());
 		}
 	}
+	
+	public String getAdGroupTargets(String json) throws Exception
+	{
+		logger.debug("call getAdGroupTargets(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Target ret = null;
+		try {
+			ret = getAdGroupTargets(new Long(data.get("accountId")), 
+					new Long(data.get("customerId")), 
+					new Long(data.get("adGroupId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
 
 	@Override
 	public Target getAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws RemoteException
@@ -899,6 +984,24 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	// Ad Methods
 	// ==================================
+	public String createAd(String json) throws Exception
+	{
+		logger.debug("call createAd(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		long ret = -1;
+		try {
+			ret = createAd(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					data.get("title"),
+					data.get("text"),
+					data.get("displayUrl"),
+					data.get("destinationUrl"));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
 	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws RemoteException,
 			ApiFaultDetail, AdApiFaultDetail
@@ -912,9 +1015,33 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		// ad.setEditorialStatus(AdEditorialStatus.Active);
 		// TextAd ad =
 		// aNew().textAd().withTitle(title).withText(text).withDisplayUrl(displayUrl).withDestinationUrl(destinationUrl).build();
-		AddAdsResponse addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[]
-		{ ad }));
+		AddAdsResponse addAds = null;
+		try{
+			addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[]
+					{ ad }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(EditorialApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return addAds.getAdIds()[0];
+	}
+	
+	public String getAdById(String json) throws Exception
+	{
+		logger.debug("call getAdById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Ad ret = null;
+		try {
+			ret = getAdById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("adId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(new MsnAdObject(ret));
 	}
 
 	@Override
@@ -934,6 +1061,26 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		return adsByIds.getAds()[0];
 	}
+	
+	public String getAdsByAdGroupId(String json) throws Exception
+	{
+		logger.debug("call getAdsByAdGroupId(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Ad[] ret = null;
+		try {
+			ret = getAdsByAdGroupId(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		//pack it to MsnAdObject
+		MsnAdObject[] ret1 = new MsnAdObject[ret.length];
+		for(int i = 0; i < ret.length; i++){
+			ret1[i] = new MsnAdObject();
+			ret1[i].fromAd(ret[i]);
+		}
+		return gson.toJson(ret1);
+	}
 
 	@Override
 	public Ad[] getAdsByAdGroupId(Long accountId, Long adGroupId) throws RemoteException
@@ -950,6 +1097,24 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new RemoteException(e2.dumpToString());
 		}
 		return ads.getAds();
+	}
+	
+	public String updateAdById(String json) throws Exception
+	{
+		logger.debug("call updateAdById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			updateAdById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("adId")), 
+					data.get("title"),
+					data.get("text"),
+					data.get("displayUrl"),
+					data.get("destinationUrl"));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -969,8 +1134,30 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			textAd.setDisplayUrl(displayUrl);
 			textAd.setDestinationUrl(destinationUrl);
 		}
-		campaignManagement.updateAds(new UpdateAdsRequest(adGroupId, new Ad[]
-		{ ad }));
+		try{
+			campaignManagement.updateAds(new UpdateAdsRequest(adGroupId, new Ad[]
+					{ ad }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
+	}
+	
+	public String pauseAdById(String json) throws Exception
+	{
+		logger.debug("call pauseAdById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			pauseAdById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("adId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -988,6 +1175,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new RemoteException(e2.dumpToString());
 		}
 	}
+	
+	public String resumeAdById(String json) throws Exception
+	{
+		logger.debug("call resumeAdById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			resumeAdById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("adId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
+	}
 
 	@Override
 	public void resumeAdById(Long accountId, Long adGroupId, long adId) throws RemoteException
@@ -1003,6 +1204,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		catch(ApiFaultDetail e2){
 			throw new RemoteException(e2.dumpToString());
 		}
+	}
+	
+	public String deleteAdById(String json) throws Exception
+	{
+		logger.debug("call deleteAdById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			deleteAdById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("adId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -1024,6 +1239,33 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	// Keyword Methods
 	// ==================================
+	public String createKeyword(String json) throws Exception
+	{
+		logger.debug("call createKeyword(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		long ret = -1;
+		String broadMatchBidStr = data.get("broadMatchBid");
+		Bid broadMatchBid = gson.fromJson(broadMatchBidStr, Bid.class);
+		String contentMatchBidStr = data.get("contentMatchBid");
+		Bid contentMatchBid = gson.fromJson(contentMatchBidStr, Bid.class);
+		String exactMatchBidStr = data.get("exactMatchBid");
+		Bid exactMatchBid = gson.fromJson(exactMatchBidStr, Bid.class);
+		String phraseMatchBidStr = data.get("phraseMatchBid");
+		Bid phraseMatchBid = gson.fromJson(phraseMatchBidStr, Bid.class);
+		try {
+			ret = createKeyword(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					data.get("text"),
+					broadMatchBid,
+					contentMatchBid,
+					exactMatchBid,
+					phraseMatchBid);
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
 	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
 			Bid phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
@@ -1053,8 +1295,23 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return addKeywords.getKeywordIds();
 	}
 
+	public String getKeywordById(String json) throws Exception
+	{
+		logger.debug("call getKeywordById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Keyword ret = null;
+		try {
+			ret = getKeywordById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("keywordId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
 	@Override
-	public Maybe<Keyword> getKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
+	public Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		GetKeywordsByIdsResponse keywordsByIds = null;
@@ -1071,9 +1328,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		Keyword[] keywords = keywordsByIds.getKeywords();
 		if (keywords.length == 1 && keywords[0] != null)
 		{
-			return Maybe.just(keywords[0]);
+			return keywords[0];
 		}
-		return Maybe.nothing();
+		return null;
 	}
 
 	@Override
