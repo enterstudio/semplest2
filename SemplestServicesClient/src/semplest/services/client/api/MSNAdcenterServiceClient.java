@@ -18,7 +18,7 @@ import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.server.protocol.msn.*;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 
 import com.google.gson.Gson;
@@ -37,6 +37,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
+	private static String seperator = "#";
 	
 	private final String baseurl;
 	
@@ -92,23 +93,33 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			Campaign ret2 = test.getCampaignById(new Long(1595249), new Long(130129414));  //updated value
 			
 			//setCampaignStateTargets
-			//String[] list = {"US-NY", "US-MA"};
-			//List<String> states = Arrays.asList(list);
-			//test.setCampaignStateTargets(new Long(1595249), new Long(13061731), new Long(130129414), states);
+			Target ret = test.getCampaignTargets(1595249L, 13061731L, 130129426L);  //check before change
+			if(ret != null){
+				//delete target if there's already one associated to the entity
+				test.deleteCampaignTargets(1595249L, 13061731L, 130129426L);
+			}
+			String[] list = {"US-NY", "US-MA", "US-CA", "US-FL"};
+			List<String> states = Arrays.asList(list);
+			test.setCampaignStateTargets(1595249L, 13061731L, 130129426L, states);
+			ret = test.getCampaignTargets(1595249L, 13061731L, 130129426L);  //check after change
+			StateTargetBid[] bids = ret.getLocation().getStateTarget().getBids();
+			for(StateTargetBid b:bids){
+				logger.info("state = " + b.getState());
+			}
 			
 			//getCampaignTargets
 			Target ret = test.getCampaignTargets(1595249L, 13061731L, 130129414L);
 			StateTargetBid[] bids = ret.getLocation().getStateTarget().getBids();
 			for(StateTargetBid b:bids){
-				logger.debug("state = " + b.getState());
+				logger.info("state = " + b.getState());
 			}
 			
 			//deleteCampaignTargets
 			Target ret = test.getCampaignTargets(1595249L, 13061731L, 130129426L);  //check before change
-			if(ret!=null) logger.debug("Target is not null");
+			if(ret!=null) logger.info("Target is not null");
 			test.deleteCampaignTargets(1595249L, 13061731L, 130129426L);
 			ret = test.getCampaignTargets(1595249L, 13061731L, 130129426L);  //check after change
-			if(ret==null) logger.debug("Target is null");
+			if(ret==null) logger.info("Target is null");
 			
 			//createAdGroup
 			long ret = test.createAdGroup(1595249L, 130129414L);
@@ -118,13 +129,168 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			
 			//getAdGroupById
 			AdGroup ret = test.getAdGroupById(1595249L, 130129414L, 754813047L);
-			*/
+			
 			//deleteAdGroupById
 			long ret1 = test.createAdGroup(1595249L, 130129414L);  //add a group
 			AdGroup[] ret2 = test.getAdGroupsByCampaignId(1595249L, 130129414L);  //check the list
 			test.deleteAdGroupById(1595249L, 130129414L, ret1);  //delete the group
 			ret2 = test.getAdGroupsByCampaignId(1595249L, 130129414L);  //check the list
 			
+			//setAdGroupStateTargets, deleteAdGroupTargets and getAdGroupTargets
+			Target ret = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check before change
+			if(ret != null){
+				//delete target if there's already one associated to the entity
+				test.deleteAdGroupTargets(1595249L, 13061731L, 754813047L);
+			}
+			String[] list = {"US-NY", "US-MA", "US-CA", "US-FL"};
+			List<String> states = Arrays.asList(list);
+			test.setAdGroupStateTargets(1595249L, 13061731L, 754813047L, states);			
+			ret = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check after change
+			StateTargetBid[] bids = ret.getLocation().getStateTarget().getBids();
+			for(StateTargetBid b:bids){
+				logger.info("state = " + b.getState());
+			}
+			//===Use this test to get format of City string and MetroArea string. (need to set things up on the website before run this)
+			Target ret2 = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);
+			StateTargetBid[] bids = ret2.getLocation().getStateTarget().getBids();
+			for(StateTargetBid b:bids){
+				logger.info("state = " + b.getState());
+			}
+			CityTargetBid[] bids1 = ret2.getLocation().getCityTarget().getBids();
+			for(CityTargetBid b:bids1){
+				logger.info("city = " + b.getCity());
+			}
+			MetroAreaTargetBid[] bids2 = ret2.getLocation().getMetroAreaTarget().getBids();
+			for(MetroAreaTargetBid b:bids2){
+				logger.info("MetroArea = " + b.getMetroArea());
+			}
+			
+			//setAdGroupCityTargets
+			Target ret = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check before change
+			if(ret != null){
+				//delete target if there's already one associated to the entity
+				test.deleteAdGroupTargets(1595249L, 13061731L, 754813047L);
+			} 
+			String[] list = {"Brookline, Boston MA US", "Newton, Boston MA US", "Wellesley, Boston MA US"};
+			List<String> states = Arrays.asList(list);
+			test.setAdGroupCityTargets(1595249L, 13061731L, 754813047L, states);			
+			Target ret2 = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check after change
+			CityTargetBid[] bids = ret2.getLocation().getCityTarget().getBids();
+			for(CityTargetBid b:bids){
+				logger.info("city = " + b.getCity());
+			}			
+			
+			//setAdGroupMetroAreaTargets
+			Target ret = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check before change
+			if(ret != null){
+				//delete target if there's already one associated to the entity
+				test.deleteAdGroupTargets(1595249L, 13061731L, 754813047L);
+			} 
+			String[] list = {"Brooklyn, NY US", "New York, NY US"};
+			List<String> metros = Arrays.asList(list);
+			test.setAdGroupMetroAreaTargets(1595249L, 13061731L, 754813047L, metros);			
+			Target ret2 = test.getAdGroupTargets(1595249L, 13061731L, 754813047L);  //check after change
+			MetroAreaTargetBid[] bids = ret2.getLocation().getMetroAreaTarget().getBids();
+			for(MetroAreaTargetBid b:bids){
+				logger.info("city = " + b.getMetroArea());
+			}	
+			
+			//createAd
+			long ret = test.createAd(1595249L, 754813047L, "nan ad test 1", "semplest test num 1", "https://www.semplest.com/", "https://www.semplest.com/");
+			
+			//getAdById
+			Ad ret = test.getAdById(1595249L, 754813047L, 937776925L);
+			logger.info("AdId = " + ret.getId()
+					+ "; status = " + ret.getStatus().getValue()
+					+ "; EditorialStatus = " + ret.getEditorialStatus().getValue()
+					+ "; Type = " + ret.getType().getValue());
+			MobileAd ret1 = (MobileAd)ret;
+			logger.info("Title = " + ret1.getTitle()
+					+ "; Text = " + ret1.getText()
+					+ "; DisplayUrl = " + ret1.getDisplayUrl()
+					+ "; DestinationUrl = " + ret1.getDestinationUrl());
+			
+			//getAdsByAdGroupId
+			Ad[] ret = test.getAdsByAdGroupId(1595249L, 754813047L);
+			for (Ad x : ret){
+				MobileAd a = (MobileAd) x;
+				logger.info("Id = " + a.getId()
+						+ "; Title = " + a.getTitle()
+						+ "; Text = " + a.getText()
+						+ "; DisplayUrl = " + a.getDisplayUrl()
+						+ "; DestinationUrl = " + a.getDestinationUrl());
+			}
+			
+			//updateAdById
+			  //check before update
+			Ad ret = test.getAdById(1595249L, 754813047L, 937776925L);
+			MobileAd a = (MobileAd) ret;
+			logger.info("Id = " + a.getId()
+					+ "; Title = " + a.getTitle()
+					+ "; Text = " + a.getText()
+					+ "; DisplayUrl = " + a.getDisplayUrl()
+					+ "; DestinationUrl = " + a.getDestinationUrl());
+			  //update
+			test.updateAdById(1595249L, 754813047L, 937776925L, "nan ad test 1", "semplest test num 1", "https://adcenter.microsoft.com/", "https://adcenter.microsoft.com/");
+			  //check after update
+			ret = test.getAdById(1595249L, 754813047L, 937776925L);
+			a = (MobileAd) ret;
+			logger.info("Id = " + a.getId()
+					+ "; Title = " + a.getTitle()
+					+ "; Text = " + a.getText()
+					+ "; DisplayUrl = " + a.getDisplayUrl()
+					+ "; DestinationUrl = " + a.getDestinationUrl());
+			
+			//pauseAdById
+			test.pauseAdById(1595249L, 754813047L, 937776925L);  //pause the Ad
+			  //Check current status
+			Ad ret = test.getAdById(1595249L, 754813047L, 937776925L);
+			logger.info("AdId = " + ret.getId()
+					+ "; status = " + ret.getStatus().getValue());
+			
+			//resumeAdById
+			test.resumeAdById(1595249L, 754813047L, 937776925L);  //resume the Ad
+			  //Check current status
+			Ad ret = test.getAdById(1595249L, 754813047L, 937776925L);
+			logger.info("AdId = " + ret.getId()
+					+ "; status = " + ret.getStatus().getValue());
+			test.pauseAdById(1595249L, 754813047L, 937776925L);  //you'd better pause it after test
+			
+			//deleteAdById
+			  //create a new Ad first
+			long ret1 = test.createAd(1595249L, 754813047L, "nan ad test 3", "semplest test num 3", "https://www.semplest.com/", "https://www.semplest.com/");
+			  //list all Ads
+			Ad[] ret2 = test.getAdsByAdGroupId(1595249L, 754813047L);
+			for (Ad x : ret2){
+				MobileAd a = (MobileAd) x;
+				logger.info("Id = " + a.getId());
+			}
+			  //now delete the last Ad
+			test.deleteAdById(1595249L, 754813047L, ret1);
+			  //list all current Ads
+			ret2 = test.getAdsByAdGroupId(1595249L, 754813047L);
+			for (Ad x : ret2){
+				MobileAd a = (MobileAd) x;
+				logger.info("Id = " + a.getId());
+			}
+			*/
+			//createKeyword, getKeywordById
+			  //createKeyword
+			Bid broadMatchBid = new Bid();
+			broadMatchBid.setAmount(2.00);
+			Bid contentMatchBid = new Bid();
+			contentMatchBid.setAmount(2.01);
+			Bid exactMatchBid = new Bid();
+			exactMatchBid.setAmount(2.02);
+			Bid phraseMatchBid = new Bid();
+			phraseMatchBid.setAmount(2.03);
+			long ret = test.createKeyword(1595249L, 754813047L, "nan keyword test 2", broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);			
+			  //getKeywordById
+			Keyword ret2 = test.getKeywordById(1595249L, 754813047L, ret);
+			if(ret2 != null){
+				logger.info("Id = " + ret2.getId()
+						+ "; text = " + ret2.getText());
+			}
 			
 			
 		}
@@ -176,7 +342,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	
 
 	@Override
-	public MsnAccountObject getAccountById(Long accountId) throws Exception
+	public Account getAccountById(Long accountId) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -187,7 +353,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		logger.debug("getAccountById: Name = " + account.getName()
 				+ "; ParentCustomerId = " + account.getParentCustomerId()
 				+ "; PrimaryUserId = " + account.getPrimaryUserId());
-		return account;
+		return account.toAccount();
 	}
 
 	@Override
@@ -317,7 +483,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String stateslist = "";
 		for (int i = 0; i < states.size()-1; i++){
-			stateslist += states.get(i) + ",";
+			stateslist += states.get(i) + seperator;
 		}
 		stateslist += states.get(states.size()-1);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -426,101 +592,244 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	@Override
 	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String stateslist = "";
+		for (int i = 0; i < states.size()-1; i++){
+			stateslist += states.get(i) + seperator;
+		}
+		stateslist += states.get(states.size()-1);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("customerId", Long.toString(customerId));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("states", stateslist);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupStateTargets", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("setAdGroupStateTargets: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void setAdGroupCityTargets(Long accountId, long customerId, Long adGroupId, List<String> cities) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String citylist = "";
+		for (int i = 0; i < cities.size()-1; i++){
+			citylist += cities.get(i) + seperator;
+		}
+		citylist += cities.get(cities.size()-1);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("customerId", Long.toString(customerId));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("cities", citylist);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupCityTargets", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("setAdGroupCityTargets: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void setAdGroupMetroAreaTargets(Long accountId, long customerId, long msnAdGroupId, List<String> metroTargets) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String metroTargetsList = "";
+		for (int i = 0; i < metroTargets.size()-1; i++){
+			metroTargetsList += metroTargets.get(i) + seperator;
+		}
+		metroTargetsList += metroTargets.get(metroTargets.size()-1);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("customerId", Long.toString(customerId));
+		jsonHash.put("msnAdGroupId", Long.toString(msnAdGroupId));
+		jsonHash.put("metroTargets", metroTargetsList);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupMetroAreaTargets", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("setAdGroupMetroAreaTargets: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void deleteAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("customerId", Long.toString(customerId));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdGroupTargets", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("deleteAdGroupTargets: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public Target getAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("customerId", Long.toString(customerId));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupTargets", json, null);
+		Target ret = gson.fromJson(returnData, Target.class);
+		logger.debug("getAdGroupTargets: ok");
+		return ret;
 	}
 
 	@Override
 	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("title", title);
+		jsonHash.put("text", text);
+		jsonHash.put("displayUrl", displayUrl);
+		jsonHash.put("destinationUrl", destinationUrl);
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAd", json, null);
+		long ret = gson.fromJson(returnData, long.class);
+		logger.debug("createAd: AdId = " + ret);
+		return ret;
 	}
 
 	@Override
 	public Ad getAdById(Long accountId, Long adGroupId, long adId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("adId", Long.toString(adId));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdById", json, null);
+		MsnAdObject ret = gson.fromJson(returnData, MsnAdObject.class);
+		logger.debug("getAdById: ok");
+		return ret.toAd();
 	}
 
 	@Override
 	public Ad[] getAdsByAdGroupId(Long accountId, Long adGroupId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdsByAdGroupId", json, null);
+		MsnAdObject[] ret = gson.fromJson(returnData, MsnAdObject[].class);
+		logger.debug("getAdsByAdGroupId: ok");
+		//depack to Ad
+		Ad[] ret1 = new Ad[ret.length];
+		for (int i = 0; i < ret.length; i++){
+			ret1[i] = new Ad();
+			ret1[i] = ret[i].toAd();
+		}
+		return ret1;
 	}
 
 	@Override
 	public void updateAdById(Long accountId, Long adGroupId, long adId, String title, String text, String displayUrl, String destinationUrl)
 			throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("adId", Long.toString(adId));
+		jsonHash.put("title", title);
+		jsonHash.put("text", text);
+		jsonHash.put("displayUrl", displayUrl);
+		jsonHash.put("destinationUrl", destinationUrl);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateAdById", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("updateAdById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void pauseAdById(Long accountId, Long adGroupId, long adId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("adId", Long.toString(adId));		
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseAdById", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("pauseAdById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void resumeAdById(Long accountId, Long adGroupId, long adId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("adId", Long.toString(adId));		
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "resumeAdById", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("resumeAdById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void deleteAdById(Long accountId, Long adGroupId, long adId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("adId", Long.toString(adId));		
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdById", json, null);
+		int ret = gson.fromJson(returnData, int.class);
+		logger.debug("deleteAdById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
 			Bid phraseMatchBid) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return 0;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String broadMatchBidStr = gson.toJson(broadMatchBid);
+		String contentMatchBidStr = gson.toJson(contentMatchBid);
+		String exactMatchBidStr = gson.toJson(exactMatchBid);
+		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("text", text);
+		jsonHash.put("broadMatchBid", broadMatchBidStr);
+		jsonHash.put("contentMatchBid", contentMatchBidStr);
+		jsonHash.put("exactMatchBid", exactMatchBidStr);
+		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeyword", json, null);
+		long ret = gson.fromJson(returnData, long.class);
+		logger.debug("createKeyword: KeywordId = " + ret);
+		return ret;
 	}
 
 	@Override
-	public Maybe<Keyword> getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception
+	public Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordId", Long.toString(keywordId));		
+		String json = gson.toJson(jsonHash);
+		
+		Keyword ret = null;
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordById", json, null);
+		ret = gson.fromJson(returnData, Keyword.class);
+		logger.debug("getKeywordById: ok");
+		return ret;
 	}
 
 	@Override
