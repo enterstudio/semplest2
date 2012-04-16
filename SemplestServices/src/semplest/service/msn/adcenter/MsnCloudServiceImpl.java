@@ -176,7 +176,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
 	
-	private static String seperator = "#";
+	private static String separator = "#";
 
 	@Override
 	public boolean isProduction()
@@ -531,7 +531,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setCampaignStateTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("campaignId")), 
-					Arrays.asList(data.get("states").split(seperator)));
+					Arrays.asList(data.get("states").split(separator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -805,7 +805,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setAdGroupStateTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("adGroupId")), 
-					Arrays.asList(data.get("states").split(seperator)));
+					Arrays.asList(data.get("states").split(separator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -839,7 +839,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setAdGroupCityTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("adGroupId")), 
-					Arrays.asList(data.get("cities").split(seperator)));
+					Arrays.asList(data.get("cities").split(separator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -874,7 +874,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			setAdGroupMetroAreaTargets(new Long(data.get("accountId")), 
 					new Long(data.get("customerId")), 
 					new Long(data.get("msnAdGroupId")), 
-					Arrays.asList(data.get("metroTargets").split(seperator)));
+					Arrays.asList(data.get("metroTargets").split(separator)));
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
@@ -1273,12 +1273,42 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		Keyword keyword = aNew().keyword().withText(text).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid)
 				.withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
-		AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]
-		{ keyword }));
+		AddKeywordsResponse addKeywords = null;
+		try{
+			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]
+					{ keyword }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(EditorialApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return addKeywords.getKeywordIds()[0];
 	}
+	
+	public String createKeywords(String json) throws Exception
+	{
+		logger.debug("call createKeywords(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		long[] ret = null;
+		String[] keywordsStr = data.get("keywords").split(separator);
+		Keyword[] keywords = new Keyword[keywordsStr.length];
+		for(int i = 0; i < keywordsStr.length; i++){
+			keywords[i] = gson.fromJson(keywordsStr[i], Keyword.class);
+		}
+		try {
+			long[] ret1 = createKeywords(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					keywords);
+			ret = ret1;
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
 
-	public long[] createKeywords(Long accountId, Long adGroupId, MsnCloudKeywordProxy... keywords) throws RemoteException, ApiFaultDetail,
+	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail,
 			AdApiFaultDetail
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
@@ -1286,12 +1316,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		Keyword[] keywordsMsn = new Keyword[length];
 		for (int i = 0; i < length; i++)
 		{
-			MsnCloudKeywordProxy msnSemKeyword = keywords[i];
+			Keyword msnSemKeyword = keywords[i];
 			keywordsMsn[i] = aNew().keyword().withText(msnSemKeyword.getText()).withBroadMatchBid(msnSemKeyword.getBroadMatchBid())
 					.withContentMatchBid(msnSemKeyword.getContentMatchBid()).withExactMatchBid(msnSemKeyword.getExactMatchBid())
 					.withPhraseMatchBid(msnSemKeyword.getPhraseMatchBid()).build();
 		}
-		AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywordsMsn));
+		AddKeywordsResponse addKeywords = null;
+		try{
+			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywordsMsn));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(EditorialApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 		return addKeywords.getKeywordIds();
 	}
 
@@ -1307,7 +1346,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		} catch (RemoteException e) {
 			throw new Exception(e);
 		}
-		return gson.toJson(ret);
+		return gson.toJson(new MsnKeywordObject(ret));
 	}
 	
 	@Override
@@ -1331,6 +1370,26 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			return keywords[0];
 		}
 		return null;
+	}
+	
+	public String getKeywordByAdGroupId(String json) throws Exception
+	{
+		logger.debug("call getKeywordByAdGroupId(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);		
+		Keyword[] ret1 = null;
+		try {
+			ret1 = getKeywordByAdGroupId(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		if (ret1 == null) return gson.toJson(null);
+		MsnKeywordObject[] ret = new MsnKeywordObject[ret1.length];
+		for (int i = 0; i < ret1.length; i++){
+			ret[i] = new MsnKeywordObject();
+			ret[i].fromKeyword(ret1[i]);
+		}
+		return gson.toJson(ret);
 	}
 
 	@Override
@@ -2114,13 +2173,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			throw new SemplestError(e);
 		}
-	}
-
-	@Override
-	public long[] createKeywords(Long accountId, Long adGroupId, semplest.other.MsnCloudKeywordProxy... keywords) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
