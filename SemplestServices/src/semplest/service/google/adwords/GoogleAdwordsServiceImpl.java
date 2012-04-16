@@ -137,13 +137,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * for(int i = 0; i < camp.length; i++) {
 			 * System.out.println(camp[i].getName()); } }
 			 */
+			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
+			// "6048920973";
+			Long adGroupID = 3074331030L;
+			Long campaignID = 77290470L;
 
+
+			GoogleBidObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+
+			/*
 			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
 												// "6048920973";
 			Long adGroupID = 3380873349L;
 			Long campaignID = 77290470L;
 
-			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			
 			HashMap<String, Double> bids = new HashMap<String, Double>();
 			bids.put("wedding flower", 2.0);
 			HashMap<String, Double> bids2 = new HashMap<String, Double>();
@@ -175,7 +184,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 			}
 			
-			
+			*/
 			/*
 			 * Double[] bids = o.getBidList(); for (int i = 0; i < bids.length;
 			 * i++) { System.out.println(bids[i] + " Aveclicks=" +
@@ -445,7 +454,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 		}
-		selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 		
 		// Get all ad group criteria.
 		AdGroupCriterionPage page = adGroupCriterionService.get(selector);
