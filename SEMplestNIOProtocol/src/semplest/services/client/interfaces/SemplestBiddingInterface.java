@@ -5,6 +5,6 @@ import java.util.HashMap;
 
 public interface SemplestBiddingInterface extends ServiceInitialize {
 	
-	HashMap<String,Double> getBid(Integer customerID, Integer campaignID, Integer adGroupID, ArrayList<String> keywords) throws Exception ;
+	HashMap<String,Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception ;
 
 }

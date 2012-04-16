@@ -1,183 +1,336 @@
 package semplest.server.protocol.google;
 
 import java.util.HashMap;
+import java.util.Iterator;
 /*
  * All estimates are in dollar amounts
  */
 public class GoogleTrafficEstimatorObject
 {
-	private static long micro = 1000000;
-	private String keyword;
-	private HashMap<Double,BidData> bidDataMap = new HashMap<Double,BidData>();
+	//private static long micro = 1000000;
 	
-	public GoogleTrafficEstimatorObject(String keyword)
+	private HashMap<String,HashMap<Double,BidData>> bidDataMap = new HashMap<String,HashMap<Double,BidData>>();
+	
+	
+	public void setBidData(String keyword, Double bidAmount, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost) throws Exception
 	{
-		this.keyword = keyword;
-	}
-	public void setBidData(Double bidAmount, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost) throws Exception
-	{
-		if (bidDataMap.containsKey(bidAmount))
+		BidData biddata = new BidData(minAveCPC,maxAveCPC,minAvePosition,maxAvePosition,minClickPerDay,maxClickPerDay,minTotalDailyMicroCost,maxTotalDailyMicroCost);
+		if (bidDataMap.containsKey(keyword))
 		{
-			throw new Exception("Already have set bid Amount " + String.valueOf(bidAmount) + " for keyword " + keyword);
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			data.put(bidAmount,biddata);
 		}
 		else
 		{
-			BidData biddata = new BidData(minAveCPC,maxAveCPC,minAvePosition,maxAvePosition,minClickPerDay,maxClickPerDay,minTotalDailyMicroCost,maxTotalDailyMicroCost);
-			bidDataMap.put(bidAmount, biddata);
+			HashMap<Double,BidData> data = new HashMap<Double,BidData>();
+			data.put(bidAmount, biddata);
+			bidDataMap.put(keyword, data);
 		}
 	}
-	public Double[] getBidList()
+	private void setBidData(String keyword, Double bidAmount, BidData biddata)
 	{
-		return bidDataMap.keySet().toArray(new Double[bidDataMap.keySet().size()]);	
-	}
-	public Long getMinAveCPC(Double bid) throws Exception
-	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMinAveCPC() / micro;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			data.put(bidAmount,biddata);
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			HashMap<Double,BidData> data = new HashMap<Double,BidData>();
+			data.put(bidAmount, biddata);
+			bidDataMap.put(keyword, data);
 		}
 	}
-	public Long getMaxAveCPC(Double bid) throws Exception
+	public String[] getListOfKeywords()
 	{
-		if (bidDataMap.containsKey(bid))
+		return bidDataMap.keySet().toArray(new String[bidDataMap.keySet().size()]);	
+	}
+	public Double[] getBidList(String keyword)
+	{
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMaxAveCPC() / micro;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			return data.keySet().toArray(new Double[bidDataMap.keySet().size()]);	
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			return null;
 		}
+		
 	}
-	public Double getAveCPC(Double bid) throws Exception
+	public HashMap<Double,BidData> getMapOfPoints(String keyword)
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return ((bidDataMap.get(bid).getMinAveCPC() + bidDataMap.get(bid).getMaxAveCPC()) /2.0) / micro ;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			return data;	
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			return null;
+		}
+	}
+	public void addGoogleTrafficEstimatorObject(GoogleTrafficEstimatorObject trafficData)
+	{
+		if (trafficData != null)
+		{
+			String[] keywords = trafficData.getListOfKeywords();
+			for (int i=0; i < keywords.length; i++)
+			{
+				HashMap<Double,BidData> ptData=  trafficData.getMapOfPoints(keywords[i]);
+				Iterator<Double> bidsIT = ptData.keySet().iterator();
+				while (bidsIT.hasNext())
+				{
+					Double bid = bidsIT.next();
+					BidData aBidData = ptData.get(bid);
+					this.setBidData(keywords[i], bid, aBidData);
+				}
+			}
+		}
+	}
+	public Long getMinAveCPC(String keyword,Double bid) throws Exception
+	{
+		if (bidDataMap.containsKey(keyword))
+		{
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMinAveCPC();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
+		}
+		else
+		{
+			throw new Exception("Keyword not found " + keyword);
+		}
+	}
+	public Long getMaxAveCPC(String keyword,Double bid) throws Exception
+	{
+		if (bidDataMap.containsKey(keyword))
+		{
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMaxAveCPC();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
+		}
+		else
+		{
+			throw new Exception("Keyword not found " + keyword);
+		}
+	}
+	public Double getAveCPC(String keyword,Double bid) throws Exception
+	{
+		
+		if (bidDataMap.containsKey(keyword))
+		{
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return ((data.get(bid).getMinAveCPC() + data.get(bid).getMaxAveCPC()) /2.0);
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
+		}
+		else
+		{
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
 	
 	//Position
-	public Double getMinAvePosition(Double bid) throws Exception
+	public Double getMinAvePosition(String keyword,Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMinAvePosition();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMinAvePosition();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Double getMaxAvePosition(Double bid) throws Exception
+	public Double getMaxAvePosition(String keyword,Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMaxAvePosition();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMaxAvePosition();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Double getAvePosition(Double bid) throws Exception
+	public Double getAvePosition(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		
+		if (bidDataMap.containsKey(keyword))
 		{
-			return (bidDataMap.get(bid).getMinAvePosition() + bidDataMap.get(bid).getMaxAvePosition()) /2.0 ;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return (data.get(bid).getMinAvePosition() + data.get(bid).getMaxAvePosition()) /2.0;
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
 	
 	//clicks
-	public Float getMinAveClickPerDay(Double bid) throws Exception
+	public Float getMinAveClickPerDay(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMinClickPerDay();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMinClickPerDay();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Float getMaxAveClickPerDay(Double bid) throws Exception
+	public Float getMaxAveClickPerDay(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMaxClickPerDay();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMaxClickPerDay();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Float getAveClickPerDay(Double bid) throws Exception
+	public Float getAveClickPerDay(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		
+		if (bidDataMap.containsKey(keyword))
 		{
-			return (bidDataMap.get(bid).getMinClickPerDay() + bidDataMap.get(bid).getMaxClickPerDay())/ 2.0F  ;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return (data.get(bid).getMinClickPerDay() + data.get(bid).getMaxClickPerDay())/ 2.0F  ;
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
 	//dailycost
 
-	public Long getMinTotalDailyMicroCost(Double bid) throws Exception
+	public Long getMinTotalDailyMicroCost(String keyword,Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMinTotalDailyMicroCost();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMinTotalDailyMicroCost();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Long getMaxTotalDailyMicroCost(Double bid) throws Exception
+	public Long getMaxTotalDailyMicroCost(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return bidDataMap.get(bid).getMaxTotalDailyMicroCost();
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return data.get(bid).getMaxTotalDailyMicroCost();
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
-	public Double getAveTotalDailyMicroCost(Double bid) throws Exception
+	public Double getAveTotalDailyMicroCost(String keyword, Double bid) throws Exception
 	{
-		if (bidDataMap.containsKey(bid))
+		if (bidDataMap.containsKey(keyword))
 		{
-			return (bidDataMap.get(bid).getMinTotalDailyMicroCost() + bidDataMap.get(bid).getMinTotalDailyMicroCost())/ 2.0  ;
+			HashMap<Double,BidData> data = bidDataMap.get(keyword);
+			if (data.containsKey(bid))
+			{
+				return (data.get(bid).getMinTotalDailyMicroCost() + data.get(bid).getMinTotalDailyMicroCost())/ 2.0  ;
+			}
+			else
+			{
+				throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			}
 		}
 		else
 		{
-			throw new Exception("Bid level " + bid + " not found for keyword " + keyword);
+			throw new Exception("Keyword not found " + keyword);
 		}
 	}
 	
-	public String getKeyword()
-	{
-		return keyword;
-	}
 	
 	/*
 	 * All in micro amounts
 	 */
-	private class BidData
+	public class BidData
 	{
 		private Long minAveCPC;
 		private Long maxAveCPC;
