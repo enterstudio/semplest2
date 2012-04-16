@@ -37,7 +37,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
-	private static String seperator = "#";
+	private static String separator = "#";
 	
 	private final String baseurl;
 	
@@ -273,7 +273,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 				MobileAd a = (MobileAd) x;
 				logger.info("Id = " + a.getId());
 			}
-			*/
+			
 			//createKeyword, getKeywordById
 			  //createKeyword
 			Bid broadMatchBid = new Bid();
@@ -291,6 +291,32 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 				logger.info("Id = " + ret2.getId()
 						+ "; text = " + ret2.getText());
 			}
+			
+			//createKeywords
+			Keyword[] keywords = new Keyword[2];
+			keywords[0] = new Keyword();
+			keywords[1] = new Keyword();
+			keywords[0].setText("nan keyword test 4");
+			keywords[1].setText("nan keyword test 5");
+			Bid broadMatchBid1 = new Bid();
+			broadMatchBid1.setAmount(3.01);
+			Bid broadMatchBid2 = new Bid();
+			broadMatchBid2.setAmount(3.01);
+			keywords[0].setBroadMatchBid(broadMatchBid1);						
+			keywords[1].setBroadMatchBid(broadMatchBid2);			
+			long[] ret = test.createKeywords(1595249L, 754813047L, keywords);
+			*/
+			//getKeywordByAdGroupId
+			Keyword[] ret2 = test.getKeywordByAdGroupId(1595249L, 754813047L);
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			
 		}
@@ -385,8 +411,6 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignById", json, null);
 		Campaign campaign = gson.fromJson(returnData, Campaign.class);		
 		logger.debug("getCampaignById: " + ": Name = " + campaign.getName()
-				+ "; DailyBudget = " + campaign.getDailyBudget().toString()
-				+ "; MonthlyBudget = " + campaign.getMonthlyBudget().toString()
 				+ "; CampaignStatus = " + campaign.getStatus().toString());		
 		return campaign;
 	}
@@ -400,12 +424,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignsByAccountId", json, null);
 		Campaign[] campaigns = gson.fromJson(returnData, Campaign[].class);	
+		if (campaigns == null)
+			return null;
 		logger.debug("getCampaignsByAccountId: numOfCampaigns = " + campaigns.length);
 		for (int i = 0; i < campaigns.length; i++)
 		{
 			logger.debug(i + ": Name = " + campaigns[i].getName()
-					+ "; DailyBudget = " + campaigns[i].getDailyBudget().toString()
-					+ "; MonthlyBudget = " + campaigns[i].getMonthlyBudget().toString()
 					+ "; CampaignStatus = " + campaigns[i].getStatus().toString());		
 		}		
 		return campaigns;
@@ -483,7 +507,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String stateslist = "";
 		for (int i = 0; i < states.size()-1; i++){
-			stateslist += states.get(i) + seperator;
+			stateslist += states.get(i) + separator;
 		}
 		stateslist += states.get(states.size()-1);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -551,6 +575,8 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupsByCampaignId", json, null);
 		AdGroup[] adgroups = gson.fromJson(returnData, AdGroup[].class);
+		if (adgroups == null)
+			return null;
 		for (int i = 0; i < adgroups.length; i++)
 		{
 			logger.debug("getAdGroupsByCampaignId: Name = " + adgroups[i].getName()
@@ -595,7 +621,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String stateslist = "";
 		for (int i = 0; i < states.size()-1; i++){
-			stateslist += states.get(i) + seperator;
+			stateslist += states.get(i) + separator;
 		}
 		stateslist += states.get(states.size()-1);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -615,7 +641,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String citylist = "";
 		for (int i = 0; i < cities.size()-1; i++){
-			citylist += cities.get(i) + seperator;
+			citylist += cities.get(i) + separator;
 		}
 		citylist += cities.get(cities.size()-1);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -635,7 +661,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String metroTargetsList = "";
 		for (int i = 0; i < metroTargets.size()-1; i++){
-			metroTargetsList += metroTargets.get(i) + seperator;
+			metroTargetsList += metroTargets.get(i) + separator;
 		}
 		metroTargetsList += metroTargets.get(metroTargets.size()-1);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -721,6 +747,8 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdsByAdGroupId", json, null);
 		MsnAdObject[] ret = gson.fromJson(returnData, MsnAdObject[].class);
+		if (ret == null)
+			return null;
 		logger.debug("getAdsByAdGroupId: ok");
 		//depack to Ad
 		Ad[] ret1 = new Ad[ret.length];
@@ -825,18 +853,35 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("keywordId", Long.toString(keywordId));		
 		String json = gson.toJson(jsonHash);
 		
-		Keyword ret = null;
+		MsnKeywordObject ret = null;
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordById", json, null);
-		ret = gson.fromJson(returnData, Keyword.class);
+		ret = gson.fromJson(returnData, MsnKeywordObject.class);
 		logger.debug("getKeywordById: ok");
-		return ret;
+		return ret.toKeyword();
 	}
 
 	@Override
 	public Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));		
+		String json = gson.toJson(jsonHash);
+		
+		MsnKeywordObject[] ret1 = null;
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordByAdGroupId", json, null);
+		ret1 = gson.fromJson(returnData, MsnKeywordObject[].class);
+		if (ret1 == null)
+			return null;
+		Keyword[] ret = new Keyword[ret1.length];
+		logger.debug("getKeywordByAdGroupId: num of keywords = " + ret1.length);
+		for (int i = 0; i < ret1.length; i++){
+			ret[i] = new Keyword();
+			ret[i] = ret1[i].toKeyword();
+			logger.debug("Id = " + ret[i].getId()
+					+ "; Text = " + ret[i].getText());
+		}		
+		return ret;
 	}
 
 	@Override
@@ -922,10 +967,27 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public long[] createKeywords(Long accountId, Long adGroupId, MsnCloudKeywordProxy... keywords) throws Exception
+	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String keywordsList = "";
+		for (int i = 0; i < keywords.length-1; i++){
+			keywordsList += gson.toJson(keywords[i]) + separator;
+		}
+		keywordsList += gson.toJson(keywords[keywords.length-1]);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywords", keywordsList);
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeywords", json, null);
+		long[] ret = gson.fromJson(returnData, long[].class);
+		if (ret == null)
+			return null;
+		for (long r:ret){
+			logger.debug("createKeywords: Id = " + r);
+		}
+		return ret;
 	}
 
 	@Override
