@@ -23,9 +23,9 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	{
 		try
 		{
-			Integer cust = 0;
-			Integer camp = 1;
-			Integer ad = 2;
+			String cust = "0";
+			Long camp = 1L;
+			Long ad = 2L;
 			ArrayList<String> keywords = new  ArrayList<String>();
 			keywords.add("peanut butter"); 
 			keywords.add("ice"); 
@@ -48,10 +48,10 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 
 	@Override
-	public HashMap<String, Double> getBid(Integer customerID, Integer campaignID, Integer adGroupID, ArrayList<String> keywords) throws Exception
+	public HashMap<String, Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("customerID", String.valueOf(customerID));
+		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		String keyLevelStr = gson.toJson(keywords, ArrayList.class);

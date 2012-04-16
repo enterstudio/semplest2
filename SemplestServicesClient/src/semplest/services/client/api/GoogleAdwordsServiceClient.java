@@ -516,14 +516,17 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, GoogleBidObject.class);
 	}
 	@Override
-	public GoogleTrafficEstimatorObject getTrafficEstimationForOneKeyword(String keyword, KeywordMatchType matchType, ArrayList<Double> bidLevels)
+	public GoogleTrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
+			HashMap<String, Double> KeywordWithBid)
 			throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("keyword", keyword);
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		//jsonHash.put("keyword", keyword);
 		jsonHash.put("matchType", matchType.getValue());
-		String bidLevelStr = gson.toJson(bidLevels, ArrayList.class);
-		jsonHash.put("bidLevels",bidLevelStr);
+		//String bidLevelStr = gson.toJson(bidLevels, ArrayList.class);
+		//jsonHash.put("bidLevels",bidLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getTrafficEstimationForOneKeyword", json,timeoutMS);
