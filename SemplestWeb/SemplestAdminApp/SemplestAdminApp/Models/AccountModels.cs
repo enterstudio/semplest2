@@ -87,14 +87,21 @@ namespace SemplestAdminApp.Models
     }
 
 
+
     public class EmployeeCustomerAssociaitionModel
-    {
+    {                
                 public int AccountNumber { get; set; }
                 public string EmployeeType { get; set; }
                 public int employeePK { get; set; }
                 public string FirstName { get; set; }
                 public string LastName  { get; set; }
                 public int EmployeeUserPK { get; set; }
+     }
+
+    public class EmployeeDropdownModel
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
     }
 
 
@@ -116,6 +123,94 @@ namespace SemplestAdminApp.Models
         //no rep, salesperson  
       }
 
+    public class CustomerAccount
+    {
+        public int AccountNumber { get; set; }
+        public string Customer { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Address1 { get; set; }
+        public string Address2 { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public int StateID { get; set; }
+        public string Zip { get; set; }
+        public string Phone { get; set; }
+        public string Email { get; set; }
+        public string BillType { get; set; }
+        public int  UserPK { get; set; }
+    }
+
+    public class EmployeeSetup
+    {
+        //employeePK, employeetypefk, UserPK, employeetypeid, rolesFK, FirstName, LastName, Email, rolename, employeetype
+        public int EmployeePK { get; set; }
+        public int EmployeeTypeFK { get; set; }
+        public int UserPK { get; set; }
+        public int EmployeeTypeID { get; set; }
+        public int RolesFK { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string RoleName { get; set; }
+        public string EmployeeType { get; set; }
+        public int ReportingTo { get; set; }
+    }
+
+
+    public class EmployeeSetupWithRolesModel
+    {
+        public EmployeeSetup EmployeeSetup { get; set; }
+
+        //for role dropdown
+        public int SelectedRoleID { get; set; }
+        public IEnumerable<SelectListItem> Roles { get; set; }
+        
+        
+        //for reporting to dropdown
+        public int SelectedReportingToID { get; set; }
+        public IEnumerable<SelectListItem> ReportingTo { get; set; }
+
+        //for employeetype dropdown
+        public int SelectedEmployeeTypeID { get; set; }
+        public IEnumerable<SelectListItem> EmployeeTypes { get; set; }
+    }
+
+    
+    public class CustomerAccountWithEmployeeModel
+    {
+        public CustomerAccount CustomerAccount { get; set; }
+        public IEnumerable<EmployeeCustomerAssociaitionModel> EmployeeCustomerAssociaitionModel { get; set; }
+        //public IEnumerable<EmployeeCustomerAssociaitionModel> EmployeeCustomerAssociaitionModel2 { get; set; }
+
+        //public MyListModel MyListModel { get; set; }
+        //public int[] employeeitemIDs { get; set; }
+        //public List<EmployeeDropdownModel> EmployeeList { get; set; }
+
+
+        //for state dropdown
+        public int SelectedStateID { get; set; }
+        public IEnumerable<SelectListItem> States { get; set; }
+
+        //for rep dropdown
+        public int SelectedRepID { get; set; }
+        public IEnumerable<SelectListItem> Reps { get; set; }
+
+        //for rep dropdown
+        public int SelectedSalesPersonID { get; set; }
+        public IEnumerable<SelectListItem> SalesPersons { get; set; }
+
+    }
+
+
+    public class ReportingToModel
+    {
+        public int EmployeePK { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+    }
+    
+
     public class AccountServiceWithEmployeeModel
     {
         public AccountServiceModel AccountServiceModel { get; set; }
@@ -130,10 +225,17 @@ namespace SemplestAdminApp.Models
         public string Label { get; set; }
         public bool IsVisible { get; set; }
         public bool IsReadonly { get; set; }
-
     }
 
 
+    //public class MyListModel
+    //{
+    //    public string SelectedItemId { get; set; }
+    //    public IEnumerable<SelectListItem> Items { get; set; }
+    //} 
+
+
+    
     public class AddUserModel
     {
  
