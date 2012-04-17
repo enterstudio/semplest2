@@ -10,7 +10,7 @@
 namespace SemplestAdminApp.Models
 {
     using System;
-
+    
     public partial class sp_GetRigtsRolesInteraction_Result
     {
         public Nullable<int> RolesFK { get; set; }
