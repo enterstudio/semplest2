@@ -10,7 +10,8 @@ namespace SemplestWebApp.Models
     {
         public CampaignSetupModel()
         {
-            Addresses = new List<Address> { new Address { Address1 = "" } };
+            Addresses = new List<Address> { new Address { } };
+            Ads = new List<Promotion>() { new Promotion { } };
         }
 
         //[Required]
@@ -25,6 +26,7 @@ namespace SemplestWebApp.Models
         public bool Bing { get; set; }
 
         public List<Address> Addresses { get; set; }
+        public List<Promotion> Ads { get; set; }
 
         public double Proximity { get; set; }
 
