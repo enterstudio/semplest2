@@ -14,9 +14,10 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.axis.encoding.Base64;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
 
 public class AESBouncyCastle
 {
@@ -127,7 +128,8 @@ public class AESBouncyCastle
 		{
 			
 			//byte[] base64Decoded = (new BASE64Decoder()).decodeBuffer(encyptedText);
-			byte[] base64Decoded = Base64.decode(encyptedText);
+			
+			byte[] base64Decoded = Base64.decodeBase64(encyptedText.getBytes());
 			cryptedbytes = decryptCipher.doFinal(base64Decoded);
 
 		}
@@ -182,7 +184,7 @@ public class AESBouncyCastle
 		if (cryptedbytes != null)
 		{
 			//return (new BASE64Encoder()).encode(cryptedbytes);
-			return Base64.encode(cryptedbytes);
+			return new String (Base64.encodeBase64(cryptedbytes));
 		}
 		else
 		{
