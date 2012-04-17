@@ -5,6 +5,29 @@ using System.Globalization;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Web;
+using Microsoft.Practices.EnterpriseLibrary.Logging;
+using SemplestAdminApp.Models;
+
+
+public class LoggingHandleErrorAttribute : HandleErrorAttribute
+{
+    public override void OnException(ExceptionContext filterContext)
+    {
+        base.OnException(filterContext);
+
+        //if (filterContext.ExceptionHandled)
+        //{
+        try
+        {
+            SemplestEntities _dbContext = new SemplestEntities();
+            _dbContext.Errors.Add(new Error { ErrorMessage = filterContext.Exception.ToString() });
+            _dbContext.SaveChanges();
+        }
+        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            // Log filterContext.Exception in some way.  
+        //}
+    }
+}  
 
 
 
