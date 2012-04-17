@@ -390,7 +390,7 @@
             <PropertyRef Name="ErrorPK" />
           </Key>
           <Property Name="ErrorPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ErrorMessage" Type="nvarchar" Nullable="false" MaxLength="1000" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ErrorID" Type="int" />
         </EntityType>
         <EntityType Name="HelpDefinition">
