@@ -9,6 +9,7 @@ using System.Data.Entity.Validation;
 
 namespace SemplestAdminApp.Controllers
 {
+    [LoggingHandleErrorAttribute]
     public class RolesController : Controller
     {
         SemplestEntities _dbContext = new SemplestEntities();
@@ -44,6 +45,7 @@ namespace SemplestAdminApp.Controllers
 
         public ActionResult Index()
         {
+            throw new Exception("asdasdasda");
             IEnumerable<SemplestAdminApp.Models.Role> viewModel = _dbContext.Roles;
             return View(viewModel);
         }
