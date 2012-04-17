@@ -2,6 +2,7 @@ package semplest.bidding.estimation;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 public class EstimatorData {
 	
@@ -25,10 +26,11 @@ public class EstimatorData {
 	
 	public Double [] getBidArray(){
 		Double [] bidArray = new Double[bidVsTarget.size()];
-		Iterator it = bidVsTarget.entrySet().iterator();
+		Set<Double> bidSet = bidVsTarget.keySet();
 		int i=0;
-		while(it.hasNext()) {
-			bidArray[i]=(Double) it.next();
+		for(Double bid : bidSet){
+			bidArray[i]=bid;
+			i++;
 		}
 		return bidArray;
 	}
