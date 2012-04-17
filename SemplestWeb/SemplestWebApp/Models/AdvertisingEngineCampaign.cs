@@ -18,6 +18,7 @@ namespace SemplestWebApp.Models
         public Nullable<int> PromotionFK { get; set; }
         public string AdvertisingEngineAccountFK { get; set; }
     
+        public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
         public virtual Promotion Promotion { get; set; }
     }
 }

@@ -16,14 +16,12 @@ namespace SemplestWebApp.Models
     {
         public AdvertisingEngine()
         {
-            this.AdGroups = new HashSet<AdGroup>();
-            this.Customers = new HashSet<Customer>();
+            this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
         }
     
         public int AdvertisingEnginePK { get; set; }
         public string AdvertisingEngine1 { get; set; }
     
-        public virtual ICollection<AdGroup> AdGroups { get; set; }
-        public virtual ICollection<Customer> Customers { get; set; }
+        public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
     }
 }

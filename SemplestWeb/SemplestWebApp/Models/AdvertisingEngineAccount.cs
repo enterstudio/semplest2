@@ -12,20 +12,19 @@ namespace SemplestWebApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Employee
+    public partial class AdvertisingEngineAccount
     {
-        public Employee()
+        public AdvertisingEngineAccount()
         {
-            this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
+            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
         }
     
-        public int EmployeePK { get; set; }
-        public int EmployeeTypeFK { get; set; }
-        public int UsersFK { get; set; }
-        public Nullable<int> ReportingTo { get; set; }
+        public string AdvertisingEngineAccountPK { get; set; }
+        public int AdvertisingEngineFK { get; set; }
+        public int CustomerFK { get; set; }
     
-        public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        public virtual EmployeeType EmployeeType { get; set; }
-        public virtual User User { get; set; }
+        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
+        public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }
