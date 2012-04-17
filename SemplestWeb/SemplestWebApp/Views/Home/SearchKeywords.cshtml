@@ -1,6 +1,11 @@
 ﻿@{
     ViewBag.Title = "SearchKeywords";
 }
+@section Title{
+Search Keywords
+}
+@section Links
+{}
 
 @model SemplestWebApp.Models.SearchKeywordsModel
 
@@ -77,8 +82,10 @@
                          //    </div>
                          //@Html.ListBoxFor(t => t.SelectedCategory, new SelectList(Model.AllCategories, "Name", "Name"))
                          //@Html.ListBox("CategoryList", new MultiSelectList(Model.AllCategories.ToList(), "Name", "Name"));
-
-                         @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:400px"});
+                         <div>
+                         @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
+@*                         @Html.LabelFor(m => m.StatusMessage);
+*@                         </div>
                          //@Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.ItemIds), new { Multiple = "multiple" });
                          //@Html.ListBoxFor(m => m.ItemIds, (IEnumerable<SelectListItem>)(new[] { new SelectListItem() { Value = "1", Text = "text1" }, new SelectListItem() { Value = "2", Text = "text2" } }));
                          //@Html.ListBoxFor(m => m.ItemIds, Model.CategoriesList, new { Multiple = "multiple" });
@@ -97,7 +104,7 @@
                     @if (Model != null)
                     {
 
-                        @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllKeywords, "Name", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:400px" });
+                        @Html.ListBoxFor(m => m.ItemIds, new MultiSelectList(Model.AllKeywords, "Name", "Name", Model.ItemIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
                     }
 
                 </div>
@@ -152,6 +159,7 @@
       });
 
       $('#getKeywords').click(function () {
+            $('#StatusMessage').val("Please wait while getting the Keywords");
           //alert("in getKeywords func");
       });
 
