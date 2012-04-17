@@ -76,6 +76,7 @@ namespace SemplestWebApp.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    model.StatusMessage = "Please wait while getting the Keywords";
                     //SemplestWebApp.Helpers.ServiceHelper.CallSemplestTestGetMethod();
                     if (model.AllCategories.Count == 0)
                     {
