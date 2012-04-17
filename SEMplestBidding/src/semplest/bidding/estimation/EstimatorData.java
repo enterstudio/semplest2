@@ -24,12 +24,13 @@ public class EstimatorData {
 		return targetVsBid.get(bid);
 	}
 	
-	public Double [] getBidArray(){
-		Double [] bidArray = new Double[targetVsBid.size()];
+	
+	public double [] getBidArray(){
+		double [] bidArray = new double[targetVsBid.size()];
 		Set<Double> bidSet = targetVsBid.keySet();
 		int i=0;
 		for(Double bid : bidSet){
-			bidArray[i]=bid;
+			bidArray[i]=bid.doubleValue();
 			i++;
 		}
 		return bidArray;
