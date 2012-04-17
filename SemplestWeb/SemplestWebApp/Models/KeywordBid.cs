@@ -27,9 +27,11 @@ namespace SemplestWebApp.Models
         public bool IsActive { get; set; }
         public int BidTypeFK { get; set; }
         public decimal BidAmount { get; set; }
+        public int PromotionFK { get; set; }
     
         public virtual AdGroupKeywordAssociation AdGroupKeywordAssociation { get; set; }
         public virtual ICollection<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
         public virtual BidType BidType { get; set; }
+        public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
     }
 }

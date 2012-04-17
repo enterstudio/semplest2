@@ -12,22 +12,28 @@ namespace SemplestWebApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Keyword
+    public partial class Promotion
     {
-        public Keyword()
+        public Promotion()
         {
-            this.AdGroupKeywordAssociations = new HashSet<AdGroupKeywordAssociation>();
+            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
+            this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
         }
     
-        public int KeywordPK { get; set; }
-        public string Keyword1 { get; set; }
-        public bool IsActive { get; set; }
+        public int PromotionPK { get; set; }
+        public int ProductGroupFK { get; set; }
+        public string LandingPageURL { get; set; }
+        public decimal CycleBudgetAmount { get; set; }
+        public System.DateTime StartDate { get; set; }
+        public Nullable<System.DateTime> EndDate { get; set; }
+        public bool IsPaused { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string EditedDate { get; set; }
-        public bool ISNegative { get; set; }
     
-        public virtual ICollection<AdGroupKeywordAssociation> AdGroupKeywordAssociations { get; set; }
+        public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
+        public virtual ProductGroup ProductGroup { get; set; }
+        public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
     }
 }

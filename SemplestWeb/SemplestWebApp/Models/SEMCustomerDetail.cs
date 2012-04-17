@@ -12,18 +12,17 @@ namespace SemplestWebApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisingEngineBidData
+    public partial class SEMCustomerDetail
     {
-        public int AdvertisingEngineBidPK { get; set; }
-        public Nullable<int> KeywordBidFK { get; set; }
-        public decimal BidAmount { get; set; }
-        public int NumberImpressions { get; set; }
-        public int NumberClick { get; set; }
-        public int AveragePosition { get; set; }
-        public decimal AverageCPC { get; set; }
+        public int SEMCustomerDetailsPK { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Company { get; set; }
+        public string Phone { get; set; }
+        public string email { get; set; }
+        public bool CallMe { get; set; }
+        public bool EmailMe { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public Nullable<int> QualityScore { get; set; }
-    
-        public virtual KeywordBid KeywordBid { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
     }
 }

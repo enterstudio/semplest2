@@ -23,6 +23,9 @@ namespace SemplestWebApp.Models
             this.CustomerHierarchies1 = new HashSet<CustomerHierarchy>();
             this.Users = new HashSet<User>();
             this.AdvertisingEngines = new HashSet<AdvertisingEngine>();
+            this.ProductGroups = new HashSet<ProductGroup>();
+            this.CustomerNotes = new HashSet<CustomerNote>();
+            this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
         }
     
         public int CustomerPK { get; set; }
@@ -32,6 +35,7 @@ namespace SemplestWebApp.Models
         public int BillTypeFK { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
+        public int ProductGroupCycleTypeFK { get; set; }
     
         public virtual BillType BillType { get; set; }
         public virtual ICollection<Campaign> Campaigns { get; set; }
@@ -42,5 +46,10 @@ namespace SemplestWebApp.Models
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies1 { get; set; }
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<AdvertisingEngine> AdvertisingEngines { get; set; }
+        public virtual ICollection<ProductGroup> ProductGroups { get; set; }
+        public virtual ProductGroupCycleType ProductGroupCycleType { get; set; }
+        public virtual ICollection<CustomerNote> CustomerNotes { get; set; }
+        public virtual CustomerStyle CustomerStyle { get; set; }
+        public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
     }
 }

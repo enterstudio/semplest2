@@ -12,18 +12,19 @@ namespace SemplestWebApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisingEngineBidData
+    public partial class PromotionKeywordAssociation
     {
-        public int AdvertisingEngineBidPK { get; set; }
-        public Nullable<int> KeywordBidFK { get; set; }
-        public decimal BidAmount { get; set; }
-        public int NumberImpressions { get; set; }
-        public int NumberClick { get; set; }
-        public int AveragePosition { get; set; }
-        public decimal AverageCPC { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<int> QualityScore { get; set; }
+        public PromotionKeywordAssociation()
+        {
+            this.KeywordBids = new HashSet<KeywordBid>();
+        }
     
-        public virtual KeywordBid KeywordBid { get; set; }
+        public int KeywordFK { get; set; }
+        public int PromotionFK { get; set; }
+        public System.DateTime CreatedDate { get; set; }
+    
+        public virtual Keyword Keyword { get; set; }
+        public virtual ICollection<KeywordBid> KeywordBids { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }
