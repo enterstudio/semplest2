@@ -36,7 +36,7 @@ public class EstimatorData {
 		return bidArray;
 	}
 	
-	public double [] getData(Double [] bids){
+	public double [] getData(double [] bids){
 		double [] dataArray = new double[bids.length];
 		for (int i=0; i<bids.length; i++){
 			dataArray[i]=targetVsBid.get(bids[i]).doubleValue();
