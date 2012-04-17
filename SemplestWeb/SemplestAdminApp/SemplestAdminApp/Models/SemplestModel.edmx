@@ -1506,7 +1506,7 @@
             <PropertyRef Name="ErrorPK" />
           </Key>
           <Property Type="Int32" Name="ErrorPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="ErrorMessage" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ErrorMessage" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="ErrorID" />
         </EntityType>
         <EntityType Name="HelpDefinition">
