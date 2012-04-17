@@ -64,6 +64,7 @@ namespace SemplestAdminApp.Models
         public DbSet<StateCode> StateCodes { get; set; }
         public DbSet<sysdiagram> sysdiagrams { get; set; }
         public DbSet<TransactionHistory> TransactionHistories { get; set; }
+        public DbSet<UserRolesAssociation> UserRolesAssociations { get; set; }
         public DbSet<User> Users { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
