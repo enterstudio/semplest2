@@ -32,7 +32,10 @@ Customer Accounts
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.RoleName)
+        @Html.Label(item.RoleName)  
+        @Html.ActionLink("Edit", "Edit", new { id = item.RolePK })
+        | @Html.ActionLink("Delete", "Delete", new { id = item.RolePK })
+            @*Html.DisplayFor(modelItem => item.RoleName)*@
         </td>
 @*        <td>
             @Html.ActionLink("Edit", "Edit", new { id=item.RolePK }) |
@@ -43,4 +46,5 @@ Customer Accounts
 }
 </table>
 @Html.ActionLink("Add Role", "Create")
+
 </fieldset>

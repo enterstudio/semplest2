@@ -48,41 +48,11 @@ namespace SemplestAdminApp.Controllers
             return View(viewModel);
         }
 
-        //
-        // GET: /Roles/Details/5
-
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        //
         // GET: /Roles/Create
-
         public ActionResult Create()
         {
-                ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
-                return View(_dbContext.sp_GetRigtsRolesInteraction(null));
-            
-            //var viewModel =
-            //       from ra in _dbContext.RolesRightsAssociations
-            //       join r in _dbContext.Rights on ra.RightsFK equals r.RightsPK
-            //       group r by new
-            //       {
-            //           r.Controller,
-            //           r.Label
-            //       } into grp
-            //       select new UserRoleModel
-            //       {
-            //           Controller = grp.FirstOrDefault().Controller,
-            //           Label = grp.FirstOrDefault().Label,
-            //           IsVisible = false,
-            //           IsReadonly = false
-            //       };
-            //IEnumerable<SemplestAdminApp.Models.sp_GetRigtsRolesInteraction_Result> viewModel = _dbContext.sp_GetRigtsRolesInteraction(null);
-            
-
-            
+            ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
+            return View(_dbContext.sp_GetRigtsRolesInteraction(null));
         }
 
         //
@@ -91,34 +61,84 @@ namespace SemplestAdminApp.Controllers
         public ActionResult Create(IEnumerable<sp_GetRigtsRolesInteraction_Result> userRights, FormCollection f)
         {
             // TODO: Add insert logic here
-                Role ro = _dbContext.Roles.Add(new Role { RoleName = f["roleName"].ToString() });
-                _dbContext.SaveChanges();
-                foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
-                {
-                    RolesRightsAssociation ra = new RolesRightsAssociation
-                    {
-                        IsReadonly = s.IsReadonly == null ? false : bool.Parse(s.IsReadonly.ToString()),
-                        IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString()),
-                        RightsFK = s.RightsPK,
-                        RolesFK = ro.RolePK
-                    };
-                    _dbContext.RolesRightsAssociations.Add(ra);
-                }
-                _dbContext.SaveChanges();
-
-                /*update code*/
-                //foreach (RolesRightsAssociation r in _dbContext.RolesRightsAssociations)
-                //{
-
-                //    r.IsReadonly = ur.IsReadonly == null ? false : bool.Parse(ur.IsReadonly.ToString());
-                //    r.IsVisible = ur.IsVisible  == null ? false : bool.Parse(ur.IsVisible.ToString());
-                //    r.RolesFK = ro.RolePK;
-                //    r.RightsFK = ur.RightsPK;
-                //}
-                _dbContext.SaveChanges();
+            Role ro = _dbContext.Roles.Add(new Role { RoleName = f["roleName"].ToString() });
+            _dbContext.SaveChanges();
+            foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
+            {
+                _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, ro.RolePK));
+            }
+            _dbContext.SaveChanges();
             return RedirectToAction("Index");
         }
 
+        //
+        // GET: /Roles/Edit/5
+        public ActionResult Edit(int id)
+        {
+            ViewBag.RoleName = _dbContext.Roles.Where(x => x.RolePK == id).First().RoleName;
+            return View(_dbContext.sp_GetRigtsRolesInteraction(id));
+        }
+        //
+        // POST: /Roles/Edit/5
+        [HttpPost]
+        public ActionResult Edit(IEnumerable<sp_GetRigtsRolesInteraction_Result> userRights, int id)
+        {
+                foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
+                {
+                    var z = _dbContext.RolesRightsAssociations.Where(x => x.RolesFK == id  && x.RightsFK == s.RightsPK);
+                    if (z.Count() > 0)
+                    {
+                        foreach (var l in z)
+                        {
+                            l.IsReadonly = s.IsReadonly == null ? false : bool.Parse(s.IsReadonly.ToString());
+                            l.IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString());
+                        }
+                    }
+                    else {  _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, id)); }
+                }
+                _dbContext.SaveChanges();
+
+                return RedirectToAction("Index");
+        }
+
+        public RolesRightsAssociation AddRoleRightAssociation(sp_GetRigtsRolesInteraction_Result s, int RolePK)
+        {
+            RolesRightsAssociation ra = new RolesRightsAssociation
+            {
+                IsReadonly = s.IsReadonly == null ? false : bool.Parse(s.IsReadonly.ToString()),
+                IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString()),
+                RightsFK = s.RightsPK,
+                RolesFK = RolePK
+            };
+            return ra;
+        }
+
+        //
+        // GET: /Roles/Delete/5
+
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        //
+        // POST: /Roles/Delete/5
+
+        [HttpPost]
+        public ActionResult Delete(int id, FormCollection collection)
+        {
+            try
+            {
+                // TODO: Add delete logic here
+
+                return RedirectToAction("Index");
+            }
+            catch
+            {
+                return View();
+            }
+        }
+        [ChildActionOnly]
         public ActionResult Models(string RoleId)
         {
 
@@ -153,10 +173,10 @@ namespace SemplestAdminApp.Controllers
                 IsVisible = ra.IsVisible,
                 IsReadonly = ra.IsReadonly
             };*/
-                return PartialView("_RolesRightsAssociation", _dbContext.sp_GetRigtsRolesInteraction(role));
+            return PartialView("_RolesRightsAssociation", _dbContext.sp_GetRigtsRolesInteraction(role));
             //sp_GetRigtsRolesInteraction_Result model = _dbContext.sp_GetRigtsRolesInteraction(role);
 
-            
+
             //return View();
             //var viewModel =
             //                from ro in _dbContext.Roles
@@ -170,56 +190,5 @@ namespace SemplestAdminApp.Controllers
             //return Json(viewModel.ToList());
         }
 
-        //
-        // GET: /Roles/Edit/5
-
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        //
-        // POST: /Roles/Edit/5
-
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        //
-        // GET: /Roles/Delete/5
-
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        //
-        // POST: /Roles/Delete/5
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

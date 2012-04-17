@@ -29,15 +29,8 @@ Role
        @Html.Editor("roleName")
         </div>
         <div class= "rights">
-
-    
-
         @Html.Partial("_RolesRightsAssociation", Model)
-                
-        
-    
-    
-    </div>
+        </div>
         <p>
             <input type="submit" value="Create" />
         </p>
@@ -48,7 +41,7 @@ Role
  
 
 }
-   <script>
+   <script  type="text/javascript">
        $("select").change(function () {
            $.ajax({ type: "GET", url: "/Roles/Models", data: { RoleId: $(this).attr('value') }, success: function (data) { $('.rights').html(data); } });
        })
