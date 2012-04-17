@@ -1,6 +1,7 @@
 package semplest.bidding.estimation;
 
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class EstimatorData {
 	
@@ -20,6 +21,16 @@ public class EstimatorData {
 	
 	public Double getData(Double bid){
 		return bidVsTarget.get(bid);
+	}
+	
+	public Double [] getBidArray(){
+		Double [] bidArray = new Double[bidVsTarget.size()];
+		Iterator it = bidVsTarget.entrySet().iterator();
+		int i=0;
+		while(it.hasNext()) {
+			bidArray[i]=(Double) it.next();
+		}
+		return bidArray;
 	}
 	
 
