@@ -23,10 +23,7 @@ namespace SemplestAdminApp.Controllers
         public ActionResult Edit(int id)
         {
 
-            
-
             SemplestEntities dbcontext = new SemplestEntities();
-            
             
             var viewModel =
                from u in dbcontext.Users
@@ -77,28 +74,9 @@ namespace SemplestAdminApp.Controllers
                 };
 
 
-
-            //dropdown
-            //var viewModel3 =
-            //    from e in dbcontext.Employees
-            //    join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
-            //    join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
-            //    join u in dbcontext.Users on e.UsersFK equals u.UserPK
-            //    select new EmployeeDropdownModel
-            //    {
-            //        ID = e.EmployeePK,
-            //        Name=u.FirstName + u.LastName
-            //        //AccountNumber = eca.CustomerFK,
-            //        //EmployeeType = et.EmployeeType1,
-            //        //employeePK = e.EmployeePK,
-            //        //FirstName = u.FirstName,
-            //        //LastName = u.LastName,
-            //        //EmployeeUserPK = u.UserPK
-            //    };
-
-
-
+            /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
+            /////////////////////////////////////////////////////////////////////////////////
             var allreps = from e in dbcontext.Employees
                           join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                           join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
@@ -161,7 +139,7 @@ namespace SemplestAdminApp.Controllers
             //                 Text=r.FirstName
             //            });
 
-            //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
+            //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
             List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
             List<SelectListItem> sl1= new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
@@ -197,14 +175,6 @@ namespace SemplestAdminApp.Controllers
                 sl2.Add(mylistitem);
             }
             x.SalesPersons = sl2;
-
-
-
-
-
-
-
-
 
 
             return View(x);
@@ -256,72 +226,74 @@ namespace SemplestAdminApp.Controllers
 
 
 
-            //repopulate states ddl
-            var states = (from sc in dbcontext.StateCodes select sc).ToList();
-            m.States = states.Select(r => new SelectListItem
-             {
-                 Value = r.StateAbbrPK.ToString(),
-                 Text = r.StateAbbr.ToString()
-             });
+            ////repopulate states ddl
+            //var states = (from sc in dbcontext.StateCodes select sc).ToList();
+            //m.States = states.Select(r => new SelectListItem
+            // {
+            //     Value = r.StateAbbrPK.ToString(),
+            //     Text = r.StateAbbr.ToString()
+            // });
             
 
-            //repopulate reps ddl
-            var allreps = from e in dbcontext.Employees
-                          join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
-                          join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
-                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where (et.EmployeeType1 == "Rep")
-                          select new EmployeeCustomerAssociaitionModel
-                          {
-                              AccountNumber = eca.CustomerFK,
-                              employeePK = e.EmployeePK,
-                              EmployeeType = et.EmployeeType1,
-                              EmployeeUserPK = u.UserPK,
-                              FirstName = u.FirstName,
-                              LastName = u.LastName
-                          };
-            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
-            List<SelectListItem> sl1 = new List<SelectListItem>();
-            foreach (EmployeeCustomerAssociaitionModel s in ll1)
-            {
-                SelectListItem mylistitem = new SelectListItem();
-                mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
-                sl1.Add(mylistitem);
-            }
-            m.Reps = sl1;
+            ////repopulate reps ddl
+            //var allreps = from e in dbcontext.Employees
+            //              join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+            //              join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+            //              join u in dbcontext.Users on e.UsersFK equals u.UserPK
+            //              where (et.EmployeeType1 == "Rep")
+            //              select new EmployeeCustomerAssociaitionModel
+            //              {
+            //                  AccountNumber = eca.CustomerFK,
+            //                  employeePK = e.EmployeePK,
+            //                  EmployeeType = et.EmployeeType1,
+            //                  EmployeeUserPK = u.UserPK,
+            //                  FirstName = u.FirstName,
+            //                  LastName = u.LastName
+            //              };
+            //List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
+            //List<SelectListItem> sl1 = new List<SelectListItem>();
+            //foreach (EmployeeCustomerAssociaitionModel s in ll1)
+            //{
+            //    SelectListItem mylistitem = new SelectListItem();
+            //    mylistitem.Text = s.FirstName + " " + s.LastName;
+            //    mylistitem.Value = s.EmployeeUserPK.ToString();
+            //    sl1.Add(mylistitem);
+            //}
+            //m.Reps = sl1;
 
 
 
-            //repopulate salepersons ddl
-            //for reps dropdown
-            var allsalespersons = from e in dbcontext.Employees
-                          join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
-                          join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
-                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where (et.EmployeeType1 == "Sales")
-                          select new EmployeeCustomerAssociaitionModel
-                          {
-                              AccountNumber = eca.CustomerFK,
-                              employeePK = e.EmployeePK,
-                              EmployeeType = et.EmployeeType1,
-                              EmployeeUserPK = u.UserPK,
-                              FirstName = u.FirstName,
-                              LastName = u.LastName
-                          };
-            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.ToList();
-            List<SelectListItem> sl2 = new List<SelectListItem>();
-            foreach (EmployeeCustomerAssociaitionModel s in ll2)
-            {
-                SelectListItem mylistitem = new SelectListItem();
-                mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
-                sl2.Add(mylistitem);
-            }
-            m.SalesPersons = sl2;
+            ////repopulate salepersons ddl
+            ////for reps dropdown
+            //var allsalespersons = from e in dbcontext.Employees
+            //              join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+            //              join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+            //              join u in dbcontext.Users on e.UsersFK equals u.UserPK
+            //              where (et.EmployeeType1 == "Sales")
+            //              select new EmployeeCustomerAssociaitionModel
+            //              {
+            //                  AccountNumber = eca.CustomerFK,
+            //                  employeePK = e.EmployeePK,
+            //                  EmployeeType = et.EmployeeType1,
+            //                  EmployeeUserPK = u.UserPK,
+            //                  FirstName = u.FirstName,
+            //                  LastName = u.LastName
+            //              };
+            //List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.ToList();
+            //List<SelectListItem> sl2 = new List<SelectListItem>();
+            //foreach (EmployeeCustomerAssociaitionModel s in ll2)
+            //{
+            //    SelectListItem mylistitem = new SelectListItem();
+            //    mylistitem.Text = s.FirstName + " " + s.LastName;
+            //    mylistitem.Value = s.EmployeeUserPK.ToString();
+            //    sl2.Add(mylistitem);
+            //}
+            //m.SalesPersons = sl2;
 
 
-            return View(m);
+            return RedirectToAction("Index");
+            //return View("index");
+            //return View(m);
         }
 
        
