@@ -45,7 +45,6 @@ namespace SemplestAdminApp.Controllers
 
         public ActionResult Index()
         {
-            throw new Exception("asdasdasda");
             IEnumerable<SemplestAdminApp.Models.Role> viewModel = _dbContext.Roles;
             return View(viewModel);
         }
