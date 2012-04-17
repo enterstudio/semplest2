@@ -1,109 +1,46 @@
-﻿@model SemplestWebApp.Models.CampaignSetupModel
+﻿@using SemplestWebApp.Helpers
+@using SemplestWebApp.Models
+@model SemplestWebApp.Models.CampaignSetupModel
+@Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Campaign";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@section Navbar{
-    <div id="panelbar-images">
-    </div>
-    <script>
-        $("#panelbar-images").kendoPanelBar({
-            dataSource: [
-                        {
-                            text: "Home",
-                            items: [
-                                { text: "My Account" },
-                                { text: "Reporting" },
-                                { text: "Billing" }
-                            ]
-                        },
-                        {
-                            text: "Product Groups",
-                            items: [
-                                { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance"}] },
-                                { text: "Safty Tips", items: [{ text: "Auto Mobile"}] },
-                                { text: "Agents", items: [{ text: "Best Agents"}] }
-                            ]
-                        }
-                    ]
-        });
-
-
-    </script>
+@section Title{
+    Ad Setup
+    
 }
-<script type="text/x-kendo-tmpl" id="template">        
-    <div class="product-view">            
-        <dl>                
-            <dt>Product Name</dt>                
-            <dd>${ProductName}</dd>                
-            <dt>Unit Price</dt>                
-            <dd>${kendo.toString(UnitPrice, "c")}</dd>                
-            <dt>Units In Stock</dt>                
-            <dd>${UnitsInStock}</dd>                
-            <dt>Discontinued</dt>                
-            <dd>${Discontinued}</dd>            
-        </dl>            
-        <div class="edit-buttons">                
-        <a class="k-button k-button-icontext k-edit-button" href="\\#"><span class="k-icon k-edit"></span>Edit</a>                
-        <a class="k-button k-button-icontext k-delete-button" href="\\#"><span class="k-icon k-delete"></span>Delete</a>            
-        </div>        
-    </div>    
-</script>
-<script type="text/x-kendo-tmpl" id="editTemplate">        
-    <div class="product-view">            
-        <dl>                
-            <dt>Product Name</dt>                
-            <dd><input type="text" data-bind="value:ProductName" name="ProductName" required="required" validationMessage="required" /> 
-            <span data-for="ProductName" class="k-invalid-msg"></span></dd>
-            <dt>Unit Price</dt>
-            <dd><input type="text" data-bind="value:UnitPrice" data-role="numerictextbox" data-type="number" name="UnitPrice" required="required" min="1" validationMessage="required" /><span data-for="UnitPrice" class="k-invalid-msg"></span></dd>                
-            <dt>Units In Stock</dt>
-            <dd><input type="text" data-bind="value:UnitsInStock" data-role="numerictextbox" name="UnitsInStock" required="required" data-type="number" min="0" validationMessage="required" /><span data-for="UnitsInStock" class="k-invalid-msg"></span></dd>                
-            <dt>Discontinued</dt>
-            <dd><input type="checkbox" name="Discontinued" data-bind="checked:Discontinued"></dd>
-        </dl>
-        <div class="edit-buttons">                
-            <a class="k-button k-button-icontext k-update-button" href="\\#"><span class="k-icon k-update"></span>Save</a>
-            <a class="k-button k-button-icontext k-cancel-button" href="\\#"><span class="k-icon k-cancel"></span>Cancel</a>
-        </div>
-    </div>    
-</script>
-<div id="exampleTitleBg">
-    <h1 id="exampleTitle">
-        <span class="exampleIcon overviewIcon"></span>Ad Setup
-    </h1>
-    <div id="examplesThemeChooser" style="margin-right: 120px">
-        Step 1 of 4
+@section Links{
+    <div id="examplesThemeChooser" >
+        Step 1 of 3
         <input type="button" class="k-button k-state-btnerror rounded" value="1" id="btnOne" />
         <input type="button" class="k-button rounded" value="2" id="btnTwo" />
         <input type="button" class="k-button rounded" value="3" id="btnThree" />
-        <input type="button" class="k-button rounded" value="4" id="btnFour" />
     </div>
+}
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"></script>
+<div id="exampleTitleBg">
+   
 </div>
 <div id="exampleWrap">
     <div id="example" class="k-content">
-        @using (Html.BeginForm())
+        @using (Html.BeginForm("CampaignSetup", "Campaign", FormMethod.Post))
         {
             @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
             <div id="tabstrip">
                 <ul>
-                    <li class="k-state-active">DEFINE PRODUCT</li>
+@*                    <li class="k-state-active">TELL US ABOUT YOUR BUSINESS</li>
+*@                    <li class="k-state-active">DEFINE PRODUCT</li>
                     <li>CREATE ADS</li>
-                    <li>Additional Click Through Links("SiteLinks")</li>
-                    <li>Negative Keywords</li>
+                    @*<li>Additional Click Through Links("SiteLinks")</li>
+                    <li>Negative Keywords</li>*@
                 </ul>
                 <div id="cap-view" class="k-header">
-                    <div class="configuration">
-                        <span class="infoHead">Helpful Links</span>
-                        <ul>
-                            <li>@Url.Action("/AdditionalLinks")</li>
-                            <li>@Html.ActionLink("What are SEM Ads?", "/About")</li>
-                            <li>@Html.ActionLink("What is a Product Group?", "/About")</li>
-                            <li>@Html.ActionLink("What is a Product?", "/About")</li>
-                            <li>@Html.ActionLink("Ad Creation Tips", "/About")</li>
-                            <li>@Html.ActionLink("Why should i create morethan one Ad?", "/About") </li>
-                        </ul>
-                    </div>
                     <div class="configuration1">
                         <ul class="options">
                             <li>
@@ -111,14 +48,14 @@
                                     Product Group Name
                                 </label>
                                 <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
-                                    placeholder="Product Group Name" required validationmessage="Please enter {0}" />
+                                    required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <label for="productPromotionName" class="required">
                                     Product / Promotion Name
                                 </label>
                                 <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
-                                    placeholder="Product / Promotion Name" required validationmessage="Please enter {0}" />
+                                    required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <h4 class="required">
@@ -127,37 +64,42 @@
                                 </h4>
                                 <label>
                                 </label>
-                                <input type="text" id="Words" name="Words" class="k-textbox" placeholder="words"
-                                    required validationmessage="Please enter {0}" />
+                                <input type="text" id="Words" name="Words" class="k-textbox" required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <label for="Budget" class="required">
                                     Budget
                                 </label>
-                                <input type="text" id="Budget" name="Budget" class="k-textbox" placeholder="Budget"
-                                    required validationmessage="Please enter {0}" />
+                                <input type="text" id="Budget" name="Budget" class="k-textbox" required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <label for="StartDate" class="required">
                                     Product Start Date
                                 </label>
                                 <input type="text" id="StartDate" name="StartDate" class="k-textbox" placeholder="Start"
-                                    required validationmessage="Please select {0}" />
+                                    required validationmessage="Please select {0}" data-bind="value: ProductStartDate" />
                             </li>
                             <li>
                                 <label for="StartEndDate" class="required">
-                                    Product End Date
+                                    Period
                                 </label>
-                                <input type="text" id="EndDate" name="EndDate" class="k-textbox" placeholder="End"
-                                    required validationmessage="Please selectd {0}" />
+@*                                <div class="options">
+                                    <input id="dropDownPeriodList" />
+                                </div>
+*@
+                                <select id="dropDownPeriodList" name="EndDate">
+                                    <option value="EachMonth">Each Month</option>
+                                    <option value="SpecificMonth">Specific Month</option>
+                                </select>
+                                <input type="text" id="EndDate" name="EndDate" class="k-textbox" required validationmessage="Please selectd {0}" />
                             </li>
                             <li>
                                 <label for="SearchEngines" class="required">
                                     Search Engines
                                 </label>
-                                <input id="Google" name="Google" type="checkbox" value="true">Google</input>
-                                <input id="Yahoo" name="Yahoo" type="checkbox" value="true">Yahoo</input>
-                                <input id="Bing" name="Bing" type="checkbox" value="true">Bing</input>
+                                <input id="Google" name="Google" type="checkbox" value="Google">Google</input>
+                                <input id="Yahoo" name="Yahoo" type="checkbox" value="Yahoo">Yahoo</input>
+                                <input id="Bing" name="Bing" type="checkbox" value="Bing">Bing</input>
                             </li>
                             <li>
                                 <button class="k-button" id="save1" type="button">
@@ -169,15 +111,6 @@
                     </div>
                 </div>
                 <div id="product-view" class="k-header">
-                    <div class="configuration">
-                        <span class="infoHead">Helpful Links</span>
-                        <ul>
-                            <li>@Html.ActionLink("Ad Creation Tips", "/About")</li>
-                            <li>@Html.ActionLink("Why should I Create morethan one Ad?", "/About")</li>
-                            <li>@Html.ActionLink("What are site links?", "/About")</li>
-                            <li>@Html.ActionLink("What are negative keywords?", "/About") </li>
-                        </ul>
-                    </div>
                     <div class="configuration1">
                         <span class="infoHead">Location (Enter Address,City,State or Zip)</span>
                         <table>
@@ -186,88 +119,36 @@
                                     <span>Business Address</span>
                                 </td>
                                 <td>
-                                    <div id="businessLocationGrid">
-                                        <table>
-                                            <tr>
-                                                <td>
-                                                    <textarea id="Address_Address1" name="Address.Address1" cols="20" rows="3" class="k-textbox1" placeholder="Enter name" data-bind="value: Location"></textarea>
-                                                </td>
-                                                <td>
-                                                    <button data-bind="click: addBusinessLocation" type="button" class="k-button">
-                                                        <span class="k-add k-icon"></span>Add</button>
-                                                </td>
-                                            </tr>
-                                            <tbody data-template="businessLocationrow-template" data-bind="source: businessLocations">
-                                            </tbody>
-                                        </table>
+                                    <div id="addresses">
+                                        @Html.EditorFor(t => t.Addresses)
                                     </div>
-                                </td>
-                                <td rowspan="3" style="background-color: #333fff;">
-                                    MAP
+                                    <div style="text-align:right">
+                                    @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(Address))
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <span style="margin-right: 10px">Proximity </span>
-                                    <input id="Proxmity" name="Proxmity" class="k-textbox" style="width: 4.3em" />
+                                    <span style="margin-right: 10px">Proxmity </span>
+                                    <input id="Proxmity" name="Proxmity" class="k-textbox" style="width: 4.3em" data-bind="value: proxmity" />
                                 </td>
                                 <td>
                                     <span>miles or less from business</span>
                                 </td>
                             </tr>
                         </table>
-                        <div id="addressListView">
-                        </div>
                     </div>
                     <div class="configuration1">
                         <span class="infoHead">Ad Copy</span>
-                        <table>
-                            <tr>
-                                <td>
-                                    <span>URL</span>
-                                </td>
-                                <td>
-                                    <input id="Url" name="Url" class="k-textbox" />
-                                </td>
-                                <td>
-                                    <span>This url will appears in all of your ads</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Ad #1
-                                </td>
-                                <td>
-                                </td>
-                                <td>
-                                    Ad #1 Preview
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Title
-                                </td>
-                                <td>
-                                    <input id="Title" name="Title" class="k-textbox" />
-                                </td>
-                                <td rowspan="2" style="background-color: #333fff;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    Ad Copy
-                                </td>
-                                <td>
-                                    <input id="AdCopy" name="AdCopy" class="k-textbox" />
-                                </td>
-                            </tr>
-                        </table>
+                        @Html.EditorFor(t => t.Ads)
                     </div>
                     <div class="configuration1">
                         <ul class="options">
-                            <li>@Html.ActionLink("Click to add additional click through options", "/About")</li>
-                            <li>@Html.ActionLink("Click to identify keywords to avoid in association with your business", "/About")</li>
-                            <li>@Html.ActionLink("Create Another Ad", "/About")</li>
+                            <li><a href="#" id="additionalLinks">Click to add additional click through options</a> </li>
+                            <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association with your business</a></li>
+                            <li>
+                                <button data-bind="click: addAd" type="button" class="k-button" id="deleteRow">
+                                    <span class="k-add k-icon"></span>Create Another Ad</button></li>
                         </ul>
                     </div>
                     <div class="configuration1">
@@ -283,15 +164,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="k-header" style="padding-bottom: 20px">
-                    <div class="configuration">
-                        <span class="infoHead">Helpful Links</span>
-                        <ul>
-                            <li>@Html.ActionLink("What are site links?", "/About")</li>
-                            <li>@Html.ActionLink("Why are sitelinks useful?", "/About")</li>
-                            <li>@Html.ActionLink("Examples of sitelinks", "/About")</li>
-                        </ul>
-                    </div>
+                <div class="k-header" style="padding-bottom: 20px" id="additionalLinksdiv">
                     <span class="infoHead">Sitelinks is a feature that lets you include additional links
                         to other content on your site that's not on the main landing page. They appear below
                         your ad copy in the search results</span>
@@ -337,14 +210,6 @@
                     </div>
                 </div>
                 <div class="k-header">
-                    <div class="configuration">
-                        <span class="infoHead">Helpful Links</span>
-                        <ul>
-                            <li>@Html.ActionLink("What are Negative Keywords?", "/About")</li>
-                            <li>@Html.ActionLink("Why would I want to designate Keywords to avoid?", "/About")</li>
-                            <li>@Html.ActionLink("Examples of Negative Keywords", "/About")</li>
-                        </ul>
-                    </div>
                     <span class="infoHead">Adding a negative keyword to your product group means that your
                         ads won't show for searches containing that term. By filtering out unwanted impressions,
                         negative keywords can help you reach the most appropriate prospects. </span>
@@ -362,198 +227,6 @@
                 </div>
             </div>
         }
-        <script id="row-template" type="text/x-kendo-template">    
-            <tr>        
-                <td data-bind="text: Name"></td>        
-                <td data-bind="text: Url"></td>        
-                <td><button data-bind="click: deleteLink" type="button" class="k-button"><span class="k-delete k-icon"></span>Delete</button></td>
-            </tr>
-        </script>
-        <script id="businessLocationrow-template" type="text/x-kendo-template">    
-            <tr>        
-                <td data-bind="text: Location"></td>        
-                <td><button data-bind="click: deleteBusinessLocation" type="button" class="k-button"><span class="k-delete k-icon"></span>Delete</button></td>
-            </tr>
-        </script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $("#Proxmity").kendoNumericTextBox();
-                var validator = $("#cap-view").kendoValidator().data("kendoValidator"), status = $(".status");
-                $("#save1").click(function () {
-                    if (validator.validate()) {
-                        status.text("Hooray! Your tickets has been booked!").addClass("valid");
-                        tabStrip.select(1);
-                        tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-                    } else {
-                        status.text("Oops! There is invalid data in the form.").addClass("invalid");
-
-                    }
-                });
-                $("#save2").click(function () { tabStrip.select(2); tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled")); });
-                $("#save3").click(function () { tabStrip.select(3); tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled")); });
-                $("#back1").click(function () { tabStrip.select(0) });
-                $("#back2").click(function () { tabStrip.select(1) });
-                $("#back3").click(function () { tabStrip.select(2) });
-                $("#save").click(function () { tabStrip.select(0) });
-                $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
-                function startChange() {
-                    var startDate = start.value();
-
-                    if (startDate) {
-                        startDate = new Date(startDate);
-                        startDate.setDate(startDate.getDate() + 1);
-                        end.min(startDate);
-                    }
-                }
-
-                function endChange() {
-                    var endDate = end.value();
-
-                    if (endDate) {
-                        endDate = new Date(endDate);
-                        endDate.setDate(endDate.getDate() - 1);
-                        start.max(endDate);
-                    }
-                }
-
-                var start = $("#StartDate").kendoDatePicker({
-                    change: startChange
-                }).data("kendoDatePicker");
-
-                var end = $("#EndDate").kendoDatePicker({
-                    change: endChange
-                }).data("kendoDatePicker");
-
-                start.max(end.value());
-                end.min(start.value());
-                var onActivate = function (e) {
-                    switch (tabStrip.select().text()) {
-                        case "DEFINE PRODUCT":
-                            $("input[type='button']#btnOne").addClass('k-state-btnerror');
-                            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnFour").removeClass('k-state-btnerror');
-                            break;
-                        case "CREATE ADS":
-                            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnTwo").addClass('k-state-btnerror');
-                            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnFour").removeClass('k-state-btnerror');
-                            break;
-                        case 'Additional Click Through Links("SiteLinks")':
-                            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnThree").addClass('k-state-btnerror');
-                            $("input[type='button']#btnFour").removeClass('k-state-btnerror');
-                            break;
-                        case "Negative Keywords":
-                            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                            $("input[type='button']#btnFour").addClass('k-state-btnerror');
-                            break;
-                    }
-                };
-                var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
-
-                // Start Enable tabs region
-                var tab = tabStrip.select();
-                tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-                tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
-                tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
-                // end Enable tabs Region
-
-                $("input[type='button']#btnOne").addClass("k-button rounded");
-
-                var additionalLinksViewModel = kendo.observable({
-                    Name: "",
-                    Url: "",
-                    addLink: function () {
-                        this.get("additionalLinks").push({ Name: this.get("Name"), Url: this.get("Url") });
-                    },
-                    deleteLink: function (e) {
-                        var additionalLink = e.data;
-                        var additionalLinks = this.get("additionalLinks");
-                        var index = additionalLinks.indexOf(additionalLink);
-                        additionalLinks.splice(index, 1);
-                    },
-                    additionalLinks: []
-                });
-                kendo.bind($("#grid"), additionalLinksViewModel);
-
-                var businessLocationsViewModel = kendo.observable({
-                    Location: "",
-                    addBusinessLocation: function () {
-                        this.get("businessLocations").push({ Location: this.get("Location") });
-                    },
-                    deleteBusinessLocation: function (e) {
-                        var businessLocation = e.data;
-                        var businessLocations = this.get("businessLocations");
-                        var index = businessLocations.indexOf(businessLocation);
-                        businessLocations.splice(index, 1);
-                    },
-                    businessLocations: []
-                });
-                kendo.bind($("#businessLocationGrid"), businessLocationsViewModel);
-            });
-        </script>
-        <style scoped>
-            .configuration1
-            {
-                margin: 0 0 0 15px;
-                padding: 10px;
-                border: 1px solid inherit;
-                background-image: none;
-                -moz-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
-                -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.45), inset 0 0 30px rgba(0,0,0,0.07);
-                -webkit-border-radius: 8px;
-                -moz-border-radius: 8px;
-                border-radius: 8px;
-                min-width: 170px;
-            }
-            .configuration1 table
-            {
-                background-color: #fffbff;
-            }
-            .configuration1 .infoHead
-            {
-                display: inline-block;
-                font-size: 14px;
-                margin-top: 0;
-                text-indent: 0;
-                margin-bottom: 10px;
-                padding-bottom: 5px;
-                border-bottom: 1px solid #999;
-                background-position: 0 -178px;
-            }
-            .configuration1 .k-textbox1
-            {
-                margin-left: 7px;
-            }
-            .configuration1 .options li
-            {
-                display: block;
-                margin: 0;
-                padding: 0.2em 0;
-            }
-            #example h3
-            {
-                clear: both;
-            }
-            
-            #example .code-sample
-            {
-                width: 60%;
-                float: left;
-                margin-bottom: 20px;
-            }
-            
-            #example .output
-            {
-                width: 24%;
-                margin-left: 4%;
-                float: left;
-            }
-        </style>
+        
     </div>
 </div>
