@@ -19,7 +19,7 @@ namespace SemplestAdminApp.Models
             this.Credentials = new HashSet<Credential>();
             this.Employees = new HashSet<Employee>();
             this.TransactionHistories = new HashSet<TransactionHistory>();
-            this.Roles = new HashSet<Role>();
+            this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
     
         public int UserPK { get; set; }
@@ -36,6 +36,6 @@ namespace SemplestAdminApp.Models
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
-        public virtual ICollection<Role> Roles { get; set; }
+        public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }
 }

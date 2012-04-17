@@ -17,12 +17,13 @@ namespace SemplestAdminApp.Models
         public Role()
         {
             this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
+            this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
     
         public int RolePK { get; set; }
         public string RoleName { get; set; }
     
         public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
-        public virtual User User { get; set; }
+        public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }
 }

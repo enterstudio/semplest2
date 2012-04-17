@@ -12,20 +12,13 @@ namespace SemplestAdminApp.Models
     using System;
     using System.Collections.Generic;
     
-    public partial class Employee
+    public partial class UserRolesAssociation
     {
-        public Employee()
-        {
-            this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
-        }
-    
-        public int EmployeePK { get; set; }
-        public int EmployeeTypeFK { get; set; }
+        public int UserRolesAssociationPK { get; set; }
+        public int RolesFK { get; set; }
         public int UsersFK { get; set; }
-        public Nullable<int> ReportingTo { get; set; }
     
-        public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        public virtual EmployeeType EmployeeType { get; set; }
+        public virtual Role Role { get; set; }
         public virtual User User { get; set; }
     }
 }
