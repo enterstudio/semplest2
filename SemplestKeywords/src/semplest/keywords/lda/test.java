@@ -17,11 +17,11 @@ public class test {
 	 * @throws ParserException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
-		String a = "flower";
-		String b = "florist";
-		String c = "floral";
+		String a = null;
+		String b = null;
+		String c = null;
 		String d = "flowers";
-		System.out.println(stemvString(a));
+		System.out.println(a+b+c);
 		System.out.println(stemvString(b));
 		System.out.println(stemvString(c));
 		System.out.println(stemvString(d));

@@ -550,7 +550,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    	logger.info(categOpt.get(Integer.parseInt(indexes[v])));
 		    	categories.add(categOpt.get(Integer.parseInt(indexes[v])));
 		    }
-			categories.add(categOpt.get(0));
+			//categories.add(categOpt.get(0));
 			
 			logger.info("Please, introduce path to file containing landing page (type \"exit\" to close) :");
 			scanFile = new Scanner(System.in);
@@ -613,6 +613,44 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 	}
+	/*
+	public static void main(String[] args)
+	{
+
+		try
+		{
+			KWGenDmozLDAServer client = new KWGenDmozLDAServer();
+			client.initializeService(null);
+			long start = System.currentTimeMillis();
+			ArrayList<String> res = client.getCategories(null, "peanut butter", null, null, null);
+			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
+			System.out.println("categories took " + sec + " seconds");
+			for (int i = 0; i < res.size(); i++)
+			{
+				System.out.println(res.get(i));
+			}
+			
+			start = System.currentTimeMillis();
+			ArrayList<String> selectCateg = new ArrayList<String>();
+			selectCateg.add(res.get(1));
+			System.out.println("Selected:"+res.get(1));
+			ArrayList<ArrayList<String>> kw = client.getKeywords(selectCateg,null, "peanut butter", null, null, "http://peanutbutterlovers.com/", new Integer[]{50,50});
+			sec = (double) (System.currentTimeMillis() - start)/1000.0;
+			System.out.println("keywords took " + sec + " seconds");
+			for(int n=0; n<kw.size(); n++){
+				System.out.println("\n"+ (n+2)+" word keywords:");
+				for(String k: kw.get(n)){
+					System.out.print(k+", ");
+				}
+			}
+	
+		}
+		catch (Exception e)
+		{
+			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
+			e.printStackTrace();
+		}
+	} */
 
 
 
