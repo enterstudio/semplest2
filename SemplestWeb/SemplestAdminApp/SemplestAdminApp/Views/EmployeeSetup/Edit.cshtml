@@ -22,7 +22,9 @@ Edit Employee:
 {
     @Html.ValidationSummary(true)
     <fieldset>
-        <legend>User</legend>
+        
+            @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
+    
         
         <div class="editor-label">
             @Html.LabelFor(model => model.EmployeeSetup.FirstName)
@@ -66,6 +68,16 @@ Edit Employee:
         @Html.DropDownListFor(r=>r.SelectedRoleID, Model.Roles)
         </div>
 
+
+           <div class="editor-label">
+        <label> Employee Type</label>
+        </div>
+
+        <div class="editor-field">
+        @Html.DropDownListFor(r=>r.SelectedEmployeeTypeID , Model.EmployeeTypes )
+        </div>
+
+
         <div class="editor-label">
             <label>Sales Comission</label>
         </div>
@@ -78,7 +90,7 @@ Edit Employee:
             <label>Reporting To</label>
         </div>
         <div class="editor-field">
-            
+         @Html.DropDownListFor(r=>r.SelectedReportingToID, Model.ReportingTo)    
         </div>
         
         
