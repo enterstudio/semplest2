@@ -123,7 +123,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    logger.info("Generating Kewyords");
 	    
 	    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
-	    keywordsfull= this.getKwMultiCombined(optCateg, nGrams, wordMap, 5);
+	    keywordsfull= this.getKwMultiCombined(optCateg, searchTerm, nGrams, wordMap, 5);
 	    int kwCount = 0;
 	    int iter = 0;
 	    ArrayList<String> finalkwList;
@@ -185,7 +185,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
-	    String qsStem = this.stemvString( searchTerm, data.dict ); 
+	    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
 	    if(searchTerm!=null){
 	    	String[] terms = qsStem.split("\\s+");
 		    for(int n=0; n<terms.length; n++){
@@ -195,11 +195,11 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		return wordMap;
 	}
 	
-	private ArrayList<ArrayList<String>> getKwMultiCombined(ArrayList<String> optCateg, Integer[] nGrams, HashMap<String, Double> wordMap, int nGramsmax) throws Exception{
+	private ArrayList<ArrayList<String>> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, HashMap<String, Double> wordMap, int nGramsmax) throws Exception{
 		
 		//Returns 4 grams combining 2 and 3 grams
-		ArrayList<String> bigrams = getKwMulti(optCateg, nGrams[0], wordMap, 2);
-		ArrayList<String> trigrams = getKwMulti(optCateg, nGrams[1], wordMap, 3);
+		ArrayList<String> bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2);
+		ArrayList<String> trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3);
 		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
 		results.add(bigrams);
 		results.add(trigrams);
@@ -278,14 +278,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	  return new Double(wProb);
 	}
 	
-	private ArrayList<String> getKwMulti(ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
+	private ArrayList<String> getKwMulti(String searchTerms,ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
 		//Generates keywords with nGrams words
 
 		MultiWordCollect[] nGramsA=data.biGrams;
 		ArrayList<String> keywords = new ArrayList<String>();
 		//Select bigrams or trigrams based on nGrams value
 		switch (nGrams){
-		case 2: nGramsA=data.biGrams; break;
+		case 2: nGramsA=data.biGrams; 
+				keywords.add(searchTerms);
+				break;
 		case 3: nGramsA=data.triGrams; break;
 		default: throw new Exception("nGrams value not valid");
 		}
@@ -516,7 +518,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	      os = os + dict.getStemWord( w ) + " ";
 	    return os;
 	  }
-	
+	private String stemvStringNoFilter( String raws, dictUtils dict){
+		//Returns the stemmed version of a word
+	    String os = "";
+	    for( String w: raws.split("\\s+")){
+	    	String aux = dictUtils.getStemWord( w );
+	    	if(aux != null)
+	    		os = os + aux + " ";
+	    	else 
+	    		os = os + w + " "; 
+	    }
+	    return os;
+	}
 	public static void main(String[] args) throws Exception {
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer();
 		kwGen.initializeService(null);
