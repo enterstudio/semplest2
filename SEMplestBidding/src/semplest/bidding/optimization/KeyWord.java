@@ -44,7 +44,7 @@ public class KeyWord implements KeyWordInterface {
 		
 //		CPCParams=estimateModelParams(CPC, true);
 		DCostParams=estimateModelParams(DCost, false);
-		ClickParams=estimateModelParams(Clicks, true);
+		ClickParams=estimateModelParams(Clicks, false);
 		
 		
 
@@ -118,7 +118,7 @@ public class KeyWord implements KeyWordInterface {
         
     	PlotGraph pg = new PlotGraph(data);
 
-//    	pg.setGraphTitle(title);            // Enter graph title
+    	pg.setGraphTitle(name);            // Enter graph title
 //    	pg.setXaxisLegend(xLeg);            // Enter x-axis legend
 //    	pg.setXaxisUnitsName(xUnits);       // Enter x-axis units
 //    	pg.setYaxisLegend(yLeg);            // Enter y-axis legend
