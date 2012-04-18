@@ -113,6 +113,7 @@ public class TestBidAlgorithm {
 		}
 		bidOptimizer.setDailyBudget(900);
 		double [] optimalBids = bidOptimizer.optimizeBids();
+//		double [] optimalBids = bidOptimizer.optimizeBids_old();
 		
 		
 

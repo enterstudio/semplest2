@@ -97,7 +97,7 @@ public class KeyWord implements KeyWordInterface {
 
         // get values of y and z at minimum
         double [] EstParams = pe.getParamValues();
-        System.out.format("Param0: %.2f, param1: %.2f, param2: %.2f\n",EstParams[0],EstParams[1],EstParams[2]);
+//        System.out.format("Param0: %.2f, param1: %.2f, param2: %.2f\n",EstParams[0],EstParams[1],EstParams[2]);
         
         if (!plotGraphs){
         	return EstParams;
