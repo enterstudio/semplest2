@@ -82,8 +82,8 @@ public class KeyWord implements KeyWordInterface {
 
 		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
-		double [] startPoint = {1.5, 2.0, 0.5};//, 0.5};
-		startPoint[0]=minBid;
+		double [] startPoint = {1.5, 1.0, 0.5};//, 0.5};
+		startPoint[0]=minBid-1.0;
 		startPoint[2]=output[output.length-1];
 		pe.setStartPoint(startPoint);
 		double [] stepSize = {0.001D, 0.001D, 0.001D};//, 0.01D};
