@@ -22,19 +22,22 @@ public class KeyWord implements KeyWordInterface {
 //	private double [] ClickParams2 = null; 
 
 	
-	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost){
+	public KeyWord(String name, double score, double [] bid, double [] Clicks, double [] CPC, double [] Pos, double [] DCost, Double cutoff){
 		this.name=name;
 		this.score=score;
 		this.bid=bid;
 		
-		
-		for(int i=0; i<bid.length; i++){
-			if(Clicks[i]<0.0001){
-				minBid = bid[i];
-			} else {
-//				minBid = bid[i];
-				break;
+		if (cutoff==null){
+			for(int i=0; i<bid.length; i++){
+				if(Clicks[i]<0.0001){
+					minBid = bid[i];
+				} else {
+					//				minBid = bid[i];
+					break;
+				}
 			}
+		} else {
+			minBid = cutoff.doubleValue();
 		}
 		
 				
