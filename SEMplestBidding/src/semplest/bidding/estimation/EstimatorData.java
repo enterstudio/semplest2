@@ -36,9 +36,12 @@ public class EstimatorData {
 		return bidArray;
 	}
 	
-	public double [] getData(double [] bids){
+	public double [] getData(double [] bids) throws Exception {
 		double [] dataArray = new double[bids.length];
 		for (int i=0; i<bids.length; i++){
+			if (targetVsBid.get(bids[i])==null) {
+				throw new Exception("Data for bid value "+bids[i]+ " is not available! ");
+			}
 			dataArray[i]=targetVsBid.get(bids[i]).doubleValue();
 		}
 		return dataArray;
