@@ -22,6 +22,7 @@ public class LoggingHandleErrorAttribute : HandleErrorAttribute
             SemplestEntities _dbContext = new SemplestEntities();
             _dbContext.Errors.Add(new Error { ErrorMessage = filterContext.Exception.ToString() });
             _dbContext.SaveChanges();
+            //send email
         }
         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
             // Log filterContext.Exception in some way.  
