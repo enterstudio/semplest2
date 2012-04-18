@@ -80,7 +80,8 @@ public class KeyWord implements KeyWordInterface {
 		}
 		
 
-		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
+//		ParametricFunction f = new TruncatedSmoothSCurve(minBid);
+		ParametricFunction f = new TruncatedSmoothSCurve(0.0);
 		ParameterEstimator pe = new ParameterEstimator(f, input, output);
 		double [] startPoint = {1.5, 1.0, 0.5};//, 0.5};
 		startPoint[0]=minBid-1.0;
