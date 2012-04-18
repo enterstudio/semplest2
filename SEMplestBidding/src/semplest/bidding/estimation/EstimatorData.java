@@ -47,5 +47,14 @@ public class EstimatorData {
 		return dataArray;
 	}
 	
+	public boolean removeKeyword(String key){
+		if(targetVsBid.containsKey(key)){
+			targetVsBid.remove(key);
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 
 }
