@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import flanagan.math.Minimisation;
 import flanagan.math.MinimisationFunction;
+import flanagan.plot.PlotGraph;
 
 import semplest.bidding.estimation.ParametricFunction;
 import semplest.bidding.estimation.TruncatedSmoothSCurve;
@@ -40,7 +41,7 @@ class MinimFunct implements MinimisationFunction{
 			}
 			i++;
 		}    	
-		System.out.println("Function value evaluated at " + x[0] +": "+Math.abs(expectedCost-dailyBudget));
+//		System.out.println("Function value evaluated at " + x[0] +": "+Math.pow(expectedCost-dailyBudget,2);
         return Math.pow(expectedCost-dailyBudget,2);
     }
     
@@ -181,42 +182,89 @@ public class CampaignBid {
 	
 	public double [] optimizeBids(){
 		//Create instance of Minimisation
-        Minimisation min = new Minimisation();
-        MinimFunct func = new MinimFunct();
-        func.setWordList(wordList);
-        func.setDailyBudget(dailyBudget);
-        
-        double[] start = {2};
+		Minimisation min = new Minimisation();
+		MinimFunct func = new MinimFunct();
+		func.setWordList(wordList);
+		func.setDailyBudget(dailyBudget);
 
-        // initial step sizes
-        double[] step = {5.0D};
+		// initialization
+		ArrayList<Double> bidPoints = new ArrayList<Double>();
+		double minVal=Double.MAX_VALUE;
+		double minPoint=1.0;
+		double b = 0;
+		while(b<10){
+			bidPoints.add(b);
+			b=b+0.01;
+		}
+		double [] x = new double[1];
+		double [][] data = PlotGraph.data(1,bidPoints.size());
+		for(int i=0; i<bidPoints.size(); i++){
+			data[0][i]=bidPoints.get(i);
+			x[0]=bidPoints.get(i);
+			data[1][i]=func.function(x);
+			if(data[1][i]<minVal){
+				minVal=data[1][i];
+				minPoint=data[0][i];
+			}
+		}
+		System.out.println("Minimum occurs at "+minPoint+", and the minimum value is "+minVal);
+		
+		// refine the search zone
+		b = minVal-0.011;
+		bidPoints.clear();
+		while(b<minVal+0.011){
+			bidPoints.add(b);
+			b=b+0.0001;
+		}
+		data = PlotGraph.data(1,bidPoints.size());
+		for(int i=0; i<bidPoints.size(); i++){
+			data[0][i]=bidPoints.get(i);
+			x[0]=bidPoints.get(i);
+			data[1][i]=func.function(x);
+			if(data[1][i]<minVal){
+				minVal=data[1][i];
+				minPoint=data[0][i];
+			}
+		}
+		
+		PlotGraph pg = new PlotGraph(data);
+		pg.plot();
+		
+		
 
-        // convergence tolerance
-        double ftol = 1e-15;
 
-//        min.addConstraint(0, -1, 0.0);
+		double[] start = {minVal};
+
+		// initial step sizes
+		double[] step = {0.1D};
+
+		// convergence tolerance
+		double ftol = 1e-15;
+
+		//        min.addConstraint(0, -1, 0.0);
 
 
-        // Nelder and Mead minimisation procedure
-        min.nelderMead(func, start, step, ftol);
+		// Nelder and Mead minimisation procedure
+		min.nelderMead(func, start, step, ftol);
 
-        // get the minimum value
-        double minimum = min.getMinimum();
+		// get the minimum value
+		double minimum = min.getMinimum();
 
-        // get values of y and z at minimum
-         double[] param = min.getParamValues();
+		// get values of y and z at minimum
+		double[] param = min.getParamValues();
 
-         // Output the results to screen
-         System.out.println("Minimum = " + minimum);
-         System.out.println("Value of Lagrange multiplier at the minimum = " + param[0]);
-         
- 		bids = new double[wordList.size()];
- 		for(int i=0; i<wordList.size();i++){
-			bids[i]=computeOptimumBidForConst(i,param[0]);
-//			System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
+		// Output the results to screen
+		System.out.println("Minimum = " + minimum);
+		System.out.println("Value of Lagrange multiplier at the minimum = " + param[0]);
+
+		bids = new double[wordList.size()];
+		for(int i=0; i<wordList.size();i++){
+//			bids[i]=computeOptimumBidForConst(i,param[0]);
+			bids[i]=computeOptimumBidForConst(i,minPoint);
+			//			System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
 		} // for(int i=0; i<wordList.size();i++)
 		computeExpectedValues();
-		
+
 		double [] input = new double[1];
 		KeyWordInterface key = null;
 		ParametricFunction f = new TruncatedSmoothSCurve();
@@ -225,7 +273,7 @@ public class CampaignBid {
 			key=wordList.get(i);
 			input[0]=bids[i];
 			f.setMinBid(key.getMinBid());
-//			System.out.print(key.getKeyWord()+":: ");
+			//			System.out.print(key.getKeyWord()+":: ");
 			if(bids[i]>= key.getMinBid()) {
 				System.out.format("%2d :: %s: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
 						i+1, key.getKeyWord(), bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
@@ -239,14 +287,14 @@ public class CampaignBid {
 		} // for(int i=0; i<bids.length;i++)
 		System.out.format("Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f, expected CPC: %.2f \n",
 				expectedCost,expectedClicks,expectedQualityMetric, expectedCost/expectedClicks);
-		
-		
+
+
 		for(int i=0; i<bids.length;i++){
 			wordList.get(i).setBidValue(bids[i]);
 		}
-		
+
 		return bids;
-        
+
 	}
 	
 	
