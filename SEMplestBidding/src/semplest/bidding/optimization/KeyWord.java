@@ -43,7 +43,7 @@ public class KeyWord implements KeyWordInterface {
 				
 		
 //		CPCParams=estimateModelParams(CPC, true);
-		DCostParams=estimateModelParams(DCost, false);
+		DCostParams=estimateModelParams(DCost, true);
 		ClickParams=estimateModelParams(Clicks, false);
 		
 		

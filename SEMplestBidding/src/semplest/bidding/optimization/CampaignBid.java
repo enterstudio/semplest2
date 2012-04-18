@@ -1,6 +1,7 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 
 import flanagan.math.Minimisation;
@@ -9,6 +10,44 @@ import flanagan.plot.PlotGraph;
 
 import semplest.bidding.estimation.ParametricFunction;
 import semplest.bidding.estimation.TruncatedSmoothSCurve;
+
+
+
+class WordQCPCPair {
+	
+	String word;
+	double QCPC;
+	
+	public WordQCPCPair(String word, double QCPC){
+		this.word=word;
+		this.QCPC=QCPC;
+	}
+	
+	public void setQCPC(double QCPC){
+		this.QCPC=QCPC;
+	}
+	
+	public void setWord(String word){
+		this.word=word;
+	}
+	
+	public double getQCPC(){
+		return QCPC;
+	}
+	
+	public String getWord(){
+		return word;
+	}
+}
+
+class WordQCPCPairComparator implements Comparator {
+	@Override
+	public int compare(Object o1, Object o2) {
+		Double d1 = new Double(((WordQCPCPair)o1).getQCPC());
+		Double d2 = new Double(((WordQCPCPair)o2).getQCPC());
+		return d1.compareTo(d2);
+	}
+}
 
 
 
@@ -122,7 +161,7 @@ public class CampaignBid {
         Minimisation min = new Minimisation();
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
-        min.addConstraint(0, +1, 10.00); // max bid allowed
+        min.addConstraint(0, +1, 9.00); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -243,7 +282,6 @@ public class CampaignBid {
 
 		//        min.addConstraint(0, -1, 0.0);
 
-
 		// Nelder and Mead minimisation procedure
 		min.nelderMead(func, start, step, ftol);
 
@@ -275,13 +313,13 @@ public class CampaignBid {
 			f.setMinBid(key.getMinBid());
 			//			System.out.print(key.getKeyWord()+":: ");
 			if(bids[i]>= key.getMinBid()) {
-				System.out.format("%2d :: %s: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
+				System.out.format("%2d :: %30s: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
 						i+1, key.getKeyWord(), bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
 						key.getQualityScore()*f.function(input, key.getClickInfo()),
 						f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
 				//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
 			} else {
-				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
+				System.out.format("%2d :: %30s: Bid value: 0.00, min bid: %1.2f, expected clicks:  0.0, expected daily cost:  0.00, expected quality metric:  0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
 						i+1, key.getKeyWord(), key.getMinBid());//,
 			}
 		} // for(int i=0; i<bids.length;i++)
