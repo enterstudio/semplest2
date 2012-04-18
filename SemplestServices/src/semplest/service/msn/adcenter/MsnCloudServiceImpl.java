@@ -1561,6 +1561,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new RemoteException(e2.dumpToString());
 		}
 	}
+	
+	public String deleteKeywordById(String json) throws Exception
+	{
+		logger.debug("call deleteKeywordById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			deleteKeywordById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("keywordId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
+	}
 
 	@Override
 	public void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws RemoteException
@@ -1576,6 +1590,22 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		catch(ApiFaultDetail e2){
 			throw new RemoteException(e2.dumpToString());
 		}
+	}
+	
+	public String deleteKeywordsById(String json) throws Exception
+	{
+		logger.debug("call deleteKeywordsById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		String keywordIdsStr = data.get("keywordIds");
+		long[] keywordIds = gson.fromJson(keywordIdsStr, long[].class);
+		try {
+			deleteKeywordsById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					keywordIds);
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
