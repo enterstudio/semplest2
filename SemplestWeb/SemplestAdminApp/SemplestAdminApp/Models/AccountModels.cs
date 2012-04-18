@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Web;
-using Microsoft.Practices.EnterpriseLibrary.Logging;
 using SemplestAdminApp.Models;
 
 
