@@ -36,7 +36,6 @@ public class CampaignBid {
 	
 	
 	private double computeOptimumBidForConst(int i, double k){
-		
 		ParametricFunction f = new TruncatedSmoothSCurve();
 		f.setMinBid(wordList.get(i).getMinBid());
 
