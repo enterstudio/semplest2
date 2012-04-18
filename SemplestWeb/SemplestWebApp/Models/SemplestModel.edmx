@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="SemplestModelStoreContainer">
           <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
@@ -26,6 +26,7 @@
           <EntitySet Name="EmployeeCustomerAssociation" EntityType="SemplestModel.Store.EmployeeCustomerAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EmployeeType" EntityType="SemplestModel.Store.EmployeeType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Error" EntityType="SemplestModel.Store.Error" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Frequency" EntityType="SemplestModel.Store.Frequency" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="HelpDefinition" EntityType="SemplestModel.Store.HelpDefinition" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Keyword" EntityType="SemplestModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
@@ -39,10 +40,13 @@
           <EntitySet Name="Rights" EntityType="SemplestModel.Store.Rights" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Roles" EntityType="SemplestModel.Store.Roles" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="RolesRightsAssociation" EntityType="SemplestModel.Store.RolesRightsAssociation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Schedule" EntityType="SemplestModel.Store.Schedule" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ScheduleTaskAssociation" EntityType="SemplestModel.Store.ScheduleTaskAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="SEMCustomerDetails" EntityType="SemplestModel.Store.SEMCustomerDetails" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="SiteLinks" EntityType="SemplestModel.Store.SiteLinks" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StateCode" EntityType="SemplestModel.Store.StateCode" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="sysdiagrams" EntityType="SemplestModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Task" EntityType="SemplestModel.Store.Task" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="TransactionHistory" EntityType="SemplestModel.Store.TransactionHistory" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
@@ -130,6 +134,10 @@
             <End Role="EmployeeType" EntitySet="EmployeeType" />
             <End Role="Employee" EntitySet="Employee" />
           </AssociationSet>
+          <AssociationSet Name="REL_Frequency_Schedule_1" Association="SemplestModel.Store.REL_Frequency_Schedule_1">
+            <End Role="Frequency" EntitySet="Frequency" />
+            <End Role="Schedule" EntitySet="Schedule" />
+          </AssociationSet>
           <AssociationSet Name="REL_Keyword_PromotionKeywordAssociation_2" Association="SemplestModel.Store.REL_Keyword_PromotionKeywordAssociation_2">
             <End Role="Keyword" EntitySet="Keyword" />
             <End Role="PromotionKeywordAssociation" EntitySet="PromotionKeywordAssociation" />
@@ -173,6 +181,10 @@
           <AssociationSet Name="REL_Roles_UserRolesAssociation_2" Association="SemplestModel.Store.REL_Roles_UserRolesAssociation_2">
             <End Role="Roles" EntitySet="Roles" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleTaskAssociation_1" Association="SemplestModel.Store.REL_Schedule_ScheduleTaskAssociation_1">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="ScheduleTaskAssociation" EntitySet="ScheduleTaskAssociation" />
           </AssociationSet>
           <AssociationSet Name="REL_Users_Credential_1" Association="SemplestModel.Store.REL_Users_Credential_1">
             <End Role="Users" EntitySet="Users" />
@@ -390,8 +402,15 @@
             <PropertyRef Name="ErrorPK" />
           </Key>
           <Property Name="ErrorPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ErrorMessage" Type="nvarchar" Nullable="false" MaxLength="1000" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ErrorID" Type="int" />
+        </EntityType>
+        <EntityType Name="Frequency">
+          <Key>
+            <PropertyRef Name="FrequencyPK" />
+          </Key>
+          <Property Name="FrequencyPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Frequency" Type="nchar" Nullable="false" MaxLength="20" />
         </EntityType>
         <EntityType Name="HelpDefinition">
           <Key>
@@ -519,6 +538,31 @@
           <Property Name="IsVisible" Type="bit" Nullable="false" />
           <Property Name="IsReadonly" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="SchedulePK" />
+          </Key>
+          <Property Name="SchedulePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="StartTime" Type="datetime2" Nullable="false" />
+          <Property Name="FrequencyFK" Type="int" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="IsSuccessful" Type="bit" Nullable="false" />
+          <Property Name="IsInactive" Type="bit" Nullable="false" />
+          <Property Name="IsComplete" Type="int" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedBy" Type="int" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+        </EntityType>
+        <EntityType Name="ScheduleTaskAssociation">
+          <Key>
+            <PropertyRef Name="TaskFK" />
+            <PropertyRef Name="ScheduleFK" />
+          </Key>
+          <Property Name="TaskFK" Type="int" Nullable="false" />
+          <Property Name="ScheduleFK" Type="int" Nullable="false" />
+          <Property Name="TaskExecutionOrder" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="SEMCustomerDetails">
           <Key>
             <PropertyRef Name="SEMCustomerDetailsPK" />
@@ -559,6 +603,15 @@
           <Property Name="diagram_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="TaskPK" />
+          </Key>
+          <Property Name="TaskPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceName" Type="nchar" Nullable="false" MaxLength="100" />
+          <Property Name="MethodName" Type="nchar" Nullable="false" MaxLength="50" />
+          <Property Name="Parameters" Type="nchar" Nullable="false" MaxLength="2500" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -846,6 +899,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_Frequency_Schedule_1">
+          <End Role="Frequency" Type="SemplestModel.Store.Frequency" Multiplicity="1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Frequency">
+              <PropertyRef Name="FrequencyPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="FrequencyFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Keyword_PromotionKeywordAssociation_2">
           <End Role="Keyword" Type="SemplestModel.Store.Keyword" Multiplicity="1" />
           <End Role="PromotionKeywordAssociation" Type="SemplestModel.Store.PromotionKeywordAssociation" Multiplicity="*" />
@@ -980,6 +1045,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_Schedule_ScheduleTaskAssociation_1">
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="1" />
+          <End Role="ScheduleTaskAssociation" Type="SemplestModel.Store.ScheduleTaskAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleTaskAssociation">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Users_Credential_1">
           <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="1" />
           <End Role="Credential" Type="SemplestModel.Store.Credential" Multiplicity="*" />
@@ -1074,8 +1151,7 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -1267,6 +1343,18 @@
           <AssociationSet Name="REL_Users_UserRolesAssociation_1" Association="SemplestModel.REL_Users_UserRolesAssociation_1">
             <End Role="Users" EntitySet="Users" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
+          </AssociationSet>
+          <EntitySet Name="Frequencies" EntityType="SemplestModel.Frequency" />
+          <EntitySet Name="Schedules" EntityType="SemplestModel.Schedule" />
+          <EntitySet Name="ScheduleTaskAssociations" EntityType="SemplestModel.ScheduleTaskAssociation" />
+          <EntitySet Name="Tasks" EntityType="SemplestModel.Task" />
+          <AssociationSet Name="REL_Frequency_Schedule_1" Association="SemplestModel.REL_Frequency_Schedule_1">
+            <End Role="Frequency" EntitySet="Frequencies" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleTaskAssociation_1" Association="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="ScheduleTaskAssociation" EntitySet="ScheduleTaskAssociations" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="Address">
@@ -2188,6 +2276,75 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Frequency">
+          <Key>
+            <PropertyRef Name="FrequencyPK" />
+          </Key>
+          <Property Type="Int32" Name="FrequencyPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Frequency1" Nullable="false" MaxLength="20" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Frequency_Schedule_1" FromRole="Frequency" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="SchedulePK" />
+          </Key>
+          <Property Type="Int32" Name="SchedulePK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="StartTime" Nullable="false" />
+          <Property Type="Int32" Name="FrequencyFK" Nullable="false" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="Boolean" Name="IsSuccessful" Nullable="false" />
+          <Property Type="Boolean" Name="IsInactive" Nullable="false" />
+          <Property Type="Int32" Name="IsComplete" Nullable="false" />
+          <Property Type="Int32" Name="CreatedBy" Nullable="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="Int32" Name="EditedBy" Nullable="false" />
+          <Property Type="DateTime" Name="EditedDate" />
+          <NavigationProperty Name="Frequency" Relationship="SemplestModel.REL_Frequency_Schedule_1" FromRole="Schedule" ToRole="Frequency" />
+          <NavigationProperty Name="ScheduleTaskAssociations" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="Schedule" ToRole="ScheduleTaskAssociation" />
+        </EntityType>
+        <EntityType Name="ScheduleTaskAssociation">
+          <Key>
+            <PropertyRef Name="TaskFK" />
+            <PropertyRef Name="ScheduleFK" />
+          </Key>
+          <Property Type="Int32" Name="TaskFK" Nullable="false" />
+          <Property Type="Int32" Name="ScheduleFK" Nullable="false" />
+          <Property Type="Int32" Name="TaskExecutionOrder" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="ScheduleTaskAssociation" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="TaskPK" />
+          </Key>
+          <Property Type="Int32" Name="TaskPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="MethodName" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="Parameters" Nullable="false" MaxLength="2500" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <Association Name="REL_Frequency_Schedule_1">
+          <End Type="SemplestModel.Frequency" Role="Frequency" Multiplicity="1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Frequency">
+              <PropertyRef Name="FrequencyPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="FrequencyFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Schedule_ScheduleTaskAssociation_1">
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="SemplestModel.ScheduleTaskAssociation" Role="ScheduleTaskAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleTaskAssociation">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2468,6 +2625,50 @@
             <ScalarProperty Name="IsActive" ColumnName="IsActive" />
             <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Frequencies">
+            <EntityTypeMapping TypeName="SemplestModel.Frequency">
+              <MappingFragment StoreEntitySet="Frequency">
+                <ScalarProperty Name="Frequency1" ColumnName="Frequency" />
+                <ScalarProperty Name="FrequencyPK" ColumnName="FrequencyPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schedules">
+            <EntityTypeMapping TypeName="SemplestModel.Schedule">
+              <MappingFragment StoreEntitySet="Schedule">
+                <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+                <ScalarProperty Name="EditedBy" ColumnName="EditedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsComplete" ColumnName="IsComplete" />
+                <ScalarProperty Name="IsInactive" ColumnName="IsInactive" />
+                <ScalarProperty Name="IsSuccessful" ColumnName="IsSuccessful" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="FrequencyFK" ColumnName="FrequencyFK" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="SchedulePK" ColumnName="SchedulePK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleTaskAssociations">
+            <EntityTypeMapping TypeName="SemplestModel.ScheduleTaskAssociation">
+              <MappingFragment StoreEntitySet="ScheduleTaskAssociation">
+                <ScalarProperty Name="TaskExecutionOrder" ColumnName="TaskExecutionOrder" />
+                <ScalarProperty Name="ScheduleFK" ColumnName="ScheduleFK" />
+                <ScalarProperty Name="TaskFK" ColumnName="TaskFK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="SemplestModel.Task">
+              <MappingFragment StoreEntitySet="Task">
+                <ScalarProperty Name="Parameters" ColumnName="Parameters" />
+                <ScalarProperty Name="MethodName" ColumnName="MethodName" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="TaskPK" ColumnName="TaskPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -2774,6 +2975,18 @@
           <ConnectorPoint PointX="9.9166666666666661" PointY="41.515622500000006" />
           <ConnectorPoint PointX="10.083333333333334" PointY="41.515622500000006" />
           <ConnectorPoint PointX="10.5" PointY="41.515622500000006" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.Frequency" Width="1.5" PointX="8.75" PointY="5" Height="1.595683593749996" />
+        <EntityTypeShape EntityType="SemplestModel.Schedule" Width="1.5" PointX="11" PointY="4" Height="3.5186979166666532" />
+        <EntityTypeShape EntityType="SemplestModel.ScheduleTaskAssociation" Width="1.5" PointX="13.25" PointY="4.875" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="SemplestModel.Task" Width="1.5" PointX="0.75" PointY="6.75" Height="1.7879850260416674" />
+        <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" >
+          <ConnectorPoint PointX="10.25" PointY="5.797841796874998" />
+          <ConnectorPoint PointX="11" PointY="5.797841796874998" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" >
+          <ConnectorPoint PointX="12.5" PointY="5.7689925130208337" />
+          <ConnectorPoint PointX="13.25" PointY="5.7689925130208337" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

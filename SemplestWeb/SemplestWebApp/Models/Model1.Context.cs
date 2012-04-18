@@ -65,5 +65,9 @@ namespace SemplestWebApp.Models
         public DbSet<TransactionHistory> TransactionHistories { get; set; }
         public DbSet<UserRolesAssociation> UserRolesAssociations { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Frequency> Frequencies { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
+        public DbSet<Task> Tasks { get; set; }
     }
 }
