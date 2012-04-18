@@ -289,7 +289,7 @@ getKeywordById: ok
 Id = 8099371836; text = nan keyword test 2
 
 	
-getKeywordByAdGroupId  ##
+getKeywordByAdGroupId  ###
 ------------------------------------------
 getKeywordByAdGroupId: num of keywords = 4
 Id = 8099371830; Text = nan keyword test 1
@@ -298,16 +298,37 @@ Id = 8099436288; Text = nan keyword test 4
 Id = 8099436289; Text = nan keyword test 5
 
 
->>>>>
+>>>>>04/17/2012
 
 
-updateKeywordBidById
+updateKeywordBidById  ###
+------------------------------------------
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 1.0; contentMatchBid = 1.01; exactMatchBid = 1.02; phraseMatchBid = 1.03
+updateKeywordBidById: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 5.0; contentMatchBid = 5.01; exactMatchBid = 5.02; phraseMatchBid = 5.03
+
 	
-updateKeywordBidsByIds
+updateKeywordBidsByIds  ###
+------------------------------------------
+updateKeywordBidsByIds: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371836; broadMatchBid = 6.01; contentMatchBid = 6.01; exactMatchBid = 6.01; phraseMatchBid = 6.01
+getKeywordById: ok
+Id = 8099436288; broadMatchBid = 7.01; contentMatchBid = 7.01; exactMatchBid = 7.01; phraseMatchBid = 7.01
+
 	
-pauseKeywordById
+pauseKeywordById  ###
+------------------------------------------
+pauseKeywordById: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 5.0; status = Paused
+
 	
-deleteKeywordById
+deleteKeywordById  #
+------------------------------------------
+
 	
 deleteKeywordsById
 	

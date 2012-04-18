@@ -11,7 +11,8 @@ public class MsnKeywordObject {
 	private String Bids;  //a string contains BroadMatchBid, ContentMatchBid, ExactMatchBid and PhraseMatchBid (in seq)
 	private String Param123;  //a string contains Param1, Param2 and Param3. Separated by the separator
 	
-	private static String separator = "#";
+	private static String separator1 = "#";
+	private static String separator2 = "|";
 	
 	private static Gson gson = new Gson();
 	
@@ -30,11 +31,11 @@ public class MsnKeywordObject {
 		Status = keyword.getStatus();
 		EditorialStatus = keyword.getEditorialStatus();
 		Text = keyword.getText();
-		Param123 = keyword.getParam1() + separator + keyword.getParam2() + separator + keyword.getParam3();
+		Param123 = keyword.getParam1() + separator2 + keyword.getParam2() + separator2 + keyword.getParam3();
 		Bids = gson.toJson(keyword.getBroadMatchBid())
-				+ separator + gson.toJson(keyword.getContentMatchBid()) 
-				+ separator + gson.toJson(keyword.getExactMatchBid()) 
-				+ separator + gson.toJson(keyword.getPhraseMatchBid());
+				+ separator1 + gson.toJson(keyword.getContentMatchBid()) 
+				+ separator1 + gson.toJson(keyword.getExactMatchBid()) 
+				+ separator1 + gson.toJson(keyword.getPhraseMatchBid());
 	}
 	
 	public Keyword toKeyword(){
@@ -45,7 +46,7 @@ public class MsnKeywordObject {
 		ret.setEditorialStatus(EditorialStatus);
 		ret.setText(Text);
 		
-		String[] params = Param123.split(separator);
+		String[] params = Param123.split(separator2);
 		int numOfParams = params.length;
 		if(numOfParams>0)
 			ret.setParam1(params[0]);
@@ -54,7 +55,7 @@ public class MsnKeywordObject {
 		if(numOfParams>2)
 			ret.setParam3(params[2]);
 		
-		String[] bidslist = Bids.split(separator);
+		String[] bidslist = Bids.split(separator1);
 		int numOfBids = bidslist.length;
 		if(numOfBids>0)
 			ret.setBroadMatchBid(gson.fromJson(bidslist[0], Bid.class));

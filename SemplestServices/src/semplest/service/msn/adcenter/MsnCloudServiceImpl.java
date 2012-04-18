@@ -1408,6 +1408,28 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		return keywordsByAdGroupId.getKeywords();
 	}
+	
+	public String updateKeywordBidById(String json) throws Exception
+	{
+		logger.debug("call updateKeywordBidById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Bid broadMatchBid = gson.fromJson(data.get("broadMatchBid"), Bid.class);
+		Bid contentMatchBid = gson.fromJson(data.get("contentMatchBid"), Bid.class);
+		Bid exactMatchBid = gson.fromJson(data.get("exactMatchBid"), Bid.class);
+		Bid phraseMatchBid = gson.fromJson(data.get("phraseMatchBid"), Bid.class);
+		try {
+			updateKeywordBidById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("keywordId")), 
+					broadMatchBid,
+					contentMatchBid,
+					exactMatchBid,
+					phraseMatchBid);
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
+	}
 
 	@Override
 	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
@@ -1420,8 +1442,39 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		keyword.setContentMatchBid(contentMatchBid);
 		keyword.setExactMatchBid(exactMatchBid);
 		keyword.setPhraseMatchBid(phraseMatchBid);
-		campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, new Keyword[]
-		{ keyword }));
+		try{
+			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, new Keyword[]
+					{ keyword }));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
+	}
+	
+	public String updateKeywordBidsByIds(String json) throws Exception
+	{
+		logger.debug("call updateKeywordBidsByIds(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		long[] keywordId = gson.fromJson(data.get("keywordId"), long[].class);
+		Bid[] broadMatchBid = gson.fromJson(data.get("broadMatchBid"), Bid[].class);
+		Bid[] contentMatchBid = gson.fromJson(data.get("contentMatchBid"), Bid[].class);
+		Bid[] exactMatchBid = gson.fromJson(data.get("exactMatchBid"), Bid[].class);
+		Bid[] phraseMatchBid = gson.fromJson(data.get("phraseMatchBid"), Bid[].class);
+		try {
+			updateKeywordBidsByIds(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					keywordId, 
+					broadMatchBid,
+					contentMatchBid,
+					exactMatchBid,
+					phraseMatchBid);
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override
@@ -1442,7 +1495,15 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			ret[i] = makeKeywordFromArrays(i, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
 		}
 
-		campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, ret));
+		try{
+			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, ret));
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(EditorialApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
 	}
 
 	private Keyword makeKeywordFromArrays(int index, long[] keywordId, Bid[] broadMatchBidArr, Bid[] contentMatchBidArr, Bid[] exactMatchBidArr,
@@ -1455,6 +1516,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		Bid phraseMatchBid = (phraseMatchBidArr == null ? null : phraseMatchBidArr[index]);
 		return aNew().keyword().withText(null).with(id).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid)
 				.withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
+	}
+	
+	public String pauseKeywordById(String json) throws Exception
+	{
+		logger.debug("call pauseKeywordById(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			pauseKeywordById(new Long(data.get("accountId")), 
+					new Long(data.get("adGroupId")), 
+					new Long(data.get("keywordId")));
+		} catch (RemoteException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(0);
 	}
 
 	@Override

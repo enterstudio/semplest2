@@ -305,17 +305,87 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			keywords[0].setBroadMatchBid(broadMatchBid1);						
 			keywords[1].setBroadMatchBid(broadMatchBid2);			
 			long[] ret = test.createKeywords(1595249L, 754813047L, keywords);
-			*/
+			
 			//getKeywordByAdGroupId
 			Keyword[] ret2 = test.getKeywordByAdGroupId(1595249L, 754813047L);
 			
+			//updateKeywordBidById
+			  //check before update
+			Keyword ret = test.getKeywordById(1595249L, 754813047L, 8099371830L);
+			if(ret != null){
+				logger.info("Id = " + ret.getId()
+						+ "; broadMatchBid = " + ret.getBroadMatchBid().getAmount()
+						+ "; contentMatchBid = " + ret.getContentMatchBid().getAmount()
+						+ "; exactMatchBid = " + ret.getExactMatchBid().getAmount()
+						+ "; phraseMatchBid = " + ret.getPhraseMatchBid().getAmount());
+			}
+			  //update
+			Bid broadMatchBid = new Bid();
+			broadMatchBid.setAmount(5.00);
+			Bid contentMatchBid = new Bid();
+			contentMatchBid.setAmount(5.01);
+			Bid exactMatchBid = new Bid();
+			exactMatchBid.setAmount(5.02);
+			Bid phraseMatchBid = new Bid();
+			phraseMatchBid.setAmount(5.03);
+			test.updateKeywordBidById(1595249L, 754813047L, 8099371830L, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
+			  //check after update
+			ret = test.getKeywordById(1595249L, 754813047L, 8099371830L);
+			if(ret != null){
+				logger.info("Id = " + ret.getId()
+						+ "; broadMatchBid = " + ret.getBroadMatchBid().getAmount()
+						+ "; contentMatchBid = " + ret.getContentMatchBid().getAmount()
+						+ "; exactMatchBid = " + ret.getExactMatchBid().getAmount()
+						+ "; phraseMatchBid = " + ret.getPhraseMatchBid().getAmount());
+			}
+			
+			//updateKeywordBidsByIds
+			long[] keywordId = new long[2];
+			keywordId[0] = 8099371836L;
+			keywordId[1] = 8099436288L;
+			Bid[] broadMatchBid = new Bid[2];
+			broadMatchBid[0] = new Bid();
+			broadMatchBid[0].setAmount(6.01);
+			broadMatchBid[1] = new Bid();
+			broadMatchBid[1].setAmount(7.01);
+			Bid[] contentMatchBid = broadMatchBid;
+			Bid[] exactMatchBid = broadMatchBid;
+			Bid[] phraseMatchBid = broadMatchBid;			
+			test.updateKeywordBidsByIds(1595249L, 754813047L, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
+			  //check the updated values
+			Keyword ret = test.getKeywordById(1595249L, 754813047L, 8099371836L);
+			if(ret != null){
+				logger.info("Id = " + ret.getId()
+						+ "; broadMatchBid = " + ret.getBroadMatchBid().getAmount()
+						+ "; contentMatchBid = " + ret.getContentMatchBid().getAmount()
+						+ "; exactMatchBid = " + ret.getExactMatchBid().getAmount()
+						+ "; phraseMatchBid = " + ret.getPhraseMatchBid().getAmount());
+			}
+			ret = test.getKeywordById(1595249L, 754813047L, 8099436288L);
+			if(ret != null){
+				logger.info("Id = " + ret.getId()
+						+ "; broadMatchBid = " + ret.getBroadMatchBid().getAmount()
+						+ "; contentMatchBid = " + ret.getContentMatchBid().getAmount()
+						+ "; exactMatchBid = " + ret.getExactMatchBid().getAmount()
+						+ "; phraseMatchBid = " + ret.getPhraseMatchBid().getAmount());
+			}
+			*/
+			//pauseKeywordById
+			test.pauseKeywordById(1595249L, 754813047L, 8099371830L);
+			  //check it
+			Keyword ret = test.getKeywordById(1595249L, 754813047L, 8099371830L);
+			if(ret != null){
+				logger.info("Id = " + ret.getId()
+						+ "; broadMatchBid = " + ret.getBroadMatchBid().getAmount()
+						+ "; status = " + ret.getStatus());
+			}
 			
 			
 			
 			
 			
 			
-			
+						
 			
 			
 			
@@ -888,23 +958,62 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
 			Bid phraseMatchBid) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String broadMatchBidStr = gson.toJson(broadMatchBid);
+		String contentMatchBidStr = gson.toJson(contentMatchBid);
+		String exactMatchBidStr = gson.toJson(exactMatchBid);
+		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordId", Long.toString(keywordId));
+		jsonHash.put("broadMatchBid", broadMatchBidStr);
+		jsonHash.put("contentMatchBid", contentMatchBidStr);
+		jsonHash.put("exactMatchBid", exactMatchBidStr);
+		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidById", json, null);
+		long ret = gson.fromJson(returnData, long.class);
+		logger.debug("updateKeywordBidById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, long[] keywordId, Bid[] broadMatchBid, Bid[] contentMatchBid,
 			Bid[] exactMatchBid, Bid[] phraseMatchBid) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String keywordIdStr = gson.toJson(keywordId);
+		String broadMatchBidStr = gson.toJson(broadMatchBid);
+		String contentMatchBidStr = gson.toJson(contentMatchBid);
+		String exactMatchBidStr = gson.toJson(exactMatchBid);
+		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordId", keywordIdStr);
+		jsonHash.put("broadMatchBid", broadMatchBidStr);
+		jsonHash.put("contentMatchBid", contentMatchBidStr);
+		jsonHash.put("exactMatchBid", exactMatchBidStr);
+		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
+		String json = gson.toJson(jsonHash);
 		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidsByIds", json, null);
+		long ret = gson.fromJson(returnData, long.class);
+		logger.debug("updateKeywordBidsByIds: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordId", Long.toString(keywordId));		
+		String json = gson.toJson(jsonHash);
 		
+		int ret = -1;
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseKeywordById", json, null);
+		ret = gson.fromJson(returnData, int.class);
+		logger.debug("pauseKeywordById: (if successful returns 0) " + ret);
 	}
 
 	@Override
