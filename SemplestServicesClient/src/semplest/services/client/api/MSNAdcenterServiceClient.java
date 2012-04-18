@@ -369,7 +369,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 						+ "; exactMatchBid = " + ret.getExactMatchBid().getAmount()
 						+ "; phraseMatchBid = " + ret.getPhraseMatchBid().getAmount());
 			}
-			*/
+			
 			//pauseKeywordById
 			test.pauseKeywordById(1595249L, 754813047L, 8099371830L);
 			  //check it
@@ -380,9 +380,15 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 						+ "; status = " + ret.getStatus());
 			}
 			
+			//deleteKeywordById
+			test.deleteKeywordById(1595249L, 754813047L, 8099436289L);
 			
-			
-			
+			//deleteKeywordsById
+			long[] keywordIds = new long[2];
+			keywordIds[0] = 8099371836L;
+			keywordIds[1] = 8099436288L;
+			test.deleteKeywordsById(1595249L, 754813047L, keywordIds);
+			*/
 			
 			
 						
@@ -1019,15 +1025,32 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	@Override
 	public void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordId", Long.toString(keywordId));		
+		String json = gson.toJson(jsonHash);
 		
+		int ret = -1;
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordById", json, null);
+		ret = gson.fromJson(returnData, int.class);
+		logger.debug("deleteKeywordById: (if successful returns 0) " + ret);
 	}
 
 	@Override
 	public void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws Exception
 	{
-		// TODO Auto-generated method stub
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String keywordIdsStr = gson.toJson(keywordIds);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
+		jsonHash.put("keywordIds", keywordIdsStr);		
+		String json = gson.toJson(jsonHash);
 		
+		int ret = -1;
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordsById", json, null);
+		ret = gson.fromJson(returnData, int.class);
+		logger.debug("deleteKeywordsById: (if successful returns 0) " + ret);
 	}
 
 	@Override
