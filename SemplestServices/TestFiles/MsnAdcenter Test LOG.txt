@@ -16,9 +16,6 @@ campaignId = 130129414
 		AdId = 937778709
 		
 		KeywordId = 8099371830
-		KeywordId = 8099371836
-		KeywordId = 8099436288
-		KeywordId = 8099436289
 		
 	adGroupId = 754813055
 		Name = A1334181636164
@@ -326,11 +323,18 @@ getKeywordById: ok
 Id = 8099371830; broadMatchBid = 5.0; status = Paused
 
 	
-deleteKeywordById  #
+deleteKeywordById  ###
 ------------------------------------------
+deleteKeywordById: (if successful returns 0) 0
 
 	
-deleteKeywordsById
+deleteKeywordsById  #
+------------------------------------------
+deleteKeywordsById: (if successful returns 0) 0
+
+
+>>>>
+
 	
 getKeywordEstimateByBids
 	
