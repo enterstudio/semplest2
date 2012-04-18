@@ -103,6 +103,7 @@
     <Compile Include="Controllers\EmployeeSetupController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\RolesController.cs" />
+    <Compile Include="Controllers\ProfileController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -244,6 +245,7 @@
     <Compile Include="Models\User.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Models\UserRolesAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -373,6 +375,7 @@
       <LastGenOutput>Model1.cs</LastGenOutput>
     </None>
     <Content Include="Views\Roles\Edit.cshtml" />
+    <Content Include="Views\Profile\LogOn.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
