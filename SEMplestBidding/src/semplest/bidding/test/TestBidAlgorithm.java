@@ -108,7 +108,8 @@ public class TestBidAlgorithm {
 		CampaignBid bidOptimizer = new CampaignBid();
 		
 		for (i=0; i<keywords.length;i++){
-			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
+//			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
+			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], null, null, DCost[i]));
 		}
 		bidOptimizer.setDailyBudget(1005);
 		double [] optimalBids = bidOptimizer.optimizeBids();
