@@ -8,9 +8,11 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.TaskOutput;
+import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
-public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface
+public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
@@ -18,6 +20,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(SemplestBiddingServiceClient.class);
+	private String baseurl = null;
 
 	public static void main(String[] args)
 	{
@@ -29,7 +32,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			ArrayList<String> keywords = new  ArrayList<String>();
 			keywords.add("peanut butter"); 
 			keywords.add("ice"); 
-			SemplestBiddingServiceClient client = new SemplestBiddingServiceClient();
+			SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(null);
 			HashMap<String, Double> res = client.getBid(cust, camp, ad, keywords);
 			System.out.println(String.valueOf(res.get("ice")));
 		}
@@ -39,6 +42,17 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			e.printStackTrace();
 		}
 		
+	}
+	public SemplestBiddingServiceClient(String baseurl)
+	{
+		if (baseurl == null)
+		{
+			this.baseurl = BASEURLTEST;
+		}
+		else
+		{
+			this.baseurl = baseurl;
+		}
 	}
 	@Override
 	public void initializeService(String input) throws Exception
@@ -60,6 +74,15 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 
 		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBid", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
+	}
+	@Override
+	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
+	{
+		if (optionalTimeoutMS == null)
+		{
+			optionalTimeoutMS = timeoutMS;
+		}
+		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
 }

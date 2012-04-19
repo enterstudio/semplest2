@@ -8,12 +8,14 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleBidObject;
 import semplest.server.protocol.google.GoogleBidSimulatorObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
+import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
@@ -27,7 +29,7 @@ import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
-public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface
+public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
 	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
@@ -565,6 +567,16 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
+	{
+		if (optionalTimeoutMS == null)
+		{
+			optionalTimeoutMS = timeoutMS;
+		}
+		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
 }

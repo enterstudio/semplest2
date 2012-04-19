@@ -1,13 +1,16 @@
 package semplest.services.client.api;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.TaskOutput;
+import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
 import com.google.gson.Gson;
 
-public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface
+public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
 	private static String BASEURLTEST = "http://localhost:9898/semplest"; // VMJAVA1
@@ -67,4 +70,13 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		return gson.fromJson(returnData, Boolean.class);
 	}
 
+	@Override
+	public TaskOutput RunTask(String method, String jsonParameters,String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
+	{
+		if (optionalTimeoutMS == null)
+		{
+			optionalTimeoutMS = timeoutMS;
+		}
+		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
+	}
 }

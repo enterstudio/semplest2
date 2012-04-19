@@ -1,8 +1,11 @@
 package semplest.services.client.api;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
+
+import semplest.server.protocol.TaskOutput;
 
 
 import com.google.gson.Gson;
@@ -35,6 +38,40 @@ public class ServiceRun
 		{
 			return resultMap.get("result");
 		}
+	}
+	
+	public Class<?> getReturnType(Class c,String method)
+	{
+		Method[] allMethods= c.getDeclaredMethods();
+		for (Method m : allMethods)
+		{
+			if (m.getName().equals(method))
+			{
+				return m.getReturnType();
+			}
+		}
+		return null;
+	}
+	public TaskOutput RunTask(Class taskClass, String baseurl, String SERVICEOFFERED, String method, String jsonParameters,String timeoutMS) throws Exception
+	{
+		
+		TaskOutput out = new TaskOutput();
+		String returnData = runMethod(baseurl, SERVICEOFFERED, method, jsonParameters, timeoutMS);
+		Class returnType = getReturnType(taskClass,method);
+		if (returnType != null)
+		{	
+			Object result = gson.fromJson(returnData, returnType);
+			out.setIsSuccessful(true);
+			out.setResult(result);
+			out.setReturnType(returnType);
+		}
+		else 
+		{
+			out.setIsSuccessful(false);
+			out.setErrorMessage("Error running RunTask " + SERVICEOFFERED + ":" + method + ": " + jsonParameters);
+		}
+		return out;
+		
 	}
 
 }

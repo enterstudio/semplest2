@@ -19,8 +19,10 @@ import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.msn.*;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
+import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 import com.google.gson.Gson;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
@@ -30,12 +32,13 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 
-public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterServiceInterface
+public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterServiceInterface, SchedulerTaskRunnerInterface
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
 	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
 	private static String separator = "#";
@@ -1204,6 +1207,15 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
+	{
+		if (optionalTimeoutMS == null)
+		{
+			optionalTimeoutMS = timeoutMS;
+		}
+		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
 }
