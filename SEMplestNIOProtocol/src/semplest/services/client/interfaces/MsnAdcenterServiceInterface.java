@@ -149,7 +149,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Reports
 	// ==================================
-	String requestCampaignReport(Long accountId, int campaignId, int days, ReportAggregation aggregation);
+	String requestCampaignReport(Long accountId, Long campaignId, int days, ReportAggregation aggregation) throws Exception;
 	
-	String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation);
+	String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
 }
