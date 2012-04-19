@@ -10,6 +10,7 @@ using System.Data.Entity.Validation;
 
 namespace SemplestAdminApp.Controllers
 {
+    [LoggingHandleErrorAttribute]
     public class EmployeeSetupController : Controller
     {
         //
