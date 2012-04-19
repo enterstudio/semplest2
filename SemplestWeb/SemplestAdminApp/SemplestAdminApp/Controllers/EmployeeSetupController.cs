@@ -13,8 +13,69 @@ namespace SemplestAdminApp.Controllers
     [LoggingHandleErrorAttribute]
     public class EmployeeSetupController : Controller
     {
-        //
-        // GET: /EmployeeSetup/
+
+        public ActionResult Add()
+        {
+            SemplestEntities dbcontext = new SemplestEntities();
+          
+
+            EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
+          
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for roles dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var roles = (from r in dbcontext.Roles select r).ToList();
+            x.SelectedRoleID = -1;
+            x.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.RolePK.ToString(),
+                Text = r.RoleName.ToString()
+            });
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for Reportingto dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var reportingto = (
+                from e in dbcontext.Employees
+                join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                select new ReportingToModel
+                {
+                    EmployeePK = e.EmployeePK,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName
+                }
+                ).ToList();
+            x.SelectedReportingToID = -1;
+
+
+            //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
+            List<SelectListItem> sli = new List<SelectListItem>();
+            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Nobody" });
+
+
+            x.ReportingTo = reportingto.Select(r => new SelectListItem
+            {
+                Value = r.EmployeePK.ToString(),
+                Text = r.FirstName.ToString() + " " + r.FirstName.ToString()
+            }).Union(sli);
+
+            /////////////////////////////////////////////////////////////////////////////////
+            // for employeetype dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+            x.SelectedEmployeeTypeID = -1; //viewModel.Select(r => r.EmployeeTypeID).FirstOrDefault();
+            x.EmployeeTypes = employeetypes.Select(r => new SelectListItem
+            {
+                Value = r.EmployeeTypeID.ToString(),
+                Text = r.EmployeeType1.ToString()
+            });
+
+            //return View(x);
+            return View(x);
+
+        }
 
         public ActionResult Index(string search)
         {
@@ -44,8 +105,6 @@ namespace SemplestAdminApp.Controllers
                    Email = u.Email,
                    ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value)
                };
-
-            
             return View(viewModel);
         }
 
@@ -54,8 +113,6 @@ namespace SemplestAdminApp.Controllers
         {
 
             SemplestEntities dbcontext = new SemplestEntities();
-
-
             /*
              select employeePK, EmployeeTypeFK, UserPK, FirstName, LastName, Email, EmployeeTypeID, RolesFK, RoleName, EmployeeType 
                         from Employee e join 
@@ -64,7 +121,6 @@ namespace SemplestAdminApp.Controllers
 						join dbo.UserRolesAssociation ura on ura.usersFK=e.usersFK
 						join dbo.roles r on r.rolePK = ura.rolesFK
              */
-
             var viewModel =
                from e in dbcontext.Employees
                join u in dbcontext.Users on e.UsersFK equals u.UserPK
@@ -86,8 +142,6 @@ namespace SemplestAdminApp.Controllers
                    Email = u.Email,
                     ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value)
                };
-
-           
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
             x.EmployeeSetup = viewModel.FirstOrDefault(c => c.UserPK.Equals(id));
@@ -132,8 +186,6 @@ namespace SemplestAdminApp.Controllers
                 Text = r.FirstName.ToString() + " " + r.FirstName.ToString()
             }).Union(sli);
 
-
-
             /////////////////////////////////////////////////////////////////////////////////
             // for employeetype dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -144,7 +196,6 @@ namespace SemplestAdminApp.Controllers
                 Value = r.EmployeeTypeID.ToString(),
                 Text = r.EmployeeType1.ToString()
             });
-
 
             //return View(x);
             return View(x);
@@ -163,13 +214,8 @@ namespace SemplestAdminApp.Controllers
             user.Email = m.EmployeeSetup.Email;
             user.EditedDate = DateTime.Now;
             UpdateModel(user);
-
-
             //need to add effective date to db ---><><>
 
-            
-
-            
             var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             employee.EmployeeTypeFK = m.SelectedEmployeeTypeID;
             employee.ReportingTo = m.SelectedReportingToID == -1 ?  default(int?) : m.SelectedReportingToID;
@@ -178,7 +224,6 @@ namespace SemplestAdminApp.Controllers
             var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             userrolesassociation.RolesFK = m.SelectedRoleID;
             UpdateModel(userrolesassociation);
-
             dbcontext.SaveChanges();
 
 
@@ -217,8 +262,6 @@ namespace SemplestAdminApp.Controllers
             //}
             //m.Reps = sl1;
 
-
-
             ////repopulate salepersons ddl
             ////for reps dropdown
             //var allsalespersons = from e in dbcontext.Employees
@@ -246,8 +289,10 @@ namespace SemplestAdminApp.Controllers
             //}
             //m.SalesPersons = sl2;
 
+            //return View("index");
 
-            return View("index",null);
+            return RedirectToAction("Index"); 
+
         }
 
 
