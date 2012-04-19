@@ -7,6 +7,7 @@ using SemplestAdminApp.Models;
 
 namespace SemplestAdminApp.Controllers
 {
+    [LoggingHandleErrorAttribute]
     public class ConfigurationController : Controller
     {
         //
