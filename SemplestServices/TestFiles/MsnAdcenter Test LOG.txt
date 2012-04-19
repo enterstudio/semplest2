@@ -20,6 +20,9 @@ campaignId = 130129414
 	adGroupId = 754813055
 		Name = A1334181636164
 		
+		KeywordId = 8099787314
+		KeywordId = 8099787315
+		
 campaignId = 130129426
 	campaignName = msn_test_nan_2
 
@@ -328,23 +331,89 @@ deleteKeywordById  ###
 deleteKeywordById: (if successful returns 0) 0
 
 	
-deleteKeywordsById  #
+deleteKeywordsById  ###
 ------------------------------------------
 deleteKeywordsById: (if successful returns 0) 0
 
 
->>>>
+>>>>04/18/2012
 
 	
-getKeywordEstimateByBids
-	
-getKeywordEstimateByBid
+getKeywordEstimateByBids  ###
+------------------------------------------
+getKeywordEstimateByBids: ok
+keyword = flower
+EstimatedPositionAndTraffic: 
+AverageCPC = 4.453714285714286
+CTR = 4.375
+MaxClicksPerWeek = 14
+MaxImpressionsPerWeek = 320
+MaxTotalCostPerWeek = 62.352
+MinClicksPerWeek = 3
+MinImpressionsPerWeek = 80
+MinTotalCostPerWeek = 15.588
+EstimatedPositionAndTraffic: 
+AverageCPC = 3.907777777777778
+CTR = 2.5
+MaxClicksPerWeek = 9
+MaxImpressionsPerWeek = 360
+MaxTotalCostPerWeek = 35.17
+MinClicksPerWeek = 2
+MinImpressionsPerWeek = 90
+MinTotalCostPerWeek = 8.7925
+EstimatedPositionAndTraffic: 
+AverageCPC = 3.7319166666666668
+CTR = 1.6666666666666667
+MaxClicksPerWeek = 6
+MaxImpressionsPerWeek = 360
+MaxTotalCostPerWeek = 22.3915
+MinClicksPerWeek = 1
+MinImpressionsPerWeek = 90
+MinTotalCostPerWeek = 5.5979
+keyword = rose
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 122
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 30
+MinTotalCostPerWeek = 0.0
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 218
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 54
+MinTotalCostPerWeek = 0.0
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 8861
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 2215
+MinTotalCostPerWeek = 0.0
 
-getKeywordEstimateByBids
+	
+getKeywordEstimateByBid  ??
+------------------------------------------
+
+getKeywordEstimateByBids  ??
+------------------------------------------
 	
 getReportData
+------------------------------------------
 	
-requestCampaignReport
+requestCampaignReport  ##
+------------------------------------------
+
+
 	
 requestKeywordReport
+------------------------------------------
 
