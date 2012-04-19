@@ -3,6 +3,7 @@ package semplest.bidding.optimization;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 
 
 import flanagan.math.Minimisation;
@@ -263,7 +264,7 @@ public class CampaignBid {
 		this.dailyBudget=dailyBudget;
 	}
 	
-	public double [] optimizeBids(){
+	public double [] optimizeBids_new(){
 		//Create instance of Minimisation
 		Minimisation min = new Minimisation();
 		MinimFunct func = new MinimFunct();
@@ -388,7 +389,7 @@ public class CampaignBid {
 	}
 	
 	
-	public double [] optimizeBids_old(){
+	public HashMap<String,Double> optimizeBids(){
 		
 		// initialize constant
 		double multLagrange = 0.01;
@@ -468,6 +469,8 @@ public class CampaignBid {
 //						f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
 				//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
 			} else {
+				bids[i]=0;
+//				bids[i]=key.getMinBid();
 //				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
 //						i+1, key.getKeyWord(), key.getMinBid());//,
 			}
@@ -476,11 +479,16 @@ public class CampaignBid {
 				expectedCost,expectedClicks,expectedQualityMetric, expectedCost/expectedClicks);
 		
 		
+		HashMap<String,Double> bidData = new HashMap<String,Double>();
+
 		for(int i=0; i<bids.length;i++){
 			wordList.get(i).setBidValue(bids[i]);
+			bidData.put(wordList.get(i).getKeyWord(), bids[i]);
 		}
 		
-		return bids;
+		
+		
+		return bidData;
 	} // public void optimizeBids()
 	
 	

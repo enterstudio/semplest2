@@ -1,6 +1,7 @@
 package semplest.bidding.test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
@@ -112,8 +113,7 @@ public class TestBidAlgorithm {
 			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], null, null, DCost[i], null));
 		}
 		bidOptimizer.setDailyBudget(2000);
-		double [] optimalBids = bidOptimizer.optimizeBids();
-//		double [] optimalBids = bidOptimizer.optimizeBids_old();
+		HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 		
 		
 
