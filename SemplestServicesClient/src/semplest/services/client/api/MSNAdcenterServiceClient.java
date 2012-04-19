@@ -418,8 +418,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			}
 			*/
 			//requestCampaignReport
-			//ReportAggregation aggregation = new ReportAggregation();
-			//String ret = test.requestCampaignReport(accountId, campaignId, days, aggregation);
+			String ret = test.requestCampaignReport(1595249L, 130129414L, 10, ReportAggregation.fromString(ReportAggregation._Daily));
 			
 						
 			
@@ -1115,13 +1114,13 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public String requestCampaignReport(Long accountId, int campaignId, int days, ReportAggregation aggregation)
+	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation)
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String aggregationStr = gson.toJson(aggregation);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
-		jsonHash.put("campaignId", Integer.toString(campaignId));
-		jsonHash.put("days", Integer.toString(days));
+		jsonHash.put("campaignId", Long.toString(campaignId));
+		jsonHash.put("daysInReport", Integer.toString(daysInReport));
 		jsonHash.put("aggregation", aggregationStr);		
 		String json = gson.toJson(jsonHash);
 		
@@ -1133,7 +1132,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			logger.debug("requestCampaignReport ERROR: " + e.getMessage());
 		}
 		String ret = returnData;
-		logger.debug("requestCampaignReport: " + ret);
+		logger.debug("requestCampaignReport: reportID = " + ret);
 
 		return ret;		
 		
