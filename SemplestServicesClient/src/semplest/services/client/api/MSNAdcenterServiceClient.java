@@ -9,6 +9,7 @@ import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
 import org.joda.time.DateTime;
 
@@ -388,8 +389,34 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			keywordIds[0] = 8099371836L;
 			keywordIds[1] = 8099436288L;
 			test.deleteKeywordsById(1595249L, 754813047L, keywordIds);
-			*/
 			
+			//getKeywordEstimateByBids
+			String[] keywords = new String[2];
+			keywords[0] = "flower";
+			keywords[1] = "rose";
+			Money bid = new Money(7000000);
+			KeywordEstimatedPosition[] ret = test.getKeywordEstimateByBids(1595249L, keywords, bid);
+			for(KeywordEstimatedPosition k : ret){
+				EstimatedPositionAndTraffic[] pts = k.getEstimatedPositions();
+				logger.info("keyword = " + k.getKeyword());
+				if(pts != null){
+					for(EstimatedPositionAndTraffic pt : pts){
+						logger.info("EstimatedPositionAndTraffic: " 
+								+ "\nAverageCPC = " + pt.getAverageCPC()
+								+ "\nCTR = " + pt.getCTR()
+								+ "\nMaxClicksPerWeek = " + pt.getMaxClicksPerWeek()
+								+ "\nMaxImpressionsPerWeek = " + pt.getMaxImpressionsPerWeek()
+								+ "\nMaxTotalCostPerWeek = " + pt.getMaxTotalCostPerWeek()
+								+ "\nMinClicksPerWeek = " + pt.getMinClicksPerWeek()
+								+ "\nMinImpressionsPerWeek = " + pt.getMinImpressionsPerWeek()
+								+ "\nMinTotalCostPerWeek = " + pt.getMinTotalCostPerWeek());
+					}
+				}
+			}
+			*/
+			//requestCampaignReport
+			//ReportAggregation aggregation = new ReportAggregation();
+			//String ret = test.requestCampaignReport(accountId, campaignId, days, aggregation);
 			
 						
 			
@@ -1054,10 +1081,27 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(String[] keywords, Money bid) throws Exception
+	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String keywordsList = "";
+		for (int i = 0; i < keywords.length-1; i++){
+			keywordsList += keywords[i] + separator;
+		}
+		keywordsList += keywords[keywords.length-1];
+		String bidStr = gson.toJson(bid);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("keywords", keywordsList);
+		jsonHash.put("bid", bidStr);		
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordEstimateByBids", json, null);
+		KeywordEstimatedPosition[] ret = gson.fromJson(returnData, KeywordEstimatedPosition[].class);
+		if (ret == null)
+			return null;
+		logger.debug("getKeywordEstimateByBids: ok");
+
+		return ret;
 	}
 
 	@Override
@@ -1070,8 +1114,26 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	@Override
 	public String requestCampaignReport(Long accountId, int campaignId, int days, ReportAggregation aggregation)
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String aggregationStr = gson.toJson(aggregation);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", Integer.toString(campaignId));
+		jsonHash.put("days", Integer.toString(days));
+		jsonHash.put("aggregation", aggregationStr);		
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = "";
+		try{
+			returnData = runMethod(baseurl,SERVICEOFFERED, "requestCampaignReport", json, null);
+		}
+		catch(Exception e){
+			logger.debug("requestCampaignReport ERROR: " + e.getMessage());
+		}
+		String ret = returnData;
+		logger.debug("requestCampaignReport: " + ret);
+
+		return ret;		
+		
 	}
 
 	@Override
