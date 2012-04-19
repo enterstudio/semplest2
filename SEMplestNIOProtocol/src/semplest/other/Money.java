@@ -18,11 +18,11 @@ public class Money implements Comparable<Money>, Serializable {
 	@XmlAttribute
 	private final long milliCents;
 	
-	Money() {
+	public Money() {
 		milliCents = 0;
 	}
 	
-	Money(long milliCents) {
+	public Money(long milliCents) {
 		this.milliCents = milliCents;
 	}
 	
