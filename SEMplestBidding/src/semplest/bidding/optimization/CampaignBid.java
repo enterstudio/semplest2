@@ -180,7 +180,7 @@ public class CampaignBid {
 	private double expectedClicks =0;
 	private double expectedQualityMetric =0;
 	private double [] bids;
-	private double stepSize = 0.1D;
+	private double stepSize = 1.0D;
 	private double toldailyBudget = 1;
 	private double dampingFactor = 0.99D;
 	
@@ -392,7 +392,7 @@ public class CampaignBid {
 	public HashMap<String,Double> optimizeBids(){
 		
 		// initialize constant
-		double multLagrange = 0.01;
+		double multLagrange = 1.0;
 		boolean highCost=true;
 		bids = new double[wordList.size()];
 		double prevCost=Double.MIN_VALUE;
