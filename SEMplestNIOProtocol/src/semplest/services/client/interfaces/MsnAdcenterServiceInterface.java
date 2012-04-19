@@ -138,7 +138,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Keyword Estimates
 	// ==================================
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(String[] keywords, Money bid) throws Exception;
+	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
 	
 	public abstract KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid) throws Exception;
 	//	
