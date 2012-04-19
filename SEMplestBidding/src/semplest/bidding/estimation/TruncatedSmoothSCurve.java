@@ -37,12 +37,14 @@ package semplest.bidding.estimation;
 
 	@Override
 	public double function(double[] input, double[] parameters) {
-		return Erf.function(input, parameters)*Erf.function(input, TruncatedParameters);
+		return Erf.function(input, parameters);
+//		return Erf.function(input, parameters)*Erf.function(input, TruncatedParameters);
 	}
 
 	@Override
 	public double derivative(double[] input, double[] parameters) {
-		return Erf.derivative(input, parameters)*Erf.function(input, TruncatedParameters) + Erf.function(input, parameters)*Erf.derivative(input, TruncatedParameters);
+		return Erf.derivative(input, parameters);
+//		return Erf.derivative(input, parameters)*Erf.function(input, TruncatedParameters) + Erf.function(input, parameters)*Erf.derivative(input, TruncatedParameters);
 	}
 	
 //	@Override
