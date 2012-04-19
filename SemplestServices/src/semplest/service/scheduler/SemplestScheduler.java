@@ -109,7 +109,7 @@ public class SemplestScheduler extends Thread
 							{
 								// write result to DB
 								logger.debug("*****Write Result to DB for : User" + runData.getUserID() + " ScheduleID=" + runData.getScheduleID());
-								//****BPMDatabaseBPM6.SetScheduleOrderDataComplete(Integer.parseInt(runData.getScheduleOrderID()),Integer.parseInt(runData.getScheduleID()), result.booleanValue(), Integer.parseInt(runData.getUserID()));
+								//****SetScheduleOrderDataComplete(Integer.parseInt(runData.getScheduleOrderID()),Integer.parseInt(runData.getScheduleID()), result.booleanValue(), Integer.parseInt(runData.getUserID()));
 								// remove the schedule and report the result
 								synchronized (lock)
 								{
@@ -424,20 +424,20 @@ public class SemplestScheduler extends Thread
 		TaskOutput previousTaskOutput = null; // First TaskOutput is null
 		//Run the Set of Tasks and return the output
 		TaskRunnerDB tasks = new TaskRunnerDB();
-		List<TaskRunnerObj> l = tasks.getScheduleTasks(Integer.parseInt(SchedulePK));
-		if (!l.isEmpty())
+		List<TaskRunnerObj> listofTasks = tasks.getScheduleTasks(Integer.parseInt(SchedulePK));
+		if (!listofTasks.isEmpty())
 		{
 			try
 			{
-				for (int i = 0; i < l.size(); i++)
+				for (int i = 0; i < listofTasks.size(); i++)
 				{
-					TaskRunnerObj j = l.get(i);
-					System.out.println(j.getServiceName() + ":" + j.getMethodName() + ":" + j.getParameters());
-					Class taskClass = Class.forName(j.getServiceName());
-					Constructor ct = taskClass.getDeclaredConstructor(String.class);
-					SchedulerTaskRunnerInterface cf =  (SchedulerTaskRunnerInterface) ct.newInstance(new Object[] {url});
-					previousTaskOutput = cf.RunTask(j.getMethodName(),j.getParameters(), null, previousTaskOutput);
-					TaskOutputData.put(String.valueOf(j.getTaskExecutionOrder()), previousTaskOutput);
+					TaskRunnerObj taskObj = listofTasks.get(i);
+					System.out.println(taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
+					Class taskClass = Class.forName(taskObj.getServiceName());
+					Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
+					SchedulerTaskRunnerInterface cf =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
+					previousTaskOutput = cf.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
+					TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 					cf = null;
 				}
 			}
