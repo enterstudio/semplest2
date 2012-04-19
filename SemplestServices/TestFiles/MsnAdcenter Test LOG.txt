@@ -409,9 +409,9 @@ getKeywordEstimateByBids  ??
 getReportData
 ------------------------------------------
 	
-requestCampaignReport  ##
+requestCampaignReport  ###
 ------------------------------------------
-
+requestCampaignReport: reportID = "1900786974"
 
 	
 requestKeywordReport
