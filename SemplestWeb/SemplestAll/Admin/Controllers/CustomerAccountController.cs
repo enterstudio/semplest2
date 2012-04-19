@@ -14,11 +14,28 @@ namespace Semplest.Admin.Controllers
         //
         // GET: /CreateNewCustomerAccount/
 
-        public ActionResult Index()
+        public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
         {
+
+            //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
+            SemplestEntities dbcontext = new SemplestEntities();
+
             
-            //redirect to edit or add??
-            return View();
+
+            var viewModel =
+                from u in dbcontext.Users
+                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
+                where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)))
+                select new HomeModel
+                {
+                    Customer = c.Name,
+                    AccountNumber = c.CustomerPK,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Email = u.Email
+                };
+
+            return View(viewModel);
         }
 
         public ActionResult Edit(int id)
@@ -297,12 +314,123 @@ namespace Semplest.Admin.Controllers
             //return View(m);
         }
 
-       
 
 
-        public ActionResult Create()
+        public ActionResult Add()
         {
-            return View();
+
+            SemplestEntities dbcontext = new SemplestEntities();
+
+           
+
+
+           
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for reps dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var allreps = from e in dbcontext.Employees
+                          join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                          join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                          where (et.EmployeeType1 == "Rep")
+                          select new EmployeeCustomerAssociaitionModel
+                          {
+                              AccountNumber = eca.CustomerFK,
+                              employeePK = e.EmployeePK,
+                              EmployeeType = et.EmployeeType1,
+                              EmployeeUserPK = u.UserPK,
+                              FirstName = u.FirstName,
+                              LastName = u.LastName
+                          };
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for sales dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var allsalespersons = from e in dbcontext.Employees
+                                  join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                  join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                                  join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                  where (et.EmployeeType1 == "Sales")
+                                  select new EmployeeCustomerAssociaitionModel
+                                  {
+                                      AccountNumber = eca.CustomerFK,
+                                      employeePK = e.EmployeePK,
+                                      EmployeeType = et.EmployeeType1,
+                                      EmployeeUserPK = u.UserPK,
+                                      FirstName = u.FirstName,
+                                      LastName = u.LastName
+                                  };
+
+
+            CustomerAccountWithEmployeeModel x = new CustomerAccountWithEmployeeModel();
+            //x.CustomerAccount = //viewModel.Single(c => c.AccountNumber == id);
+            //x.EmployeeCustomerAssociaitionModel = viewModel2;
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for state dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
+            x.SelectedStateID = -1;//viewModel.Select(r => r.StateID).FirstOrDefault();
+            x.States = allstates.Select(r => new SelectListItem
+            {
+                Value = r.StateAbbrPK.ToString(),
+                Text = r.StateAbbr.ToString()
+            });
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for reps dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            x.SelectedRepID = -1; //viewModel2.Select(r => r.employeePK).FirstOrDefault();
+
+            //x.Reps=allreps.Select(r=>new SelectListItem 
+            //            {
+            //                Value=r.employeePK.ToString() ,
+            //                 Text=r.FirstName
+            //            });
+
+            //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
+            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
+            List<SelectListItem> sl1 = new List<SelectListItem>();
+            foreach (EmployeeCustomerAssociaitionModel s in ll1)
+            {
+                SelectListItem mylistitem = new SelectListItem();
+                mylistitem.Text = s.FirstName + " " + s.LastName;
+                mylistitem.Value = s.EmployeeUserPK.ToString();
+                sl1.Add(mylistitem);
+            }
+            x.Reps = sl1;
+
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for salespersons drowdown
+            /////////////////////////////////////////////////////////////////////////////////
+
+            x.SelectedSalesPersonID = -1; //viewModel2.Select(r => r.employeePK).FirstOrDefault();
+            //x.SalesPersons = allreps.Select(r => new SelectListItem
+            //{
+            //    //Value = r.EmployeeUserPK.ToString(),
+            //    Value = r.employeePK.ToString(),
+            //    Text = r.FirstName.ToString()
+            //});
+            //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
+            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.ToList();
+            List<SelectListItem> sl2 = new List<SelectListItem>();
+            foreach (EmployeeCustomerAssociaitionModel s in ll2)
+            {
+                SelectListItem mylistitem = new SelectListItem();
+                mylistitem.Text = s.FirstName + " " + s.LastName;
+                mylistitem.Value = s.EmployeeUserPK.ToString();
+                sl2.Add(mylistitem);
+            }
+            x.SalesPersons = sl2;
+
+
+            return View(x);
         }
 
     }
