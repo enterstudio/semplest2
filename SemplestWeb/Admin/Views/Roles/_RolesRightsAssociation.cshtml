@@ -1,0 +1,24 @@
+﻿    @model IEnumerable<SemplestAdminApp.Models.UserRoleModel>
+    <div class= "rights">
+    <table>
+    <tr>
+    <th>IsVisible</th>
+    <th>ReadOnly</th>
+        <th>Page</th>
+        <th>Object</th>
+    </tr>
+        @foreach (var item in Model)
+        {
+    <tr>
+        <td>
+        @Html.CheckBox(item.RightPK.ToString(), item.IsVisible)
+        </td>
+        <td>
+        @Html.CheckBox(item.RightPK.ToString(), item.IsReadonly)
+        </td>
+        <td>@Html.Label(item.Controller.ToString().Replace(".", "/"))</td>
+        <td>@Html.Label(item.Label)</td>
+    </tr>
+        }
+    </table>
+    </div>

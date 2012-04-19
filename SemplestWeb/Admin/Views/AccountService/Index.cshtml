@@ -1,0 +1,68 @@
+﻿@model Semplest.Admin.Models.AccountServiceWithEmployeeModel 
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+Account Service:
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+@using (Html.BeginForm("Index"))
+{
+
+<h2>@Model.AccountServiceModel.Customer - Account ID @Model.AccountServiceModel.AccountNumber</h2>
+    
+
+<br />
+
+<h3>Contact<br />
+
+@Model.AccountServiceModel.FirstName&nbsp;@Model.AccountServiceModel.LastName <br />
+@Model.AccountServiceModel.Address1<br />
+@Model.AccountServiceModel.City,@Model.AccountServiceModel.State&nbsp;@Model.AccountServiceModel.Zip<br />
+@Model.AccountServiceModel.Email<br />
+</h3>
+
+<h3>
+<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").LastName"/></label><br />
+<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").LastName" /></label><br />
+<label>Parent: <input type="text" name="parent" disabled="true"/></label><br />
+<label>Super Parent: <input type="text" name="superparent" disabled="true"/></label><br />
+</h3>
+
+<br />
+<br />
+    <ul style="display: block" class="kendo-nav">
+    <li><a href="url">Update Account</a></li>
+    <li><a href="url">Delete Account</a></li>
+    <li><br /></li>
+    <li><h2>Account Actions</h2></li>
+    <li><a href="url">Impresonate</a></li>
+    <li><a href="url">Disable</a> </li>
+    <li><a href="url">Enable</a> </li>
+    <li><a href="url">Pause</a> </li>
+    <li><a href="url">Issue Refund</a> </li>
+    <li><a href="url">Excel Import Customer Data</a> </li>
+    <li><a href="url">Edit Start or End Date</a> </li>
+    <li><br /></li>
+    <li><h2>Reporting</h2></li>
+    <li><a href="url">Customer Summary Report</a></li>
+    <li><a href="url">Customer Billing Report</a></li>
+    <li><a href="url">Account Detailed Audit History</a> <br /></li>
+    <li></li>
+    <li><h2>Billing Info</h2></li>
+    <li><p>VISA ending in 8971   Expires 8/24/14</p> </li>
+    <li><p>or</p></li>
+    <li><a href="url">Add a new card</a> </li>
+</ul>    
+    
+    
+}
+
+
+
+
