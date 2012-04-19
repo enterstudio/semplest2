@@ -1816,7 +1816,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation)
+	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws RemoteException
 	{
 		ReportTime time = new MsnTime(firstDay).reportTimeTill(lastDay, timeServer.now());
 		return requestKeywordReport(accountId, campaignId, time, aggregation);
@@ -1826,7 +1826,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	 * Request a report for account, campaign. Set campaignId == 0 to report on
 	 * all campaigns.
 	 */
-	public String requestKeywordReport(Long accountId, Long campaignId, ReportTime time, ReportAggregation aggregation)
+	public String requestKeywordReport(Long accountId, Long campaignId, ReportTime time, ReportAggregation aggregation)  throws RemoteException
 	{
 		KeywordPerformanceReportColumn[] columns;
 		if (aggregation == ReportAggregation.Summary)
@@ -1871,8 +1871,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		String ret = "";
 		ReportAggregation aggregation = gson.fromJson(data.get("aggregation"), ReportAggregation.class);
-		ret = requestCampaignReport(new Long(data.get("accountId")), new Integer(data.get("campaignId")), new Integer(data.get("daysInReport")), aggregation);
-
+		try{
+			ret = requestCampaignReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), new Integer(data.get("daysInReport")), aggregation);
+		}
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
+		}
+		catch(EditorialApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
+		}
+		
 		return gson.toJson(ret);
 	}
 	
@@ -1884,7 +1892,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	 * @param campaignId
 	 */
 	@Override
-	public String requestCampaignReport(Long accountId, int campaignId, int daysInReport, ReportAggregation aggregation)
+	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation) throws RemoteException
 	{
 		CampaignPerformanceReportColumn[] columns = new CampaignPerformanceReportColumn[]
 		{ //
@@ -1924,7 +1932,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return sendReportRequest(accountId, reportRequest);
 	}
 
-	public String sendReportRequest(Long accountId, final ReportRequest reportRequest) throws SemplestError
+	public String sendReportRequest(Long accountId, final ReportRequest reportRequest) throws RemoteException
 	{
 		// Create the service operation request object, and then assign values.
 		SubmitGenerateReportRequest submitGenerateReportRequest = new SubmitGenerateReportRequest();
@@ -1937,20 +1945,11 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			submitGenerateReportResponse = reportingService.submitGenerateReport(submitGenerateReportRequest);
 		}
-		catch (ApiFaultDetail fault)
-		{
-			printApiFaultDetail(fault);
-			throw new SemplestError(fault);
+		catch(AdApiFaultDetail e1){
+			throw new RemoteException(e1.dumpToString());			
 		}
-		catch (AdApiFaultDetail fault)
-		{
-			printAdApiFaultDetail(fault);
-			throw new SemplestError(fault);
-		}
-		catch (RemoteException e)
-		{
-			e.printStackTrace();
-			throw new SemplestError(e);
+		catch(ApiFaultDetail e2){
+			throw new RemoteException(e2.dumpToString());
 		}
 
 		String reportId = submitGenerateReportResponse.getReportRequestId();
