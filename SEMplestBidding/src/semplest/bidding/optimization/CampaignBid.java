@@ -270,7 +270,8 @@ public class CampaignBid {
 		PlotGraph pg = new PlotGraph(data);
 		pg.plot();
 		
-		
+		 
+		 
 
 
 		double[] start = {minVal};
