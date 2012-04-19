@@ -8,6 +8,7 @@ using SemplestAdminApp.Models;
 
 namespace SemplestAdminApp.Controllers
 {
+    [LoggingHandleErrorAttribute]
     public class HomeController : Controller
     {
         public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
