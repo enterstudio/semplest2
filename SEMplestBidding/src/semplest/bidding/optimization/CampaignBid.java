@@ -1,6 +1,7 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 
 
@@ -17,24 +18,33 @@ class WordQCPCPair {
 	
 	String word;
 	double QCPC;
+	double click;
+	double cost;
+	double quality;
+
 	
 	public WordQCPCPair(String word, double QCPC){
 		this.word=word;
 		this.QCPC=QCPC;
 	}
 	
-	public void setQCPC(double QCPC){
-		this.QCPC=QCPC;
-	}
-	
-	public void setWord(String word){
+	public WordQCPCPair(String word, double QCPC, double click, double cost, double quality){
 		this.word=word;
+		this.QCPC=QCPC;
+		this.click=click;
+		this.cost=cost;
+		this.quality=quality;
 	}
-	
+		
 	public double getQCPC(){
 		return QCPC;
 	}
-	
+	public double getCost(){
+		return cost;
+	}
+	public double getClick(){
+		return click;
+	}
 	public String getWord(){
 		return word;
 	}
@@ -82,6 +92,40 @@ class MinimFunct implements MinimisationFunction{
 		}    	
 //		System.out.println("Function value evaluated at " + x[0] +": "+Math.pow(expectedCost-dailyBudget,2);
         return Math.pow(expectedCost-dailyBudget,2);
+        
+//		ArrayList<WordQCPCPair> wqcpcList = new ArrayList<WordQCPCPair>();
+//		i=0;
+//		for (KeyWordInterface key : wordList){
+//			f.setMinBid(key.getMinBid());
+//			input[0] = bids[i];
+//			if (bids[i]>= key.getMinBid())  {
+//				double cost=f.function(input, params);
+//				params = key.getClickInfo();
+//				double clicks=f.function(input, params);
+//				wqcpcList.add(new WordQCPCPair(key.getKeyWord(), cost/(key.getQualityScore()*clicks), clicks, cost, key.getQualityScore()));				
+//			}
+//			i++;
+//		}
+//		WordQCPCPair [] wqcpcArray = new WordQCPCPair[wqcpcList.size()];
+//		for (i=0; i<wqcpcArray.length; i++){
+//			wqcpcArray[i]=wqcpcList.get(i);
+//		}
+//		Arrays.sort(wqcpcArray, new WordQCPCPairComparator());
+////        for (i=0; i<wqcpcArray.length; i++){
+////        	System.out.println(wqcpcArray[i].getQCPC());
+////        }
+//		double totCost=0, totClicks=0;
+//		for(i=0;i<wqcpcArray.length;i++){
+//			totCost+=wqcpcArray[i].getCost();
+//			totClicks+=wqcpcArray[i].getClick();
+//			if(totCost>=dailyBudget){
+//				break;
+//			}
+//			System.out.println(totCost+" : "+totClicks);
+//		}
+//		System.out.println("Function value evaluated at " + x[0] +": "+totCost/totClicks);
+//		return totCost/totClicks; // CPC
+		
     }
     
     private double computeOptimumBidForConst(int i, double k){
@@ -161,7 +205,7 @@ public class CampaignBid {
         Minimisation min = new Minimisation();
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
-//        min.addConstraint(0, +1, 9.00); // max bid allowed
+        min.addConstraint(0, +1, 9.99); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -246,58 +290,37 @@ public class CampaignBid {
 				minPoint=data[0][i];
 			}
 		}
+		
+////		PlotGraph pg = new PlotGraph(data);
+////		pg.plot();
+//		
+//		// refine the search zone
+//		b = minVal-0.011;
+//		bidPoints.clear();
+//		while(b<minVal+0.011){
+//			bidPoints.add(b);
+//			b=b+0.0001;
+//		}
+//		
+//
+//		
+//		data = PlotGraph.data(1,bidPoints.size());
+//		for(int i=0; i<bidPoints.size(); i++){
+//			data[0][i]=bidPoints.get(i);
+//			x[0]=bidPoints.get(i);
+//			data[1][i]=func.function(x);
+//			if(data[1][i]<minVal){
+//				minVal=data[1][i];
+//				minPoint=data[0][i];
+//			}
+//		}
 		System.out.println("Minimum occurs at "+minPoint+", and the minimum value is "+minVal);
+
 		
-		// refine the search zone
-		b = minVal-0.011;
-		bidPoints.clear();
-		while(b<minVal+0.011){
-			bidPoints.add(b);
-			b=b+0.0001;
-		}
-		data = PlotGraph.data(1,bidPoints.size());
-		for(int i=0; i<bidPoints.size(); i++){
-			data[0][i]=bidPoints.get(i);
-			x[0]=bidPoints.get(i);
-			data[1][i]=func.function(x);
-			if(data[1][i]<minVal){
-				minVal=data[1][i];
-				minPoint=data[0][i];
-			}
-		}
-		
-		/*
-		PlotGraph pg = new PlotGraph(data);
-		pg.plot();
+
 		
 		 
 		 
-
-
-		double[] start = {minVal};
-
-		// initial step sizes
-		double[] step = {0.1D};
-
-		// convergence tolerance
-		double ftol = 1e-15;
-
-		//        min.addConstraint(0, -1, 0.0);
-
-		// Nelder and Mead minimisation procedure
-		min.nelderMead(func, start, step, ftol);
-
-		// get the minimum value
-		double minimum = min.getMinimum();
-
-		// get values of y and z at minimum
-		double[] param = min.getParamValues();
-
-		// Output the results to screen
-		System.out.println("Minimum = " + minimum);
-		System.out.println("Value of Lagrange multiplier at the minimum = " + param[0]);
-		
-		*/
 
 		bids = new double[wordList.size()];
 		for(int i=0; i<wordList.size();i++){
@@ -340,95 +363,6 @@ public class CampaignBid {
 	}
 	
 	
-	public double [] optimizeBids_old(){
-		
-		// initialize constant
-		double multLagrange = 0.01;
-		boolean highCost=true;
-		bids = new double[wordList.size()];
-		double prevCost=Double.MIN_VALUE;
-		
 
-		ParametricFunction f = new TruncatedSmoothSCurve();
-
-		double [] input = new double[1];
-		KeyWordInterface key = null;
-		
-		int j=0;
-//		while(j<200){
-		while(true){
-			for(int i=0; i<wordList.size();i++){
-				bids[i]=computeOptimumBidForConst(i,multLagrange);
-//				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
-			} // for(int i=0; i<wordList.size();i++)
-			computeExpectedValues();
-			System.out.format("Iteration %d:: Lagrange mult: %f, Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,multLagrange,expectedCost,expectedClicks,expectedQualityMetric);
-			
-			if (j>0){ 
-				if (expectedCost<dailyBudget && highCost){
-					stepSize=stepSize*dampingFactor;
-//					System.out.println("1: Step-size reduced!");
-				} else if (expectedCost>dailyBudget && (!highCost)){
-					stepSize=stepSize*dampingFactor;
-//					System.out.println("2: Step-size reduced!");
-				}
-				
-				if(Math.abs(expectedCost-prevCost) < 1e-6) {
-					System.out.println("BREAKING 1");
-					break;
-				}
-			}
-			
-			if (expectedCost<dailyBudget){
-				highCost=false;
-			} else {
-				highCost=true;
-			}
-			
-			System.out.println("Expected cost: "+expectedCost+", Daily cost: "+dailyBudget);
-			if(Math.abs(expectedCost-dailyBudget) < toldailyBudget){
-				System.out.println("BREAKING 2");
-				break;
-			} else if (expectedCost<dailyBudget){
-				multLagrange-=stepSize;
-//				System.out.println("Lagrange mult reduced!");
-			} else {
-				multLagrange+=stepSize;
-//				System.out.println("Lagrange mult increased!");
-			} // if(Math.abs(expectedCost-dailyBudget) < toldailyBudget)
-			multLagrange=Math.max(multLagrange, 0.01);
-			j++;
-			
-			prevCost=expectedCost;
-			
-		} // while(true)
-		
-
-		for(int i=0; i<bids.length;i++){
-			key=wordList.get(i);
-			input[0]=bids[i];
-			f.setMinBid(key.getMinBid());
-//			System.out.print(key.getKeyWord()+":: ");
-			if(bids[i]>= key.getMinBid()) {
-				System.out.format("%2d :: %s: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
-						i+1, key.getKeyWord(), bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
-						key.getQualityScore()*f.function(input, key.getClickInfo()),
-						f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
-				//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
-			} else {
-				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
-						i+1, key.getKeyWord(), key.getMinBid());//,
-			}
-		} // for(int i=0; i<bids.length;i++)
-		System.out.format("Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f, expected CPC: %.2f \n",
-				expectedCost,expectedClicks,expectedQualityMetric, expectedCost/expectedClicks);
-		
-		
-		for(int i=0; i<bids.length;i++){
-			wordList.get(i).setBidValue(bids[i]);
-		}
-		
-		return bids;
-	} // public void optimizeBids()
 
 }
