@@ -2,10 +2,6 @@ package semplest.server.service.springjdbc;
 
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 
 public class TaskRunnerDB extends BaseDB

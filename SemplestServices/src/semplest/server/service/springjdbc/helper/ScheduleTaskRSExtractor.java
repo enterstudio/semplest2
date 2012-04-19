@@ -12,10 +12,10 @@ public class ScheduleTaskRSExtractor
 	public TaskRunnerObj extractData(ResultSet rs) throws SQLException, DataAccessException
 	{
 		TaskRunnerObj task = new TaskRunnerObj();
-		task.setMethodName(rs.getString("MethodName"));
-		task.setParameters(rs.getString("Parameters"));
+		task.setMethodName(rs.getString("MethodName").trim());
+		task.setParameters(rs.getString("Parameters").trim());
 		task.setSchedulePK(rs.getInt("SchedulePK"));
-		task.setServiceName(rs.getString("ServiceName"));
+		task.setServiceName(rs.getString("ServiceName").trim());
 		task.setTaskExecutionOrder(rs.getInt("TaskExecutionOrder"));
 		return task;
 		
