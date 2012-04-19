@@ -1638,13 +1638,29 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// return keywordEstimates[0];
 	// }
 	//
+	
+	public String getKeywordEstimateByBids(String json) throws Exception
+	{
+		logger.debug("call getKeywordEstimateByBids(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		KeywordEstimatedPosition[] ret = null;
+		String bidStr = data.get("bid");
+		Money bid = gson.fromJson(bidStr, Money.class);
+		try {
+			ret = getKeywordEstimateByBids(new Long(data.get("accountId")), data.get("keywords").split(separator), bid);
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
 
 	@Override
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(String[] keywords, Money bid) throws MsnCloudException
+	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws MsnCloudException
 	{
 		try
 		{
-			IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
+			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
+			IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);  //nan test. use accountID
 			GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
 					bid.getDoubleDollars(), "English", new String[]
 					{ "US" }, Currency.USDollar, new MatchType[]
@@ -1849,6 +1865,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return sendReportRequest(accountId, request);
 	}
 
+	public String requestCampaignReport(String json) throws Exception
+	{
+		logger.debug("call requestCampaignReport(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		String ret = "";
+		ReportAggregation aggregation = gson.fromJson(data.get("aggregation"), ReportAggregation.class);
+		ret = requestCampaignReport(new Long(data.get("accountId")), new Integer(data.get("campaignId")), new Integer(data.get("daysInReport")), aggregation);
+
+		return gson.toJson(ret);
+	}
+	
 	/**
 	 * Request a report for account, campaign. Set campaignId == 0 to report on
 	 * all campaigns.
@@ -1897,7 +1924,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return sendReportRequest(accountId, reportRequest);
 	}
 
-	public String sendReportRequest(Long accountId, final ReportRequest reportRequest)
+	public String sendReportRequest(Long accountId, final ReportRequest reportRequest) throws SemplestError
 	{
 		// Create the service operation request object, and then assign values.
 		SubmitGenerateReportRequest submitGenerateReportRequest = new SubmitGenerateReportRequest();
