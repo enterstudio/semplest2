@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 
 
-namespace SemplestAdminApp.Models
+namespace Semplest.Admin.Models
 {
     [MetadataType(typeof(ConfigurationMetadata))]
     public partial class Configuration
