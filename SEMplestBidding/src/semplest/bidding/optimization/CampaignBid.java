@@ -161,7 +161,7 @@ public class CampaignBid {
         Minimisation min = new Minimisation();
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
-        min.addConstraint(0, +1, 9.00); // max bid allowed
+//        min.addConstraint(0, +1, 9.00); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -266,6 +266,7 @@ public class CampaignBid {
 			}
 		}
 		
+		/*
 		PlotGraph pg = new PlotGraph(data);
 		pg.plot();
 		
@@ -294,6 +295,8 @@ public class CampaignBid {
 		// Output the results to screen
 		System.out.println("Minimum = " + minimum);
 		System.out.println("Value of Lagrange multiplier at the minimum = " + param[0]);
+		
+		*/
 
 		bids = new double[wordList.size()];
 		for(int i=0; i<wordList.size();i++){
@@ -313,14 +316,14 @@ public class CampaignBid {
 			f.setMinBid(key.getMinBid());
 			//			System.out.print(key.getKeyWord()+":: ");
 			if(bids[i]>= key.getMinBid()) {
-				System.out.format("%2d :: %30s: Bid value: %1.2f, min bid: %1.2f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
-						i+1, key.getKeyWord(), bids[i],key.getMinBid(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
+				System.out.format("%2d :: %30s: Bid value: %1.2f, min bid: %1.2f, quality score: %.1f, expected clicks: %4.1f, expected daily cost: %4.2f, expected quality metric: %4.1f, CPC: %2.2f\n",//, CPQM: %2.2f \n", 
+						i+1, key.getKeyWord(), bids[i],key.getMinBid(), key.getQualityScore(),f.function(input, key.getClickInfo()),f.function(input, key.getDCostInfo()),
 						key.getQualityScore()*f.function(input, key.getClickInfo()),
 						f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
 				//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
 			} else {
-				System.out.format("%2d :: %30s: Bid value: 0.00, min bid: %1.2f, expected clicks:  0.0, expected daily cost:  0.00, expected quality metric:  0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
-						i+1, key.getKeyWord(), key.getMinBid());//,
+				System.out.format("%2d :: %30s: Bid value: 0.00, min bid: %1.2f, quality score: %.1f, expected clicks:  0.0, expected daily cost:  0.00, expected quality metric:  0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
+						i+1, key.getKeyWord(), key.getMinBid(), key.getQualityScore());//,
 			}
 		} // for(int i=0; i<bids.length;i++)
 		System.out.format("Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f, expected CPC: %.2f \n",
