@@ -80,7 +80,7 @@ else
 
 
  <ul style="display: block" class="kendo-nav">
-    <li><a href="url">Add New Employee</a></li>
+    <li> @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add"}) </li>
     <li><a href="url">Delete Employee</a> </li>
     <li><a href="url">Go to sleep!</a> </li>
 </ul>
