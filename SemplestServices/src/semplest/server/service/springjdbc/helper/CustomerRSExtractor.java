@@ -2,6 +2,7 @@ package semplest.server.service.springjdbc.helper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -16,13 +17,13 @@ public class CustomerRSExtractor implements ResultSetExtractor<CustomerObj>
 	{
 		CustomerObj customer = new CustomerObj();
 		customer.setBillType(rs.getString("BillType"));
-		customer.setCampaignCycleType(rs.getString("CampaignCycleType"));
-		customer.setCreatedDate(rs.getDate("CreatedDate"));
+		customer.setCampaignCycleType(rs.getString("ProductGroupCycleType"));
+		customer.setCreatedDate(rs.getTimestamp("CreatedDate"));
 		customer.setCustomerPK(rs.getInt("CustomerPK"));
 		customer.setCycleInDays(rs.getInt("CycleInDays"));
-		customer.setEditedDate(rs.getDate("EditedDate"));
+		customer.setEditedDate(rs.getTimestamp("EditedDate"));
 		customer.setName(rs.getString("Name"));
-		customer.setTotalCycleTargetBudget(rs.getDouble("TotalCycleTargetBudget"));
+		customer.setTotalTargetCycleBudget(rs.getDouble("TotalTargetCycleBudget"));
 		
 		return customer;
 		

@@ -4,12 +4,12 @@ public class CustomerObj
 {
 	private Integer CustomerPK;
 	private String Name;
-	private Double TotalCycleTargetBudget;
+	private Double TotalTargetCycleBudget;
 	private String CampaignCycleType;
 	private Integer CycleInDays;
 	private String BillType;
-	private java.sql.Date CreatedDate;
-	private java.sql.Date EditedDate;
+	private java.util.Date CreatedDate;
+	private java.util.Date EditedDate;
 	public Integer getCustomerPK()
 	{
 		return CustomerPK;
@@ -26,14 +26,7 @@ public class CustomerObj
 	{
 		Name = name;
 	}
-	public Double getTotalCycleTargetBudget()
-	{
-		return TotalCycleTargetBudget;
-	}
-	public void setTotalCycleTargetBudget(Double totalCycleTargetBudget)
-	{
-		TotalCycleTargetBudget = totalCycleTargetBudget;
-	}
+	
 	public String getCampaignCycleType()
 	{
 		return CampaignCycleType;
@@ -58,21 +51,29 @@ public class CustomerObj
 	{
 		BillType = billType;
 	}
-	public java.sql.Date getCreatedDate()
+	public java.util.Date getCreatedDate()
 	{
 		return CreatedDate;
 	}
-	public void setCreatedDate(java.sql.Date createdDate)
+	public void setCreatedDate(java.util.Date createdDate)
 	{
 		CreatedDate = createdDate;
 	}
-	public java.sql.Date getEditedDate()
+	public java.util.Date getEditedDate()
 	{
 		return EditedDate;
 	}
-	public void setEditedDate(java.sql.Date editedDate)
+	public void setEditedDate(java.util.Date editedDate)
 	{
 		EditedDate = editedDate;
+	}
+	public Double getTotalTargetCycleBudget()
+	{
+		return TotalTargetCycleBudget;
+	}
+	public void setTotalTargetCycleBudget(Double totalTargetCycleBudget)
+	{
+		TotalTargetCycleBudget = totalTargetCycleBudget;
 	}
 	
 
