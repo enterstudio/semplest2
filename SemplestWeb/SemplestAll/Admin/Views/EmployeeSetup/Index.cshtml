@@ -1,0 +1,120 @@
+﻿@using System.Globalization
+@model IEnumerable<Semplest.Admin.Models.EmployeeSetup>
+           
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+Employee Setup
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+@using (Html.BeginForm("Index"))
+{
+  <div class="configuration1">
+        <ul class="options">
+            <li>Search
+                <input type="text" id="Search" name="search" class="k-textbox"
+                    required validationmessage="Please enter {0}" />
+                     <input type="submit" value="Search" class="k-button" />
+            </li>
+
+        </ul>
+    </div>
+
+}
+
+    
+@if (!Model.Any())
+    {
+        // table is empty
+    }
+else
+    { 
+    <div class="tableresults">
+    <table>
+        <tr>
+            <th>
+                First Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Active
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Email
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+             <tr>
+                <td>
+                @Html.RouteLink(item.FirstName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK  })
+                </td>
+                <td>
+                    @Html.RouteLink(item.LastName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                </td>
+                <td>
+                    @Html.RouteLink( "1" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                </td>
+                <td>
+                    @Html.RouteLink(item.RoleName , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                </td>
+                <td>
+                    @Html.RouteLink(item.Email, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                </td>        
+            </tr>
+        }
+    </table>
+    </div>
+    }
+
+
+ <ul style="display: block" class="kendo-nav">
+    <li> @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add"}) </li>
+    <li><a href="url">Delete Employee</a> </li>
+    <li><a href="url">Go to sleep!</a> </li>
+</ul>
+
+
+@*<h3>
+    Search:</h3>
+<input type="text" />
+<label>
+    Name:</label>
+<input type="text" />
+<input type="text" />
+<br />
+<label>
+    ID:</label><input type="text" />
+<br />
+<label>
+    Effective Date:</label><input type="text" />
+<br />
+<label>
+    Role:</label>
+<select>
+    <option value="Role1">Role1</option>
+    <option value="Role2">Role2</option>
+    <option value="Role3">Role3</option>
+    <option value="Role4">Role4</option>
+</select>
+<br />
+<label>
+    Reporting to:</label>
+<select>
+    <option value="R1">R1</option>
+    <option value="R2">R2</option>
+    <option value="R3">R3</option>
+    <option value="R4">R4</option>
+</select>
+*@

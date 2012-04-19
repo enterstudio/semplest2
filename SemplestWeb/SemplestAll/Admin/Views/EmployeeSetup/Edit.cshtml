@@ -1,0 +1,104 @@
+﻿@model Semplest.Admin.Models.EmployeeSetupWithRolesModel
+@section NavBar {
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Title{
+Edit Employee:
+}
+@section headscript{
+ <script type="text/jscript">
+     $(document).ready(function () {
+         $("#datePicker").kendoDatePicker();
+     });
+</script>
+
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Html.BeginForm("Edit"))
+{
+    @Html.ValidationSummary(true)
+    <fieldset>
+        
+            @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
+    
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.FirstName)
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.EmployeeSetup.FirstName, new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.FirstName)
+        </div>
+        
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.LastName )
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.EmployeeSetup.LastName , new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.LastName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.Email )
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.EmployeeSetup.Email , new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.Email )
+        </div>
+        
+        <div class="editor-label">
+        <label>Effective Date:</label>
+        
+        </div>
+
+        <div class="editor-field">
+            <input type="text" id="datePicker"/>
+        </div>
+
+
+        <div class="editor-label">
+        <label> Role</label>
+        </div>
+
+        <div class="editor-field">
+        @Html.DropDownListFor(r=>r.SelectedRoleID, Model.Roles)
+        </div>
+
+
+           <div class="editor-label">
+        <label> Employee Type</label>
+        </div>
+
+        <div class="editor-field">
+        @Html.DropDownListFor(r=>r.SelectedEmployeeTypeID , Model.EmployeeTypes )
+        </div>
+
+
+        <div class="editor-label">
+            <label>Sales Comission</label>
+        </div>
+        <div class="editor-field">
+            <input type="text" />
+        </div>
+        
+        
+        <div class="editor-label">
+            <label>Reporting To</label>
+        </div>
+        <div class="editor-field">
+         @Html.DropDownListFor(r=>r.SelectedReportingToID, Model.ReportingTo)    
+        </div>
+        
+        
+        <p>
+            <input type="submit" value="Save" class="k-button" />
+        </p>
+    </fieldset>
+}
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

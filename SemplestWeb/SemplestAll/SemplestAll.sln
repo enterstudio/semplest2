@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Semplest Admin Application", "Semplest Admin Application", "{A642BFA1-3AA4-42F7-8131-089377D2E10F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Semplest Core Application", "Semplest Core Application", "{14CE0242-1DC5-457B-9913-56B19260A660}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Semplest Web Site", "Semplest Web Site", "{8AE6FE93-89B0-4A1F-9B59-6A10B5BA3EF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSite", "WebSite\WebSite.csproj", "{8497CA32-0F54-41D0-AE34-B9341FD7A330}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}"
+EndProject
+Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8497CA32-0F54-41D0-AE34-B9341FD7A330}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8497CA32-0F54-41D0-AE34-B9341FD7A330}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8497CA32-0F54-41D0-AE34-B9341FD7A330}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8497CA32-0F54-41D0-AE34-B9341FD7A330}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A} = {A642BFA1-3AA4-42F7-8131-089377D2E10F}
+		{B1A1CDCC-FFC2-4F9E-8F81-EAEA3D130829} = {14CE0242-1DC5-457B-9913-56B19260A660}
+		{8497CA32-0F54-41D0-AE34-B9341FD7A330} = {8AE6FE93-89B0-4A1F-9B59-6A10B5BA3EF2}
+	EndGlobalSection
+EndGlobal
