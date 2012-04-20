@@ -15,7 +15,7 @@ public class SemplestSchedulerService  implements ServiceInterface
 	{
 		try
 		{
-			logger.debug("Running Google Service " + methodName + ":" + jsonStr);
+			logger.debug("Running  SemplestSchedulerService Service " + methodName + ":" + jsonStr);
 			SemplestSchedulerServiceImpl service = new SemplestSchedulerServiceImpl();
 			Class[] parameterTypes = new Class[]
 			{ String.class };

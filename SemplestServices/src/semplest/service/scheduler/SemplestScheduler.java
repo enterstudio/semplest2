@@ -46,7 +46,7 @@ public class SemplestScheduler extends Thread
 	{
 		appContext = new ClassPathXmlApplicationContext("Service.xml");
 		SemplestScheduler s = new SemplestScheduler(null,null);
-		Boolean res = s.runScheduledTasks("0", "2");
+		Boolean res = s.runScheduledTasks(0, 2);
 		
 	}
 
@@ -288,7 +288,7 @@ public class SemplestScheduler extends Thread
 	/*
 	 * Should be based on ScheduleOrderID?
 	 */
-	private boolean removeScheduleToRun(String ScheduleID)
+	private boolean removeScheduleToRun(Integer ScheduleID)
 	{
 		try
 		{
@@ -337,13 +337,13 @@ public class SemplestScheduler extends Thread
 		return i;
 	}
 
-	private int findPositionOfscheduleID(String ScheduleID)
+	private int findPositionOfscheduleID(Integer ScheduleID)
 	{
 		int i = 0;
 		int pos = -1;
 		for (SchedulerRecord rec : recordMessageList)
 		{
-			if (rec.getScheduleID().equalsIgnoreCase(ScheduleID))
+			if (rec.getScheduleID().equals(ScheduleID))
 			{
 				pos = i;
 				break;
@@ -397,7 +397,7 @@ public class SemplestScheduler extends Thread
 		// return schedulerData.getScheduleToRun();
 	}
 
-	private Boolean runScheduledTasks(String UserID, String SchedulePK)
+	private Boolean runScheduledTasks(Integer UserID, Integer SchedulePK)
 	{
 		java.util.Date startTime = null;
 		try
@@ -412,8 +412,6 @@ public class SemplestScheduler extends Thread
 			return false;
 		}
 		HashMap<String, TaskOutput> TaskOutputData = new HashMap<String, TaskOutput>();
-		// HashMap<String, String> TaskEmailBody = new HashMap<String, String>(); //Contain the email for each task
-
 		if (UserID == null || SchedulePK == null)
 		{
 			logger.error("Cannot execute runScheduledTasks:  UserID = <" + UserID + "> SCHEDULEPK=<" + SchedulePK + ">");
@@ -424,7 +422,7 @@ public class SemplestScheduler extends Thread
 		TaskOutput previousTaskOutput = null; // First TaskOutput is null
 		//Run the Set of Tasks and return the output
 		TaskRunnerDB tasks = new TaskRunnerDB();
-		List<TaskRunnerObj> listofTasks = tasks.getScheduleTasks(Integer.parseInt(SchedulePK));
+		List<TaskRunnerObj> listofTasks = tasks.getScheduleTasks(SchedulePK);
 		if (!listofTasks.isEmpty())
 		{
 			try
@@ -435,10 +433,10 @@ public class SemplestScheduler extends Thread
 					System.out.println(taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
 					Class taskClass = Class.forName(taskObj.getServiceName());
 					Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
-					SchedulerTaskRunnerInterface cf =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
-					previousTaskOutput = cf.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
+					SchedulerTaskRunnerInterface taskRunner =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
+					previousTaskOutput = taskRunner.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
 					TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
-					cf = null;
+					taskRunner = null;
 				}
 			}
 			catch (Exception e)

@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.service.springjdbc.TaskRunnerDB;
-import semplest.server.service.springjdbc.TaskRunnerObj;
+import semplest.server.service.springjdbc.CustomerDB;
+import semplest.server.service.springjdbc.CustomerObj;
 
 public class TestSpringJDBC
 {
@@ -24,18 +24,18 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			/*
+			
 			CustomerDB cust = new CustomerDB();
 			List<CustomerObj> customers = cust.getAllCustomers();
 			if (!customers.isEmpty())
 			{
-				System.out.println(customers.get(0).getCustomerPK());
+				System.out.println(customers.get(0).getCustomerPK() + ":" + customers.get(0).getCreatedDate().toString());
 			}
 			else
 			{
 				System.out.println("No customers found");
 			}
-			*/
+			/*
 			TaskRunnerDB tasks = new TaskRunnerDB();
 			List<TaskRunnerObj> l = tasks.getScheduleTasks(2);
 			if (!l.isEmpty())
@@ -50,6 +50,7 @@ public class TestSpringJDBC
 			{
 				System.out.println("No tasks found");
 			}
+			*/
 		}
 		catch (Exception e)
 		{

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 
 public class SemplestMessageBroker extends Thread
 {
-	//private Vector<SchedulerRecord> recordMessageList = null;
+	// private Vector<SchedulerRecord> recordMessageList = null;
 	private SimpleDateFormat MMddYYYYHHMMSS = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
@@ -52,66 +52,12 @@ public class SemplestMessageBroker extends Thread
 		{
 			while (true)
 			{
-				String aMessage = (String) messageQueue.take();
-				logger.info("MessageBroker ProcessMessage: " + aMessage);
-				String userid = null, schedID = null, datetime = null, isdel = null, scheduleOrderID = null; // 
-				// parse the message
-				String[] command = aMessage.split("[;]");
-				for (int i = 0; i < command.length; i++)
-				{
-					String[] val = command[i].split("[=]");
-					parameters.valueOf(val[0]);
-					if (val[0].equalsIgnoreCase(parameters.UserID.name()))
-					{
-						userid = val[1].trim();
-					}
-					else if (val[0].equalsIgnoreCase(parameters.ScheduleID.name()))
-					{
-						schedID = val[1].trim();
-					}
-					else if (val[0].equalsIgnoreCase(parameters.TimeToRun.name()))
-					{
-						datetime = val[1].trim();
-					}
-					else if (val[0].equalsIgnoreCase(parameters.isDelete.name()))
-					{
-						isdel = val[1].trim();
-					}
-					else if (val[0].equalsIgnoreCase(parameters.ScheduleOrderID.name()))
-					{
-						scheduleOrderID = val[1].trim();
-					}
-
-				}
-				if (userid != null && schedID != null && datetime != null && isdel != null && scheduleOrderID != null)
-				{
-					try
-					{
-						logger.warn("UserID = " + userid + " schedID=" + schedID + " scheduleOrderID=" + scheduleOrderID);
-						SchedulerRecord newschedule = new SchedulerRecord();
-						newschedule.setUserID(userid);
-						newschedule.setScheduleID(schedID);
-						newschedule.setScheduleOrderID(scheduleOrderID);
-						newschedule.setDelete(getDel(isdel));
-
-						newschedule.setTimeToRunInMS(MMddYYYYHHMMSS.parse(datetime).getTime());
-						// send to message processor
-						logger.debug("messageProcessor.receiveSchedulerRecord(newschedule)");
-						scheduler.receiveSchedulerRecord(newschedule);
-					}
-					catch (Exception e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						logger.error("FAILED TO Add Schedule ID = " + schedID + ": DateTime parse error " + e.getMessage());
-						return;
-					}
-
-				}
-				else
-				{
-					logger.warn("One of the message parameters was null");
-				}
+				SchedulerRecord newschedule = (SchedulerRecord) messageQueue.take();
+				logger.info("MessageBroker ProcessMessage: " + newschedule.getScheduleID());
+				// newschedule.setTimeToRunInMS(MMddYYYYHHMMSS.parse(newschedule.getTimeToRunInMS()).getTime());
+				// send to message processor
+				logger.debug("messageProcessor.receiveSchedulerRecord(newschedule)");
+				scheduler.receiveSchedulerRecord(newschedule);
 			}
 		}
 		catch (Exception e)
@@ -139,7 +85,6 @@ public class SemplestMessageBroker extends Thread
 		}
 	}
 
-	
 	private boolean getDel(String isDel)
 	{
 		if (isDel != null && isDel.trim().equals("1"))
@@ -152,6 +97,4 @@ public class SemplestMessageBroker extends Thread
 		}
 	}
 
-	
 }
-
