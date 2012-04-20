@@ -1660,7 +1660,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		try
 		{
 			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
-			IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);  //nan test. use accountID
+			IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
 			GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
 					bid.getDoubleDollars(), "English", new String[]
 					{ "US" }, Currency.USDollar, new MatchType[]
@@ -1814,6 +1814,22 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{ target };
 		return targets;
 	}
+	
+	public String requestKeywordReport(String json) throws Exception
+	{
+		logger.debug("call requestKeywordReport(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		String ret = "";
+		ReportAggregation aggregation = gson.fromJson(data.get("aggregation"), ReportAggregation.class);
+		try{
+			ret = requestKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")), aggregation);
+		}
+		catch(RemoteException e){
+			throw new Exception(e);			
+		}
+		
+		return gson.toJson(ret);
+	}
 
 	@Override
 	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws RemoteException
@@ -1874,11 +1890,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		try{
 			ret = requestCampaignReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), new Integer(data.get("daysInReport")), aggregation);
 		}
-		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
-		}
-		catch(EditorialApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
+		catch(RemoteException e){
+			throw new Exception(e);			
 		}
 		
 		return gson.toJson(ret);
