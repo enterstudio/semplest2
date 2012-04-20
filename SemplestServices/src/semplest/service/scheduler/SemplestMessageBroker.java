@@ -13,13 +13,7 @@ public class SemplestMessageBroker extends Thread
 	private SimpleDateFormat MMddYYYYHHMMSS = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
-
-	private enum parameters
-	{
-		UserID, ScheduleID, TimeToRun, isDelete, ScheduleOrderID;
-	}
-
-	private BlockingQueue<Object> messageQueue = new LinkedBlockingQueue<Object>();
+	private BlockingQueue<SchedulerRecord> messageQueue = new LinkedBlockingQueue<SchedulerRecord>();
 
 	public SemplestMessageBroker(Object synchLock, SemplestScheduler scheduler)
 	{
@@ -67,34 +61,21 @@ public class SemplestMessageBroker extends Thread
 		}
 	}
 
-	synchronized public void newMessageFromDB(Object data)
+	synchronized public void newMessageFromDB(SchedulerRecord data)
 	{
-		logger.debug("MessageBroker- New Message From DB:" + (String) data);
+		logger.debug("MessageBroker- New Message From DB:" +  data.getScheduleID());
 		messageQueue.add(data);
 		logger.debug("messageQueue");
 		/*
 		 * Test
 		 */
-		Iterator<Object> it = messageQueue.iterator();
+		Iterator<SchedulerRecord> it = messageQueue.iterator();
 		int i = 0;
 		while (it.hasNext())
 		{
-			String d = (String) it.next();
-			logger.debug("messageQueue:" + i + " val=" + d);
+			SchedulerRecord d = it.next();
+			logger.debug("messageQueue:" + i + " val=" + d.getScheduleID());
 			i++;
 		}
 	}
-
-	private boolean getDel(String isDel)
-	{
-		if (isDel != null && isDel.trim().equals("1"))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
 }

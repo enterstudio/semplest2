@@ -46,7 +46,7 @@ public class SemplestScheduler extends Thread
 	{
 		appContext = new ClassPathXmlApplicationContext("Service.xml");
 		SemplestScheduler s = new SemplestScheduler(null,null);
-		Boolean res = s.runScheduledTasks(0, 2);
+		Boolean res = s.runScheduledTasks( 2);
 		
 	}
 
@@ -108,7 +108,7 @@ public class SemplestScheduler extends Thread
 							if (result != null)
 							{
 								// write result to DB
-								logger.debug("*****Write Result to DB for : User" + runData.getUserID() + " ScheduleID=" + runData.getScheduleID());
+								logger.debug("*****Write Result to DB for : ScheduleID=" + runData.getScheduleID());
 								//****SetScheduleOrderDataComplete(Integer.parseInt(runData.getScheduleOrderID()),Integer.parseInt(runData.getScheduleID()), result.booleanValue(), Integer.parseInt(runData.getUserID()));
 								// remove the schedule and report the result
 								synchronized (lock)
@@ -153,17 +153,17 @@ public class SemplestScheduler extends Thread
 	 */
 	synchronized public void receiveSchedulerRecord(SchedulerRecord record)
 	{
-		logger.debug("Message Processor - receiveSchedulerRecord User " + record.getUserID() + " schedID=" + record.getScheduleID() + ":" + record.getTimeToRunInMS());
+		logger.debug("Message Processor - receiveSchedulerRecord schedID=" + record.getScheduleID() + ":" + record.getTimeToRunInMS());
 		if (recordAlreadyExist(record))
 		{
-			logger.debug("Ignor - Received the same message for " + record.getScheduleID() + ": user " + record.getUserID() + " at Time " + record.getTimeToRunInMS());
+			logger.debug("Ignor - Received the same message for " + record.getScheduleID() + " at Time " + record.getTimeToRunInMS());
 		}
 		else
 		{
 			synchronized (lock)
 			{
 				int pos = findPositionOfscheduleID(record.getScheduleID());
-				if (record.isDelete())
+				if (record.getIsDelete())
 				{
 					// Trying to remove the Head of the list
 					if (pos == 0)
@@ -368,7 +368,7 @@ public class SemplestScheduler extends Thread
 				logger.debug("SKIPPING OLD DATA:" + runData.getScheduleID());
 				return null;
 			}
-			Boolean res = runScheduledTasks(runData.getUserID(), runData.getScheduleID());
+			Boolean res = runScheduledTasks(runData.getScheduleID());
 
 			return res;
 
@@ -397,7 +397,7 @@ public class SemplestScheduler extends Thread
 		// return schedulerData.getScheduleToRun();
 	}
 
-	private Boolean runScheduledTasks(Integer UserID, Integer SchedulePK)
+	private Boolean runScheduledTasks(Integer SchedulePK)
 	{
 		java.util.Date startTime = null;
 		try
@@ -412,9 +412,9 @@ public class SemplestScheduler extends Thread
 			return false;
 		}
 		HashMap<String, TaskOutput> TaskOutputData = new HashMap<String, TaskOutput>();
-		if (UserID == null || SchedulePK == null)
+		if (SchedulePK == null)
 		{
-			logger.error("Cannot execute runScheduledTasks:  UserID = <" + UserID + "> SCHEDULEPK=<" + SchedulePK + ">");
+			logger.error("Cannot execute runScheduledTasks: SCHEDULEPK=<" + SchedulePK + ">");
 			return false;
 		}
 

@@ -34,27 +34,19 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		logger.debug("call deleteAd(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer ScheduleID = Integer.parseInt(data.get("ScheduleID"));
-		Integer CustomerID = Integer.parseInt(data.get("CustomerID"));
-		Integer ProductGroupID = Integer.parseInt(data.get("ProductGroupID"));
-		Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
-		Integer UserID = Integer.parseInt(data.get("UserID"));
 		Boolean IsDelete = Boolean.getBoolean(data.get("IsDelete"));
 		java.util.Date StartTime = new  java.util.Date(data.get("StartTime"));
 		
-		Boolean del =  NewSchedule(ScheduleID, CustomerID, ProductGroupID, PromotionID,UserID,StartTime,IsDelete);
+		Boolean del =  NewSchedule(ScheduleID,StartTime,IsDelete);
 		// convert result to Json String
 		return gson.toJson(del);
 	}
 	@Override
-	public Boolean NewSchedule(Integer ScheduleID, Integer CustomerID, Integer ProductGroupID, Integer PromotionID,Integer UserID, java.util.Date StartTime,Boolean IsDelete) throws Exception
+	public Boolean NewSchedule(Integer ScheduleID, java.util.Date StartTime,Boolean IsDelete) throws Exception
 	{
 		SchedulerRecord newschedule = new SchedulerRecord();
-		newschedule.setCustomerID(CustomerID);
-		newschedule.setDelete(IsDelete);
-		newschedule.setProductGroupID(ProductGroupID);
-		newschedule.setPromotionID(PromotionID);
+		newschedule.setIsDelete(IsDelete);
 		newschedule.setScheduleID(ScheduleID);
-		newschedule.setUserID(UserID);
 		newschedule.setTimeToRunInMS(StartTime.getTime());
 		SemplestSchedulerServiceImpl.messageBroker.newMessageFromDB(newschedule);
 		return true;
