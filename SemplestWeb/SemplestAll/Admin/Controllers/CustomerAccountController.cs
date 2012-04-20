@@ -433,5 +433,51 @@ namespace Semplest.Admin.Controllers
             return View(x);
         }
 
+
+
+        [HttpPost]
+        public ActionResult Add(CustomerAccountWithEmployeeModel m)
+        {
+
+            try
+            {
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
+                
+            ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
+
+            Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillType=bt, ProductGroupCycleType = pgct});
+            User u= dbcontext.Users.Add(new User { 
+                                Customer=c, 
+                                Email=m.CustomerAccount.Email, 
+                                FirstName=m.CustomerAccount.FirstName, 
+                                LastName=m.CustomerAccount.LastName
+                    });
+
+            Credential cr=dbcontext.Credentials.Add(new   Credential { User =u, UsersFK=u.UserPK, Username=m.CustomerAccount.Email, Password="t"}); //-- default password --- !!
+
+            PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
+            Phone ph = dbcontext.Phones.Add(new Phone { Phone1 = m.CustomerAccount.Phone, PhoneType=pt });
+            CustomerPhoneAssociation cpa = dbcontext.CustomerPhoneAssociations.Add(new CustomerPhoneAssociation { Customer = c, Phone = ph });
+            
+            StateCode sc= dbcontext.StateCodes.First(p=>p.StateAbbrPK==m.SelectedStateID);
+            AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
+            Address a = dbcontext.Addresses.Add(new Address { Address1 = m.CustomerAccount.Address1, Address2 = m.CustomerAccount.Address2, City = m.CustomerAccount.City, ZipCode = m.CustomerAccount.Zip, StateCode = sc });
+            CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType =at });
+            
+           
+            dbcontext.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.TargetSite);
+            }
+
+
+            return RedirectToAction("Index");
+        }
+
     }
 }
