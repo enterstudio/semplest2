@@ -23,12 +23,13 @@ Add Employee:
     @Html.ValidationSummary(true)
     <fieldset>
         
-            @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
-    
-        
+         
         <div class="editor-label">
             @Html.LabelFor(model => model.EmployeeSetup.FirstName)
         </div>
+
+
+
         <div class="editor-field">
             @Html.TextBoxFor(model => model.EmployeeSetup.FirstName, new { @class = "k-textbox" })
             @Html.ValidationMessageFor(model => model.EmployeeSetup.FirstName)
