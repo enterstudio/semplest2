@@ -401,6 +401,11 @@ MinClicksPerWeek = 0
 MinImpressionsPerWeek = 2215
 MinTotalCostPerWeek = 0.0
 
+
+getReportData  ###
+------------------------------------------
+!!! It takes too long, and causes Time Out on ESB !!!
+
 	
 requestCampaignReport  ###
 ------------------------------------------
