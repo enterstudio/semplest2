@@ -31,6 +31,7 @@ public class ProjectProperties {
 	public static int numTopics;
 	public static double userInfoWeight;
 	public static int numKeywords;
+	public static int numThreads;
 	private static final Logger logger = Logger.getLogger(ProjectProperties.class);
 	
 	
@@ -61,6 +62,7 @@ public class ProjectProperties {
 			numTopics = Integer.parseInt(properties.getProperty("numTopics"));
 			userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
 			numKeywords = Integer.parseInt(properties.getProperty("numKeywords"));
+			numThreads= Integer.parseInt(properties.getProperty("numThreads"));
 			logger.info("Set all property data...");
 		} catch (Exception e) {
 			logger.error(e.getMessage());

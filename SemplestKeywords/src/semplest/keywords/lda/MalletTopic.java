@@ -574,7 +574,7 @@ public class MalletTopic {
         //  the second is the parameter for a single dimension of the Dirichlet prior.
 		initalpha = alpha_t;
 		initbeta = beta_w;
-		int numThreads=8;
+		int numThreads=ProjectProperties.numThreads;
 		model = new ParallelTopicModel(numTopics, 1.0, 0.01);
 		logger.info("Loading Instances into Model");
         model.addInstances(instances);

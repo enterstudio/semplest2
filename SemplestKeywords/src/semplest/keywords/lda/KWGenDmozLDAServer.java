@@ -349,18 +349,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    String keyword;
 		    i=0;
 		    iterator=keySet.iterator();
-		    double baseProb = 1.0;
+		    String stcompare = searchTerms.replaceAll("\\s+", "");
 		    while(i<numkw){
 		    		if(iterator.hasNext())keyword =iterator.next();
 		    		else break;
-		    		/*if(baseProb>=1.0 && multWMap.get(keyword)<1.0)
-		    			baseProb = multWMap.get(keyword);
-		    		double diff = baseProb- multWMap.get(keyword);
-		    		//if(nGrams==2 && diff>0.01718787) break;
-		    		//if(nGrams==3 && diff>0.001718787) break;
-		    		//logger.debug(diff+"\t"+keyword);*/
-		    		keywords.add(keyword);
-				    i++;
+		    		if(!keyword.replaceAll("\\s+", "").equals(stcompare)){
+		    			keywords.add(keyword);
+				    	i++;
+		    		}
 		    }
 		    return keywords;
 		
@@ -601,7 +597,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			
 			
-			Integer[] nGrams = {100,100};
+			Integer[] nGrams = {50,50};
 			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, adds, url,nGrams);
 			
 			for(int n=0; n<4; n++){
@@ -615,8 +611,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			PrintStream stdout = System.out;
 			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
 			for(int n=0; n<4; n++){
-				System.out.println("\n"+ (n+2)+" word keywords:");
+				//System.out.println("\n"+ (n+2)+" word keywords:");
 				for(String k: kw.get(n)){
+					k=k.replaceAll("wed", "wedding");
 					System.out.println(k);
 				}
 			}
