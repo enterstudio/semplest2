@@ -18,5 +18,8 @@ namespace SemplestWebSite.Models
         public string LastName { get; set; }
         [Required]
         public string Company { get; set; }
+
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")] 
+        public string email { get; set; }
     }
 }
