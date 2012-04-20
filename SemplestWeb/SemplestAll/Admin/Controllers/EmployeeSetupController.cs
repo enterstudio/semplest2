@@ -58,7 +58,7 @@ namespace Semplest.Admin.Controllers
             x.ReportingTo = reportingto.Select(r => new SelectListItem
             {
                 Value = r.EmployeePK.ToString(),
-                Text = r.FirstName.ToString() + " " + r.FirstName.ToString()
+                Text = r.FirstName.ToString() + " " + r.LastName.ToString()
             }).Union(sli);
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace Semplest.Admin.Controllers
             x.ReportingTo= reportingto.Select(r => new SelectListItem
             {
                 Value = r.EmployeePK.ToString(),
-                Text = r.FirstName.ToString() + " " + r.FirstName.ToString()
+                Text = r.FirstName.ToString() + " " + r.LastName.ToString()
             }).Union(sli);
 
             /////////////////////////////////////////////////////////////////////////////////
