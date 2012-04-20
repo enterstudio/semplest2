@@ -1852,7 +1852,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.Conversions,
 					KeywordPerformanceReportColumn.Spend, KeywordPerformanceReportColumn.AccountName, KeywordPerformanceReportColumn.AdDistribution,
 					KeywordPerformanceReportColumn.AdGroupName, KeywordPerformanceReportColumn.CampaignName,
-					KeywordPerformanceReportColumn.LanguageAndRegion
+					KeywordPerformanceReportColumn.LanguageAndRegion, KeywordPerformanceReportColumn.QualityScore,
+					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.KeywordRelevance,
+					KeywordPerformanceReportColumn.LandingPageRelevance
 			// ,KeywordPerformanceReportColumn.AdType
 			// ,KeywordPerformanceReportColumn.PricingModel
 			};
@@ -1864,7 +1866,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 					KeywordPerformanceReportColumn.Impressions, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.Conversions,
 					KeywordPerformanceReportColumn.Spend, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.AccountName,
 					KeywordPerformanceReportColumn.AdDistribution, KeywordPerformanceReportColumn.AdGroupName,
-					KeywordPerformanceReportColumn.CampaignName, KeywordPerformanceReportColumn.LanguageAndRegion
+					KeywordPerformanceReportColumn.CampaignName, KeywordPerformanceReportColumn.LanguageAndRegion, KeywordPerformanceReportColumn.QualityScore,
+					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.KeywordRelevance,
+					KeywordPerformanceReportColumn.LandingPageRelevance
 			// ,KeywordPerformanceReportColumn.AdType
 			// ,KeywordPerformanceReportColumn.PricingModel
 			};
@@ -1918,7 +1922,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				CampaignPerformanceReportColumn.CostPerConversion, CampaignPerformanceReportColumn.LowQualityClicks,
 				CampaignPerformanceReportColumn.LowQualityClicksPercent, CampaignPerformanceReportColumn.LowQualityImpressions,
 				CampaignPerformanceReportColumn.LowQualityImpressionsPercent, CampaignPerformanceReportColumn.LowQualityConversions,
-				CampaignPerformanceReportColumn.LowQualityConversionRate, CampaignPerformanceReportColumn.AverageCpm };
+				CampaignPerformanceReportColumn.LowQualityConversionRate, CampaignPerformanceReportColumn.AverageCpm,
+				CampaignPerformanceReportColumn.AverageCpc
+				};
 
 		final CampaignPerformanceReportFilter filter = null;
 		final String title = "Weekly Campaign Report AccountId " + accountId + " CampaignId " + campaignId;
@@ -1968,6 +1974,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		String reportId = submitGenerateReportResponse.getReportRequestId();
 
 		return reportId;
+	}
+	
+	public String getReportData(String json) throws Exception
+	{
+		logger.debug("call getReportData(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Map<String, String[]> ret = null;
+		try{
+			ret = getReportData(data.get("reportId"), new Long(data.get("accountId")));
+		}
+		catch(RemoteException e){
+			throw new Exception(e);			
+		}
+		
+		return gson.toJson(ret);
 	}
 
 	@Override
