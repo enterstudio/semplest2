@@ -1,6 +1,5 @@
 package semplest.services.client.api;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import semplest.server.protocol.ProtocolJSON;

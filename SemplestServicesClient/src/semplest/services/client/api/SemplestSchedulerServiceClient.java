@@ -1,7 +1,10 @@
 package semplest.services.client.api;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+
+import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
@@ -17,15 +20,28 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
-
+	private static final Logger logger = Logger.getLogger(SemplestSchedulerServiceClient.class);
 	private String baseurl;
 	
 	public static void main(String[] args)
 	{
 		try
 		{
+			java.util.Date startTime = null;
+			try
+			{
+				Calendar c = Calendar.getInstance();
+				c.setTime(new Date());
+				c.add(Calendar.MILLISECOND, 60000);
+				startTime = c.getTime();
+			}
+			catch (Exception e2)
+			{
+				logger.error("Error Getting StartTime" + e2.getMessage());
+				e2.printStackTrace();
+			}
 			SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(null);
-			client.NewSchedule(2, new java.util.Date(), false);
+			client.NewSchedule(2, startTime, false);
 		}
 		catch (Exception e)
 		{
