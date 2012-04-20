@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Semplest.Core.Models;
-using SemplestWebApp.Models;
 using SemplestWebApp.Services;
 using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
@@ -21,11 +20,9 @@ namespace Semplest.Core.Controllers
         [AuthorizeRole]
         public ActionResult CampaignSetup()
         {
-            LogEntry logEnty = new LogEntry();
-            logEnty.ActivityId = Guid.NewGuid();
-            logEnty.Message = "Loading";
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading"};
             Logger.Write(logEnty);
-            LogService logService = new LogService();
+            var logService = new LogService();
             logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
@@ -35,7 +32,7 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                SemplestDataService service = new SemplestDataService();
+                var service = new SemplestDataService();
                 service.SaveAd(model);
             }
             return View(model);
