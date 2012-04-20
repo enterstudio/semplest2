@@ -34,7 +34,6 @@
     var onSelect = function (e) {
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
-        alert(dataItem.text);
         if (dataItem.text == 'Specific Month') {
             $("#EndDate").removeClass("enddate");
             $("#EndDate").kendoDatePicker({
