@@ -24,8 +24,37 @@
     $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
 
     // Dropdownlist for Period
-    $("#dropDownPeriodList").kendoDropDownList();
+    //    $("#dropDownPeriodList").kendoDropDownList({
+    //        change: function (e) {
+    //            
+    //        }
+    //    });
 
+    // event handler for select
+    var onSelect = function (e) {
+        // access the selected item via e.item (jQuery object)
+        var dataItem = this.dataItem(e.item.index());
+        alert(dataItem.text);
+        if (dataItem.text == 'Specific Month') {
+            alert(' in if');
+            //$("#EndDate").kendoDatePicker({ visible: true });
+        }
+        else {
+            alert('in else');
+            //$("#EndDate").style.visibility = 'hidden';
+        }
+        alert("event :: select (" + dataItem.text + " : " + dataItem.value);
+    };
+
+    // attach select event handler during initialization
+    var dropdownlist = $("#dropDownPeriodList").kendoDropDownList({
+        select: onSelect
+    });
+
+    // detach select event handler via unbind()
+    //dropdownlist.data("dropDownPeriodList").unbind("select", onSelect);
+
+    ///////
     //DateFunctions Start And Date
     function startChange() {
         var startDate = start.value();
@@ -93,7 +122,7 @@
 
     //Selected Button Logic
     $("input[type='button']#btnOne").addClass("k-button rounded");
-    
+
     var isAdditionalLinksAdded = false;
     $("#additionalLinks").click(function () {
         if (!isAdditionalLinksAdded) {
