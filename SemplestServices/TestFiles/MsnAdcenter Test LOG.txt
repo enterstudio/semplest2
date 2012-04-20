@@ -8,6 +8,8 @@ userId = 1667566
 
 campaignId = 130129414
 	campaignName = msn_test_nan
+	campaignReportId = 1900786974
+	keywordReportId = 1901813874
 	
 	adGroupId = 754813047
 		Name = A1334181236897 
@@ -400,20 +402,12 @@ MinImpressionsPerWeek = 2215
 MinTotalCostPerWeek = 0.0
 
 	
-getKeywordEstimateByBid  ??
-------------------------------------------
-
-getKeywordEstimateByBids  ??
-------------------------------------------
-	
-getReportData
-------------------------------------------
-	
 requestCampaignReport  ###
 ------------------------------------------
 requestCampaignReport: reportID = "1900786974"
 
 	
-requestKeywordReport
+requestKeywordReport  ###
 ------------------------------------------
+requestKeywordReport: reportID = "1901813874"
 
