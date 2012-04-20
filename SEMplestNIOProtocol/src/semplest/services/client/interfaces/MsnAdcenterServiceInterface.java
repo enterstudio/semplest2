@@ -139,9 +139,9 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// Keyword Estimates
 	// ==================================
 	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
-	
+	// please don't use this method, use the one above
 	public abstract KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid) throws Exception;
-	//	
+	//	please don't use this method, use the first getKeywordEstimateByBids method
 	public abstract KeywordEstimate[] getKeywordEstimateByBids(Long accountId, String[] keywords, double[] broadMatchBids, double[] exactMatchBids, double[] phraseMatchBids) throws Exception;
 	
 	public abstract Map<String, String[]> getReportData(String reportId, Long accountId) throws Exception;
