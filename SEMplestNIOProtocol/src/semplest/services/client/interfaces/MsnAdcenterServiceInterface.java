@@ -144,12 +144,12 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	//	
 	public abstract KeywordEstimate[] getKeywordEstimateByBids(Long accountId, String[] keywords, double[] broadMatchBids, double[] exactMatchBids, double[] phraseMatchBids) throws Exception;
 	
-	Map<String, String[]> getReportData(String reportId, Long accountId) throws Exception;
+	public abstract Map<String, String[]> getReportData(String reportId, Long accountId) throws Exception;
 	
 	// ==================================
 	// Reports
 	// ==================================
-	String requestCampaignReport(Long accountId, Long campaignId, int days, ReportAggregation aggregation) throws Exception;
+	public abstract String requestCampaignReport(Long accountId, Long campaignId, int days, ReportAggregation aggregation) throws Exception;
 	
-	String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
+	public abstract String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
 }
