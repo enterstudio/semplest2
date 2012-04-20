@@ -1,9 +1,11 @@
 package semplest.services.client.api;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -18,6 +20,7 @@ import semplest.other.Maybe;
 import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
+import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.msn.*;
@@ -419,13 +422,19 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			
 			//requestCampaignReport
 			String ret = test.requestCampaignReport(1595249L, 130129414L, 10, ReportAggregation.fromString(ReportAggregation._Daily));
-			*/
+			
 			//requestKeywordReport
 			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
 			String ret = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.fromString(ReportAggregation._Daily));		
 					
-			
+			//getReportData
+			Map<String, String[]> ret = test.getReportData("1901813874", 1595249L);
+			Set<String> keys = ret.keySet();
+			Collection<String[]> values = ret.values();
+			logger.info(keys.toString());
+			logger.info(values.toString());
+			*/
 			
 		}
 		catch (Exception e)
@@ -1112,8 +1121,17 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	@Override
 	public Map<String, String[]> getReportData(String reportId, Long accountId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("reportId", reportId);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		ProtocolJSON protocolJson = new ProtocolJSON();
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportData", json, null);
+		HashMap<String,String[]> ret = protocolJson.getHashMapFromJson(returnData);
+		logger.debug("getReportData: ok");
+		
+		return ret;
 	}
 
 	@Override
