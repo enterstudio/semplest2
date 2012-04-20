@@ -63,7 +63,8 @@ namespace Semplest.WebSite.Controllers
                         dbContext.SaveChanges();
 
                         // send email using smtp server
-                        SendMail(model, semEmail);
+                        if (model.EmailMe == true)
+                            SendMail(model, semEmail);
                     }
                 }
                 catch (Exception ex)
