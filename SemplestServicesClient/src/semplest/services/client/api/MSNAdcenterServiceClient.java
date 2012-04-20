@@ -416,12 +416,15 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 					}
 				}
 			}
-			*/
+			
 			//requestCampaignReport
 			String ret = test.requestCampaignReport(1595249L, 130129414L, 10, ReportAggregation.fromString(ReportAggregation._Daily));
-			
-						
-			
+			*/
+			//requestKeywordReport
+			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
+			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
+			String ret = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.fromString(ReportAggregation._Daily));		
+					
 			
 			
 		}
@@ -1114,7 +1117,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation)
+	public String requestCampaignReport(Long accountId, Long campaignId, int daysInReport, ReportAggregation aggregation) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String aggregationStr = gson.toJson(aggregation);
@@ -1125,12 +1128,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = "";
-		try{
-			returnData = runMethod(baseurl,SERVICEOFFERED, "requestCampaignReport", json, null);
-		}
-		catch(Exception e){
-			logger.debug("requestCampaignReport ERROR: " + e.getMessage());
-		}
+		returnData = runMethod(baseurl,SERVICEOFFERED, "requestCampaignReport", json, null);
 		String ret = returnData;
 		logger.debug("requestCampaignReport: reportID = " + ret);
 
@@ -1139,10 +1137,23 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation)
+	public String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		String aggregationStr = gson.toJson(aggregation);
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", Long.toString(campaignId));
+		jsonHash.put("firstDay", firstDay.toString());
+		jsonHash.put("lastDay", lastDay.toString());
+		jsonHash.put("aggregation", aggregationStr);		
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = "";
+		returnData = runMethod(baseurl,SERVICEOFFERED, "requestKeywordReport", json, null);
+		String ret = returnData;
+		logger.debug("requestKeywordReport: reportID = " + ret);
+
+		return ret;		
 	}
 
 	@Override
