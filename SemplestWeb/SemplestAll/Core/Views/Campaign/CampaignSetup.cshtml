@@ -6,6 +6,12 @@
     ViewBag.Title = "Campaign";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<style>
+    .enddate {
+        visibility: hidden;
+        display: none;
+    }
+</style>
 @section Title{
     Ad Setup
     
@@ -34,7 +40,7 @@
             @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
             <div id="tabstrip">
                 <ul>
-@*                    <li class="k-state-active">TELL US ABOUT YOUR BUSINESS</li>
+                    @*                    <li class="k-state-active">TELL US ABOUT YOUR BUSINESS</li>
 *@                    <li class="k-state-active">DEFINE PRODUCT</li>
                     <li>CREATE ADS</li>
                     @*<li>Additional Click Through Links("SiteLinks")</li>
@@ -48,14 +54,14 @@
                                     Product Group Name
                                 </label>
                                 <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
-                                    required validationmessage="Please enter {0}" />
+                                       required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <label for="productPromotionName" class="required">
                                     Product / Promotion Name
                                 </label>
                                 <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
-                                    required validationmessage="Please enter {0}" />
+                                       required validationmessage="Please enter {0}" />
                             </li>
                             <li>
                                 <h4 class="required">
@@ -77,13 +83,13 @@
                                     Product Start Date
                                 </label>
                                 <input type="text" id="StartDate" name="StartDate" class="k-textbox" placeholder="Start"
-                                    required validationmessage="Please select {0}" data-bind="value: ProductStartDate" />
+                                       required validationmessage="Please select {0}" data-bind="value: ProductStartDate" />
                             </li>
                             <li>
                                 <label for="StartEndDate" class="required">
                                     Period
                                 </label>
-@*                                <div class="options">
+                                @*                                <div class="options">
                                     <input id="dropDownPeriodList" />
                                 </div>
 *@
@@ -91,7 +97,7 @@
                                     <option value="EachMonth">Each Month</option>
                                     <option value="SpecificMonth">Specific Month</option>
                                 </select>
-                                <input type="text" id="EndDate" name="EndDate" class="k-textbox" style="visibility:hidden" validationmessage="Please selectd {0}" />
+                                <input type="text" id="EndDate" name="EndDate" class="k-textbox enddate" validationmessage="Please selectd {0}" />
                             </li>
                             <li>
                                 <label for="SearchEngines" class="required">
@@ -123,7 +129,7 @@
                                         @Html.EditorFor(t => t.Addresses)
                                     </div>
                                     <div style="text-align:right">
-                                    @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(Address))
+                                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(Address))
                                     </div>
                                 </td>
                             </tr>
@@ -230,3 +236,4 @@
         
     </div>
 </div>
+

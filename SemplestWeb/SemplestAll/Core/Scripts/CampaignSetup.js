@@ -36,15 +36,37 @@
         var dataItem = this.dataItem(e.item.index());
         alert(dataItem.text);
         if (dataItem.text == 'Specific Month') {
-            alert(' in if');
-            //$("#EndDate").kendoDatePicker({ visible: true });
+            $("#EndDate").removeClass("enddate");
+            $("#EndDate").kendoDatePicker({
+                change: endChange
+            }).data("kendoDatePicker");
         }
         else {
-            alert('in else');
-            //$("#EndDate").style.visibility = 'hidden';
+            $("#EndDate").addClass("enddate");
+            disposeDatePicker();
         }
-        alert("event :: select (" + dataItem.text + " : " + dataItem.value);
     };
+    function disposeDatePicker() {
+        var datepicker = $("#EndDate").data("kendoDatePicker"),
+    popup = datepicker.dateView.popup,
+    element = popup.wrapper[0] ? popup.wrapper : popup.element;
+
+        //Move the shared calendar to the body
+        kendo.ui.DatePicker.sharedCalendar.element.hide().appendTo(document.body);
+
+        //remove popup element;
+        element.remove();
+        //unwrap element
+        var input = datepicker.element.show();
+
+        input.removeClass("k-input").css("width", "auto");
+        input.insertBefore(datepicker.wrapper);
+
+        datepicker.wrapper.remove();
+
+        //remove DatePicker object
+        input.removeData("kendoDatePicker");
+    }
 
     // attach select event handler during initialization
     var dropdownlist = $("#dropDownPeriodList").kendoDropDownList({
@@ -62,7 +84,7 @@
         if (startDate) {
             startDate = new Date(startDate);
             startDate.setDate(startDate.getDate() + 1);
-            end.min(startDate);
+            //end.min(startDate);
         }
     }
     function endChange() {
@@ -79,12 +101,12 @@
         change: startChange
     }).data("kendoDatePicker");
 
-    var end = $("#EndDate").kendoDatePicker({
-        change: endChange
-    }).data("kendoDatePicker");
+    //    var end = $("#EndDate").kendoDatePicker({
+    //        change: endChange
+    //    }).data("kendoDatePicker");
 
-    start.max(end.value());
-    end.min(start.value());
+    //start.max(end.value());
+    //end.min(start.value());
     // Tab Activated Event to Change The Color of the Number 1,2,3,4
     var onActivate = function () {
         switch (tabStrip.select().text()) {
