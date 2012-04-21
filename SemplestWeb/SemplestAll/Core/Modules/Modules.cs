@@ -1,8 +1,7 @@
 ﻿using Ninject.Modules;
 using Semplest.Core.Models.Repositories;
-using SemplestWebApp.Models.Repositories;
 
-namespace SemplestWebApp.Modules
+namespace Semplest.Core.Modules
 {
     public class Module : NinjectModule
     {

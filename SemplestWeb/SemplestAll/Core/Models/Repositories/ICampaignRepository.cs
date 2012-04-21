@@ -2,5 +2,6 @@
 {
     public interface ICampaignRepository
     {
+        int Save(string data);
     }
 }

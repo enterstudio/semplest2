@@ -58,5 +58,10 @@ namespace Semplest.Core.Controllers
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
         }
+
+        public ActionResult SaveDefineProduct(string data)
+        {
+            return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
+        }
     }
 }

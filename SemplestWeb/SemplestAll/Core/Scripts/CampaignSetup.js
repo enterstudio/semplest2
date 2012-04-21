@@ -1,10 +1,10 @@
-﻿$(document).ready(function() {
+﻿$(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     // Juery Validator for Validations
     var validator = $("#cap-view").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
-    $("#save1").click(function() {
+    $("#save1").click(function () {
         if (validator.validate()) {
             status.text("Hooray! Your tickets has been booked!").addClass("valid");
             tabStrip.select(1);
@@ -14,24 +14,24 @@
         }
     });
     // Previous and Save And Continue Button tab changed Logic
-    $("#save2").click(function() {
+    $("#save2").click(function () {
         tabStrip.select(2);
         tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
     });
-    $("#save3").click(function() {
+    $("#save3").click(function () {
         tabStrip.select(3);
         tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
     });
-    $("#back1").click(function() { tabStrip.select(0); });
-    $("#back2").click(function() { tabStrip.select(1); });
-    $("#back3").click(function() { tabStrip.select(2); });
-    $("#save").click(function() { tabStrip.select(0); });
+    $("#back1").click(function () { tabStrip.select(0); });
+    $("#back2").click(function () { tabStrip.select(1); });
+    $("#back3").click(function () { tabStrip.select(2); });
+    $("#save").click(function () { tabStrip.select(0); });
     //DropdownlistBindig
-    $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2" }] });
+    $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
 
 
     // event handler for select
-    var onSelect = function(e) {
+    var onSelect = function (e) {
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
         if (dataItem.text == 'Specific Month') {
@@ -109,28 +109,28 @@
     //start.max(end.value());
     //end.min(start.value());
     // Tab Activated Event to Change The Color of the Number 1,2,3,4
-    var onActivate = function() {
+    var onActivate = function () {
         switch (tabStrip.select().text()) {
-        case "DEFINE PRODUCT":
-            $("input[type='button']#btnOne").addClass('k-state-btnerror');
-            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-            break;
-        case "CREATE ADS":
-            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-            $("input[type='button']#btnTwo").addClass('k-state-btnerror');
-            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-            break;
-        case 'Additional Click Through Links("SiteLinks")':
-            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-            $("input[type='button']#btnThree").addClass('k-state-btnerror');
-            break;
-        case "Negative Keywords":
-            $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-            $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-            $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-            break;
+            case "DEFINE PRODUCT":
+                $("input[type='button']#btnOne").addClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
+            case "CREATE ADS":
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").addClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
+            case 'Additional Click Through Links("SiteLinks")':
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").addClass('k-state-btnerror');
+                break;
+            case "Negative Keywords":
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
         }
     };
     //Generate Tab
@@ -147,7 +147,7 @@
     $("input[type='button']#btnOne").addClass("k-button rounded");
 
     var isAdditionalLinksAdded = false;
-    $("#additionalLinks").click(function() {
+    $("#additionalLinks").click(function () {
         if (!isAdditionalLinksAdded) {
             tabStrip.append({
                 text: 'Additional Click Through Links("SiteLinks")'
@@ -156,13 +156,38 @@
         }
     });
     var isnegativeKeyWordsAdded = false;
-    $("#negativeKeyWords").click(function() {
+    $("#negativeKeyWords").click(function () {
         if (!isnegativeKeyWordsAdded) {
             tabStrip.append({
                 text: 'Negative Keywords'
             });
             isnegativeKeyWordsAdded = true;
         }
+    });
+    $('#frmCampaign').submit(function (e) {
+        e.preventDefault();
+
+        $.fn.serializeObject = function () {
+            var o = {};
+            var a = this.serializeArray();
+            $.each(a, function () {
+                if (o[this.name] !== undefined) {
+                    if (!o[this.name].push) {
+                        o[this.name] = [o[this.name]];
+                    }
+                    o[this.name].push(this.value || '');
+                } else {
+                    o[this.name] = this.value || '';
+                }
+            });
+            return o;
+        };
+        var data = $(this).serializeArray();
+        var data1 = (JSON.stringify(data));
+        alert(data1);
+        $.post('/Campaign/SaveDefineProduct/', { data: data1 }, function (e) {
+            alert(e);
+        }).error(function (err) { alert(err); });
     });
 });
 
