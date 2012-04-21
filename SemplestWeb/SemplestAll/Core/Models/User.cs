@@ -20,6 +20,7 @@ namespace Semplest.Core.Models
             this.Employees = new HashSet<Employee>();
             this.TransactionHistories = new HashSet<TransactionHistory>();
             this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
+            this.Schedules = new HashSet<Schedule>();
         }
     
         public int UserPK { get; set; }
@@ -37,5 +38,6 @@ namespace Semplest.Core.Models
         public virtual ICollection<Employee> Employees { get; set; }
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

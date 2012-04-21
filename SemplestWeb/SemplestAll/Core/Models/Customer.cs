@@ -25,6 +25,7 @@ namespace Semplest.Core.Models
             this.CustomerNotes = new HashSet<CustomerNote>();
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
             this.Users = new HashSet<User>();
+            this.Schedules = new HashSet<Schedule>();
         }
     
         public int CustomerPK { get; set; }
@@ -47,5 +48,6 @@ namespace Semplest.Core.Models
         public virtual CustomerStyle CustomerStyle { get; set; }
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
         public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

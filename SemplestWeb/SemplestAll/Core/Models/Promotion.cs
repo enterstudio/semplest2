@@ -19,6 +19,8 @@ namespace Semplest.Core.Models
             this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
             this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
+            this.GeoTargetings = new HashSet<GeoTargeting>();
+            this.Schedules = new HashSet<Schedule>();
         }
     
         public int PromotionPK { get; set; }
@@ -35,5 +37,7 @@ namespace Semplest.Core.Models
         public virtual ProductGroup ProductGroup { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
+        public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }
