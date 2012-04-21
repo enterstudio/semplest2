@@ -37,5 +37,10 @@ namespace Semplest.Core.Controllers
             }
         }
 
+        public ActionResult TestMap()
+        {
+            return View();
+        }
+
     }
 }
