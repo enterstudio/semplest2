@@ -7,7 +7,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.service.springjdbc.CustomerDB;
 import semplest.server.service.springjdbc.CustomerObj;
-import semplest.server.service.springjdbc.SetScheduleCompleteSP;
+import semplest.server.service.springjdbc.SetScheduleJobCompleteSP;
 
 public class TestSpringJDBC
 {
@@ -37,7 +37,7 @@ public class TestSpringJDBC
 			{
 				System.out.println("No customers found");
 			}
-			SetScheduleCompleteSP sp  = new SetScheduleCompleteSP();
+			SetScheduleJobCompleteSP sp  = new SetScheduleJobCompleteSP();
 			Map res = sp.execute(2, 1);
 			
 			/*

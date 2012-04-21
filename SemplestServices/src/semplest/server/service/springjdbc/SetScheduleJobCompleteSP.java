@@ -7,15 +7,15 @@ import java.util.Map;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
-public class SetScheduleCompleteSP extends StoredProcedure 
+public class SetScheduleJobCompleteSP extends StoredProcedure 
 {
-	private static final String SPROC_NAME = "SetScheduleComplete";
+	private static final String SPROC_NAME = "SetScheduleJobComplete";
 	
-	public SetScheduleCompleteSP()
+	public SetScheduleJobCompleteSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME );
-		declareParameter(new SqlParameter("ScheduleID", Types.INTEGER));
-		declareParameter(new SqlParameter("IsSucceedD", Types.BIT));
+		declareParameter(new SqlParameter("ScheduleJobID", Types.INTEGER));
+		declareParameter(new SqlParameter("IsSucceedful", Types.BIT));
 		//declareParameter(new SqlOutParameter("titles", , new TitleMapper()));
         compile();
 
@@ -23,7 +23,7 @@ public class SetScheduleCompleteSP extends StoredProcedure
 	}
 	public Map execute(Integer ScheduleID, boolean IsSuccessful) {
         Map inputs = new HashMap();
-        inputs.put("ScheduleID", ScheduleID);
+        inputs.put("ScheduleJobID", ScheduleID);
         inputs.put("IsSuccessful", IsSuccessful);
         return super.execute(inputs);
     }

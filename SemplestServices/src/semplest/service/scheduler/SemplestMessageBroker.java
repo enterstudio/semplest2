@@ -1,6 +1,5 @@
 package semplest.service.scheduler;
 
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -61,7 +60,7 @@ public class SemplestMessageBroker extends Thread
 		}
 	}
 
-	synchronized public void newMessageFromDB(SchedulerRecord data)
+	synchronized public void newMessageFromWebService(SchedulerRecord data)
 	{
 		logger.debug("MessageBroker- New Message From DB:" +  data.getScheduleID());
 		messageQueue.add(data);
@@ -74,7 +73,7 @@ public class SemplestMessageBroker extends Thread
 		while (it.hasNext())
 		{
 			SchedulerRecord d = it.next();
-			logger.debug("messageQueue:" + i + " val=" + d.getScheduleID());
+			logger.debug("messageQueue:" + i + " val=" + d.getScheduleID() + ": job" + d.getScheduleJobID());
 			i++;
 		}
 	}

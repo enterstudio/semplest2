@@ -3,6 +3,7 @@ package semplest.service.scheduler;
 public class SchedulerRecord
 {
 // CustomerID, Integer ProductGroup, Integer PromotionID, String StartTime
+	private Integer scheduleJobID;
 	private Integer scheduleID;
 	private Long timeToRunInMS;
 	private Boolean IsDelete = false;
@@ -29,6 +30,14 @@ public class SchedulerRecord
 	public void setIsDelete(Boolean isDelete)
 	{
 		IsDelete = isDelete;
+	}
+	public Integer getScheduleJobID()
+	{
+		return scheduleJobID;
+	}
+	public void setScheduleJobID(Integer scheduleJobID)
+	{
+		this.scheduleJobID = scheduleJobID;
 	}
 
 	

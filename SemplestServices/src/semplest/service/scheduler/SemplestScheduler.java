@@ -2,7 +2,6 @@ package semplest.service.scheduler;
 
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -94,7 +93,7 @@ public class SemplestScheduler extends Thread
 
 							logger.debug("????????????????????????????????????????????????");
 							logger.debug("????????????????????????????????????????????????");
-							logger.debug("Run Schedule:" + runData.getScheduleID());
+							logger.debug("Run Schedule:" + runData.getScheduleJobID());
 							
 							
 							scheduleRunning = true;
@@ -108,20 +107,20 @@ public class SemplestScheduler extends Thread
 							if (result != null)
 							{
 								// write result to DB
-								logger.debug("*****Write Result to DB for : ScheduleID=" + runData.getScheduleID());
+								logger.debug("*****Write Result to DB for : ScheduleJobID=" + runData.getScheduleJobID());
 								//****SetScheduleOrderDataComplete(Integer.parseInt(runData.getScheduleOrderID()),Integer.parseInt(runData.getScheduleID()), result.booleanValue(), Integer.parseInt(runData.getUserID()));
 								// remove the schedule and report the result
 								synchronized (lock)
 								{
-									removeScheduleToRun(runData.getScheduleID());
+									removeScheduleToRun(runData.getScheduleJobID());
 								}
 							}
 							scheduleRunning = false;
-							logger.debug("Run Sched UN-Lock:" + runData.getScheduleID());
+							logger.debug("Run Sched UN-Lock:" + runData.getScheduleJobID());
 						}
 						else
 						{
-							logger.debug("Schedlue Cancel:" + runData.getScheduleID());
+							logger.debug("Schedlue Cancel:" + runData.getScheduleJobID());
 							cancel = false;
 						}
 					}
@@ -153,16 +152,20 @@ public class SemplestScheduler extends Thread
 	 */
 	synchronized public void receiveSchedulerRecord(SchedulerRecord scheduleRecord)
 	{
-		logger.debug("Message Processor - receiveSchedulerRecord schedID=" + scheduleRecord.getScheduleID() + ":" + scheduleRecord.getTimeToRunInMS());
+		logger.debug("Message Processor -job" + scheduleRecord.getScheduleJobID() +":" + "schedID=" + scheduleRecord.getScheduleID() + ":" + scheduleRecord.getTimeToRunInMS());
 		if (recordAlreadyExist(scheduleRecord))
 		{
 			logger.debug("Ignor - Received the same message for " + scheduleRecord.getScheduleID() + " at Time " + scheduleRecord.getTimeToRunInMS());
+		}
+		else if (scheduleRecord.getScheduleJobID() == null)
+		{
+			logger.error("Received message with no JobID for " + scheduleRecord.getScheduleID() + " at Time " + scheduleRecord.getTimeToRunInMS());
 		}
 		else
 		{
 			synchronized (lock)
 			{
-				int pos = findPositionOfscheduleID(scheduleRecord.getScheduleID());
+				int pos = findPositionOfscheduleJobID(scheduleRecord.getScheduleJobID());
 				if (scheduleRecord.getIsDelete())
 				{
 					// Trying to remove the Head of the list
@@ -278,7 +281,7 @@ public class SemplestScheduler extends Thread
 	{
 		for (SchedulerRecord rec : recordMessageList)
 		{
-			if (record.getScheduleID().equals(rec.getScheduleID()) && record.getTimeToRunInMS() == rec.getTimeToRunInMS()) 
+			if (record.getScheduleJobID().equals(rec.getScheduleJobID())) 
 			{
 				return true;
 			}
@@ -286,13 +289,13 @@ public class SemplestScheduler extends Thread
 		return false;
 	}
 	/*
-	 * Should be based on ScheduleOrderID?
+	 *
 	 */
-	private boolean removeScheduleToRun(Integer ScheduleID)
+	private boolean removeScheduleToRun(Integer ScheduleJobID)
 	{
 		try
 		{
-			int pos = findPositionOfscheduleID(ScheduleID);
+			int pos = findPositionOfscheduleJobID(ScheduleJobID);
 			if (pos != -1)
 			{
 				SchedulerRecord removed = recordMessageList.remove(pos);
@@ -307,13 +310,13 @@ public class SemplestScheduler extends Thread
 			}
 			else
 			{
-				logger.warn("Could not find record to delete for schedule:" + ScheduleID);
+				logger.warn("Could not find record to delete for schedule job:" + ScheduleJobID);
 				return false;
 			}
 		}
 		catch (Exception e)
 		{
-			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule:" + ScheduleID);
+			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID);
 			return false;
 
 		}
@@ -337,13 +340,13 @@ public class SemplestScheduler extends Thread
 		return i;
 	}
 
-	private int findPositionOfscheduleID(Integer ScheduleID)
+	private int findPositionOfscheduleJobID(Integer ScheduleJobID)
 	{
 		int i = 0;
 		int pos = -1;
 		for (SchedulerRecord rec : recordMessageList)
 		{
-			if (rec.getScheduleID().equals(ScheduleID))
+			if (rec.getScheduleJobID().equals(ScheduleJobID))
 			{
 				pos = i;
 				break;

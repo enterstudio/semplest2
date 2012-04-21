@@ -33,22 +33,24 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 	{
 		logger.debug("call deleteAd(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer scheduleJobID = Integer.parseInt(data.get("scheduleJobID"));
 		Integer ScheduleID = Integer.parseInt(data.get("ScheduleID"));
 		Boolean IsDelete = Boolean.getBoolean(data.get("IsDelete"));
 		java.util.Date StartTime = new  java.util.Date(data.get("StartTime"));
 		
-		Boolean del =  NewSchedule(ScheduleID,StartTime,IsDelete);
+		Boolean del =  NewSchedule(scheduleJobID,ScheduleID,StartTime,IsDelete);
 		// convert result to Json String
 		return gson.toJson(del);
 	}
 	@Override
-	public Boolean NewSchedule(Integer ScheduleID, java.util.Date StartTime,Boolean IsDelete) throws Exception
+	public Boolean NewSchedule(Integer scheduleJobID,Integer ScheduleID, java.util.Date StartTime,Boolean IsDelete) throws Exception
 	{
 		SchedulerRecord newschedule = new SchedulerRecord();
+		newschedule.setScheduleJobID(scheduleJobID);
 		newschedule.setIsDelete(IsDelete);
 		newschedule.setScheduleID(ScheduleID);
 		newschedule.setTimeToRunInMS(StartTime.getTime());
-		SemplestSchedulerServiceImpl.messageBroker.newMessageFromDB(newschedule);
+		SemplestSchedulerServiceImpl.messageBroker.newMessageFromWebService(newschedule);
 		return true;
 	}
 
