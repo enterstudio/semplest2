@@ -7,18 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class ScheduleLog
+    public class ScheduleLog
     {
         public int ScheduleLogPK { get; set; }
-        public Nullable<int> ScheduleFK { get; set; }
-        public System.DateTime DateCreated { get; set; }
+        public int? ScheduleFK { get; set; }
+        public DateTime DateCreated { get; set; }
         public bool IsSuccessful { get; set; }
-    
+
         public virtual Schedule Schedule { get; set; }
     }
 }

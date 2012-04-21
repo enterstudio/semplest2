@@ -9,15 +9,12 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class UserRolesAssociation
+    public class UserRolesAssociation
     {
         public int UserRolesAssociationPK { get; set; }
         public int RolesFK { get; set; }
         public int UsersFK { get; set; }
-    
+
         public virtual Role Role { get; set; }
         public virtual User User { get; set; }
     }

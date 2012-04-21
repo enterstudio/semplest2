@@ -1,5 +1,5 @@
-﻿@using SemplestWebApp.Helpers
-@using Semplest.Core.Models
+﻿@using Semplest.Core.Models
+@using SemplestWebApp.Helpers
 @model Semplest.Core.Models.CampaignSetupModel
 @Html.AntiForgeryToken()
 @{
@@ -8,8 +8,8 @@
 }
 <style>
     .enddate {
-        visibility: hidden;
         display: none;
+        visibility: hidden;
     }
 </style>
 @section Title{
@@ -27,9 +27,9 @@
 @section Navbar{
     <div id="panelbar-images">
     </div>
-    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
 }
-<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
 <div id="exampleTitleBg">
    
 </div>
@@ -105,7 +105,7 @@
                                 </label>
                                 <input id="Google" name="Google" type="checkbox" value="Google">Google</input>
                                 <input id="Yahoo" name="Yahoo" type="checkbox" value="Yahoo">Yahoo / Bing</input>
-@*                                <input id="Bing" name="Bing" type="checkbox" value="Bing">Bing</input>
+                                @*                                <input id="Bing" name="Bing" type="checkbox" value="Bing">Bing</input>
 *@                            </li>
                             <li>
                                 <button class="k-button" id="save1" type="button">
@@ -128,8 +128,8 @@
                                     <div id="addresses">
                                         @Html.EditorFor(t => t.Addresses)
                                     </div>
-                                    <div style="text-align:right">
-                                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(Address))
+                                    <div style="text-align: right">
+                                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof (Address))
                                     </div>
                                 </td>
                             </tr>
@@ -236,4 +236,3 @@
         
     </div>
 </div>
-

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Security.Principal;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using Semplest.Core.Models;
@@ -13,14 +7,19 @@ namespace Semplest.Core.Controllers
 {
     public class AccountController : Controller
     {
-
         public IFormsAuthenticationService FormsService { get; set; }
         public IMembershipService MembershipService { get; set; }
 
         protected override void Initialize(RequestContext requestContext)
         {
-            if (FormsService == null) { FormsService = new FormsAuthenticationService(); }
-            if (MembershipService == null) { MembershipService = new AccountMembershipService(); }
+            if (FormsService == null)
+            {
+                FormsService = new FormsAuthenticationService();
+            }
+            if (MembershipService == null)
+            {
+                MembershipService = new AccountMembershipService();
+            }
 
             base.Initialize(requestContext);
         }
@@ -80,7 +79,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Register()
         {
             ViewBag.PasswordLength = MembershipService.MinPasswordLength;
-          
+
             return View();
         }
 
@@ -90,7 +89,8 @@ namespace Semplest.Core.Controllers
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
-                MembershipCreateStatus createStatus = MembershipService.CreateUser(model.UserName, model.Password, model.Email);
+                MembershipCreateStatus createStatus = MembershipService.CreateUser(model.UserName, model.Password,
+                                                                                   model.Email);
 
                 if (createStatus == MembershipCreateStatus.Success)
                 {
@@ -148,6 +148,5 @@ namespace Semplest.Core.Controllers
         {
             return View();
         }
-
     }
 }

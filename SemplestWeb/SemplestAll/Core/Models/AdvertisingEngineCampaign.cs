@@ -9,15 +9,12 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class AdvertisingEngineCampaign
+    public class AdvertisingEngineCampaign
     {
         public string AdvertisingEngineCampaignPK { get; set; }
-        public Nullable<int> PromotionFK { get; set; }
+        public int? PromotionFK { get; set; }
         public string AdvertisingEngineAccountFK { get; set; }
-    
+
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
         public virtual Promotion Promotion { get; set; }
     }

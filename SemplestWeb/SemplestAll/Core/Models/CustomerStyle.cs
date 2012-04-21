@@ -9,14 +9,11 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class CustomerStyle
+    public class CustomerStyle
     {
         public int CustomerFK { get; set; }
         public string CustomerLogo { get; set; }
-    
+
         public virtual Customer Customer { get; set; }
     }
 }

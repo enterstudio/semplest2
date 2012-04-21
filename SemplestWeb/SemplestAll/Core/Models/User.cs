@@ -7,32 +7,32 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class User
+    public class User
     {
         public User()
         {
-            this.Credentials = new HashSet<Credential>();
-            this.Employees = new HashSet<Employee>();
-            this.TransactionHistories = new HashSet<TransactionHistory>();
-            this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
-            this.Schedules = new HashSet<Schedule>();
+            Credentials = new HashSet<Credential>();
+            Employees = new HashSet<Employee>();
+            TransactionHistories = new HashSet<TransactionHistory>();
+            UserRolesAssociations = new HashSet<UserRolesAssociation>();
+            Schedules = new HashSet<Schedule>();
         }
-    
+
         public int UserPK { get; set; }
-        public Nullable<int> CustomerFK { get; set; }
+        public int? CustomerFK { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? EditedDate { get; set; }
         public bool IsActive { get; set; }
         public string MiddleInitial { get; set; }
-    
+
         public virtual ICollection<Credential> Credentials { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }

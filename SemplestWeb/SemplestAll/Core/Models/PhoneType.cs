@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class PhoneType
+    public class PhoneType
     {
         public PhoneType()
         {
-            this.Phones = new HashSet<Phone>();
+            Phones = new HashSet<Phone>();
         }
-    
+
         public int PhoneTypePK { get; set; }
         public string PhoneType1 { get; set; }
-    
+
         public virtual ICollection<Phone> Phones { get; set; }
     }
 }

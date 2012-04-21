@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class EmployeeType
+    public class EmployeeType
     {
         public EmployeeType()
         {
-            this.Employees = new HashSet<Employee>();
+            Employees = new HashSet<Employee>();
         }
-    
+
         public int EmployeeTypeID { get; set; }
         public string EmployeeType1 { get; set; }
-    
+
         public virtual ICollection<Employee> Employees { get; set; }
     }
 }

@@ -7,22 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Role
+    public class Role
     {
         public Role()
         {
-            this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
-            this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
+            RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
+            UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
-    
+
         public int RolePK { get; set; }
         public string RoleName { get; set; }
-    
+
         public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }

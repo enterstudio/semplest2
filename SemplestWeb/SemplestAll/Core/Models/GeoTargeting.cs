@@ -9,21 +9,18 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class GeoTargeting
+    public class GeoTargeting
     {
         public int GeoTargetingPK { get; set; }
         public int PromotionFK { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
-        public Nullable<int> StateCodeFK { get; set; }
+        public int? StateCodeFK { get; set; }
         public string Zip { get; set; }
-        public Nullable<decimal> Longitude { get; set; }
-        public Nullable<decimal> Latitude { get; set; }
-        public Nullable<decimal> ProximityRadius { get; set; }
-    
+        public decimal? Longitude { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? ProximityRadius { get; set; }
+
         public virtual Promotion Promotion { get; set; }
     }
 }

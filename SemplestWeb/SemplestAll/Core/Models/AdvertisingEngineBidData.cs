@@ -7,23 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class AdvertisingEngineBidData
+    public class AdvertisingEngineBidData
     {
         public int AdvertisingEngineBidPK { get; set; }
-        public Nullable<int> KeywordBidFK { get; set; }
+        public int? KeywordBidFK { get; set; }
         public decimal BidAmount { get; set; }
         public int NumberImpressions { get; set; }
         public int NumberClick { get; set; }
         public int AveragePosition { get; set; }
         public decimal AverageCPC { get; set; }
-        public Nullable<int> QualityScore { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-    
+        public int? QualityScore { get; set; }
+        public DateTime CreatedDate { get; set; }
+
         public virtual KeywordBid KeywordBid { get; set; }
     }
 }

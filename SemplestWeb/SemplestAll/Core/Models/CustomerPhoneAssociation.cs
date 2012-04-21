@@ -7,17 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class CustomerPhoneAssociation
+    public class CustomerPhoneAssociation
     {
         public int CustomerFK { get; set; }
         public int PhoneFK { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
+
         public virtual Customer Customer { get; set; }
         public virtual Phone Phone { get; set; }
     }

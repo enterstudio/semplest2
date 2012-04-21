@@ -7,25 +7,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Phone
+    public class Phone
     {
         public Phone()
         {
-            this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
+            CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
         }
-    
+
         public int PhonePK { get; set; }
         public string Phone1 { get; set; }
         public string Extension { get; set; }
         public int PhoneTypeFK { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
+        public DateTime? EditedDate { get; set; }
+
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
         public virtual PhoneType PhoneType { get; set; }
     }

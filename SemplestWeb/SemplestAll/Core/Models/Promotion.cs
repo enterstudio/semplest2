@@ -7,32 +7,32 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Promotion
+    public class Promotion
     {
         public Promotion()
         {
-            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
-            this.PromotionAds = new HashSet<PromotionAd>();
-            this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
-            this.GeoTargetings = new HashSet<GeoTargeting>();
-            this.Schedules = new HashSet<Schedule>();
+            AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
+            PromotionAds = new HashSet<PromotionAd>();
+            PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
+            GeoTargetings = new HashSet<GeoTargeting>();
+            Schedules = new HashSet<Schedule>();
         }
-    
+
         public int PromotionPK { get; set; }
         public int ProductGroupFK { get; set; }
         public string LandingPageURL { get; set; }
         public decimal CycleBudgetAmount { get; set; }
-        public System.DateTime StartDate { get; set; }
-        public Nullable<System.DateTime> EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public bool IsPaused { get; set; }
-        public System.DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
         public string EditedDate { get; set; }
-    
+
         public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }

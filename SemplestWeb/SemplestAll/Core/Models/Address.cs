@@ -7,27 +7,27 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Address
+    public class Address
     {
         public Address()
         {
-            this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
+            CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
         }
-    
+
         public int AddressPK { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
         public string City { get; set; }
         public int StateAbbrFK { get; set; }
         public string ZipCode { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
+        public DateTime? EditedDate { get; set; }
+
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
         public virtual StateCode StateCode { get; set; }
     }

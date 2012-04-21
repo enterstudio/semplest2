@@ -7,35 +7,35 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Schedule
+    public class Schedule
     {
         public Schedule()
         {
-            this.ScheduleLogs = new HashSet<ScheduleLog>();
-            this.ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
+            ScheduleLogs = new HashSet<ScheduleLog>();
+            ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
         }
-    
+
         public int SchedulePK { get; set; }
-        public System.DateTime StartTime { get; set; }
+        public DateTime StartTime { get; set; }
         public int FrequencyFK { get; set; }
         public bool IsEnabled { get; set; }
         public bool IsSuccessful { get; set; }
         public bool IsInactive { get; set; }
         public int IsComplete { get; set; }
         public int CreatedBy { get; set; }
-        public System.DateTime CreatedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
         public int EditedBy { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
-        public Nullable<int> PromotionFK { get; set; }
-        public Nullable<int> CustomerFK { get; set; }
-        public Nullable<int> ProductGroupFK { get; set; }
-        public Nullable<int> UsersFK { get; set; }
-    
+        public DateTime? EditedDate { get; set; }
+        public int? PromotionFK { get; set; }
+        public int? CustomerFK { get; set; }
+        public int? ProductGroupFK { get; set; }
+        public int? UsersFK { get; set; }
+
         public virtual Customer Customer { get; set; }
         public virtual Frequency Frequency { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }

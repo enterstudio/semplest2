@@ -9,16 +9,13 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class SiteLink
+    public class SiteLink
     {
         public int SiteLInkPK { get; set; }
         public int PromotionAdsFK { get; set; }
         public string LinkText { get; set; }
         public string LinkURL { get; set; }
-    
+
         public virtual PromotionAd PromotionAd { get; set; }
     }
 }

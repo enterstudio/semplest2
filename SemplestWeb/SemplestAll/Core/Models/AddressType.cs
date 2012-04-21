@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class AddressType
+    public class AddressType
     {
         public AddressType()
         {
-            this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
+            CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
         }
-    
+
         public int AddressTypePK { get; set; }
         public string AddressType1 { get; set; }
-    
+
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
     }
 }

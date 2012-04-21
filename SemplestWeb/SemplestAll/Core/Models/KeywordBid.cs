@@ -7,27 +7,27 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class KeywordBid
+    public class KeywordBid
     {
         public KeywordBid()
         {
-            this.AdvertisingEngineBidDatas = new HashSet<AdvertisingEngineBidData>();
+            AdvertisingEngineBidDatas = new HashSet<AdvertisingEngineBidData>();
         }
-    
+
         public int KeywordBidPK { get; set; }
         public int KeywordFK { get; set; }
         public int PromotionFK { get; set; }
-        public System.DateTime StartDate { get; set; }
-        public Nullable<System.DateTime> EndDate { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
         public bool IsActive { get; set; }
         public int BidTypeFK { get; set; }
         public decimal BidAmount { get; set; }
-    
+
         public virtual ICollection<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
         public virtual BidType BidType { get; set; }
         public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }

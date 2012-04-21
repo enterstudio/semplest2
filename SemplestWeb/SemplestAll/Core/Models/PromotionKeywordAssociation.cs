@@ -7,22 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class PromotionKeywordAssociation
+    public class PromotionKeywordAssociation
     {
         public PromotionKeywordAssociation()
         {
-            this.KeywordBids = new HashSet<KeywordBid>();
+            KeywordBids = new HashSet<KeywordBid>();
         }
-    
+
         public int KeywordFK { get; set; }
         public int PromotionFK { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
+
         public virtual Keyword Keyword { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
         public virtual Promotion Promotion { get; set; }

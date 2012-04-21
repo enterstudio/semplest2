@@ -9,15 +9,12 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class ScheduleTaskAssociation
+    public class ScheduleTaskAssociation
     {
         public int TaskFK { get; set; }
         public int ScheduleFK { get; set; }
         public int TaskExecutionOrder { get; set; }
-    
+
         public virtual Schedule Schedule { get; set; }
     }
 }

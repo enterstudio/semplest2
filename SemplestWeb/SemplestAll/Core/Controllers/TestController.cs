@@ -32,7 +32,6 @@ namespace Semplest.Core.Controllers
             }
             catch
             {
-
                 return View();
             }
         }
@@ -41,6 +40,5 @@ namespace Semplest.Core.Controllers
         {
             return View();
         }
-
     }
 }

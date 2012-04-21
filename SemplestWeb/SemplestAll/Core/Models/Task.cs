@@ -9,10 +9,7 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Task
+    public class Task
     {
         public int TaskPK { get; set; }
         public string ServiceName { get; set; }

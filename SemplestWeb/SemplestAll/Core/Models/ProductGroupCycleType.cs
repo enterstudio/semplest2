@@ -7,22 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class ProductGroupCycleType
+    public class ProductGroupCycleType
     {
         public ProductGroupCycleType()
         {
-            this.Customers = new HashSet<Customer>();
+            Customers = new HashSet<Customer>();
         }
-    
+
         public int ProductGroupCycleTypePK { get; set; }
         public string ProductGroupCycleType1 { get; set; }
         public int CycleInDays { get; set; }
-    
+
         public virtual ICollection<Customer> Customers { get; set; }
     }
 }

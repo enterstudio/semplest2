@@ -17,7 +17,6 @@ namespace Semplest.Core.Controllers
 
         public ActionResult BillType()
         {
-                    
             //var model = new BillType();
             //{
             //    model.BillType1 = "Credit Card";
@@ -39,7 +38,7 @@ namespace Semplest.Core.Controllers
                 }
             }
 
-            
+
             //return View();
         }
 
@@ -62,7 +61,6 @@ namespace Semplest.Core.Controllers
             }
             catch
             {
-                
                 return View();
             }
         }

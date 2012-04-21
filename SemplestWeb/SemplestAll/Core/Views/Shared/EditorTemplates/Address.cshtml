@@ -1,6 +1,6 @@
 ﻿@using SemplestWebApp.Helpers
 @model Semplest.Core.Models.Address
-<script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
 <div class="address">
     <table>
         <tr>
@@ -8,8 +8,8 @@
                 Address
             </td>
             <td>
-                @Html.TextAreaFor(t => t.Address1, new { @cols = 20, @rows = 3, @class = "k-textbox1" })
-                <button type="button" class="k-button" style="vertical-align:top" onclick="doOptions()">
+                @Html.TextAreaFor(t => t.Address1, new {@cols = 20, @rows = 3, @class = "k-textbox1"})
+                <button type="button" class="k-button" style="vertical-align: top" onclick=" doOptions() ">
                     <span class="k-search k-icon"></span>
                 </button>
             </td>
@@ -31,4 +31,3 @@
         </tr>
     </table>
 </div>
-

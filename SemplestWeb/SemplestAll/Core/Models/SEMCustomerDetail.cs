@@ -7,12 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class SEMCustomerDetail
+    public class SEMCustomerDetail
     {
         public int SEMCustomerDetailsPK { get; set; }
         public string FirstName { get; set; }
@@ -22,7 +21,7 @@ namespace Semplest.Core.Models
         public string email { get; set; }
         public bool CallMe { get; set; }
         public bool EmailMe { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? EditedDate { get; set; }
     }
 }

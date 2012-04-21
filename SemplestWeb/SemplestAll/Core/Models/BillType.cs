@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class BillType
+    public class BillType
     {
         public BillType()
         {
-            this.Customers = new HashSet<Customer>();
+            Customers = new HashSet<Customer>();
         }
-    
+
         public int BillTypePK { get; set; }
         public string BillType1 { get; set; }
-    
+
         public virtual ICollection<Customer> Customers { get; set; }
     }
 }

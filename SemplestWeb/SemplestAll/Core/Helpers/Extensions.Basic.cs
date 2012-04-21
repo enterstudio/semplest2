@@ -21,6 +21,7 @@ public static class MvcCheckBoxList_Extensions_Basic
         return htmlHelper.CheckBoxList
             (listName, dataList, null, null, null, position);
     }
+
     /// <summary>
     /// Model-Independent function
     /// </summary>
@@ -37,6 +38,7 @@ public static class MvcCheckBoxList_Extensions_Basic
         return htmlHelper.CheckBoxList
             (listName, dataList, htmlAttributes, null, null, position);
     }
+
     /// <summary>
     /// Model-Independent function
     /// </summary>
@@ -54,6 +56,7 @@ public static class MvcCheckBoxList_Extensions_Basic
         return htmlHelper.CheckBoxList
             (listName, dataList, htmlAttributes, null, disabledValues, position);
     }
+
     /// <summary>
     /// Model-Independent function
     /// </summary>
@@ -69,6 +72,7 @@ public static class MvcCheckBoxList_Extensions_Basic
         return htmlHelper.CheckBoxList
             (listName, dataList, null, wrapInfo, null);
     }
+
     /// <summary>
     /// Model-Independent function
     /// </summary>
@@ -85,6 +89,7 @@ public static class MvcCheckBoxList_Extensions_Basic
         return htmlHelper.CheckBoxList
             (listName, dataList, null, wrapInfo, disabledValues);
     }
+
     /// <summary>
     /// Model-Independent function
     /// </summary>

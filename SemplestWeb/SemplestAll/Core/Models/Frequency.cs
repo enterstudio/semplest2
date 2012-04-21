@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Frequency
+    public class Frequency
     {
         public Frequency()
         {
-            this.Schedules = new HashSet<Schedule>();
+            Schedules = new HashSet<Schedule>();
         }
-    
+
         public int FrequencyPK { get; set; }
         public string Frequency1 { get; set; }
-    
+
         public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

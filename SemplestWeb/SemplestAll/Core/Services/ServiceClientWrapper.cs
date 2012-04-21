@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using Newtonsoft.Json;
-using System.Net;
 using System.IO;
+using System.Linq;
+using System.Net;
+using Newtonsoft.Json;
 
 namespace SemplestWebApp.Services
 {
@@ -14,9 +13,10 @@ namespace SemplestWebApp.Services
         private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
         private static String timeoutMS = "40000";
 
-        public List<string> GetCategories(string companyName, string searchTerm, string description, string[] adds, string url)
+        public List<string> GetCategories(string companyName, string searchTerm, string description, string[] adds,
+                                          string url)
         {
-            Dictionary<string, string> jsonHash = new Dictionary<string, string>();
+            var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("companyName", companyName);
             jsonHash.Add("searchTerm", searchTerm);
             string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
@@ -29,15 +29,16 @@ namespace SemplestWebApp.Services
             string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
             //return JsonConvert.DeserializeObject<List<string>>(returnData);
 
-            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
             return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
         }
 
-        public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm, string description, string[] adds, string url, System.Int32[] nGrams)
+        public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm,
+                                        string description, string[] adds, string url, Int32[] nGrams)
         {
-            Dictionary<string, string> jsonHash = new Dictionary<string, string>();
+            var jsonHash = new Dictionary<string, string>();
             String jsonCategories = JsonConvert.SerializeObject(categories);
             jsonHash.Add("categories", jsonCategories);
             jsonHash.Add("companyName", companyName);
@@ -46,7 +47,7 @@ namespace SemplestWebApp.Services
             jsonHash.Add("adds", jsonAdds);
             jsonHash.Add("description", description);
             jsonHash.Add("url", url);
-            nGrams = new Int32[] { 50, 50 };
+            nGrams = new[] {50, 50};
             //nGrams = new Int32[] { 1,2,3 };
             string jsonNgrams = JsonConvert.SerializeObject(nGrams);
             jsonHash.Add("nGrams", jsonNgrams);
@@ -54,14 +55,14 @@ namespace SemplestWebApp.Services
 
             //string returnData = string.Empty;
             string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
-            Dictionary<string, string> dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
 
-            List<List<string>> listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-            List<string> newstrlist = new List<string>();
+            var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+            var newstrlist = new List<string>();
 
-            foreach(List<string> strlis in listoflist)
+            foreach (var strlis in listoflist)
             {
                 newstrlist.AddRange(strlis);
             }
@@ -71,26 +72,26 @@ namespace SemplestWebApp.Services
 
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
-	    {
-		    WebClient client = new WebClient();
+        {
+            var client = new WebClient();
             client.QueryString.Add("jsonStr", jsonStr);
             client.QueryString.Add("service", serviceName);
             client.QueryString.Add("method", methodName);
 
-		    if (timeoutMS != null)
-		    {
-			    client.QueryString.Add("timeout", timeoutMS);
-		    }
+            if (timeoutMS != null)
+            {
+                client.QueryString.Add("timeout", timeoutMS);
+            }
 
             client.BaseAddress = baseURL;
             string qs = client.QueryString.ToString();
             Stream data = client.OpenRead(baseURL);
-            StreamReader reader = new StreamReader (data);
-            string s = reader.ReadToEnd ();
+            var reader = new StreamReader(data);
+            string s = reader.ReadToEnd();
 
             //WebResource webResource = client.resource(baseURL);
             //return webResource.queryParams(queryParams).get(String.class);
             return s;
-	    }
+        }
     }
 }

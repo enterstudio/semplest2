@@ -7,24 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Infrastructure;
-    
-    public partial class SemplestEntities : DbContext
+    public class SemplestEntities : DbContext
     {
         public SemplestEntities()
             : base("name=SemplestEntities")
         {
         }
-    
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            throw new UnintentionalCodeFirstException();
-        }
-    
+
         public DbSet<Address> Addresses { get; set; }
         public DbSet<AddressType> AddressTypes { get; set; }
         public DbSet<AdvertisingEngine> AdvertisingEngines { get; set; }
@@ -71,5 +65,10 @@ namespace Semplest.Core.Models
         public DbSet<ScheduleLog> ScheduleLogs { get; set; }
         public DbSet<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
         public DbSet<Task> Tasks { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            throw new UnintentionalCodeFirstException();
+        }
     }
 }

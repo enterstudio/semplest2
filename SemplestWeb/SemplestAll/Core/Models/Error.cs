@@ -9,13 +9,10 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Error
+    public class Error
     {
         public int ErrorPK { get; set; }
         public string ErrorMessage { get; set; }
-        public Nullable<int> ErrorID { get; set; }
+        public int? ErrorID { get; set; }
     }
 }

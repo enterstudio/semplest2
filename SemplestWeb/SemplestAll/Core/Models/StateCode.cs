@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class StateCode
+    public class StateCode
     {
         public StateCode()
         {
-            this.Addresses = new HashSet<Address>();
+            Addresses = new HashSet<Address>();
         }
-    
+
         public int StateAbbrPK { get; set; }
         public string StateAbbr { get; set; }
-    
+
         public virtual ICollection<Address> Addresses { get; set; }
     }
 }

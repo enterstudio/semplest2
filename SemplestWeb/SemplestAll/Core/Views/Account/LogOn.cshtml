@@ -10,15 +10,15 @@
     <script>
         $("#panelbar-images").kendoPanelBar({
             dataSource: [
-                        {
-                            text: "Home",
-                            items: [
-                                { text: "Quick Start Guide" },
-                                { text: "FAQs" },
-                                { text: "Contact Us" }
-                            ]
-                        }
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" }
                     ]
+                }
+            ]
         });
 
     </script>
@@ -31,10 +31,10 @@
         <div id="options" align="center">
             <h3>
                 User Name</h3>
-            @Html.TextBoxFor(t => t.UserName, new { @class = "k-textbox" })
+            @Html.TextBoxFor(t => t.UserName, new {@class = "k-textbox"})
             <h3>
                 Password</h3>
-            @Html.PasswordFor(t => t.Password, new { @class = "k-textbox" })
+            @Html.PasswordFor(t => t.Password, new {@class = "k-textbox"})
             <br />
             <br />
             <button class="k-button" type="submit">
@@ -42,14 +42,13 @@
         </div>
     </div>
     <style scoped>
-        #datasource-views
-        {
-            padding: 20px;
+        #datasource-views {
             border-bottom-color: Black;
             border-radius: 10px;
             border-style: solid;
             border-width: 2px;
             overflow: hidden;
+            padding: 20px;
         }
     </style>
 }

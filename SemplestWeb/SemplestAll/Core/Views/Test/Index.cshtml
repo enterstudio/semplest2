@@ -1,10 +1,11 @@
-﻿@model IEnumerable<Semplest.Core.Models.Phone>
+﻿@using Semplest.Core.Models
+@model IEnumerable<Semplest.Core.Models.Phone>
 
 @{
     ViewBag.Title = "Index";
 }
 @section Title{
-Create Account
+    Create Account
 }
 @section Links
 {}
@@ -15,25 +16,24 @@ Create Account
     <script>
         $("#panelbar-images").kendoPanelBar({
             dataSource: [
-                        {
-                            text: "Home",
-                            items: [
-                                { text: "My Account" },
-                                { text: "Reporting" },
-                                { text: "Billing" }
-                            ]
-                        },
-                        {
-                            text: "Product Groups",
-                            items: [
-                                { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance"}] },
-                                { text: "Safty Tips", items: [{ text: "Auto Mobile"}] },
-                                { text: "Agents", items: [{ text: "Best Agents"}] }
-                            ]
-                        }
+                {
+                    text: "Home",
+                    items: [
+                        { text: "My Account" },
+                        { text: "Reporting" },
+                        { text: "Billing" }
                     ]
+                },
+                {
+                    text: "Product Groups",
+                    items: [
+                        { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance" }] },
+                        { text: "Safty Tips", items: [{ text: "Auto Mobile" }] },
+                        { text: "Agents", items: [{ text: "Best Agents" }] }
+                    ]
+                }
+            ]
         });
-
 
     </script>
 }
@@ -65,35 +65,35 @@ Create Account
         </th>
         <th></th>
     </tr>
-@if (Model != null)
-{
-foreach (var item in Model)
-{
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhonePK)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Phone1)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Extension)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneTypeFK)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.CreatedDate)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.EditedDate)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-            @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-        </td>
-    </tr>
-}
-}
+    @if (Model != null)
+    {
+        foreach (Phone item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhonePK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Phone1)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Extension)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhoneTypeFK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CreatedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EditedDate)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) |
+                    @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) |
+                    @Html.ActionLink("Delete", "Delete", new {/* id=item.PrimaryKey */})
+                </td>
+            </tr>
+        }
+    }
 </table>

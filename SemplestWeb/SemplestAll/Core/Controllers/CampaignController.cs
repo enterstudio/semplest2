@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
-using Semplest.Core.Models;
-using SemplestWebApp.Services;
 using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Semplest.Core.Models;
+using Semplest.Core.Models.Repositories;
 using SemplestWebApp.Helpers;
-using SemplestWebApp.Models.Repositories;
+using SemplestWebApp.Services;
 
 namespace Semplest.Core.Controllers
 {
     public class CampaignController : Controller
     {
         private ICampaignRepository campaignRepository;
+
         public CampaignController(ICampaignRepository iCampaignRepository)
         {
             campaignRepository = iCampaignRepository;
         }
+
         [AuthorizeRole]
         public ActionResult CampaignSetup()
         {
@@ -27,6 +29,7 @@ namespace Semplest.Core.Controllers
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
         }
+
         [HttpPost]
         public ActionResult CampaignSetup(CampaignSetupModel model)
         {
@@ -37,15 +40,16 @@ namespace Semplest.Core.Controllers
             }
             return View(model);
         }
+
         [HttpPost]
         public JsonResult AdditionalLinks(KendoGridRequest request)
         {
             var employees = new List<AdditionalLinks>
-            {
-                new AdditionalLinks { Id = 1, Name = "Bill", Url= "Jones"},
-                new AdditionalLinks { Id = 2, Name = "Rob", Url = "Johnson"},
-                new AdditionalLinks { Id = 3, Name = "Jane", Url = "Smith"},
-            };
+                                {
+                                    new AdditionalLinks {Id = 1, Name = "Bill", Url = "Jones"},
+                                    new AdditionalLinks {Id = 2, Name = "Rob", Url = "Johnson"},
+                                    new AdditionalLinks {Id = 3, Name = "Jane", Url = "Smith"},
+                                };
             var grid = new KendoGrid<AdditionalLinks>(request, employees);
             return Json(grid);
         }

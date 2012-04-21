@@ -1,29 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Web.Mvc;
-using System.Dynamic;
 
 /// <summary>
 /// @Html.CheckBoxList(...) main methods
 /// </summary>
 internal static class MvcCheckBoxList
 {
+    // properties
+    internal static string no_data_message = "No Records...";
+
+    internal static string empty_model_message = "View Model cannot be null! " +
+                                                 "Please make sure your View Model " +
+                                                 "is created and passed to this View";
+
+    internal static string empty_name_message = "Name of the CheckBoxList cannot be null or empty";
+
     static MvcCheckBoxList()
     {
         // reset internal counters
         linked_label_counter = 0;
         htmlwrap_rowbreak_counter = 0;
     }
-    // properties
-    internal static string no_data_message = "No Records...";
-    internal static string empty_model_message = "View Model cannot be null! " +
-                                                 "Please make sure your View Model " +
-                                                 "is created and passed to this View";
-    internal static string empty_name_message = "Name of the CheckBoxList cannot be null or empty";
+
+    /// <summary>
+    /// Counter to count when to insert HTML code that brakes checkbox list
+    /// </summary>
+    private static int htmlwrap_rowbreak_counter { get; set; }
+
+    /// <summary>
+    /// Counter to be used on a label linked to each checkbox in the list
+    /// </summary>
+    private static int linked_label_counter { get; set; }
 
     /// <summary>
     /// Model-Independent main function
@@ -44,10 +57,10 @@ internal static class MvcCheckBoxList
         // validation
         if (dataList == null || dataList.Count == 0) return MvcHtmlString.Create(no_data_message);
         if (String.IsNullOrEmpty(listName)) throw new ArgumentException(empty_name_message, "listName");
-        var numberOfItems = dataList.Count;
+        int numberOfItems = dataList.Count;
 
         // set up table/list html wrapper, if applicable
-        var htmlWrapper = createHtmlWrapper(wrapInfo, numberOfItems, position);
+        htmlWrapperInfo htmlWrapper = createHtmlWrapper(wrapInfo, numberOfItems, position);
 
         // create checkbox list
         var sb = new StringBuilder();
@@ -55,10 +68,10 @@ internal static class MvcCheckBoxList
         htmlwrap_rowbreak_counter = 0;
 
         // create list of selected values
-        var selectedValues = dataList.Where(x => x.Selected).Select(s => s.Value);
+        IEnumerable<string> selectedValues = dataList.Where(x => x.Selected).Select(s => s.Value);
 
         // create list of checkboxes based on data
-        foreach (var r in dataList)
+        foreach (SelectListItem r in dataList)
         {
             // create checkbox element
             sb = createCheckBoxListElement(sb, htmlHelper, null, htmlWrapper, htmlAttributes, selectedValues,
@@ -69,6 +82,7 @@ internal static class MvcCheckBoxList
         // return checkbox list
         return MvcHtmlString.Create(sb.ToString());
     }
+
     /// <summary>
     /// Model-Based main function
     /// </summary>
@@ -104,22 +118,23 @@ internal static class MvcCheckBoxList
          Position position = Position.Horizontal)
     {
         // validation
-        if (sourceDataExpr == null || sourceDataExpr.Body.ToString() == "null") return MvcHtmlString.Create(no_data_message);
+        if (sourceDataExpr == null || sourceDataExpr.Body.ToString() == "null")
+            return MvcHtmlString.Create(no_data_message);
         if (htmlHelper.ViewData.Model == null) throw new NoNullAllowedException(empty_model_message);
         if (string.IsNullOrEmpty(listName)) throw new ArgumentException(empty_name_message, "listName");
 
         // set properties
-        var model = htmlHelper.ViewData.Model;
-        var sourceData = sourceDataExpr.Compile()(model).ToList();
-        var valueFunc = valueExpr.Compile();
-        var textToDisplayFunc = textToDisplayExpr.Compile();
+        TModel model = htmlHelper.ViewData.Model;
+        List<TItem> sourceData = sourceDataExpr.Compile()(model).ToList();
+        Func<TItem, TValue> valueFunc = valueExpr.Compile();
+        Func<TItem, TKey> textToDisplayFunc = textToDisplayExpr.Compile();
         var selectedItems = new List<TItem>();
         if (selectedValuesExpr != null)
         {
-            var _selectedItems = selectedValuesExpr.Compile()(model);
+            IEnumerable<TItem> _selectedItems = selectedValuesExpr.Compile()(model);
             if (_selectedItems != null) selectedItems = _selectedItems.ToList();
         }
-        var selectedValues = selectedItems.Select(s => valueFunc(s).ToString()).ToList();
+        List<string> selectedValues = selectedItems.Select(s => valueFunc(s).ToString()).ToList();
 
         // validate source data
         if (!sourceData.Any()) return MvcHtmlString.Create(no_data_message);
@@ -128,22 +143,23 @@ internal static class MvcCheckBoxList
         Func<TItem, object, object> _valueHtmlAttributesFunc = (item, baseAttributes) => baseAttributes;
         if (htmlAttributesExpr != null)
         {
-            var valueHtmlAttributesFunc = htmlAttributesExpr.Compile();
+            Func<TItem, object> valueHtmlAttributesFunc = htmlAttributesExpr.Compile();
             _valueHtmlAttributesFunc = (item, baseAttributes) =>
-            {
-                var baseAttrDict = baseAttributes.toDictionary();
-                var itemAttrDict = valueHtmlAttributesFunc(item).toDictionary();
-                var result = new ExpandoObject();
-                var d = result as IDictionary<string, object>;
-                foreach (var pair in baseAttrDict.Concat(itemAttrDict))
-                    d[pair.Key] = pair.Value;
-                return result;
-            };
+                                           {
+                                               IDictionary<string, object> baseAttrDict = baseAttributes.toDictionary();
+                                               IDictionary<string, object> itemAttrDict =
+                                                   valueHtmlAttributesFunc(item).toDictionary();
+                                               var result = new ExpandoObject();
+                                               var d = result as IDictionary<string, object>;
+                                               foreach (var pair in baseAttrDict.Concat(itemAttrDict))
+                                                   d[pair.Key] = pair.Value;
+                                               return result;
+                                           };
         }
 
         // set up table/list html wrapper, if applicable
-        var numberOfItems = sourceData.Count;
-        var htmlWrapper = createHtmlWrapper(wrapInfo, numberOfItems, position);
+        int numberOfItems = sourceData.Count;
+        htmlWrapperInfo htmlWrapper = createHtmlWrapper(wrapInfo, numberOfItems, position);
 
         // create checkbox list
         var sb = new StringBuilder();
@@ -151,11 +167,11 @@ internal static class MvcCheckBoxList
         htmlwrap_rowbreak_counter = 0;
 
         // create list of checkboxes based on data
-        foreach (var item in sourceData)
+        foreach (TItem item in sourceData)
         {
             // get checkbox value and text
-            var itemValue = valueFunc(item).ToString();
-            var itemText = textToDisplayFunc(item).ToString();
+            string itemValue = valueFunc(item).ToString();
+            string itemText = textToDisplayFunc(item).ToString();
 
             // create checkbox element
             sb = createCheckBoxListElement(sb, htmlHelper, modelMetadata, htmlWrapper,
@@ -185,26 +201,26 @@ internal static class MvcCheckBoxList
             // creating custom layouts
             switch (wrapInfo.htmlTag)
             {
-                // creates user selected number of float sections with
-                // vertically sorted checkboxes
+                    // creates user selected number of float sections with
+                    // vertically sorted checkboxes
                 case HtmlTag.vertical_columns:
                     {
                         if (wrapInfo.Columns <= 0) wrapInfo.Columns = 1;
                         // calculate number of rows
-                        var rows = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(numberOfItems)
-                                                                / Convert.ToDecimal(wrapInfo.Columns)));
+                        int rows = Convert.ToInt32(Math.Ceiling(Convert.ToDecimal(numberOfItems)
+                                                                /Convert.ToDecimal(wrapInfo.Columns)));
                         if (numberOfItems <= 4 &&
                             (numberOfItems <= wrapInfo.Columns || numberOfItems - wrapInfo.Columns == 1))
                             rows = numberOfItems;
                         w.separator_max_counter = rows;
 
                         // create wrapped raw html tag
-                        var wrapRow = htmlElementTag.div;
+                        htmlElementTag wrapRow = htmlElementTag.div;
                         var wrapHtml_builder = new TagBuilder(wrapRow.ToString());
-                        var user_html_attributes = wrapInfo.htmlAttributes.toDictionary();
+                        IDictionary<string, object> user_html_attributes = wrapInfo.htmlAttributes.toDictionary();
 
                         // create raw style and merge it with user provided style (if applicable)
-                        var defaultSectionStyle = "float:left; margin-right:30px; line-height:25px;";
+                        string defaultSectionStyle = "float:left; margin-right:30px; line-height:25px;";
                         object style;
                         user_html_attributes.TryGetValue("style", out style);
                         if (style != null) // if user style is set, use it
@@ -225,7 +241,7 @@ internal static class MvcCheckBoxList
                         w.append_to_element = "<br/>";
                     }
                     break;
-                // creates an html <table> with checkboxes sorted horizontally
+                    // creates an html <table> with checkboxes sorted horizontally
                 case HtmlTag.table:
                     {
                         if (wrapInfo.Columns <= 0) wrapInfo.Columns = 1;
@@ -235,7 +251,7 @@ internal static class MvcCheckBoxList
                         wrapHtml_builder.MergeAttributes(wrapInfo.htmlAttributes.toDictionary());
                         wrapHtml_builder.MergeAttribute("cellspacing", "0"); // for IE7 compatibility
 
-                        var wrapRow = htmlElementTag.tr;
+                        htmlElementTag wrapRow = htmlElementTag.tr;
                         w.wrap_element = htmlElementTag.td;
                         w.wrap_open = wrapHtml_builder.ToString(TagRenderMode.StartTag) +
                                       "<" + wrapRow + ">";
@@ -244,7 +260,7 @@ internal static class MvcCheckBoxList
                                        wrapHtml_builder.ToString(TagRenderMode.EndTag);
                     }
                     break;
-                // creates an html unordered (bulleted) list of checkboxes in one column
+                    // creates an html unordered (bulleted) list of checkboxes in one column
                 case HtmlTag.ul:
                     {
                         var wrapHtml_builder = new TagBuilder(htmlElementTag.ul.ToString());
@@ -258,7 +274,7 @@ internal static class MvcCheckBoxList
                     break;
             }
         }
-        // default setting creates vertical or horizontal column of checkboxes
+            // default setting creates vertical or horizontal column of checkboxes
         else
         {
             if (position == Position.Horizontal) w.append_to_element = " &nbsp; ";
@@ -267,14 +283,7 @@ internal static class MvcCheckBoxList
 
         return w;
     }
-    /// <summary>
-    /// Counter to count when to insert HTML code that brakes checkbox list
-    /// </summary>
-    private static int htmlwrap_rowbreak_counter { get; set; }
-    /// <summary>
-    /// Counter to be used on a label linked to each checkbox in the list
-    /// </summary>
-    private static int linked_label_counter { get; set; }
+
     /// <summary>
     /// Creates an an individual checkbox
     /// </summary>
@@ -295,7 +304,7 @@ internal static class MvcCheckBoxList
          string name, string itemValue, string itemText)
     {
         // get full name from view model
-        var fullName = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
+        string fullName = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
 
         // create checkbox tag
         var builder = new TagBuilder("input");
@@ -306,7 +315,7 @@ internal static class MvcCheckBoxList
         builder.MergeAttribute("name", fullName);
 
         // create linked label tag
-        var link_name = name + linked_label_counter++;
+        string link_name = name + linked_label_counter++;
         builder.GenerateId(link_name);
         var linked_label_builder = new TagBuilder("label");
         linked_label_builder.MergeAttribute("for", link_name.Replace(".", "_"));

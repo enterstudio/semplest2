@@ -9,17 +9,14 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Credential
+    public class Credential
     {
         public int CredentialPK { get; set; }
         public int UsersFK { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public bool RememberMe { get; set; }
-    
+
         public virtual User User { get; set; }
     }
 }

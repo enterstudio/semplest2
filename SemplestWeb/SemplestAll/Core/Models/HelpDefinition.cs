@@ -9,10 +9,7 @@
 
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class HelpDefinition
+    public class HelpDefinition
     {
         public int GUIWidgetID { get; set; }
         public string HelpText { get; set; }

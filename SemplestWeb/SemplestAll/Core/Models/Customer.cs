@@ -7,35 +7,35 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class Customer
+    public class Customer
     {
         public Customer()
         {
-            this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
-            this.CustomerHierarchies = new HashSet<CustomerHierarchy>();
-            this.ProductGroups = new HashSet<ProductGroup>();
-            this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
-            this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
-            this.CustomerHierarchies1 = new HashSet<CustomerHierarchy>();
-            this.CustomerNotes = new HashSet<CustomerNote>();
-            this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
-            this.Users = new HashSet<User>();
-            this.Schedules = new HashSet<Schedule>();
+            AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
+            CustomerHierarchies = new HashSet<CustomerHierarchy>();
+            ProductGroups = new HashSet<ProductGroup>();
+            CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
+            CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
+            CustomerHierarchies1 = new HashSet<CustomerHierarchy>();
+            CustomerNotes = new HashSet<CustomerNote>();
+            EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
+            Users = new HashSet<User>();
+            Schedules = new HashSet<Schedule>();
         }
-    
+
         public int CustomerPK { get; set; }
         public string Name { get; set; }
         public decimal TotalTargetCycleBudget { get; set; }
         public int ProductGroupCycleTypeFK { get; set; }
         public int BillTypeFK { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public Nullable<System.DateTime> EditedDate { get; set; }
-    
+        public DateTime CreatedDate { get; set; }
+        public DateTime? EditedDate { get; set; }
+
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual BillType BillType { get; set; }
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies { get; set; }

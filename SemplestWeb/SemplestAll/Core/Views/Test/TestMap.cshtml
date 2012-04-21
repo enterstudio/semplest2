@@ -2,7 +2,7 @@
     ViewBag.Title = "TestMap";
 }
 @section Title{
-Create Account
+    Create Account
 }
 @section Links
 {}
@@ -12,15 +12,15 @@ Create Account
     <script>
         $("#panelbar-images").kendoPanelBar({
             dataSource: [
-                        {
-                            text: "Home",
-                            items: [
-                                { text: "Quick Start Guide" },
-                                { text: "FAQs" },
-                                { text: "Contact Us" }
-                            ]
-                        }
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" }
                     ]
+                }
+            ]
         });
 
     </script>
@@ -36,8 +36,8 @@ Create Account
             </td>
             <td>
                 <input id="Location" name="Location" type="text" class="k-textbox required" title="First Name is Required"
-                    style="width: 400px" />
-                <input type="button" class="k-button" value="Submit" id='btnSubmit' onclick="showOptionsURL" />
+                       style="width: 400px" />
+                <input type="button" class="k-button" value="Submit" id='btnSubmit' onclick=" showOptionsURL " />
 
             </td>
         </tr>
@@ -54,28 +54,28 @@ Create Account
 </form>
 
 <script type="text/javascript">
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-        $("#btnSubmit").click(function () {
+        $("#btnSubmit").click(function() {
             alert('button clicked');
             doOptions('Location');
         });
     });
 
-    var HOST_URL = 'http://www.mapquestapi.com'
-    var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq'
+    var HOST_URL = 'http://www.mapquestapi.com';
+    var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
     var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderBatch';
     var advancedOptions = '';
     var outFormat = '';
-    var index = ''
+    var index = '';
+
     function showOptionsURL(type, elementName) {
         alert('manik');
         advancedOptions = SAMPLE_ADVANCED_POST;
         var location = '';
         if (elementName != null) {
             location = document.getElementById(elementName).value;
-        }
-        else {
+        } else {
             location = document.getElementById('Location').value;
         }
         var thumbMaps = 'true';
@@ -102,7 +102,9 @@ Create Account
         advancedOptions += jsonText;
 
         var safe = advancedOptions;
-    };
+    }
+
+    ;
 
     function renderOptions(response) {
         var html = '';
@@ -175,11 +177,9 @@ Create Account
                     document.getElementById('optionsNarrative').innerHTML = html;
                 return;
             }
-        }
-        else if (outFormat == "geojson") {
+        } else if (outFormat == "geojson") {
 
-        }
-        else {
+        } else {
 
         }
 
@@ -193,8 +193,7 @@ Create Account
             index = index.replace('_', '');
             index = index.replace('__', '');
             document.getElementById('optionsNarrative_' + index).innerHTML = 'Pending...';
-        }
-        else {
+        } else {
             $('#optionsNarrative').html('Pending...');
         }
         var script = document.createElement('script');
@@ -203,7 +202,9 @@ Create Account
         var newURL = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
         script.src = newURL;
         document.body.appendChild(script);
-    };
+    }
+
+    ;
 
     function renderGeocode(response) {
         var html = '';
@@ -216,7 +217,9 @@ Create Account
         html += "</p>";
 
         document.getElementById('narrative').innerHTML = html;
-    };
+    }
+
+    ;
 
     function renderBatch(response) {
         var html = '';
@@ -261,6 +264,8 @@ Create Account
         }
 
         document.getElementById('batchNarrative').innerHTML = html;
-    };
+    }
+
+    ;
 
 </script>

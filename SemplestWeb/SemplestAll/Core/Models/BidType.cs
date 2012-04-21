@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class BidType
+    public class BidType
     {
         public BidType()
         {
-            this.KeywordBids = new HashSet<KeywordBid>();
+            KeywordBids = new HashSet<KeywordBid>();
         }
-    
+
         public int BidTypePK { get; set; }
         public string BidType1 { get; set; }
-    
+
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
     }
 }

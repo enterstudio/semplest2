@@ -33,11 +33,12 @@ public static class MvcCheckBoxList_Extensions_Model
          Expression<Func<TModel, IEnumerable<TItem>>> selectedValuesExpr,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr,
              textToDisplayExpr, htmlAttributesExpr, selectedValuesExpr, null, null, null);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -94,11 +95,12 @@ public static class MvcCheckBoxList_Extensions_Model
          Position position,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr,
              textToDisplayExpr, htmlAttributesExpr, selectedValuesExpr, null, null, null, position);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -157,11 +159,12 @@ public static class MvcCheckBoxList_Extensions_Model
          object htmlAttributes,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr,
              textToDisplayExpr, htmlAttributesExpr, selectedValuesExpr, htmlAttributes, null, null);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -222,11 +225,12 @@ public static class MvcCheckBoxList_Extensions_Model
          Position position,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr, textToDisplayExpr,
              htmlAttributesExpr, selectedValuesExpr, htmlAttributes, null, null, position);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -291,11 +295,12 @@ public static class MvcCheckBoxList_Extensions_Model
          Position position,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr, textToDisplayExpr,
              htmlAttributesExpr, selectedValuesExpr, htmlAttributes, null, disabledValues, position);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -358,11 +363,12 @@ public static class MvcCheckBoxList_Extensions_Model
          HtmlListInfo wrapInfo,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr, textToDisplayExpr,
              htmlAttributesExpr, selectedValuesExpr, null, wrapInfo, null);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -423,11 +429,12 @@ public static class MvcCheckBoxList_Extensions_Model
          string[] disabledValues,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr, textToDisplayExpr,
              htmlAttributesExpr, selectedValuesExpr, null, wrapInfo, disabledValues);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>
@@ -492,11 +499,12 @@ public static class MvcCheckBoxList_Extensions_Model
          string[] disabledValues,
          Expression<Func<TItem, dynamic>> htmlAttributesExpr = null)
     {
-        var modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
+        ModelMetadata modelMetadata = ModelMetadata.FromLambdaExpression(listNameExpr, htmlHelper.ViewData);
         return MvcCheckBoxList.CheckBoxList_ModelBased
             (htmlHelper, modelMetadata, listNameExpr.toProperty(), sourceDataExpr, valueExpr, textToDisplayExpr,
              htmlAttributesExpr, selectedValuesExpr, htmlAttributes, wrapInfo, disabledValues);
     }
+
     /// <summary>
     /// Model-Based function
     /// </summary>

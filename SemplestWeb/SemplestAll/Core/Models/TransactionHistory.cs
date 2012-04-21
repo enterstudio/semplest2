@@ -7,21 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class TransactionHistory
+    public class TransactionHistory
     {
         public int TransactionHistoryPK { get; set; }
         public int UserFK { get; set; }
-        public System.DateTime TransactionDate { get; set; }
+        public DateTime TransactionDate { get; set; }
         public string TableName { get; set; }
         public string Field { get; set; }
         public string OldValue { get; set; }
         public string NewValue { get; set; }
-    
+
         public virtual User User { get; set; }
     }
 }

@@ -7,25 +7,24 @@
     <script>
         $("#panelbar-images").kendoPanelBar({
             dataSource: [
-                        {
-                            text: "Home",
-                            items: [
-                                { text: "My Account" },
-                                { text: "Reporting" },
-                                { text: "Billing" }
-                            ]
-                        },
-                        {
-                            text: "Product Groups",
-                            items: [
-                                { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance"}] },
-                                { text: "Safty Tips", items: [{ text: "Auto Mobile"}] },
-                                { text: "Agents", items: [{ text: "Best Agents"}] }
-                            ]
-                        }
+                {
+                    text: "Home",
+                    items: [
+                        { text: "My Account" },
+                        { text: "Reporting" },
+                        { text: "Billing" }
                     ]
+                },
+                {
+                    text: "Product Groups",
+                    items: [
+                        { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance" }] },
+                        { text: "Safty Tips", items: [{ text: "Auto Mobile" }] },
+                        { text: "Agents", items: [{ text: "Best Agents" }] }
+                    ]
+                }
+            ]
         });
-
 
     </script>
 }
@@ -34,9 +33,9 @@
         <span class="exampleIcon overviewIcon"></span>Ad Setup
          
     </h1>
-    <div id="examplesThemeChooser" style="margin-right:120px">
-                Step 1 of 3
-        </div>
+    <div id="examplesThemeChooser" style="margin-right: 120px">
+        Step 1 of 3
+    </div>
 </div>
 <div id="exampleWrap">
     <div id="example" class="k-content">
@@ -93,7 +92,8 @@
             </div>
         </div>
         <script type="text/javascript">
-            $(document).ready(function () {
+            $(document).ready(function() {
+
                 function startChange() {
                     var startDate = start.value();
 
@@ -127,59 +127,45 @@
             });
         </script>
         <style scoped>
-                vertical-align: middle;
-                }
+            vertical-align: middle ;
+            } 
 
-                #example h3 {
-                    clear: both;
-                }
+            #example h3 { clear: both; }
 
-                #example .code-sample {
-                    width: 60%;
-                    float:left;
-                    margin-bottom: 20px;
-                }
+            #example .code-sample {
+                float: left;
+                margin-bottom: 20px;
+                width: 60%;
+            }
 
-                #example .output {
-                    width: 24%;
-                    margin-left: 4%;
-                    float:left;
-                }
-            #datasource-views
-            {
-                padding: 20px;
+            #example .output {
+                float: left;
+                margin-left: 4%;
+                width: 24%;
+            }
+
+            #datasource-views {
                 border-radius: 10px;
                 border-style: solid;
                 border-width: 1px;
                 overflow: hidden;
+                padding: 20px;
             }
-            
-            .selector
-            {
-                text-align: right;
-            }
-            * + html .selector
-            {
-                margin-bottom: 25px;
-            }
-            
-            .selector h3
-            {
+
+            .selector { text-align: right; }
+
+            * + html .selector { margin-bottom: 25px; }
+
+            .selector h3 {
                 float: left;
-                margin: 0;
                 font-size: 16px;
                 font-weight: normal;
+                margin: 0;
             }
-            
-            .selector h3, .k-dropdown
-            {
-                vertical-align: middle;
-            }
-            
-            .k-dropdown
-            {
-                text-align: left;
-            }
+
+            .selector h3, .k-dropdown { vertical-align: middle; }
+
+            .k-dropdown { text-align: left; }
         </style>
     </div>
 </div>

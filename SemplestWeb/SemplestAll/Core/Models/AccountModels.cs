@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 
@@ -70,9 +67,11 @@ namespace Semplest.Core.Models
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
     }
+
     #endregion
 
     #region Services
+
     // The FormsAuthentication type is sealed and contains static members, so it is difficult to
     // unit test code that calls its members. The interface and helper class below demonstrate
     // how to create an abstract wrapper around such a type in order to make the AccountController
@@ -101,26 +100,29 @@ namespace Semplest.Core.Models
             _provider = provider ?? Membership.Provider;
         }
 
+        #region IMembershipService Members
+
         public int MinPasswordLength
         {
-            get
-            {
-                return _provider.MinRequiredPasswordLength;
-            }
+            get { return _provider.MinRequiredPasswordLength; }
         }
 
         public bool ValidateUser(string userName, string password)
         {
-            if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
-            if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentException("Value cannot be null or empty.", "userName");
+            if (String.IsNullOrEmpty(password))
+                throw new ArgumentException("Value cannot be null or empty.", "password");
 
             return _provider.ValidateUser(userName, password);
         }
 
         public MembershipCreateStatus CreateUser(string userName, string password, string email)
         {
-            if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
-            if (String.IsNullOrEmpty(password)) throw new ArgumentException("Value cannot be null or empty.", "password");
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentException("Value cannot be null or empty.", "userName");
+            if (String.IsNullOrEmpty(password))
+                throw new ArgumentException("Value cannot be null or empty.", "password");
             if (String.IsNullOrEmpty(email)) throw new ArgumentException("Value cannot be null or empty.", "email");
 
             MembershipCreateStatus status;
@@ -130,9 +132,12 @@ namespace Semplest.Core.Models
 
         public bool ChangePassword(string userName, string oldPassword, string newPassword)
         {
-            if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
-            if (String.IsNullOrEmpty(oldPassword)) throw new ArgumentException("Value cannot be null or empty.", "oldPassword");
-            if (String.IsNullOrEmpty(newPassword)) throw new ArgumentException("Value cannot be null or empty.", "newPassword");
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentException("Value cannot be null or empty.", "userName");
+            if (String.IsNullOrEmpty(oldPassword))
+                throw new ArgumentException("Value cannot be null or empty.", "oldPassword");
+            if (String.IsNullOrEmpty(newPassword))
+                throw new ArgumentException("Value cannot be null or empty.", "newPassword");
 
             // The underlying ChangePassword() will throw an exception rather
             // than return false in certain failure scenarios.
@@ -150,6 +155,8 @@ namespace Semplest.Core.Models
                 return false;
             }
         }
+
+        #endregion
     }
 
     public interface IFormsAuthenticationService
@@ -160,9 +167,12 @@ namespace Semplest.Core.Models
 
     public class FormsAuthenticationService : IFormsAuthenticationService
     {
+        #region IFormsAuthenticationService Members
+
         public void SignIn(string userName, bool createPersistentCookie)
         {
-            if (String.IsNullOrEmpty(userName)) throw new ArgumentException("Value cannot be null or empty.", "userName");
+            if (String.IsNullOrEmpty(userName))
+                throw new ArgumentException("Value cannot be null or empty.", "userName");
 
             FormsAuthentication.SetAuthCookie(userName, createPersistentCookie);
         }
@@ -171,10 +181,14 @@ namespace Semplest.Core.Models
         {
             FormsAuthentication.SignOut();
         }
+
+        #endregion
     }
+
     #endregion
 
     #region Validation
+
     public static class AccountValidation
     {
         public static string ErrorCodeToString(MembershipCreateStatus createStatus)
@@ -205,13 +219,16 @@ namespace Semplest.Core.Models
                     return "The user name provided is invalid. Please check the value and try again.";
 
                 case MembershipCreateStatus.ProviderError:
-                    return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
 
                 case MembershipCreateStatus.UserRejected:
-                    return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
 
                 default:
-                    return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
+                    return
+                        "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
             }
         }
     }
@@ -227,25 +244,32 @@ namespace Semplest.Core.Models
         {
         }
 
+        #region IClientValidatable Members
+
+        public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata,
+                                                                               ControllerContext context)
+        {
+            return new[]
+                       {
+                           new ModelClientValidationStringLengthRule(FormatErrorMessage(metadata.GetDisplayName()),
+                                                                     _minCharacters, int.MaxValue)
+                       };
+        }
+
+        #endregion
+
         public override string FormatErrorMessage(string name)
         {
             return String.Format(CultureInfo.CurrentCulture, ErrorMessageString,
-                name, _minCharacters);
+                                 name, _minCharacters);
         }
 
         public override bool IsValid(object value)
         {
-            string valueAsString = value as string;
+            var valueAsString = value as string;
             return (valueAsString != null && valueAsString.Length >= _minCharacters);
         }
-
-        public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata, ControllerContext context)
-        {
-            return new[]{
-                new ModelClientValidationStringLengthRule(FormatErrorMessage(metadata.GetDisplayName()), _minCharacters, int.MaxValue)
-            };
-        }
     }
-    #endregion
 
+    #endregion
 }

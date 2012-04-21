@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Services;
+﻿using System.Data.Services;
 using System.Data.Services.Common;
-using System.Linq;
-using System.ServiceModel.Web;
-using System.Web;
 using Semplest.Core.Models;
-using SemplestWebApp.Models;
 
 namespace SemplestWebApp.Services
 {
@@ -21,6 +15,7 @@ namespace SemplestWebApp.Services
             // config.SetServiceOperationAccessRule("MyServiceOperation", ServiceOperationRights.All);
             config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V2;
         }
+
         public void AddToLog(int activityId, string description, string url, int userId)
         {
             //var semplest = new SemplestEntities();

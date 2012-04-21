@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using Semplest.Core.Models.Repositories;
 
 namespace SemplestWebApp.Models.Repositories
 {
     public class CampaignRepository : ICampaignRepository
     {
-
     }
 }

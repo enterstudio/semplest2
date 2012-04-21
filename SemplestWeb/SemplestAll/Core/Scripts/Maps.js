@@ -4,13 +4,13 @@ var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&c
 var advancedOptions = '';
 var outFormat = '';
 var index = '';
+
 function showOptionsURL(type, elementName) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = '';
     if (elementName != null) {
         location = document.getElementById(elementName).value;
-    }
-    else {
+    } else {
         location = document.getElementById('Addresses_0__Address1').value;
     }
     var thumbMaps = 'true';
@@ -37,7 +37,9 @@ function showOptionsURL(type, elementName) {
     advancedOptions += jsonText;
 
     var safe = advancedOptions;
-};
+}
+
+;
 
 function renderOptions(response) {
     var html = '';
@@ -109,11 +111,9 @@ function renderOptions(response) {
                 document.getElementById('optionsNarrative').innerHTML = html;
             return;
         }
-    }
-    else if (outFormat == "geojson") {
+    } else if (outFormat == "geojson") {
 
-    }
-    else {
+    } else {
 
     }
 
@@ -127,8 +127,7 @@ function doOptions(elementName) {
         index = index.replace('_', '');
         index = index.replace('__', '');
         document.getElementById('optionsNarrative_' + index).innerHTML = 'Pending...';
-    }
-    else {
+    } else {
         $('#optionsNarrative').html('Pending...');
     }
     var script = document.createElement('script');
@@ -137,4 +136,6 @@ function doOptions(elementName) {
     var newURL = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
     script.src = newURL;
     document.body.appendChild(script);
-};
+}
+
+;

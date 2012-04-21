@@ -7,22 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.Collections.Generic;
+
 namespace Semplest.Core.Models
 {
-    using System;
-    using System.Collections.Generic;
-    
-    public partial class AdvertisingEngineAccount
+    public class AdvertisingEngineAccount
     {
         public AdvertisingEngineAccount()
         {
-            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
+            AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
         }
-    
+
         public string AdvertisingEngineAccountPK { get; set; }
         public int AdvertisingEngineFK { get; set; }
         public int CustomerFK { get; set; }
-    
+
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
         public virtual Customer Customer { get; set; }
