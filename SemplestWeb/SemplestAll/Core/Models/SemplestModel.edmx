@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="SemplestModelStoreContainer">
           <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
@@ -26,6 +26,8 @@
           <EntitySet Name="EmployeeCustomerAssociation" EntityType="SemplestModel.Store.EmployeeCustomerAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EmployeeType" EntityType="SemplestModel.Store.EmployeeType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Error" EntityType="SemplestModel.Store.Error" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Frequency" EntityType="SemplestModel.Store.Frequency" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="GeoTargeting" EntityType="SemplestModel.Store.GeoTargeting" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="HelpDefinition" EntityType="SemplestModel.Store.HelpDefinition" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Keyword" EntityType="SemplestModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
@@ -39,10 +41,14 @@
           <EntitySet Name="Rights" EntityType="SemplestModel.Store.Rights" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Roles" EntityType="SemplestModel.Store.Roles" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="RolesRightsAssociation" EntityType="SemplestModel.Store.RolesRightsAssociation" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Schedule" EntityType="SemplestModel.Store.Schedule" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ScheduleLog" EntityType="SemplestModel.Store.ScheduleLog" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="ScheduleTaskAssociation" EntityType="SemplestModel.Store.ScheduleTaskAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="SEMCustomerDetails" EntityType="SemplestModel.Store.SEMCustomerDetails" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="SiteLinks" EntityType="SemplestModel.Store.SiteLinks" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="StateCode" EntityType="SemplestModel.Store.StateCode" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="sysdiagrams" EntityType="SemplestModel.Store.sysdiagrams" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="Task" EntityType="SemplestModel.Store.Task" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="TransactionHistory" EntityType="SemplestModel.Store.TransactionHistory" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
@@ -122,6 +128,10 @@
             <End Role="Customer" EntitySet="Customer" />
             <End Role="EmployeeCustomerAssociation" EntitySet="EmployeeCustomerAssociation" />
           </AssociationSet>
+          <AssociationSet Name="REL_Customer_Schedule_3" Association="SemplestModel.Store.REL_Customer_Schedule_3">
+            <End Role="Customer" EntitySet="Customer" />
+            <End Role="Schedule" EntitySet="Schedule" />
+          </AssociationSet>
           <AssociationSet Name="REL_Employee_EmployeeCustomerAssociation_1" Association="SemplestModel.Store.REL_Employee_EmployeeCustomerAssociation_1">
             <End Role="Employee" EntitySet="Employee" />
             <End Role="EmployeeCustomerAssociation" EntitySet="EmployeeCustomerAssociation" />
@@ -129,6 +139,10 @@
           <AssociationSet Name="REL_EmployeeType_Employee_1" Association="SemplestModel.Store.REL_EmployeeType_Employee_1">
             <End Role="EmployeeType" EntitySet="EmployeeType" />
             <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Frequency_Schedule_1" Association="SemplestModel.Store.REL_Frequency_Schedule_1">
+            <End Role="Frequency" EntitySet="Frequency" />
+            <End Role="Schedule" EntitySet="Schedule" />
           </AssociationSet>
           <AssociationSet Name="REL_Keyword_PromotionKeywordAssociation_2" Association="SemplestModel.Store.REL_Keyword_PromotionKeywordAssociation_2">
             <End Role="Keyword" EntitySet="Keyword" />
@@ -142,9 +156,17 @@
             <End Role="ProductGroup" EntitySet="ProductGroup" />
             <End Role="Promotion" EntitySet="Promotion" />
           </AssociationSet>
+          <AssociationSet Name="REL_ProductGroup_Schedule_4" Association="SemplestModel.Store.REL_ProductGroup_Schedule_4">
+            <End Role="ProductGroup" EntitySet="ProductGroup" />
+            <End Role="Schedule" EntitySet="Schedule" />
+          </AssociationSet>
           <AssociationSet Name="REL_Promotion_AdvertisingEngineCampaign_1" Association="SemplestModel.Store.REL_Promotion_AdvertisingEngineCampaign_1">
             <End Role="Promotion" EntitySet="Promotion" />
             <End Role="AdvertisingEngineCampaign" EntitySet="AdvertisingEngineCampaign" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_GeoTargeting_1" Association="SemplestModel.Store.REL_Promotion_GeoTargeting_1">
+            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="GeoTargeting" EntitySet="GeoTargeting" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_PromotionAds_1" Association="SemplestModel.Store.REL_Promotion_PromotionAds_1">
             <End Role="Promotion" EntitySet="Promotion" />
@@ -153,6 +175,10 @@
           <AssociationSet Name="REL_Promotion_PromotionKeywordAssociation_3" Association="SemplestModel.Store.REL_Promotion_PromotionKeywordAssociation_3">
             <End Role="Promotion" EntitySet="Promotion" />
             <End Role="PromotionKeywordAssociation" EntitySet="PromotionKeywordAssociation" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_Schedule_2" Association="SemplestModel.Store.REL_Promotion_Schedule_2">
+            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="Schedule" EntitySet="Schedule" />
           </AssociationSet>
           <AssociationSet Name="REL_PromotionAds_SiteLinks_1" Association="SemplestModel.Store.REL_PromotionAds_SiteLinks_1">
             <End Role="PromotionAds" EntitySet="PromotionAds" />
@@ -174,6 +200,14 @@
             <End Role="Roles" EntitySet="Roles" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociation" />
           </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleLog_1" Association="SemplestModel.Store.REL_Schedule_ScheduleLog_1">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="ScheduleLog" EntitySet="ScheduleLog" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleTaskAssociation_1" Association="SemplestModel.Store.REL_Schedule_ScheduleTaskAssociation_1">
+            <End Role="Schedule" EntitySet="Schedule" />
+            <End Role="ScheduleTaskAssociation" EntitySet="ScheduleTaskAssociation" />
+          </AssociationSet>
           <AssociationSet Name="REL_Users_Credential_1" Association="SemplestModel.Store.REL_Users_Credential_1">
             <End Role="Users" EntitySet="Users" />
             <End Role="Credential" EntitySet="Credential" />
@@ -181,6 +215,10 @@
           <AssociationSet Name="REL_Users_Employee_2" Association="SemplestModel.Store.REL_Users_Employee_2">
             <End Role="Users" EntitySet="Users" />
             <End Role="Employee" EntitySet="Employee" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Users_Schedule_5" Association="SemplestModel.Store.REL_Users_Schedule_5">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Schedule" EntitySet="Schedule" />
           </AssociationSet>
           <AssociationSet Name="REL_Users_TransactionHistory_1" Association="SemplestModel.Store.REL_Users_TransactionHistory_1">
             <End Role="Users" EntitySet="Users" />
@@ -390,8 +428,29 @@
             <PropertyRef Name="ErrorPK" />
           </Key>
           <Property Name="ErrorPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="ErrorMessage" Type="nvarchar" Nullable="false" MaxLength="1000" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ErrorID" Type="int" />
+        </EntityType>
+        <EntityType Name="Frequency">
+          <Key>
+            <PropertyRef Name="FrequencyPK" />
+          </Key>
+          <Property Name="FrequencyPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Frequency" Type="nchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="GeoTargeting">
+          <Key>
+            <PropertyRef Name="GeoTargetingPK" />
+          </Key>
+          <Property Name="GeoTargetingPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="PromotionFK" Type="int" Nullable="false" />
+          <Property Name="Address" Type="nvarchar" MaxLength="150" />
+          <Property Name="City" Type="nvarchar" MaxLength="100" />
+          <Property Name="StateCodeFK" Type="int" />
+          <Property Name="Zip" Type="nvarchar" MaxLength="15" />
+          <Property Name="Longitude" Type="decimal" Scale="5" />
+          <Property Name="Latitude" Type="decimal" Scale="5" />
+          <Property Name="ProximityRadius" Type="decimal" Scale="2" />
         </EntityType>
         <EntityType Name="HelpDefinition">
           <Key>
@@ -519,6 +578,44 @@
           <Property Name="IsVisible" Type="bit" Nullable="false" />
           <Property Name="IsReadonly" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="SchedulePK" />
+          </Key>
+          <Property Name="SchedulePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="StartTime" Type="datetime2" Nullable="false" />
+          <Property Name="FrequencyFK" Type="int" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="IsSuccessful" Type="bit" Nullable="false" />
+          <Property Name="IsInactive" Type="bit" Nullable="false" />
+          <Property Name="IsComplete" Type="int" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedBy" Type="int" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="PromotionFK" Type="int" />
+          <Property Name="CustomerFK" Type="int" />
+          <Property Name="ProductGroupFK" Type="int" />
+          <Property Name="UsersFK" Type="int" />
+        </EntityType>
+        <EntityType Name="ScheduleLog">
+          <Key>
+            <PropertyRef Name="ScheduleLogPK" />
+          </Key>
+          <Property Name="ScheduleLogPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ScheduleFK" Type="int" />
+          <Property Name="DateCreated" Type="datetime2" Nullable="false" />
+          <Property Name="IsSuccessful" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ScheduleTaskAssociation">
+          <Key>
+            <PropertyRef Name="TaskFK" />
+            <PropertyRef Name="ScheduleFK" />
+          </Key>
+          <Property Name="TaskFK" Type="int" Nullable="false" />
+          <Property Name="ScheduleFK" Type="int" Nullable="false" />
+          <Property Name="TaskExecutionOrder" Type="int" Nullable="false" />
+        </EntityType>
         <EntityType Name="SEMCustomerDetails">
           <Key>
             <PropertyRef Name="SEMCustomerDetailsPK" />
@@ -559,6 +656,15 @@
           <Property Name="diagram_id" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="version" Type="int" />
           <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="TaskPK" />
+          </Key>
+          <Property Name="TaskPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ServiceName" Type="nchar" Nullable="false" MaxLength="100" />
+          <Property Name="MethodName" Type="nchar" Nullable="false" MaxLength="50" />
+          <Property Name="Parameters" Type="nchar" Nullable="false" MaxLength="2500" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -822,6 +928,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_Customer_Schedule_3">
+          <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="0..1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Employee_EmployeeCustomerAssociation_1">
           <End Role="Employee" Type="SemplestModel.Store.Employee" Multiplicity="1" />
           <End Role="EmployeeCustomerAssociation" Type="SemplestModel.Store.EmployeeCustomerAssociation" Multiplicity="*" />
@@ -843,6 +961,18 @@
             </Principal>
             <Dependent Role="Employee">
               <PropertyRef Name="EmployeeTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Frequency_Schedule_1">
+          <End Role="Frequency" Type="SemplestModel.Store.Frequency" Multiplicity="1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Frequency">
+              <PropertyRef Name="FrequencyPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="FrequencyFK" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -882,6 +1012,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_ProductGroup_Schedule_4">
+          <End Role="ProductGroup" Type="SemplestModel.Store.ProductGroup" Multiplicity="0..1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductGroup">
+              <PropertyRef Name="ProductGroupPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="ProductGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Promotion_AdvertisingEngineCampaign_1">
           <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="0..1" />
           <End Role="AdvertisingEngineCampaign" Type="SemplestModel.Store.AdvertisingEngineCampaign" Multiplicity="*" />
@@ -890,6 +1032,18 @@
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="AdvertisingEngineCampaign">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_GeoTargeting_1">
+          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="GeoTargeting" Type="SemplestModel.Store.GeoTargeting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="GeoTargeting">
               <PropertyRef Name="PromotionFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -914,6 +1068,18 @@
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="PromotionKeywordAssociation">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_Schedule_2">
+          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="0..1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="Schedule">
               <PropertyRef Name="PromotionFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -980,6 +1146,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_Schedule_ScheduleLog_1">
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="0..1" />
+          <End Role="ScheduleLog" Type="SemplestModel.Store.ScheduleLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleLog">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Schedule_ScheduleTaskAssociation_1">
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="1" />
+          <End Role="ScheduleTaskAssociation" Type="SemplestModel.Store.ScheduleTaskAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleTaskAssociation">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Users_Credential_1">
           <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="1" />
           <End Role="Credential" Type="SemplestModel.Store.Credential" Multiplicity="*" />
@@ -1000,6 +1190,18 @@
               <PropertyRef Name="UserPK" />
             </Principal>
             <Dependent Role="Employee">
+              <PropertyRef Name="UsersFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Users_Schedule_5">
+          <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="0..1" />
+          <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Schedule">
               <PropertyRef Name="UsersFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -1041,6 +1243,24 @@
           </ReferentialConstraint>
         </Association>
         <Function Name="fn_diagramobjects" ReturnType="int" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetNextScheduleTime" ReturnType="datetime" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDateTime" Type="datetime" Mode="In" />
+          <Parameter Name="Frequency" Type="varchar" Mode="In" />
+          <Parameter Name="IsEveryWeekday" Type="bit" Mode="In" />
+          <Parameter Name="EveryNWeekdays" Type="int" Mode="In" />
+          <Parameter Name="RecurEveryNWeeks" Type="int" Mode="In" />
+          <Parameter Name="WeeklyWeekDays" Type="varchar" Mode="In" />
+          <Parameter Name="DayN" Type="int" Mode="In" />
+          <Parameter Name="OfEveryNMonthsDayN" Type="int" Mode="In" />
+          <Parameter Name="WeekNum" Type="int" Mode="In" />
+          <Parameter Name="OfEveryNMonthsWeekNum" Type="int" Mode="In" />
+          <Parameter Name="IsSemiMonthly" Type="bit" Mode="In" />
+          <Parameter Name="MonthlyDayofWeek" Type="varchar" Mode="In" />
+        </Function>
+        <Function Name="SetScheduleComplete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ScheduleID" Type="int" Mode="In" />
+          <Parameter Name="IsSucceed" Type="bit" Mode="In" />
+        </Function>
         <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
           <Parameter Name="owner_id" Type="int" Mode="In" />
@@ -1074,8 +1294,7 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -1268,6 +1487,44 @@
             <End Role="Users" EntitySet="Users" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
+          <EntitySet Name="Frequencies" EntityType="SemplestModel.Frequency" />
+          <EntitySet Name="GeoTargetings" EntityType="SemplestModel.GeoTargeting" />
+          <EntitySet Name="Schedules" EntityType="SemplestModel.Schedule" />
+          <EntitySet Name="ScheduleLogs" EntityType="SemplestModel.ScheduleLog" />
+          <EntitySet Name="ScheduleTaskAssociations" EntityType="SemplestModel.ScheduleTaskAssociation" />
+          <EntitySet Name="Tasks" EntityType="SemplestModel.Task" />
+          <AssociationSet Name="REL_Customer_Schedule_3" Association="SemplestModel.REL_Customer_Schedule_3">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Frequency_Schedule_1" Association="SemplestModel.REL_Frequency_Schedule_1">
+            <End Role="Frequency" EntitySet="Frequencies" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_GeoTargeting_1" Association="SemplestModel.REL_Promotion_GeoTargeting_1">
+            <End Role="Promotion" EntitySet="Promotions" />
+            <End Role="GeoTargeting" EntitySet="GeoTargetings" />
+          </AssociationSet>
+          <AssociationSet Name="REL_ProductGroup_Schedule_4" Association="SemplestModel.REL_ProductGroup_Schedule_4">
+            <End Role="ProductGroup" EntitySet="ProductGroups" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_Schedule_2" Association="SemplestModel.REL_Promotion_Schedule_2">
+            <End Role="Promotion" EntitySet="Promotions" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleLog_1" Association="SemplestModel.REL_Schedule_ScheduleLog_1">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="ScheduleLog" EntitySet="ScheduleLogs" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Schedule_ScheduleTaskAssociation_1" Association="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1">
+            <End Role="Schedule" EntitySet="Schedules" />
+            <End Role="ScheduleTaskAssociation" EntitySet="ScheduleTaskAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Users_Schedule_5" Association="SemplestModel.REL_Users_Schedule_5">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -1413,6 +1670,7 @@
           <NavigationProperty Name="CustomerStyle" Relationship="SemplestModel.REL_Customer_CustomerStyle_1" FromRole="Customer" ToRole="CustomerStyle" />
           <NavigationProperty Name="EmployeeCustomerAssociations" Relationship="SemplestModel.REL_Customer_EmployeeCustomerAssociation_2" FromRole="Customer" ToRole="EmployeeCustomerAssociation" />
           <NavigationProperty Name="Users" Relationship="SemplestModel.UserCustomer_rel" FromRole="Customer" ToRole="Users" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Customer_Schedule_3" FromRole="Customer" ToRole="Schedule" />
         </EntityType>
         <EntityType Name="CustomerAddressAssociation">
           <Key>
@@ -1577,6 +1835,7 @@
           <Property Name="EditedDate" Type="DateTime" />
           <NavigationProperty Name="Customer" Relationship="SemplestModel.Cust_Camp_rel" FromRole="ProductGroup" ToRole="Customer" />
           <NavigationProperty Name="Promotions" Relationship="SemplestModel.REL_ProductGroup_Promotion_1" FromRole="ProductGroup" ToRole="Promotion" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_ProductGroup_Schedule_4" FromRole="ProductGroup" ToRole="Schedule" />
         </EntityType>
         <EntityType Name="ProductGroupCycleType">
           <Key>
@@ -1604,6 +1863,8 @@
           <NavigationProperty Name="ProductGroup" Relationship="SemplestModel.REL_ProductGroup_Promotion_1" FromRole="Promotion" ToRole="ProductGroup" />
           <NavigationProperty Name="PromotionAds" Relationship="SemplestModel.REL_Promotion_PromotionAds_1" FromRole="Promotion" ToRole="PromotionAds" />
           <NavigationProperty Name="PromotionKeywordAssociations" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" FromRole="Promotion" ToRole="PromotionKeywordAssociation" />
+          <NavigationProperty Name="GeoTargetings" Relationship="SemplestModel.REL_Promotion_GeoTargeting_1" FromRole="Promotion" ToRole="GeoTargeting" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Promotion_Schedule_2" FromRole="Promotion" ToRole="Schedule" />
         </EntityType>
         <EntityType Name="PromotionAd">
           <Key>
@@ -1741,6 +2002,7 @@
           <NavigationProperty Name="Employees" Relationship="SemplestModel.REL_Users_Employee_2" FromRole="Users" ToRole="Employee" />
           <NavigationProperty Name="TransactionHistories" Relationship="SemplestModel.REL_Users_TransactionHistory_1" FromRole="Users" ToRole="TransactionHistory" />
           <NavigationProperty Name="UserRolesAssociations" Relationship="SemplestModel.REL_Users_UserRolesAssociation_1" FromRole="Users" ToRole="UserRolesAssociation" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Users_Schedule_5" FromRole="User" ToRole="Schedule" />
         </EntityType>
         <Association Name="Address_Rel">
           <End Role="Address" Type="SemplestModel.Address" Multiplicity="1" />
@@ -2188,6 +2450,181 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Frequency">
+          <Key>
+            <PropertyRef Name="FrequencyPK" />
+          </Key>
+          <Property Type="Int32" Name="FrequencyPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="Frequency1" Nullable="false" MaxLength="20" FixedLength="true" Unicode="true" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Frequency_Schedule_1" FromRole="Frequency" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="GeoTargeting">
+          <Key>
+            <PropertyRef Name="GeoTargetingPK" />
+          </Key>
+          <Property Type="Int32" Name="GeoTargetingPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="PromotionFK" Nullable="false" />
+          <Property Type="String" Name="Address" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="City" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="StateCodeFK" />
+          <Property Type="String" Name="Zip" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="Longitude" Precision="18" Scale="5" />
+          <Property Type="Decimal" Name="Latitude" Precision="18" Scale="5" />
+          <Property Type="Decimal" Name="ProximityRadius" Precision="18" Scale="2" />
+          <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_GeoTargeting_1" FromRole="GeoTargeting" ToRole="Promotion" />
+        </EntityType>
+        <EntityType Name="Schedule">
+          <Key>
+            <PropertyRef Name="SchedulePK" />
+          </Key>
+          <Property Type="Int32" Name="SchedulePK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="DateTime" Name="StartTime" Nullable="false" />
+          <Property Type="Int32" Name="FrequencyFK" Nullable="false" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="Boolean" Name="IsSuccessful" Nullable="false" />
+          <Property Type="Boolean" Name="IsInactive" Nullable="false" />
+          <Property Type="Int32" Name="IsComplete" Nullable="false" />
+          <Property Type="Int32" Name="CreatedBy" Nullable="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="Int32" Name="EditedBy" Nullable="false" />
+          <Property Type="DateTime" Name="EditedDate" />
+          <Property Type="Int32" Name="PromotionFK" />
+          <Property Type="Int32" Name="CustomerFK" />
+          <Property Type="Int32" Name="ProductGroupFK" />
+          <Property Type="Int32" Name="UsersFK" />
+          <NavigationProperty Name="Customer" Relationship="SemplestModel.REL_Customer_Schedule_3" FromRole="Schedule" ToRole="Customer" />
+          <NavigationProperty Name="Frequency" Relationship="SemplestModel.REL_Frequency_Schedule_1" FromRole="Schedule" ToRole="Frequency" />
+          <NavigationProperty Name="ProductGroup" Relationship="SemplestModel.REL_ProductGroup_Schedule_4" FromRole="Schedule" ToRole="ProductGroup" />
+          <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_Schedule_2" FromRole="Schedule" ToRole="Promotion" />
+          <NavigationProperty Name="ScheduleLogs" Relationship="SemplestModel.REL_Schedule_ScheduleLog_1" FromRole="Schedule" ToRole="ScheduleLog" />
+          <NavigationProperty Name="ScheduleTaskAssociations" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="Schedule" ToRole="ScheduleTaskAssociation" />
+          <NavigationProperty Name="User" Relationship="SemplestModel.REL_Users_Schedule_5" FromRole="Schedule" ToRole="User" />
+        </EntityType>
+        <EntityType Name="ScheduleLog">
+          <Key>
+            <PropertyRef Name="ScheduleLogPK" />
+          </Key>
+          <Property Type="Int32" Name="ScheduleLogPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ScheduleFK" />
+          <Property Type="DateTime" Name="DateCreated" Nullable="false" />
+          <Property Type="Boolean" Name="IsSuccessful" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="SemplestModel.REL_Schedule_ScheduleLog_1" FromRole="ScheduleLog" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="ScheduleTaskAssociation">
+          <Key>
+            <PropertyRef Name="TaskFK" />
+            <PropertyRef Name="ScheduleFK" />
+          </Key>
+          <Property Type="Int32" Name="TaskFK" Nullable="false" />
+          <Property Type="Int32" Name="ScheduleFK" Nullable="false" />
+          <Property Type="Int32" Name="TaskExecutionOrder" Nullable="false" />
+          <NavigationProperty Name="Schedule" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="ScheduleTaskAssociation" ToRole="Schedule" />
+        </EntityType>
+        <EntityType Name="Task">
+          <Key>
+            <PropertyRef Name="TaskPK" />
+          </Key>
+          <Property Type="Int32" Name="TaskPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="ServiceName" Nullable="false" MaxLength="100" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="MethodName" Nullable="false" MaxLength="50" FixedLength="true" Unicode="true" />
+          <Property Type="String" Name="Parameters" Nullable="false" MaxLength="2500" FixedLength="true" Unicode="true" />
+        </EntityType>
+        <Association Name="REL_Customer_Schedule_3">
+          <End Type="SemplestModel.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="CustomerPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="CustomerFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Frequency_Schedule_1">
+          <End Type="SemplestModel.Frequency" Role="Frequency" Multiplicity="1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Frequency">
+              <PropertyRef Name="FrequencyPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="FrequencyFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_GeoTargeting_1">
+          <End Type="SemplestModel.Promotion" Role="Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.GeoTargeting" Role="GeoTargeting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="GeoTargeting">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_ProductGroup_Schedule_4">
+          <End Type="SemplestModel.ProductGroup" Role="ProductGroup" Multiplicity="0..1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductGroup">
+              <PropertyRef Name="ProductGroupPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="ProductGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_Schedule_2">
+          <End Type="SemplestModel.Promotion" Role="Promotion" Multiplicity="0..1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Schedule_ScheduleLog_1">
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="0..1" />
+          <End Type="SemplestModel.ScheduleLog" Role="ScheduleLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleLog">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Schedule_ScheduleTaskAssociation_1">
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="1" />
+          <End Type="SemplestModel.ScheduleTaskAssociation" Role="ScheduleTaskAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Schedule">
+              <PropertyRef Name="SchedulePK" />
+            </Principal>
+            <Dependent Role="ScheduleTaskAssociation">
+              <PropertyRef Name="ScheduleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Users_Schedule_5">
+          <End Type="SemplestModel.User" Role="User" Multiplicity="0..1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Schedule">
+              <PropertyRef Name="UsersFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2468,6 +2905,79 @@
             <ScalarProperty Name="IsActive" ColumnName="IsActive" />
             <ScalarProperty Name="MiddleInitial" ColumnName="MiddleInitial" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Frequencies">
+            <EntityTypeMapping TypeName="SemplestModel.Frequency">
+              <MappingFragment StoreEntitySet="Frequency">
+                <ScalarProperty Name="Frequency1" ColumnName="Frequency" />
+                <ScalarProperty Name="FrequencyPK" ColumnName="FrequencyPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="GeoTargetings">
+            <EntityTypeMapping TypeName="SemplestModel.GeoTargeting">
+              <MappingFragment StoreEntitySet="GeoTargeting">
+                <ScalarProperty Name="ProximityRadius" ColumnName="ProximityRadius" />
+                <ScalarProperty Name="Latitude" ColumnName="Latitude" />
+                <ScalarProperty Name="Longitude" ColumnName="Longitude" />
+                <ScalarProperty Name="Zip" ColumnName="Zip" />
+                <ScalarProperty Name="StateCodeFK" ColumnName="StateCodeFK" />
+                <ScalarProperty Name="City" ColumnName="City" />
+                <ScalarProperty Name="Address" ColumnName="Address" />
+                <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
+                <ScalarProperty Name="GeoTargetingPK" ColumnName="GeoTargetingPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Schedules">
+            <EntityTypeMapping TypeName="SemplestModel.Schedule">
+              <MappingFragment StoreEntitySet="Schedule">
+                <ScalarProperty Name="UsersFK" ColumnName="UsersFK" />
+                <ScalarProperty Name="ProductGroupFK" ColumnName="ProductGroupFK" />
+                <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+                <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
+                <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+                <ScalarProperty Name="EditedBy" ColumnName="EditedBy" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="IsComplete" ColumnName="IsComplete" />
+                <ScalarProperty Name="IsInactive" ColumnName="IsInactive" />
+                <ScalarProperty Name="IsSuccessful" ColumnName="IsSuccessful" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="FrequencyFK" ColumnName="FrequencyFK" />
+                <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+                <ScalarProperty Name="SchedulePK" ColumnName="SchedulePK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleLogs">
+            <EntityTypeMapping TypeName="SemplestModel.ScheduleLog">
+              <MappingFragment StoreEntitySet="ScheduleLog">
+                <ScalarProperty Name="IsSuccessful" ColumnName="IsSuccessful" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="ScheduleFK" ColumnName="ScheduleFK" />
+                <ScalarProperty Name="ScheduleLogPK" ColumnName="ScheduleLogPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ScheduleTaskAssociations">
+            <EntityTypeMapping TypeName="SemplestModel.ScheduleTaskAssociation">
+              <MappingFragment StoreEntitySet="ScheduleTaskAssociation">
+                <ScalarProperty Name="TaskExecutionOrder" ColumnName="TaskExecutionOrder" />
+                <ScalarProperty Name="ScheduleFK" ColumnName="ScheduleFK" />
+                <ScalarProperty Name="TaskFK" ColumnName="TaskFK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tasks">
+            <EntityTypeMapping TypeName="SemplestModel.Task">
+              <MappingFragment StoreEntitySet="Task">
+                <ScalarProperty Name="Parameters" ColumnName="Parameters" />
+                <ScalarProperty Name="MethodName" ColumnName="MethodName" />
+                <ScalarProperty Name="ServiceName" ColumnName="ServiceName" />
+                <ScalarProperty Name="TaskPK" ColumnName="TaskPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -2580,8 +3090,8 @@
           <ConnectorPoint PointX="15.25" PointY="29.970896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_AdvertisingEngineCampaign_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="8.4375" PointY="32.25" />
-          <ConnectorPoint PointX="8.4375" PointY="28.115143229166666" />
+          <ConnectorPoint PointX="8.51562625" PointY="32.25" />
+          <ConnectorPoint PointX="8.51562625" PointY="28.115143229166666" />
           <ConnectorPoint PointX="9.4166666666666661" PointY="28.115143229166666" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="28.115143229166666" />
           <ConnectorPoint PointX="10.5" PointY="28.115143229166666" />
@@ -2600,15 +3110,17 @@
           <ConnectorPoint PointX="7.5" PointY="38.0237939453125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Child_Rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="19.961293945312498" />
-          <ConnectorPoint PointX="5.25" PointY="19.961293945312498" />
+          <ConnectorPoint PointX="4.5" PointY="20.201617431640621" />
+          <ConnectorPoint PointX="5.25" PointY="20.201617431640621" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Cust_Camp_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.75" PointY="23.797506510416667" />
-          <ConnectorPoint PointX="3.75" PointY="33.970896809895834" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="33.970896809895834" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="33.970896809895834" />
-          <ConnectorPoint PointX="5.25" PointY="33.970896809895834" />
+          <ConnectorPoint PointX="3.75" PointY="23.989807942708335" />
+          <ConnectorPoint PointX="3.75" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="4.0729191666666669" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="4.2395858333333329" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="4.2760454166666664" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="4.4427120833333325" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="5.25" PointY="34.067047526041662" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Customer_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="3.75" PointY="19.125" />
@@ -2624,36 +3136,35 @@
           <ConnectorPoint PointX="8.25" PointY="17.766462343750003" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.custPhone_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.1562525" PointY="23.797506510416667" />
-          <ConnectorPoint PointX="4.1562525" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="7.244791666666667" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="7.411458333333333" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="7.666666666666667" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="8.1458333333333339" PointY="24.211255755208327" />
-          <ConnectorPoint PointX="8.25" PointY="24.211255755208327" />
+          <ConnectorPoint PointX="4.5" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="7.244791666666667" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="7.411458333333333" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="7.666666666666667" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="7.979166666666667" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="8.1458333333333339" PointY="23.862447916666671" />
+          <ConnectorPoint PointX="8.25" PointY="23.862447916666671" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.cycType_Relation" ManuallyRouted="false">
-          <ConnectorPoint PointX="2.25" PointY="18.41447867187501" />
-          <ConnectorPoint PointX="3.3437475" PointY="18.41447867187501" />
+          <ConnectorPoint PointX="2.25" PointY="18.366403313802088" />
+          <ConnectorPoint PointX="3.3437475" PointY="18.366403313802088" />
           <ConnectorPoint PointX="3.3437475" PointY="19.125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Paraent_Rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.5" PointY="19.480646972656249" />
-          <ConnectorPoint PointX="5.25" PointY="19.480646972656249" />
+          <ConnectorPoint PointX="4.5" PointY="19.60080871582031" />
+          <ConnectorPoint PointX="5.25" PointY="19.60080871582031" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_CustomerNotes_1" ManuallyRouted="false">
           <ConnectorPoint PointX="4.5" PointY="22.5862939453125" />
           <ConnectorPoint PointX="5.25" PointY="22.5862939453125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_CustomerStyle_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.3437475" PointY="23.797506510416667" />
+          <ConnectorPoint PointX="3.3437475" PointY="23.989807942708335" />
           <ConnectorPoint PointX="3.3437475" PointY="27.922841796875" />
           <ConnectorPoint PointX="3.6666666666666665" PointY="27.922841796875" />
           <ConnectorPoint PointX="3.8333333333333335" PointY="27.922841796875" />
+          <ConnectorPoint PointX="4.0729191666666669" PointY="27.922841796875" />
+          <ConnectorPoint PointX="4.2395858333333329" PointY="27.922841796875" />
           <ConnectorPoint PointX="4.2760454166666664" PointY="27.922841796875" />
           <ConnectorPoint PointX="4.4427120833333325" PointY="27.922841796875" />
           <ConnectorPoint PointX="5.25" PointY="27.922841796875" />
@@ -2664,9 +3175,9 @@
           <ConnectorPoint PointX="5.25" PointY="16.490143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.UserCustomer_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.3593787499999994" PointY="23.797506510416667" />
-          <ConnectorPoint PointX="4.3593787499999994" PointY="39.230499674479169" />
-          <ConnectorPoint PointX="5.25" PointY="39.230499674479169" />
+          <ConnectorPoint PointX="4.1562525" PointY="23.989807942708335" />
+          <ConnectorPoint PointX="4.1562525" PointY="39.326650390625005" />
+          <ConnectorPoint PointX="5.25" PointY="39.326650390625005" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneCust_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="7.5" PointY="9.744882062900647" />
@@ -2691,26 +3202,28 @@
           <ConnectorPoint PointX="9.75" PointY="39.994944661458334" />
           <ConnectorPoint PointX="9.9166666666666661" PointY="39.994944661458334" />
           <ConnectorPoint PointX="10.083333333333334" PointY="39.994944661458334" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="39.994944661458334" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="39.994944661458334" />
           <ConnectorPoint PointX="10.5" PointY="39.994944661458334" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Employee_2" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="39.0862939453125" />
           <ConnectorPoint PointX="9.9166666666666661" PointY="39.0862939453125" />
           <ConnectorPoint PointX="10.083333333333334" PointY="39.0862939453125" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="39.0862939453125" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="39.0862939453125" />
           <ConnectorPoint PointX="10.5" PointY="39.0862939453125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Keyword_PromotionKeywordAssociation_2" ManuallyRouted="false">
           <ConnectorPoint PointX="8.25" PointY="46.875" />
           <ConnectorPoint PointX="8.25" PointY="45.307190755208325" />
-          <ConnectorPoint PointX="9.3229166666666661" PointY="45.307190755208325" />
-          <ConnectorPoint PointX="9.4895833333333339" PointY="45.307190755208325" />
-          <ConnectorPoint PointX="10" PointY="45.307190755208325" />
+          <ConnectorPoint PointX="9.25" PointY="45.307190755208325" />
+          <ConnectorPoint PointX="9.25" PointY="41.34568359375001" />
+          <ConnectorPoint PointX="10" PointY="41.34568359375001" />
           <ConnectorPoint PointX="10" PointY="35.480286458333339" />
-          <ConnectorPoint PointX="9.25" PointY="35.480286458333339" />
-          <ConnectorPoint PointX="9.25" PointY="30.961293945312505" />
-          <ConnectorPoint PointX="9.4166666666666661" PointY="30.961293945312505" />
-          <ConnectorPoint PointX="9.5833333333333339" PointY="30.961293945312505" />
-          <ConnectorPoint PointX="9.75" PointY="30.961293945312505" />
+          <ConnectorPoint PointX="9.4375" PointY="35.480286458333339" />
+          <ConnectorPoint PointX="9.4375" PointY="30.674094708984384" />
+          <ConnectorPoint PointX="9.75" PointY="30.674094708984384" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_PromotionKeywordAssociation_KeywordBid_1" ManuallyRouted="false">
           <ConnectorPoint PointX="11.25" PointY="30.692047526041662" />
@@ -2721,27 +3234,23 @@
           <ConnectorPoint PointX="6" PointY="8.547841796874998" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_ProductGroup_Promotion_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.75" PointY="33.970896809895834" />
-          <ConnectorPoint PointX="7.5" PointY="33.970896809895834" />
+          <ConnectorPoint PointX="6.75" PointY="34.067047526041662" />
+          <ConnectorPoint PointX="7.5" PointY="34.067047526041662" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAds_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9" PointY="33.990143229166669" />
-          <ConnectorPoint PointX="9.1666666666666661" PointY="33.990143229166669" />
-          <ConnectorPoint PointX="9.3333333333333339" PointY="33.990143229166669" />
-          <ConnectorPoint PointX="9.4166666666666661" PointY="33.990143229166669" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="33.990143229166669" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="33.990143229166669" />
           <ConnectorPoint PointX="9.75" PointY="33.990143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.9687475" PointY="32.25" />
-          <ConnectorPoint PointX="7.9687475" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="8.3541666666666661" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="8.5208333333333339" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="9.1666666666666661" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="9.3333333333333339" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="9.4166666666666661" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="9.5833333333333339" PointY="31.535693417968751" />
-          <ConnectorPoint PointX="9.75" PointY="31.535693417968751" />
+          <ConnectorPoint PointX="8.0078106250000012" PointY="32.25" />
+          <ConnectorPoint PointX="8.0078106250000012" PointY="31.392093799804691" />
+          <ConnectorPoint PointX="8.4322929166666665" PointY="31.392093799804691" />
+          <ConnectorPoint PointX="8.5989595833333343" PointY="31.392093799804691" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="31.392093799804691" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="31.392093799804691" />
+          <ConnectorPoint PointX="9.75" PointY="31.392093799804691" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_PromotionAds_SiteLinks_1" ManuallyRouted="false">
           <ConnectorPoint PointX="11.25" PointY="33.990143229166662" />
@@ -2757,23 +3266,108 @@
           <ConnectorPoint PointX="10.5" PointY="51.268992513020834" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Roles_UserRolesAssociation_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="9.40625" PointY="50.375" />
-          <ConnectorPoint PointX="9.40625" PointY="41.84375" />
-          <ConnectorPoint PointX="9.9166666666666661" PointY="41.84375" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="41.84375" />
-          <ConnectorPoint PointX="10.5" PointY="41.84375" />
+          <ConnectorPoint PointX="9.5" PointY="50.375" />
+          <ConnectorPoint PointX="9.5" PointY="42.00781375" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="42.00781375" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="42.00781375" />
+          <ConnectorPoint PointX="10.5" PointY="42.00781375" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_TransactionHistory_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6" PointY="41.085999348958339" />
-          <ConnectorPoint PointX="6" PointY="43.778595377604162" />
+          <ConnectorPoint PointX="5.82812625" PointY="41.27830078125" />
+          <ConnectorPoint PointX="5.82812625" PointY="43.778595377604162" />
           <ConnectorPoint PointX="7.5" PointY="43.778595377604162" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_UserRolesAssociation_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.4062525" PointY="41.085999348958339" />
-          <ConnectorPoint PointX="6.4062525" PointY="41.515622500000006" />
-          <ConnectorPoint PointX="9.9166666666666661" PointY="41.515622500000006" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="41.515622500000006" />
-          <ConnectorPoint PointX="10.5" PointY="41.515622500000006" />
+          <ConnectorPoint PointX="6.320315625" PointY="41.27830078125" />
+          <ConnectorPoint PointX="6.320315625" PointY="41.64549617187501" />
+          <ConnectorPoint PointX="9.1666666666666661" PointY="41.64549617187501" />
+          <ConnectorPoint PointX="9.3333333333333339" PointY="41.64549617187501" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="41.64549617187501" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="41.64549617187501" />
+          <ConnectorPoint PointX="10.5" PointY="41.64549617187501" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.Frequency" Width="1.5" PointX="12.875" PointY="44.375" Height="1.595683593749996" />
+        <EntityTypeShape EntityType="SemplestModel.GeoTargeting" Width="1.5" PointX="10.125" PointY="44.75" Height="2.9417936197916674" />
+        <EntityTypeShape EntityType="SemplestModel.Schedule" Width="1.5" PointX="15.125" PointY="32.625" Height="5.2494108072916674" />
+        <EntityTypeShape EntityType="SemplestModel.ScheduleLog" Width="1.5" PointX="17.375" PointY="33" Height="1.9802864583333246" />
+        <EntityTypeShape EntityType="SemplestModel.ScheduleTaskAssociation" Width="1.5" PointX="17.375" PointY="35.625" Height="1.7879850260416674" />
+        <EntityTypeShape EntityType="SemplestModel.Task" Width="1.5" PointX="0.75" PointY="6.75" Height="1.7879850260416674" />
+        <AssociationConnector Association="SemplestModel.REL_Customer_Schedule_3" >
+          <ConnectorPoint PointX="4.3593787499999994" PointY="23.989807942708335" />
+          <ConnectorPoint PointX="4.3593787499999994" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="9.4583333333333339" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="36.326650390625005" />
+          <ConnectorPoint PointX="15.125" PointY="36.326650390625005" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" >
+          <ConnectorPoint PointX="13.96875" PointY="44.375" />
+          <ConnectorPoint PointX="13.96875" PointY="37.13178309895833" />
+          <ConnectorPoint PointX="15.125" PointY="37.13178309895833" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_1" >
+          <ConnectorPoint PointX="9" PointY="33.088819614583343" />
+          <ConnectorPoint PointX="9.375" PointY="33.088819614583343" />
+          <ConnectorPoint PointX="9.375" PointY="37.875" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="37.875" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="37.875" />
+          <ConnectorPoint PointX="10.25" PointY="37.875" />
+          <ConnectorPoint PointX="10.25" PointY="44.375" />
+          <ConnectorPoint PointX="10.875" PointY="44.375" />
+          <ConnectorPoint PointX="10.875" PointY="44.75" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_ProductGroup_Schedule_4" >
+          <ConnectorPoint PointX="6" PointY="35.634095052083332" />
+          <ConnectorPoint PointX="6" PointY="36.25" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="36.25" />
+          <ConnectorPoint PointX="9.4583333333333339" PointY="36.25" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="36.25" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="36.25" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="36.25" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="36.25" />
+          <ConnectorPoint PointX="14.75" PointY="36.25" />
+          <ConnectorPoint PointX="14.75" PointY="34.444573195312508" />
+          <ConnectorPoint PointX="15.125" PointY="34.444573195312508" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_Schedule_2" >
+          <ConnectorPoint PointX="9" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="9.2916666666666661" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="9.4583333333333339" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="14.666666666666666" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="14.833333333333334" PointY="35.879293619791675" />
+          <ConnectorPoint PointX="15.125" PointY="35.879293619791675" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Schedule_ScheduleLog_1" >
+          <ConnectorPoint PointX="16.625" PointY="33.990143229166662" />
+          <ConnectorPoint PointX="17.375" PointY="33.990143229166662" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" >
+          <ConnectorPoint PointX="16.625" PointY="36.518992513020834" />
+          <ConnectorPoint PointX="17.375" PointY="36.518992513020834" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Users_Schedule_5" >
+          <ConnectorPoint PointX="6.75" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="10.083333333333334" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="10.166666666666666" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="10.333333333333334" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="10.375" PointY="38.879438417968757" />
+          <ConnectorPoint PointX="10.375" PointY="37.859375" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="37.859375" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="37.859375" />
+          <ConnectorPoint PointX="13.885416666666666" PointY="37.859375" />
+          <ConnectorPoint PointX="14.052083333333334" PointY="37.859375" />
+          <ConnectorPoint PointX="14.875" PointY="37.859375" />
+          <ConnectorPoint PointX="14.875" PointY="38.124410807291667" />
+          <ConnectorPoint PointX="15.875" PointY="38.124410807291667" />
+          <ConnectorPoint PointX="15.875" PointY="37.874410807291667" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>
