@@ -1,11 +1,13 @@
 package semplest.test;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.service.springjdbc.CustomerDB;
 import semplest.server.service.springjdbc.CustomerObj;
+import semplest.server.service.springjdbc.SetScheduleCompleteSP;
 
 public class TestSpringJDBC
 {
@@ -35,6 +37,9 @@ public class TestSpringJDBC
 			{
 				System.out.println("No customers found");
 			}
+			SetScheduleCompleteSP sp  = new SetScheduleCompleteSP();
+			Map res = sp.execute(2, 1);
+			
 			/*
 			TaskRunnerDB tasks = new TaskRunnerDB();
 			List<TaskRunnerObj> l = tasks.getScheduleTasks(2);

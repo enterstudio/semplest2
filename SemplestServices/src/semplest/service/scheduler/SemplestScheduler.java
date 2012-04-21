@@ -151,19 +151,19 @@ public class SemplestScheduler extends Thread
 	/*
 	 * Add record in correct order in list
 	 */
-	synchronized public void receiveSchedulerRecord(SchedulerRecord record)
+	synchronized public void receiveSchedulerRecord(SchedulerRecord scheduleRecord)
 	{
-		logger.debug("Message Processor - receiveSchedulerRecord schedID=" + record.getScheduleID() + ":" + record.getTimeToRunInMS());
-		if (recordAlreadyExist(record))
+		logger.debug("Message Processor - receiveSchedulerRecord schedID=" + scheduleRecord.getScheduleID() + ":" + scheduleRecord.getTimeToRunInMS());
+		if (recordAlreadyExist(scheduleRecord))
 		{
-			logger.debug("Ignor - Received the same message for " + record.getScheduleID() + " at Time " + record.getTimeToRunInMS());
+			logger.debug("Ignor - Received the same message for " + scheduleRecord.getScheduleID() + " at Time " + scheduleRecord.getTimeToRunInMS());
 		}
 		else
 		{
 			synchronized (lock)
 			{
-				int pos = findPositionOfscheduleID(record.getScheduleID());
-				if (record.getIsDelete())
+				int pos = findPositionOfscheduleID(scheduleRecord.getScheduleID());
+				if (scheduleRecord.getIsDelete())
 				{
 					// Trying to remove the Head of the list
 					if (pos == 0)
@@ -191,7 +191,7 @@ public class SemplestScheduler extends Thread
 				{
 					if (recordMessageList.isEmpty())
 					{
-						recordMessageList.add(record);
+						recordMessageList.add(scheduleRecord);
 						logger.debug("%%%%%%%%%%recordMessageList Empty - Add");
 						notify();
 					}
@@ -201,11 +201,11 @@ public class SemplestScheduler extends Thread
 						// new Add
 						if (pos == -1)
 						{
-							int posToAdd = findPositionToAdd(record);
+							int posToAdd = findPositionToAdd(scheduleRecord);
 							// add at end?
 							if (posToAdd == recordMessageList.size())
 							{
-								recordMessageList.add(record);
+								recordMessageList.add(scheduleRecord);
 								logger.debug("++++++++Add to end at " + posToAdd);
 							}
 							else if (posToAdd == 0) // replace the current
@@ -214,20 +214,20 @@ public class SemplestScheduler extends Thread
 								if (!this.scheduleRunning)
 								{
 									cancel = true;
-									recordMessageList.add(0, record);
+									recordMessageList.add(0, scheduleRecord);
 									notify();
 								}
 								else
 								// just add to the head - the running Schedule will be deleted
 								{
-									recordMessageList.add(0, record);
+									recordMessageList.add(0, scheduleRecord);
 								}
 							}
 						}
 						else
 						// already there so need to replace and put in the right order
 						{
-							int posToAdd = findPositionToAdd(record);
+							int posToAdd = findPositionToAdd(scheduleRecord);
 							// remove and put back in
 							if (pos == 0)
 							{
@@ -238,7 +238,7 @@ public class SemplestScheduler extends Thread
 									recordMessageList.remove(0);
 									cancel = true;
 
-									recordMessageList.add(0, record);
+									recordMessageList.add(0, scheduleRecord);
 									logger.debug("Already There in Pos 0 - replace");
 
 									notify();
@@ -249,12 +249,12 @@ public class SemplestScheduler extends Thread
 							{
 								if (posToAdd == recordMessageList.size())
 								{
-									recordMessageList.add(record);
+									recordMessageList.add(scheduleRecord);
 									logger.debug("++++++++Add to end at " + posToAdd);
 								}
 								else
 								{
-									recordMessageList.add(posToAdd, record);
+									recordMessageList.add(posToAdd, scheduleRecord);
 									logger.debug("++++++++Add at Pos=" + posToAdd);
 								}
 							}
@@ -399,18 +399,7 @@ public class SemplestScheduler extends Thread
 
 	private Boolean runScheduledTasks(Integer SchedulePK)
 	{
-		java.util.Date startTime = null;
-		try
-		{
-			Calendar c = Calendar.getInstance();
-			startTime = c.getTime();
-		}
-		catch (Exception e2)
-		{
-			logger.error("Error Getting StartTime" + e2.getMessage());
-			e2.printStackTrace();
-			return false;
-		}
+		
 		HashMap<String, TaskOutput> TaskOutputData = new HashMap<String, TaskOutput>();
 		if (SchedulePK == null)
 		{
