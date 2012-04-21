@@ -543,6 +543,7 @@
           <Property Name="PromotionAdsPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="PromotionFK" Type="int" />
           <Property Name="AdText" Type="nvarchar" Nullable="false" />
+          <Property Name="AdTitle" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="PromotionKeywordAssociation">
           <Key>
@@ -1875,6 +1876,7 @@
           <Property Name="AdText" Type="String" Nullable="false" MaxLength="4000" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAds_1" FromRole="PromotionAds" ToRole="Promotion" />
           <NavigationProperty Name="SiteLinks" Relationship="SemplestModel.REL_PromotionAds_SiteLinks_1" FromRole="PromotionAds" ToRole="SiteLinks" />
+          <Property Type="String" Name="AdTitle" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="PromotionKeywordAssociation">
           <Key>
@@ -2827,7 +2829,8 @@
             <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="PromotionAds"><EntityTypeMapping TypeName="SemplestModel.PromotionAd"><MappingFragment StoreEntitySet="PromotionAds">
-            <ScalarProperty Name="PromotionAdsPK" ColumnName="PromotionAdsPK" />
+            <ScalarProperty Name="AdTitle" ColumnName="AdTitle" />
+                <ScalarProperty Name="PromotionAdsPK" ColumnName="PromotionAdsPK" />
             <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
             <ScalarProperty Name="AdText" ColumnName="AdText" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>

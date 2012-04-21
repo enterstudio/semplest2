@@ -22,6 +22,7 @@ namespace Semplest.Core.Models
         public int PromotionAdsPK { get; set; }
         public Nullable<int> PromotionFK { get; set; }
         public string AdText { get; set; }
+        public string AdTitle { get; set; }
     
         public virtual Promotion Promotion { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
