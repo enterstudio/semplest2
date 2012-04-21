@@ -9,8 +9,7 @@
 
 using System.Collections.Generic;
 
-namespace Semplest.Core
-.76Models
+namespace Semplest.Core.Models
 
 {
     public class AdvertisingEngine
