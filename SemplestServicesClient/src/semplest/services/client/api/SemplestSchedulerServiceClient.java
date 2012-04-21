@@ -13,7 +13,7 @@ import semplest.server.protocol.TaskOutput;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
 
-public class SemplestSchedulerServiceClient extends ServiceRun implements SemplestSchedulerInterface,SchedulerTaskRunnerInterface
+public class SemplestSchedulerServiceClient extends ServiceRun implements SemplestSchedulerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.scheduler.SemplestSchedulerService";
 	private static String BASEURLTEST = "http://localhost:9898/semplest"; // VMJAVA1
@@ -32,7 +32,7 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 			{
 				Calendar c = Calendar.getInstance();
 				c.setTime(new Date());
-				c.add(Calendar.MILLISECOND, 60000);
+				c.add(Calendar.MILLISECOND, 20000);
 				startTime = c.getTime();
 			}
 			catch (Exception e2)
@@ -41,7 +41,8 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 				e2.printStackTrace();
 			}
 			SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(null);
-			client.NewSchedule(2, startTime, false);
+			client.NewSchedule(1,1, startTime, false);
+			//client.NewSchedule(2,3, new Date(), false);
 		}
 		catch (Exception e)
 		{
@@ -63,13 +64,6 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 	}
 
 	@Override
-	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void initializeService(String input) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -77,9 +71,10 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 	}
 
 	@Override
-	public Boolean NewSchedule(Integer ScheduleID, Date StartTime, Boolean IsDelete) throws Exception
+	public Boolean NewSchedule(Integer scheduleJobID, Integer ScheduleID, Date StartTime, Boolean IsDelete) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("scheduleJobID", String.valueOf(scheduleJobID));
 		jsonHash.put("ScheduleID", String.valueOf(ScheduleID));
 		jsonHash.put("StartTime", StartTime.toString());
 		jsonHash.put("IsDelete", String.valueOf(IsDelete));
