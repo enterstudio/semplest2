@@ -135,10 +135,10 @@
     var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
 
     // Start Enable tabs region
-    //                var tab = tabStrip.select();
-    //                tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-    //                tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
-    //                tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
+                    var tab = tabStrip.select();
+                    tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
+                    tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
+                    tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
     // end Enable tabs Region
 
     //Selected Button Logic
