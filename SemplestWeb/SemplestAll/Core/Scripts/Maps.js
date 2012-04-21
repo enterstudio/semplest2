@@ -1,9 +1,9 @@
-﻿var HOST_URL = 'http://www.mapquestapi.com'
-var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq'
+﻿var HOST_URL = 'http://www.mapquestapi.com';
+var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
 var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderOptions';
 var advancedOptions = '';
 var outFormat = '';
-var index = ''
+var index = '';
 function showOptionsURL(type, elementName) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = '';
@@ -60,11 +60,11 @@ function renderOptions(response) {
         }
 
         var locations = response.results[0].locations;
+        var location;
         if (locations.length > 1) { // Location ambiguities!
             html = "<p>Ambiguous addresses found in request:</p><table>";
             for (i = 0; i < locations.length; i++) {
-                var location = locations[i];
-
+                location = locations[i];
                 html += '<tr><td>';
                 html += ' ' + (location.adminArea5 || ' ');
                 html += ' ' + (location.adminArea4 || ' ');
@@ -89,8 +89,7 @@ function renderOptions(response) {
 
         if (locations.length == 1) {
             //html = "<p>Location:</p>";
-            var location = locations[0];
-            //            html += 'Country: ' + location.adminArea1;
+            location = locations[0]; //            html += 'Country: ' + location.adminArea1;
             //            html += '<br/>';
             //            html += 'State: ' + location.adminArea3;
             //            html += '<br/>';
@@ -103,7 +102,7 @@ function renderOptions(response) {
             //            html += 'Lat: ' + location.latLng.lat + "   Lng: " + location.latLng.lng;
             //            html += '<br/>';
             //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
-            html += '<img src="' + location.mapUrl + '"/>';
+            html += '<img src="' + location.mapUrl + '" style="height: 160px; width:160px;"/>';
             if (index != '')
                 document.getElementById('optionsNarrative_' + index).innerHTML = html;
             else
