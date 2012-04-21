@@ -30,9 +30,10 @@ namespace SemplestWebApp.Services
                                    //TargetCycleBudget = model.Budget
                                };
             // CampaignAds is now called as PromotionAd
-            var cad = new PromotionAd {AdText = model.AdCopy};
+            var cad = new PromotionAd {AdText = model.AdCopy, AdTitle = model.Title};
             var ae = new AdvertisingEngine {AdvertisingEngine1 = model.Google.ToString()};
             var ag = new Promotion {ProductGroup = campaign};
+            ag.LandingPageURL = model.Url;
             ag.PromotionAds.Add(cad);
             //ae.AdGroups.Add(ag);
             var kewword = new Keyword {Keyword1 = model.Words};
