@@ -44,7 +44,7 @@ namespace Semplest.Core.Controllers
                     // save this some how while getting the keywords this is becoming null
                     Session.Add("AllCategories", model.AllCategories);
                 }
-                return View(model);
+                return PartialView("Categories", model);
             }
             catch (Exception)
             {
@@ -96,6 +96,10 @@ namespace Semplest.Core.Controllers
             return PartialView();
         }
         public ActionResult NegativeKeyWords()
+        {
+            return PartialView();
+        }
+        public ActionResult Categories()
         {
             return PartialView();
         }
