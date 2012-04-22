@@ -1,0 +1,69 @@
+﻿@using Semplest.Core.Helpers
+@using Semplest.Core.Models
+@model AdModel
+<div >
+    <div class="configuration1">
+        <span class="infoHead">Location (Enter Address,City,State or Zip)</span>
+        <table>
+            <tr>
+                <td style="vertical-align: top">
+                    <span>Business Address</span>
+                </td>
+                <td>
+                    <div id="addresses">
+                        @Html.EditorFor(t => t.Addresses)
+                    </div>
+                    <div style="text-align: right">
+                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(GeoTargeting))
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="configuration1">
+        <span class="infoHead">Ad Copy</span>
+        <table>
+            <tr>
+                <td>
+                    <span>URL</span>
+                </td>
+                <td>
+                    <input id="Url" name="Url" class="k-textbox" />
+                </td>
+                <td>
+                    <span>This url will appears in all of your ads</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div id="addcopy">
+                        @Html.EditorFor(t => t.Ads)
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="configuration1">
+        <ul class="options">
+            <li><a href="#" id="additionalLinks">Click to add additional click through options</a>
+            </li>
+            <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association
+                with your business</a></li>
+            <li>
+                <button data-bind="click: addAd" type="button" class="k-button" id="deleteRow">
+                    <span class="k-add k-icon"></span>Create Another Ad</button></li>
+        </ul>
+    </div>
+    <div class="configuration1">
+        <span class="infoHead">How Would you Classify Your Product</span>
+        <div class="options">
+            <input id="dropDownList" />
+        </div>
+        <div class="options">
+            <button class="k-button" id="back1" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getCategories" type="submit" name="Command" value="GetCategories">
+                <span class="k-update k-icon"></span>Save And Continue</button>
+        </div>
+    </div>
+</div>

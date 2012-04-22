@@ -97,7 +97,14 @@
             start.max(endDate);
         }
     }
-
+    var onSelectTab = function (e) {
+        if (e.item.innerText == "Additional Links")
+            if ($('#additionalLinksdiv').html() == '')
+                $('#additionalLinksdiv').load('/Campaign/AdditionalLinks', function () { alert('dfsdfsd'); });
+        if (e.item.innerText == "Negative Keywords")
+            if ($('#negativeKeyWordsdiv').html() == '')
+                $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('dfsdfsd'); });
+    };
     var start = $("#StartDate").kendoDatePicker({
         change: startChange
     }).data("kendoDatePicker");
@@ -134,10 +141,12 @@
         }
     };
     //Generate Tab
-    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
+    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate, select: onSelectTab }).data("kendoTabStrip");
 
     // Start Enable tabs region
     var tab = tabStrip.select();
+
+
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
     tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
     tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
@@ -150,7 +159,8 @@
     $("#additionalLinks").click(function () {
         if (!isAdditionalLinksAdded) {
             tabStrip.append({
-                text: 'Additional Click Through Links("SiteLinks")'
+                text: "Additional Links",
+                content: '<div id="additionalLinksdiv" />'
             });
             isAdditionalLinksAdded = true;
         }
@@ -159,7 +169,8 @@
     $("#negativeKeyWords").click(function () {
         if (!isnegativeKeyWordsAdded) {
             tabStrip.append({
-                text: 'Negative Keywords'
+                text: "Negative Keywords",
+                content: '<div id="negativeKeyWordsdiv" />'
             });
             isnegativeKeyWordsAdded = true;
         }

@@ -8,23 +8,12 @@ namespace Semplest.Core.Models
     {
         public CampaignSetupModel()
         {
-            Addresses = new List<GeoTargeting> { new GeoTargeting() };
-            Ads = new List<PromotionAd> {new PromotionAd()};
             ProductGroup = new ProductGroupModel();
+            AdModel = new AdModel();
         }
         public ProductGroupModel ProductGroup { get; set; }
-
-        public List<GeoTargeting> Addresses { get; set; }
-        public List<PromotionAd> Ads { get; set; }
-
-        public double Proximity { get; set; }
-
-        public string Url { get; set; }
-        public string Title { get; set; }
-        public string AdCopy { get; set; }
-
-        //public string ProductType { get; set; }
-
+        public AdModel AdModel { get; set; }
+        
         #region Nested type: CategoriesModel
 
         public int[] CategoryIds { get; set; }
@@ -48,6 +37,19 @@ namespace Semplest.Core.Models
         }
 
         #endregion
+
+    }
+
+    public class AdModel
+    {
+        public AdModel ()
+        {
+            Addresses = new List<GeoTargeting> { new GeoTargeting() };
+            Ads = new List<PromotionAd> { new PromotionAd() };
+        }
+        public List<GeoTargeting> Addresses { get; set; }
+        public List<PromotionAd> Ads { get; set; }
+        public string Url { get; set; }
 
     }
 
