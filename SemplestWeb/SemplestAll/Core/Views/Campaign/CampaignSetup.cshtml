@@ -1,7 +1,4 @@
-﻿@using Semplest.Core.Helpers
-@using Semplest.Core.Models
-@using SemplestWebApp.Helpers
-@model Semplest.Core.Models.CampaignSetupModel
+﻿@model Semplest.Core.Models.CampaignSetupModel
 @Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Campaign";
@@ -31,26 +28,41 @@ Ad Setup
     <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
 }
 <script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
-@using (Html.BeginForm())
-{
-    <div id="exampleWrap">
-        <div id="example" class="k-content">
-            @using (Html.BeginForm("CampaignSetup", "Campaign", FormMethod.Post))
-            {
-                @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
-                <div id="tabstrip">
-                    <ul>
-                        <li class="k-state-active">DEFINE PRODUCT</li>
-                        <li>CREATE ADS</li>
-                    </ul>
-                    <div id="cap-view" class="k-header">
-                        @Html.EditorFor(t => t.ProductGroup)
-                    </div>
-                    <div id="product-view" class="k-header">
-                        @Html.Partial("AdModel", Model.AdModel)
-                    </div>
+<script>
+    function OnSuccess() {
+        //alert('Success');
+        var tabStrip = $("#tabstrip").kendoTabStrip().data("kendoTabStrip");
+        tabStrip.append({
+            text: "Key Words",
+            content: '<div id="KeyWordsdiv" />'
+        });
+    }
+    function OnFailure(ajaxContext) {
+        var response = ajaxContext.get_response();
+        var statusCode = response.get_statusCode();
+        alert('Failure');
+        $('#example').empty();
+    }
+</script>
+<div id="exampleWrap">
+    <div id="example" class="k-content">
+        @*@using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", UpdateTargetId = "example" }))*@
+        @*@using (Html.BeginForm("CampaignSetup", "Campaign"))*@
+        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess" }))
+        {
+            @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
+            <div id="tabstrip">
+                <ul>
+                    <li class="k-state-active">DEFINE PRODUCT</li>
+                    <li>CREATE ADS</li>
+                </ul>
+                <div id="cap-view" class="k-header">
+                    @Html.EditorFor(t => t.ProductGroup)
                 </div>
-            }
-        </div>
+                <div id="product-view" class="k-header">
+                    @Html.Partial("AdModel", Model.AdModel)
+                </div>
+            </div>
+        }
     </div>
-}
+</div>

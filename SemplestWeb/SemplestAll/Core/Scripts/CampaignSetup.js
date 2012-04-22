@@ -100,10 +100,13 @@
     var onSelectTab = function (e) {
         if (e.item.innerText == "Additional Links")
             if ($('#additionalLinksdiv').html() == '')
-                $('#additionalLinksdiv').load('/Campaign/AdditionalLinks', function () { alert('dfsdfsd'); });
+                $('#additionalLinksdiv').load('/Campaign/AdditionalLinks', function () { alert('Additional Links'); });
         if (e.item.innerText == "Negative Keywords")
             if ($('#negativeKeyWordsdiv').html() == '')
-                $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('dfsdfsd'); });
+                $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('Negative Key Words'); });
+        if (e.item.innerText == "Key Words")
+            if ($('#KeyWordsdiv').html() == '')
+                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { alert('Key Words'); });
     };
     var start = $("#StartDate").kendoDatePicker({
         change: startChange
@@ -175,35 +178,52 @@
             isnegativeKeyWordsAdded = true;
         }
     });
-    $('#frmCampaign').submit(function (e) {
-        e.preventDefault();
-
-        $.fn.serializeObject = function () {
-            var o = {};
-            var a = this.serializeArray();
-            $.each(a, function () {
-                if (o[this.name] !== undefined) {
-                    if (!o[this.name].push) {
-                        o[this.name] = [o[this.name]];
-                    }
-                    o[this.name].push(this.value || '');
-                } else {
-                    o[this.name] = this.value || '';
-                }
-            });
-            return o;
-        };
-        var data = $(this).serializeArray();
-        var data1 = (JSON.stringify(data));
-        alert(data1);
-        $.post('/Campaign/SaveDefineProduct/', { data: data1 }, function (de) {
-            alert(de);
-        }).error(function (err) { alert(err); });
+    var isKeywordsAdded = false;
+    $("#getCategories").click(function () {
+        if (!isKeywordsAdded) {
+//            tabStrip.append({
+//                text: "Key Words",
+//                content: '<div id="KeyWordsdiv" />'
+//            });
+            isKeywordsAdded = true;
+        }
     });
+//    if (isKeywordsAdded) {
+//        tabStrip.append({
+//            text: "Key Words",
+//            content: '<div id="KeyWordsdiv" />'
+//        });
+//    }
+    //    $('#frmCampaign').submit(function (e) {
+    //        e.preventDefault();
+    //                $.fn.serializeObject = function () {
+    //                    var o = {};
+    //                    var a = this.serializeArray();
+    //                    $.each(a, function () {
+    //                        if (o[this.name] !== undefined) {
+    //                            if (!o[this.name].push) {
+    //                                o[this.name] = [o[this.name]];
+    //                            }
+    //                            o[this.name].push(this.value || '');
+    //                        } else {
+    //                            o[this.name] = this.value || '';
+    //                        }
+    //                    });
+    //                    return o;
+    //                };
+    //                var data = $(this).serializeArray();
+    //                var data1 = (JSON.stringify(data));
+    //                alert(data1);
+    //                $.post('/Campaign/GetCategories/', { data: data1 }, function (de) {
+    //                    alert(de);
+    //                }).error(function (err) { alert(err); });
+    //    });
+
+    
 });
 
 //Helper functions to Add Multiple Items..
-
+ 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
     $container.find(deleteElement).val('True');

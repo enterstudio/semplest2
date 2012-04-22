@@ -90,11 +90,16 @@ namespace Semplest.Core.Controllers
         {
             return PartialView(model);
         }
+        
         public ActionResult AdditionalLinks()
         {
             return PartialView();
         }
         public ActionResult NegativeKeyWords()
+        {
+            return PartialView();
+        }
+        public ActionResult KeyWords()
         {
             return PartialView();
         }
