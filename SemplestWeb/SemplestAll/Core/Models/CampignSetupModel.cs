@@ -10,18 +10,12 @@ namespace Semplest.Core.Models
         {
             Addresses = new List<Address> {new Address()};
             Ads = new List<Promotion> {new Promotion()};
+            ProductGroup = new ProductGroupModel();
         }
 
         //[Required]
-        public string ProductGroupName { get; set; }
-        public string ProductPromotionName { get; set; }
-        public string Words { get; set; }
-        public decimal Budget { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public bool Google { get; set; }
-        public bool Yahoo { get; set; }
-        public bool Bing { get; set; }
+
+        public ProductGroupModel ProductGroup { get; set; }
 
         public List<Address> Addresses { get; set; }
         public List<Promotion> Ads { get; set; }
@@ -33,6 +27,18 @@ namespace Semplest.Core.Models
         public string AdCopy { get; set; }
 
         //public string ProductType { get; set; }
+    }
+
+    public class ProductGroupModel
+    {
+        public string ProductGroupName { get; set; }
+        public string ProductPromotionName { get; set; }
+        public string Words { get; set; }
+        public decimal Budget { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public bool Google { get; set; }
+        public bool YahooBing { get; set; }
     }
 
     public class AdditionalLinks

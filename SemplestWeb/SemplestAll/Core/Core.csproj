@@ -311,6 +311,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\CampaignSetup.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery.busy.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\kendo.web.min.js" />
     <Content Include="Scripts\Maps.js" />
@@ -405,6 +406,7 @@
       <LastGenOutput>Model1.cs</LastGenOutput>
     </None>
     <Content Include="Views\Test\TestMap.cshtml" />
+    <Content Include="Views\Campaign\ProductGroup.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

@@ -20,31 +20,31 @@ namespace SemplestWebApp.Services
         public void SaveAd(CampaignSetupModel model)
         {
             // Campaign is now called as ProductGroup
-            var campaign = new ProductGroup
-                               {
-                                   ProductGroupName = model.ProductGroupName,
-                                   IsActive = true,
-                                   CustomerFK = 1,
-                                   StartDate = model.StartDate,
-                                   EndDate = model.EndDate,
-                                   //TargetCycleBudget = model.Budget
-                               };
-            // CampaignAds is now called as PromotionAd
-            var cad = new PromotionAd {AdText = model.AdCopy, AdTitle = model.Title};
-            var ae = new AdvertisingEngine {AdvertisingEngine1 = model.Google.ToString()};
-            var ag = new Promotion {ProductGroup = campaign};
-            ag.LandingPageURL = model.Url;
-            ag.PromotionAds.Add(cad);
-            //ae.AdGroups.Add(ag);
-            var kewword = new Keyword {Keyword1 = model.Words};
-            using (var db = new SemplestEntities())
-            {
-                db.ProductGroups.Add(campaign);
-                db.Promotions.Add(ag);
-                db.PromotionAds.Add(cad);
-                db.AdvertisingEngines.Add(ae);
-                db.SaveChanges();
-            }
+            //var campaign = new ProductGroup
+            //                   {
+            //                       ProductGroupName = model.ProductGroupName,
+            //                       IsActive = true,
+            //                       CustomerFK = 1,
+            //                       StartDate = model.StartDate,
+            //                       EndDate = model.EndDate,
+            //                       //TargetCycleBudget = model.Budget
+            //                   };
+            //// CampaignAds is now called as PromotionAd
+            //var cad = new PromotionAd {AdText = model.AdCopy, AdTitle = model.Title};
+            //var ae = new AdvertisingEngine {AdvertisingEngine1 = model.Google.ToString()};
+            //var ag = new Promotion {ProductGroup = campaign};
+            //ag.LandingPageURL = model.Url;
+            //ag.PromotionAds.Add(cad);
+            ////ae.AdGroups.Add(ag);
+            //var kewword = new Keyword {Keyword1 = model.Words};
+            //using (var db = new SemplestEntities())
+            //{
+            //    db.ProductGroups.Add(campaign);
+            //    db.Promotions.Add(ag);
+            //    db.PromotionAds.Add(cad);
+            //    db.AdvertisingEngines.Add(ae);
+            //    db.SaveChanges();
+            //}
         }
     }
 }
