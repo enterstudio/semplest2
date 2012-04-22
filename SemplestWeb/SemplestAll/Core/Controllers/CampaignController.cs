@@ -200,9 +200,15 @@ namespace Semplest.Core.Controllers
         {
         }
 
-        public ActionResult SaveDefineProduct(string data)
+        public ActionResult SaveDefineProduct(CampaignSetupModel data)
         {
-            return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
+            if(data == null)
+            return Json(0);
+            else
+            {
+                return Json(123);
+            }
+            // return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
         }
     }
 }
