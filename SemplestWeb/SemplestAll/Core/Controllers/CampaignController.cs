@@ -31,16 +31,16 @@ namespace Semplest.Core.Controllers
             return View(campaignSetupModel);
         }
 
-        [HttpPost]
-        public ActionResult CampaignSetup(CampaignSetupModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var service = new SemplestDataService();
-                service.SaveAd(model);
-            }
-            return View(model);
-        }
+        //[HttpPost]
+        //public ActionResult CampaignSetup(CampaignSetupModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var service = new SemplestDataService();
+        //        service.SaveAd(model);
+        //    }
+        //    return View(model);
+        //}
 
         [HttpPost]
         [ActionName("CampaignSetup")]
