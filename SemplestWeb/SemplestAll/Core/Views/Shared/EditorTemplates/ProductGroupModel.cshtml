@@ -13,8 +13,9 @@
                 <label for="productPromotionName" class="required">
                     Product / Promotion Name
                 </label>
-                <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
-                    required validationmessage="Please enter {0}" />
+                @Html.TextBoxFor(t=>t.ProductPromotionName ,new { @class="k-textbox" })
+                @*<input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox"
+                    required validationmessage="Please enter {0}" />*@
             </li>
             <li>
                 <h4 class="required">
