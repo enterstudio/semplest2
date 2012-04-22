@@ -1,16 +1,8 @@
-﻿@using Semplest.Core.Helpers
-@using Semplest.Core.Models
-@model Semplest.Core.Models.CampaignSetupModel
-           
+﻿@model Semplest.Core.Models.CampaignSetupModel
 <div class="configuration1">
     <span class="infoHead">How Would you Classify Your Product</span>
     <div class="options">
-@*        <input id="dropDownList" />
-*@        
-        @if (Model != null)
-        {
-            @Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
-        }
+        @Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
     </div>
     <div class="options">
         <br />

@@ -99,9 +99,9 @@ namespace Semplest.Core.Controllers
         {
             return PartialView();
         }
-        public ActionResult Categories()
+        public ActionResult Categories(CampaignSetupModel model)
         {
-            return PartialView();
+            return PartialView(model);
         }
         public ActionResult KeyWords()
         {
