@@ -8,10 +8,14 @@
                 City
             </td>
             <td>
-                @Html.TextBoxFor(t => t.City, new {@cols = 20, @rows = 3, @class = "k-textbox"})
-                <button type="button" class="k-button" style="vertical-align: top" onclick=" doOptions() ">
+                @Html.TextBoxFor(t => t.City, new { @class = "k-textbox"})
+                <button type="button" class="k-button" style="vertical-align: top" onclick="doOptions()">
                     <span class="k-search k-icon"></span>
                 </button>
+            </td>
+            <td rowspan="4">
+                <div id="optionsNarrative">
+                </div>
             </td>
         </tr>
         <tr>
@@ -19,7 +23,7 @@
                 State
             </td>
             <td>
-                @Html.TextBoxFor(t => t.StateCodeFK, new { @cols = 20, @rows = 3, @class = "k-textbox" })
+                @Html.TextBoxFor(t => t.StateCodeFK, new { @class = "k-textbox" })
             </td>
         </tr>
         <tr>
@@ -27,7 +31,7 @@
                 Zip
             </td>
             <td>
-                @Html.TextBoxFor(t => t.Zip, new { @cols = 20, @rows = 3, @class = "k-textbox" })
+                @Html.TextBoxFor(t => t.Zip, new { @class = "k-textbox" })
             </td>
         </tr>
         <tr>
@@ -35,7 +39,7 @@
                 Proximity
             </td>
             <td>
-                <input type="text" class="k-textbox" />
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "k-textbox" })
             </td>
         </tr>
     </table>

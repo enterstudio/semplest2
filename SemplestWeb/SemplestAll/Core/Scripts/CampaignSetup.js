@@ -185,8 +185,8 @@
         var data = $(this).serializeArray();
         var data1 = (JSON.stringify(data));
         alert(data1);
-        $.post('/Campaign/SaveDefineProduct/', { data: data1 }, function (e) {
-            alert(e);
+        $.post('/Campaign/SaveDefineProduct/', { data: data1 }, function (de) {
+            alert(de);
         }).error(function (err) { alert(err); });
     });
 });
@@ -203,7 +203,7 @@ function addNestedForm(container, counter, ticks, content) {
     var nextIndex = $(counter).length;
     var pattern = new RegExp(ticks, "gi");
     content = content.replace(pattern, nextIndex);
-    content = content.replace("doOptions()", "doOptions('Addresses_" + nextIndex + "__Address1')");
+    content = content.replace("doOptions()", "doOptions('Addresses_" + nextIndex + "__City','Addresses_" + nextIndex + "__StateCodeFK','Addresses_" + nextIndex + "__Zip','Addresses_" + nextIndex + "__Proximity')");
     content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
     $(container).append(content);
 }
