@@ -377,7 +377,7 @@
     <Content Include="Views\Campaign\CampaignSetup.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Shared\EditorTemplates\Address.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\GeoTargeting.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\AdGroup.cshtml" />
     <Content Include="Views\Entity\BillType.cshtml" />
     <Content Include="Views\Entity\Create.cshtml" />

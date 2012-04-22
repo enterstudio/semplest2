@@ -8,16 +8,13 @@ namespace Semplest.Core.Models
     {
         public CampaignSetupModel()
         {
-            Addresses = new List<Address> {new Address()};
+            Addresses = new List<GeoTargeting> { new GeoTargeting() };
             Ads = new List<Promotion> {new Promotion()};
             ProductGroup = new ProductGroupModel();
         }
-
-        //[Required]
-
         public ProductGroupModel ProductGroup { get; set; }
 
-        public List<Address> Addresses { get; set; }
+        public List<GeoTargeting> Addresses { get; set; }
         public List<Promotion> Ads { get; set; }
 
         public double Proximity { get; set; }
