@@ -21,27 +21,19 @@
         </table>
     </div>
     <div class="configuration1">
-        <span class="infoHead">Ad Copy</span>
-        <table>
-            <tr>
-                <td>
-                    <span>URL</span>
-                </td>
-                <td>
-                    <input id="Url" name="Url" class="k-textbox" />
-                </td>
-                <td>
-                    <span>This url will appears in all of your ads</span>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div id="addcopy">
+        <div class="table">
+            <h3 class="infoHead">Ad Copy</h3>
+            <li>
+                <label>URL</label>
+                <input id="Url" name="Url" class="k-textbox" />
+                <span>This url will appears in all of your ads</span>
+            </li>
+            <li>
+                <div id="addcopy">
                         @Html.EditorFor(t => t.Ads)
                     </div>
-                </td>
-            </tr>
-        </table>
+            </li>
+        </div>
     </div>
     <div class="configuration1">
         <ul class="options">
@@ -50,8 +42,7 @@
             <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association
                 with your business</a></li>
             <li>
-                <button data-bind="click: addAd" type="button" class="k-button" id="deleteRow">
-                    <span class="k-add k-icon"></span>Create Another Ad</button></li>
+                @Html.LinkToAddNestedForm("Create Another Ad", "#addcopy", ".addcopy", "Ads", typeof(PromotionAd))</li>
         </ul>
     </div>
     <div class="configuration1">
