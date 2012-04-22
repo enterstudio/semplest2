@@ -5,20 +5,29 @@
     <table>
         <tr>
             <td>
-                Address
+                City
             </td>
             <td>
-                @Html.TextAreaFor(t => t.Address, new {@cols = 20, @rows = 3, @class = "k-textbox1"})
+                @Html.TextBoxFor(t => t.City, new {@cols = 20, @rows = 3, @class = "k-textbox"})
                 <button type="button" class="k-button" style="vertical-align: top" onclick=" doOptions() ">
                     <span class="k-search k-icon"></span>
                 </button>
             </td>
-            <td rowspan="2">
-                <div id="optionsNarrative">
-                </div>
+        </tr>
+        <tr>
+            <td>
+                State
             </td>
-            <td valign="top">
-                @Html.LinkToRemoveNestedForm("Remove", "div.address", "input.mark-for-delete")
+            <td>
+                @Html.TextBoxFor(t => t.StateCodeFK, new { @cols = 20, @rows = 3, @class = "k-textbox" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Zip
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.Zip, new { @cols = 20, @rows = 3, @class = "k-textbox" })
             </td>
         </tr>
         <tr>

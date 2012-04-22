@@ -407,6 +407,7 @@
     </None>
     <Content Include="Views\Test\TestMap.cshtml" />
     <Content Include="Views\Campaign\ProductGroup.cshtml" />
+    <Content Include="Views\Campaign\CreateAds.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
