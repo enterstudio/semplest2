@@ -75,7 +75,26 @@ Ad Setup
                     </div>
                     <div class="configuration1">
                         <span class="infoHead">Ad Copy</span>
-                        @Html.EditorFor(t => t.Ads)
+                        <table>
+                            <tr>
+                                <td>
+                                    <span>URL</span>
+                                </td>
+                                <td>
+                                    <input id="Url" name="Url" class="k-textbox" />
+                                </td>
+                                <td>
+                                    <span>This url will appears in all of your ads</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="addcopy">
+                                        @Html.EditorFor(t => t.Ads)
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
                     <div class="configuration1">
                         <ul class="options">
