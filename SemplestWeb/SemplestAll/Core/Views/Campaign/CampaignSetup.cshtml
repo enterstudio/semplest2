@@ -32,7 +32,7 @@ Ad Setup
 <script>
     function OnBegin() {
         //alert('Success');
-        $.blockUI({ message: '<h1><img src="busy.gif" /> Just a moment...</h1>' }); 
+        $.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>' }); 
     }
     function OnSuccess() {
         $.unblockUI();
