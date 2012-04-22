@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
 using KendoGridBinder;
@@ -14,11 +12,11 @@ namespace Semplest.Core.Controllers
 {
     public class CampaignController : Controller
     {
-        private ICampaignRepository campaignRepository;
+        private readonly ICampaignRepository _campaignRepository;
 
         public CampaignController(ICampaignRepository iCampaignRepository)
         {
-            campaignRepository = iCampaignRepository;
+            _campaignRepository = iCampaignRepository;
         }
 
         [AuthorizeRole]
@@ -42,30 +40,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var scw = new ServiceClientWrapper();
-
-                    // create AdCopy array
-                    var promAds = model.AdModel.Ads;
-
-                    // get categories or classifications
-                    var categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName,
-                                                model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.AdModel.Url);
-
-                    // create categories list that will be displayed in a multiselect list box
-                    if (categories != null && categories.Count > 0)
-                    {
-                        for (var i = 0; i < categories.Count; i++)
-                        {
-                            var cm = new CampaignSetupModel.CategoriesModel { Id = i, Name = categories[i] };
-                            model.AllCategories.Add(cm);
-                        }
-                    }
-                    else
-                    {
-                        var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Could not get Categories from web service" };
-                        Logger.Write(logEnty);
-                    }
-
+                    model = _campaignRepository.GetCategories(model);
                     // save this some how while getting the keywords this is becoming null
                     Session.Add("AllCategories", model.AllCategories);
                 }
@@ -73,10 +48,6 @@ namespace Semplest.Core.Controllers
             }
             catch (Exception)
             {
-                //string err = ex.Message + "\\r\\n" + ex.StackTrace;
-                //CreateDummyModel(model);
-                //ViewBag.AllCategories = model.AllCategories;
-                //Session.Add("AllCategories", model.AllCategories);
                 return View(model);
             }
         }
@@ -89,46 +60,7 @@ namespace Semplest.Core.Controllers
             try
             {
                 if (ModelState.IsValid)
-                {
-                    if (model.AllCategories.Count == 0)
-                    {
-                        model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-                    }
-
-                    if (model.AllCategories.Count <= 0)
-                    {
-                    }
-
-                    var catList = new List<string>();
-
-                    foreach (CampaignSetupModel.CategoriesModel cat in model.AllCategories)
-                    {
-                        catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
-                    }
-
-                    var scw = new ServiceClientWrapper();
-                    // create AdCopy array
-                    var promAds = model.AdModel.Ads;
-
-                    // get keywords from the web service
-                    //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
-                    var keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
-                                                    model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.AdModel.Url, null);
-                    if (keywords != null && keywords.Count > 0)
-                    {
-                        foreach (var key in keywords)
-                        {
-                            var kwm = new CampaignSetupModel.KeywordsModel { Name = key };
-                            model.AllKeywords.Add(kwm);
-                        }
-                    }
-                    else
-                    {
-                        var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Could not get Keywords from web service" };
-                        Logger.Write(logEnty);
-                    }
-                }
-
+                    model = _campaignRepository.GetKeyWords(model);
                 return View(model);
             }
             catch (Exception)
