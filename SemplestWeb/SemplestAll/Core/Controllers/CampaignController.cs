@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
 using KendoGridBinder;
@@ -23,7 +24,7 @@ namespace Semplest.Core.Controllers
         [AuthorizeRole]
         public ActionResult CampaignSetup()
         {
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading"};
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading" };
             Logger.Write(logEnty);
             var logService = new LogService();
             logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
@@ -55,20 +56,15 @@ namespace Semplest.Core.Controllers
 
                     // create AdCopy array
                     var promAds = model.Ads;
-                    List<string> liAddcopies = new List<string>();
-                    foreach (PromotionAd pAd in promAds)
-                    {
-                        liAddcopies.Add(pAd.AdText);
-                    }
 
                     // get categories or classifications
-                    List<string> categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName, 
-                                                model.ProductGroup.Words, liAddcopies.ToArray(), model.Url);
+                    var categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName,
+                                                model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.Url);
 
                     // create categories list that will be displayed in a multiselect list box
                     if (categories != null && categories.Count > 0)
                     {
-                        for (int i = 0; i < categories.Count; i++)
+                        for (var i = 0; i < categories.Count; i++)
                         {
                             var cm = new CampaignSetupModel.CategoriesModel { Id = i, Name = categories[i] };
                             model.AllCategories.Add(cm);
@@ -85,9 +81,9 @@ namespace Semplest.Core.Controllers
                 }
                 return View(model);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                string err = ex.Message + "\\r\\n" + ex.StackTrace;
+                //string err = ex.Message + "\\r\\n" + ex.StackTrace;
                 //CreateDummyModel(model);
                 //ViewBag.AllCategories = model.AllCategories;
                 //Session.Add("AllCategories", model.AllCategories);
@@ -117,35 +113,22 @@ namespace Semplest.Core.Controllers
 
                     foreach (CampaignSetupModel.CategoriesModel cat in model.AllCategories)
                     {
-                        for (int i = 0; i < model.CategoryIds.Length; i++)
-                        {
-                            if (cat.Id == model.CategoryIds[i])
-                            {
-                                catList.Add(cat.Name);
-                            }
-                        }
+                        catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
                     }
 
                     var scw = new ServiceClientWrapper();
                     // create AdCopy array
                     var promAds = model.Ads;
-                    List<string> liAddcopies = new List<string>();
-                    foreach (PromotionAd pAd in promAds)
-                    {
-                        liAddcopies.Add(pAd.AdText);
-                    }
 
                     // get keywords from the web service
                     //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
-                    List<string> keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
-                                                    model.ProductGroup.Words, liAddcopies.ToArray(), model.Url, null);
+                    var keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
+                                                    model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.Url, null);
                     if (keywords != null && keywords.Count > 0)
                     {
-                        int i = 0;
-                        foreach (string key in keywords)
+                        foreach (var key in keywords)
                         {
-                            var kwm = new CampaignSetupModel.KeywordsModel();
-                            kwm.Name = key;
+                            var kwm = new CampaignSetupModel.KeywordsModel { Name = key };
                             model.AllKeywords.Add(kwm);
                         }
                     }
@@ -158,9 +141,9 @@ namespace Semplest.Core.Controllers
 
                 return View(model);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                string err = ex.Message + "\\r\\n" + ex.StackTrace;
+                //string err = ex.Message + "\\r\\n" + ex.StackTrace;
                 return View(model);
             }
         }
@@ -202,12 +185,9 @@ namespace Semplest.Core.Controllers
 
         public ActionResult SaveDefineProduct(CampaignSetupModel data)
         {
-            if(data == null)
-            return Json(0);
-            else
-            {
-                return Json(123);
-            }
+            if (data == null)
+                return Json(0);
+            return Json(123);
             // return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
         }
     }
