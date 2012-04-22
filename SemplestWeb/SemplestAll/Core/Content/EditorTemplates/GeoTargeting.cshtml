@@ -1,0 +1,46 @@
+﻿@using SemplestWebApp.Helpers
+@model Semplest.Core.Models.GeoTargeting
+<script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
+<div class="address">
+    <table>
+        <tr>
+            <td>
+                City
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.City, new { @class = "k-textbox"})
+                <button type="button" class="k-button" style="vertical-align: top" onclick="doOptions()">
+                    <span class="k-search k-icon"></span>
+                </button>
+            </td>
+            <td rowspan="4">
+                <div id="optionsNarrative">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                State
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.StateCodeFK, new { @class = "k-textbox" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Zip
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.Zip, new { @class = "k-textbox" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Proximity
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "k-textbox" })
+            </td>
+        </tr>
+    </table>
+</div>
