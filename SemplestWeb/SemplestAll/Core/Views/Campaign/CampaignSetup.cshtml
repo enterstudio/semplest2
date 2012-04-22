@@ -39,8 +39,8 @@ Ad Setup
         //alert('Success');
         var tabStrip = $("#tabstrip").kendoTabStrip().data("kendoTabStrip");
         tabStrip.append({
-            text: "Key Words",
-            content: '<div id="KeyWordsdiv" />'
+            text: "Categories",
+            content: '<div id="Categoriesdiv" />'
         });
     }
     function OnFailure(ajaxContext) {
@@ -62,16 +62,12 @@ Ad Setup
                 <ul>
                     <li class="k-state-active">DEFINE PRODUCT</li>
                     <li>CREATE ADS</li>
-                    <li>CLASSIFICATIONS</li>
                 </ul>
                 <div id="cap-view" class="k-header">
                     @Html.EditorFor(t => t.ProductGroup)
                 </div>
                 <div id="product-view" class="k-header">
                     @Html.Partial("AdModel", Model.AdModel)
-                </div>
-                <div id="categories-view" class="k-header">
-                    @Html.Partial("Categories", Model)
                 </div>
             </div>
         }

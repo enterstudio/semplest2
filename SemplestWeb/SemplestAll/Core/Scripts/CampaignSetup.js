@@ -107,6 +107,9 @@
         if (e.item.innerText == "Key Words")
             if ($('#KeyWordsdiv').html() == '')
                 $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { alert('Key Words'); });
+        if (e.item.innerText == "Categories")
+            if ($('#Categoriesdiv').html() == '')
+                $('#Categoriesdiv').load('/Campaign/Categories', function () { alert('Categories'); });
     };
     var start = $("#StartDate").kendoDatePicker({
         change: startChange
