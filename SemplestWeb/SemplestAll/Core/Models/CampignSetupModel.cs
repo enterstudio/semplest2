@@ -10,7 +10,7 @@ namespace Semplest.Core.Models
         {
             ProductGroup = new ProductGroupModel();
             AdModel = new AdModel();
-
+            CategoryIds = new List<int>();
             // for categories and keywords
             AllCategories = new List<CategoriesModel>();
             SelectedCategories = new List<CategoriesModel>();
@@ -22,7 +22,7 @@ namespace Semplest.Core.Models
         
         #region Nested type: CategoriesModel
 
-        public int[] CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
         public List<CategoriesModel> SelectedCategories { get; set; }
         public List<CategoriesModel> AllCategories { get; set; }
 

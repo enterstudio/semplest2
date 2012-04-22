@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 using System.Reflection;
 using KendoGridBinder;
@@ -101,6 +102,7 @@ namespace Semplest.Core.Controllers
         }
         public ActionResult Categories(CampaignSetupModel model)
         {
+            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
             return PartialView(model);
         }
         public ActionResult KeyWords()
