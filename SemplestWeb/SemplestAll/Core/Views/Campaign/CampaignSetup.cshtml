@@ -51,7 +51,7 @@ Ad Setup
         @*@using (Html.BeginForm("CampaignSetup", "Campaign"))*@
         @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess" }))
         {
-            @Html.ValidationSummary(true, "Account creation was unsuccessful. Please correct the errors and try again.")
+            @Html.ValidationSummary(true, "Campaign creation was unsuccessful. Please correct the errors and try again.")
             <div id="tabstrip">
                 <ul>
                     <li class="k-state-active">DEFINE PRODUCT</li>
@@ -62,6 +62,9 @@ Ad Setup
                 </div>
                 <div id="product-view" class="k-header">
                     @Html.Partial("AdModel", Model.AdModel)
+                </div>
+                <div id="categories-view" class="k-header">
+                    @Html.Partial("Categories", Model)
                 </div>
             </div>
         }
