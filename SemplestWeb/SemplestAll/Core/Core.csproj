@@ -118,7 +118,6 @@
     <Compile Include="Helpers\htmlWrapperInfo.cs" />
     <Compile Include="Helpers\MvcCheckBoxList.cs" />
     <Compile Include="Helpers\Position.cs" />
-    <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Helpers\toDictionary.cs" />
     <Compile Include="Helpers\toProperty.cs" />
     <Compile Include="Models\AccountModels.cs" />
