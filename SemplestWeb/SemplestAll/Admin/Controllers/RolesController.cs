@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using System.Reflection;
 using System.Data.Entity.Validation;
+using SemplestModel;
 
 namespace Semplest.Admin.Controllers
 {
@@ -45,7 +46,7 @@ namespace Semplest.Admin.Controllers
 
         public ActionResult Index()
         {
-            IEnumerable<Semplest.Admin.Models.Role> viewModel = _dbContext.Roles;
+            IEnumerable<SemplestModel.Role> viewModel = _dbContext.Roles;
             return View(viewModel);
         }
 

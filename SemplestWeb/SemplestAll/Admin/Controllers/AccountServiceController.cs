@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Semplest.Admin.Models;
+using SemplestModel;
 
 namespace Semplest.Admin.Controllers
 {

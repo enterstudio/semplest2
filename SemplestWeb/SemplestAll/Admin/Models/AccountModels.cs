@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.Web.Security;
 using System.Web;
 using Semplest.Admin.Models;
-
+using SemplestModel;
 
 public class LoggingHandleErrorAttribute : HandleErrorAttribute
 {
@@ -19,7 +19,9 @@ public class LoggingHandleErrorAttribute : HandleErrorAttribute
         try
         {
             SemplestEntities _dbContext = new SemplestEntities();
-            _dbContext.Errors.Add(new Error { ErrorMessage = filterContext.Exception.ToString() });
+            SemplestModel.Error er = new SemplestModel.Error();
+            er.ErrorMessage = filterContext.Exception.ToString();
+            _dbContext.Errors.Add(er);
             _dbContext.SaveChanges();
             //send email
         }
