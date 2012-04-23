@@ -172,7 +172,13 @@ class MinimFunct implements MinimisationFunction{
 } // class MinimFunct implements MinimisationFunction
 
 
-public class CampaignBid {
+public class CampaignBid implements java.io.Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8002739489949394209L;
+	
 	
 	private ArrayList<KeyWordInterface> wordList;
 	private double dailyBudget = 0.0;
@@ -206,7 +212,7 @@ public class CampaignBid {
         Minimisation min = new Minimisation();
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
-        min.addConstraint(0, +1, 9.99); // max bid allowed
+        min.addConstraint(0, +1, 5.00); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -390,7 +396,7 @@ public class CampaignBid {
 	
 	
 	public HashMap<String,Double> optimizeBids(){
-		
+				
 		// initialize constant
 		double multLagrange = 1.0;
 		boolean highCost=true;
