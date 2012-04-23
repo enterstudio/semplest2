@@ -10,12 +10,14 @@ namespace Semplest.Core.Models
         {
             ProductGroup = new ProductGroupModel();
             AdModelProp = new AdModel();
-            CategoryIds = new List<int>();
-            // for categories and keywords
+            // for categories
             AllCategories = new List<CategoriesModel>();
             SelectedCategories = new List<CategoriesModel>();
+            CategoryIds = new List<int>();
+            // for keywords
             AllKeywords = new List<KeywordsModel>();
             SelectedKeywords = new List<KeywordsModel>();
+            KeywordIds = new List<int>();
         }
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
@@ -37,9 +39,11 @@ namespace Semplest.Core.Models
         #region Nested type: KeywordsModel
         public List<KeywordsModel> AllKeywords { get; set; }
         public List<KeywordsModel> SelectedKeywords { get; set; }
+        public List<int> KeywordIds { get; set; }
 
         public class KeywordsModel
         {
+            public int Id { get; set; }
             public string Name { get; set; }
         }
 
