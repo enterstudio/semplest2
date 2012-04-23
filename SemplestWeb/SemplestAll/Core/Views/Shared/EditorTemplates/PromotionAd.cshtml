@@ -3,9 +3,19 @@
     <ul>
         <li><label>Ad #1</label> </li>
         <li><label>Title</label> 
-            <input id="Title" name="Title" class="k-textbox" value="great coffee" />
+@*            <input id="Title" name="Title" class="k-textbox" value="great coffee" />
+*@           
+@* <input id="Title" name="Title" class="k-textbox" />
+*@              
+            @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox" })
         </li>
-        <li><label>Ad Copy</label> <input id="description" class="k-textbox" value="great coffee" />
+        <li>
+@*            <label>Ad Copy</label> <input id="description" class="k-textbox" value="great coffee" />
+*@            
+@*<label>Ad Copy</label> <input id="description" class="k-textbox" />
+*@
+              @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox" })
+
         </li>
     </ul>
 </div>
