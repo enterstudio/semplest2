@@ -1,10 +1,10 @@
-﻿@model IEnumerable<Semplest.Admin.Models.Role>
+﻿@model IEnumerable<SemplestModel.Role>
 
 @{
     ViewBag.Title = "Index";
 }
 @section Title{
-Customer Accounts
+Security
 }
 @section Navbar{
     <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
@@ -34,7 +34,7 @@ Customer Accounts
         <td>
         @Html.Label(item.RoleName)  
         @Html.ActionLink("Edit", "Edit", new { id = item.RolePK })
-        | @Html.ActionLink("Delete", "Delete", new { id = item.RolePK })
+        | Delete@*Html.ActionLink("Delete", "Delete", new { id = item.RolePK })*@
             @*Html.DisplayFor(modelItem => item.RoleName)*@
         </td>
 @*        <td>
