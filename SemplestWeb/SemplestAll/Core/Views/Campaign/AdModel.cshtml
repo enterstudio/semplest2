@@ -1,7 +1,6 @@
 ﻿@using Semplest.Core.Helpers
-@using Semplest.Core.Models
-@model AdModel
-<div id="product-view">
+@model Semplest.Core.Models.CampaignSetupModel
+<div id="product-view" class="k-header">
     <div class="configuration1">
         <span class="infoHead">Location (Enter Address,City,State or Zip)</span>
         <table>
@@ -11,10 +10,10 @@
                 </td>
                 <td>
                     <div id="addresses">
-                        @Html.EditorFor(t => t.Addresses)
+                        @Html.EditorFor(t => t.AdModelProp.Addresses)
                     </div>
                     <div style="text-align: right">
-                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(GeoTargeting))
+                        @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "Addresses", typeof(Semplest.Core.Models.GeoTargeting))
                     </div>
                 </td>
             </tr>
@@ -29,12 +28,12 @@
 *@                
 @*                <input id="Url" name="Url" class="k-textbox" />
 *@                
-                @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox" })
+                @Html.TextBoxFor(m => m.AdModelProp.Url, new { @class = "k-textbox" })
                 <span>This url will appears in all of your ads</span>
             </li>
             <li>
                 <div id="addcopy">
-                        @Html.EditorFor(t => t.Ads)
+                        @Html.EditorFor(t => t.AdModelProp.Ads)
                     </div>
             </li>
         </div>
@@ -46,7 +45,7 @@
             <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association
                 with your business</a></li>
             <li>
-                @Html.LinkToAddNestedForm("Create Another Ad", "#addcopy", ".addcopy", "Ads", typeof(PromotionAd))</li>
+                @Html.LinkToAddNestedForm("Create Another Ad", "#addcopy", ".addcopy", "Ads", typeof(Semplest.Core.Models.PromotionAd))</li>
         </ul>
     </div>
     <div class="configuration1">
