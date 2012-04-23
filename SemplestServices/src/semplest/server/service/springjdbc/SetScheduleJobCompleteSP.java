@@ -45,7 +45,14 @@ public class SetScheduleJobCompleteSP extends StoredProcedure
 		else
 		{
 			ArrayList<ScheduleJobObj> res = (ArrayList<ScheduleJobObj>) results.get("nextScheduledJob");
-			return res.get(0);
+			if (res.size() > 0)
+			{
+				return res.get(0);
+			}
+			else
+			{
+				return null;
+			}
 		}
 	}
 
