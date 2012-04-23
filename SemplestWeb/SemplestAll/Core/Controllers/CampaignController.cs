@@ -66,8 +66,9 @@ namespace Semplest.Core.Controllers
                 {
                     model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
                     model = _campaignRepository.GetKeyWords(model);
+                    Session.Add("FullModel", model);
                 }
-                return View(model);
+                return PartialView("KeyWords", model);
             }
             catch (Exception)
             {
@@ -110,9 +111,10 @@ namespace Semplest.Core.Controllers
             model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
             return PartialView(model);
         }
-        public ActionResult KeyWords()
+        public ActionResult KeyWords(CampaignSetupModel model)
         {
-            return PartialView();
+            model = (CampaignSetupModel)Session["FullModel"];
+            return PartialView(model);
         }
         [HttpPost]
         public void UpdateAdditionalLinks(KendoGridRequest request)
