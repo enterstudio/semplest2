@@ -6,8 +6,10 @@
                 <label for="productGroupName" class="required">
                     Product Group Name
                 </label>
-                <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
+@*                <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox"
                     required validationmessage="Please enter {0}" />
+*@                
+                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @value = "coffee machine" })
             </li>
             <li>
                 <label for="productPromotionName" class="required">
@@ -24,8 +26,9 @@
                 </h4>
                 <label>
                 </label>
-                <input type="text" id="Words" name="Words" class="k-textbox" required validationmessage="Please enter {0}" />
-            </li>
+@*                <input type="text" id="Words" name="Words" class="k-textbox" required validationmessage="Please enter {0}" />
+*@                 @Html.TextBoxFor(t => t.Words, new { @class = "k-textbox" })
+           </li>
             <li>
                 <label for="Budget" class="required">
                     Budget
