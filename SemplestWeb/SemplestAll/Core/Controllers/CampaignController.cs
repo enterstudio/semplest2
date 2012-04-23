@@ -23,10 +23,10 @@ namespace Semplest.Core.Controllers
         [AuthorizeRole]
         public ActionResult CampaignSetup()
         {
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading" };
-            Logger.Write(logEnty);
-            var logService = new LogService();
-            logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
+            //var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading" };
+            //Logger.Write(logEnty);
+            //var logService = new LogService();
+            //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
         }
@@ -44,6 +44,8 @@ namespace Semplest.Core.Controllers
                     model = _campaignRepository.GetCategories(model);
                     // save this some how while getting the keywords this is becoming null
                     Session.Add("AllCategories", model.AllCategories);
+                    Session.Add("AdModelProp", model.AdModelProp);
+                    Session.Add("ProductGroup", model.ProductGroup);
                 }
                 return PartialView("Categories", model);
             }
@@ -61,7 +63,10 @@ namespace Semplest.Core.Controllers
             try
             {
                 if (ModelState.IsValid)
+                {
+                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
                     model = _campaignRepository.GetKeyWords(model);
+                }
                 return View(model);
             }
             catch (Exception)
