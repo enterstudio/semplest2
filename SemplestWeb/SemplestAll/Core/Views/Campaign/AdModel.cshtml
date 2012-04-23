@@ -1,7 +1,7 @@
 ﻿@using Semplest.Core.Helpers
 @using Semplest.Core.Models
 @model AdModel
-<div >
+<div id="product-view">
     <div class="configuration1">
         <span class="infoHead">Location (Enter Address,City,State or Zip)</span>
         <table>
@@ -25,7 +25,11 @@
             <h3 class="infoHead">Ad Copy</h3>
             <li>
                 <label>URL</label>
-                <input id="Url" name="Url" class="k-textbox" value="http://www.wholelattelove.com" />
+@*                <input id="Url" name="Url" class="k-textbox" value="http://www.wholelattelove.com" />
+*@                
+@*                <input id="Url" name="Url" class="k-textbox" />
+*@                
+                @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox" })
                 <span>This url will appears in all of your ads</span>
             </li>
             <li>
