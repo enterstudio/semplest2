@@ -83,7 +83,6 @@
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Views\Profile\Index.generated.cs" />
     <Compile Include="Views\Profile\LogIn.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -163,9 +162,6 @@
       <Project>{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}</Project>
       <Name>SemplestModel</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Profile\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Profile\LogIn.cshtml">
