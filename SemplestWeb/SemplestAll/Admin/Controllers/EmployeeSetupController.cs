@@ -6,12 +6,14 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using System.Data.Entity.Validation;
 using SemplestModel;
+using Semplest.SharedResources.Helpers;
 
 
 
 namespace Semplest.Admin.Controllers
 {
     [LoggingHandleErrorAttribute]
+    [AuthorizeRole]
     public class EmployeeSetupController : Controller
     {
 

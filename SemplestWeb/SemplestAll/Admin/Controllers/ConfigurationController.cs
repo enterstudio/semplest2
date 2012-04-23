@@ -5,10 +5,12 @@ using System.Web;
 using System.Web.Mvc;
 using Semplest.Admin.Models;
 using SemplestModel;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {
     [LoggingHandleErrorAttribute]
+    [AuthorizeRole]
     public class ConfigurationController : Controller
     {
         //

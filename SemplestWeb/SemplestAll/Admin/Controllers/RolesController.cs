@@ -7,10 +7,12 @@ using Semplest.Admin.Models;
 using System.Reflection;
 using System.Data.Entity.Validation;
 using SemplestModel;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {
     [LoggingHandleErrorAttribute]
+    [AuthorizeRole]
     public class RolesController : Controller
     {
         SemplestEntities _dbContext = new SemplestEntities();
