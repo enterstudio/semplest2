@@ -9,7 +9,7 @@ namespace Semplest.Core.Models
         public CampaignSetupModel()
         {
             ProductGroup = new ProductGroupModel();
-            AdModel = new AdModel();
+            AdModelProp = new AdModel();
             CategoryIds = new List<int>();
             // for categories and keywords
             AllCategories = new List<CategoriesModel>();
@@ -18,7 +18,7 @@ namespace Semplest.Core.Models
             SelectedKeywords = new List<KeywordsModel>();
         }
         public ProductGroupModel ProductGroup { get; set; }
-        public AdModel AdModel { get; set; }
+        public AdModel AdModelProp { get; set; }
         
         #region Nested type: CategoriesModel
 
