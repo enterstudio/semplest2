@@ -1,13 +1,10 @@
 package semplest.test;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.service.springjdbc.CustomerDB;
-import semplest.server.service.springjdbc.CustomerObj;
-import semplest.server.service.springjdbc.SetScheduleJobCompleteSP;
+import semplest.server.service.springjdbc.ScheduleOperations;
 
 public class TestSpringJDBC
 {
@@ -26,7 +23,18 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			
+			ScheduleOperations op = new ScheduleOperations();
+			Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);
+			System.out.println(i);
+			/*
+			GetNextScheduleJobSP nextsch = new GetNextScheduleJobSP();
+			ScheduleJobObj res = nextsch.execute();
+			if (res != null)
+			{
+				System.out.println(res.getScheduleJobPK() + ":" + res.getScheduleFK() + ":" + res.getExecutionStartTime());
+			}
+			*/
+			/*
 			CustomerDB cust = new CustomerDB();
 			List<CustomerObj> customers = cust.getAllCustomers();
 			if (!customers.isEmpty())
@@ -39,7 +47,7 @@ public class TestSpringJDBC
 			}
 			SetScheduleJobCompleteSP sp  = new SetScheduleJobCompleteSP();
 			Map res = sp.execute(2, 1);
-			
+			*/
 			/*
 			TaskRunnerDB tasks = new TaskRunnerDB();
 			List<TaskRunnerObj> l = tasks.getScheduleTasks(2);
@@ -59,7 +67,7 @@ public class TestSpringJDBC
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
+			System.out.println("ERROR" + e.getMessage());
 		}
 		/*
 		catch (FileNotFoundException e)

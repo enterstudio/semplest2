@@ -5,9 +5,11 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
-
+import semplest.server.service.springjdbc.GetNextScheduleJobSP;
+import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
+
+import com.google.gson.Gson;
 
 public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 {
@@ -27,6 +29,17 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		messageBroker.start();
 		logger.info("Started Semplest Scheduler Service");
 		//load the next schedule from the DB
+		GetNextScheduleJobSP nextsch = new GetNextScheduleJobSP();
+		ScheduleJobObj res = nextsch.execute();
+		if (res != null)
+		{
+			SchedulerRecord scheduleRecord = new SchedulerRecord();
+			scheduleRecord.setIsDelete(false);
+			scheduleRecord.setScheduleID(res.getScheduleFK());
+			scheduleRecord.setScheduleJobID(res.getScheduleJobPK());
+			scheduleRecord.setTimeToRunInMS(res.getExecutionStartTime().getTime());
+			scheduler.receiveSchedulerRecord(scheduleRecord);
+		}
 	}
 
 	public String NewSchedule(String json) throws Exception
