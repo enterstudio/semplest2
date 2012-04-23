@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
+import semplest.server.service.springjdbc.ScheduleJobObj;
+import semplest.server.service.springjdbc.SetScheduleJobCompleteSP;
 import semplest.server.service.springjdbc.TaskRunnerDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -45,7 +47,7 @@ public class SemplestScheduler extends Thread
 	{
 		appContext = new ClassPathXmlApplicationContext("Service.xml");
 		SemplestScheduler s = new SemplestScheduler(null,null);
-		Boolean res = s.runScheduledTasks( 2);
+		Boolean res = s.runScheduledTasks(1, 2);
 		
 	}
 
@@ -371,7 +373,7 @@ public class SemplestScheduler extends Thread
 				logger.debug("SKIPPING OLD DATA:" + runData.getScheduleID());
 				return null;
 			}
-			Boolean res = runScheduledTasks(runData.getScheduleID());
+			Boolean res = runScheduledTasks(runData.getScheduleJobID(),runData.getScheduleID());
 
 			return res;
 
@@ -400,7 +402,7 @@ public class SemplestScheduler extends Thread
 		// return schedulerData.getScheduleToRun();
 	}
 
-	private Boolean runScheduledTasks(Integer SchedulePK)
+	private Boolean runScheduledTasks(Integer scheduleJobPK, Integer SchedulePK)
 	{
 		
 		HashMap<String, TaskOutput> TaskOutputData = new HashMap<String, TaskOutput>();
@@ -430,6 +432,8 @@ public class SemplestScheduler extends Thread
 					TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 					taskRunner = null;
 				}
+				//Update results to the DB and add next Job if necessary
+				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
 			}
 			catch (Exception e)
 			{
@@ -445,6 +449,21 @@ public class SemplestScheduler extends Thread
 		
 		//UpdateSchedule(BPMUtil.parseInt(UserID), BPMUtil.parseInt(SchedulePK), true, previousTaskOutput.isSuccess(), null);
 		return true;
+	}
+	
+	private void getNextJobToExecute(Integer scheduleJobID, boolean IsSuccessful, String ErrorMessage) throws Exception
+	{
+		SetScheduleJobCompleteSP getNextJob = new SetScheduleJobCompleteSP();
+		ScheduleJobObj nextJob = getNextJob.execute(scheduleJobID, IsSuccessful, ErrorMessage);
+		if (nextJob != null)
+		{
+			SchedulerRecord newschedule = new SchedulerRecord();
+			newschedule.setScheduleJobID(nextJob.getScheduleJobPK());
+			newschedule.setIsDelete(false);
+			newschedule.setScheduleID(nextJob.getScheduleFK());
+			newschedule.setTimeToRunInMS(nextJob.getExecutionStartTime().getTime());
+			this.receiveSchedulerRecord(newschedule);
+		}
 	}
 
 }
