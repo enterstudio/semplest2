@@ -38,11 +38,22 @@ Ad Setup
         $.unblockUI();
         //alert('Success');
         var tabStrip = $("#tabstrip").kendoTabStrip().data("kendoTabStrip");
-        tabStrip.append({
-            text: "Categories",
-            content: '<div id="Categoriesdiv" />'
-        });
+        if ($("#hiddenfield").val() == "done") {
+            tabStrip.append({
+                text: "KeyWords",
+                content: '<div id="KeyWordsdiv" />'
+            });
+            $("#hiddenfield").val("done1");
+        }
+        if ($("#hiddenfield").val() == "") {
+            tabStrip.append({
+                text: "Categories",
+                content: '<div id="Categoriesdiv" />'
+            });
+            $("#hiddenfield").val("done");
+        }
 //        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
+//        alert(item);
 //        tabStrip.select(item);
 //        tabStrip.activateTab(item);
     }
@@ -72,6 +83,7 @@ Ad Setup
                 <div id="product-view" class="k-header">
                     @Html.Partial("AdModel", Model)
                 </div>
+                <input type="hidden" id="hiddenfield" name="hiddenfield" />
             </div>
         }
     </div>
