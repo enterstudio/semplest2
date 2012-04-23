@@ -373,7 +373,6 @@
   <ItemGroup>
     <Content Include="Views\Home\Contact.cshtml" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="Views\Campaign\CampaignSetup.cshtml" />
   </ItemGroup>
@@ -414,6 +413,12 @@
     <Content Include="Views\Campaign\KeyWords.cshtml" />
     <Content Include="Views\Campaign\Categories.cshtml" />
     <Content Include="Scripts\Jquery.UiBlock.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SharedResources\SharedResources.csproj">
+      <Project>{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}</Project>
+      <Name>SharedResources</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

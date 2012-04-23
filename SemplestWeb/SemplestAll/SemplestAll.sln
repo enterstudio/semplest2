@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSite", "WebSite\WebSite.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Admin", "Admin\Admin.csproj", "{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharedResources", "SharedResources\SharedResources.csproj", "{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SemplestModel", "SemplestModel\SemplestModel.csproj", "{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -35,6 +39,14 @@ Global
 		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFBFA7D2-321D-46C3-BAED-58474CAA6C3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CB69885-A4AC-41D2-9A4D-121B4A8D36D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{839F5DD8-AC95-4F7D-90C2-FB7CBAC08172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
