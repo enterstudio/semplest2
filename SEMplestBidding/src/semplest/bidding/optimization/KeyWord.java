@@ -5,7 +5,12 @@ package semplest.bidding.optimization;
 import flanagan.plot.PlotGraph;
 import semplest.bidding.estimation.*;
 
-public class KeyWord implements KeyWordInterface {
+public class KeyWord implements KeyWordInterface, java.io.Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4557533990626640318L;
 	
 	private String name = "";
 	private double score = 1.0;
@@ -43,7 +48,7 @@ public class KeyWord implements KeyWordInterface {
 				
 		
 //		CPCParams=estimateModelParams(CPC, true);
-		DCostParams=estimateModelParams(DCost, false);
+		DCostParams=estimateModelParams(DCost, true);
 		ClickParams=estimateModelParams(Clicks, false);
 		
 		
