@@ -21,6 +21,8 @@ public class LoggingHandleErrorAttribute : HandleErrorAttribute
             SemplestEntities _dbContext = new SemplestEntities();
             SemplestModel.Error er = new SemplestModel.Error();
             er.ErrorMessage = filterContext.Exception.ToString();
+            //filterContext.RequestContext.HttpContext.Session
+            er.UsersFK = 1;
             _dbContext.Errors.Add(er);
             _dbContext.SaveChanges();
             //send email

@@ -17,5 +17,9 @@ namespace SemplestModel
         public int ErrorPK { get; set; }
         public string ErrorMessage { get; set; }
         public Nullable<int> ErrorID { get; set; }
+        public int UsersFK { get; set; }
+        public System.DateTime TimeStamp { get; set; }
+    
+        public virtual User User { get; set; }
     }
 }

@@ -36,5 +36,7 @@ namespace SemplestModel
         public string DefaultProductPromotionName { get; set; }
         public string SamplestDevelopmentEmail { get; set; }
         public string SemplestDefaultBudgetMarkUpOrDown { get; set; }
+        public Nullable<int> BillingDaysOffset { get; set; }
+        public string OnErrorEmail { get; set; }
     }
 }

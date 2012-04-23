@@ -34,6 +34,7 @@ namespace SemplestModel
         public Nullable<int> CustomerFK { get; set; }
         public Nullable<int> ProductGroupFK { get; set; }
         public Nullable<int> UsersFK { get; set; }
+        public string ScheduleName { get; set; }
     
         public virtual Frequency Frequency { get; set; }
         public virtual ICollection<ScheduleJob> ScheduleJobs { get; set; }

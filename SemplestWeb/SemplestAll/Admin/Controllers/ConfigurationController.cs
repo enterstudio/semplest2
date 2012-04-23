@@ -45,6 +45,8 @@ namespace Semplest.Admin.Controllers
             c.DefaultProductPromotionName = c2.DefaultProductPromotionName;
             c.SamplestDevelopmentEmail = c2.SamplestDevelopmentEmail;
             c.SemplestDefaultBudgetMarkUpOrDown = c2.SemplestDefaultBudgetMarkUpOrDown;
+            c.BillingDaysOffset = c2.BillingDaysOffset;
+            c.OnErrorEmail = c2.OnErrorEmail;
             _dbContext.SaveChanges();
             return View(c);
         }

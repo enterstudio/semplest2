@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="SemplestModelStoreContainer">
           <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
@@ -84,6 +84,10 @@
           <AssociationSet Name="cycType_Relation" Association="SemplestModel.Store.cycType_Relation">
             <End Role="ProductGroupCycleType" EntitySet="ProductGroupCycleType" />
             <End Role="Customer" EntitySet="Customer" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Error_Users" Association="SemplestModel.Store.FK_Error_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Error" EntitySet="Error" />
           </AssociationSet>
           <AssociationSet Name="Paraent_Rel" Association="SemplestModel.Store.Paraent_Rel">
             <End Role="Customer" EntitySet="Customer" />
@@ -319,6 +323,8 @@
           <Property Name="DefaultProductPromotionName" Type="nvarchar" MaxLength="256" />
           <Property Name="SamplestDevelopmentEmail" Type="nvarchar" MaxLength="150" />
           <Property Name="SemplestDefaultBudgetMarkUpOrDown" Type="nvarchar" MaxLength="1" />
+          <Property Name="BillingDaysOffset" Type="int" />
+          <Property Name="OnErrorEmail" Type="nvarchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -419,6 +425,8 @@
           <Property Name="ErrorPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="ErrorMessage" Type="nvarchar(max)" Nullable="false" />
           <Property Name="ErrorID" Type="int" />
+          <Property Name="UsersFK" Type="int" Nullable="false" />
+          <Property Name="TimeStamp" Type="smalldatetime" Nullable="false" />
         </EntityType>
         <EntityType Name="Frequency">
           <Key>
@@ -586,6 +594,7 @@
           <Property Name="CustomerFK" Type="int" />
           <Property Name="ProductGroupFK" Type="int" />
           <Property Name="UsersFK" Type="int" />
+          <Property Name="ScheduleName" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="ScheduleJob">
           <Key>
@@ -796,6 +805,18 @@
             </Principal>
             <Dependent Role="Customer">
               <PropertyRef Name="ProductGroupCycleTypeFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Error_Users">
+          <End Role="Users" Type="SemplestModel.Store.Users" Multiplicity="1" />
+          <End Role="Error" Type="SemplestModel.Store.Error" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Error">
+              <PropertyRef Name="UsersFK" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1256,8 +1277,7 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -1478,8 +1498,12 @@
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
           <FunctionImport Name="sp_GetRigtsRolesInteraction" ReturnType="Collection(SemplestModel.sp_GetRigtsRolesInteraction_Result)">
-            <Parameter Name="roleId" Mode="In" Type="Int32" />
+          <Parameter Name="roleId" Mode="In" Type="Int32" />
           </FunctionImport>
+          <AssociationSet Name="FK_Error_Users" Association="SemplestModel.FK_Error_Users">
+            <End Role="User" EntitySet="Users" />
+            <End Role="Error" EntitySet="Errors" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -1590,6 +1614,8 @@
           <Property Name="DefaultProductPromotionName" Type="String" MaxLength="256" Unicode="true" FixedLength="false" />
           <Property Name="SamplestDevelopmentEmail" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="SemplestDefaultBudgetMarkUpOrDown" Type="String" MaxLength="1" Unicode="true" FixedLength="false" />
+          <Property Type="Int32" Name="BillingDaysOffset" />
+          <Property Type="String" Name="OnErrorEmail" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -1718,6 +1744,9 @@
           <Property Name="ErrorPK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="ErrorMessage" Type="String" Nullable="false" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="ErrorID" Type="Int32" />
+          <Property Type="Int32" Name="UsersFK" Nullable="false" />
+          <NavigationProperty Name="User" Relationship="SemplestModel.FK_Error_Users" FromRole="Error" ToRole="User" />
+          <Property Type="DateTime" Name="TimeStamp" Nullable="false" />
         </EntityType>
         <EntityType Name="Frequency">
           <Key>
@@ -1915,6 +1944,7 @@
           <NavigationProperty Name="Frequency" Relationship="SemplestModel.REL_Frequency_Schedule_1" FromRole="Schedule" ToRole="Frequency" />
           <NavigationProperty Name="ScheduleJobs" Relationship="SemplestModel.REL_Schedule_ScheduleJob_1" FromRole="Schedule" ToRole="ScheduleJob" />
           <NavigationProperty Name="ScheduleTaskAssociations" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="Schedule" ToRole="ScheduleTaskAssociation" />
+          <Property Type="String" Name="ScheduleName" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ScheduleJob">
           <Key>
@@ -2045,6 +2075,7 @@
           <NavigationProperty Name="Employees" Relationship="SemplestModel.REL_Users_Employee_2" FromRole="Users" ToRole="Employee" />
           <NavigationProperty Name="TransactionHistories" Relationship="SemplestModel.REL_Users_TransactionHistory_1" FromRole="Users" ToRole="TransactionHistory" />
           <NavigationProperty Name="UserRolesAssociations" Relationship="SemplestModel.REL_Users_UserRolesAssociation_1" FromRole="Users" ToRole="UserRolesAssociation" />
+          <NavigationProperty Name="Errors" Relationship="SemplestModel.FK_Error_Users" FromRole="User" ToRole="Error" />
         </EntityType>
         <Association Name="Address_Rel">
           <End Role="Address" Type="SemplestModel.Address" Multiplicity="1" />
@@ -2560,6 +2591,18 @@
           <Property Type="Boolean" Name="IsReadonly" Nullable="true" />
           <Property Type="Int32" Name="RightsPK" Nullable="false" />
         </ComplexType>
+        <Association Name="FK_Error_Users">
+          <End Type="SemplestModel.User" Role="User" Multiplicity="1" />
+          <End Type="SemplestModel.Error" Role="Error" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="UserPK" />
+            </Principal>
+            <Dependent Role="Error">
+              <PropertyRef Name="UsersFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -2614,7 +2657,9 @@
             <ScalarProperty Name="BillType1" ColumnName="BillType" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Configurations"><EntityTypeMapping TypeName="SemplestModel.Configuration"><MappingFragment StoreEntitySet="Configuration">
-            <ScalarProperty Name="ConfigurationPK" ColumnName="ConfigurationPK" />
+            <ScalarProperty Name="OnErrorEmail" ColumnName="OnErrorEmail" />
+                <ScalarProperty Name="BillingDaysOffset" ColumnName="BillingDaysOffset" />
+                <ScalarProperty Name="ConfigurationPK" ColumnName="ConfigurationPK" />
             <ScalarProperty Name="CustomerMinOrderAmount" ColumnName="CustomerMinOrderAmount" />
             <ScalarProperty Name="CustomerDefaultMonthlyFlatFeeAmount" ColumnName="CustomerDefaultMonthlyFlatFeeAmount" />
             <ScalarProperty Name="CustomerDefaultPerCampaignFlatFeeAmount" ColumnName="CustomerDefaultPerCampaignFlatFeeAmount" />
@@ -2697,7 +2742,9 @@
             <ScalarProperty Name="EmployeeType1" ColumnName="EmployeeType" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Errors"><EntityTypeMapping TypeName="SemplestModel.Error"><MappingFragment StoreEntitySet="Error">
-            <ScalarProperty Name="ErrorPK" ColumnName="ErrorPK" />
+            <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="UsersFK" ColumnName="UsersFK" />
+                <ScalarProperty Name="ErrorPK" ColumnName="ErrorPK" />
             <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
             <ScalarProperty Name="ErrorID" ColumnName="ErrorID" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
@@ -2803,7 +2850,8 @@
             <ScalarProperty Name="IsReadonly" ColumnName="IsReadonly" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Schedules"><EntityTypeMapping TypeName="SemplestModel.Schedule"><MappingFragment StoreEntitySet="Schedule">
-            <ScalarProperty Name="SchedulePK" ColumnName="SchedulePK" />
+            <ScalarProperty Name="ScheduleName" ColumnName="ScheduleName" />
+                <ScalarProperty Name="SchedulePK" ColumnName="SchedulePK" />
             <ScalarProperty Name="StartTime" ColumnName="StartTime" />
             <ScalarProperty Name="EndDate" ColumnName="EndDate" />
             <ScalarProperty Name="FrequencyFK" ColumnName="FrequencyFK" />
@@ -2933,7 +2981,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel">
+      <Diagram Name="SemplestModel" ZoomLevel="121">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="12" Height="2.9417936197916674" IsExpanded="true" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="25.75" Height="1.5956835937500031" IsExpanded="true" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="30.875" Height="1.595683593749996" IsExpanded="true" />
@@ -2986,7 +3034,7 @@
           <ConnectorPoint PointX="7.15625" PointY="21.799988606770832" />
           <ConnectorPoint PointX="7.666666666666667" PointY="21.799988606770832" />
           <ConnectorPoint PointX="7.833333333333333" PointY="21.799988606770832" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="21.799988606770832" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="21.799988606770832" />
           <ConnectorPoint PointX="8.1458333333333339" PointY="21.799988606770832" />
           <ConnectorPoint PointX="8.25" PointY="21.799988606770832" />
         </AssociationConnector>
@@ -2999,7 +3047,7 @@
           <ConnectorPoint PointX="7.328125" PointY="21.831241106770833" />
           <ConnectorPoint PointX="7.666666666666667" PointY="21.831241106770833" />
           <ConnectorPoint PointX="7.833333333333333" PointY="21.831241106770833" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="21.831241106770833" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="21.831241106770833" />
           <ConnectorPoint PointX="8.1458333333333339" PointY="21.831241106770833" />
           <ConnectorPoint PointX="8.25" PointY="21.831241106770833" />
         </AssociationConnector>
@@ -3007,7 +3055,7 @@
           <ConnectorPoint PointX="7.5" PointY="30.876152846153843" />
           <ConnectorPoint PointX="7.875" PointY="30.501152846153843" />
           <ConnectorPoint PointX="7.875" PointY="23.7112939453125" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="23.7112939453125" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="23.7112939453125" />
           <ConnectorPoint PointX="8.1458333333333339" PointY="23.7112939453125" />
           <ConnectorPoint PointX="8.25" PointY="23.7112939453125" />
         </AssociationConnector>
@@ -3024,8 +3072,6 @@
           <ConnectorPoint PointX="7.244791666666667" PointY="24.766337890625003" />
           <ConnectorPoint PointX="7.411458333333333" PointY="24.766337890625003" />
           <ConnectorPoint PointX="7.666666666666667" PointY="24.766337890625003" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="24.766337890625003" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="24.766337890625003" />
           <ConnectorPoint PointX="8.1458333333333339" PointY="24.766337890625003" />
           <ConnectorPoint PointX="8.25" PointY="24.766337890625003" />
         </AssociationConnector>
@@ -3036,6 +3082,8 @@
         <AssociationConnector Association="SemplestModel.REL_Promotion_AdvertisingEngineCampaign_1" ManuallyRouted="false">
           <ConnectorPoint PointX="8.4375" PointY="34.25" />
           <ConnectorPoint PointX="8.4375" PointY="29.71381911458333" />
+          <ConnectorPoint PointX="9.1666666666666661" PointY="29.71381911458333" />
+          <ConnectorPoint PointX="9.3333333333333339" PointY="29.71381911458333" />
           <ConnectorPoint PointX="9.4166666666666661" PointY="29.71381911458333" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="29.71381911458333" />
           <ConnectorPoint PointX="10.041666666666666" PointY="29.71381911458333" />
@@ -3080,7 +3128,7 @@
           <ConnectorPoint PointX="7.666666666666667" PointY="22.239889322916667" />
           <ConnectorPoint PointX="7.833333333333333" PointY="22.239889322916667" />
           <ConnectorPoint PointX="7.875" PointY="22.239889322916667" />
-          <ConnectorPoint PointX="8.00357443490112" PointY="22.111314888015546" />
+          <ConnectorPoint PointX="7.94107443490112" PointY="22.173814888015546" />
           <ConnectorPoint PointX="8.1214255650988783" PointY="21.993463757817789" />
           <ConnectorPoint PointX="8.25" PointY="21.864889322916667" />
         </AssociationConnector>
@@ -3091,8 +3139,6 @@
           <ConnectorPoint PointX="7.244791666666667" PointY="25.65625" />
           <ConnectorPoint PointX="7.411458333333333" PointY="25.65625" />
           <ConnectorPoint PointX="7.666666666666667" PointY="25.65625" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="25.65625" />
-          <ConnectorPoint PointX="7.979166666666667" PointY="25.65625" />
           <ConnectorPoint PointX="8.1458333333333339" PointY="25.65625" />
           <ConnectorPoint PointX="8.25" PointY="25.65625" />
         </AssociationConnector>
@@ -3130,11 +3176,13 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.UserCustomer_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="4.125" PointY="26.047506510416667" />
-          <ConnectorPoint PointX="4.125" PointY="42.605499674479162" />
-          <ConnectorPoint PointX="5.25" PointY="42.605499674479162" />
+          <ConnectorPoint PointX="4.125" PointY="42.701650390625005" />
+          <ConnectorPoint PointX="5.25" PointY="42.701650390625005" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneCust_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="7.5" PointY="10.869882062900647" />
+          <ConnectorPoint PointX="7.9410744349011217" PointY="11.310956497801767" />
+          <ConnectorPoint PointX="8.0589255650988783" PointY="11.428807627999525" />
           <ConnectorPoint PointX="8.0625" PointY="11.432382062900647" />
           <ConnectorPoint PointX="8.0625" PointY="26.662020229166671" />
           <ConnectorPoint PointX="8.25" PointY="26.662020229166671" />
@@ -3144,7 +3192,7 @@
           <ConnectorPoint PointX="11.25" PointY="39.29758789062501" />
           <ConnectorPoint PointX="9.5" PointY="39.29758789062501" />
           <ConnectorPoint PointX="9.5" PointY="27.855286458333339" />
-          <ConnectorPoint PointX="7.958333333333333" PointY="27.855286458333339" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="27.855286458333339" />
           <ConnectorPoint PointX="7.791666666666667" PointY="27.855286458333339" />
           <ConnectorPoint PointX="7.75" PointY="27.855286458333339" />
           <ConnectorPoint PointX="7.75" PointY="17.615143229166669" />
@@ -3158,6 +3206,8 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Employee_2" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="42.3987939453125" />
+          <ConnectorPoint PointX="7.916666666666667" PointY="42.3987939453125" />
+          <ConnectorPoint PointX="8.0833333333333339" PointY="42.3987939453125" />
           <ConnectorPoint PointX="10.5" PointY="42.3987939453125" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" ManuallyRouted="false">
@@ -3166,6 +3216,8 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9" PointY="35.220896809895834" />
+          <ConnectorPoint PointX="9.1666666666666661" PointY="35.220896809895834" />
+          <ConnectorPoint PointX="9.3333333333333339" PointY="35.220896809895834" />
           <ConnectorPoint PointX="9.4166666666666661" PointY="35.220896809895834" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="35.220896809895834" />
           <ConnectorPoint PointX="9.75" PointY="35.220896809895834" />
@@ -3190,12 +3242,16 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAds_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9" PointY="37.417999674479169" />
+          <ConnectorPoint PointX="9.1666666666666661" PointY="37.417999674479169" />
+          <ConnectorPoint PointX="9.3333333333333339" PointY="37.417999674479169" />
           <ConnectorPoint PointX="9.4166666666666661" PointY="37.417999674479169" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="37.417999674479169" />
           <ConnectorPoint PointX="9.75" PointY="37.417999674479169" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" ManuallyRouted="false">
           <ConnectorPoint PointX="9" PointY="36.533396809895834" />
+          <ConnectorPoint PointX="9.1666666666666661" PointY="36.533396809895834" />
+          <ConnectorPoint PointX="9.3333333333333339" PointY="36.533396809895834" />
           <ConnectorPoint PointX="9.4166666666666661" PointY="36.533396809895834" />
           <ConnectorPoint PointX="9.5833333333333339" PointY="36.533396809895834" />
           <ConnectorPoint PointX="13.90625" PointY="36.533396809895834" />
@@ -3232,14 +3288,27 @@
           <ConnectorPoint PointX="7.5" PointY="2.4324446614583337" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_TransactionHistory_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6" PointY="44.460999348958325" />
-          <ConnectorPoint PointX="6" PointY="47.153595377604177" />
+          <ConnectorPoint PointX="5.82812625" PointY="44.65330078125" />
+          <ConnectorPoint PointX="5.82812625" PointY="47.153595377604177" />
           <ConnectorPoint PointX="7.5" PointY="47.153595377604177" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_UserRolesAssociation_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.4062525" PointY="44.460999348958325" />
-          <ConnectorPoint PointX="6.4062525" PointY="44.890622500000006" />
-          <ConnectorPoint PointX="10.5" PointY="44.890622500000006" />
+          <ConnectorPoint PointX="6.320315625" PointY="44.65330078125" />
+          <ConnectorPoint PointX="6.320315625" PointY="45.546877499999994" />
+          <ConnectorPoint PointX="9.3229166666666661" PointY="45.546877499999994" />
+          <ConnectorPoint PointX="9.4895833333333339" PointY="45.546877499999994" />
+          <ConnectorPoint PointX="10.5" PointY="45.546877499999994" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.FK_Error_Users" >
+          <ConnectorPoint PointX="6.75" PointY="42.701650390625005" />
+          <ConnectorPoint PointX="8" PointY="42.701650390625005" />
+          <ConnectorPoint PointX="8" PointY="42.172587890624996" />
+          <ConnectorPoint PointX="9.25" PointY="42.172587890624996" />
+          <ConnectorPoint PointX="9.25" PointY="28.105286458333339" />
+          <ConnectorPoint PointX="8" PointY="28.105286458333339" />
+          <ConnectorPoint PointX="8" PointY="9.4033821614583246" />
+          <ConnectorPoint PointX="8.2187505" PointY="9.4033821614583246" />
+          <ConnectorPoint PointX="8.2187505" PointY="6.7302864583333335" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>
