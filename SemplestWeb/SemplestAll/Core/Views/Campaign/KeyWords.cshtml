@@ -1,1 +1,22 @@
-﻿<h3>Key Words</h3>
+﻿@model Semplest.Core.Models.CampaignSetupModel
+<div class="configuration1">
+    <span class="infoHead">View Keywords</span>
+    <div class="configuration1">
+        <p>Hundreds of keywords have been generated for you.  It is recommemded that you do
+            not delete keywords that seem obscure because they help you beat the
+            competition by reaching potential customers without engaging in a price war for the
+            most obvious ones. In the following weeks, this tool will take care of cleaning up your
+            keywords, keeping only the most effective ones.
+        </p>
+    </div>
+    <div class="options">
+        @Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
+    </div>
+    <div class="options">
+        <br />
+        <button class="k-button" id="back1" type="button">
+            <span class="k-back k-icon"></span>back</button>
+        <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch">
+            <span class="k-update k-icon"></span>Save And Continue</button>
+    </div>
+</div>
