@@ -104,9 +104,9 @@
         if (e.item.innerText == "Negative Keywords")
             if ($('#negativeKeyWordsdiv').html() == '')
                 $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('Negative Key Words'); });
-        if (e.item.innerText == "Key Words")
+        if (e.item.innerText == "KeyWords" || e.item.innerText == "Keywords")
             if ($('#KeyWordsdiv').html() == '')
-                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { alert('Key Words'); });
+                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () {  });
         if (e.item.innerText == "Categories")
             if ($('#Categoriesdiv').html() == '')
                 $('#Categoriesdiv').load('/Campaign/Categories', function () {  });
