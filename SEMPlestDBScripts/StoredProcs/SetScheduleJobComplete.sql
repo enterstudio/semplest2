@@ -24,7 +24,8 @@ BEGIN TRY
     insert into dbo.ScheduleLog(ScheduleJobFK,IsSuccessful,DateCreated,ErrorMessage,IsComplete) 
 		values (@ScheduleJobID,@IsSuccessful,CURRENT_TIMESTAMP,@ErrorMessage,1) 
 	--update the Job
-	UPDATE ScheduleJob SET IsComplete = 1, IsSuccessful= @IsSuccessful	
+	UPDATE ScheduleJob SET IsComplete = 1, IsSuccessful= @IsSuccessful, EditedDate = CURRENT_TIMESTAMP
+		where ScheduleJobPK = @ScheduleJobID	
 		
 
 	--Get the schedule parameters
@@ -54,13 +55,19 @@ BEGIN TRY
 															
 			--Add next job to run
 			INSERT INTO ScheduleJob(ScheduleFK,IsComplete,IsSuccessful,ExecutionStartTime)
-			SELECT sj.ScheduleFK,0,0,@NextTimeToRun FROM ScheduleJob sj where sj.ScheduleJobPK = @ScheduleJobID 
+			SELECT sj.ScheduleFK,0,0,@NextTimeToRun FROM ScheduleJob sj 
+				inner join Schedule s on s.SchedulePK = sj.ScheduleFK 
+			where sj.ScheduleJobPK = @ScheduleJobID and @NextTimeToRun <= ISNULL(s.EndDate, '2050-01-01')	
 			
 		END
 	END
-	COMMIT TRANSACTION	
 	--Get the next Job to run
-	SELECT job.ScheduleJobPK, job.ScheduleFK, job.ExecutionStartTime from GetNextJobToRun() job
+	DECLARE @nextJobTable TABLE(ScheduleJobPK INT, ScheduleFK INT, ExecutionStartTime DATETIME2)
+	insert into @nextJobTable EXECUTE GetNextJobToRun
+	select r.ScheduleJobPK, r.ScheduleFK, r.ExecutionStartTime from @nextJobTable r
+	
+	COMMIT TRANSACTION	
+	
 	
 END TRY
 BEGIN CATCH

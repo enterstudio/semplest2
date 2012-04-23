@@ -1,15 +1,15 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.SetNextJobToRun') AND type in (N'P', N'PC'))
-  DROP PROCEDURE dbo.SetNextJobToRun;
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.GetNextJobToRun') AND type in (N'P', N'PC'))
+  DROP PROCEDURE dbo.GetNextJobToRun;
 GO
 
 -- +----------------------------------------------------------------------------------------------------------------+
 -- | Author  - Mitch                                                                                                |
 -- | Written - 4/20/2012																							|
--- | Parms   - ScheduleID																							|
--- | Purpose - Update Schedule and Get Next Time to Run						|
+-- | Parms   - 																							|
+-- | Purpose - Get Next Time to Run						|
 -- +----------------------------------------------------------------------------------------------------------------+
 
-CREATE PROCEDURE dbo.SetNextJobToRun
+CREATE PROCEDURE dbo.GetNextJobToRun
 
 AS
 BEGIN TRY
@@ -24,8 +24,6 @@ BEGIN TRY
 	
 END TRY
 BEGIN CATCH
- IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
-    ROLLBACK TRANSACTION;
 	DECLARE @ErrMessage	nvarchar(4000),
           @ErrorSeverity	int,
           @ErrorState		int;
