@@ -8,9 +8,11 @@ using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
 using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Core.Controllers
 {
+    [AuthorizeRole]
     public class CampaignController : Controller
     {
         private readonly ICampaignRepository _campaignRepository;
@@ -20,7 +22,6 @@ namespace Semplest.Core.Controllers
             _campaignRepository = iCampaignRepository;
         }
 
-        [AuthorizeRole]
         public ActionResult CampaignSetup()
         {
             //var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading" };
