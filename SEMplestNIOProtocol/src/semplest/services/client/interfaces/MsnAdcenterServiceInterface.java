@@ -17,6 +17,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
 import com.microsoft.adcenter.v8.Bid;
+import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
 import com.microsoft.adcenter.v8.CampaignStatus;
 import com.microsoft.adcenter.v8.Keyword;
@@ -54,7 +55,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Campaign Methods
 	// ==================================
-	public abstract Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus) throws Exception;
+	public abstract Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus) throws Exception;
 	
 	public abstract Campaign getCampaignById(Long accountId, Long campaignId) throws Exception;
 	
@@ -68,7 +69,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	
 	public abstract void deleteCampaignById(Long accountId, Long campaignId) throws Exception;
 	
-	public abstract void updateCampaignBudget(Long accountId, Long campaignId, double dailyBudget, double monthlyBudget) throws Exception;
+	public abstract void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetType, double dailyBudget, double monthlyBudget) throws Exception;
 	
 	public abstract void setCampaignStateTargets(Long accountId, long customerId, Long campaignId, List<String> states) throws Exception;
 	
