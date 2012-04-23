@@ -28,7 +28,8 @@ public class BidLagrangeOptim implements MinimisationFunction {
 	@Override
 	public double function(double[] param) {
 		
-		return Math.pow(score*f.derivative(param, ClickParams)-lambda*f.derivative(param, DCostParams),2);
+//		return Math.pow(score*f.derivative(param, ClickParams)-lambda*f.derivative(param, DCostParams),2);
+		return Math.pow(score*f.derivative(param, ClickParams)/f.derivative(param, DCostParams)-lambda,2);
 	}
 
 }
