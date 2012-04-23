@@ -212,7 +212,8 @@ public class CampaignBid implements java.io.Serializable {
         Minimisation min = new Minimisation();
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
-        min.addConstraint(0, +1, 5.00); // max bid allowed
+        min.addConstraint(0, -1, 0);
+//        min.addConstraint(0, +1, 5.00); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -225,8 +226,8 @@ public class CampaignBid implements java.io.Serializable {
         min.nelderMead(Bid, start, step, ftol, iterMax);
 
 //        // get the minimum value
-//        double minimum = min.getMinimum();
-//        System.out.println("***** Minimum value: "+minimum);
+        double minimum = min.getMinimum();
+        System.out.println("***** Minimum value: "+minimum);
         
 
         // get values of y and z at minimum
@@ -270,7 +271,7 @@ public class CampaignBid implements java.io.Serializable {
 		this.dailyBudget=dailyBudget;
 	}
 	
-	public double [] optimizeBids_new(){
+	public HashMap<String,Double> optimizeBids_new(){
 		//Create instance of Minimisation
 		Minimisation min = new Minimisation();
 		MinimFunct func = new MinimFunct();
@@ -378,6 +379,7 @@ public class CampaignBid implements java.io.Serializable {
 						f.function(input, key.getDCostInfo())/f.function(input, key.getClickInfo()));//,
 				//					f.function(input, key.getDCostInfo())/key.getQualityScore()*f.function(input, key.getClickInfo()));
 			} else {
+				bids[i]=0;
 				System.out.format("%2d :: %30s: Bid value: 0.00, min bid: %1.2f, quality score: %.1f, expected clicks:  0.0, expected daily cost:  0.00, expected quality metric:  0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
 						i+1, key.getKeyWord(), key.getMinBid(), key.getQualityScore());//,
 			}
@@ -390,7 +392,18 @@ public class CampaignBid implements java.io.Serializable {
 			wordList.get(i).setBidValue(bids[i]);
 		}
 
-		return bids;
+//		return bids;
+		
+		HashMap<String,Double> bidData = new HashMap<String,Double>();
+
+		for(int i=0; i<bids.length;i++){
+			wordList.get(i).setBidValue(bids[i]);
+			bidData.put(wordList.get(i).getKeyWord(), bids[i]);
+		}
+		
+		
+		
+		return bidData;
 
 	}
 	
@@ -414,7 +427,7 @@ public class CampaignBid implements java.io.Serializable {
 		while(true){
 			for(int i=0; i<wordList.size();i++){
 				bids[i]=computeOptimumBidForConst(i,multLagrange);
-//				System.out.format("Bid value: %.2f, min bid: %.2f\n", bids[i],wordList.get(i).getMinBid());
+				System.out.format("Keyword: %s, Bid value: %.2f, min bid: %.2f\n", wordList.get(i).getKeyWord(), bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<wordList.size();i++)
 			computeExpectedValues();
 			System.out.format("Iteration %d:: Lagrange mult: %f, Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,multLagrange,expectedCost,expectedClicks,expectedQualityMetric);
@@ -477,8 +490,8 @@ public class CampaignBid implements java.io.Serializable {
 			} else {
 				bids[i]=0;
 //				bids[i]=key.getMinBid();
-//				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
-//						i+1, key.getKeyWord(), key.getMinBid());//,
+				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
+						i+1, key.getKeyWord(), key.getMinBid());//,
 			}
 		} // for(int i=0; i<bids.length;i++)
 		System.out.format("Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f, expected CPC: %.2f \n",
