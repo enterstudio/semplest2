@@ -70,9 +70,10 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 		try
 		{
-			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient("http://VMJAVA1:9898/semplest");
+			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(BASEURLTEST);
 			
-			String accountID = "2188810777";
+			//String accountID = "2188810777";
+			String accountID = "218881";  //nan test- to trigger error
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 
 			
