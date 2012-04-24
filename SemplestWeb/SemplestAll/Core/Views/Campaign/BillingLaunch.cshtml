@@ -1,0 +1,26 @@
+﻿@model Semplest.Core.Models.CampaignSetupModel
+<div class="configuration1">
+    <span class="infoHead">Billing and Launch</span>
+    <div class="configuration1">
+        <ul class="options">
+            <li><h3>We have selected</h3> <h2>@Html.LabelFor(m => m.BillingLaunch.KeywordsCount)</h2> <h3>keywords to bid on!</h3></li>
+            <li><a href="#" id="viewSelectedKeywords">View selected keywords</a></li>
+        </ul>
+    </div>
+    <div class="configuration1">
+    </div>
+    <ul class="options">
+        <li>Budget:</li>
+        <li>@Html.LabelFor(m => m.ProductGroup.Budget)</li>
+    </ul>
+    <div class="options">
+        <br />
+        <button class="k-button" id="getLaunchAdProduct" type="submit" name="Command" value="LaunchAdProduct">
+            <span class="k-update k-icon"></span>LAUNCH AD PRODUCT</button>
+    </div>
+    <div class="options">
+        <button class="k-button" id="editadproduct" type="button">
+            <span class="k-back k-icon"></span>EDIT AD PRODUCT</button>
+
+    </div>
+</div>

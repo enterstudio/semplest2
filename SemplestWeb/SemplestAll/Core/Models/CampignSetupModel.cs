@@ -11,6 +11,7 @@ namespace Semplest.Core.Models
         {
             ProductGroup = new ProductGroupModel();
             AdModelProp = new AdModel();
+            BillingLaunch = new BillingLaunchModel();
             // for categories
             AllCategories = new List<CategoriesModel>();
             SelectedCategories = new List<CategoriesModel>();
@@ -22,6 +23,7 @@ namespace Semplest.Core.Models
         }
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
+        public BillingLaunchModel BillingLaunch { get; set; }
         
         #region Nested type: CategoriesModel
 
@@ -75,6 +77,11 @@ namespace Semplest.Core.Models
         public DateTime EndDate { get; set; }
         public bool Google { get; set; }
         public bool YahooBing { get; set; }
+    }
+
+    public class BillingLaunchModel
+    {
+        public int KeywordsCount { get; set; }
     }
 
     public class AdditionalLinks

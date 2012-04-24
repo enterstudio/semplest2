@@ -117,6 +117,10 @@ namespace Semplest.Core.Controllers
             model = (CampaignSetupModel)Session["FullModel"];
             return PartialView(model);
         }
+        public ActionResult BillingLaunch(CampaignSetupModel model)
+        {
+            return PartialView(model);
+        }
         [HttpPost]
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
