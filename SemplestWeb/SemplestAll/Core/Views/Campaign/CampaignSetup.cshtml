@@ -54,10 +54,9 @@ Ad Setup
             $("#hiddenfield").val("done");
             
         }
-//        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
-//        alert(item);
-//        tabStrip.select(item);
-//        tabStrip.activateTab(item);
+        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
+        tabStrip.select(item);
+        tabStrip.activateTab(item);
     }
     function OnFailure(ajaxContext) {
         $.unblockUI();
