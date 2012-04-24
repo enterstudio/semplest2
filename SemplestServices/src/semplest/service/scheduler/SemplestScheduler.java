@@ -11,7 +11,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
 import semplest.server.service.springjdbc.ScheduleJobObj;
-import semplest.server.service.springjdbc.TaskRunnerDB;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
 import semplest.server.service.springjdbc.storedproc.SetScheduleJobCompleteSP;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -415,8 +415,7 @@ public class SemplestScheduler extends Thread
 		
 		TaskOutput previousTaskOutput = null; // First TaskOutput is null
 		//Run the Set of Tasks and return the output
-		TaskRunnerDB tasks = new TaskRunnerDB();
-		List<TaskRunnerObj> listofTasks = tasks.getScheduleTasks(SchedulePK);
+		List<TaskRunnerObj> listofTasks = SemplestDB.getScheduleTasks(SchedulePK);
 		if (!listofTasks.isEmpty())
 		{
 			try
@@ -445,9 +444,6 @@ public class SemplestScheduler extends Thread
 		{
 			System.out.println("No tasks found");
 		}
-		
-		
-		//UpdateSchedule(BPMUtil.parseInt(UserID), BPMUtil.parseInt(SchedulePK), true, previousTaskOutput.isSuccess(), null);
 		return true;
 	}
 	
