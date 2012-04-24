@@ -63,7 +63,7 @@ BEGIN TRY
 	END
 	--Get the next Job to run
 	DECLARE @nextJobTable TABLE(ScheduleJobPK INT, ScheduleFK INT, ExecutionStartTime DATETIME2)
-	insert into @nextJobTable EXECUTE GetNextJobToRun
+	insert into @nextJobTable(ScheduleJobPK,ScheduleFK,ExecutionStartTime) EXECUTE GetNextJobToRun
 	select r.ScheduleJobPK, r.ScheduleFK, r.ExecutionStartTime from @nextJobTable r
 	
 	COMMIT TRANSACTION	
