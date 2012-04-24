@@ -31,12 +31,10 @@ public class ScheduleOperations extends BaseDB
 	}
 	*/
 
-	public static void addTask(String ServiceClientName, String MethodName, String jsonParameters) throws Exception
+	public static void associateTaskToSchedule(int ScheduleFK, int TaskFK, int TaskExecutionOrder) throws Exception
 	{
-
-		jdbcTemplate.update("insert into Task(ServiceName,MethodName,Parameters) values (?,?,?)", new Object[]
-		{ ServiceClientName, MethodName, jsonParameters });
-
+		jdbcTemplate.update("ScheduleTaskAssociation(ScheduleFK,TaskFK,TaskExecutionOrder) values (?,?,?)", new Object[]
+		{ ScheduleFK, TaskFK, TaskExecutionOrder });
 	}
 
 	public static void deleteTask(Integer taskID) throws Exception
