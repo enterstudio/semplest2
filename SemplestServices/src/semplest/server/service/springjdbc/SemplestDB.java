@@ -21,7 +21,9 @@ public class SemplestDB extends BaseDB
 	 * Customer
 	 */
 	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class); 
-	
+	/*
+	 * customer
+	 */
     public static List<CustomerObj> getAllCustomers()
     {
     	
@@ -89,9 +91,6 @@ public class SemplestDB extends BaseDB
 		{ taskID });
 	}
 
-	
-
-	
 	/*
 	 * Bidding calls
 	 */
@@ -106,7 +105,7 @@ public class SemplestDB extends BaseDB
 				try
 				{
 					addBid.execute(productGroupID, adGroupID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
-							bid.getQualityScore(), bid.getStatus(), true, bid.isNegative(), advertisingEngine.name());
+							bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(), advertisingEngine.name(), bid.getSemplestProbability());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -116,6 +115,16 @@ public class SemplestDB extends BaseDB
 				}
 			}
 		}
+	}
+	
+	private static final RowMapper<BidObject> bidObjMapper = new BeanPropertyRowMapper(BidObject.class);
+	
+	public static List<BidObject> getBidObjects(Long productGroupID, Long adGroupID) throws Exception
+	{
+		String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c " +
+    			"inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK " +
+    			"inner join BillType bt on c.BillTypeFK = bt.BillTypePK";
+    	return jdbcTemplate.query(strSQL,bidObjMapper);
 	}
 	
 	
@@ -153,6 +162,27 @@ public class SemplestDB extends BaseDB
 				for (AdEngine val : AdEngine.values())
 				{
 					if (val.name().equalsIgnoreCase(adEngine))
+					{
+						return true;
+
+					}
+				}
+
+			}
+			return false;
+		}
+	}
+	
+	public static enum MatchType
+	{
+		Exact,Broad,Phrase;
+		public static boolean existsFrequency(String matchType)
+		{
+			if (matchType != null)
+			{
+				for (MatchType val : MatchType.values())
+				{
+					if (val.name().equalsIgnoreCase(matchType))
 					{
 						return true;
 

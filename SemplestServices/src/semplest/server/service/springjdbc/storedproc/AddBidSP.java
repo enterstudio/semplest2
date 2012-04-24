@@ -44,6 +44,7 @@ public class AddBidSP extends StoredProcedure
 		declareParameter(new SqlParameter("IsBidActive", Types.BIT));
 		declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
+		declareParameter(new SqlParameter("SemplestProbability", Types.FLOAT));
 		
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		compile();
@@ -53,10 +54,10 @@ public class AddBidSP extends StoredProcedure
 	 * returns the next schedule job to run
 	 */
 	public Integer execute(int ProductGroupPK, int PromotionPK, int KeywordAdEngineID, String Keyword, Long MicroBidAmount, String ApprovalStatus, String BidType, Long FirstPageMicroCpc, Integer QualityScore,
-			Boolean IsEligibleForShowing, boolean IsBidActive, Boolean IsNegative, String AdvertisingEngine) throws Exception
+			Boolean IsEligibleForShowing, boolean IsBidActive, Boolean IsNegative, String AdvertisingEngine, Double semplestProbabilty) throws Exception
 	{
 		Map<String, Object> results = super.execute(ProductGroupPK, PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, ApprovalStatus, BidType, FirstPageMicroCpc, QualityScore,
-				IsEligibleForShowing,IsBidActive, IsNegative, AdvertisingEngine);
+				IsEligibleForShowing,IsBidActive, IsNegative, AdvertisingEngine,semplestProbabilty);
 		if (results.get("ID") == null)
 		{
 			return null;

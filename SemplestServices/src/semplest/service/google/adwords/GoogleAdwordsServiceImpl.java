@@ -558,7 +558,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 				bidRes.setBidID(res.getCriterion().getId());
 				if(res.getSystemServingStatus()!=null){
-					bidRes.setStatus(res.getSystemServingStatus().getValue());
+					if (res.getSystemServingStatus().getValue().equalsIgnoreCase("Eligible"))
+					{
+						bidRes.setIsEligibleForShowing(true);
+					}
+					else
+					{	
+						bidRes.setIsEligibleForShowing(false);
+					}
 				}
 				if (res.getApprovalStatus() != null)
 				{
