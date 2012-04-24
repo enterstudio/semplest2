@@ -95,8 +95,12 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 	
-	public static void storeBidObjects(Long productGroupID, Long adGroupID, ArrayList<BidObject> bidObjects, AdEngine advertisingEngine)
+	public static void storeBidObjects(Long productGroupID, Long promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine) throws Exception
 	{
+		if (!AdEngine.existsFrequency(advertisingEngine))
+		{
+			throw new Exception(advertisingEngine + " Not Found");
+		}
 		if (bidObjects != null && bidObjects.size() > 0)
 		{
 			AddBidSP addBid = new AddBidSP();
@@ -104,8 +108,8 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(productGroupID, adGroupID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
-							bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(), advertisingEngine.name(), bid.getSemplestProbability());
+					addBid.execute(productGroupID, promotionID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
+							bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(), advertisingEngine, bid.getSemplestProbability());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -119,12 +123,21 @@ public class SemplestDB extends BaseDB
 	
 	private static final RowMapper<BidObject> bidObjMapper = new BeanPropertyRowMapper(BidObject.class);
 	
-	public static List<BidObject> getBidObjects(Long productGroupID, Long adGroupID) throws Exception
+	public static List<BidObject> getBidObjects(Long promotionID,String advertisingEngine) throws Exception
 	{
-		String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c " +
-    			"inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK " +
-    			"inner join BillType bt on c.BillTypeFK = bt.BillTypePK";
-    	return jdbcTemplate.query(strSQL,bidObjMapper);
+		if (!AdEngine.existsFrequency(advertisingEngine))
+		{
+			throw new Exception(advertisingEngine + " Not Found");
+		}
+		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, " +
+				"ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative,ki.SemplestProbability from PromotionKeywordAssociation pka " +
+				"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
+				"inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK " +
+				"inner join BidType b on b.BidTypePK = kb.BidTypeFK " +
+				"left join KeywordInitialBidData ki on ki.KeywordBidFK = kb.KeywordBidPK " +
+				"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+				"where pka.PromotionFK = ? and a.AdvertisingEngine = ? and kb.IsActive = 1";
+    	return jdbcTemplate.query(strSQL, new Object[]{promotionID, advertisingEngine},bidObjMapper);
 	}
 	
 	

@@ -1,9 +1,11 @@
 package semplest.test;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.adengine.BidObject;
 import semplest.server.service.springjdbc.SemplestDB;
 
 public class TestSpringJDBC
@@ -24,8 +26,9 @@ public class TestSpringJDBC
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
 			SemplestDB op = new SemplestDB();
-			Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);
-			System.out.println(i);
+			List<BidObject> bids = op.getBidObjects(2L, SemplestDB.AdEngine.Google.name());
+			//Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);
+			if (bids != null && !bids.isEmpty()) System.out.println(bids.get(0).getMicroBidAmount());
 			/*
 			GetNextScheduleJobSP nextsch = new GetNextScheduleJobSP();
 			ScheduleJobObj res = nextsch.execute();
