@@ -42,15 +42,17 @@ Ad Setup
             tabStrip.append({
                 text: "KeyWords",
                 content: '<div id="KeyWordsdiv" />'
-            });
+            },tabStrip.tabGroup.children("li:last")).select();
             $("#hiddenfield").val("done1");
         }
         if ($("#hiddenfield").val() == "") {
             tabStrip.append({
                 text: "Categories",
                 content: '<div id="Categoriesdiv" />'
-            });
+            }, tabStrip.tabGroup.children("li:last")).select();
+            tabStrip.tabGroup.children("li:last").select();
             $("#hiddenfield").val("done");
+            
         }
 //        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
 //        alert(item);
