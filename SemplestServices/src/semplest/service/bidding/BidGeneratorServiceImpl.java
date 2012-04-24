@@ -1,31 +1,16 @@
 package semplest.service.bidding;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-import semplest.bidding.estimation.EstimatorData;
 import semplest.bidding.optimization.CampaignBid;
-import semplest.bidding.optimization.KeyWord;
 import semplest.bidding.test.ioUtils;
+import semplest.server.protocol.adengine.GoogleBidObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
-import semplest.server.protocol.google.GoogleBidObject;
-import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
-
-
-//import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
-import semplest.services.client.interfaces.SemplestBiddingInterface;
-
 import semplest.services.client.api.GoogleAdwordsServiceClient;
+import semplest.services.client.interfaces.SemplestBiddingInterface;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.gson.Gson;
