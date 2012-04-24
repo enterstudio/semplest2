@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Web.Mvc;
 using Semplest.Core.Models;
+using SemplestModel;
 
 namespace Semplest.Core.Controllers
 {

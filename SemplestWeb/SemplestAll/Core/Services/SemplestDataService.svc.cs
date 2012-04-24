@@ -1,6 +1,7 @@
 ﻿using System.Data.Services;
 using System.Data.Services.Common;
 using Semplest.Core.Models;
+using SemplestModel;
 
 namespace SemplestWebApp.Services
 {

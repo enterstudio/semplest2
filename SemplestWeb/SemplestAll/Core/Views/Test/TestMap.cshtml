@@ -64,7 +64,7 @@
 
     var HOST_URL = 'http://www.mapquestapi.com';
     var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
-    var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderBatch';
+    var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderOptions';
     var advancedOptions = '';
     var outFormat = '';
     var index = '';
@@ -170,7 +170,8 @@
                 //            html += 'Lat: ' + location.latLng.lat + "   Lng: " + location.latLng.lng;
                 //            html += '<br/>';
                 //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
-                html += '<img src="' + location.mapUrl + '"/>';
+                //html += '<img src="' + location.mapUrl + '"/>';
+                html += '<img src="' + location.mapUrl + '" style="height: 160px; width:225px;"/>';
                 if (index != '')
                     document.getElementById('optionsNarrative_' + index).innerHTML = html;
                 else
