@@ -9,11 +9,11 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.GoogleBidObject;
+import semplest.server.protocol.adengine.GoogleBidSimulatorObject;
+import semplest.server.protocol.adengine.GoogleTrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
-import semplest.server.protocol.google.GoogleBidObject;
-import semplest.server.protocol.google.GoogleBidSimulatorObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.server.protocol.google.GoogleTrafficEstimatorObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
