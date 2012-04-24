@@ -4,9 +4,12 @@ import java.util.Date;
 
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 
-public class ScheduleOperations extends BaseDB
+public class SemplestDB extends BaseDB
 {
 
+	/*
+	 * Scheduler Calls
+	 */
 	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
 
@@ -55,6 +58,38 @@ public class ScheduleOperations extends BaseDB
 				for (ScheduleFrequency val : ScheduleFrequency.values())
 				{
 					if (val.name().equalsIgnoreCase(freq))
+					{
+						return true;
+
+					}
+				}
+
+			}
+			return false;
+		}
+	}
+	
+	/*
+	 * Bidding calls
+	 */
+	
+	
+	
+	
+	/*
+	 * ENUMS
+	 */
+	
+	public enum AdEngine
+	{
+		MSN,Google;
+		public static boolean existsFrequency(String adEngine)
+		{
+			if (adEngine != null)
+			{
+				for (AdEngine val : AdEngine.values())
+				{
+					if (val.name().equalsIgnoreCase(adEngine))
 					{
 						return true;
 

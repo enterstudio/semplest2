@@ -4,7 +4,7 @@ import java.util.Date;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.service.springjdbc.ScheduleOperations;
+import semplest.server.service.springjdbc.SemplestDB;
 
 public class TestSpringJDBC
 {
@@ -23,7 +23,7 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			ScheduleOperations op = new ScheduleOperations();
+			SemplestDB op = new SemplestDB();
 			Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);
 			System.out.println(i);
 			/*
