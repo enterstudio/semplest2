@@ -225,9 +225,9 @@ public class CampaignBid implements java.io.Serializable {
         min.suppressNoConvergenceMessage();
         min.nelderMead(Bid, start, step, ftol, iterMax);
 
-//        // get the minimum value
-        double minimum = min.getMinimum();
-        System.out.println("***** Minimum value: "+minimum);
+////         get the minimum value
+//        double minimum = min.getMinimum();
+//        System.out.println("***** Minimum value: "+minimum);
         
 
         // get values of y and z at minimum
@@ -427,7 +427,7 @@ public class CampaignBid implements java.io.Serializable {
 		while(true){
 			for(int i=0; i<wordList.size();i++){
 				bids[i]=computeOptimumBidForConst(i,multLagrange);
-				System.out.format("Keyword: %s, Bid value: %.2f, min bid: %.2f\n", wordList.get(i).getKeyWord(), bids[i],wordList.get(i).getMinBid());
+				System.out.format("%d:: Keyword: %s, Bid value: %.2f, min bid: %.2f\n", i, wordList.get(i).getKeyWord(), bids[i],wordList.get(i).getMinBid());
 			} // for(int i=0; i<wordList.size();i++)
 			computeExpectedValues();
 			System.out.format("Iteration %d:: Lagrange mult: %f, Expected Cost: %.2f, expected clicks: %.1f, expected click quality: %.2f\n",j+1,multLagrange,expectedCost,expectedClicks,expectedQualityMetric);

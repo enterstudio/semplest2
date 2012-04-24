@@ -48,7 +48,7 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
 				
 		
 //		CPCParams=estimateModelParams(CPC, true);
-		DCostParams=estimateModelParams(DCost, false);
+		DCostParams=estimateModelParams(DCost, true);
 		ClickParams=estimateModelParams(Clicks, false);
 		
 		
@@ -119,6 +119,8 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     		data[2][i]=bid[i];
     		in[0]=bid[i];
     		data[3][i]=f.function(in, EstParams);
+//    		data[3][i]=fitData[i];
+
     	}
         
     	PlotGraph pg = new PlotGraph(data);
