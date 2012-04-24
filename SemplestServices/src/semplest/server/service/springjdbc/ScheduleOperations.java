@@ -2,6 +2,8 @@ package semplest.server.service.springjdbc;
 
 import java.util.Date;
 
+import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
+
 public class ScheduleOperations extends BaseDB
 {
 

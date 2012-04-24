@@ -8,11 +8,11 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
-public class AddScheduleJob extends StoredProcedure
+public class AddScheduleJobSP extends StoredProcedure
 {
 	private static final String SPROC_NAME = "AddScheduleJob";
 	
-	public AddScheduleJob()
+	public AddScheduleJobSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("ScheduleFK", Types.INTEGER));

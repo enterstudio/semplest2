@@ -1,4 +1,4 @@
-package semplest.server.service.springjdbc;
+package semplest.server.service.springjdbc.storedproc;
 
 import java.sql.Types;
 import java.util.ArrayList;
@@ -10,6 +10,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
+
+import semplest.server.service.springjdbc.BaseDB;
+import semplest.server.service.springjdbc.ScheduleJobObj;
 
 public class GetNextScheduleJobSP extends StoredProcedure
 {

@@ -11,9 +11,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
 import semplest.server.service.springjdbc.ScheduleJobObj;
-import semplest.server.service.springjdbc.SetScheduleJobCompleteSP;
 import semplest.server.service.springjdbc.TaskRunnerDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
+import semplest.server.service.springjdbc.storedproc.SetScheduleJobCompleteSP;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 

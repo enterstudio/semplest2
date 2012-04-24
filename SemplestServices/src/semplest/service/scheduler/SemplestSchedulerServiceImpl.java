@@ -5,8 +5,8 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
-import semplest.server.service.springjdbc.GetNextScheduleJobSP;
 import semplest.server.service.springjdbc.ScheduleJobObj;
+import semplest.server.service.springjdbc.storedproc.GetNextScheduleJobSP;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
 
 import com.google.gson.Gson;
