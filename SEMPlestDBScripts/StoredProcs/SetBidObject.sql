@@ -11,7 +11,7 @@ GO
 
 CREATE PROCEDURE dbo.SetBidObject
 (
-	@AdvertisingEngineAccountPK			varchar(30),
+
 	@ProductGroupPK			INT,
 	@PromotionPK            INT,
 	@KeywordAdEngineID      INT,
@@ -24,12 +24,14 @@ CREATE PROCEDURE dbo.SetBidObject
 	@IsEligibleForShowing	BIT = 1,
 	@IsBidActive			BIT = 1,
 	@IsNegative				BIT = 0,
-	@AdvertisingEngine		VARCHAR(50)
+	@AdvertisingEngine		VARCHAR(50),
+	@ID int output
 )
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @currentMicroBidAmt int, @keywordBidPK int, @currentTime datetime2, @BidTypeID int, @AdEngineID int,@keywordPK int
+	DECLARE @ErrMsg VARCHAR(250), @currentMicroBidAmt int, @keywordBidPK int, @currentTime datetime2, @BidTypeID int, 
+			@AdEngineID int,@keywordPK int
 
 	--validate data
 	--AdEngine
@@ -58,7 +60,16 @@ BEGIN TRY
 					 and kb.KeywordBidPK = @BidTypeID
 					 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID))
 	BEGIN
-		--Check to see if setting inactive
+		
+		select @currentMicroBidAmt = kb.MicroBidAmount, @keywordBidPK = kb.KeywordBidPK , @keywordPK = kb.KeywordFK
+			from PromotionKeywordAssociation pka
+					inner join Keyword k on k.KeywordPK = pka.KeywordFK
+					inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
+					inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
+					where pka.PromotionFK = @PromotionPK and pka.IsActive = 1 and a.AdvertisingEnginePK = @AdEngineID
+						 and kb.KeywordBidPK = @BidTypeID
+						 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID)
+		--Check to see if setting inactive				 
 		if (@IsBidActive = 0)
 		BEGIN
 			update KeywordBid set EndDate = @currentTime, IsActive = 0
@@ -72,15 +83,6 @@ BEGIN TRY
 		END
 		ELSE  --update the Bid if MicroBidAmount if different
 		BEGIN
-			
-			select @currentMicroBidAmt = kb.MicroBidAmount, @keywordBidPK = kb.KeywordBidPK , @keywordPK = kb.KeywordFK
-			from PromotionKeywordAssociation pka
-					inner join Keyword k on k.KeywordPK = pka.KeywordFK
-					inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
-					inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
-					where pka.PromotionFK = @PromotionPK and pka.IsActive = 1 and a.AdvertisingEnginePK = @AdEngineID
-						 and kb.KeywordBidPK = @BidTypeID
-						 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID)
 			if (@MicroBidAmount != @currentMicroBidAmt)
 			BEGIN
 				
@@ -112,8 +114,11 @@ BEGIN TRY
 			--create the keyword bid
 			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
 				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,@IsBidActive,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID)
+			SET @keywordBidPK = @@IDENTITY	
 	  END		
-	COMMIT TRANSACTION					 
+	COMMIT TRANSACTION	
+	
+	RETURN 	@keywordBidPK			 
 	
 END TRY
 BEGIN CATCH
