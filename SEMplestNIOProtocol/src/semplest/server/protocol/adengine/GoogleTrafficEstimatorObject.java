@@ -1,4 +1,4 @@
-package semplest.server.protocol.google;
+package semplest.server.protocol.adengine;
 
 import java.util.HashMap;
 import java.util.Iterator;
