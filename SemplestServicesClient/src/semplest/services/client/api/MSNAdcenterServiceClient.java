@@ -500,12 +500,13 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
+	public Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
 			throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("campaignName", campaignName);
+		jsonHash.put("budgetLimitType", gson.toJson(budgetLimitType));
 		jsonHash.put("dailyBudget", Double.toString(dailyBudget));
 		jsonHash.put("monthlyBudget", Double.toString(monthlyBudget));
 		jsonHash.put("CampaignStatus", CampaignStatus.toString());
@@ -604,11 +605,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public void updateCampaignBudget(Long accountId, Long campaignId, double dailyBudget, double monthlyBudget) throws Exception
+	public void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
+		jsonHash.put("budgetLimitType", gson.toJson(budgetLimitType));
 		jsonHash.put("dailyBudget", Double.toString(dailyBudget));
 		jsonHash.put("monthlyBudget", Double.toString(monthlyBudget));
 		String json = gson.toJson(jsonHash);

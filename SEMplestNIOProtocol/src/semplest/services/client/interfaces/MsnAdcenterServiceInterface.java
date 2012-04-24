@@ -55,7 +55,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Campaign Methods
 	// ==================================
-	public abstract Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus) throws Exception;
+	public abstract Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus) throws Exception;
 	
 	public abstract Campaign getCampaignById(Long accountId, Long campaignId) throws Exception;
 	
@@ -69,7 +69,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	
 	public abstract void deleteCampaignById(Long accountId, Long campaignId) throws Exception;
 	
-	public abstract void updateCampaignBudget(Long accountId, Long campaignId, double dailyBudget, double monthlyBudget) throws Exception;
+	public abstract void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget) throws Exception;
 	
 	public abstract void setCampaignStateTargets(Long accountId, long customerId, Long campaignId, List<String> states) throws Exception;
 	

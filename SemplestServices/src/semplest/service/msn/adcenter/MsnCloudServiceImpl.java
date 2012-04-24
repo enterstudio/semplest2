@@ -305,6 +305,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		try {
 			ret = createCampaign(new Long(data.get("accountId")), 
 					data.get("campaignName"), 
+					gson.fromJson(data.get("budgetLimitType"), BudgetLimitType.class),
 					Double.valueOf(data.get("dailyBudget")),  
 					Double.valueOf(data.get("monthlyBudget")),
 					CampaignStatus.fromString(data.get("CampaignStatus")));
@@ -315,14 +316,14 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 	
 	@Override
-	public Long createCampaign(Long accountId, String campaignName, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
+	public Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
 			throws MsnCloudException
 	{
 		try
 		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 			Campaign newCampaign = aNew().campaign().withName(campaignName).with(CampaignStatus)
-					.with(BudgetLimitType.MonthlyBudgetSpendUntilDepleted).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
+					.with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 			AddCampaignsResponse addCampaigns;
 			Campaign[] campaign = new Campaign[1]; campaign[0] = newCampaign;
 			addCampaigns = campaignManagement.addCampaigns(new AddCampaignsRequest((long) accountId, campaign));
@@ -634,6 +635,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		try {
 			updateCampaignBudget(new Long(data.get("accountId")), 
 					new Long(data.get("campaignId")),
+					gson.fromJson(data.get("budgetLimitType"), BudgetLimitType.class),
 					Double.valueOf(data.get("dailyBudget")),
 					Double.valueOf(data.get("monthlyBudget")));
 		} catch (RemoteException e) {
@@ -643,12 +645,13 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 	
 	@Override
-	public void updateCampaignBudget(Long accountId, Long campaignId, double dailyBudget, double monthlyBudget) throws RemoteException
+	public void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget) throws RemoteException
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 
 		Campaign campaign = new Campaign();
 		campaign.setId(campaignId);
+		campaign.setBudgetType(budgetLimitType);
 		campaign.setDailyBudget(dailyBudget);
 		campaign.setMonthlyBudget(monthlyBudget);
 		Campaign[] campaigns = new Campaign[]
