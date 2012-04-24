@@ -10,8 +10,9 @@ public class BidObject
 	private String matchType;
 	private Long firstPageCpc;
 	private Integer qualityScore;
-	private String status;
+	private boolean IsEligibleForShowing = true;
 	private boolean isNegative = false;
+	private Double semplestProbability = -1.0;
 	
 	public Long getBidID()
 	{
@@ -69,12 +70,7 @@ public class BidObject
 	{
 		this.qualityScore = qualityScore;
 	}
-	public void setStatus(String status){
-		this.status=status;
-	}
-	public String getStatus(){
-		return status;
-	}
+	
 	public boolean isNegative()
 	{
 		return isNegative;
@@ -82,6 +78,22 @@ public class BidObject
 	public void setNegative(boolean isNegative)
 	{
 		this.isNegative = isNegative;
+	}
+	public Double getSemplestProbability()
+	{
+		return semplestProbability;
+	}
+	public void setSemplestProbability(Double semplestProbability)
+	{
+		this.semplestProbability = semplestProbability;
+	}
+	public boolean isIsEligibleForShowing()
+	{
+		return IsEligibleForShowing;
+	}
+	public void setIsEligibleForShowing(boolean isEligibleForShowing)
+	{
+		IsEligibleForShowing = isEligibleForShowing;
 	}
 	
 }
