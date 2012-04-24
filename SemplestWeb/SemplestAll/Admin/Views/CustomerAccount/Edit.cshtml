@@ -45,6 +45,15 @@ Edit Customer Account:
             @Html.ValidationMessageFor(model => model.CustomerAccount.FirstName)
         </div>
     </label> <br />
+    
+    <label>
+        Middle Inital:<br />
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.CustomerAccount.MiddleInitial, new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.CustomerAccount.MiddleInitial )
+        </div>
+    </label> <br />
+    
     <label>
         Last Name:<br />
         <div class="editor-field">

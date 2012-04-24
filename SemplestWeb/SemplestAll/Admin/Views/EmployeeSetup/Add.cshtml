@@ -28,13 +28,19 @@ Add Employee:
             @Html.LabelFor(model => model.EmployeeSetup.FirstName)
         </div>
 
-
-
         <div class="editor-field">
             @Html.TextBoxFor(model => model.EmployeeSetup.FirstName, new { @class = "k-textbox" })
             @Html.ValidationMessageFor(model => model.EmployeeSetup.FirstName)
         </div>
         
+            <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.MiddleInitial )
+        </div>
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.EmployeeSetup.MiddleInitial , new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.MiddleInitial)
+        </div>
+
         <div class="editor-label">
             @Html.LabelFor(model => model.EmployeeSetup.LastName )
         </div>

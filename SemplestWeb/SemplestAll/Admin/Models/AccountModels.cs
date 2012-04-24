@@ -121,6 +121,7 @@ namespace Semplest.Admin.Models
                 public string EmployeeType { get; set; }
                 public int employeePK { get; set; }
                 public string FirstName { get; set; }
+                public string MiddleInitial { get; set; }
                 public string LastName  { get; set; }
                 public int EmployeeUserPK { get; set; }
      }
@@ -155,6 +156,7 @@ namespace Semplest.Admin.Models
         public int AccountNumber { get; set; }
         public string Customer { get; set; }
         public string FirstName { get; set; }
+        public string MiddleInitial { get; set; }
         public string LastName { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
@@ -177,6 +179,7 @@ namespace Semplest.Admin.Models
         public int EmployeeTypeID { get; set; }
         public int RolesFK { get; set; }
         public string FirstName { get; set; }
+        public string MiddleInitial { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string RoleName { get; set; }
