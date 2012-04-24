@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.test.ioUtils;
-import semplest.server.protocol.adengine.GoogleBidObject;
+import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.services.client.api.GoogleAdwordsServiceClient;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
@@ -75,8 +75,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		// and form competitive and non-competitive groups 
 		
 		
-		GoogleBidObject[] bidObjects = null;
-		GoogleBidObject bidObject;
+		BidObject[] bidObjects = null;
+		BidObject bidObject;
 		
 		
 		

@@ -12,9 +12,9 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.server.protocol.adengine.GoogleBidObject;
-import semplest.server.protocol.adengine.GoogleBidSimulatorObject;
-import semplest.server.protocol.adengine.GoogleTrafficEstimatorObject;
+import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.service.google.adwords.GoogleReportDownloader.HttpException;
@@ -141,7 +141,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Long campaignID = 77290470L;
 
 
-			GoogleBidObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+			BidObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
 			/*
 			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
@@ -471,21 +471,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		GoogleBidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
+		BidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
+	public BidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
 	{
-		List<GoogleBidObject> result = new ArrayList<GoogleBidObject>();
+		List<BidObject> result = new ArrayList<BidObject>();
 		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			if (criterion instanceof BiddableAdGroupCriterion)
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) criterion;
-				GoogleBidObject bidRes = new GoogleBidObject();
+				BidObject bidRes = new BidObject();
 				if (res.getQualityInfo() != null)
 				{
 					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -513,7 +513,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				result.add(bidRes);
 			}
 		}
-		return result.toArray(new GoogleBidObject[result.size()]);
+		return result.toArray(new BidObject[result.size()]);
 	}
 
 	public String getAllAdGroupKeywords(String json) throws Exception
@@ -531,7 +531,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		List<String> keywords = new ArrayList<String>();
-		for (GoogleBidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID, ActiveOnly))
+		for (BidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			keywords.add(criterion.getKeyword());
 		}
@@ -700,7 +700,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		GoogleBidObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
+		BidObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
 				KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
 
 		// convert result to Json String
@@ -708,7 +708,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
+	public BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
 			throws Exception
 	{
 		// AdWordsServiceLogger.log(); //SOAP XML Logger
@@ -740,7 +740,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
 		{
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
-			GoogleBidObject bidRes = new GoogleBidObject();
+			BidObject bidRes = new BidObject();
 			if (res.getQualityInfo() != null)
 			{
 				bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -758,7 +758,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			return new GoogleBidObject();
+			return new BidObject();
 		}
 	}
 
@@ -769,13 +769,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		GoogleBidObject res = setBidForKeyWord(data.get("accountID"), keywordID, adGroupID, microBidAmount);
+		BidObject res = setBidForKeyWord(data.get("accountID"), keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public BidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the AdGroupCriterionService.
@@ -803,7 +803,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
 			Keyword keyword = ((Keyword) res.getCriterion());
-			GoogleBidObject bidRes = new GoogleBidObject();
+			BidObject bidRes = new BidObject();
 			if (res.getQualityInfo() != null)
 			{
 				bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -820,7 +820,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			return new GoogleBidObject();
+			return new BidObject();
 		}
 	}
 
@@ -1288,14 +1288,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		// String accountID, Long campaignID, KeywordMatchType matchType,
 		// HashMap<String, ArrayList<Double>> KeywordWithBid
-		GoogleTrafficEstimatorObject res = getTrafficEstimationForKeywords(data.get("accountID"), campaignID,
+		TrafficEstimatorObject res = getTrafficEstimationForKeywords(data.get("accountID"), campaignID,
 				KeywordMatchType.fromString(data.get("matchType")), KeywordWithBid);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleTrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
+	public TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
 			HashMap<String, Double> KeywordWithBid) throws Exception
 	{
 		AdWordsServiceLogger.log();
@@ -1355,7 +1355,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Display traffic estimates.
 		if (result != null && result.getCampaignEstimates() != null)
 		{
-			GoogleTrafficEstimatorObject estimatorObj = new GoogleTrafficEstimatorObject();
+			TrafficEstimatorObject estimatorObj = new TrafficEstimatorObject();
 			KeywordEstimate[] keywordEstimates = result.getCampaignEstimates()[0].getAdGroupEstimates()[0].getKeywordEstimates();
 			
 				
@@ -1374,7 +1374,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		else
 		{
 
-			return new GoogleTrafficEstimatorObject();
+			return new TrafficEstimatorObject();
 		}
 
 	}
@@ -1385,13 +1385,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
-		GoogleBidSimulatorObject[] res = getBidLandscapeForKeyword(data.get("accountID"), adGroupID, keywordID);
+		BidSimulatorObject[] res = getBidLandscapeForKeyword(data.get("accountID"), adGroupID, keywordID);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleBidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
+	public BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the DataService.
@@ -1413,14 +1413,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Get bid landscape for ad group criteria.
 		CriterionBidLandscapePage page = dataService.getCriterionBidLandscape(selector);
 		// Display bid landscapes.
-		GoogleBidSimulatorObject[] res;
+		BidSimulatorObject[] res;
 		if (page.getEntries() != null && page.getEntries().length > 0)
 		{
-			res = new GoogleBidSimulatorObject[page.getEntries().length];
+			res = new BidSimulatorObject[page.getEntries().length];
 			int i = 0;
 			for (CriterionBidLandscape criterionBidLandscape : page.getEntries())
 			{
-				GoogleBidSimulatorObject obj = new GoogleBidSimulatorObject();
+				BidSimulatorObject obj = new BidSimulatorObject();
 				obj.setAdGroupId(criterionBidLandscape.getAdGroupId());
 				obj.setCriterionId(criterionBidLandscape.getCriterionId());
 				obj.setEndDate(criterionBidLandscape.getEndDate());
@@ -1437,7 +1437,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			res = new GoogleBidSimulatorObject[0];
+			res = new BidSimulatorObject[0];
 			logger.info("No criterion bid landscapes were found.");
 		}
 		return res;
@@ -1449,13 +1449,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call  getBidLandscapeForAdgroup" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		GoogleBidSimulatorObject[] res = getBidLandscapeForAdgroup(data.get("accountID"), adGroupID);
+		BidSimulatorObject[] res = getBidLandscapeForAdgroup(data.get("accountID"), adGroupID);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public GoogleBidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	public BidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		// Get the DataService.
@@ -1473,14 +1473,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{ adGroupIdPredicate });
 		// Get bid landscape for ad group criteria.
 		AdGroupBidLandscapePage page = dataService.getAdGroupBidLandscape(selector);
-		GoogleBidSimulatorObject[] res;
+		BidSimulatorObject[] res;
 		if (page.getEntries() != null && page.getEntries().length > 0)
 		{
-			res = new GoogleBidSimulatorObject[page.getEntries().length];
+			res = new BidSimulatorObject[page.getEntries().length];
 			int i = 0;
 			for (AdGroupBidLandscape adGroupBidLandscape : page.getEntries())
 			{
-				GoogleBidSimulatorObject obj = new GoogleBidSimulatorObject();
+				BidSimulatorObject obj = new BidSimulatorObject();
 				obj.setAdGroupId(adGroupBidLandscape.getAdGroupId());
 				obj.setEndDate(adGroupBidLandscape.getEndDate());
 				obj.setStartDate(adGroupBidLandscape.getStartDate());
@@ -1496,7 +1496,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		else
 		{
-			res = new GoogleBidSimulatorObject[0];
+			res = new BidSimulatorObject[0];
 			logger.info("No Adgroup bid landscapes were found.");
 		}
 		return res;
