@@ -106,13 +106,18 @@
                 $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('Negative Key Words'); });
         if (e.item.innerText == "KeyWords" || e.item.innerText == "Keywords")
             if ($('#KeyWordsdiv').html() == '')
-                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () {  });
+                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { });
         if (e.item.innerText == "Categories")
             if ($('#Categoriesdiv').html() == '')
-                $('#Categoriesdiv').load('/Campaign/Categories', function () {  });
+                $('#Categoriesdiv').load('/Campaign/Categories', function () { });
     };
+    var date = new Date();
+    var d = date.getDate();
+    var m = date.getMonth();
+    var y = date.getFullYear();
+    var toDay = new Date(y, m, d + 1);
     var start = $("#StartDate").kendoDatePicker({
-        change: startChange
+        change: startChange, value: toDay
     }).data("kendoDatePicker");
 
     //    var end = $("#EndDate").kendoDatePicker({
@@ -184,19 +189,19 @@
     var isKeywordsAdded = false;
     $("#getCategories").click(function () {
         if (!isKeywordsAdded) {
-//            tabStrip.append({
-//                text: "Key Words",
-//                content: '<div id="KeyWordsdiv" />'
-//            });
+            //            tabStrip.append({
+            //                text: "Key Words",
+            //                content: '<div id="KeyWordsdiv" />'
+            //            });
             isKeywordsAdded = true;
         }
     });
-//    if (isKeywordsAdded) {
-//        tabStrip.append({
-//            text: "Key Words",
-//            content: '<div id="KeyWordsdiv" />'
-//        });
-//    }
+    //    if (isKeywordsAdded) {
+    //        tabStrip.append({
+    //            text: "Key Words",
+    //            content: '<div id="KeyWordsdiv" />'
+    //        });
+    //    }
     //    $('#frmCampaign').submit(function (e) {
     //        e.preventDefault();
     //                $.fn.serializeObject = function () {
@@ -222,7 +227,7 @@
     //                }).error(function (err) { alert(err); });
     //    });
 
-    
+
 });
 
 //Helper functions to Add Multiple Items..
