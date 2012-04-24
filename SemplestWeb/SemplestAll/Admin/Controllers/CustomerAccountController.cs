@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
-
+using LinqKit;
 
 namespace Semplest.Admin.Controllers
 {
@@ -17,18 +17,18 @@ namespace Semplest.Admin.Controllers
         //
         // GET: /CreateNewCustomerAccount/
 
-        public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
+        public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
         {
 
             //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
             SemplestEntities dbcontext = new SemplestEntities();
 
-            
+
 
             var viewModel =
                 from u in dbcontext.Users
                 join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-                where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)))
+                //where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)))
                 select new HomeModel
                 {
                     Customer = c.Name,
@@ -38,6 +38,34 @@ namespace Semplest.Admin.Controllers
                     Email = u.Email
                 };
 
+            var predicate = PredicateBuilder.True <HomeModel>();
+
+
+            if (form["searchtype"] == "Customer" && usersearch != null && usersearch != "")
+            {
+                predicate = (p => p.Customer.ToLower().Contains(usersearch.ToLower()));
+            }
+
+            if (form["searchtype"] == "LastName" && usersearch != null && usersearch != "")
+            {
+                predicate = (p => p.LastName.ToLower().Contains(usersearch.ToLower()));
+            }
+
+
+            if ( accountnumbersearch != null && accountnumbersearch!="")
+            {
+                predicate = (p => p.AccountNumber.Equals(accountnumbersearch.ToLower()));
+            }
+
+            if (emailsearch != null && emailsearch!="")
+            {
+                predicate = (p => p.Email.ToLower().Contains(emailsearch.ToLower()));
+            }
+
+
+           
+            viewModel = viewModel.AsExpandable().Where(predicate);
+
             return View(viewModel);
         }
 
@@ -45,7 +73,7 @@ namespace Semplest.Admin.Controllers
         {
 
             SemplestEntities dbcontext = new SemplestEntities();
-            
+
             var viewModel =
                from u in dbcontext.Users
                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
@@ -58,12 +86,13 @@ namespace Semplest.Admin.Controllers
                join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
 
                where (c.CustomerPK == id)
-               select new CustomerAccount 
+               select new CustomerAccount
                {
                    AccountNumber = c.CustomerPK,
                    Customer = c.Name,
                    FirstName = u.FirstName,
                    LastName = u.LastName,
+                   MiddleInitial = u.MiddleInitial,
                    Address1 = a.Address1,
                    Address2 = a.Address2,
                    City = a.City,
@@ -72,11 +101,11 @@ namespace Semplest.Admin.Controllers
                    Phone = p.Phone1,
                    Email = u.Email,
                    BillType = b.BillType1,
-                   UserPK= u.UserPK ,
-                   StateID=sc.StateAbbrPK
+                   UserPK = u.UserPK,
+                   StateID = sc.StateAbbrPK
                };
 
-            
+
 
             var viewModel2 =
                 from e in dbcontext.Employees
@@ -90,6 +119,7 @@ namespace Semplest.Admin.Controllers
                     EmployeeType = et.EmployeeType1,
                     employeePK = e.EmployeePK,
                     FirstName = u.FirstName,
+                    MiddleInitial = u.MiddleInitial,
                     LastName = u.LastName,
                     EmployeeUserPK = u.UserPK
                 };
@@ -110,7 +140,8 @@ namespace Semplest.Admin.Controllers
                               EmployeeType = et.EmployeeType1,
                               EmployeeUserPK = u.UserPK,
                               FirstName = u.FirstName,
-                              LastName = u.LastName
+                              LastName = u.LastName,
+                              MiddleInitial = u.MiddleInitial
                           };
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -128,9 +159,10 @@ namespace Semplest.Admin.Controllers
                                       EmployeeType = et.EmployeeType1,
                                       EmployeeUserPK = u.UserPK,
                                       FirstName = u.FirstName,
-                                      LastName = u.LastName
+                                      LastName = u.LastName,
+                                      MiddleInitial = u.MiddleInitial
                                   };
-            
+
 
             CustomerAccountWithEmployeeModel x = new CustomerAccountWithEmployeeModel();
             x.CustomerAccount = viewModel.Single(c => c.AccountNumber == id);
@@ -141,7 +173,7 @@ namespace Semplest.Admin.Controllers
             //for state dropdown
             /////////////////////////////////////////////////////////////////////////////////
             var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
-            x.SelectedStateID = viewModel.Select(r=>r.StateID).FirstOrDefault();
+            x.SelectedStateID = viewModel.Select(r => r.StateID).FirstOrDefault();
             x.States = allstates.Select(r => new SelectListItem
                         {
                             Value = r.StateAbbrPK.ToString(),
@@ -162,7 +194,7 @@ namespace Semplest.Admin.Controllers
 
             //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
             List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
-            List<SelectListItem> sl1= new List<SelectListItem>();
+            List<SelectListItem> sl1 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
             {
                 SelectListItem mylistitem = new SelectListItem();
@@ -178,7 +210,7 @@ namespace Semplest.Admin.Controllers
             //for salespersons drowdown
             /////////////////////////////////////////////////////////////////////////////////
 
-            x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK ).FirstOrDefault();
+            x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
             //x.SalesPersons = allreps.Select(r => new SelectListItem
             //{
             //    //Value = r.EmployeeUserPK.ToString(),
@@ -200,7 +232,7 @@ namespace Semplest.Admin.Controllers
 
             return View(x);
 
-            
+
         }
 
 
@@ -209,18 +241,19 @@ namespace Semplest.Admin.Controllers
         {
 
             SemplestEntities dbcontext = new SemplestEntities();
-            
-            
+
+
             var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.CustomerAccount.UserPK);
             user.FirstName = m.CustomerAccount.FirstName;
             user.LastName = m.CustomerAccount.LastName;
+            user.MiddleInitial = m.CustomerAccount.MiddleInitial;
             user.Email = m.CustomerAccount.Email;
             user.EditedDate = DateTime.Now;
             UpdateModel(user);
 
             var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.CustomerAccount.AccountNumber);
             var customeraddressassociation = dbcontext.CustomerAddressAssociations.ToList().Find(p => p.CustomerFK == customer.CustomerPK);
-            var address = dbcontext.Addresses.ToList().Find(p => p.AddressPK == customeraddressassociation.AddressFK );
+            var address = dbcontext.Addresses.ToList().Find(p => p.AddressPK == customeraddressassociation.AddressFK);
             address.Address1 = m.CustomerAccount.Address1;
             address.Address2 = m.CustomerAccount.Address2;
             address.City = m.CustomerAccount.City;
@@ -230,9 +263,9 @@ namespace Semplest.Admin.Controllers
 
             UpdateModel(address);
             dbcontext.SaveChanges();
-            
 
-           
+
+
             //Role ro = _dbContext.Roles.Add(new Role { RoleName = f["roleName"].ToString() });
             //_dbContext.SaveChanges();
             //foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
@@ -254,7 +287,7 @@ namespace Semplest.Admin.Controllers
             //     Value = r.StateAbbrPK.ToString(),
             //     Text = r.StateAbbr.ToString()
             // });
-            
+
 
             ////repopulate reps ddl
             //var allreps = from e in dbcontext.Employees
@@ -324,12 +357,6 @@ namespace Semplest.Admin.Controllers
 
             SemplestEntities dbcontext = new SemplestEntities();
 
-           
-
-
-           
-
-
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -345,6 +372,7 @@ namespace Semplest.Admin.Controllers
                               EmployeeType = et.EmployeeType1,
                               EmployeeUserPK = u.UserPK,
                               FirstName = u.FirstName,
+                              MiddleInitial = u.MiddleInitial,
                               LastName = u.LastName
                           };
 
@@ -363,6 +391,7 @@ namespace Semplest.Admin.Controllers
                                       EmployeeType = et.EmployeeType1,
                                       EmployeeUserPK = u.UserPK,
                                       FirstName = u.FirstName,
+                                      MiddleInitial = u.MiddleInitial,
                                       LastName = u.LastName
                                   };
 
@@ -444,33 +473,35 @@ namespace Semplest.Admin.Controllers
 
             try
             {
-            SemplestEntities dbcontext = new SemplestEntities();
+                SemplestEntities dbcontext = new SemplestEntities();
 
-            BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
-                
-            ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
+                BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
 
-            Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillType=bt, ProductGroupCycleType = pgct});
-            User u= dbcontext.Users.Add(new User { 
-                                Customer=c, 
-                                Email=m.CustomerAccount.Email, 
-                                FirstName=m.CustomerAccount.FirstName, 
-                                LastName=m.CustomerAccount.LastName
-                    });
+                ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
-            Credential cr=dbcontext.Credentials.Add(new   Credential { User =u, UsersFK=u.UserPK, Username=m.CustomerAccount.Email, Password="t"}); //-- default password --- !!
+                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillType = bt, ProductGroupCycleType = pgct });
+                User u = dbcontext.Users.Add(new User
+                {
+                    Customer = c,
+                    Email = m.CustomerAccount.Email,
+                    FirstName = m.CustomerAccount.FirstName,
+                    LastName = m.CustomerAccount.LastName,
+                    MiddleInitial = m.CustomerAccount.MiddleInitial
+                });
 
-            PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
-            Phone ph = dbcontext.Phones.Add(new Phone { Phone1 = m.CustomerAccount.Phone, PhoneType=pt });
-            CustomerPhoneAssociation cpa = dbcontext.CustomerPhoneAssociations.Add(new CustomerPhoneAssociation { Customer = c, Phone = ph });
-            
-            StateCode sc= dbcontext.StateCodes.First(p=>p.StateAbbrPK==m.SelectedStateID);
-            AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
-            Address a = dbcontext.Addresses.Add(new Address { Address1 = m.CustomerAccount.Address1, Address2 = m.CustomerAccount.Address2, City = m.CustomerAccount.City, ZipCode = m.CustomerAccount.Zip, StateCode = sc });
-            CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType =at });
-            
-           
-            dbcontext.SaveChanges();
+                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.CustomerAccount.Email, Password = "t" }); //-- default password --- !!
+
+                PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
+                Phone ph = dbcontext.Phones.Add(new Phone { Phone1 = m.CustomerAccount.Phone, PhoneType = pt });
+                CustomerPhoneAssociation cpa = dbcontext.CustomerPhoneAssociations.Add(new CustomerPhoneAssociation { Customer = c, Phone = ph });
+
+                StateCode sc = dbcontext.StateCodes.First(p => p.StateAbbrPK == m.SelectedStateID);
+                AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
+                Address a = dbcontext.Addresses.Add(new Address { Address1 = m.CustomerAccount.Address1, Address2 = m.CustomerAccount.Address2, City = m.CustomerAccount.City, ZipCode = m.CustomerAccount.Zip, StateCode = sc });
+                CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at });
+
+
+                dbcontext.SaveChanges();
 
             }
             catch (Exception ex)
