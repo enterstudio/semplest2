@@ -1,12 +1,19 @@
 package semplest.server.service.springjdbc;
 
+import java.util.ArrayList;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
+import semplest.server.protocol.adengine.BidObject;
+import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 
 public class SemplestDB extends BaseDB
 {
+	
 
+	private static final Logger logger = Logger.getLogger(SemplestDB.class);
 	/*
 	 * Scheduler Calls
 	 */
@@ -48,6 +55,39 @@ public class SemplestDB extends BaseDB
 		{ taskID });
 	}
 
+	
+
+	
+	/*
+	 * Bidding calls
+	 */
+	
+	public static void storeBidObjects(Long productGroupID, Long adGroupID, ArrayList<BidObject> bidObjects, AdEngine advertisingEngine)
+	{
+		if (bidObjects != null && bidObjects.size() > 0)
+		{
+			AddBidSP addBid = new AddBidSP();
+			for (BidObject bid : bidObjects)
+			{
+				try
+				{
+					addBid.execute(productGroupID, adGroupID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
+							bid.getQualityScore(), bid.getStatus(), true, bid.isNegative(), advertisingEngine.name());
+				}
+				catch (Exception e)
+				{
+					logger.error("Strore Bid Object Error " + bid.getKeyword() + ":" + e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	
+	
+	/*
+	 * ENUMS
+	 */
 	public enum ScheduleFrequency
 	{
 		Now, Daily, Weekly, Monthly;
@@ -68,18 +108,6 @@ public class SemplestDB extends BaseDB
 			return false;
 		}
 	}
-	
-	/*
-	 * Bidding calls
-	 */
-	
-	
-	
-	
-	/*
-	 * ENUMS
-	 */
-	
 	public enum AdEngine
 	{
 		MSN,Google;
@@ -100,5 +128,6 @@ public class SemplestDB extends BaseDB
 			return false;
 		}
 	}
+	
 
 }

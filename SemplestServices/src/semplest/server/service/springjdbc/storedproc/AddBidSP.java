@@ -33,6 +33,7 @@ public class AddBidSP extends StoredProcedure
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("ProductGroupPK", Types.INTEGER));
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
+		declareParameter(new SqlParameter("KeywordAdEngineID", Types.INTEGER));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
 		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
 		declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
@@ -51,9 +52,11 @@ public class AddBidSP extends StoredProcedure
 	/*
 	 * returns the next schedule job to run
 	 */
-	public Integer execute(int ScheduleFK, Date ExecutionStartTime)
+	public Integer execute(int ProductGroupPK, int PromotionPK, int KeywordAdEngineID, String Keyword, Long MicroBidAmount, String ApprovalStatus, String BidType, Long FirstPageMicroCpc, Integer QualityScore,
+			Boolean IsEligibleForShowing, boolean IsBidActive, Boolean IsNegative, String AdvertisingEngine) throws Exception
 	{
-		Map<String, Object> results = super.execute(ScheduleFK, ExecutionStartTime);
+		Map<String, Object> results = super.execute(ProductGroupPK, PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, ApprovalStatus, BidType, FirstPageMicroCpc, QualityScore,
+				IsEligibleForShowing,IsBidActive, IsNegative, AdvertisingEngine);
 		if (results.get("ID") == null)
 		{
 			return null;
