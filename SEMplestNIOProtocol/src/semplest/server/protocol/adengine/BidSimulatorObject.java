@@ -3,7 +3,7 @@ package semplest.server.protocol.adengine;
 import java.util.HashMap;
 
 
-public class GoogleBidSimulatorObject
+public class BidSimulatorObject
 {
 	private Long AdGroupId;
 	private Long CriterionId;

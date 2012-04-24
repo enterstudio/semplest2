@@ -5,7 +5,7 @@ import java.util.Iterator;
 /*
  * All estimates are in dollar amounts
  */
-public class GoogleTrafficEstimatorObject
+public class TrafficEstimatorObject
 {
 	//private static long micro = 1000000;
 	
@@ -70,7 +70,7 @@ public class GoogleTrafficEstimatorObject
 			return null;
 		}
 	}
-	public void addGoogleTrafficEstimatorObject(GoogleTrafficEstimatorObject trafficData)
+	public void addGoogleTrafficEstimatorObject(TrafficEstimatorObject trafficData)
 	{
 		if (trafficData != null)
 		{

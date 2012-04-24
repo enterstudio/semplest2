@@ -1,6 +1,6 @@
 package semplest.server.protocol.adengine;
 
-public class GoogleBidObject
+public class BidObject
 {
 
 	private Long bidID;
