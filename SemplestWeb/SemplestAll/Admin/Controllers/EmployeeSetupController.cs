@@ -7,6 +7,7 @@ using Semplest.Admin.Models;
 using System.Data.Entity.Validation;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
+using LinqKit;
 
 
 
@@ -86,6 +87,8 @@ namespace Semplest.Admin.Controllers
             SemplestEntities dbcontext = new SemplestEntities();
             //FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
             //if (search == null) search = "";
+            //var filter;
+            
 
             var viewModel =
                from e in dbcontext.Employees
@@ -93,7 +96,8 @@ namespace Semplest.Admin.Controllers
                join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                join ura in dbcontext.UserRolesAssociations on e.UsersFK equals ura.UsersFK
                join r in dbcontext.Roles on ura.RolesFK equals r.RolePK
-               where (u.FirstName.ToLower().Contains(search.ToLower())||u.LastName.ToLower().Contains(search.ToLower())||u.Email.ToLower().Contains(search.ToLower()))
+               //where (u.FirstName.ToLower().Contains(search.ToLower())||u.LastName.ToLower().Contains(search.ToLower())||u.Email.ToLower().Contains(search.ToLower()))
+               //where Predicate
                select new EmployeeSetup
                {
                    EmployeePK = e.EmployeePK,
@@ -103,11 +107,32 @@ namespace Semplest.Admin.Controllers
                    UserPK = u.UserPK,
                    EmployeeType = e.EmployeeType.EmployeeType1,
                    FirstName = u.FirstName,
+                   MiddleInitial = u.MiddleInitial,
                    LastName = u.LastName,
                    RoleName = r.RoleName,
                    Email = u.Email,
                    ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value)
                };
+
+            //ordering by lastname, firstname
+            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName); 
+
+
+            //filtering the search with linqkit (added linqkit package through nugit)
+            var predicate = PredicateBuilder.True <EmployeeSetup>();
+            if (search != null && search!="")
+            {
+
+                predicate = PredicateBuilder.False <EmployeeSetup>();
+                predicate = predicate.Or(p => p.FirstName.ToLower().Contains(search.ToLower()));
+                predicate = predicate.Or(p => p.LastName.ToLower().Contains(search.ToLower()));
+                predicate = predicate.Or(p => p.Email.ToLower().Contains(search.ToLower()));
+                viewModel = viewModel.AsExpandable().Where(predicate);
+
+            }
+            
+
+            
             return View(viewModel);
         }
 
@@ -162,6 +187,7 @@ namespace Semplest.Admin.Controllers
             });
 
 
+
             /////////////////////////////////////////////////////////////////////////////////
             //for Reportingto dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -212,7 +238,8 @@ namespace Semplest.Admin.Controllers
             SemplestEntities dbcontext = new SemplestEntities();
             
             var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
-            user.FirstName = m.EmployeeSetup.FirstName; ;
+            user.FirstName = m.EmployeeSetup.FirstName;
+            user.MiddleInitial = m.EmployeeSetup.MiddleInitial;
             user.LastName = m.EmployeeSetup.LastName;
             user.Email = m.EmployeeSetup.Email;
             user.EditedDate = DateTime.Now;
@@ -315,6 +342,7 @@ namespace Semplest.Admin.Controllers
                     Customer = null,
                     Email = m.EmployeeSetup.Email,
                     FirstName = m.EmployeeSetup.FirstName,
+                    MiddleInitial = m.EmployeeSetup.MiddleInitial,
                     LastName = m.EmployeeSetup.LastName,
                     CustomerFK=null
                 });
