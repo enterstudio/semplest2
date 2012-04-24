@@ -1,4 +1,4 @@
-package semplest.server.service.springjdbc;
+package semplest.server.service.springjdbc.storedproc;
 
 import java.sql.Types;
 import java.util.Date;
@@ -7,6 +7,8 @@ import java.util.Map;
 import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
+
+import semplest.server.service.springjdbc.BaseDB;
 
 public class AddScheduleJobSP extends StoredProcedure
 {
