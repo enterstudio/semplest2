@@ -57,6 +57,10 @@ Ad Setup
         var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
         tabStrip.select(item);
         tabStrip.activateTab(item);
+        if ($('#Categoriesdiv').html() == '')
+            $('#Categoriesdiv').load('/Campaign/Categories', function () { });
+        if ($('#KeyWordsdiv').html() == '')
+            $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { });
     }
     function OnFailure(ajaxContext) {
         $.unblockUI();
