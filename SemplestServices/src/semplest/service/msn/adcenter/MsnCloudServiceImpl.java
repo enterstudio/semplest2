@@ -2336,7 +2336,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		catch (ServiceException e)
 		{
-			throw new SemplestError(e);
+			throw new RuntimeException(e);
 		}
 	}
 
