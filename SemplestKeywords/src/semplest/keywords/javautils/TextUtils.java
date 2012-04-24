@@ -18,10 +18,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.io.DataInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.net.URI;
 
@@ -299,7 +302,28 @@ public class TextUtils
     in.close();
     return data;
   }
-
+  
+  public static void changeKeywordMatchtoExact(String filepath) throws IOException{
+	    FileInputStream fstream = new FileInputStream(filepath);
+	    DataInputStream in = new DataInputStream(fstream);
+	    // Get the object of DataInputStream
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String outputfile = filepath+"Exact";
+	    String strLine;
+	    PrintStream stdout = System.out;
+	    PrintStream out = new PrintStream(new FileOutputStream(outputfile));
+	    System.setOut(out);
+	    //Read File Line By Line
+	    while ((strLine = br.readLine()) != null)   {
+	      // Print the content on the console
+	    	System.out.println("["+strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "")+"]");
+	    }
+	    System.setOut(stdout);
+	    
+	    //Close the input stream
+	    in.close();
+}
+  
   // Return stemmed words from a web page, in our dictionary 
   public static ArrayList<String> validWords( ArrayList<String> words ){
     Stemmer stemmer = new Stemmer();
