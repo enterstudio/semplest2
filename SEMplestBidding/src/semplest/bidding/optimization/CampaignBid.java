@@ -443,7 +443,19 @@ public class CampaignBid implements java.io.Serializable {
 				
 				if(Math.abs(expectedCost-prevCost) < 1e-6) {
 					System.out.println("BREAKING 1");
-					break;
+					// check if there is any unused keyword
+					boolean noUnused = true;
+					for(int l=0; l< bids.length; l++){
+						if(bids[l]< wordList.get(l).getMinBid()){
+							noUnused = false;
+							break;
+						}
+					}
+					if(noUnused) {
+						break;
+					} else {
+						this.dailyBudget=this.dailyBudget+1;
+					}
 				}
 			}
 			

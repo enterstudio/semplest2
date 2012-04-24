@@ -48,7 +48,7 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
 				
 		
 //		CPCParams=estimateModelParams(CPC, true);
-		DCostParams=estimateModelParams(DCost, true);
+		DCostParams=estimateModelParams(DCost, false);
 		ClickParams=estimateModelParams(Clicks, false);
 		
 		
