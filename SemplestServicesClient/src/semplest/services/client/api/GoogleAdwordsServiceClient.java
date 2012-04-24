@@ -9,9 +9,9 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
-import semplest.server.protocol.adengine.GoogleBidObject;
-import semplest.server.protocol.adengine.GoogleBidSimulatorObject;
-import semplest.server.protocol.adengine.GoogleTrafficEstimatorObject;
+import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
@@ -81,7 +81,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			System.out.println(campaignID);
 			
 			Long adGroupID= 3074331030L;
-			GoogleBidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true); 
+			BidObject[] c = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true); 
 			for (int i = 0; i < c.length; i++) 
 			{
 				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":"  + c[i].getQualityScore() + ":" + c[i].getFirstPageCpc());
@@ -339,7 +339,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 	@Override
-	public GoogleBidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
+	public BidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -348,7 +348,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAllBiddableAdGroupCriteria", json,timeoutMS);
-		return gson.fromJson(returnData,  GoogleBidObject[].class);
+		return gson.fromJson(returnData,  BidObject[].class);
 	}
 	@Override
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID,  Boolean ActiveOnly) throws Exception
@@ -485,7 +485,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
-	public GoogleBidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	public BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -504,10 +504,10 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "addKeyWordToAdGroup", json,timeoutMS);
 		System.out.println(returnData);
-		return gson.fromJson(returnData, GoogleBidObject.class);
+		return gson.fromJson(returnData, BidObject.class);
 	}
 	@Override
-	public GoogleBidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public BidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -517,10 +517,10 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "setBidForKeyWord", json,timeoutMS);
-		return gson.fromJson(returnData, GoogleBidObject.class);
+		return gson.fromJson(returnData, BidObject.class);
 	}
 	@Override
-	public GoogleTrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
+	public TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
 			HashMap<String, Double> KeywordWithBid)
 			throws Exception
 	{
@@ -534,10 +534,10 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getTrafficEstimationForOneKeyword", json,timeoutMS);
-		return gson.fromJson(returnData,GoogleTrafficEstimatorObject.class);
+		return gson.fromJson(returnData,TrafficEstimatorObject.class);
 	}
 	@Override
-	public  GoogleBidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
+	public  BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -546,11 +546,11 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getBidLandscapeForKeyword", json,timeoutMS);
-		return gson.fromJson(returnData, GoogleBidSimulatorObject[].class);
+		return gson.fromJson(returnData, BidSimulatorObject[].class);
 		
 	}
 	@Override
-	public GoogleBidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
+	public BidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -558,7 +558,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getBidLandscapeForAdgroup", json,timeoutMS);
-		return gson.fromJson(returnData, GoogleBidSimulatorObject[].class);
+		return gson.fromJson(returnData, BidSimulatorObject[].class);
 		
 	}
 
