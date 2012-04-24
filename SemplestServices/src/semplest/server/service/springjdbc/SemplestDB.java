@@ -73,6 +73,7 @@ public class SemplestDB extends BaseDB
 				{
 					addBid.execute(productGroupID, adGroupID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
 							bid.getQualityScore(), bid.getStatus(), true, bid.isNegative(), advertisingEngine.name());
+					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
 				{
@@ -88,7 +89,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * ENUMS
 	 */
-	public enum ScheduleFrequency
+	public static enum ScheduleFrequency
 	{
 		Now, Daily, Weekly, Monthly;
 		public static boolean existsFrequency(String freq)
@@ -108,7 +109,7 @@ public class SemplestDB extends BaseDB
 			return false;
 		}
 	}
-	public enum AdEngine
+	public static enum AdEngine
 	{
 		MSN,Google;
 		public static boolean existsFrequency(String adEngine)
