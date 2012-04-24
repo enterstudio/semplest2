@@ -1,9 +1,12 @@
 package semplest.service.bidding;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,6 +23,7 @@ import semplest.bidding.test.ioUtils;
 
 
 import semplest.server.protocol.google.GoogleAdGroupObject;
+
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
