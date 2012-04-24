@@ -294,23 +294,23 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //			e.printStackTrace();
 //		}
 		
-		bidOptimizer = null;
-		try
-        {
-           FileInputStream fileIn = new FileInputStream("/tmp/longCampaign.ser.obj");
-           ObjectInputStream in = new ObjectInputStream(fileIn);
-           bidOptimizer = (CampaignBid) in.readObject();
-           in.close();
-           fileIn.close();
-           System.out.println("Yahoo ... have deserialized!");
-       }catch(IOException e)
-       {
-           e.printStackTrace();
-       }catch(ClassNotFoundException c)
-       {
-           System.out.println("CampaignBid class not found");
-           c.printStackTrace();
-       }
+//		bidOptimizer = null;
+//		try
+//        {
+//           FileInputStream fileIn = new FileInputStream("/tmp/longCampaign.ser.obj");
+//           ObjectInputStream in = new ObjectInputStream(fileIn);
+//           bidOptimizer = (CampaignBid) in.readObject();
+//           in.close();
+//           fileIn.close();
+//           System.out.println("Yahoo ... have deserialized!");
+//       }catch(IOException e)
+//       {
+//           e.printStackTrace();
+//       }catch(ClassNotFoundException c)
+//       {
+//           System.out.println("CampaignBid class not found");
+//           c.printStackTrace();
+//       }
 		
 		
 		
