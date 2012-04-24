@@ -11,6 +11,7 @@ public class BidObject
 	private Long firstPageCpc;
 	private Integer qualityScore;
 	private String status;
+	private boolean isNegative = false;
 	
 	public Long getBidID()
 	{
@@ -73,6 +74,14 @@ public class BidObject
 	}
 	public String getStatus(){
 		return status;
+	}
+	public boolean isNegative()
+	{
+		return isNegative;
+	}
+	public void setNegative(boolean isNegative)
+	{
+		this.isNegative = isNegative;
 	}
 	
 }
