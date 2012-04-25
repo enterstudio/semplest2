@@ -23,7 +23,11 @@ public class LoggingHandleErrorAttribute : HandleErrorAttribute
             SemplestModel.Error er = new SemplestModel.Error();
             er.ErrorMessage = filterContext.Exception.ToString();
             //filterContext.RequestContext.HttpContext.Session
-            er.UsersFK = 1;
+            if (HttpContext.Current.Session["userid"] == null)
+                er.UsersFK = 1;
+            else
+                er.UsersFK = string.IsNullOrEmpty(HttpContext.Current.Session["userid"].ToString()) ? 1 : int.Parse(HttpContext.Current.Session["userid"].ToString());
+            er.TimeStamp = DateTime.Now;
             _dbContext.Errors.Add(er);
             _dbContext.SaveChanges();
             //send email
