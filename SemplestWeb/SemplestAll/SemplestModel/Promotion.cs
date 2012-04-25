@@ -33,7 +33,7 @@ namespace SemplestModel
         public Nullable<System.DateTime> EndDate { get; set; }
         public bool IsPaused { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public string EditedDate { get; set; }
+        public Nullable<System.DateTime> EditedDate { get; set; }
         public string IsSearchNetwoirk { get; set; }
     
         public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
