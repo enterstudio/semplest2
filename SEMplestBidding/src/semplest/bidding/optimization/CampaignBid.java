@@ -213,7 +213,7 @@ public class CampaignBid implements java.io.Serializable {
         
 //        min.addConstraint(0, -1, wordList.get(i).getMinBid());
         min.addConstraint(0, -1, 0);
-//        min.addConstraint(0, +1, 5.00); // max bid allowed
+        min.addConstraint(0, +1, 4.00); // max bid allowed
 //        min.setNrestartsMax(10);
 		
 		double[] start = {wordList.get(i).getMinBid()};
@@ -415,6 +415,8 @@ public class CampaignBid implements java.io.Serializable {
 		boolean highCost=true;
 		bids = new double[wordList.size()];
 		double prevCost=Double.MIN_VALUE;
+		double initialDailyBudget = dailyBudget;
+		double initialStepSize = stepSize;
 		
 
 		ParametricFunction f = new TruncatedSmoothSCurve();
@@ -451,10 +453,11 @@ public class CampaignBid implements java.io.Serializable {
 							break;
 						}
 					}
-					if(noUnused) {
+					if(noUnused || (this.dailyBudget>=2*initialDailyBudget)) {
 						break;
 					} else {
 						this.dailyBudget=this.dailyBudget+1;
+						this.stepSize=initialStepSize;
 					}
 				}
 			}
@@ -502,7 +505,7 @@ public class CampaignBid implements java.io.Serializable {
 			} else {
 				bids[i]=0;
 //				bids[i]=key.getMinBid();
-				System.out.format("%2d :: %s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
+				System.out.format("%2d :: %30s: Bid value: 0.00, min bid: %1.2f, expected clicks:    0.0, expected daily cost:    0.00, expected quality metric:    0.0, CPC:  0.00\n",//, CPQM: %2.2f \n", 
 						i+1, key.getKeyWord(), key.getMinBid());//,
 			}
 		} // for(int i=0; i<bids.length;i++)
