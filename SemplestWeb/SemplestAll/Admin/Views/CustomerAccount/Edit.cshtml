@@ -169,6 +169,16 @@ Edit Customer Account:
         @Html.ValidationMessageFor(model => model.CustomerAccount.Zip)
     </div>
 
+    
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.CustomerNote)
+    </div>
+    <div class="editor-field">
+        @Html.TextAreaFor(model => model.CustomerAccount.CustomerNote,10,20, new { @class = "k-textarea" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.CustomerNote)
+    </div>
+    
+    
 
     <br />
     <br />

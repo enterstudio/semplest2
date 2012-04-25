@@ -179,6 +179,8 @@ namespace Semplest.Admin.Models
         public string Email { get; set; }
         public string BillType { get; set; }
         public int  UserPK { get; set; }
+        [DisplayName("SEMplest Internal Note:")] 
+        public string CustomerNote { get; set; }
     }
 
     public class EmployeeSetup

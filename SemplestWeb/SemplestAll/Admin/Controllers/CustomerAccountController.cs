@@ -84,6 +84,7 @@ namespace Semplest.Admin.Controllers
                join cpa in dbcontext.CustomerPhoneAssociations on c.CustomerPK equals cpa.CustomerFK
                join p in dbcontext.Phones on cpa.PhoneFK equals p.PhonePK
                join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
+               join n in dbcontext.CustomerNotes.DefaultIfEmpty() on c.CustomerPK equals n.CustomerFK 
 
                where (c.CustomerPK == id)
                select new CustomerAccount
@@ -102,7 +103,8 @@ namespace Semplest.Admin.Controllers
                    Email = u.Email,
                    BillType = b.BillType1,
                    UserPK = u.UserPK,
-                   StateID = sc.StateAbbrPK
+                   StateID = sc.StateAbbrPK,
+                   CustomerNote=(n.Note==null?null:n.Note)
                };
 
 
@@ -260,8 +262,11 @@ namespace Semplest.Admin.Controllers
             address.ZipCode = m.CustomerAccount.Zip;
             address.EditedDate = DateTime.Now;
             address.StateAbbrFK = m.SelectedStateID;
-
             UpdateModel(address);
+            var customernote=dbcontext.CustomerNotes.ToList().FirstOrDefault(p=>p.CustomerFK==m.CustomerAccount.AccountNumber);
+            customernote.Note = m.CustomerAccount.CustomerNote;
+            UpdateModel(customernote);
+            
             dbcontext.SaveChanges();
 
 
@@ -500,7 +505,7 @@ namespace Semplest.Admin.Controllers
                 Address a = dbcontext.Addresses.Add(new Address { Address1 = m.CustomerAccount.Address1, Address2 = m.CustomerAccount.Address2, City = m.CustomerAccount.City, ZipCode = m.CustomerAccount.Zip, StateCode = sc });
                 CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at });
 
-
+                CustomerNote cn = dbcontext.CustomerNotes.Add(new CustomerNote { Customer=c, Note=m.CustomerAccount.CustomerNote });
                 dbcontext.SaveChanges();
 
             }

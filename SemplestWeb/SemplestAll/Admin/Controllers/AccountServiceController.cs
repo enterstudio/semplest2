@@ -19,8 +19,8 @@ namespace Semplest.Admin.Controllers
         public ActionResult Index(int id)
         {
             SemplestEntities dbcontext = new SemplestEntities();
-
-            var viewModel =
+            
+            var viewModel = 
                from u in dbcontext.Users
                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
                join caa in dbcontext.CustomerAddressAssociations on c.CustomerPK equals caa.CustomerFK
