@@ -34,7 +34,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
-import semplest.services.client.api.GoogleAdwordsServiceClient;
+//import semplest.services.client.api.GoogleAdwordsServiceClient;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.gson.Gson;
@@ -182,15 +182,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				firstPageCPCMap.put(bidObject.getKeyword(), new Double(bidObject.getFirstPageCpc()*1e-6));
 				qualityScoreMap.put(bidObject.getKeyword(), new Double(Math.pow(bidObject.getQualityScore(),1)));
 				statusMap.put(bidObject.getKeyword(), bidObject.getApprovalStatus());
-				if (bidObject.getApprovalStatus().equals("ELIGIBLE") || bidObject.getApprovalStatus().equals("UNDER_REVIEW") || bidObject.getApprovalStatus().equals("APPROVED")) {
+				if(bidObject.isIsEligibleForShowing()) {
 					compKeywords.add(bidObject.getKeyword());
-				} else if (bidObject.getApprovalStatus().equals("RARELY_SERVED")){
-					nonCompKeywords.add(bidObject.getKeyword());
 				} else {
-					logger.info("Unknown status found for keyword "+bidObject.getKeyword()+": "+bidObject.getApprovalStatus());
-					// ******** TBD: TAKE CARE OF THIS EXCEPTION SOMEWHERE ELSE OR REMOVE IT FOR PRODUCTION ****** //
-					throw(new Exception("Unknown status found for keyword "+bidObject.getKeyword()+": "+bidObject.getApprovalStatus()));
-				}	
+					nonCompKeywords.add(bidObject.getKeyword());
+				} 	
 			}
 		} // for(int i=0; i<bidObjects.length; i++)
 		
@@ -324,7 +320,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		for( int j=2; j<8; j++) {
 			bids = new HashMap<String, Double>();
 			for (String s : compKeywords){
-				bids.put(s, firstPageCPCMap.get(s)+0.6*j);
+				bids.put(s, firstPageCPCMap.get(s)+0.8*j);
 			}
 			System.out.println("j="+j);
 			k=0;
@@ -372,7 +368,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			double [] bidArray = costDataMap.get(words[i]).getBidArray();
 			Arrays.sort(bidArray);
 			double [] costArray = costDataMap.get(words[i]).getData(bidArray);
-			if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
+//			if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
+			if (costArray[costArray.length-1]<costArray[0]+1e-4){
 				 System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
 				compKeywords.remove(words[i]);
 				nonCompKeywords.add(words[i]);
@@ -441,8 +438,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		
 		
-		bidOptimizer.setDailyBudget(50.0);
-//		HashMap<String,Double> compBidData= bidOptimizer.optimizeBids();
+		bidOptimizer.setDailyBudget(30.0);
+		HashMap<String,Double> compBidData= bidOptimizer.optimizeBids();
 
 		
 
@@ -587,11 +584,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 //		String accountID = "2188810777"; // small campaign : 100 words
 //		String accountID = "9544523876";
-//		String accountID = "1283163526"; // large capmaign : 1500 words
+		String accountID = "1283163526"; // large capmaign : 1500 words
 		
 //		String accountID = "4764852610"; // teststudiobloom;
 //		String accountID = "9036397375"; // bethflowers
-		String accountID = "6870692153"; // piperhall
+//		String accountID = "6870692153"; // piperhall
 		
 //		String accountID = "1851386728"; // ParkWinters
 
