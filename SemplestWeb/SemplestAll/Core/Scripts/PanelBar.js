@@ -3,10 +3,13 @@
         {
             text: "Home",
             items: [
-                { text: "My Account" },
-                { text: "Reporting" },
-                { text: "Billing" }
-            ]
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" },
+                        { text: "Create User", url: "../Home" },
+                        { text: "Campaign" },
+                        { text: "Search Keywords", url: "../Home/SearchKeywords" }
+                    ]
         },
         {
             text: "Product Groups",
