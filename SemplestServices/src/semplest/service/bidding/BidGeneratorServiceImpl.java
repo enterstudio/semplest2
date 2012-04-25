@@ -48,9 +48,17 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
 	
+
+
+	@Override
+	public void initializeService(String input) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public String getBidsInitial(String json) throws Exception
 	{
-		logger.debug("call  getBid(String json)" + json);
+		logger.debug("call  getBidsInitial(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		String accountID = data.get("accountID");
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
@@ -59,15 +67,28 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		ArrayList<BidObject> res = getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
 		return gson.toJson(res);
 	}
-
-	@Override
-	public void initializeService(String input) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	public ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine){
+		
+		return new ArrayList<BidObject>();
+	}
+	
+	
+	public String getBidsUpdate(String json) throws Exception
+	{
+		logger.debug("call  getBidsUpdate(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		String searchEngine = data.get("searchEngine");
+		ArrayList<BidObject> res = getBidsUpdate( accountID, campaignID, adGroupID, searchEngine);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public ArrayList<BidObject> getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine){
 		
 		return new ArrayList<BidObject>();
 	}
