@@ -20,6 +20,9 @@ namespace SemplestModel
             this.GeoTargetings = new HashSet<GeoTargeting>();
             this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
+            this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
+            this.KeywordCategories = new HashSet<KeywordCategory>();
+            this.AdvertisingEngines = new HashSet<AdvertisingEngine>();
         }
     
         public int PromotionPK { get; set; }
@@ -31,11 +34,15 @@ namespace SemplestModel
         public bool IsPaused { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public string EditedDate { get; set; }
+        public string IsSearchNetwoirk { get; set; }
     
         public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
+        public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
+        public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
+        public virtual ICollection<AdvertisingEngine> AdvertisingEngines { get; set; }
     }
 }

@@ -17,6 +17,8 @@ namespace SemplestModel
         public KeywordBid()
         {
             this.AdvertisingEngineBidDatas = new HashSet<AdvertisingEngineBidData>();
+            this.KeywordInitialBidDatas = new HashSet<KeywordInitialBidData>();
+            this.TrafficEstimators = new HashSet<TrafficEstimator>();
         }
     
         public int KeywordBidPK { get; set; }
@@ -27,9 +29,15 @@ namespace SemplestModel
         public bool IsActive { get; set; }
         public int BidTypeFK { get; set; }
         public decimal BidAmount { get; set; }
+        public int AdvertisingEngineFK { get; set; }
+        public int MicroBidAmount { get; set; }
+        public Nullable<int> KeywordAdEngineID { get; set; }
     
         public virtual ICollection<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
         public virtual BidType BidType { get; set; }
         public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
+        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
+        public virtual ICollection<KeywordInitialBidData> KeywordInitialBidDatas { get; set; }
+        public virtual ICollection<TrafficEstimator> TrafficEstimators { get; set; }
     }
 }

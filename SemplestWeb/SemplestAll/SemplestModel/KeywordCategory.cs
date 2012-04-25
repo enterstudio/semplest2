@@ -12,22 +12,12 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionKeywordAssociation
+    public partial class KeywordCategory
     {
-        public PromotionKeywordAssociation()
-        {
-            this.KeywordBids = new HashSet<KeywordBid>();
-        }
-    
-        public int KeywordFK { get; set; }
+        public int KeywordCategoryPK { get; set; }
         public int PromotionFK { get; set; }
-        public System.DateTime CreatedDate { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsNegative { get; set; }
+        public string KeywordCategory1 { get; set; }
     
-        public virtual Keyword Keyword { get; set; }
-        public virtual ICollection<KeywordBid> KeywordBids { get; set; }
         public virtual Promotion Promotion { get; set; }
     }
 }

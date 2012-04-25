@@ -23,6 +23,8 @@ namespace SemplestModel
         public decimal AverageCPC { get; set; }
         public Nullable<int> QualityScore { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public string AdvertisingEngineBidDataPK { get; set; }
+        public int MicroBidAmount { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }
     }

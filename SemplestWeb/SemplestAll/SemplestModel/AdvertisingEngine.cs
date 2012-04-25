@@ -17,11 +17,15 @@ namespace SemplestModel
         public AdvertisingEngine()
         {
             this.AdvertisingEngineAccounts = new HashSet<AdvertisingEngineAccount>();
+            this.KeywordBids = new HashSet<KeywordBid>();
+            this.Promotions = new HashSet<Promotion>();
         }
     
         public int AdvertisingEnginePK { get; set; }
         public string AdvertisingEngine1 { get; set; }
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
+        public virtual ICollection<KeywordBid> KeywordBids { get; set; }
+        public virtual ICollection<Promotion> Promotions { get; set; }
     }
 }

@@ -12,22 +12,17 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionKeywordAssociation
+    public partial class KeywordInitialBidData
     {
-        public PromotionKeywordAssociation()
-        {
-            this.KeywordBids = new HashSet<KeywordBid>();
-        }
-    
-        public int KeywordFK { get; set; }
-        public int PromotionFK { get; set; }
+        public int KeywordInitialBidDataPK { get; set; }
+        public int KeywordBidFK { get; set; }
+        public Nullable<int> QualityScore { get; set; }
+        public string ApprovalStatus { get; set; }
+        public Nullable<int> FirstPageMicroCPC { get; set; }
+        public bool IsEligibleForShowing { get; set; }
+        public Nullable<double> SemplestProbability { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public bool IsActive { get; set; }
-        public bool IsDeleted { get; set; }
-        public bool IsNegative { get; set; }
     
-        public virtual Keyword Keyword { get; set; }
-        public virtual ICollection<KeywordBid> KeywordBids { get; set; }
-        public virtual Promotion Promotion { get; set; }
+        public virtual KeywordBid KeywordBid { get; set; }
     }
 }

@@ -12,16 +12,13 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class Credential
+    public partial class TrafficEstimator
     {
-        public int CredentialPK { get; set; }
-        public int UsersFK { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public bool RememberMe { get; set; }
-        public string SecurityQuestion { get; set; }
-        public string SecurityAnswer { get; set; }
+        public int TrafficEstimatorPK { get; set; }
+        public Nullable<int> KeywordBidFK { get; set; }
+        public int MicroCost { get; set; }
+        public int NumberClicks { get; set; }
     
-        public virtual User User { get; set; }
+        public virtual KeywordBid KeywordBid { get; set; }
     }
 }

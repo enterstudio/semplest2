@@ -32,6 +32,7 @@ namespace SemplestModel
         public Nullable<System.DateTime> EditedDate { get; set; }
         public bool IsActive { get; set; }
         public string MiddleInitial { get; set; }
+        public bool IsRegistered { get; set; }
     
         public virtual ICollection<Credential> Credentials { get; set; }
         public virtual Customer Customer { get; set; }
