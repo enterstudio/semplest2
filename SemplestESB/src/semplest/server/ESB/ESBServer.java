@@ -69,7 +69,7 @@ public class ESBServer
 		serverData.setAsynchServletMaxPoolSize(Integer.parseInt(properties.getProperty("AsynchServletMaxPoolSize")));
 		serverData.setAsynchServletMaxWorkInQueue(Integer.parseInt(properties.getProperty("AsynchServletMaxWorkInQueue")));
 		serverData.setAsynchCallDefaultTimeoutMS(Integer.parseInt(properties.getProperty("AsynchCallDefaultTimeoutMS")));
-		serverData.setHeaderBufferSize(Integer.parseInt(properties.getProperty("headerBufferSize")));
+		serverData.setHeaderBufferSize(Integer.parseInt(properties.getProperty("HeaderBufferSize")));
 		logger.info("Read properties file...");
 		return true;
 
@@ -118,7 +118,8 @@ public class ESBServer
 		logger.debug("Starting Servlet Container...");
 		executor = new ThreadPoolExecutor(serverData.getAsynchServletCorePoolSize(), serverData.getAsynchServletMaxPoolSize(), 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(serverData.getAsynchServletMaxWorkInQueue()));
 		Server server = new Server(Integer.parseInt(serverData.getWebServerPort()));
-		server.setAttribute("headerBufferSize", serverData.getHeaderBufferSize());
+		server.getConnectors()[0].setRequestHeaderSize(serverData.getHeaderBufferSize());
+		
 		ServletHolder sh = new ServletHolder(ServletContainer.class);
 		sh.setInitParameter("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jersey.api.core.PackagesResourceConfig");
 		//sh.setInitParameter("com.sun.jersey.config.property.packages", serverData.getJerseyPackage());
