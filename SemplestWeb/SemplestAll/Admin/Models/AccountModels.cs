@@ -130,6 +130,7 @@ namespace Semplest.Admin.Models
                 [DisplayName("Last Name")] 
                 public string LastName  { get; set; }
                 public int EmployeeUserPK { get; set; }
+                //public bool isActive { get; set; }
      }
 
     public class EmployeeDropdownModel
@@ -155,6 +156,7 @@ namespace Semplest.Admin.Models
         public string Phone { get; set; }
         public string Email { get; set; }
         public string BillType { get; set; }
+        public bool  isActive { get; set; }
         //no credit table in the database --> need to add these
         //no rep, salesperson  
       }
@@ -181,6 +183,7 @@ namespace Semplest.Admin.Models
         public int  UserPK { get; set; }
         [DisplayName("SEMplest Internal Note:")] 
         public string CustomerNote { get; set; }
+        public bool isActive { get; set; }
     }
 
     public class EmployeeSetup
@@ -201,7 +204,7 @@ namespace Semplest.Admin.Models
         public string RoleName { get; set; }
         public string EmployeeType { get; set; }
         public int ReportingTo { get; set; }
-        public bool Active { get; set; }
+        public bool isActive { get; set; }
     }
 
 

@@ -65,6 +65,9 @@ namespace Semplest.Admin.Controllers
 
            
             viewModel = viewModel.AsExpandable().Where(predicate);
+            
+            //ordering by lastname, firstname
+            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName); 
 
             return View(viewModel);
         }
@@ -104,7 +107,8 @@ namespace Semplest.Admin.Controllers
                    BillType = b.BillType1,
                    UserPK = u.UserPK,
                    StateID = sc.StateAbbrPK,
-                   CustomerNote=(n.Note==null?null:n.Note)
+                   CustomerNote=(n.Note==null?null:n.Note),
+                   isActive = u.IsActive 
                };
 
 
@@ -251,6 +255,7 @@ namespace Semplest.Admin.Controllers
             user.MiddleInitial = m.CustomerAccount.MiddleInitial;
             user.Email = m.CustomerAccount.Email;
             user.EditedDate = DateTime.Now;
+            user.IsActive = m.CustomerAccount.isActive;
             UpdateModel(user);
 
             var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.CustomerAccount.AccountNumber);
@@ -262,6 +267,7 @@ namespace Semplest.Admin.Controllers
             address.ZipCode = m.CustomerAccount.Zip;
             address.EditedDate = DateTime.Now;
             address.StateAbbrFK = m.SelectedStateID;
+            
             UpdateModel(address);
             var customernote=dbcontext.CustomerNotes.ToList().FirstOrDefault(p=>p.CustomerFK==m.CustomerAccount.AccountNumber);
             customernote.Note = m.CustomerAccount.CustomerNote;
@@ -491,7 +497,8 @@ namespace Semplest.Admin.Controllers
                     Email = m.CustomerAccount.Email,
                     FirstName = m.CustomerAccount.FirstName,
                     LastName = m.CustomerAccount.LastName,
-                    MiddleInitial = m.CustomerAccount.MiddleInitial
+                    MiddleInitial = m.CustomerAccount.MiddleInitial,
+                    IsActive=m.CustomerAccount.isActive 
                 });
 
                 Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.CustomerAccount.Email, Password = "t" }); //-- default password --- !!

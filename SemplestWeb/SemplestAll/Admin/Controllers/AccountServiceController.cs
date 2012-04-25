@@ -45,7 +45,8 @@ namespace Semplest.Admin.Controllers
                     Zip = a.ZipCode ,
                     Phone  = p.Phone1 ,
                     Email  = u.Email ,
-                    BillType  = b.BillType1 
+                    BillType  = b.BillType1,
+                     isActive = u.IsActive 
                };
 
             var viewModel2 =

@@ -93,6 +93,14 @@ Edit Employee:
          @Html.DropDownListFor(r=>r.SelectedReportingToID, Model.ReportingTo)    
         </div>
         
+         <div class="editor-label">
+        <label>Status:</label>
+        </div>
+      <div class="editor-field">Active
+     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True")
+     Inactive
+     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
+     </div>
         
         <p>
             <input type="submit" value="Save" class="k-button" />

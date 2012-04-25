@@ -95,7 +95,18 @@ Edit Customer Account:
             <input type="text" id="datePicker"/>
      </div>
 
-
+     
+     <div class="editor-label">
+        <label>Status:</label>
+        </div>
+     <div class="editor-field">Active
+     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "True")
+     InActive
+     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "False")
+     </div>
+    
+    
+    
     <label>
         Rep Name/ID: 
         
@@ -174,7 +185,7 @@ Edit Customer Account:
             @Html.LabelFor(model => model.CustomerAccount.CustomerNote)
     </div>
     <div class="editor-field">
-        @Html.TextAreaFor(model => model.CustomerAccount.CustomerNote,10,20, new { @class = "k-textarea" })
+        @Html.TextAreaFor(model => model.CustomerAccount.CustomerNote, 10, 20, new { @class = "k-textarea" })
         @Html.ValidationMessageFor(model => model.CustomerAccount.CustomerNote)
     </div>
     

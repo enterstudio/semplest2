@@ -112,7 +112,7 @@ namespace Semplest.Admin.Controllers
                    RoleName = r.RoleName,
                    Email = u.Email,
                    ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value),
-                   Active = u.IsActive 
+                   isActive = u.IsActive 
                };
 
             //ordering by lastname, firstname
@@ -170,7 +170,7 @@ namespace Semplest.Admin.Controllers
                    RoleName = r.RoleName,
                    Email = u.Email,
                     ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value),
-                    Active=u.IsActive 
+                    isActive=u.IsActive 
                };
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
@@ -245,6 +245,7 @@ namespace Semplest.Admin.Controllers
             user.LastName = m.EmployeeSetup.LastName;
             user.Email = m.EmployeeSetup.Email;
             user.EditedDate = DateTime.Now;
+            user.IsActive = m.EmployeeSetup.isActive;
             UpdateModel(user);
             //need to add effective date to db ---><><>
 
@@ -346,7 +347,8 @@ namespace Semplest.Admin.Controllers
                     FirstName = m.EmployeeSetup.FirstName,
                     MiddleInitial = m.EmployeeSetup.MiddleInitial,
                     LastName = m.EmployeeSetup.LastName,
-                    CustomerFK=null
+                    CustomerFK=null,
+                    IsActive=m.EmployeeSetup.isActive 
                 });
 
                 Role r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );

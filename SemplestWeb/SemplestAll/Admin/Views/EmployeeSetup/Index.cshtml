@@ -78,7 +78,7 @@ else
                     @Html.RouteLink(item.LastName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
-                    @Html.RouteLink( item.Active?"Active":"InActive" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    @Html.RouteLink( item.isActive?"Active":"InActive" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
                     @Html.RouteLink(item.RoleName , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })

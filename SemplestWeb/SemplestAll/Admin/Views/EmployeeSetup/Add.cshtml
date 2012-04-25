@@ -103,6 +103,15 @@ Add Employee:
         </div>
         
         
+         <div class="editor-label">
+        <label>Status:</label>
+        </div>
+      <div class="editor-field">Active
+     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True")
+     Inactive
+     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
+     </div>
+
      
     </fieldset>   
     

@@ -29,8 +29,8 @@ Account Service
 </h3>
 
 <h3>
-<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Rep").LastName"/></label><br />
-<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").FirstName @Model.EmployeeCustomerAssociaitionModel.First(o=>o.EmployeeType=="Sales").LastName" /></label><br />
+<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o=>o.EmployeeType=="Rep").FirstName @Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o=>o.EmployeeType=="Rep").LastName"/></label><br />
+<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").FirstName @Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").LastName" /></label><br />
 <label>Parent: <input type="text" name="parent" disabled="true"/></label><br />
 <label>Super Parent: <input type="text" name="superparent" disabled="true"/></label><br />
 </h3>

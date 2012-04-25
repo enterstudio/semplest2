@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
-
+using LinqKit;
 
 namespace Semplest.Admin.Controllers
 {
@@ -14,7 +14,7 @@ namespace Semplest.Admin.Controllers
     [AuthorizeRole]
     public class HomeController : Controller
     {
-        public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch)
+         public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
         {
 
             ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
@@ -34,6 +34,35 @@ namespace Semplest.Admin.Controllers
                     LastName = u.LastName,
                     Email = u.Email
                 };
+
+            var predicate = PredicateBuilder.True<HomeModel>();
+
+
+            if (form["searchtype"] == "Customer" && usersearch != null && usersearch != "")
+            {
+                predicate = (p => p.Customer.ToLower().Contains(usersearch.ToLower()));
+            }
+
+            if (form["searchtype"] == "LastName" && usersearch != null && usersearch != "")
+            {
+                predicate = (p => p.LastName.ToLower().Contains(usersearch.ToLower()));
+            }
+
+
+            if (accountnumbersearch != null && accountnumbersearch != "")
+            {
+                predicate = (p => p.AccountNumber.Equals(accountnumbersearch.ToLower()));
+            }
+
+            if (emailsearch != null && emailsearch != "")
+            {
+                predicate = (p => p.Email.ToLower().Contains(emailsearch.ToLower()));
+            }
+
+
+            //ordering by lastname, firstname
+            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName); 
+            viewModel = viewModel.AsExpandable().Where(predicate);
 
             return View(viewModel);
         }
