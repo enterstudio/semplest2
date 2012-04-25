@@ -13,6 +13,13 @@ import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 
+
+
+import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.MatchType;
+import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;;
+
+
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
@@ -142,70 +149,7 @@ public class SemplestDB extends BaseDB
 	
 	
 	
-	/*
-	 * ENUMS
-	 */
-	public static enum ScheduleFrequency
-	{
-		Now, Daily, Weekly, Monthly;
-		public static boolean existsFrequency(String freq)
-		{
-			if (freq != null)
-			{
-				for (ScheduleFrequency val : ScheduleFrequency.values())
-				{
-					if (val.name().equalsIgnoreCase(freq))
-					{
-						return true;
 
-					}
-				}
-
-			}
-			return false;
-		}
-	}
-	public static enum AdEngine
-	{
-		MSN,Google;
-		public static boolean existsFrequency(String adEngine)
-		{
-			if (adEngine != null)
-			{
-				for (AdEngine val : AdEngine.values())
-				{
-					if (val.name().equalsIgnoreCase(adEngine))
-					{
-						return true;
-
-					}
-				}
-
-			}
-			return false;
-		}
-	}
-	
-	public static enum MatchType
-	{
-		Exact,Broad,Phrase;
-		public static boolean existsFrequency(String matchType)
-		{
-			if (matchType != null)
-			{
-				for (MatchType val : MatchType.values())
-				{
-					if (val.name().equalsIgnoreCase(matchType))
-					{
-						return true;
-
-					}
-				}
-
-			}
-			return false;
-		}
-	}
 	
 
 }
