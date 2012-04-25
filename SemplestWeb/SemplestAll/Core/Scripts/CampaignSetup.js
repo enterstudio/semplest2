@@ -6,7 +6,7 @@
     //Save Click Validation Logic..
     $("#save1").click(function () {
         if (validator.validate()) {
-            status.text("Hooray! Your Product has been defined!").addClass("valid");
+            //status.text("Hooray! Your Product has been defined!").addClass("valid");
             tabStrip.select(1);
             tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
         } else {
