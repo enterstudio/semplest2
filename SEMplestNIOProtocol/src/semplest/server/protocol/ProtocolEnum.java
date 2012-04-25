@@ -30,7 +30,7 @@ public class ProtocolEnum {
 	public static enum AdEngine
 	{
 		MSN,Google;
-		public static boolean existsFrequency(String adEngine)
+		public static boolean existsAdEngine(String adEngine)
 		{
 			if (adEngine != null)
 			{
@@ -51,7 +51,7 @@ public class ProtocolEnum {
 	public static enum MatchType
 	{
 		Exact,Broad,Phrase;
-		public static boolean existsFrequency(String matchType)
+		public static boolean existsMatchType(String matchType)
 		{
 			if (matchType != null)
 			{
