@@ -11,4 +11,6 @@ public interface SemplestBiddingInterface extends ServiceInitialize {
 
 	ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception;
 
+	ArrayList<BidObject> getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception;
+
 }
