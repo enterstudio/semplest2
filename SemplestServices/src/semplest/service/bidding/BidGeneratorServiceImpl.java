@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -25,6 +26,8 @@ import semplest.bidding.test.ioUtils;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 
 import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
+
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
 
@@ -44,12 +47,31 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
+	
+	public String getBidsInitial(String json) throws Exception
+	{
+		logger.debug("call  getBid(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		String searchEngine = data.get("searchEngine");
+		ArrayList<BidObject> res = getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
+		return gson.toJson(res);
+	}
 
 	@Override
 	public void initializeService(String input) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine){
+		
+		return new ArrayList<BidObject>();
+	}
+
 
 	public String getBid(String json) throws Exception
 	{
@@ -131,7 +153,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				firstPageCPCMap.put(bidObject.getKeyword(), new Double(bidObject.getFirstPageCpc()*1e-6));
 				qualityScoreMap.put(bidObject.getKeyword(), new Double(Math.pow(bidObject.getQualityScore(),1)));
 				statusMap.put(bidObject.getKeyword(), bidObject.getApprovalStatus());
-				if (bidObject.getApprovalStatus().equals("ELIGIBLE")) {
+				if (bidObject.getApprovalStatus().equals("ELIGIBLE") || bidObject.getApprovalStatus().equals("UNDER_REVIEW") || bidObject.getApprovalStatus().equals("APPROVED")) {
 					compKeywords.add(bidObject.getKeyword());
 				} else if (bidObject.getApprovalStatus().equals("RARELY_SERVED")){
 					nonCompKeywords.add(bidObject.getKeyword());
@@ -159,7 +181,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		// get info for the first page CPC point
 		HashMap<String, Double> bids = new HashMap<String, Double>();
 		for (String s : compKeywords){
-			bids.put(s, firstPageCPCMap.get(s));
+			bids.put(s, firstPageCPCMap.get(s)+0.1);
 		}
 		System.out.println("Number of initial competitive keywords: "+bids.size());
 
@@ -168,7 +190,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		while(true) {
 			Thread.sleep(500+k*3000);
 			try {
-				o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids);
+				o = getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids, client);
+//				o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
 				System.out.println("Received exception : will retry..., k="+(k+1));
@@ -185,7 +208,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			{
 				Double abid= bidIT.next();
 //				if(points.get(abid).getMaxAveCPC()/1e6 < 1e-2){
-				if(points.get(abid).getMaxTotalDailyMicroCost()/1e6 < 1e-2){
+				if(points.get(abid).getMaxTotalDailyMicroCost()/1e6 < 1e-3){
 //					 System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
 //					 System.out.println(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
 					compKeywords.remove(words[i]);
@@ -219,7 +242,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		while(true) {
 			Thread.sleep(500+k*3000);
 			try {
-				o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids);
+				o = getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids, client);
 				break;
 			} catch (Exception e) {
 				System.out.println("Received exception : will retry..., k="+(k+1));
@@ -249,10 +272,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				System.out.println(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
 
 
-				// now check if we are getting the same data 
-				double [] bidArray = costDataMap.get(words[i]).getBidArray();
-				Arrays.sort(bidArray);
-				double [] costArray = costDataMap.get(words[i]).getData(bidArray);
+//				// now check if we are getting the same data 
+//				double [] bidArray = costDataMap.get(words[i]).getBidArray();
+//				Arrays.sort(bidArray);
+//				double [] costArray = costDataMap.get(words[i]).getData(bidArray);
 //				if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
 //					// System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
 //					compKeywords.remove(words[i]);
@@ -265,7 +288,6 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			}
 		}
 		
-		System.out.println("Number of final competitive keywords: "+compKeywords.size());
 
 		
 		
@@ -280,7 +302,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			while(true) {
 				Thread.sleep(1500+k*3000);
 				try {
-					o = client.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids);
+					o = getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids, client);
 					break;
 				} catch (Exception e) {
 					System.out.println("Received exception : will retry..., k="+(k+1));
@@ -316,6 +338,23 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		
 
+		for (int i=0; i < words.length; i++) {
+			// now check if we are getting the same data 
+			double [] bidArray = costDataMap.get(words[i]).getBidArray();
+			Arrays.sort(bidArray);
+			double [] costArray = costDataMap.get(words[i]).getData(bidArray);
+			if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
+				 System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
+				compKeywords.remove(words[i]);
+				nonCompKeywords.add(words[i]);
+				clickDataMap.remove(words[i]);
+				costDataMap.remove(words[i]);
+				continue;
+			}
+		}
+		
+		System.out.println("Number of final competitive keywords: "+compKeywords.size());
+
 		
 		// ************************************************************************** 
 
@@ -343,7 +382,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		try
 		{
-			FileOutputStream fileOut = new FileOutputStream("/tmp/bloomAll.ser.obj");
+			FileOutputStream fileOut = new FileOutputStream("/tmp/piperhall.ser.obj");
 			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(bidOptimizer);
 			out.close();
@@ -373,7 +412,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 		
 		
-		bidOptimizer.setDailyBudget(125.0);
+		bidOptimizer.setDailyBudget(50.0);
 //		HashMap<String,Double> compBidData= bidOptimizer.optimizeBids();
 
 		
@@ -466,6 +505,49 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 
 	}
+	
+	private TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
+			HashMap<String, Double> KeywordWithBid, GoogleAdwordsServiceImpl client) throws Exception {
+//		HashMap<String, Double> KeywordWithBid, GoogleAdwordsServiceClient client) throws Exception {
+		
+		TrafficEstimatorObject o = null, o2;
+		int i=0, k;
+		boolean firstLoop = true;
+		
+		HashMap<String,Double> newKeywordWithBid = new HashMap<String,Double>();
+		Iterator it = KeywordWithBid.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry me = (Map.Entry) it.next();
+			String s = (String) me.getKey();
+			newKeywordWithBid.put(s,KeywordWithBid.get(s));
+			i++;
+			if(i%500==0 || (!it.hasNext())){
+				k=0;
+				while(true) {
+					Thread.sleep(1500+k*3000);
+					try {
+						o2 = client.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+						break;
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("Received exception : will retry..., k="+(k+1));
+						k++;
+					}
+				}
+				newKeywordWithBid.clear();
+				if(firstLoop){
+					o=o2;
+					firstLoop=false;
+				} else {
+					o.addGoogleTrafficEstimatorObject(o2);
+				}
+			} // if(i/500==0) 
+		} // while(it.hasNext())
+		
+		
+		return o;
+		
+	}
 
 	
 
@@ -479,8 +561,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //		String accountID = "1283163526"; // large capmaign : 1500 words
 		
 //		String accountID = "4764852610"; // teststudiobloom;
+//		String accountID = "9036397375"; // bethflowers
+		String accountID = "6870692153"; // piperhall
+		
 //		String accountID = "1851386728"; // ParkWinters
-		String accountID = "9036397375"; // bethflowers
+
 
 
 		BasicConfigurator.configure();
