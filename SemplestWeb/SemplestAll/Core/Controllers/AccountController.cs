@@ -2,9 +2,11 @@
 using System.Web.Routing;
 using System.Web.Security;
 using Semplest.Core.Models;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Core.Controllers
 {
+    [AuthorizeRole]
     public class AccountController : Controller
     {
         public IFormsAuthenticationService FormsService { get; set; }

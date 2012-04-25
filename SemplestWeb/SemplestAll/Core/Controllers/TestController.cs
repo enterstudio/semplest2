@@ -1,9 +1,11 @@
 ﻿using System.Web.Mvc;
 using Semplest.Core.Models;
 using SemplestModel;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Core.Controllers
 {
+    [AuthorizeRole]
     public class TestController : Controller
     {
         //

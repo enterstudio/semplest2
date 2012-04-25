@@ -4,9 +4,11 @@ using System.Reflection;
 using System.Web.Mvc;
 using Semplest.Core.Models;
 using SemplestWebApp.Services;
+using Semplest.SharedResources.Helpers;
 
 namespace SemplestWebApp.Controllers
 {
+    [AuthorizeRole]
     public class HomeController : Controller
     {
         public ActionResult Index()
