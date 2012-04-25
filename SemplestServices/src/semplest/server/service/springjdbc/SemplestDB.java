@@ -28,9 +28,7 @@ public class SemplestDB extends BaseDB
 	 * Customer
 	 */
 	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class); 
-	/*
-	 * customer
-	 */
+	
     public static List<CustomerObj> getAllCustomers()
     {
     	
@@ -147,7 +145,18 @@ public class SemplestDB extends BaseDB
     	return jdbcTemplate.query(strSQL, new Object[]{promotionID, advertisingEngine},bidObjMapper);
 	}
 	
+	/*
+	 * Account calls
+	 */
+	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(AdvertisingEnginePromotionObj.class);
 	
+	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(String advertisingEngineAccountID) throws Exception
+	{
+			String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID]," +
+					"ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.AdvertisingEngineBudget " +
+					"from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
+	    	return jdbcTemplate.query(strSQL, new Object[]{advertisingEngineAccountID},advertisingEnginePromotionObjMapper);	
+	}
 	
 
 	
