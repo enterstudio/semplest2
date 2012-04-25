@@ -23,8 +23,8 @@ namespace Semplest.SharedResources.Controllers
         {
             using (SemplestEntities dbContext = new SemplestEntities())
             {
-                Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = 1;
-                return RedirectToAction("Index", "Home");
+                //Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = 1;
+                //return RedirectToAction("Index", "Home");
                 var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
                 if (creds.Count() == 1)
                 {
@@ -35,7 +35,7 @@ namespace Semplest.SharedResources.Controllers
                         return RedirectToAction("Index", "Home");
                     else if (c.User.IsRegistered)
                         //user is a regular core user
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("CampaignSetup", "Campaign");
                     else if (!string.IsNullOrEmpty(pm.SecurityAnswer) && !string.IsNullOrEmpty(pm.SecurityQuestion))
                     {
                         //authenticated properly but hasn't registered yet
