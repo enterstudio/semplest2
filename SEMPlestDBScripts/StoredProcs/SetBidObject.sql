@@ -25,6 +25,7 @@ CREATE PROCEDURE dbo.SetBidObject
 	@IsBidActive			BIT = 1,
 	@IsNegative				BIT = 0,
 	@AdvertisingEngine		VARCHAR(50),
+	@SemplestProbability    float = null,
 	@ID int output
 )
 AS
@@ -91,7 +92,8 @@ BEGIN TRY
 				 --add new active keyword bid
 				 INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
 				 select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID
-					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK 
+					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK
+				SET @keywordBidPK = @@IDENTITY	 
 				--make sure the associaition is active
 				update PromotionKeywordAssociation set IsActive = 1 where PromotionFK = @PromotionPK and KeywordFK = @keywordPK	
 			END	
@@ -115,7 +117,13 @@ BEGIN TRY
 			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
 				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,@IsBidActive,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID)
 			SET @keywordBidPK = @@IDENTITY	
-	  END		
+	  END
+	if (@QualityScore is not null or @ApprovalStatus is not null or @FirstPageMicroCpc is not null or @IsEligibleForShowing is not null)
+	BEGIN
+		INSERT INTO KeywordInitialBidData(KeywordBidFK,QualityScore,ApprovalStatus,FirstPageMicroCPC,IsEligibleForShowing,SemplestProbability,CreatedDate)
+		values (@keywordBidPK, @QualityScore,@ApprovalStatus,@FirstPageMicroCpc,@IsEligibleForShowing,@SemplestProbability,@currentTime)
+	END
+	   		
 	COMMIT TRANSACTION	
 	
 	RETURN 	@keywordBidPK			 
