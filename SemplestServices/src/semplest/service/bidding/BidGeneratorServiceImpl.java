@@ -69,7 +69,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	@Override
-	public ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine){
+	public ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
 		
 		return new ArrayList<BidObject>();
 	}
@@ -88,7 +92,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	@Override
-	public ArrayList<BidObject> getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine){
+	public ArrayList<BidObject> getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
 		
 		return new ArrayList<BidObject>();
 	}
