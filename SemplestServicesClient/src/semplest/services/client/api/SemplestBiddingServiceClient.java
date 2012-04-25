@@ -96,7 +96,21 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBid", json, timeoutMS);
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
+		return gson.fromJson(returnData, ArrayList.class);
+	}
+	@Override
+	public ArrayList<BidObject> getBidsUpdate(String accountID,
+			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 		return gson.fromJson(returnData, ArrayList.class);
 	}
 
