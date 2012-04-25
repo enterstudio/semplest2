@@ -10,7 +10,10 @@
         </p>
     </div>
     <div class="options">
-        @Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
+        @if (Model != null)
+        {
+            @Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
+        }
     </div>
     <div class="options">
         <br />
