@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
+using System.Linq;
 
 namespace Semplest.Core.Models
 {
@@ -54,6 +55,17 @@ namespace Semplest.Core.Models
 
     }
 
+    public class MapAddressModel
+    {
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public decimal Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal ProximityRadius { get; set; }
+    }
+
     public class AdModel
     {
         public AdModel ()
@@ -67,14 +79,49 @@ namespace Semplest.Core.Models
 
     }
 
+    public class AdEngineSelectModel
+    {
+        bool IsSelected { get; set; }
+        string Name { get; set; }
+    }
+
     public class ProductGroupModel
     {
+        public ProductGroupModel()
+        {
+            //using (SemplestEntities dbcontext = new SemplestEntities())
+            //{
+            //    try
+            //    {
+            //        var query = from c in dbcontext.AdvertisingEngines select c.AdvertisingEngine1;
+            //        if (query.Count() > 0)
+            //        {
+            //            AdEnginesList = query.ToList();
+            //        }
+            //        else
+            //        {
+            //            AdEnginesList = new List<string>();
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        string msg = ex.Message;
+            //        throw;
+            //    }
+            //}
+
+            AdEnginesSelectedList = new List<AdEngineSelectModel>();
+        }
+
         public string ProductGroupName { get; set; }
         public string ProductPromotionName { get; set; }
         public string Words { get; set; }
         public decimal Budget { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
+        public List<string> AdEnginesList { get; set; }
+        public List<AdEngineSelectModel> AdEnginesSelectedList { get; set; }
         public bool Google { get; set; }
         public bool YahooBing { get; set; }
     }
