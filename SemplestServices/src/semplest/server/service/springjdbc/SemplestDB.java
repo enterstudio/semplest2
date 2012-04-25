@@ -104,7 +104,7 @@ public class SemplestDB extends BaseDB
 	
 	public static void storeBidObjects(Long productGroupID, Long promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine) throws Exception
 	{
-		if (!AdEngine.existsFrequency(advertisingEngine))
+		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
@@ -132,7 +132,7 @@ public class SemplestDB extends BaseDB
 	
 	public static List<BidObject> getBidObjects(Long promotionID,String advertisingEngine) throws Exception
 	{
-		if (!AdEngine.existsFrequency(advertisingEngine))
+		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
