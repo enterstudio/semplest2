@@ -52,28 +52,41 @@ WriteLiteral("\r\n<h2>Log In</h2>\r\n\r\n");
 
             
             #line 8 "..\..\Views\Profile\LogIn.cshtml"
- using (Html.BeginForm()) {
+ using (Html.BeginForm())
+{
+    
 
             
             #line default
             #line hidden
-WriteLiteral("        <fieldset>\r\n            <legend>Account Information</legend>\r\n\r\n         " +
-"   <div class=\"editor-label\">\r\n                ");
+WriteLiteral("         <fieldset>\r\n             <legend>Account Information</legend>\r\n         " +
+"   <div id=\"options\" align=\"center\" >\r\n            <div class=\"editor-label\">\r\n " +
+"               ");
 
 
             
-            #line 13 "..\..\Views\Profile\LogIn.cshtml"
+            #line 15 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.LabelFor(m => m.UserName));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">\r\n                ");
+WriteLiteral("\r\n                ");
 
 
             
             #line 16 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox"}));
+           Write(Html.HiddenFor(m => m.IsRegistered));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">\r\n                ");
+
+
+            
+            #line 19 "..\..\Views\Profile\LogIn.cshtml"
+           Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
 
             
             #line default
@@ -82,18 +95,18 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 17 "..\..\Views\Profile\LogIn.cshtml"
+            #line 20 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.ValidationMessageFor(m => m.UserName));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n            </div>\r\n\r\n            <div class=\"editor-label\">\r\n                ");
+WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-label\">\r\n                ");
 
 
             
-            #line 21 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.LabelFor(m => m.Password));
+            #line 23 "..\..\Views\Profile\LogIn.cshtml"
+           Write(Html.LabelFor(m => m.Password1));
 
             
             #line default
@@ -102,8 +115,8 @@ WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">
 
 
             
-            #line 24 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.PasswordFor(m => m.Password, new { @class = "k-textbox" }));
+            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+           Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
 
             
             #line default
@@ -112,22 +125,69 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 25 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.ValidationMessageFor(m => m.Password));
+            #line 27 "..\..\Views\Profile\LogIn.cshtml"
+           Write(Html.ValidationMessageFor(m => m.Password1));
 
             
             #line default
             #line hidden
 WriteLiteral("\r\n            </div>\r\n            <p>\r\n                <input type=\"submit\" value" +
-"=\"Log On\" class =\"k-button\" />\r\n            </p>\r\n        </fieldset>\r\n");
+"=\"Log On\" class =\"k-button\" id=\"btnSubmit\" />\r\n            </p>\r\n");
 
 
             
-            #line 31 "..\..\Views\Profile\LogIn.cshtml"
-}
+            #line 32 "..\..\Views\Profile\LogIn.cshtml"
+             if (Model != null && Model.IsRegistered != null && !Model.IsRegistered)
+            {
+
             
             #line default
             #line hidden
+WriteLiteral("                <div class=\"passwordverify\">");
+
+
+            
+            #line 34 "..\..\Views\Profile\LogIn.cshtml"
+                                       Write(Html.Partial("_Password", Model));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</div>\r\n");
+
+
+            
+            #line 35 "..\..\Views\Profile\LogIn.cshtml"
+            }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("            </div>\r\n        </fieldset>\r\n");
+
+
+            
+            #line 38 "..\..\Views\Profile\LogIn.cshtml"
+        
+}
+
+            
+            #line default
+            #line hidden
+WriteLiteral(@"
+<script type=""text/javascript"">
+    $(document).ready(function () {
+        $(""input[id$='btnSubmit1']"").click(function () {
+            $.ajax({
+                type: ""GET"",
+                url: ""/Profile/Verify"",
+                data: { userName: $('#UserName').val(), password: $('#Password1').val() },
+                success: function (data) { $('.passwordverify').html(data); }
+            });
+        });
+    })
+</script>");
+
 
         }
     }

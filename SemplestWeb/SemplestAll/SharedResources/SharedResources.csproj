@@ -83,10 +83,16 @@
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SEMplestConstants.cs" />
     <Compile Include="Views\Profile\LogIn.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>LogIn.cshtml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Shared\_Password.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>_Password.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +173,12 @@
     <Content Include="Views\Profile\LogIn.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>LogIn.generated.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\_Password.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>_Password.generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
