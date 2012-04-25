@@ -70,6 +70,17 @@ namespace SemplestWebApp.Services
             return newstrlist;
         }
 
+        public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("subject", subject);
+            jsonHash.Add("from", from);
+            jsonHash.Add("recipient", recipient);
+            jsonHash.Add("msgTxt", msgTxt);
+            string jsonstr = JsonConvert.SerializeObject(jsonHash);
+            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+            return (bool)JsonConvert.DeserializeObject(returnData);
+        }
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
         {
