@@ -11,7 +11,7 @@ GO
 
 CREATE PROCEDURE dbo.AddAdvertisingEngineAccount
 (
-	@AdvertisingEngineAccountID INT,
+	@AdvertisingEngineAccountID varchar(30),
 	@AdvertisingEngine nvarchar(50),
 	@CustomerID int
 )
