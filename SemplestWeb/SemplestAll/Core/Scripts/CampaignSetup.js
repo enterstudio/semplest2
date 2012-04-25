@@ -2,7 +2,7 @@
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     // Juery Validator for Validations
-    var validator = $("#cap-view").kendoValidator().data("kendoValidator"), status = $(".status");
+    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
         if (validator.validate()) {
@@ -35,18 +35,18 @@
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
         if (dataItem.text == 'Specific Month') {
-            $("#EndDate").removeClass("enddate");
-            $("#EndDate").kendoDatePicker({
+            $("#ProductGroup_EndDate").removeClass("enddate");
+            $("#ProductGroup_EndDate").kendoDatePicker({
                 change: endChange
             }).data("kendoDatePicker");
         } else {
-            $("#EndDate").addClass("enddate");
+            $("#ProductGroup_EndDate").addClass("enddate");
             disposeDatePicker();
         }
     };
 
     function disposeDatePicker() {
-        var datepicker = $("#EndDate").data("kendoDatePicker"),
+        var datepicker = $("#ProductGroup_EndDate").data("kendoDatePicker"),
             popup = datepicker.dateView.popup,
             element = popup.wrapper[0] ? popup.wrapper : popup.element;
 
@@ -116,7 +116,7 @@
     var m = date.getMonth();
     var y = date.getFullYear();
     var toDay = new Date(y, m, d + 1);
-    var start = $("#StartDate").kendoDatePicker({
+    var start = $("#ProductGroup_StartDate").kendoDatePicker({
         change: startChange, value: toDay
     }).data("kendoDatePicker");
 

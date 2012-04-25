@@ -24,15 +24,18 @@
 label
 {
     display: inline-block;
-    width: 190px;
-    text-align: right;
+    text-align: left;
+    margin-right: 5px;
+    width: auto;
 }
 
 .required
 {
     font-weight: bold;
 }
-
+br {
+    line-height: 2em;
+}
 .accept, .status
 {
     padding-left: 90px;
@@ -51,33 +54,18 @@ span.k-tooltip
 {
     margin-left: 6px;
 }
-.tshirt-view
+
+form
 {
-    border-radius: 10px 10px 10px 10px;
-    border-style: solid;
-    border-width: 1px;
-    overflow: hidden;
-    width: 500px;
-    margin: 30px auto;
-    padding: 20px 20px 0 20px;
-    background-position: 0 -255px;
-}
-.tshirt
-{
-    float: left;
-    margin: 30px 40px 30px 20px;
-}
-.options
-{
-    padding: 30px;
-}
-.options h3
-{
-    font-size: 1em;
-    font-weight: bold;
-    margin: 25px 0 8px 0;
-}
-.get
-{
-    margin-top: 25px;
+    border: 1px solid #ddd;
+    padding: 5px 5px 5px 5px;
+    background: #fff; /* -- CSS3 - define rounded corners for the form -- */
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px; /* -- CSS3 - create a background graident -- */
+    background: -webkit-gradient(linear, 0% 0%, 0% 40%, from(#EEE), to(#FFFFFF));
+    background: -moz-linear-gradient(0% 40% 90deg,#FFF, #EEE); /* -- CSS3 - add a drop shadow -- */
+    -webkit-box-shadow: 0px 0 50px #ccc;
+    -moz-box-shadow: 0px 0 50px #ccc;
+    box-shadow: 0px 0 50px #ccc;
 }

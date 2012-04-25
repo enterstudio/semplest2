@@ -1,42 +1,40 @@
 ﻿@model Semplest.Core.Models.ProductGroupModel
-<div id="cap-view" class="k-header">
+<div class="k-header" id="productGroupModel">
+    <!--end user-details-->
     <div class="configuration1">
         <ul class="options">
             <li>
                 <label for="productGroupName" class="required">
                     Product Group Name
                 </label>
-                <input type="text" id="ProductGroupName" name="ProductGroupName" class="k-textbox" required validationmessage="Please enter {0}" />
+                <br />
+                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
             </li>
             <li>
                 <label for="productPromotionName" class="required">
                     Product / Promotion Name
                 </label>
-                <input type="text" id="ProductPromotionName" name="ProductPromotionName" class="k-textbox" />
+                <br />
+                @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox" })
             </li>
             <li>
                 <h4 class="required">
                     Please type in several words or phrases that describe your business or what you
                     sell or are promoting (separated by commas) to help us build your search campaign:
                 </h4>
-                <label>
-                </label>
-                <input type="text" id="Words" name="Words" class="k-textbox" required validationmessage="Please enter {0}" />
+                @Html.TextBoxFor(t => t.Words, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}",@style="min-width:400px" })
             </li>
             <li>
                 <label for="Budget" class="required">
                     Budget
                 </label>
-                <input type="text" id="Budget" name="Budget" class="k-textbox" required validationmessage="Please enter {0}" />
+                @Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
             </li>
             <li>
                 <label for="StartDate" class="required">
                     Product Start Date
                 </label>
-                <input type="text" id="StartDate" name="StartDate" class="k-textbox" placeholder="Start"
-                    required validationmessage="Please select {0}" data-bind="value: ProductStartDate" />
-            </li>
-            <li>
+                @Html.TextBoxFor(t => t.StartDate, new { @class = "k-textbox", @required = true, @validationmessage = "Please select {0}", @placeholder = "Start" })
                 <label for="StartEndDate" class="required">
                     Period
                 </label>
@@ -44,14 +42,14 @@
                     <option value="EachMonth">Each Month</option>
                     <option value="SpecificMonth">Specific Month</option>
                 </select>
-                <input type="text" id="EndDate" name="EndDate" class="k-textbox enddate" validationmessage="Please selectd {0}" />
+                @Html.TextBoxFor(t => t.EndDate, new { @class = "k-textbox enddate", @validationmessage = "Please select {0}", @placeholder = "End" })
             </li>
             <li>
                 <label for="SearchEngines" class="required">
                     Search Engines
                 </label>
-                <input id="Google" name="Google" type="checkbox" value="Google">Google</input>
-                <input id="Yahoo" name="Yahoo" type="checkbox" value="Yahoo">Yahoo / Bing</input>
+                @Html.CheckBoxFor(t => t.Google) Google
+                @Html.CheckBoxFor(t=>t.YahooBing) Yahoo / Bing
             </li>
             <li>
                 <br />
