@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.BidObject;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
@@ -83,6 +84,20 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			optionalTimeoutMS = timeoutMS;
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
+	}
+	@Override
+	public ArrayList<BidObject> getBidsInitial(String accountID,
+			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("campaignID", String.valueOf(campaignID));
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBid", json, timeoutMS);
+		return gson.fromJson(returnData, ArrayList.class);
 	}
 
 }
