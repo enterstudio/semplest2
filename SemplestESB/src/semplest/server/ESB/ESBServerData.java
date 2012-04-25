@@ -8,6 +8,7 @@ public class ESBServerData
 	private String BrokerIP = null;
 	private String JerseyPackage = null;
 	private String WebServerPort = null;
+	private int headerBufferSize;
 	private int AsynchServletCorePoolSize;
 	private int AsynchServletMaxPoolSize;
 	private int AsynchServletMaxWorkInQueue;
@@ -93,6 +94,14 @@ public class ESBServerData
 	public void setAsynchCallDefaultTimeoutMS(int asynchCallDefaultTimeoutMS)
 	{
 		AsynchCallDefaultTimeoutMS = asynchCallDefaultTimeoutMS;
+	}
+	public int getHeaderBufferSize()
+	{
+		return headerBufferSize;
+	}
+	public void setHeaderBufferSize(int headerBufferSize)
+	{
+		this.headerBufferSize = headerBufferSize;
 	}
 
 }
