@@ -44,6 +44,26 @@ public class MSNAdcenterServiceClientTest {
 
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
+	//Parameters to create campaign and adds
+	String accountName = "_SummitFloristNJ";
+	String url = "www.summithillsfloristnj.com";
+	String productSubcategory = "Wedding Flowers";
+	double msnMonthlyBudget = 50.0; //In dolars
+			
+	//Add1
+	String adTitle1 =  "NJ Wedding Floral Artists";
+	String adText1 = "Invest 30 minutes to book your wedding.10% Confidence discount.";
+	//Add2
+	String adTitle2 =  "Easy Elegance Tabletops";
+	String adText2 = "Inexpensive blooms turned into platinum wedding flowers.15% off now!";
+	
+	//Accounts and campaigns
+	Long accountID = 1613923L;
+	Long campaignID = 120123568L;
+	Long adGroupID = 728133376L;	
+	Long addID1 = 907897094L; 
+	Long addID2 = 907897096L;
+	
 	public static void main(String[] args)
 	{
 		
@@ -62,21 +82,8 @@ public class MSNAdcenterServiceClientTest {
 	}
 	public void createCampaign() throws Exception{
 		//Parameters to create campaign and adds
-		BasicConfigurator.configure();
-		String accountName = "_SummitFloristNJ";
-		String url = "www.summithillsfloristnj.com";
-		String productSubcategory = "Wedding Flowers";
-		Long msnMonthlyBudget = 50L; //In dolars
 		
-		//Add1
-		String adTitle1 =  "NJ Wedding Floral Artists";
-		String adText1 = "Invest 30 minutes to book your wedding.10% Confidence discount.";
-		//Add2
-		String adTitle2 =  "Easy Elegance Tabletops";
-		String adText2 = "Inexpensive blooms turned into platinum wedding flowers.15% off now!";
-	
 		//MSN service instance
-		BasicConfigurator.configure();
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
 						
 		
@@ -85,19 +92,19 @@ public class MSNAdcenterServiceClientTest {
 		in.setSemplestString(accountName);
 		MsnManagementIds account = test.createAccount(in);
 		logger.info("AccountID: "+account.getAccountId());	
-		Long accountID = account.getAccountId();
+		accountID = account.getAccountId();
 		
 		
 		//createCampaign
 		CampaignStatus cpst = null;
-		Long campaignID = test.createCampaign(accountID, productSubcategory, (msnMonthlyBudget/4), msnMonthlyBudget, cpst.Paused);
+		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), msnMonthlyBudget, cpst.Paused);
 		logger.info("campaignID: "+campaignID);	
 		//createAdGroup
-		Long adGroupID = test.createAdGroup(accountID, campaignID);
+		adGroupID = test.createAdGroup(accountID, campaignID);
 		logger.info("adGroupID: "+adGroupID);	
 		//createAds
-		Long addID1 = test.createAd(accountID, adGroupID, adTitle1, adText1, url, url);
-		Long addID2 = test.createAd(accountID, adGroupID, adTitle2, adText2, url, url);
+		addID1 = test.createAd(accountID, adGroupID, adTitle1, adText1, url, url);
+		addID2 = test.createAd(accountID, adGroupID, adTitle2, adText2, url, url);
 		logger.info("adID1: "+addID1);	
 		logger.info("adID2: "+addID2);
 	}
