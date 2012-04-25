@@ -18,9 +18,9 @@ namespace SemplestModel
         {
             this.Credentials = new HashSet<Credential>();
             this.Employees = new HashSet<Employee>();
+            this.Errors = new HashSet<Error>();
             this.TransactionHistories = new HashSet<TransactionHistory>();
             this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
-            this.Errors = new HashSet<Error>();
         }
     
         public int UserPK { get; set; }
@@ -37,8 +37,8 @@ namespace SemplestModel
         public virtual ICollection<Credential> Credentials { get; set; }
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Employee> Employees { get; set; }
+        public virtual ICollection<Error> Errors { get; set; }
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
-        public virtual ICollection<Error> Errors { get; set; }
     }
 }

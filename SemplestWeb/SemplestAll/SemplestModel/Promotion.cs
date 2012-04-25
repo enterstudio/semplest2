@@ -16,12 +16,11 @@ namespace SemplestModel
     {
         public Promotion()
         {
-            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
+            this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
+            this.KeywordCategories = new HashSet<KeywordCategory>();
             this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
-            this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
-            this.KeywordCategories = new HashSet<KeywordCategory>();
             this.AdvertisingEngines = new HashSet<AdvertisingEngine>();
         }
     
@@ -36,13 +35,12 @@ namespace SemplestModel
         public Nullable<System.DateTime> EditedDate { get; set; }
         public string IsSearchNetwoirk { get; set; }
     
-        public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
+        public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
+        public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
-        public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
-        public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
         public virtual ICollection<AdvertisingEngine> AdvertisingEngines { get; set; }
     }
 }

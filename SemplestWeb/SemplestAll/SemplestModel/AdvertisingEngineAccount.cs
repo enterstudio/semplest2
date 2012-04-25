@@ -16,7 +16,6 @@ namespace SemplestModel
     {
         public AdvertisingEngineAccount()
         {
-            this.AdvertisingEngineCampaigns = new HashSet<AdvertisingEngineCampaign>();
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
         }
     
@@ -25,8 +24,7 @@ namespace SemplestModel
         public int CustomerFK { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        public virtual ICollection<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
-        public virtual Customer Customer { get; set; }
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace SemplestModel
         public DbSet<AdvertisingEngine> AdvertisingEngines { get; set; }
         public DbSet<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public DbSet<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
-        public DbSet<AdvertisingEngineCampaign> AdvertisingEngineCampaigns { get; set; }
+        public DbSet<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public DbSet<BidType> BidTypes { get; set; }
         public DbSet<BillType> BillTypes { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
@@ -51,6 +51,8 @@ namespace SemplestModel
         public DbSet<HelpDefinition> HelpDefinitions { get; set; }
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<KeywordBid> KeywordBids { get; set; }
+        public DbSet<KeywordCategory> KeywordCategories { get; set; }
+        public DbSet<KeywordInitialBidData> KeywordInitialBidDatas { get; set; }
         public DbSet<Phone> Phones { get; set; }
         public DbSet<PhoneType> PhoneTypes { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
@@ -70,13 +72,10 @@ namespace SemplestModel
         public DbSet<StateCode> StateCodes { get; set; }
         public DbSet<sysdiagram> sysdiagrams { get; set; }
         public DbSet<Task> Tasks { get; set; }
+        public DbSet<TrafficEstimator> TrafficEstimators { get; set; }
         public DbSet<TransactionHistory> TransactionHistories { get; set; }
         public DbSet<UserRolesAssociation> UserRolesAssociations { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
-        public DbSet<KeywordCategory> KeywordCategories { get; set; }
-        public DbSet<KeywordInitialBidData> KeywordInitialBidDatas { get; set; }
-        public DbSet<TrafficEstimator> TrafficEstimators { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

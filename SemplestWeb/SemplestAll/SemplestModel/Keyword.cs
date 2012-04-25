@@ -21,8 +21,6 @@ namespace SemplestModel
     
         public int KeywordPK { get; set; }
         public string Keyword1 { get; set; }
-        public bool IsActive { get; set; }
-        public bool ISNegative { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
     

@@ -347,7 +347,7 @@
           <Property Name="DefaultSemplestStyleSheetUrl" Type="nvarchar" MaxLength="1024" />
           <Property Name="MaxNumberOfSitelinks" Type="int" />
           <Property Name="LastAccountNumberUsed" Type="int" />
-          <Property Name="LastSemplestEmployeeIDused" Type="int" />
+          <Property Name="LastSEMplestEmployeeIDused" Type="int" />
           <Property Name="DefaultEmailContactUs" Type="nvarchar" MaxLength="150" />
           <Property Name="DefalutEmailContactMe" Type="nvarchar" MaxLength="150" />
           <Property Name="DefaultProductGroupName" Type="nvarchar" MaxLength="256" />
@@ -406,7 +406,7 @@
             <PropertyRef Name="NotePK" />
           </Key>
           <Property Name="CustomerFK" Type="int" Nullable="false" />
-          <Property Name="NotePK" Type="int" Nullable="false" />
+          <Property Name="NotePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="CreatedDate" Type="datetime" />
           <Property Name="EditedDate" Type="datetime" />
           <Property Name="Note" Type="nvarchar" />
@@ -1732,6 +1732,9 @@
             <End Role="AdvertisingEngine" EntitySet="AdvertisingEngines" />
             <End Role="Promotion" EntitySet="Promotions" />
           </AssociationSet>
+          <FunctionImport Name="sp_GetRigtsRolesInteraction" ReturnType="Collection(SemplestModel.sp_GetRigtsRolesInteraction_Result)">
+            <Parameter Name="roleId" Mode="In" Type="Int32" />
+          </FunctionImport>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -1840,7 +1843,7 @@
           <Property Name="DefaultSemplestStyleSheetUrl" Type="String" MaxLength="1024" Unicode="true" FixedLength="false" />
           <Property Name="MaxNumberOfSitelinks" Type="Int32" />
           <Property Name="LastAccountNumberUsed" Type="Int32" />
-          <Property Name="LastSemplestEmployeeIDused" Type="Int32" />
+          <Property Name="LastSEMplestEmployeeIDused" Type="Int32" />
           <Property Name="DefaultEmailContactUs" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="DefalutEmailContactMe" Type="String" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="DefaultProductGroupName" Type="String" MaxLength="256" Unicode="true" FixedLength="false" />
@@ -1917,7 +1920,7 @@
             <PropertyRef Name="NotePK" />
           </Key>
           <Property Name="CustomerFK" Type="Int32" Nullable="false" />
-          <Property Name="NotePK" Type="Int32" Nullable="false" />
+          <Property Name="NotePK" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CreatedDate" Type="DateTime" />
           <Property Name="EditedDate" Type="DateTime" />
           <Property Name="Note" Type="String" MaxLength="4000" Unicode="true" FixedLength="false" />
@@ -2925,6 +2928,14 @@
           <End Role="AdvertisingEngine" Type="SemplestModel.AdvertisingEngine" Multiplicity="*" />
           <End Role="Promotion" Type="SemplestModel.Promotion" Multiplicity="*" />
         </Association>
+        <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
+          <Property Type="Int32" Name="RolesFK" Nullable="true" />
+          <Property Type="String" Name="Controller" Nullable="false" MaxLength="40" />
+          <Property Type="String" Name="Label" Nullable="false" MaxLength="40" />
+          <Property Type="Boolean" Name="IsVisible" Nullable="true" />
+          <Property Type="Boolean" Name="IsReadonly" Nullable="true" />
+          <Property Type="Int32" Name="RightsPK" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -3031,7 +3042,7 @@
                 <ScalarProperty Name="DefaultSemplestStyleSheetUrl" ColumnName="DefaultSemplestStyleSheetUrl" />
                 <ScalarProperty Name="MaxNumberOfSitelinks" ColumnName="MaxNumberOfSitelinks" />
                 <ScalarProperty Name="LastAccountNumberUsed" ColumnName="LastAccountNumberUsed" />
-                <ScalarProperty Name="LastSemplestEmployeeIDused" ColumnName="LastSemplestEmployeeIDused" />
+                <ScalarProperty Name="LastSEMplestEmployeeIDused" ColumnName="LastSEMplestEmployeeIDused" />
                 <ScalarProperty Name="DefaultEmailContactUs" ColumnName="DefaultEmailContactUs" />
                 <ScalarProperty Name="DefalutEmailContactMe" ColumnName="DefalutEmailContactMe" />
                 <ScalarProperty Name="DefaultProductGroupName" ColumnName="DefaultProductGroupName" />
@@ -3509,6 +3520,18 @@
               <ScalarProperty Name="PromotionPK" ColumnName="PromotionFK" />
             </EndProperty>
           </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetRigtsRolesInteraction" FunctionName="SemplestModel.Store.sp_GetRigtsRolesInteraction">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="SemplestModel.sp_GetRigtsRolesInteraction_Result">
+                <ScalarProperty Name="RolesFK" ColumnName="RolesFK" />
+                <ScalarProperty Name="Controller" ColumnName="Controller" />
+                <ScalarProperty Name="Label" ColumnName="Label" />
+                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
+                <ScalarProperty Name="IsReadonly" ColumnName="IsReadonly" />
+                <ScalarProperty Name="RightsPK" ColumnName="RightsPK" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
