@@ -194,6 +194,20 @@ System Defaults
             @Html.EditorFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
             @Html.ValidationMessageFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
         </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.BillingDaysOffset)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.BillingDaysOffset)
+            @Html.ValidationMessageFor(model => model.BillingDaysOffset)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OnErrorEmail)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.OnErrorEmail)
+            @Html.ValidationMessageFor(model => model.OnErrorEmail)
+        </div>
 
         <p>
             <input type="submit" value="Save" />
