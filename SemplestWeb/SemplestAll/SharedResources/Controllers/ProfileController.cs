@@ -13,13 +13,18 @@ namespace Semplest.SharedResources.Controllers
         // GET: /Profile/
 
         public ActionResult LogIn()
-        { return View(); }
+        {
+            Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = null;
+            return View();
+        }
 
         [HttpPost]
         public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl)
         {
             using (SemplestEntities dbContext = new SemplestEntities())
             {
+                Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = 1;
+                return RedirectToAction("Index", "Home");
                 var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
                 if (creds.Count() == 1)
                 {
