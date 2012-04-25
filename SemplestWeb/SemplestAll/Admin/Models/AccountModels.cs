@@ -7,6 +7,7 @@ using System.Web.Security;
 using System.Web;
 using Semplest.Admin.Models;
 using SemplestModel;
+using System.ComponentModel;
 
 public class LoggingHandleErrorAttribute : HandleErrorAttribute
 {
@@ -99,17 +100,15 @@ public static class HtmlPrefixScopeExtensions
 namespace Semplest.Admin.Models
 {
 
-
-
-
-
     
     public class HomeModel
     {
         public string Customer { get; set; }
         public int AccountNumber { get; set; }
         public string FirstName { get; set; }
+        [DisplayName("First Name")] 
         public string LastName { get; set; }
+        [DisplayName("Last Name")] 
         public string Email { get; set; }
     }
 
@@ -120,8 +119,11 @@ namespace Semplest.Admin.Models
                 public int AccountNumber { get; set; }
                 public string EmployeeType { get; set; }
                 public int employeePK { get; set; }
+                [DisplayName("First Name")] 
                 public string FirstName { get; set; }
+                [DisplayName("Middle Initial")] 
                 public string MiddleInitial { get; set; }
+                [DisplayName("Last Name")] 
                 public string LastName  { get; set; }
                 public int EmployeeUserPK { get; set; }
      }
@@ -137,7 +139,9 @@ namespace Semplest.Admin.Models
     {
         public int AccountNumber { get; set; }
         public string Customer { get; set; }
+        [DisplayName("First Name")] 
         public string FirstName { get; set; }
+        [DisplayName("Last Name")] 
         public string LastName { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
@@ -155,8 +159,11 @@ namespace Semplest.Admin.Models
     {
         public int AccountNumber { get; set; }
         public string Customer { get; set; }
+        [DisplayName("First Name")] 
         public string FirstName { get; set; }
+        [DisplayName("Middle Initial")] 
         public string MiddleInitial { get; set; }
+        [DisplayName("Last Name")] 
         public string LastName { get; set; }
         public string Address1 { get; set; }
         public string Address2 { get; set; }
@@ -178,13 +185,17 @@ namespace Semplest.Admin.Models
         public int UserPK { get; set; }
         public int EmployeeTypeID { get; set; }
         public int RolesFK { get; set; }
+        [DisplayName("First Name")] 
         public string FirstName { get; set; }
+        [DisplayName("Middle Initail")] 
         public string MiddleInitial { get; set; }
+        [DisplayName("Last Name")] 
         public string LastName { get; set; }
         public string Email { get; set; }
         public string RoleName { get; set; }
         public string EmployeeType { get; set; }
         public int ReportingTo { get; set; }
+        public bool Active { get; set; }
     }
 
 

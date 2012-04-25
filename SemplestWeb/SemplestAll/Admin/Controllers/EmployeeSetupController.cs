@@ -111,7 +111,8 @@ namespace Semplest.Admin.Controllers
                    LastName = u.LastName,
                    RoleName = r.RoleName,
                    Email = u.Email,
-                   ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value)
+                   ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value),
+                   Active = u.IsActive 
                };
 
             //ordering by lastname, firstname
@@ -168,7 +169,8 @@ namespace Semplest.Admin.Controllers
                    LastName = u.LastName,
                    RoleName = r.RoleName,
                    Email = u.Email,
-                    ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value)
+                    ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value),
+                    Active=u.IsActive 
                };
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();

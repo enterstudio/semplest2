@@ -78,7 +78,7 @@ else
                     @Html.RouteLink(item.LastName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
-                    @Html.RouteLink( "1" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    @Html.RouteLink( item.Active?"Active":"InActive" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
                     @Html.RouteLink(item.RoleName , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
@@ -94,7 +94,7 @@ else
 
 
  <ul style="display: block" class="kendo-nav">
-    <li> @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add"}) </li>
+    <li> @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add" }) </li>
 </ul>
 
 
