@@ -142,7 +142,9 @@ namespace Semplest.Admin.Controllers
                 return View();
             }
         }
-        [ChildActionOnly]
+
+
+
         public ActionResult Models(string RoleId)
         {
 
