@@ -13,8 +13,9 @@ public interface SemplestBiddingInterface extends ServiceInitialize {
 
 	void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception;
 
-	HashMap<String,Double> GetMonthlyBudgetPerSE(String accountID, Long campaignID,
-			Long adGroupID, ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception;
+	HashMap<String,Double> GetMonthlyBudgetPerSE(ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception;
+
+	
 
 
 
