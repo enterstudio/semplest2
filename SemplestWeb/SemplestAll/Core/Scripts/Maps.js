@@ -10,11 +10,11 @@ function showOptionsURL(type, city, state, zip, proximity) {
     var location = {};
     if (city == ' ' || city == '' || city == null) {
         location.city = $('#AdModelProp_Addresses_0__City').val();
-        location.state = $('#AdModelProp_Addresses_0__StateCodeFK').val();
+        location.state = $("#AdModelProp_Addresses_0__StateCodeFK option:selected").text();
         location.zip = $('#AdModelProp_Addresses_0__Zip').val();
     } else {
         location.city = $('#' + city).val();
-        location.state = $('#' + state).val();
+        location.state = $('#' + state + ' option:selected').text();
         location.zip = $('#' + zip).val();
     }
     var thumbMaps = 'true';

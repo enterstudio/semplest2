@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace SemplestModel
@@ -59,6 +61,14 @@ namespace SemplestModel
         public int RolePK { get; set; }
         [DisplayName("Role Name:")]
         public string RoleName { get; set; }
+    }
+
+    public partial class GeoTargeting
+    {
+        public List<StateCode> StateCodes
+        {
+            get { return new SemplestEntities().StateCodes.ToList(); }
+        }
     }
 
 }

@@ -23,7 +23,7 @@
                 State
             </td>
             <td>
-                @Html.TextBoxFor(t => t.StateCodeFK, new { @class = "k-textbox" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr"), new { @class = "k-textbox" })
             </td>
         </tr>
         <tr>

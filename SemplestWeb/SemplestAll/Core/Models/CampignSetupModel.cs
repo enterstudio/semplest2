@@ -21,6 +21,7 @@ namespace Semplest.Core.Models
             AllKeywords = new List<KeywordsModel>();
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
+            
         }
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
@@ -31,6 +32,7 @@ namespace Semplest.Core.Models
         public List<int> CategoryIds { get; set; }
         public List<CategoriesModel> SelectedCategories { get; set; }
         public List<CategoriesModel> AllCategories { get; set; }
+        
 
         public class CategoriesModel
         {
@@ -50,7 +52,7 @@ namespace Semplest.Core.Models
             public int Id { get; set; }
             public string Name { get; set; }
         }
-
+      
         #endregion
 
     }
@@ -71,11 +73,13 @@ namespace Semplest.Core.Models
         public AdModel ()
         {
             Addresses = new List<GeoTargeting> { new GeoTargeting() };
-            Ads = new List<PromotionAd> { new PromotionAd() };
+            Ads = new List<PromotionAd> { new PromotionAd() }; 
         }
         public List<GeoTargeting> Addresses { get; set; }
         public List<PromotionAd> Ads { get; set; }
         public string Url { get; set; }
+       
+       
 
     }
 
@@ -118,8 +122,10 @@ namespace Semplest.Core.Models
         public string ProductPromotionName { get; set; }
         public string Words { get; set; }
         public decimal Budget { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        //public DateTime StartDate { get; set; }
+        //public DateTime EndDate { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
         public List<string> AdEnginesList { get; set; }
         public List<AdEngineSelectModel> AdEnginesSelectedList { get; set; }
         public bool Google { get; set; }

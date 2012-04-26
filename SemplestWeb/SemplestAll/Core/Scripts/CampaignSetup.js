@@ -118,7 +118,7 @@
     var y = date.getFullYear();
     var toDay = new Date(y, m, d + 1);
     var start = $("#ProductGroup_StartDate").kendoDatePicker({
-        change: startChange, value: toDay
+        change: startChange, value: toDay, format: "MM-dd-yyyy"
     }).data("kendoDatePicker");
 
     //    var end = $("#EndDate").kendoDatePicker({
