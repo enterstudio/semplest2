@@ -1,13 +1,13 @@
 package semplest.test;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.service.adengine.SemplestAdengineServiceImpl;
 import semplest.server.service.springjdbc.SemplestDB;
-import semplest.server.protocol.ProtocolEnum;
 
 
 public class TestSpringJDBC
@@ -21,16 +21,31 @@ public class TestSpringJDBC
 	{
 		try
 		{
+			BasicConfigurator.configure();
 			/*Properties properties = new Properties();
 			FileInputStream is = new FileInputStream(PROPSFILE);
 			properties.load(is);
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			SemplestDB op = new SemplestDB();
-			List<BidObject> bids = op.getBidObjects(2L, ProtocolEnum.AdEngine.Google.name());
+			//SemplestDB op = new SemplestDB();
+			//List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			//System.out.println("AdEngineAccount ");
+			/*
+			SemplestAdengineServiceImpl ad = new SemplestAdengineServiceImpl();
+			 ArrayList<String> l =  new ArrayList<String>();
+			 l.add("Google");
+			ad.AddPromotionToAdEngine(2, 1, 1 ,l);
+			*/
+			Integer ret = SemplestDB.addAdEngineAccountID(12, 343434L, "Google");
+			if (ret.intValue() > 0)
+			{
+				System.out.println("added");
+			}
+			
+			//List<BidObject> bids = op.getBidObjects(2L, ProtocolEnum.AdEngine.Google.name());
 			//Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);
-			if (bids != null && !bids.isEmpty()) System.out.println(bids.get(0).getMicroBidAmount());
+			//if (bids != null && !bids.isEmpty()) System.out.println(bids.get(0).getMicroBidAmount());
 			/*
 			GetNextScheduleJobSP nextsch = new GetNextScheduleJobSP();
 			ScheduleJobObj res = nextsch.execute();

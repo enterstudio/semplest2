@@ -172,10 +172,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 
 	public static final int DEFAULT_TIMEOUT = 80000; // 80 seconds. See
 														// setTimeout :P
-	private final NameServiceUniqueMsn uniqueMsnNameService;
-	private final AdCenterCredentials adCenterCredentials;
+	private NameServiceUniqueMsn uniqueMsnNameService;
+	private AdCenterCredentials adCenterCredentials;
 	private int timeoutMillis = DEFAULT_TIMEOUT;
-	private final TimeServer timeServer;
+	private TimeServer timeServer;
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	//private static Gson gson = new Gson();
@@ -200,6 +200,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		this.timeoutMillis = milliseconds;
 	}
 
+	public MsnCloudServiceImpl()
+	{
+		
+	}
 	public MsnCloudServiceImpl(AdCenterCredentials adCenterCredentials, TimeServer timeServer)
 	{
 		this(new NameServiceUniqueMsnPsuedoRandom(), adCenterCredentials, timeServer);

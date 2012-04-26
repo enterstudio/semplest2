@@ -5,19 +5,16 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
-
-
-
-import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.ProtocolEnum.MatchType;
-import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;;
 
 
 public class SemplestDB extends BaseDB
@@ -157,7 +154,40 @@ public class SemplestDB extends BaseDB
 					"from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
 	    	return jdbcTemplate.query(strSQL, new Object[]{advertisingEngineAccountID},advertisingEnginePromotionObjMapper);	
 	}
+	/*
+	 * return Hashmap - Keys: AccountID, CustomerName
+	 */
+	public static List getAdEngineAccount(int customerID, String adEngine)
+	{
+		String strSQL = "select ae.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c " +
+				"left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK " +
+				"left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK " +
+				"where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
+		try
+		{
+			return jdbcTemplate.queryForList(strSQL, new Object[] {customerID, adEngine });
+		}
+		catch (DataAccessException e)
+		{
+			return null;
+		}
+		
+	}
 	
+	public static Integer addAdEngineAccountID(int customerID, Long accountID, String adEngine) throws Exception
+	{
+		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK) " +
+				"select ? ,ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
+		try
+		{
+			return jdbcTemplate.update(strSQL, new Object[] { accountID,customerID, adEngine });
+		}
+		catch (DataAccessException e)
+		{
+			throw e;
+		}
+		
+	}
 
 	
 

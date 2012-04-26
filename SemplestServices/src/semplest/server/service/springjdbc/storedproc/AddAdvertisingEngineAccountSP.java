@@ -15,7 +15,7 @@ public class AddAdvertisingEngineAccountSP extends StoredProcedure
 	public AddAdvertisingEngineAccountSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.VARCHAR));
+		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.INTEGER));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("CustomerID", Types.INTEGER));
 		compile();
@@ -24,7 +24,7 @@ public class AddAdvertisingEngineAccountSP extends StoredProcedure
 	/*
 	 * returns the next schedule job to run
 	 */
-	public void execute(String AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID)
+	public void execute(Long AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID)
 	{
 		Map<String, Object> results = super.execute(AdvertisingEngineAccountID, AdvertisingEngine, CustomerID);
 	}

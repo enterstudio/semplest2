@@ -15,7 +15,7 @@ public class AddAdvertisingEnginePromotionSP extends StoredProcedure
 	public AddAdvertisingEnginePromotionSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.VARCHAR));
+		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.INTEGER));
 		declareParameter(new SqlParameter("AdvertisingEngineCampaignID", Types.INTEGER));
 		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
 		declareParameter(new SqlParameter("IsSearchNetwork", Types.BIT));
@@ -25,9 +25,9 @@ public class AddAdvertisingEnginePromotionSP extends StoredProcedure
 	}
 
 	/*
-	 * returns the next schedule job to run
+	 * AddAdvertising Engine Promotion
 	 */
-	public void execute(String AdvertisingEngineAccountID,Integer AdvertisingEngineCampaignID, Integer PromotionID, Boolean IsSearchNetwork, Boolean IsDisplayNetwork, Double AdvertisingEngineBudget )
+	public void execute(Long AdvertisingEngineAccountID,Integer AdvertisingEngineCampaignID, Integer PromotionID, Boolean IsSearchNetwork, Boolean IsDisplayNetwork, Double AdvertisingEngineBudget )
 	{
 		Map<String, Object> results = super.execute(AdvertisingEngineAccountID,AdvertisingEngineCampaignID, PromotionID, IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget);
 	}
