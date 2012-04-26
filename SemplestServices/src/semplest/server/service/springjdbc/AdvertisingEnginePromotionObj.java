@@ -2,20 +2,13 @@ package semplest.server.service.springjdbc;
 
 public class AdvertisingEnginePromotionObj
 {
-	private String AdvertisingEngineAccountID;
+	private Long AdvertisingEngineAccountID;
 	private Integer AdvertisingEngineCampaignID;
 	private Integer PromotionID;
 	private Boolean IsSearchNetwork;
 	private Boolean IsDisplayNetwork;
 	private Double AdvertisingEngineBudget;
-	public String getAdvertisingEngineAccountID()
-	{
-		return AdvertisingEngineAccountID;
-	}
-	public void setAdvertisingEngineAccountID(String advertisingEngineAccountID)
-	{
-		AdvertisingEngineAccountID = advertisingEngineAccountID;
-	}
+	
 	public Integer getAdvertisingEngineCampaignID()
 	{
 		return AdvertisingEngineCampaignID;
@@ -55,6 +48,14 @@ public class AdvertisingEnginePromotionObj
 	public void setAdvertisingEngineBudget(Double advertisingEngineBudget)
 	{
 		AdvertisingEngineBudget = advertisingEngineBudget;
+	}
+	public Long getAdvertisingEngineAccountID()
+	{
+		return AdvertisingEngineAccountID;
+	}
+	public void setAdvertisingEngineAccountID(Long advertisingEngineAccountID)
+	{
+		AdvertisingEngineAccountID = advertisingEngineAccountID;
 	}
 
 }

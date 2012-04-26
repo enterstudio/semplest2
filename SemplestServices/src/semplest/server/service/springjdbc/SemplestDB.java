@@ -97,7 +97,7 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 	
-	public static void storeBidObjects(Long productGroupID, Long promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine) throws Exception
+	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
@@ -125,7 +125,7 @@ public class SemplestDB extends BaseDB
 	
 	private static final RowMapper<BidObject> bidObjMapper = new BeanPropertyRowMapper(BidObject.class);
 	
-	public static List<BidObject> getBidObjects(Long promotionID,String advertisingEngine) throws Exception
+	public static List<BidObject> getBidObjects(Integer promotionID,String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
@@ -187,6 +187,44 @@ public class SemplestDB extends BaseDB
 			throw e;
 		}
 		
+	}
+	
+	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID) throws Exception
+	{
+		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget) " +
+				"VALUES (?,?,?,?,?)";
+		try
+		{
+			return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID,promotionID,adEngineAccountID, 1,0,0.0 });
+		}
+		catch (DataAccessException e)
+		{
+			throw e;
+		}
+		
+	}
+	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork, Double AdvertisingEngineBudget) throws Exception
+	{
+		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
+		try
+		{
+			return jdbcTemplate.update(strSQL, new Object[] { IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID});
+		}
+		catch (DataAccessException e)
+		{
+			throw e;
+		}
+		
+	}
+	
+
+	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper(PromotionObj.class);
+	
+	public static List<PromotionObj> getPromotionObjects(Integer promotionID) throws Exception
+	{
+		String strSQL = " select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL," +
+				"p.CycleBudgetAmount,p.StartDate,p.EditedDate,p.IsPaused,p.CreatedDate,p.EditedDate from Promotion p where p.PromotionPK = ?";
+    	return jdbcTemplate.query(strSQL, new Object[]{promotionID},promotionObjMapper);
 	}
 
 	

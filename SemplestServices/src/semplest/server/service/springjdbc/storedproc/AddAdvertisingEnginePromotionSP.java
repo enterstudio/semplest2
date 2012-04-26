@@ -15,8 +15,8 @@ public class AddAdvertisingEnginePromotionSP extends StoredProcedure
 	public AddAdvertisingEnginePromotionSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.INTEGER));
-		declareParameter(new SqlParameter("AdvertisingEngineCampaignID", Types.INTEGER));
+		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.BIGINT));
+		declareParameter(new SqlParameter("AdvertisingEngineCampaignID", Types.BIGINT));
 		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
 		declareParameter(new SqlParameter("IsSearchNetwork", Types.BIT));
 		declareParameter(new SqlParameter("IsDisplayNetwork", Types.BIT));

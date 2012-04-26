@@ -14,6 +14,10 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
+import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
+import com.google.api.adwords.v201109.cm.CampaignStatus;
+import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
@@ -31,7 +35,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
+	public Boolean AddPromotionToAdEngine(Integer customerID, Long productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
 		String companyName = null;
@@ -52,17 +56,54 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				accountID = createAdEngineAccount(advertisingEngine, companyName);
 				//store the account ID for the customer
 				SemplestDB.addAdEngineAccountID(customerID, accountID,  advertisingEngine);
+				logger.debug("Created Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			else
 			{
 				accountID = new Long((Integer) AdEngineAccoutRow.get(0).get("AccountID"));
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
+			//if no promo group then add
+			Long prodGroupID = null;
+			if (productGroupID == null)
+			{
+				//create the campaign
+				prodGroupID = createCampaign(accountID, advertisingEngine);
+				//store new product group for ad engine 
+				
+			}
+			else
+			{
+				prodGroupID = productGroupID;
+			}
+			//create the Ad Engine AdGroup
+			
 		}
 		 
 		return null;
 	}
-	
+	private Long createCampaign(Long accountID, String adEngine)
+	{
+		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
+		{
+			//assume US dollars US timezone
+			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			Long campaignID =  0l;
+					//google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
+			return campaignID;
+		}
+		
+		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
+		{
+			
+		}
+		else
+		{
+			//throw new Exception(adEngine + " Not found to create account");
+		}
+		
+		return null;
+	}
 	private Long createAdEngineAccount(String adEngine, String companyName) throws Exception
 	{
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))

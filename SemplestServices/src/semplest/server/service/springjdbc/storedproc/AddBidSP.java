@@ -33,7 +33,7 @@ public class AddBidSP extends StoredProcedure
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("ProductGroupPK", Types.INTEGER));
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
-		declareParameter(new SqlParameter("KeywordAdEngineID", Types.INTEGER));
+		declareParameter(new SqlParameter("KeywordAdEngineID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
 		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
 		declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));

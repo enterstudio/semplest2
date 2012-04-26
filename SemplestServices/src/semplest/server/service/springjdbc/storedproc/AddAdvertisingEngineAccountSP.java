@@ -15,7 +15,7 @@ public class AddAdvertisingEngineAccountSP extends StoredProcedure
 	public AddAdvertisingEngineAccountSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.INTEGER));
+		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.BIGINT));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("CustomerID", Types.INTEGER));
 		compile();
