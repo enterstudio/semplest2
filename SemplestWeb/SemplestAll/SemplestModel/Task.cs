@@ -14,9 +14,16 @@ namespace SemplestModel
     
     public partial class Task
     {
+        public Task()
+        {
+            this.ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
+        }
+    
         public int TaskPK { get; set; }
         public string ServiceName { get; set; }
         public string MethodName { get; set; }
         public string Parameters { get; set; }
+    
+        public virtual ICollection<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
     }
 }

@@ -15,8 +15,8 @@ namespace SemplestModel
     public partial class EmployeeCustomerAssociation
     {
         public int EmployeeCustomerAssociationPK { get; set; }
-        public int EmployeeFK { get; set; }
         public int CustomerFK { get; set; }
+        public int EmployeeFK { get; set; }
     
         public virtual Customer Customer { get; set; }
         public virtual Employee Employee { get; set; }

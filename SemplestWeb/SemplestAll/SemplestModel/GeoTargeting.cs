@@ -25,5 +25,6 @@ namespace SemplestModel
         public Nullable<decimal> ProximityRadius { get; set; }
     
         public virtual Promotion Promotion { get; set; }
+        public virtual StateCode StateCode { get; set; }
     }
 }

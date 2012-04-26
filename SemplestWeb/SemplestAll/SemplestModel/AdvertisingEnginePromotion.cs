@@ -14,9 +14,9 @@ namespace SemplestModel
     
     public partial class AdvertisingEnginePromotion
     {
-        public int AdvertisingEngineCampaignPK { get; set; }
+        public long AdvertisingEngineCampaignPK { get; set; }
         public int PromotionFK { get; set; }
-        public string AdvertisingEngineAccountFK { get; set; }
+        public long AdvertisingEngineAccountFK { get; set; }
         public bool IsSearchNetwork { get; set; }
         public bool IsDisplayNetwork { get; set; }
         public decimal AdvertisingEngineBudget { get; set; }

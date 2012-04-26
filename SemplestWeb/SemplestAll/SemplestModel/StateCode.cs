@@ -17,11 +17,13 @@ namespace SemplestModel
         public StateCode()
         {
             this.Addresses = new HashSet<Address>();
+            this.GeoTargetings = new HashSet<GeoTargeting>();
         }
     
         public int StateAbbrPK { get; set; }
         public string StateAbbr { get; set; }
     
         public virtual ICollection<Address> Addresses { get; set; }
+        public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
     }
 }

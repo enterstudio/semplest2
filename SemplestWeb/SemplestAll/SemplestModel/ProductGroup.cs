@@ -17,6 +17,7 @@ namespace SemplestModel
         public ProductGroup()
         {
             this.Promotions = new HashSet<Promotion>();
+            this.Schedules = new HashSet<Schedule>();
         }
     
         public int ProductGroupPK { get; set; }
@@ -30,5 +31,6 @@ namespace SemplestModel
     
         public virtual Customer Customer { get; set; }
         public virtual ICollection<Promotion> Promotions { get; set; }
+        public virtual ICollection<Schedule> Schedules { get; set; }
     }
 }

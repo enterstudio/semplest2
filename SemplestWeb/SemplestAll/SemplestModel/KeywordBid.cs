@@ -30,7 +30,7 @@ namespace SemplestModel
         public bool IsActive { get; set; }
         public int BidTypeFK { get; set; }
         public int MicroBidAmount { get; set; }
-        public Nullable<int> KeywordAdEngineID { get; set; }
+        public Nullable<long> KeywordAdEngineID { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
         public virtual ICollection<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }

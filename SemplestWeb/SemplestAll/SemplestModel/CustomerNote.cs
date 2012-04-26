@@ -14,8 +14,8 @@ namespace SemplestModel
     
     public partial class CustomerNote
     {
-        public int CustomerFK { get; set; }
         public int NotePK { get; set; }
+        public Nullable<int> CustomerFK { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
         public string Note { get; set; }

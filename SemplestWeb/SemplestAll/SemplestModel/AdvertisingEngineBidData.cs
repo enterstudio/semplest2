@@ -15,7 +15,6 @@ namespace SemplestModel
     public partial class AdvertisingEngineBidData
     {
         public string AdvertisingEngineBidDataPK { get; set; }
-        public int AdvertisingEngineBidPK { get; set; }
         public Nullable<int> KeywordBidFK { get; set; }
         public int MicroBidAmount { get; set; }
         public int NumberImpressions { get; set; }

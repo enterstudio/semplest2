@@ -19,7 +19,7 @@ namespace SemplestModel
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
         }
     
-        public string AdvertisingEngineAccountPK { get; set; }
+        public long AdvertisingEngineAccountPK { get; set; }
         public int AdvertisingEngineFK { get; set; }
         public int CustomerFK { get; set; }
     

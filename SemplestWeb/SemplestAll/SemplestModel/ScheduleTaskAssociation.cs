@@ -19,5 +19,6 @@ namespace SemplestModel
         public int TaskExecutionOrder { get; set; }
     
         public virtual Schedule Schedule { get; set; }
+        public virtual Task Task { get; set; }
     }
 }
