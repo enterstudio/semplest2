@@ -116,13 +116,22 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	
+	
+	
 	@Override
 	public HashMap<String,Double> getBid(String accountID,
 			Long campaignID, Long adGroupID, ArrayList<String> keywords)
 			throws Exception {
 		
+		throw new Exception("getBid() method is no longer in use");
 		
-		logger.info("Computing bids ...");
+	}
+	
+	
+	private void getBidInitialGoogle(String accountID,
+			Long campaignID, Long adGroupID) throws Exception {	
+		
+		logger.info("Computing bids for Google campaign...");
 
 		
 		// ************************************************************************** 
@@ -510,8 +519,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 		*/
 		
-		// TODO Auto-generated method stub
-		return bidData;
+
 	}
 	
 	
@@ -642,7 +650,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
 			//			bidGenerator.getBid(accountID, campaignID, adGroupID, keywords);
-			bidGenerator.getBid(accountID, campaignID, adGroupID, null);
+			bidGenerator.getBidInitialGoogle(accountID, campaignID, adGroupID);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
