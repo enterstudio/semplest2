@@ -8,7 +8,6 @@ using System.Reflection;
 using System.Data.Entity.Validation;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
-using SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {

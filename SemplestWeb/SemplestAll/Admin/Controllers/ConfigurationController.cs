@@ -6,7 +6,6 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
-using SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {

@@ -7,7 +7,7 @@ using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
-using SharedResources.Helpers;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {
