@@ -28,48 +28,7 @@ Ad Setup
     </div>
     <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
 }
-<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
-<script>
-    function OnBegin() {
-        //alert('Success');
-        $.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>' }); 
-    }
-    function OnSuccess() {
-        $.unblockUI();
-        //alert('Success');
-        var tabStrip = $("#tabstrip").kendoTabStrip().data("kendoTabStrip");
-        if ($("#hiddenfield").val() == "done") {
-            tabStrip.append({
-                text: "KeyWords",
-                content: '<div id="KeyWordsdiv" />'
-            },tabStrip.tabGroup.children("li:last")).select();
-            $("#hiddenfield").val("done1");
-        }
-        if ($("#hiddenfield").val() == "") {
-            tabStrip.append({
-                text: "Categories",
-                content: '<div id="Categoriesdiv" />'
-            }, tabStrip.tabGroup.children("li:last")).select();
-            tabStrip.tabGroup.children("li:last").select();
-            $("#hiddenfield").val("done");
-            
-        }
-        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
-        tabStrip.select(item);
-        tabStrip.activateTab(item);
-        if ($('#Categoriesdiv').html() == '')
-            $('#Categoriesdiv').load('/Campaign/Categories', function () { });
-        if ($('#KeyWordsdiv').html() == '')
-            $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { });
-    }
-    function OnFailure(ajaxContext) {
-        $.unblockUI();
-        var response = ajaxContext.get_response();
-        var statusCode = response.get_statusCode();
-        alert('Failure');
-        $('#example').empty();
-    }
-</script>
+
 <div id="exampleWrap">
     <div id="example" class="k-content">
         @*@using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", UpdateTargetId = "example" }))*@
@@ -93,3 +52,75 @@ Ad Setup
         }
     </div>
 </div>
+
+<script>
+    var onActivate = function () {
+        switch (tabStrip.select().text()) {
+            case "DEFINE PRODUCT":
+                $("input[type='button']#btnOne").addClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
+            case "CREATE ADS":
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").addClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
+            case 'Additional Click Through Links("SiteLinks")':
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").addClass('k-state-btnerror');
+                break;
+            case "Negative Keywords":
+                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
+                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
+                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
+                break;
+        }
+    };
+
+    //Generate Tab
+    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate }).data("kendoTabStrip");
+
+    // Start Enable tabs region
+    var tab = tabStrip.select();
+
+    tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
+    tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
+    tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
+
+    function OnBegin() {
+        //alert('Success');
+        $.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>' });
+    }
+    function OnSuccess() {
+        $.unblockUI();
+        if ($("#hiddenfield").val() == "done") {
+            tabStrip.append({
+                text: "KeyWords",
+                contentUrl: '@Url.Action("KeyWords")'
+            }, tabStrip.tabGroup.children("li:last")).select();
+            $("#hiddenfield").val("done1");
+        }
+        if ($("#hiddenfield").val() == "") {
+            tabStrip.append({
+                text: "Categories",
+                contentUrl: '@Url.Action("Categories")'
+            }, tabStrip.tabGroup.children("li:last")).select();
+            tabStrip.tabGroup.children("li:last").select();
+            $("#hiddenfield").val("done");
+        }
+        var item = tabStrip.tabGroup.children("li").eq(tabStrip.items().length - 1);
+        tabStrip.select(item);
+        tabStrip.activateTab(item);
+    }
+    function OnFailure(ajaxContext) {
+        $.unblockUI();
+        var response = ajaxContext.get_response();
+        var statusCode = response.get_statusCode();
+        alert('Failure');
+        $('#example').empty();
+    }
+
+</script>
+<script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
