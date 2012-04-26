@@ -9,6 +9,7 @@ using Semplest.SharedResources.Services;
 
 namespace SemplestWebApp.Controllers
 {
+    [ExceptionHelper]
     [AuthorizeRole]
     public class HomeController : Controller
     {

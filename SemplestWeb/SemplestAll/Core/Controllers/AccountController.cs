@@ -6,6 +6,7 @@ using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Core.Controllers
 {
+    [ExceptionHelper]
     [AuthorizeRole]
     public class AccountController : Controller
     {
