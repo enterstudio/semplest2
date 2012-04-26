@@ -116,8 +116,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
 	@Override
-	public void GetMonthlyBudgetPerSE(String accountID,
-			Long campaignID, Long adGroupID, String [] searchEngine, Double TotalMonthlyBudget) throws Exception {
+	public HashMap<String,Double> GetMonthlyBudgetPerSE(String accountID,
+			Long campaignID, Long adGroupID, ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
@@ -127,9 +127,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("TotalMonthlyBudget", String.valueOf(TotalMonthlyBudget));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-//		String returnData = 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPerSE", json, timeoutMS);
-//		return gson.fromJson(returnData, Double[].class);
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPerSE", json, timeoutMS);
+		return gson.fromJson(returnData, HashMap.class);
 	}
 
 }
