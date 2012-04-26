@@ -11,6 +11,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
@@ -34,6 +36,9 @@ import semplest.other.MsnTime;
 import semplest.other.SemplestError;
 import semplest.other.TimeServer;
 import semplest.server.protocol.*;
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.ReportObject.Transaction;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.*;
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -1646,7 +1651,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		logger.debug("call getKeywordEstimateByBids(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		KeywordEstimatedPosition[] ret = null;
+		TrafficEstimatorObject ret = null;
 		String bidStr = data.get("bid");
 		Money bid = gson.fromJson(bidStr, Money.class);
 		try {
@@ -1658,8 +1663,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws MsnCloudException
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws MsnCloudException
 	{
+		TrafficEstimatorObject ret = new TrafficEstimatorObject();
 		try
 		{
 			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
@@ -1670,7 +1676,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 					{ MatchType.Exact, MatchType.Phrase, MatchType.Broad });
 			GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords;
 			estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
-			return estimatedPositionByKeywords.getKeywordEstimatedPositions();
+			KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
+			Double bidAmount = bid.getDoubleDollars();
+			for(KeywordEstimatedPosition k : keywordEstimatedPositions){
+				String keyword = k.getKeyword();
+				for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
+					ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
+							new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), Double.valueOf(et.getEstimatedAdPosition().getValue()), 
+							(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
+							new Long((new Double(et.getMinTotalCostPerWeek()/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()/7.0).longValue())));
+				}
+			}			
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -1684,6 +1700,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			throw new MsnCloudException(e);
 		}
+		catch(Exception e){
+			throw new MsnCloudException(e);
+		}
+		return ret;
 	}
 
 	//
@@ -1851,29 +1871,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		if (aggregation == ReportAggregation.Summary)
 		{
 			columns = new KeywordPerformanceReportColumn[]
-			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, KeywordPerformanceReportColumn.Impressions,
-					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.Conversions,
-					KeywordPerformanceReportColumn.Spend, KeywordPerformanceReportColumn.AccountName, KeywordPerformanceReportColumn.AdDistribution,
-					KeywordPerformanceReportColumn.AdGroupName, KeywordPerformanceReportColumn.CampaignName,
-					KeywordPerformanceReportColumn.LanguageAndRegion, KeywordPerformanceReportColumn.QualityScore,
-					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.KeywordRelevance,
-					KeywordPerformanceReportColumn.LandingPageRelevance
-			// ,KeywordPerformanceReportColumn.AdType
-			// ,KeywordPerformanceReportColumn.PricingModel
+			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, 
+					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
+					KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
+					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
+					KeywordPerformanceReportColumn.TimePeriod
 			};
 		}
 		else
 		{
 			columns = new KeywordPerformanceReportColumn[]
-			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.AveragePosition,
-					KeywordPerformanceReportColumn.Impressions, KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.Conversions,
-					KeywordPerformanceReportColumn.Spend, KeywordPerformanceReportColumn.CurrentMaxCpc, KeywordPerformanceReportColumn.AccountName,
-					KeywordPerformanceReportColumn.AdDistribution, KeywordPerformanceReportColumn.AdGroupName,
-					KeywordPerformanceReportColumn.CampaignName, KeywordPerformanceReportColumn.LanguageAndRegion, KeywordPerformanceReportColumn.QualityScore,
-					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, KeywordPerformanceReportColumn.KeywordRelevance,
-					KeywordPerformanceReportColumn.LandingPageRelevance
-			// ,KeywordPerformanceReportColumn.AdType
-			// ,KeywordPerformanceReportColumn.PricingModel
+			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, 
+					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
+					KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
+					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
+					KeywordPerformanceReportColumn.TimePeriod
 			};
 		}
 
@@ -1989,6 +2001,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		catch(RemoteException e){
 			throw new Exception(e);			
+		}
+		catch(MsnCloudException e){
+			throw new Exception(e);
 		}
 		
 		return gson.toJson(ret);
@@ -2115,8 +2130,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			pollGenerateReportRequest = new PollGenerateReportRequest();
 			pollGenerateReportRequest.setReportRequestId(reportId);
 
-			// Make the call to get the report status.
-			pollGenerateReportResponse = reportingService.pollGenerateReport(pollGenerateReportRequest);
+			try{
+				// Make the call to get the report status.
+				pollGenerateReportResponse = reportingService.pollGenerateReport(pollGenerateReportRequest);
+			}
+			catch(AdApiFaultDetail e1){
+				throw new MsnCloudException(e1.dumpToString());			
+			}
+			catch(ApiFaultDetail e2){
+				throw new MsnCloudException(e2.dumpToString());
+			}
 
 			// Display the TrackingId that was returned in the response header.
 			BasicHttpBinding_IReportingServiceStub stub = (BasicHttpBinding_IReportingServiceStub) reportingService;
@@ -2364,5 +2387,53 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		// TODO Auto-generated method stub
 		
+	}	
+	
+	public String getKeywordReport(String json) throws Exception
+	{
+		logger.debug("call getKeywordReport(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		ReportObject ret = null;
+		try {
+			ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
+					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")),
+					ReportAggregation.fromString(data.get("aggregation")));
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+
+	@Override
+	public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
+		
+		ReportObject ret = new ReportObject();
+		
+		//requestKeywordReport
+		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, aggregation);		
+		
+		//getReportData
+		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
+		
+		if(ret2.get("keyword") != null){
+			for(int i = 0; i < ret2.get("keyword").length; i++){
+				Transaction data = ret.new Transaction();
+				data.setKeyword(ret2.get("keyword")[i]);
+				data.setBidAmount((int)(Double.valueOf(ret2.get("currentmaxcpc")[i])*1000000));
+				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
+				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
+				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
+				data.setAveragePosition(Double.valueOf(ret2.get("averageposition")[i]));
+				data.setAverageCPC((int)(Double.valueOf(ret2.get("averagecpc")[i])*1000000));
+				data.setQualityScore(Integer.valueOf(ret2.get("qualityscore")[i]));
+				data.setApprovalStatus(null);
+				data.setFirstPageCPC(-1);
+				data.setCreatedDate(new DateTime(ret2.get("timeperiod")[i]));
+				
+				ret.addTransaction(data);			
+			}
+		}
+		
+		return ret;
 	}
 }
