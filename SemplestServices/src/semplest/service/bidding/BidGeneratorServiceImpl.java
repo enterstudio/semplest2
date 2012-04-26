@@ -117,18 +117,15 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	{
 		logger.debug("call  getBid(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		String accountID = data.get("accountID");
-		Long campaignID = Long.parseLong(data.get("campaignID")); 
-		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
 		Double TotalMonthlyBudget = Double.parseDouble(data.get("TotalMonthlyBudget"));
-		HashMap<String,Double> res = GetMonthlyBudgetPerSE(accountID,campaignID,adGroupID, searchEngine, TotalMonthlyBudget);
+		HashMap<String,Double> res = GetMonthlyBudgetPerSE(searchEngine, TotalMonthlyBudget);
 		return gson.toJson(res);
 	}
 
 	@Override
-	public HashMap<String,Double> GetMonthlyBudgetPerSE (String accountID, Long campaignID, Long adGroupID, 
-			ArrayList<String> searchEngine,	Double TotalMonthlyBudget)  throws Exception  {
+	public HashMap<String,Double> GetMonthlyBudgetPerSE (ArrayList<String> searchEngine, 
+			Double TotalMonthlyBudget)  throws Exception  {
 		
 		HashSet<String> setSE = new HashSet<String>(); 
 		for (String s : searchEngine){
