@@ -9,7 +9,7 @@ GO
 -- | Purpose - add new schedule					|
 -- +----------------------------------------------------------------------------------------------------------------+
 
-CREATE PROCEDURE dbo.AddAddTask
+CREATE PROCEDURE dbo.AddTask
 (
 	@ServiceName varchar(100),
 	@MethodName varchar(50),
