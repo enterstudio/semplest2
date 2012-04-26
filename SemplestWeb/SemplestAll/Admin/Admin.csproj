@@ -175,6 +175,7 @@
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Dynamic Expressions.html" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
