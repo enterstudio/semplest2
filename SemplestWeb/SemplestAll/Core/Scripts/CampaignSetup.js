@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    $("#ProductGroup_Budget").kendoNumericTextBox();
+    $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0});
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
