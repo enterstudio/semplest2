@@ -25,7 +25,7 @@ namespace Semplest.SharedResources.Helpers
                     er.UsersFK = 1;
                 else
                     er.UsersFK = string.IsNullOrEmpty(HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString()) ? 1 : int.Parse(HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString());
-                er.TimeStamp = DateTime.Now;
+                er.CreatedDate = DateTime.Now;
                 _dbContext.Errors.Add(er);
                 _dbContext.SaveChanges();
                 //send email

@@ -27,12 +27,12 @@ namespace Semplest.SharedResources.Controllers
 //            SortedList<DateTime, ErrorModel> list = new SortedList<DateTime, ErrorModel>();
             List<ErrorModel> list = new List<ErrorModel>();
             ErrorModel em = null;
-            foreach (Error er in dbContext.Errors.OrderByDescending(x => x.TimeStamp))
+            foreach (Error er in dbContext.Errors.OrderByDescending(x => x.CreatedDate))
             {
                 em = new ErrorModel();
                 em.ErrorMessage = er.ErrorMessage;
                 em.User = er.User.Credentials.First().Username;
-                em.TimeStamp = er.TimeStamp;
+                em.TimeStamp = er.CreatedDate;
 
                 list.Add(em);
             }
