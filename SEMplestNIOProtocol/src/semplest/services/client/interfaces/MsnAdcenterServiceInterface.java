@@ -12,6 +12,8 @@ import semplest.other.Money;
 import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
@@ -139,7 +141,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Keyword Estimates
 	// ==================================
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
+	public abstract TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
 	// please don't use this method, use the one above
 	public abstract KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid) throws Exception;
 	//	please don't use this method, use the first getKeywordEstimateByBids method
@@ -153,4 +155,8 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	public abstract String requestCampaignReport(Long accountId, Long campaignId, int days, ReportAggregation aggregation) throws Exception;
 	
 	public abstract String requestKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
+	
+	//public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
+	public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception;
+	
 }

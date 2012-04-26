@@ -1,5 +1,8 @@
 package semplest.services.client.interfaces;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,10 +10,12 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 
+import com.google.api.adwords.lib.AuthTokenException;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
@@ -74,6 +79,9 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception;
 	public abstract void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount, String string) throws Exception;
 	//Utility
+	
+	//Report
+	public abstract ReportObject getReportForAccount(String accountID) throws Exception;
 	
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService
