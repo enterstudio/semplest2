@@ -102,6 +102,14 @@ namespace Semplest.Admin.Models
                 //public bool isActive { get; set; }
      }
 
+    public class ECAModel
+    {
+        public int CustomerPK { get;set; }
+        public int EmployeePK { get; set; }
+        
+
+    }
+
     public class EmployeeDropdownModel
     {
         public int ID { get; set; }

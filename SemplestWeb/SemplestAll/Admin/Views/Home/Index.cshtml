@@ -26,6 +26,23 @@ Customer Accounts
       }
       );
      });
+
+     
+
+
+ 
+
+$('tr').mouseover(function() { 
+    $('td', this).stop(true, true).animate 
+        ({ backgroundColor: "red" }, 1000); 
+}); 
+ 
+$('tr').mouseout(function() { 
+    $('td', this).stop(true, true).animate
+        ({ backgroundColor: "#aaa" }, 1000); 
+}); 
+ 
+
 </script>
 }
 
