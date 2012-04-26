@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
-using SemplestWebApp.Services;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Models.Repositories
 {
