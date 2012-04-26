@@ -36,7 +36,7 @@ function showOptionsURL(type, city, state, zip, proximity) {
         jsonText += ',maxResults:' + maxResults;
     }
     jsonText += '}}';
-    alert(jsonText);
+    //alert(jsonText);
     advancedOptions += jsonText;
 };
 
@@ -102,7 +102,7 @@ function renderOptions(response) {
         //            html += '<br/>';
         //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
         html += '<img src="' + location.mapUrl + '" style="height: 160px; width:160px;"/>';
-        alert(index);
+        //alert(index);
         if (index != 0)
             $('#optionsNarrative_' + index).html(html);
         else
