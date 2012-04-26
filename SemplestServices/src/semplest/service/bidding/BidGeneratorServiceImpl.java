@@ -26,6 +26,7 @@ import semplest.bidding.test.ioUtils;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 
 import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -74,8 +75,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
-		
-//		return new ArrayList<BidObject>();
+		if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.Google.name())){
+			getBidsInitialGoogle(accountID, campaignID, adGroupID);
+		} else if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name())){
+			// getBidsInitialMSN(accountID, campaignID, adGroupID);
+		} 
 	}
 	
 	
@@ -99,7 +103,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			throw new Exception(searchEngine + " Not Found");
 		}
 		
-		// return new ArrayList<BidObject>();
+		if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.Google.name())){
+			// getBidsUpdateGoogle(accountID, campaignID, adGroupID);
+		} else if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name())){
+			// getBidsUpdateMSN(accountID, campaignID, adGroupID);
+		}
 	}
 
 
@@ -123,12 +131,12 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			Long campaignID, Long adGroupID, ArrayList<String> keywords)
 			throws Exception {
 		
-		throw new Exception("getBid() method is no longer in use");
+		throw new Exception("getBid(...) method is no longer in use! Use either getBidsInitial(...) or getBidsUpdate(...) instead.");
 		
 	}
 	
 	
-	private void getBidInitialGoogle(String accountID,
+	private void getBidsInitialGoogle(String accountID,
 			Long campaignID, Long adGroupID) throws Exception {	
 		
 		logger.info("Computing bids for Google campaign...");
@@ -650,7 +658,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 			BidGeneratorServiceImpl bidGenerator = new BidGeneratorServiceImpl();
 			//			bidGenerator.getBid(accountID, campaignID, adGroupID, keywords);
-			bidGenerator.getBidInitialGoogle(accountID, campaignID, adGroupID);
+			bidGenerator.getBidsInitialGoogle(accountID, campaignID, adGroupID);
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
