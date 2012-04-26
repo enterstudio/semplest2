@@ -56,7 +56,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 	}
 	
-	public String getBidsInitial(String json) throws Exception
+	public void getBidsInitial(String json) throws Exception
 	{
 		logger.debug("call  getBidsInitial(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
@@ -64,22 +64,22 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		String searchEngine = data.get("searchEngine");
-		ArrayList<BidObject> res = getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
-		return gson.toJson(res);
+		getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
+//		return gson.toJson(res);
 	}
 	
 	@Override
-	public ArrayList<BidObject> getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+	public void getBidsInitial(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
 		
-		return new ArrayList<BidObject>();
+//		return new ArrayList<BidObject>();
 	}
 	
 	
-	public String getBidsUpdate(String json) throws Exception
+	public void getBidsUpdate(String json) throws Exception
 	{
 		logger.debug("call  getBidsUpdate(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
@@ -87,18 +87,19 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		String searchEngine = data.get("searchEngine");
-		ArrayList<BidObject> res = getBidsUpdate( accountID, campaignID, adGroupID, searchEngine);
-		return gson.toJson(res);
+//		ArrayList<BidObject> res = 
+		getBidsUpdate( accountID, campaignID, adGroupID, searchEngine);
+//		return gson.toJson(res);
 	}
 	
 	@Override
-	public ArrayList<BidObject> getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+	public void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
 		
-		return new ArrayList<BidObject>();
+		// return new ArrayList<BidObject>();
 	}
 
 
@@ -297,18 +298,20 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				System.out.println(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
 
 
-//				// now check if we are getting the same data 
-//				double [] bidArray = costDataMap.get(words[i]).getBidArray();
-//				Arrays.sort(bidArray);
-//				double [] costArray = costDataMap.get(words[i]).getData(bidArray);
-//				if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
-//					// System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
-//					compKeywords.remove(words[i]);
-//					nonCompKeywords.add(words[i]);
-//					clickDataMap.remove(words[i]);
-//					costDataMap.remove(words[i]);
-//					continue;
-//				}
+				/*
+				// now check if we are getting the same data 
+				double [] bidArray = costDataMap.get(words[i]).getBidArray();
+				Arrays.sort(bidArray);
+				double [] costArray = costDataMap.get(words[i]).getData(bidArray);
+				if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
+					// System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
+					compKeywords.remove(words[i]);
+					nonCompKeywords.add(words[i]);
+					clickDataMap.remove(words[i]);
+					costDataMap.remove(words[i]);
+					continue;
+				}
+				*/
 
 			}
 		}
