@@ -6,7 +6,7 @@ using System.Web.Mvc;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
 
-namespace SharedResources.Controllers
+namespace Semplest.SharedResources.Controllers
 {
     public class ErrorModel
     {

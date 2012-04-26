@@ -29,7 +29,7 @@ namespace SharedResources.Views.Error
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("RazorGenerator", "1.3.2.0")]
     [System.Web.WebPages.PageVirtualPathAttribute("~/Views/Error/Index.cshtml")]
-    public class Index : System.Web.Mvc.WebViewPage<List<SharedResources.Controllers.ErrorModel>>
+    public class Index : System.Web.Mvc.WebViewPage<List<Semplest.SharedResources.Controllers.ErrorModel>>
     {
         public Index()
         {
@@ -56,7 +56,7 @@ WriteLiteral("\r\n   <table border =1><tr><th>User</th><th>Error Message</th><th
 
             
             #line 9 "..\..\Views\Error\Index.cshtml"
-   foreach (SharedResources.Controllers.ErrorModel item in Model)
+   foreach (Semplest.SharedResources.Controllers.ErrorModel item in Model)
   {
 
             

@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using SemplestModel;
 
-namespace SharedResources.Helpers
+namespace Semplest.SharedResources.Helpers
 {
     public class ExceptionHelper : HandleErrorAttribute
     {
