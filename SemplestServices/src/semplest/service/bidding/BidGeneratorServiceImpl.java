@@ -28,6 +28,8 @@ import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.NetworkSetting;
+import semplest.server.protocol.ProtocolEnum.MatchType;
 
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
@@ -109,6 +111,43 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			// getBidsUpdateMSN(accountID, campaignID, adGroupID);
 		}
 	}
+	
+
+	public void GetMonthlyBudgetPerSE(String json) throws Exception
+	{
+		logger.debug("call  getBid(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		String [] searchEngine = gson.fromJson(data.get("searchEngine"),String[].class);
+		Double TotalMonthlyBudget = Double.parseDouble(data.get("TotalMonthlyBudget"));
+		GetMonthlyBudgetPerSE(accountID,campaignID,adGroupID, searchEngine, TotalMonthlyBudget);
+		//return gson.toJson(res);
+	}
+
+	@Override
+	public void GetMonthlyBudgetPerSE (String accountID, Long campaignID, Long adGroupID, 
+			String [] searchEngine,	Double TotalMonthlyBudget)  throws Exception  {
+		
+		HashSet<String> setSE = new HashSet<String>(); 
+		for (String s : searchEngine){
+			if(setSE.contains(s)){
+				throw new Exception("Search engine "+s+" appears twice!!");
+			} else {
+				setSE.add(s);
+			}
+			if (!AdEngine.existsAdEngine(s)){
+				throw new Exception(s + " Not Found");
+			}
+		}
+		
+		Double [] budgetArray = new Double[searchEngine.length];
+		for (int i=0; i<budgetArray.length; i++) {
+			budgetArray[i]=TotalMonthlyBudget/budgetArray.length; // for the time being -- revisit later
+		}
+		// UPDATE THE DATABASE
+	}
 
 
 	public String getBid(String json) throws Exception
@@ -136,10 +175,33 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/* ************************************** The long methods follow ******************************************* */
+	
+	
+	
+	
+	
+	
+	
 	private void getBidsInitialGoogle(String accountID,
 			Long campaignID, Long adGroupID) throws Exception {	
 		
-		logger.info("Computing bids for Google campaign...");
+		logger.info("Computing initial bids for Google campaign...");
 
 		
 		// ************************************************************************** 
