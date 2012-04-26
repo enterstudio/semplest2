@@ -113,22 +113,22 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 
-	public void GetMonthlyBudgetPerSE(String json) throws Exception
+	public String GetMonthlyBudgetPerSE(String json) throws Exception
 	{
 		logger.debug("call  getBid(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		String accountID = data.get("accountID");
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		String [] searchEngine = gson.fromJson(data.get("searchEngine"),String[].class);
+		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
 		Double TotalMonthlyBudget = Double.parseDouble(data.get("TotalMonthlyBudget"));
-		GetMonthlyBudgetPerSE(accountID,campaignID,adGroupID, searchEngine, TotalMonthlyBudget);
-		//return gson.toJson(res);
+		HashMap<String,Double> res = GetMonthlyBudgetPerSE(accountID,campaignID,adGroupID, searchEngine, TotalMonthlyBudget);
+		return gson.toJson(res);
 	}
 
 	@Override
-	public void GetMonthlyBudgetPerSE (String accountID, Long campaignID, Long adGroupID, 
-			String [] searchEngine,	Double TotalMonthlyBudget)  throws Exception  {
+	public HashMap<String,Double> GetMonthlyBudgetPerSE (String accountID, Long campaignID, Long adGroupID, 
+			ArrayList<String> searchEngine,	Double TotalMonthlyBudget)  throws Exception  {
 		
 		HashSet<String> setSE = new HashSet<String>(); 
 		for (String s : searchEngine){
@@ -142,30 +142,26 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			}
 		}
 		
-		Double [] budgetArray = new Double[searchEngine.length];
+		
+		HashMap<String,Double> budgetMap = new HashMap<String,Double>();
 
-		switch (searchEngine.length) {
+		switch (searchEngine.size()) {
 		case 2:
-			if(searchEngine[0].equalsIgnoreCase("Google") && searchEngine[1].equalsIgnoreCase("MSN")) {
-				budgetArray[0]=0.7*TotalMonthlyBudget;
-				budgetArray[1]=0.3*TotalMonthlyBudget;
-				break;
-			}
-			if(searchEngine[0].equalsIgnoreCase("MSN") && searchEngine[1].equalsIgnoreCase("Geogle")) {
-				budgetArray[0]=0.3*TotalMonthlyBudget;
-				budgetArray[1]=0.7*TotalMonthlyBudget;
+			if(searchEngine.get(0).equalsIgnoreCase("Google") && searchEngine.get(1).equalsIgnoreCase("MSN") ||
+					searchEngine.get(0).equalsIgnoreCase("MSN") && searchEngine.get(1).equalsIgnoreCase("Geogle") ) {
+				budgetMap.put("Google", new Double(0.7*TotalMonthlyBudget));
+				budgetMap.put("MSN", new Double(0.3*TotalMonthlyBudget));
 				break;
 			}
 			throw new Exception("Invalid combination of search engine options!");
 		case 1:
-			budgetArray[0]=TotalMonthlyBudget;
+			budgetMap.put(searchEngine.get(0), new Double(TotalMonthlyBudget));
 		default:
-			throw new Exception("Invalid number of search engines.. Received "+searchEngine.length+" search engine names!");
+			throw new Exception("Invalid number of search engines.. Received "+searchEngine.size()+" search engine names!");
 		}
+
 		
-		// UPDATE the DATABASE
-		throw new Exception("Database call not implemented yet!!!!");
-		// UPDATE the campaigns
+		return budgetMap;
 	}
 
 
