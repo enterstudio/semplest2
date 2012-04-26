@@ -14,7 +14,7 @@ CREATE PROCEDURE dbo.SetBidObject
 
 	@ProductGroupPK			INT,
 	@PromotionPK            INT,
-	@KeywordAdEngineID      INT,
+	@KeywordAdEngineID      BIGINT,
 	@Keyword				NVARCHAR(250),
 	@MicroBidAmount			INT,
 	@ApprovalStatus			VARCHAR(30) = null,

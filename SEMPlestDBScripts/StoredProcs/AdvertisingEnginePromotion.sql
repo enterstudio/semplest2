@@ -11,8 +11,8 @@ GO
 
 CREATE PROCEDURE dbo.AddAdvertisingEnginePromotion
 (
-	@AdvertisingEngineAccountID varchar(30),
-	@AdvertisingEngineCampaignID int,
+	@AdvertisingEngineAccountID bigint,
+	@AdvertisingEngineCampaignID bigint,
 	@PromotionID int,
 	@IsSearchNetwork bit = 1,
 	@IsDisplayNetwork bit = 0,
