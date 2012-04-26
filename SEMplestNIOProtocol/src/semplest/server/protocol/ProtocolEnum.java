@@ -68,5 +68,28 @@ public class ProtocolEnum {
 			return false;
 		}
 	}
+	
+	public static enum NetworkSetting
+	{
+		SearchOnly,SearchNetwork;
+		public static boolean existsNetworkSetting(String networkSetting)
+		{
+			if (networkSetting != null)
+			{
+				for (NetworkSetting val : NetworkSetting.values())
+				{
+					if (val.name().equalsIgnoreCase(networkSetting))
+					{
+						return true;
+
+					}
+				}
+
+			}
+			return false;
+		}
+	}
+	
+	
 
 }
