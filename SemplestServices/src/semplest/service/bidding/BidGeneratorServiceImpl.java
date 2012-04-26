@@ -143,18 +143,18 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		HashMap<String,Double> budgetMap = new HashMap<String,Double>();
 
 		switch (searchEngine.size()) {
-		case 2:
-			if(searchEngine.get(0).equalsIgnoreCase("Google") && searchEngine.get(1).equalsIgnoreCase("MSN") ||
-					searchEngine.get(0).equalsIgnoreCase("MSN") && searchEngine.get(1).equalsIgnoreCase("Geogle") ) {
-				budgetMap.put("Google", new Double(0.7*TotalMonthlyBudget));
-				budgetMap.put("MSN", new Double(0.3*TotalMonthlyBudget));
-				break;
-			}
-			throw new Exception("Invalid combination of search engine options!");
-		case 1:
-			budgetMap.put(searchEngine.get(0), new Double(TotalMonthlyBudget));
-		default:
-			throw new Exception("Invalid number of search engines.. Received "+searchEngine.size()+" search engine names!");
+			case 2:
+				if(searchEngine.get(0).equalsIgnoreCase("Google") && searchEngine.get(1).equalsIgnoreCase("MSN") ||
+						searchEngine.get(0).equalsIgnoreCase("MSN") && searchEngine.get(1).equalsIgnoreCase("Geogle") ) {
+					budgetMap.put("Google", new Double(0.7*TotalMonthlyBudget));
+					budgetMap.put("MSN", new Double(0.3*TotalMonthlyBudget));
+					break;
+				}
+				throw new Exception("Invalid combination of search engine options!");
+			case 1:
+				budgetMap.put(searchEngine.get(0), new Double(TotalMonthlyBudget));
+			default:
+				throw new Exception("Invalid number of search engines.. Received "+searchEngine.size()+" search engine names!");
 		}
 
 		

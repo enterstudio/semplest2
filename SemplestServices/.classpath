@@ -38,6 +38,6 @@
 	<classpathentry kind="lib" path="lib/jtds-1.2.5.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestBidding"/>
+	<classpathentry kind="lib" path="lib/SemplestBidding.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
