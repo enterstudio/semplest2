@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Semplest.Core.Models;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
+using Semplest.SharedResources.Services;
 
 namespace SemplestWebApp.Controllers
 {
