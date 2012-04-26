@@ -1,7 +1,12 @@
 package semplest.service.google.adwords;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -17,6 +22,8 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.ReportObject.Transaction;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
@@ -76,6 +83,9 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.ReportDefinitionField;
+import com.google.api.adwords.v201109.cm.ReportDefinitionReportType;
+import com.google.api.adwords.v201109.cm.ReportDefinitionService;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -231,6 +241,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
+			ReportObject f = g.getReportForAccount(accountID);
+			for(Transaction t : f.getTransactions()){
+				logger.info("Keyword: " + t.getKeyword() + "; "
+						+ "Bidamount: " + t.getBidAmount() + "; "
+						+ "BidMatchType: " + t.getBidMatchType() + "; "
+						+ "NumberImpressions: " + t.getNumberImpressions() + "; "
+						+ "NumberClick: " + t.getNumberClick() + "; "
+						+ "AveragePosition: " + t.getAveragePosition() + "; "
+						+ "AverageCPC: " + t.getAverageCPC() + "; "
+						+ "QualityScore: " + t.getQualityScore()+ "; "
+						+ "ApprovalStatus: " + t.getApprovalStatus()+ "; "
+						+ "FirstPageCPC: " + t.getFirstPageCPC()+ "; "
+						+ "CreatedDate: " + t.getCreatedDate()+ "; ");
+			}
+			
 
 		}
 		catch (Exception e)
@@ -1631,7 +1656,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						StatsEstimate min = keywordEstimates[i].getMin();
 						StatsEstimate max = keywordEstimates[i].getMax();
 						estimatorObj.setBidData(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getText(), Double.valueOf(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getMaxCpc().getMicroAmount()),
-						min.getAverageCpc().getMicroAmount(), max.getAverageCpc().getMicroAmount(),min.getAveragePosition(), max.getAveragePosition(), min.getClicksPerDay(), max.getClicksPerDay(),
+								adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getMatchType().toString(), min.getAverageCpc().getMicroAmount(), max.getAverageCpc().getMicroAmount(),min.getAveragePosition(), max.getAveragePosition(), min.getClicksPerDay(), max.getClicksPerDay(),
 						min.getTotalCost().getMicroAmount(),max.getTotalCost().getMicroAmount());
 					}
 				
@@ -1819,14 +1844,20 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
+			+ "<fields>ApprovalStatus</fields>"
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	public File getReportForAccount(String accountID) throws MalformedURLException, HttpException, IOException, AuthTokenException
+	public ReportObject getReportForAccount(String accountID) throws Exception
 	{
-		// ReportDefinitionDateRangeType.ALL_TIME;
 		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));//
-		return report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);
+		
+		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
+		
+		ReportObject ret = report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
+		
+		return ret;
+
 	}
 
 	@Override

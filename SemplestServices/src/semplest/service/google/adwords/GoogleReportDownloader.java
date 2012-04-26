@@ -1,17 +1,26 @@
 package semplest.service.google.adwords;
 
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import org.joda.time.DateTime;
+
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.ReportObject.Transaction;
 
 /**
  * * Helper class to download the specified reportDefinition XML to a temporary
@@ -47,6 +56,84 @@ public class GoogleReportDownloader
 	{
 		return File.createTempFile("reportDownload-" + this.accountID + "-", ".report");
 	}
+	
+	public ReportObject getReportObject(String authToken, String developerToken) throws Exception
+	{
+		try{
+			
+			HttpURLConnection conn = (HttpURLConnection) new URL("https://adwords.google.com/api/adwords/reportdownload/v201109").openConnection();
+			conn.setDoOutput(true); // You will need to
+
+			conn.setRequestProperty("clientCustomerId", Long.toString(accountID)); //
+			// The AuthToken must be specified as a request header.
+			conn.setRequestProperty("Authorization", "GoogleLogin auth=" + authToken);
+			conn.setRequestProperty("developerToken", developerToken);
+			conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("returnMoneyInMicros", "true");
+			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream()); 
+			
+			writer.write("__rdxml=" + URLEncoder.encode(reportDefinitionXml, "UTF-8"));
+			writer.close();
+			int response = conn.getResponseCode();
+			
+			if (response == HttpURLConnection.HTTP_OK)
+			{
+				//read in report data
+				ArrayList<String> lines = new ArrayList<String>();
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				String strLine;
+				while ((strLine = br.readLine()) != null)   {
+					lines.add(strLine);
+				}
+				
+				//the first 2 lines are header, and the last line is conclusion. throw them.
+				ReportObject report = new ReportObject();
+				for (int i = 2; i < lines.size()-1; i++){
+					String[] data = lines.get(i).split(",");
+					Transaction rdata = report.new Transaction();
+					
+					//parse the data to ReportObject					
+					rdata.setKeyword(data[3]);
+					String maxCpcStr = data[14];
+					if(maxCpcStr.equals(" --"))
+						maxCpcStr = "0";
+					rdata.setBidAmount(Integer.valueOf(maxCpcStr));
+					rdata.setBidMatchType(data[4]);
+					rdata.setNumberImpressions(Integer.valueOf(data[5]));
+					rdata.setNumberClick(Integer.valueOf(data[6]));
+					rdata.setAveragePosition(Double.valueOf(data[10]));
+					rdata.setAverageCPC(Integer.valueOf(data[9]));
+					rdata.setQualityScore(Integer.valueOf(data[8]));
+					rdata.setApprovalStatus(data[15]);
+					rdata.setFirstPageCPC(Integer.valueOf(data[13]));
+					rdata.setCreatedDate(new DateTime(data[0]));
+					
+					report.addTransaction(rdata);
+				}
+				
+				return report;
+			}
+			else
+			{
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				BufferedOutputStream output = new BufferedOutputStream(baos);
+				copy(conn.getErrorStream(), output);
+				output.close();
+				throw new HttpException(response, baos.toString());
+			}
+		}
+		catch(HttpException e){
+			throw new Exception(e.getMessage());
+		}
+		catch(MalformedURLException e){
+			throw new Exception(e.getMessage());
+		}
+		catch(IOException e){
+			throw new Exception(e);
+		}
+		
+	}
 
 	/**
 	 * * Downloads the report for the customer to a temporary file using the new
@@ -69,6 +156,7 @@ public class GoogleReportDownloader
 		conn.setRequestProperty("developerToken", developerToken);
 		conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
 		conn.setRequestMethod("POST");
+		conn.setRequestProperty("returnMoneyInMicros", "true");
 		OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream()); // The
 																					// report
 																					// definition
