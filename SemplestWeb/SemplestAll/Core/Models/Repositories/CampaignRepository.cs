@@ -22,11 +22,15 @@ namespace Semplest.Core.Models.Repositories
             var scw = new ServiceClientWrapper();
 
             // create AdCopy array
-            var promAds = model.AdModelProp.Ads;
+            List<string> adtitletextList = new List<string>();
+            foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
+            {
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+            }
 
             // get categories or classifications
             var categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName,
-                                        model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.AdModelProp.Url);
+                                        model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url);
 
             // create categories list that will be displayed in a multiselect list box
             if (categories != null && categories.Count > 0)
@@ -62,12 +66,16 @@ namespace Semplest.Core.Models.Repositories
 
             var scw = new ServiceClientWrapper();
             // create AdCopy array
-            var promAds = model.AdModelProp.Ads;
+            List<string> adtitletextList = new List<string>();
+            foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
+            {
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+            }
 
             // get keywords from the web service
             //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
             var keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
-                                            model.ProductGroup.Words, promAds.Select(pAd => pAd.AdText).ToArray(), model.AdModelProp.Url, null);
+                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, null);
             if (keywords != null && keywords.Count > 0)
             {
                 foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key }))
