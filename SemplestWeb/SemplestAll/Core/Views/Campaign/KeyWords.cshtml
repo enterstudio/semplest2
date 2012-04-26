@@ -17,9 +17,19 @@
     </div>
     <div class="options">
         <br />
-        <button class="k-button" id="back1" type="button">
+        <button class="k-button" id="backKey" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch">
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
+<script>
+    $('#backKey').click(function () {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+
+    });
+</script>

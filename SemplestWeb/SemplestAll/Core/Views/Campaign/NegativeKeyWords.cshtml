@@ -14,3 +14,13 @@
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
+<script>
+    $('#back3').click(function () {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+
+    });
+</script>

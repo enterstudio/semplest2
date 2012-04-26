@@ -9,9 +9,19 @@
     </div>
     <div class="options">
         <br />
-        <button class="k-button" id="back1" type="button">
+        <button class="k-button" id="backCat" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="getKeywords" type="submit" name="Command" value="GetKeywords">
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
+<script>
+    $('#backCat').click(function () {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+
+    });
+</script>
