@@ -1,7 +1,7 @@
 ﻿$(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0});
+    $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0 });
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
@@ -25,8 +25,8 @@
         tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
     });
     $("#back1").click(function () { tabStrip.select(0); });
-    $("#back2").click(function () { tabStrip.select(1); });
-    $("#back3").click(function () { tabStrip.select(2); });
+    //    $("#back2").click(function () { tabStrip.select(1); });
+    //    $("#back3").click(function () { tabStrip.select(2); });
     $("#save").click(function () { tabStrip.select(0); });
     //DropdownlistBindig
     $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
@@ -99,20 +99,6 @@
             start.max(endDate);
         }
     }
-    var onSelectTab = function (e) {
-        if (e.item.innerText == "Additional Links")
-            if ($('#additionalLinksdiv').html() == '')
-                $('#additionalLinksdiv').load('/Campaign/AdditionalLinks', function () { alert('Additional Links'); });
-        if (e.item.innerText == "Negative Keywords")
-            if ($('#negativeKeyWordsdiv').html() == '')
-                $('#negativeKeyWordsdiv').load('/Campaign/NegativeKeyWords', function () { alert('Negative Key Words'); });
-        if (e.item.innerText == "KeyWords" || e.item.innerText == "Keywords")
-            if ($('#KeyWordsdiv').html() == '')
-                $('#KeyWordsdiv').load('/Campaign/KeyWords', function () { });
-        if (e.item.innerText == "Categories")
-            if ($('#Categoriesdiv').html() == '')
-                $('#Categoriesdiv').load('/Campaign/Categories', function () { });
-    };
     var date = new Date();
     var d = date.getDate();
     var m = date.getMonth();
@@ -129,111 +115,46 @@
     //start.max(end.value());
     //end.min(start.value());
     // Tab Activated Event to Change The Color of the Number 1,2,3,4
-    var onActivate = function () {
-        switch (tabStrip.select().text()) {
-            case "DEFINE PRODUCT":
-                $("input[type='button']#btnOne").addClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
-            case "CREATE ADS":
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").addClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
-            case 'Additional Click Through Links("SiteLinks")':
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").addClass('k-state-btnerror');
-                break;
-            case "Negative Keywords":
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
-        }
-    };
-    //Generate Tab
-    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate, select: onSelectTab }).data("kendoTabStrip");
 
-    // Start Enable tabs region
-    var tab = tabStrip.select();
-
-
-    tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-    tabStrip.enable(tab.next().next(), tab.next().next().hasClass("k-state-disabled"));
-    tabStrip.enable(tab.next().next().next(), tab.next().next().next().hasClass("k-state-disabled"));
     // end Enable tabs Region
 
     //Selected Button Logic
     $("input[type='button']#btnOne").addClass("k-button rounded");
 
-    var isAdditionalLinksAdded = false;
     $("#additionalLinks").click(function () {
-        if (!isAdditionalLinksAdded) {
+        var length = tabStrip.items().length;
+        var isAdditionalLinksAdded = false;
+        for (var item = 0; item < length; item++) {
+            if (tabStrip.items().item(item).innerText == "Additional Links") {
+                isAdditionalLinksAdded = true;
+                break;
+            }
+        }
+        if (!isAdditionalLinksAdded)
             tabStrip.append({
                 text: "Additional Links",
-                content: '<div id="additionalLinksdiv" />'
+                contentUrl: '/Campaign/AdditionalLinks'
             });
-            isAdditionalLinksAdded = true;
-        }
     });
-    var isnegativeKeyWordsAdded = false;
+
     $("#negativeKeyWords").click(function () {
+        var length = tabStrip.items().length;
+        var isnegativeKeyWordsAdded = false;
+        for (var item = 0; item < length; item++) {
+            if (tabStrip.items().item(item).innerText == "Negative Keywords") {
+                isnegativeKeyWordsAdded = true;
+                break;
+            }
+        }
         if (!isnegativeKeyWordsAdded) {
             tabStrip.append({
                 text: "Negative Keywords",
-                content: '<div id="negativeKeyWordsdiv" />'
+                contentUrl: '/Campaign/NegativeKeyWords'
             });
-            isnegativeKeyWordsAdded = true;
         }
     });
-    var isKeywordsAdded = false;
-    $("#getCategories").click(function () {
-        if (!isKeywordsAdded) {
-            //            tabStrip.append({
-            //                text: "Key Words",
-            //                content: '<div id="KeyWordsdiv" />'
-            //            });
-            isKeywordsAdded = true;
-        }
-    });
-    //    if (isKeywordsAdded) {
-    //        tabStrip.append({
-    //            text: "Key Words",
-    //            content: '<div id="KeyWordsdiv" />'
-    //        });
-    //    }
-    //    $('#frmCampaign').submit(function (e) {
-    //        e.preventDefault();
-    //                $.fn.serializeObject = function () {
-    //                    var o = {};
-    //                    var a = this.serializeArray();
-    //                    $.each(a, function () {
-    //                        if (o[this.name] !== undefined) {
-    //                            if (!o[this.name].push) {
-    //                                o[this.name] = [o[this.name]];
-    //                            }
-    //                            o[this.name].push(this.value || '');
-    //                        } else {
-    //                            o[this.name] = this.value || '';
-    //                        }
-    //                    });
-    //                    return o;
-    //                };
-    //                var data = $(this).serializeArray();
-    //                var data1 = (JSON.stringify(data));
-    //                alert(data1);
-    //                $.post('/Campaign/GetCategories/', { data: data1 }, function (de) {
-    //                    alert(de);
-    //                }).error(function (err) { alert(err); });
-    //    });
-
-
 });
 
-//Helper functions to Add Multiple Items..
- 
 function removeNestedForm(element, container, deleteElement) {
     var $container = $(element).parents(container);
     $container.find(deleteElement).val('True');
