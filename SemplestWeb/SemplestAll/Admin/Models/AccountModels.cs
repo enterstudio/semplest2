@@ -173,7 +173,7 @@ namespace Semplest.Admin.Models
         public int RolesFK { get; set; }
         [DisplayName("First Name")] 
         public string FirstName { get; set; }
-        [DisplayName("Middle Initail")] 
+        [DisplayName("Middle Initial")] 
         public string MiddleInitial { get; set; }
         [DisplayName("Last Name")] 
         public string LastName { get; set; }
