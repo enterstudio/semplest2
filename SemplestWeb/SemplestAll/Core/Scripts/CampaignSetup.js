@@ -2,6 +2,7 @@
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     $("#ProductGroup_Budget").kendoNumericTextBox();
+    $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
@@ -246,4 +247,5 @@ function addNestedForm(container, counter, ticks, content) {
     content = content.replace("doOptions()", "doOptions('Addresses_" + nextIndex + "__City','Addresses_" + nextIndex + "__StateCodeFK','Addresses_" + nextIndex + "__Zip','Addresses_" + nextIndex + "__Proximity')");
     content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
     $(container).append(content);
+    $("#Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
 }
