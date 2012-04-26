@@ -112,14 +112,49 @@ namespace Semplest.Admin.Controllers
                    isActive = u.IsActive 
                };
 
-
-
+            //viewmodel2 might not be needed
             var viewModel2 =
                 from e in dbcontext.Employees
                 join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                 join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                where (eca.CustomerFK == id)
+                where (eca.CustomerFK == id && et.EmployeeType1.ToLower() == "rep")
+                select new EmployeeCustomerAssociaitionModel
+                {
+                    AccountNumber = eca.CustomerFK,
+                    EmployeeType = et.EmployeeType1,
+                    employeePK = e.EmployeePK,
+                    FirstName = u.FirstName,
+                    MiddleInitial = u.MiddleInitial,
+                    LastName = u.LastName,
+                    EmployeeUserPK = u.UserPK
+                };
+
+
+            var selectedrep =
+                from e in dbcontext.Employees
+                join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                where (eca.CustomerFK == id && et.EmployeeType1.ToLower()=="rep")
+                select new EmployeeCustomerAssociaitionModel
+                {
+                    AccountNumber = eca.CustomerFK,
+                    EmployeeType = et.EmployeeType1,
+                    employeePK = e.EmployeePK,
+                    FirstName = u.FirstName,
+                    MiddleInitial = u.MiddleInitial,
+                    LastName = u.LastName,
+                    EmployeeUserPK = u.UserPK
+                };
+
+
+            var selectedsales =
+                from e in dbcontext.Employees
+                join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                where (eca.CustomerFK == id && et.EmployeeType1.ToLower() == "sales")
                 select new EmployeeCustomerAssociaitionModel
                 {
                     AccountNumber = eca.CustomerFK,
@@ -191,7 +226,7 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            x.SelectedRepID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
+            x.SelectedRepID = selectedrep.ToList().First().employeePK ;
 
             //x.Reps=allreps.Select(r=>new SelectListItem 
             //            {
@@ -206,7 +241,7 @@ namespace Semplest.Admin.Controllers
             {
                 SelectListItem mylistitem = new SelectListItem();
                 mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
+                mylistitem.Value = s.employeePK.ToString();
                 sl1.Add(mylistitem);
             }
             x.Reps = sl1;
@@ -217,7 +252,8 @@ namespace Semplest.Admin.Controllers
             //for salespersons drowdown
             /////////////////////////////////////////////////////////////////////////////////
 
-            x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
+            //x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
+            x.SelectedSalesPersonID = selectedsales.ToList().First().employeePK;
             //x.SalesPersons = allreps.Select(r => new SelectListItem
             //{
             //    //Value = r.EmployeeUserPK.ToString(),
@@ -231,7 +267,7 @@ namespace Semplest.Admin.Controllers
             {
                 SelectListItem mylistitem = new SelectListItem();
                 mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
+                mylistitem.Value = s.employeePK.ToString();
                 sl2.Add(mylistitem);
             }
             x.SalesPersons = sl2;
@@ -267,7 +303,6 @@ namespace Semplest.Admin.Controllers
 
             customer.Name = m.CustomerAccount.Customer;
             
-
             address.Address1 = m.CustomerAccount.Address1;
             address.Address2 = m.CustomerAccount.Address2;
             address.City = m.CustomerAccount.City;
@@ -276,7 +311,45 @@ namespace Semplest.Admin.Controllers
             address.StateAbbrFK = m.SelectedStateID;
 
 
-            var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK  == customer.CustomerPK);
+
+            var rep = from c in dbcontext.Customers
+                      join eca in dbcontext.EmployeeCustomerAssociations on c.CustomerPK equals eca.CustomerFK
+                      join e in dbcontext.Employees on eca.EmployeeFK equals e.EmployeePK
+                      join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                      where (c.CustomerPK == m.CustomerAccount.AccountNumber && et.EmployeeType1.ToLower() == "rep")
+                      select new ECAModel
+                      {
+                            CustomerPK=c.CustomerPK,
+                             EmployeePK = e.EmployeePK
+                      };
+
+            var sales = from c in dbcontext.Customers
+                      join eca in dbcontext.EmployeeCustomerAssociations on c.CustomerPK equals eca.CustomerFK
+                      join e in dbcontext.Employees on eca.EmployeeFK equals e.EmployeePK
+                      join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                      where (c.CustomerPK == m.CustomerAccount.AccountNumber && et.EmployeeType1.ToLower()  == "sales")
+                      select new ECAModel
+                      {
+                          CustomerPK = c.CustomerPK,
+                          EmployeePK = e.EmployeePK
+                      };
+
+            //rep.ToList().First().EmployeePK = m.SelectedRepID;
+            //sales.ToList().First().EmployeePK = m.SelectedSalesPersonID;
+
+            var employeesales= dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK==m.CustomerAccount.AccountNumber && p.EmployeeFK==sales.ToList().First().EmployeePK);
+            employeesales.EmployeeFK = m.SelectedSalesPersonID;
+
+
+            var employeerep = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == rep.ToList().First().EmployeePK);
+            employeerep.EmployeeFK = m.SelectedRepID;
+
+
+
+            UpdateModel(employeerep);
+            UpdateModel(employeesales);
+            //var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK  == customer.CustomerPK && p.EmployeeFK==1);
+            
             
             //employeecustomerassociation.
             //employeecustomerassociation.EmployeeCustomerAssociationPK
@@ -387,13 +460,13 @@ namespace Semplest.Admin.Controllers
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
             var allreps = from e in dbcontext.Employees
-                          join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                          //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                           join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                           join u in dbcontext.Users on e.UsersFK equals u.UserPK
                           where (et.EmployeeType1 == "Rep")
                           select new EmployeeCustomerAssociaitionModel
                           {
-                              AccountNumber = eca.CustomerFK,
+                              //AccountNumber = eca.CustomerFK,
                               employeePK = e.EmployeePK,
                               EmployeeType = et.EmployeeType1,
                               EmployeeUserPK = u.UserPK,
@@ -402,17 +475,22 @@ namespace Semplest.Admin.Controllers
                               LastName = u.LastName
                           };
 
+
+
+
+
+
             /////////////////////////////////////////////////////////////////////////////////
             //for sales dropdown
             /////////////////////////////////////////////////////////////////////////////////
             var allsalespersons = from e in dbcontext.Employees
-                                  join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                  //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                                   join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                                   join u in dbcontext.Users on e.UsersFK equals u.UserPK
                                   where (et.EmployeeType1 == "Sales")
                                   select new EmployeeCustomerAssociaitionModel
                                   {
-                                      AccountNumber = eca.CustomerFK,
+                                      //AccountNumber = eca.CustomerFK,
                                       employeePK = e.EmployeePK,
                                       EmployeeType = et.EmployeeType1,
                                       EmployeeUserPK = u.UserPK,
@@ -528,6 +606,11 @@ namespace Semplest.Admin.Controllers
                 CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at });
 
                 CustomerNote cn = dbcontext.CustomerNotes.Add(new CustomerNote { Customer=c, Note=m.CustomerAccount.CustomerNote });
+                
+
+                EmployeeCustomerAssociation addrep = dbcontext.EmployeeCustomerAssociations.Add(new EmployeeCustomerAssociation { Customer=c, EmployeeFK=m.SelectedRepID });
+                EmployeeCustomerAssociation addsales = dbcontext.EmployeeCustomerAssociations.Add(new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedSalesPersonID });
+
                 dbcontext.SaveChanges();
 
             }
