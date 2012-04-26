@@ -143,10 +143,29 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 		
 		Double [] budgetArray = new Double[searchEngine.length];
-		for (int i=0; i<budgetArray.length; i++) {
-			budgetArray[i]=TotalMonthlyBudget/budgetArray.length; // for the time being -- revisit later
+
+		switch (searchEngine.length) {
+		case 2:
+			if(searchEngine[0].equalsIgnoreCase("Google") && searchEngine[1].equalsIgnoreCase("MSN")) {
+				budgetArray[0]=0.7*TotalMonthlyBudget;
+				budgetArray[1]=0.3*TotalMonthlyBudget;
+				break;
+			}
+			if(searchEngine[0].equalsIgnoreCase("MSN") && searchEngine[1].equalsIgnoreCase("Geogle")) {
+				budgetArray[0]=0.3*TotalMonthlyBudget;
+				budgetArray[1]=0.7*TotalMonthlyBudget;
+				break;
+			}
+			throw new Exception("Invalid combination of search engine options!");
+		case 1:
+			budgetArray[0]=TotalMonthlyBudget;
+		default:
+			throw new Exception("Invalid number of search engines.. Received "+searchEngine.length+" search engine names!");
 		}
-		// UPDATE THE DATABASE
+		
+		// UPDATE the DATABASE
+		throw new Exception("Database call not implemented yet!!!!");
+		// UPDATE the campaigns
 	}
 
 
