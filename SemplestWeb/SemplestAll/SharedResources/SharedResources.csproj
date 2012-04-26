@@ -125,6 +125,8 @@
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="OtherLibraries\Microsoft.Practices.ServiceLocation.dll" />
+    <Content Include="OtherLibraries\Microsoft.Practices.ServiceLocation.XML" />
     <Content Include="Scripts\jquery-1.5.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.5.1.js" />
     <Content Include="Scripts\jquery-1.5.1.min.js" />
