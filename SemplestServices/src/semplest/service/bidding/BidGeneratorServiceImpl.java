@@ -122,7 +122,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		String searchEngine = data.get("searchEngine");
-		getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
+		getBidsInitialNaive( accountID, campaignID, adGroupID, searchEngine);
 //		return gson.toJson(res);
 	}
 	
@@ -148,7 +148,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		Long campaignID = Long.parseLong(data.get("campaignID")); 
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		String searchEngine = data.get("searchEngine");
-		getBidsUpdate( accountID, campaignID, adGroupID, searchEngine);
+		getBidsUpdateNaive( accountID, campaignID, adGroupID, searchEngine);
 	}
 	
 	@Override
