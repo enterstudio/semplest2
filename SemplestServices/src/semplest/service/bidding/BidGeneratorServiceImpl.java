@@ -112,6 +112,60 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 	}
 	
+	// ----------------------------------
+	// Naive bidder
+	public void getBidsInitialNaive(String json) throws Exception
+	{
+		logger.debug("call  getBidsInitial(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		String searchEngine = data.get("searchEngine");
+		getBidsInitial( accountID, campaignID, adGroupID, searchEngine);
+//		return gson.toJson(res);
+	}
+	
+	@Override
+	public void getBidsInitialNaive(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
+		if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.Google.name())){
+			getBidsInitialGoogleNaive(accountID, campaignID, adGroupID);
+		} else if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name())){
+			// getBidsInitialMSN(accountID, campaignID, adGroupID);
+		} 
+	}
+	
+	
+	public void getBidsUpdateNaive(String json) throws Exception
+	{
+		logger.debug("call  getBidsUpdate(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		String accountID = data.get("accountID");
+		Long campaignID = Long.parseLong(data.get("campaignID")); 
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		String searchEngine = data.get("searchEngine");
+		getBidsUpdate( accountID, campaignID, adGroupID, searchEngine);
+	}
+	
+	@Override
+	public void getBidsUpdateNaive(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
+		
+		if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.Google.name())){
+			getBidsUpdateGoogleNaive(accountID, campaignID, adGroupID);
+		} else if(searchEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name())){
+			// getBidsUpdateMSN(accountID, campaignID, adGroupID);
+		}
+	}
+	
+	// End Naive Bidder-------------------------------------------------
 
 	public String GetMonthlyBudgetPerSE(String json) throws Exception
 	{
@@ -175,8 +229,6 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	
-	
-	
 	@Override
 	public HashMap<String,Double> getBid(String accountID,
 			Long campaignID, Long adGroupID, ArrayList<String> keywords)
@@ -185,11 +237,6 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		throw new Exception("getBid(...) method is no longer in use! Use either getBidsInitial(...) or getBidsUpdate(...) instead.");
 		
 	}
-	
-	
-	
-	
-	
 	
 	
 	
@@ -667,10 +714,17 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		return o;
 		
 	}
-
+	//--------------------------- -------------------
+	// Details for Naive bidder 
+	private void getBidsInitialGoogleNaive(String accountID, Long campaignID, Long adGroupID) throws Exception {	
+		logger.info("Naive Bidder: Computing initial bids for Google campaign...");
+	}
+	private void getBidsUpdateGoogleNaive(String accountID, Long campaignID, Long adGroupID) throws Exception {	
+		
+		logger.info("Naive bidder: Updating bids for Google campaign...");
+	}
 	
-
-	
+	//------------- End Naive bidder
 	
 	public static void main(String[] args){
 		
