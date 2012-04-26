@@ -23,6 +23,8 @@ import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.*;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -426,15 +428,24 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			//requestKeywordReport
 			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
-			String ret = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.fromString(ReportAggregation._Daily));		
-					
+			String ret1 = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.fromString(ReportAggregation._Daily));		
+			
 			//getReportData
-			Map<String, String[]> ret = test.getReportData("1901813874", 1595249L);
-			Set<String> keys = ret.keySet();
-			Collection<String[]> values = ret.values();
+			Map<String, String[]> ret2 = test.getReportData(ret1, 1595249L);
+			Set<String> keys = ret2.keySet();
+			Collection<String[]> values = ret2.values();
 			logger.info(keys.toString());
 			logger.info(values.toString());
 			*/
+			//getKeywordReport
+			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
+			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
+			ReportObject ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Daily);
+			
+			
+			
+			
+			
 			
 		}
 		catch (Exception e)
@@ -1097,7 +1108,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public KeywordEstimatedPosition[] getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String keywordsList = "";
@@ -1112,9 +1123,8 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordEstimateByBids", json, null);
-		KeywordEstimatedPosition[] ret = gson.fromJson(returnData, KeywordEstimatedPosition[].class);
-		if (ret == null)
-			return null;
+		TrafficEstimatorObject ret = gson.fromJson(returnData, TrafficEstimatorObject.class);
+
 		logger.debug("getKeywordEstimateByBids: ok");
 
 		return ret;
@@ -1173,7 +1183,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String ret = returnData;
 		logger.debug("requestKeywordReport: reportID = " + ret);
 
-		return ret;		
+		return ret.substring(1, ret.length()-1);	
 	}
 
 	@Override
@@ -1214,6 +1224,24 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		for (long r:ret){
 			logger.debug("createKeywords: Id = " + r);
 		}
+		return ret;
+	}
+	
+	public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
+		jsonHash.put("firstDay", firstDay.toString());
+		jsonHash.put("lastDay", lastDay.toString());
+		jsonHash.put("aggregation", aggregation.getValue());
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, null);
+		ReportObject ret = gson.fromJson(returnData, ReportObject.class);
+
+		logger.debug("getKeywordReport: ok");
+		
 		return ret;
 	}
 

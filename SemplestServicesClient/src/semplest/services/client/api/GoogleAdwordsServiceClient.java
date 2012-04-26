@@ -11,6 +11,7 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
@@ -578,6 +579,12 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			optionalTimeoutMS = timeoutMS;
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
+	}
+
+	@Override
+	public ReportObject getReportForAccount(String accountID) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
