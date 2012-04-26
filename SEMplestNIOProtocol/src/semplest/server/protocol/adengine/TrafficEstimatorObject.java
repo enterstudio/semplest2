@@ -12,9 +12,9 @@ public class TrafficEstimatorObject
 	private HashMap<String,HashMap<Double,BidData>> bidDataMap = new HashMap<String,HashMap<Double,BidData>>();
 	
 	
-	public void setBidData(String keyword, Double bidAmount, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost) throws Exception
+	public void setBidData(String keyword, Double bidAmount, String matchType, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost) throws Exception
 	{
-		BidData biddata = new BidData(minAveCPC,maxAveCPC,minAvePosition,maxAvePosition,minClickPerDay,maxClickPerDay,minTotalDailyMicroCost,maxTotalDailyMicroCost);
+		BidData biddata = new BidData(matchType, minAveCPC,maxAveCPC,minAvePosition,maxAvePosition,minClickPerDay,maxClickPerDay,minTotalDailyMicroCost,maxTotalDailyMicroCost);
 		if (bidDataMap.containsKey(keyword))
 		{
 			HashMap<Double,BidData> data = bidDataMap.get(keyword);
@@ -340,7 +340,8 @@ public class TrafficEstimatorObject
 		private Float maxClickPerDay;
 		private Long minTotalDailyMicroCost;
 		private Long maxTotalDailyMicroCost;
-		public BidData(Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost)
+		private String matchType;
+		public BidData(String matchType, Long minAveCPC, Long maxAveCPC,Double minAvePosition,Double maxAvePosition,Float minClickPerDay,Float maxClickPerDay,Long minTotalDailyMicroCost,Long maxTotalDailyMicroCost)
 		{
 			this.minAveCPC = minAveCPC;
 			this.maxAveCPC = maxAveCPC;
@@ -350,6 +351,7 @@ public class TrafficEstimatorObject
 			this.maxClickPerDay = maxClickPerDay;
 			this.minTotalDailyMicroCost = minTotalDailyMicroCost;
 			this.maxTotalDailyMicroCost = maxTotalDailyMicroCost;
+			this.matchType = matchType;
 		}
 		public Long getMinAveCPC()
 		{
@@ -414,6 +416,12 @@ public class TrafficEstimatorObject
 		public void setMaxTotalDailyMicroCost(Long maxTotalDailyMicroCost)
 		{
 			this.maxTotalDailyMicroCost = maxTotalDailyMicroCost;
+		}
+		public String getMatchType() {
+			return matchType;
+		}
+		public void setMatchType(String matchType) {
+			this.matchType = matchType;
 		}
 		
 		
