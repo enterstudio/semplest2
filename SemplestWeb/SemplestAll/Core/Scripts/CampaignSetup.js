@@ -1,6 +1,7 @@
 ﻿$(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
+    $("#ProductGroup_Budget").kendoNumericTextBox();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
