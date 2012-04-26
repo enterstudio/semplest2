@@ -9,37 +9,6 @@ using Semplest.Admin.Models;
 using SemplestModel;
 using System.ComponentModel;
 
-public class LoggingHandleErrorAttribute : HandleErrorAttribute
-{
-    public override void OnException(ExceptionContext filterContext)
-    {
-        base.OnException(filterContext);
-
-        //if (filterContext.ExceptionHandled)
-        //{
-        try
-        {
-            SemplestEntities _dbContext = new SemplestEntities();
-            SemplestModel.Error er = new SemplestModel.Error();
-            er.ErrorMessage = filterContext.Exception.ToString();
-            //filterContext.RequestContext.HttpContext.Session
-            if (HttpContext.Current.Session["userid"] == null)
-                er.UsersFK = 1;
-            else
-                er.UsersFK = string.IsNullOrEmpty(HttpContext.Current.Session["userid"].ToString()) ? 1 : int.Parse(HttpContext.Current.Session["userid"].ToString());
-            er.TimeStamp = DateTime.Now;
-            _dbContext.Errors.Add(er);
-            _dbContext.SaveChanges();
-            //send email
-        }
-        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-            // Log filterContext.Exception in some way.  
-        //}
-    }
-}  
-
-
-
 //This code is used for binding form data to collections
 public static class HtmlPrefixScopeExtensions
 {

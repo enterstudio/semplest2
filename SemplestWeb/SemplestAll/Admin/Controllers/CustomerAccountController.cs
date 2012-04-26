@@ -7,10 +7,11 @@ using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
+using SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {
-    [LoggingHandleErrorAttribute]
+    [ExceptionHelper]
     [AuthorizeRole]
     public class CustomerAccountController : Controller
     {

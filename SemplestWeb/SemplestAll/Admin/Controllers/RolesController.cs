@@ -8,10 +8,11 @@ using System.Reflection;
 using System.Data.Entity.Validation;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
+using SharedResources.Helpers;
 
 namespace Semplest.Admin.Controllers
 {
-    [LoggingHandleErrorAttribute]
+    [ExceptionHelper]
     [AuthorizeRole]
     public class RolesController : Controller
     {
