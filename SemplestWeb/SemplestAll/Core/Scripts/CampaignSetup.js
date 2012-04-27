@@ -161,15 +161,16 @@
     });
 
     $("#viewSelectedKeywords").click(function () {
+        alert('in viewSelectedKeywords');
         var length = tabStrip.items().length;
-        var isAdditionalLinksAdded = false;
+        var isSelectedKeywordsAdded = false;
         for (var item = 0; item < length; item++) {
             if (tabStrip.items().item(item).innerText == "View Keywords") {
-                isAdditionalLinksAdded = true;
+                isSelectedKeywordsAdded = true;
                 break;
             }
         }
-        if (!isAdditionalLinksAdded)
+        if (!isSelectedKeywordsAdded)
             tabStrip.append({
                 text: "View Keywords",
                 contentUrl: '/Campaign/KeyWords'
