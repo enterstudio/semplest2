@@ -10,17 +10,22 @@
     <div class="options" style="margin-top: 100px">
         <button class="k-button" id="back3" type="button">
             <span class="k-back k-icon"></span>back</button>
-        <button class="k-button" id="save" type="submit">
+        <button class="k-button" id="saveNeg" type="submit">
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
 <script>
     $('#back3').click(function () {
+        tabChange();
+    });
+    $('#saveNeg').click(function () {
+        tabChange();
+    });
+    function tabChange(parameters) {
         var nextItem = tabStrip.select().prev();
         if (nextItem.length)
             tabStrip.select(nextItem);
         else
             tabStrip.select(tabStrip.tabGroup.children().first());
-
-    });
+    }
 </script>

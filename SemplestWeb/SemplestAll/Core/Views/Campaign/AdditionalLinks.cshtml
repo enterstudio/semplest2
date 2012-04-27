@@ -43,13 +43,19 @@
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     $('#back2').click(function () {
+        tabChange();
+    });
+    $('#save3').click(function () {
+        tabChange();
+    });
+
+    function tabChange(parameters) {
         var nextItem = tabStrip.select().prev();
         if (nextItem.length)
             tabStrip.select(nextItem);
         else
             tabStrip.select(tabStrip.tabGroup.children().first());
-
-    });
+    }
 </script>
