@@ -5,135 +5,97 @@ import com.google.api.adwords.v201109.cm.*;
 import com.google.api.adwords.lib.AdWordsUser;
 import com.google.api.adwords.lib.AdWordsService;
 
-import java.lang.Math.*;
-import java.util.ArrayList;
+// import java.lang.Math.*;
+import java.util.Comparator;
+import java.util.Arrays;
 
 // Bids naiely for an ad-group
 //  Sets bid to first-page-cpc for high-volume keywords
 //  Sets bid to first-page-cpc + $0.50 for low-volume keywords
+//  When first-page-cpc is not available we use the default bid 
 
 public class NaiveBidder {
 
-  long agId;
-  AdGroupCriterionServiceInterface acs; 
-  String[] fields = {"Id","SystemServingStatus","KeywordText",
-      "QualityScore", "FirstPageCpc", "MaxCpc"};
-  String testString = "";             // for testing
+  public static int DELAY_MS = 1000;
+
+  AGInfo    a = null;
+  Estimator e = null;
+
   // ctr ---------
   public NaiveBidder(long clientId, long campaignId, long adgroupId )
     throws Exception {
-    AdWordsUser user = new AdWordsUser("adwords@semplest.com","ic0system",
-        Long.toString(clientId), "Icosystem", "2H8l6aUm6K_Q44vDvxs3Og");
-    acs = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE );
-    agId = adgroupId;
-
+    a = new AGInfo( clientId, campaignId, adgroupId );
+    e = new Estimator( clientId, campaignId, adgroupId );
   }
+
   // interface ---------
   // sets bids (specify the daily budget in cents )
-  public void sBids( int dailyBudget ) throws Exception {
-    for( BiddableAdGroupCriterion bac : gCriteria() ){
-      int fpcpc   = gFPCpc(   bac );
-      int maxcpc  = gMaxCpc(  bac );
-      String kw   = gKeyword( bac );
-      int bidamount = Math.min( dailyBudget, fpcpc );
-      if ( bac.getSystemServingStatus() == SystemServingStatus.RARELY_SERVED )
-        bidamount = Math.min( dailyBudget, fpcpc + 50 );
+  public int bid( int dailyBudget ) throws Exception {
 
-      if( bidamount != maxcpc ){ 
-        sBid( bac, bidamount);
-        System.out.println( 
-          String.format("%s Maxcpc(old,new): (%d,%d)c", kw, maxcpc, bidamount ));
+    // Get the keywords and sort them by first-page-cpc
+    BiddableAdGroupCriterion[] bacs = a.gCriteria();
+    bacs = sortEntries( bacs ); 
+
+    int remainingBudget = dailyBudget;
+    int totalCost = 0;
+    for( BiddableAdGroupCriterion bac : bacs ){ 
+      // get data for each keyword
+      int fpcpc   = a.gFPCpc(   bac );
+      int maxcpc  = a.gMaxCpc(  bac );
+      String kw   = a.gKeyword( bac );
+      boolean eligible = a.gEligible( bac ); 
+
+      // bidding logic (if eligible, bid fpcpc, else fpcpc + 50)
+      int bidamount = 0;
+      if( eligible ){
+        if( remainingBudget > 0 ){
+          bidamount       = fpcpc;
+          int cost        = e.gCost( kw, bidamount );
+          totalCost       = totalCost + cost;
+          remainingBudget = remainingBudget - cost; 
+        }
+      }
+      else               
+        bidamount = fpcpc + 50;
+
+      bidamount = bidamount > dailyBudget ? dailyBudget : bidamount; 
+      if( bidamount != maxcpc && bidamount > 0 ){ 
+        a.sBid( bac, bidamount);
+        Thread.sleep( DELAY_MS );
+        System.out.printf("%s :: Bid(old,new) : (%d,%d)c\tRem. Budget :: %d\n", 
+            kw,maxcpc,bidamount, remainingBudget );
       }
     }
+    System.out.printf("Spent: %dc, Unused: %dc\n", totalCost, remainingBudget ); 
+    return totalCost;
   }
 
-  // privates ---------------------------------
-  private BiddableAdGroupCriterion[] gCriteria() throws Exception {
-    Selector s = new Selector();
-    s.setFields( fields );
-
-    // filters 
-    Predicate agp = new Predicate("AdGroupId", PredicateOperator.IN, 
-        new String[]{ Long.toString( agId ) }); 
-    // [Note: For testing]
-    if( testString != "" ){
-      Predicate kp = new Predicate("KeywordText", PredicateOperator.EQUALS, 
-        new String[]{ testString });  
-      s.setPredicates(new Predicate[]{agp,kp});
-    }
-
-    AdGroupCriterion[] es = acs.get( s ).getEntries();
-    return filterEntries( es );
+  // bidding helper -------
+  private BiddableAdGroupCriterion[] sortEntries(BiddableAdGroupCriterion[] es ){
+    Arrays.sort( es, new Comparator(){
+      public int compare(Object f,Object g){
+        BiddableAdGroupCriterion x = (BiddableAdGroupCriterion) f;
+        BiddableAdGroupCriterion y = (BiddableAdGroupCriterion) g;
+        if(!a.gEligible(x) && !a.gEligible(y))  return 0;
+        if( a.gEligible(x) && !a.gEligible(y))  return -1;
+        if(!a.gEligible(x) &&  a.gEligible(y))  return 1;
+        if( a.gFPCpc(x)    <=  a.gFPCpc(y))      return -1;
+        return 1;
+      }
+    });
+    return es;
   }
-
-  // getters --------
-  private int gMaxCpc( BiddableAdGroupCriterion bac ){
-    AdGroupCriterionBids bids = bac.getBids();
-    if( bids != null && bids instanceof ManualCPCAdGroupCriterionBids ){
-      ManualCPCAdGroupCriterionBids mbid = 
-        (ManualCPCAdGroupCriterionBids)bids;
-      if( mbid.getMaxCpc() != null )
-        if( mbid.getMaxCpc().getAmount() != null ) 
-          return (int)(mbid.getMaxCpc().getAmount().getMicroAmount() / 10000);
-    }
-    return 0;
-  }
-  private int gFPCpc(BiddableAdGroupCriterion bac ){
-    if (bac.getFirstPageCpc() != null )
-      if (bac.getFirstPageCpc().getAmount() != null )
-        return (int)(bac.getFirstPageCpc().getAmount().getMicroAmount() / 10000);
-    return 0;
-  }
-  private String gKeyword(BiddableAdGroupCriterion bac){
-    Criterion c = bac.getCriterion();
-    if( c instanceof Keyword )
-      return ((Keyword)c).getText();
-    else 
-      return "";
-  }
-  // setters -----------
-  private void sBid(BiddableAdGroupCriterion cr, int bid ) throws Exception {
-    Criterion c = new Criterion();
-    c.setId( cr.getCriterion().getId() );
-    BiddableAdGroupCriterion bac = new BiddableAdGroupCriterion();
-    bac.setAdGroupId( agId );
-    bac.setCriterion( c );
-    ManualCPCAdGroupCriterionBids bids = new ManualCPCAdGroupCriterionBids();
-    bids.setMaxCpc( new Bid( new Money( null, bid * 10000L )));
-    bac.setBids( bids );
-
-    AdGroupCriterionOperation op = new AdGroupCriterionOperation();
-    op.setOperand( bac );
-    op.setOperator( Operator.SET );
-
-    AdGroupCriterion[] res = acs.mutate(
-        new AdGroupCriterionOperation[]{op}).getValue(); 
-    BiddableAdGroupCriterion b = filterEntries( res )[0];
-  }
-  // helpers -------
-  private BiddableAdGroupCriterion[] filterEntries( AdGroupCriterion[] es ){
-    ArrayList<BiddableAdGroupCriterion> bacal = 
-      new ArrayList<BiddableAdGroupCriterion>(); 
-    for( AdGroupCriterion e : es )
-      if( e != null && e instanceof BiddableAdGroupCriterion )
-        bacal.add((BiddableAdGroupCriterion) e);
-    return bacal.toArray(new BiddableAdGroupCriterion[]{} );
-  }
-  private String gDatums(BiddableAdGroupCriterion b){
-    return String.format("%s %d %d",gKeyword(b), gMaxCpc(b), gFPCpc(b));
-  }
-
-
-  // test and usage -------------------------------------------------------- 
+  // test and usage ------ 
   public static void main( String[] args) {
-    long CLID = 9886423251L;
-    long CAID = 94891718L;
-    long AGID = 3200406038L;
+    long CLID = 8982168071L;
+    long CAID = 76709721L;
+    long AGID = 3582397881L;
+    int budget = 2500;  // cents
 
     try { 
-      NaiveBidder n = new NaiveBidder( CLID, CAID, AGID );
-      n.sBids( 1000 );
-      } catch (Exception e ){ e.printStackTrace();}
-    }
+      NaiveBidder nb = new NaiveBidder( CLID, CAID, AGID);
+      int spent = nb.bid( budget );
+    } catch (Exception e ){ e.printStackTrace();}
   }
+}
 
