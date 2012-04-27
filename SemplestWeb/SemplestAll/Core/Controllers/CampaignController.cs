@@ -63,8 +63,24 @@ namespace Semplest.Core.Controllers
                 Session.Add("FullModel", model);
             }
             //return PartialView("KeyWords", model);
-            return PartialView("BillingLaunch", model);
+            return null;
         }
+
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "LaunchAdProduct")]
+        public ActionResult LaunchAdProduct(CampaignSetupModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                model = (CampaignSetupModel)Session["FullModel"];
+                //SemplestDataService ds = new SemplestDataService();
+                //ds.SaveAd(model);
+            }
+            //return PartialView("KeyWords", model);
+            return View();
+        }
+
 
         #region Nested type: AcceptSubmitTypeAttribute
 
