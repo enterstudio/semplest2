@@ -190,17 +190,29 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
-		DateTime lastDay = new DateTime(2012,4,31,0,0,0,0);
-		try{
-			//ReportObject ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Monthly);
+		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
+		try{	
+			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
+			//test.printReportToConsole(ret1, 1595249L);
 			
-			String ret1 = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Monthly);
-			test.printReportToConsole(ret1, 1595249L);
+			ReportObject ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
+			for(Transaction t: ret.getTransactions()){
+				logger.info("Keyword = " + t.getKeyword());
+				logger.info("BidAmount = " + t.getBidAmount());
+				logger.info("BidMatchType = " + t.getBidMatchType());
+				logger.info("NumberImpressions = " + t.getNumberImpressions());
+				logger.info("NumberClick = " + t.getNumberClick());
+				logger.info("AveragePosition = " + t.getAveragePosition());
+				logger.info("QualityScore = " + t.getQualityScore());
+				logger.info("AverageCPC = " + t.getAverageCPC());
+				logger.info("CreatedDate = " + t.getCreatedDate());
+				logger.info("===========================");
+			}
 			
 			
 		}
 		catch(Exception e){
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
@@ -2440,16 +2452,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		//getReportData
 		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
 		
-		//xnxnxn
-		logger.info(ret2);
-		for(String s : ret2.keySet()){
-			logger.info(s);
-			for(String s1 : ret2.get(s)){
-				logger.info(s1);
-			}
-			logger.info("============================");
-		}
-		
 		if(ret2.get("keyword") != null){
 			for(int i = 0; i < ret2.get("keyword").length; i++){
 				Transaction data = ret.new Transaction();
@@ -2460,10 +2462,11 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
 				data.setAveragePosition(Double.valueOf(ret2.get("averageposition")[i]));
 				data.setAverageCPC((int)(Double.valueOf(ret2.get("averagecpc")[i])*1000000));
-				data.setQualityScore(Integer.valueOf(ret2.get("qualityscore")[i]));
+				data.setQualityScore((ret2.get("qualityscore")[i].equals(""))? -1 : (Integer.valueOf(ret2.get("qualityscore")[i])));
 				data.setApprovalStatus(null);
 				data.setFirstPageCPC(-1);
-				data.setCreatedDate(new DateTime(ret2.get("timeperiod")[i]));
+				String[] t = ret2.get("week")[i].split("/");
+				data.setCreatedDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0));
 				
 				ret.addTransaction(data);			
 			}
