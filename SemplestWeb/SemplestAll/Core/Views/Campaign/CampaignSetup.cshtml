@@ -117,6 +117,20 @@ Ad Setup
                 tabStrip.select(tab);
             }
         }
+        else if (id == "viewSelectedKeywords") {
+            if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+                tabStrip.append({
+                    text: "View Keywords",
+                    contentUrl: '@Url.Action("KeyWords")'
+                }, tabStrip.tabGroup.children("li:last")).select();
+                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                tabStrip.select(tab);
+            } else {
+                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                tabStrip.select(tab);
+            }
+        }
+
     }
     function OnFailure(ajaxContext) {
         $.unblockUI();
