@@ -1,13 +1,16 @@
 package semplest.test;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.service.adengine.SemplestAdengineServiceImpl;
+import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.service.scheduler.CreateSchedulerAndTask;
 
 
 public class TestSpringJDBC
@@ -28,6 +31,17 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			//Test Scheduler
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask1", "mitch@semplest.com", "mitch@semplest.com", "Hello");
+			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask2", "mitch@semplest.com", "mitch@semplest.com", "Hello");
+			listOfTasks.add(mailTask1);
+			listOfTasks.add(mailTask2);
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			
+			
+			
 			//SemplestDB op = new SemplestDB();
 			//List ll= SemplestDB.getAdEngineAccount(2, "Google");
 			//System.out.println("AdEngineAccount ");
@@ -37,11 +51,13 @@ public class TestSpringJDBC
 			 l.add("Google");
 			ad.AddPromotionToAdEngine(2, 1, 1 ,l);
 			*/
+			/*
 			Integer ret = SemplestDB.addAdEngineAccountID(12, 343434L, "Google");
 			if (ret.intValue() > 0)
 			{
 				System.out.println("added");
 			}
+			*/
 			
 			//List<BidObject> bids = op.getBidObjects(2L, ProtocolEnum.AdEngine.Google.name());
 			//Integer i = op.addSchedule("TestSchedule", new Date(),null, "Now",true, false, null, null,null, null);

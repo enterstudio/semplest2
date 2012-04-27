@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
+import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
@@ -64,13 +65,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			//if no promo group then add
+			List<PromotionObj> promotionDataList =  SemplestDB.getPromotionObjects(PromotionID);
+			if (promotionDataList == null || promotionDataList.size() == 0 )
+			{
+				throw new Exception("No promotion data found for " + PromotionID);
+			}
 			Long prodGroupID = null;
 			if (productGroupID == null)
 			{
 				//create the campaign
 				prodGroupID = createCampaign(accountID, advertisingEngine);
 				//store new product group for ad engine 
-				
 			}
 			else
 			{

@@ -11,42 +11,50 @@ import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
+import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
-
+import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
-	
+
 	/*
 	 * Customer
 	 */
-	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class); 
-	
-    public static List<CustomerObj> getAllCustomers()
-    {
-    	
-    	String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c " +
-    			"inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK " +
-    			"inner join BillType bt on c.BillTypeFK = bt.BillTypePK";
-    	return jdbcTemplate.query(strSQL, CustomerObjMapper); //new CustomerRowMapper());
-    }
+	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class);
+
+	public static List<CustomerObj> getAllCustomers()
+	{
+
+		String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c "
+				+ "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
+				+ "inner join BillType bt on c.BillTypeFK = bt.BillTypePK";
+		return jdbcTemplate.query(strSQL, CustomerObjMapper); // new
+																// CustomerRowMapper());
+	}
+	/*
+	public void startTransaction()
+	{
+		jdbcTemplate
+	}
+	*/
+
 	/*
 	 * Scheduler Calls
 	 */
-    public static List<TaskRunnerObj> getScheduleTasks(Integer SchedulerPK)
-    {
-    	try
+	public static List<TaskRunnerObj> getScheduleTasks(Integer SchedulerPK)
+	{
+		try
 		{
-			String strSQL = "select t.ServiceName,t.MethodName,t.Parameters,s.SchedulePK,st.TaskExecutionOrder from Schedule s " +
-					"inner join ScheduleTaskAssociation st on s.SchedulePK = st.ScheduleFK " +
-					"inner join Task t on t.TaskPK = st.TaskFK " +
-					"where s.SchedulePK = ? and s.IsEnabled = 1 " +
-					"order by st.TaskExecutionOrder";
-			return jdbcTemplate.query(strSQL, new Object[] {SchedulerPK}, new ScheduleTaskRowMapper());
+			String strSQL = "select t.ServiceName,t.MethodName,t.Parameters,s.SchedulePK,st.TaskExecutionOrder from Schedule s "
+					+ "inner join ScheduleTaskAssociation st on s.SchedulePK = st.ScheduleFK " + "inner join Task t on t.TaskPK = st.TaskFK "
+					+ "where s.SchedulePK = ? and s.IsEnabled = 1 " + "order by st.TaskExecutionOrder";
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ SchedulerPK }, new ScheduleTaskRowMapper());
 		}
 		catch (Exception e)
 		{
@@ -54,15 +62,17 @@ public class SemplestDB extends BaseDB
 			e.printStackTrace();
 			return null;
 		}
-    }
-	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
+	}
+
+	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive,
+			Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
 
-		
 		if (ScheduleFrequency.existsFrequency(Frequency))
 		{
 			AddScheduleSP addsched = new AddScheduleSP();
-			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency,isEnabled,  isInactive, PromotionID, CustomerID, ProductGroupID, UserID);
+			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID,
+					ProductGroupID, UserID);
 			return scheduleID;
 		}
 		else
@@ -71,19 +81,21 @@ public class SemplestDB extends BaseDB
 		}
 
 	}
-	/*
-	public static int getFrequencyID(String Frequency)
-	{
-		SqlFunction sf = new SqlFunction(jdbcTemplate.getDataSource(), "select FrequencyPK from Frequency f where f.Frequency = '" +  Frequency + "'");
-	    sf.compile();
-	    return sf.run();
 
-	}
-	*/
+	
+
+	/*
+	 * public static int getFrequencyID(String Frequency) { SqlFunction sf = new
+	 * SqlFunction(jdbcTemplate.getDataSource(),
+	 * "select FrequencyPK from Frequency f where f.Frequency = '" + Frequency +
+	 * "'"); sf.compile(); return sf.run();
+	 * 
+	 * }
+	 */
 
 	public static void associateTaskToSchedule(int ScheduleFK, int TaskFK, int TaskExecutionOrder) throws Exception
 	{
-		jdbcTemplate.update("ScheduleTaskAssociation(ScheduleFK,TaskFK,TaskExecutionOrder) values (?,?,?)", new Object[]
+		jdbcTemplate.update("insert into ScheduleTaskAssociation(ScheduleFK,TaskFK,TaskExecutionOrder) values (?,?,?)", new Object[]
 		{ ScheduleFK, TaskFK, TaskExecutionOrder });
 	}
 
@@ -94,10 +106,30 @@ public class SemplestDB extends BaseDB
 	}
 
 	/*
+	 * Note Task execution order is determined by order of
+	 * ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList
+	 */
+	public static void createTaskAndAssociateToSchedule(int ScheduleFK, ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList) throws Exception
+	{
+		AddTaskSP addTask = new AddTaskSP();
+		int i = 0;
+		for (SemplestSchedulerTaskObject taskObj : scheduleTaskObjList)
+		{
+			Integer taskID = addTask.execute(taskObj.getClientServiceName(), taskObj.getMethodName(), taskObj.getParameters());
+			if (taskID != null)
+			{
+				associateTaskToSchedule(ScheduleFK, taskID, i);
+			}
+			i++;
+		}
+	}
+
+	/*
 	 * Bidding calls
 	 */
-	
-	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine) throws Exception
+
+	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine)
+			throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
@@ -110,8 +142,9 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(productGroupID, promotionID, bid.getBidID(),bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(), bid.getMatchType(), bid.getFirstPageCpc(), 
-							bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(), advertisingEngine, bid.getSemplestProbability());
+					addBid.execute(productGroupID, promotionID, bid.getBidID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(),
+							bid.getMatchType(), bid.getFirstPageCpc(), bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(),
+							advertisingEngine, bid.getSemplestProbability());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -122,111 +155,119 @@ public class SemplestDB extends BaseDB
 			}
 		}
 	}
-	
+
 	private static final RowMapper<BidObject> bidObjMapper = new BeanPropertyRowMapper(BidObject.class);
-	
-	public static List<BidObject> getBidObjects(Integer promotionID,String advertisingEngine) throws Exception
+
+	public static List<BidObject> getBidObjects(Integer promotionID, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
-		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, " +
-				"ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative,ki.SemplestProbability from PromotionKeywordAssociation pka " +
-				"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-				"inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK " +
-				"inner join BidType b on b.BidTypePK = kb.BidTypeFK " +
-				"left join KeywordInitialBidData ki on ki.KeywordBidFK = kb.KeywordBidPK " +
-				"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-				"where pka.PromotionFK = ? and a.AdvertisingEngine = ? and kb.IsActive = 1";
-    	return jdbcTemplate.query(strSQL, new Object[]{promotionID, advertisingEngine},bidObjMapper);
+		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, "
+				+ "ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative,ki.SemplestProbability from PromotionKeywordAssociation pka "
+				+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+				+ "inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK " + "inner join BidType b on b.BidTypePK = kb.BidTypeFK "
+				+ "left join KeywordInitialBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
+				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+				+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ? and kb.IsActive = 1";
+		return jdbcTemplate.query(strSQL, new Object[]
+		{ promotionID, advertisingEngine }, bidObjMapper);
 	}
-	
+
 	/*
 	 * Account calls
 	 */
-	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(AdvertisingEnginePromotionObj.class);
-	
+	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(
+			AdvertisingEnginePromotionObj.class);
+
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(String advertisingEngineAccountID) throws Exception
 	{
-			String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID]," +
-					"ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.AdvertisingEngineBudget " +
-					"from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
-	    	return jdbcTemplate.query(strSQL, new Object[]{advertisingEngineAccountID},advertisingEnginePromotionObjMapper);	
+		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID],"
+				+ "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.AdvertisingEngineBudget "
+				+ "from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
+		return jdbcTemplate.query(strSQL, new Object[]
+		{ advertisingEngineAccountID }, advertisingEnginePromotionObjMapper);
 	}
+
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
 	public static List getAdEngineAccount(int customerID, String adEngine)
 	{
-		String strSQL = "select ae.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c " +
-				"left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK " +
-				"left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK " +
-				"where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
+		String strSQL = "select ae.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
+				+ "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK "
+				+ "left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK "
+				+ "where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
 		try
 		{
-			return jdbcTemplate.queryForList(strSQL, new Object[] {customerID, adEngine });
+			return jdbcTemplate.queryForList(strSQL, new Object[]
+			{ customerID, adEngine });
 		}
 		catch (DataAccessException e)
 		{
 			return null;
 		}
-		
+
 	}
-	
+
 	public static Integer addAdEngineAccountID(int customerID, Long accountID, String adEngine) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK) " +
-				"select ? ,ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
+		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK) "
+				+ "select ? ,ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.update(strSQL, new Object[] { accountID,customerID, adEngine });
+			return jdbcTemplate.update(strSQL, new Object[]
+			{ accountID, customerID, adEngine });
 		}
 		catch (DataAccessException e)
 		{
+			logger.error(e.getMessage());
 			throw e;
 		}
-		
+
 	}
-	
+
 	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget) " +
-				"VALUES (?,?,?,?,?)";
+		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget) "
+				+ "VALUES (?,?,?,?,?)";
 		try
 		{
-			return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID,promotionID,adEngineAccountID, 1,0,0.0 });
+			return jdbcTemplate.update(strSQL, new Object[]
+			{ adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0 });
 		}
 		catch (DataAccessException e)
 		{
 			throw e;
 		}
-		
+
 	}
-	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork, Double AdvertisingEngineBudget) throws Exception
+
+	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork,
+			Double AdvertisingEngineBudget) throws Exception
 	{
 		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
 		try
 		{
-			return jdbcTemplate.update(strSQL, new Object[] { IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID});
+			return jdbcTemplate.update(strSQL, new Object[]
+			{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
 		}
 		catch (DataAccessException e)
 		{
 			throw e;
 		}
-		
+
 	}
-	
 
 	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper(PromotionObj.class);
-	
+
 	public static List<PromotionObj> getPromotionObjects(Integer promotionID) throws Exception
 	{
-		String strSQL = " select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL," +
-				"p.CycleBudgetAmount,p.StartDate,p.EditedDate,p.IsPaused,p.CreatedDate,p.EditedDate from Promotion p where p.PromotionPK = ?";
-    	return jdbcTemplate.query(strSQL, new Object[]{promotionID},promotionObjMapper);
+		String strSQL = " select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,"
+				+ "p.CycleBudgetAmount,p.StartDate,p.EditedDate,p.IsPaused,p.CreatedDate,p.EditedDate from Promotion p where p.PromotionPK = ?";
+		return jdbcTemplate.query(strSQL, new Object[]
+		{ promotionID }, promotionObjMapper);
 	}
-
-	
 
 }
