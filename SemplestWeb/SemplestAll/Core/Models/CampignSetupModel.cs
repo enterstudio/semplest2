@@ -135,6 +135,7 @@ namespace Semplest.Core.Models
     public class BillingLaunchModel
     {
         public int KeywordsCount { get; set; }
+        public string Range { get; set; }
     }
 
     public class AdditionalLinks
