@@ -81,7 +81,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//Utility
 	
 	//Report
-	public abstract ReportObject getReportForAccount(String accountID) throws Exception;
+	public abstract ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception;
 	
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

@@ -8,144 +8,106 @@ import org.joda.time.DateTime;
 
 public class ReportObject
 {
-	private ArrayList<Transaction> Transactions = new ArrayList<Transaction>();
 	
-	public ArrayList<Transaction> getTransactions() {
-		return Transactions;
-	}
-
-	public void setTransactions(ArrayList<Transaction> transactions) {
-		Transactions = transactions;
-	}
-	
-	public void addTransaction(Transaction transaction){
-		Transactions.add(transaction);
-	}
-	
-	public class Transaction{
 		 private String Keyword;
-		 private int BidAmount;
+		 private Integer BidAmount;
 		 private String BidMatchType;
-		 private int NumberImpressions;
-		 private int NumberClick;
+		 private Integer NumberImpressions;
+		 private Integer NumberClick;
 		 private Double AveragePosition;
-		 private int AverageCPC;
-		 private int QualityScore;
+		 private Integer AverageCPC;
+		 private Integer QualityScore;
 		 private String ApprovalStatus;
-		 private int FirstPageCPC;
+		 private Integer FirstPageCPC;
 		 private DateTime CreatedDate;
-		 
-		 public Transaction(){
-			 
-		 }		 
-		 
-		public Transaction(String keyword, int bidAmount, String bidMatchType,
-				int numberImpressions, int numberClick, Double averagePosition,
-				int averageCPC, int qualityScore, String approvalStatus,
-				int firstPageCPC, DateTime createdDate) {
-			Keyword = keyword;
-			BidAmount = bidAmount;
-			BidMatchType = bidMatchType;
-			NumberImpressions = numberImpressions;
-			NumberClick = numberClick;
-			AveragePosition = averagePosition;
-			AverageCPC = averageCPC;
-			QualityScore = qualityScore;
-			ApprovalStatus = approvalStatus;
-			FirstPageCPC = firstPageCPC;
-			CreatedDate = createdDate;
-		}
-
-		public String getKeyword() {
+		public String getKeyword()
+		{
 			return Keyword;
 		}
-
-		public void setKeyword(String keyword) {
+		public void setKeyword(String keyword)
+		{
 			Keyword = keyword;
 		}
-
-		public int getBidAmount() {
+		public Integer getBidAmount()
+		{
 			return BidAmount;
 		}
-
-		public void setBidAmount(int bidAmount) {
+		public void setBidAmount(Integer bidAmount)
+		{
 			BidAmount = bidAmount;
 		}
-
-		public String getBidMatchType() {
+		public String getBidMatchType()
+		{
 			return BidMatchType;
 		}
-
-		public void setBidMatchType(String bidMatchType) {
+		public void setBidMatchType(String bidMatchType)
+		{
 			BidMatchType = bidMatchType;
 		}
-
-		public int getNumberImpressions() {
+		public Integer getNumberImpressions()
+		{
 			return NumberImpressions;
 		}
-
-		public void setNumberImpressions(int numberImpressions) {
+		public void setNumberImpressions(Integer numberImpressions)
+		{
 			NumberImpressions = numberImpressions;
 		}
-
-		public int getNumberClick() {
+		public Integer getNumberClick()
+		{
 			return NumberClick;
 		}
-
-		public void setNumberClick(int numberClick) {
+		public void setNumberClick(Integer numberClick)
+		{
 			NumberClick = numberClick;
 		}
-
-		public Double getAveragePosition() {
+		public Double getAveragePosition()
+		{
 			return AveragePosition;
 		}
-
-		public void setAveragePosition(Double averagePosition) {
+		public void setAveragePosition(Double averagePosition)
+		{
 			AveragePosition = averagePosition;
 		}
-
-		public int getAverageCPC() {
+		public Integer getAverageCPC()
+		{
 			return AverageCPC;
 		}
-
-		public void setAverageCPC(int averageCPC) {
+		public void setAverageCPC(Integer averageCPC)
+		{
 			AverageCPC = averageCPC;
 		}
-
-		public int getQualityScore() {
+		public Integer getQualityScore()
+		{
 			return QualityScore;
 		}
-
-		public void setQualityScore(int qualityScore) {
+		public void setQualityScore(Integer qualityScore)
+		{
 			QualityScore = qualityScore;
 		}
-
-		public String getApprovalStatus() {
+		public String getApprovalStatus()
+		{
 			return ApprovalStatus;
 		}
-
-		public void setApprovalStatus(String approvalStatus) {
+		public void setApprovalStatus(String approvalStatus)
+		{
 			ApprovalStatus = approvalStatus;
 		}
-
-		public int getFirstPageCPC() {
+		public Integer getFirstPageCPC()
+		{
 			return FirstPageCPC;
 		}
-
-		public void setFirstPageCPC(int firstPageCPC) {
+		public void setFirstPageCPC(Integer firstPageCPC)
+		{
 			FirstPageCPC = firstPageCPC;
 		}
-
-		public DateTime getCreatedDate() {
+		public DateTime getCreatedDate()
+		{
 			return CreatedDate;
 		}
-
-		public void setCreatedDate(DateTime createdDate) {
+		public void setCreatedDate(DateTime createdDate)
+		{
 			CreatedDate = createdDate;
-		}		
-
-		
+		}
 		 
-	}	 
 	 
 }
