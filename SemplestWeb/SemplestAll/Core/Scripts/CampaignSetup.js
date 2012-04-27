@@ -15,6 +15,9 @@
             status.text("Oops! There is invalid data in the form.").addClass("invalid");
         }
     });
+    $('#getCategories').click(function () {
+        $("#hiddenfield").val("Categories");
+    });
     // Previous and Save And Continue Button tab changed Logic
     $("#save2").click(function () {
         tabStrip.select(2);
@@ -29,6 +32,7 @@
     //    $("#back3").click(function () { tabStrip.select(2); });
     $("#save").click(function () { tabStrip.select(0); });
     //DropdownlistBindig
+
     $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
 
     // Dropdownlist Range in BillingLaunch

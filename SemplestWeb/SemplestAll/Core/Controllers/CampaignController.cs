@@ -41,13 +41,13 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                model = _campaignRepository.GetCategories(model);
+                //model = _campaignRepository.GetCategories(model);
                 // save this some how while getting the keywords this is becoming null
                 Session.Add("AllCategories", model.AllCategories);
                 Session.Add("AdModelProp", model.AdModelProp);
                 Session.Add("ProductGroup", model.ProductGroup);
             }
-            return null;
+            return Json("Categories");
         }
 
         [HttpPost]
@@ -57,13 +57,12 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-                model = _campaignRepository.GetKeyWords(model);
+                //model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+                //model = _campaignRepository.GetKeyWords(model);
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);
             }
-            //return PartialView("KeyWords", model);
-            return null;
+            return Json("BillingLaunch");
         }
 
         [HttpPost]
