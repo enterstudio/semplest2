@@ -126,7 +126,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
+		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitialNaive", json, timeoutMS);
 
 	}
 	@Override
@@ -140,7 +140,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
+		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdateNaive", json, timeoutMS);
 //		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
