@@ -1,0 +1,126 @@
+﻿
+@{
+    ViewBag.Title = "ChildProfile";
+}
+
+<h2>ChildProfile</h2>
+
+<div id="Table">
+<ul>
+    <li><label id="clblAccunt" class="k-label">Account#:</label>
+    <!--<label id="lblAcctnNameDisp" class="k-label"></label>-->
+    <input type="text" id="ctxtAccntNum" class="k-input" />
+    </li>
+    <li>
+    <label id="clblParentName" class="k-label">ParentName:</label>
+    <input type="text" id="ctxtParentName" class="k-input" />
+    <!--<label id="lblDisplyParentNameExists" class="k-label"></label>-->
+    </li>
+    <li>
+    <label id="clblCompanyName" class="k-label">CompanyName:</label>
+    <input type="text" id="ctxtCompanyName" class="k-input" />
+    </li>
+    <li>
+    <label id="clblFitstName" class="k-label">First</label>
+    <label id="clblMiddleName" class="k-label">M</label>
+    <label id="clblLastName" class="k-label">Last</label>
+    </li>
+    <li>
+    <label id="clblContact" class="k-label">Contact:</label>    
+    <input type="text" id="ctxtFirstName" class="k-input" />
+    <input type="text" id="ctxtMiddleName" class="k-input" />
+    <input type="text" id="ctxtLastName" class="k-input" />
+    </li>
+    <li>
+    <label id="clblPhone" class="k-label">Phone:</label>
+    <input id="ctxtPhone" type="text" class="k-input"/>
+    <input id="ctxPhone2" type="text" class="k-input"/>
+    </li>
+    <li>
+    <label id="clblEmail" class="k-label">Email:</label>
+    <input id="ctxtEmail" type="text" class="k-input"/>
+    </li>
+    <li>
+    <label id="clblBillngAddress" class="k-label">Billing Address:</label>
+    <input id="ctxtBillngAddress1" type="text" class="k-input"/>
+    </li>
+    <li>
+    <input id="ctxtBillngAddress2" type="text" class="k-input"/>
+    </li>
+    <li>
+    <label id="clblCityStateZip" class="k-label">City/State/Zip:</label>
+    <input id="ctxtCity" type="text" class="k-input"/>
+    <input id="ctxtState" type="text" class="k-input"/>
+    <input id="ctxtZip" type="text" class="k-input"/>
+    <input id="ctxtZip1" type="text" class="k-input"/>
+    </li>
+   
+    <li>
+    <label id="clblUserId" class="k-label">UserId:</label>
+    <input id="ctxtUserid" class="k-input" type="text"/>
+    </li>
+    <li>
+     <label id="clblPassword" class="k-label">Password:</label>
+    <input id="ctxtPassword" class="k-input" type="text"/>
+    <label id="clblConfrmPassword" class="k-label">ReType:</label>
+    <input id="ctxtConfrmPassword" class="k-input" type="text"/>
+    </li>
+    <li>
+    <label id="clblSecurtQues" class="k-label">Security Question:</label>
+    <input id="ctxtSecurQues" class="k-input" type="text"/>
+    </li>
+    <li>
+    <label id="clblSecurtAnswer" class="k-label">Security Answer:</label>
+    <input id="ctxtSecurAnswer" class="k-input" type="text"/>
+    </li>
+    <li>
+    <button id="cbtnSave" type="submit" class="k-button">Save</button>
+    <button id="cbtnCancel" type="submit" class="k-button">Cancel</button>
+    </li>
+     <li>
+    <label id="clblCredtcardinfo" class="k-label"></label>
+    <div id="CredcardinfoGrid"></div>
+    </li>
+    </ul>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        Url: ''
+                    }
+                },
+                schema: {
+                    model: {
+
+                        fields: {
+                        
+                    }
+                }
+            },
+            batch: true,
+            pageSize: 30,
+           });
+         $("#CredcardinfoGrid").kendoGrid({
+            dataSource:dataSource,
+            pageable:true,
+            height:400,
+            scrollable:true,
+            columns:[
+            {
+            title:"NickName",
+            field:""
+            },
+            {
+            title:"Account#",
+            field:""
+            },
+            {
+            title:"Action",
+            Command:["edit","destroy"]
+            }
+            ]
+        });
+     });
+    </script>

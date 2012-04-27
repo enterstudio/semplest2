@@ -68,6 +68,48 @@ namespace Semplest.Core.Models
         public string ConfirmPassword { get; set; }
     }
 
+    public class ParentModel
+    {
+        public int Account { get; set; }
+        public string ParentName { get; set; }
+        public string SuperParent { get; set; }
+        public string LastName { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public int Phone { get; set; }
+        public string Email { get; set; }
+        public string BillingAddress { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public int Zip { get; set; }
+        public string UserId { get; set; }
+        public string Password { get; set; }
+        public string ConfPassword { get; set; }
+        public string SecurityQuestion { get; set; }
+        public string SecurityAnswer { get; set; }
+    }
+    public class ChildModel
+    {
+        public int Account { get; set; }
+        public string ParentName { get; set; }
+        public string Companyname { get; set; }
+        public string FirstName { get; set; }
+        public string MiddleName { get; set; }
+        public string LastName { get; set; }
+        public int Phone { get; set; }
+        public string Email { get; set; }
+        public string BillingAddress { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public int Zip { get; set; }
+        public string NickName { get; set; }
+        public int AccountNumber { get; set; }
+        public string UserId { get; set; }
+        public string Password { get; set; }
+        public string ConfPassword { get; set; }
+        public string SecurityQuestion { get; set; }
+        public string SecurityAnswer { get; set; }
+    }
     #endregion
 
     #region Services

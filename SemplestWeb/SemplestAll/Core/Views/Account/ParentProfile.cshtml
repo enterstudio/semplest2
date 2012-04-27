@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "PatentProfile";
+}
+<link href="@Url.Content("~/Content/MyStylesProfile.css")" rel="Stylesheet" />
+<h2>PatentProfile</h2>
+
+<div id="table">
+<ul>
+<li>
+<label id="lblAccunt" class="k-label">Account#:</label>
+    <input type="text" id="txtAccntNum" class="k-input" />
+    <!--<label id="lblAccntDipsply" class="k-label"></label>-->
+    </li>
+    <li>
+    <label id="lblParentName" class="k-label">ParentName:</label>
+    <input type="text" id="txtParentName" class="k-input" />
+    <label id="lblSuperParent" class="k-label">Super Parent:</label>
+    <input type="text" id="txtSuperParentName" class="k-input" />
+    </li>
+    
+    <li>
+    <label id="lblFitstName" class="k-label">First</label>
+    <label id="lblMiddleName" class="k-label">M</label>
+    <label id="lblLastName" class="k-label">Last</label>
+    </li>
+    <li>
+    <label id="lblContact" class="k-label">Contact:</label>
+    
+    <input type="text" id="txtFirstName" class="k-input" />
+    
+    <input type="text" id="txtMiddleName" class="k-input" />
+    
+    <input type="text" id="txtLastName" class="k-input" />
+    </li>
+    <li>
+    <label id="lblPhone" class="k-label">Phone:</label>
+    <input id="txtPhone" type="text" class="k-input"/>
+    <input id="txtPhone2" type="text" class="k-input"/>
+    </li>
+    <li>
+    <label id="lblEmail" class="k-label">Email:</label>
+    <input id="txtEmail" type="text" class="k-input"/>
+    </li>
+    <li>
+
+    <label id="lblBillngAddress" class="k-label">Billing Address:</label>
+    <input id="txtBillngAddress1" type="text" class="k-input"/>
+    </li>
+    <li>
+    <input id="txtBillngAddress2" type="text" class="k-input"/>
+   </li>
+   <li>
+    <label id="lblCityStateZip" class="k-label">City/State/Zip:</label>
+    <input id="txtCity" type="text" class="k-input"/>
+    <input id="txtState" type="text" class="k-input"/>
+    <input id="txtZip" type="text" class="k-input"/>
+    <input id="txtZip1" type="text" class="k-input"/>
+    </li>
+    <li>
+    <label id="lblUserId" class="k-label">UserId:</label>
+    <input id="txtUserid" class="k-input" type="text"/>
+    </li>
+    <li>
+     <label id="lblPassword" class="k-label">Password:</label>
+    <input id="txtPassword" class="k-input" type="text"/>
+
+     <label id="lblConfrmPassword" class="k-label">ReType:</label>
+    <input id="txtConfrmPassword" class="k-input" type="text"/>
+    </li>
+    <li>
+    <label id="lblSecurtQues" class="k-label">Security Question:</label>
+    <input id="txtSecurQues" class="k-input" type="text"/>
+    </li>
+    <li>
+    <label id="lblSecurtAnswer" class="k-label">Security Answer:</label>
+    <input id="txtSecurAnswer" class="k-input" type="text"/>
+    </li>
+    <li>
+    <button id="btnSave" type="submit" class="k-button">Save</button>
+    <button id="btnCancel" type="submit" class="k-button">Cancel</button>
+    </li>
+    </ul>
+    </div>
