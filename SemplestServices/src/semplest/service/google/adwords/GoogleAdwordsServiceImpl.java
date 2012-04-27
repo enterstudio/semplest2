@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -225,6 +226,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
+			/*
 			ArrayList<ReportObject> f = g.getReportForAccount(accountID);
 			for(ReportObject t : f){
 				logger.info("Keyword: " + t.getKeyword() + "; "
@@ -239,7 +241,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						+ "FirstPageCPC: " + t.getFirstPageCPC()+ "; "
 						+ "CreatedDate: " + t.getCreatedDate()+ "; ");
 			}
-			
+			*/
 
 		}
 		catch (Exception e)
@@ -1817,6 +1819,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception(e);
 		}
 	}
+	
+	public String getReportForAccount(String json) throws Exception
+	{
+		logger.debug("call  getReportForAccount" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		SemplestString accountId = new SemplestString();
+		accountId.setSemplestString(data.get("accountID"));
+		ArrayList<ReportObject> res = getReportForAccount(accountId);
+		// convert result to Json String
+		return gson.toJson(res);
+	}
 
 	private static final String DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 			+ "<fields>CampaignId</fields><fields>Id</fields><fields>HourOfDay</fields>"
@@ -1832,9 +1845,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	public ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception
+	public ArrayList<ReportObject> getReportForAccount(SemplestString accountID) throws Exception
 	{
-		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));//
+		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID.getSemplestString()));//
 		
 		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
 		

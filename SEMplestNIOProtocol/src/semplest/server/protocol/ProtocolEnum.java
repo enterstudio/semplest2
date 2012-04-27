@@ -91,7 +91,10 @@ public class ProtocolEnum {
 	}
 	public static enum ClientServiceName
 	{
-		Email("semplest.services.client.api.SemplestMailServiceClient");
+		Email("semplest.services.client.api.SemplestMailServiceClient"),
+		GoogleReport("semplest.services.client.api.GoogleAdwordsServiceClient"),
+		MsnReport("semplest.services.client.api.MSNAdcenterServiceClient")
+		;
 		private String val;
 
 		public String getClientServiceNameValue()

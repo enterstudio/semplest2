@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -81,7 +82,8 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//Utility
 	
 	//Report
-	public abstract ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception;
+	public abstract ArrayList<ReportObject> getReportForAccount(SemplestString accountID) throws Exception;
+
 	
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

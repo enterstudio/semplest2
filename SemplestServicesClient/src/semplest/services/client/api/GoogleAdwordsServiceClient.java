@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
@@ -580,11 +581,15 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
-
+	
 	@Override
-	public ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<ReportObject> getReportForAccount(SemplestString accountID) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID.toString());
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportForAccount", json,timeoutMS);
+		return gson.fromJson(returnData, ArrayList.class);
 	}
 
 }

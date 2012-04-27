@@ -4,9 +4,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import org.joda.time.DateTime;
+
+import com.google.gson.Gson;
+import com.microsoft.adcenter.v8.ReportAggregation;
+
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.SemplestString;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddScheduleJobSP;
 import semplest.services.client.api.SemplestSchedulerServiceClient;
@@ -18,6 +24,8 @@ public class CreateSchedulerAndTask
 {
 	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
+	private static Gson gson = new Gson();
+	
 	public static SemplestSchedulerTaskObject getSendMailTask(String subject, String from, String recipient, String msgTxt)
 	{
 		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
@@ -31,6 +39,42 @@ public class CreateSchedulerAndTask
 		jsonHash.put("from", from);
 		jsonHash.put("recipient", recipient);
 		jsonHash.put("msgTxt", msgTxt);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		taskObj.setParameters(json);
+		//
+		return taskObj;
+	}
+	
+	public static SemplestSchedulerTaskObject getGoogleReportTask(SemplestString accountID)
+	{
+		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
+		//Client service name to call from scheduler
+		taskObj.setClientServiceName(ProtocolEnum.ClientServiceName.valueOf("GoogleReport").getClientServiceNameValue());
+		//method
+		taskObj.setMethodName("getReportForAccount");
+		//json parameters
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID.getSemplestString());
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		taskObj.setParameters(json);
+		//
+		return taskObj;
+	}
+	
+	public static SemplestSchedulerTaskObject getMsnReportTask(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation)
+	{
+		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
+		//Client service name to call from scheduler
+		taskObj.setClientServiceName(ProtocolEnum.ClientServiceName.valueOf("MsnReport").getClientServiceNameValue());
+		//method
+		taskObj.setMethodName("getKeywordReport");
+		//json parameters
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId));
+		jsonHash.put("campaignId", Long.toString(campaignId));
+		jsonHash.put("firstDay", gson.toJson(firstDay));
+		jsonHash.put("lastDay", gson.toJson(lastDay));
+		jsonHash.put("aggregation", gson.toJson(aggregation));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		taskObj.setParameters(json);
 		//
