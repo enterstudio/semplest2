@@ -582,7 +582,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public ReportObject getReportForAccount(String accountID) throws Exception {
+	public ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

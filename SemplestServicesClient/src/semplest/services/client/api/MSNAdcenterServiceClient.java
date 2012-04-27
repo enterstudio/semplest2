@@ -1,40 +1,39 @@
 package semplest.services.client.api;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
 import org.joda.time.DateTime;
 
 import semplest.other.KeywordEstimate;
-import semplest.other.Maybe;
 import semplest.other.Money;
-import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.msn.*;
+import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.server.protocol.msn.MsnAdObject;
+import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 import com.google.gson.Gson;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
-import com.microsoft.adcenter.v8.*;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.microsoft.adcenter.v8.Ad;
+import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.Bid;
+import com.microsoft.adcenter.v8.BudgetLimitType;
+import com.microsoft.adcenter.v8.Campaign;
+import com.microsoft.adcenter.v8.CampaignStatus;
+import com.microsoft.adcenter.v8.Keyword;
+import com.microsoft.adcenter.v8.ReportAggregation;
+import com.microsoft.adcenter.v8.Target;
 
 
 public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterServiceInterface, SchedulerTaskRunnerInterface
@@ -440,7 +439,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			//getKeywordReport
 			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
-			ReportObject ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Daily);
+			ArrayList<ReportObject> ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Daily);
 			
 			
 			
@@ -1227,7 +1226,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return ret;
 	}
 	
-	public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
+	public ArrayList<ReportObject> getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -1238,7 +1237,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, null);
-		ReportObject ret = gson.fromJson(returnData, ReportObject.class);
+		ArrayList<ReportObject> ret = gson.fromJson(returnData, ArrayList.class);
 
 		logger.debug("getKeywordReport: ok");
 		
