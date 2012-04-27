@@ -283,6 +283,9 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(CustomerAccountWithEmployeeModel m)
         {
 
+            if (!ModelState.IsValid)
+                return View(m);
+
             SemplestEntities dbcontext = new SemplestEntities();
 
 
@@ -454,6 +457,8 @@ namespace Semplest.Admin.Controllers
         public ActionResult Add()
         {
 
+
+
             SemplestEntities dbcontext = new SemplestEntities();
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -574,6 +579,9 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Add(CustomerAccountWithEmployeeModel m)
         {
+            if (!ModelState.IsValid)
+                return View(m);
+
 
             try
             {

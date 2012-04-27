@@ -8,7 +8,7 @@ using System.Data.Entity.Validation;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
-using Semplest.SharedResources.Helpers;
+
 
 
 
@@ -142,6 +142,8 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(int id)
         {
 
+            
+
             SemplestEntities dbcontext = new SemplestEntities();
             /*
              select employeePK, EmployeeTypeFK, UserPK, FirstName, LastName, Email, EmployeeTypeID, RolesFK, RoleName, EmployeeType 
@@ -167,6 +169,7 @@ namespace Semplest.Admin.Controllers
                    UserPK = u.UserPK,
                    EmployeeType = e.EmployeeType.EmployeeType1,
                    FirstName = u.FirstName,
+                   MiddleInitial = u.MiddleInitial,
                    LastName = u.LastName,
                    RoleName = r.RoleName,
                    Email = u.Email,
@@ -237,6 +240,9 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Edit(EmployeeSetupWithRolesModel m)
         {
+
+            if (!ModelState.IsValid)
+                return  View(m);
 
             SemplestEntities dbcontext = new SemplestEntities();
             
@@ -336,6 +342,9 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Add(EmployeeSetupWithRolesModel m)
         {
+            if (!ModelState.IsValid)
+                return View(m);
+
 
             try
             {

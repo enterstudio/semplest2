@@ -141,21 +141,42 @@ namespace Semplest.Admin.Models
     public class CustomerAccount
     {
         public int AccountNumber { get; set; }
+        
+        [Required]
         public string Customer { get; set; }
+        
+        [Required]
         [DisplayName("First Name")] 
         public string FirstName { get; set; }
+        
         [DisplayName("Middle Initial")] 
         public string MiddleInitial { get; set; }
+        
+        [Required]
         [DisplayName("Last Name")] 
         public string LastName { get; set; }
+
+        [Required]
         public string Address1 { get; set; }
         public string Address2 { get; set; }
+        [Required]
         public string City { get; set; }
         public string State { get; set; }
         public int StateID { get; set; }
+
+        [Required]
         public string Zip { get; set; }
+
+        [Required]
         public string Phone { get; set; }
+        
+        
+        [Required]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
+        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
+
+
         public string BillType { get; set; }
         public int  UserPK { get; set; }
         [DisplayName("SEMplest Internal Note:")] 
@@ -171,15 +192,27 @@ namespace Semplest.Admin.Models
         public int UserPK { get; set; }
         public int EmployeeTypeID { get; set; }
         public int RolesFK { get; set; }
+        
         [DisplayName("First Name")] 
+        [Required]
         public string FirstName { get; set; }
+        
         [DisplayName("Middle Initial")] 
         public string MiddleInitial { get; set; }
-        [DisplayName("Last Name")] 
+        
+        [DisplayName("Last Name")]
+        [Required]
         public string LastName { get; set; }
+        //public string Phone { get; set; } --cannot add phone to employee yet, *due to customer phone association
+
+        [Required]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
+        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
+        
         public string RoleName { get; set; }
         public string EmployeeType { get; set; }
+
         public int ReportingTo { get; set; }
         public bool isActive { get; set; }
     }
