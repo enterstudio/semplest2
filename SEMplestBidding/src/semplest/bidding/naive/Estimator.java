@@ -53,7 +53,6 @@ public class Estimator {
           ke.getMax().getAverageCpc().getMicroAmount())/20000);
     float cpd = (ke.getMin().getClicksPerDay() + 
         ke.getMax().getClicksPerDay()) / 2;
-    System.out.println( acpc + " , " + cpd );
     return Math.round( acpc * cpd );
   }
   // ------- conveniences                        
