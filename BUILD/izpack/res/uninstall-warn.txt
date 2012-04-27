@@ -1,1 +1,0 @@
-This will remove the ${app.name} application
