@@ -89,7 +89,23 @@ public class ProtocolEnum {
 			return false;
 		}
 	}
-	
+	public static enum ClientServiceName
+	{
+		Email("semplest.services.client.api.SemplestMailServiceClient");
+		private String val;
+
+		public String getClientServiceNameValue()
+		{
+			return val;
+		}
+
+		private ClientServiceName(String value)
+		{
+			val = value;
+		}
+
+	}
+
 	
 
 }
