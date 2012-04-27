@@ -156,7 +156,7 @@ namespace Semplest.Core.Controllers
         //URL:/Account/ParentProfile
         //****************************************
 
-        public ActionResult PatentProfile()
+        public ActionResult ParentProfile()
         {
             return View();
         }
