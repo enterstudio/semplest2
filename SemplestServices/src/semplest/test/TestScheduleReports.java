@@ -37,7 +37,7 @@ public class TestScheduleReports
 			listOfTasks.add(reportTask1);
 			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "GoogleReportScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			
-					}
+		}
 		catch (Exception e)
 		{
 			System.out.println("ERROR" + e.getMessage());

@@ -91,7 +91,9 @@ public class GoogleReportDownloader
 					String[] data = lines.get(i).split(",");
 					ReportObject rdata = new ReportObject();
 					
-					//parse the data to ReportObject					
+					//parse the data to ReportObject	
+					rdata.setAccountID(accountID);
+					rdata.setCampaignID(Long.valueOf(data[11]));
 					rdata.setKeyword(data[3]);
 					String maxCpcStr = data[14];
 					if(maxCpcStr.equals(" --"))

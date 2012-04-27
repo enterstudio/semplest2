@@ -1904,26 +1904,14 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public String requestKeywordReport(Long accountId, Long campaignId, ReportTime time, ReportAggregation aggregation)  throws RemoteException
 	{
 		KeywordPerformanceReportColumn[] columns;
-		if (aggregation == ReportAggregation.Summary)
-		{
-			columns = new KeywordPerformanceReportColumn[]
-			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, 
-					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
-					KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
-					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
-					KeywordPerformanceReportColumn.TimePeriod
-			};
-		}
-		else
-		{
-			columns = new KeywordPerformanceReportColumn[]
-			{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, 
-					KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
-					KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
-					KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
-					KeywordPerformanceReportColumn.TimePeriod
-			};
-		}
+
+		columns = new KeywordPerformanceReportColumn[]
+		{ KeywordPerformanceReportColumn.Keyword, KeywordPerformanceReportColumn.AveragePosition, 
+				KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
+				KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
+				KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
+				KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId
+		};
 
 		final boolean returnOnlyCompleteData = false;
 		final String reportName = "Keyword Report for Account " + accountId + " Campaign ";
@@ -2454,6 +2442,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		if(ret2.get("keyword") != null){
 			for(int i = 0; i < ret2.get("keyword").length; i++){
 				ReportObject data = new ReportObject();
+				data.setAccountID(accountId);
+				data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 				data.setKeyword(ret2.get("keyword")[i]);
 				data.setBidAmount((int)(Double.valueOf(ret2.get("currentmaxcpc")[i])*1000000));
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);

@@ -1,5 +1,6 @@
 package semplest.service.google.adwords;
 
+import java.io.File;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -226,8 +227,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
-			/*
-			ArrayList<ReportObject> f = g.getReportForAccount(accountID);
+			///*
+			SemplestString ss = new SemplestString();
+			ArrayList<ReportObject> f = g.getReportForAccount(ss.toSemplestString(accountID));
 			for(ReportObject t : f){
 				logger.info("Keyword: " + t.getKeyword() + "; "
 						+ "Bidamount: " + t.getBidAmount() + "; "
@@ -239,9 +241,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						+ "QualityScore: " + t.getQualityScore()+ "; "
 						+ "ApprovalStatus: " + t.getApprovalStatus()+ "; "
 						+ "FirstPageCPC: " + t.getFirstPageCPC()+ "; "
-						+ "CreatedDate: " + t.getCreatedDate()+ "; ");
+						+ "CreatedDate: " + t.getCreatedDate()+ "; "
+						+ "AccountID: " + t.getAccountID()+ "; "
+						+ "CampaignID: " + t.getCampaignID()+ "; "
+						);
 			}
-			*/
+			//*/
+			
 
 		}
 		catch (Exception e)
@@ -1841,7 +1847,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
-			+ "<fields>ApprovalStatus</fields>"
+			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>"
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
