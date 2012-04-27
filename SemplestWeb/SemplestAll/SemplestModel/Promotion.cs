@@ -36,6 +36,8 @@ namespace SemplestModel
         public bool IsPaused { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
+        public bool IsCompleted { get; set; }
+        public bool IsLaunched { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }

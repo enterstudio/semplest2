@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="SemplestModelStoreContainer">
           <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
@@ -610,6 +610,8 @@
           <Property Name="IsPaused" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="IsCompleted" Type="bit" Nullable="false" />
+          <Property Name="IsLaunched" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -775,6 +777,7 @@
           <Property Name="KeywordBidFK" Type="int" />
           <Property Name="MicroCost" Type="int" Nullable="false" />
           <Property Name="NumberClicks" Type="int" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -1473,20 +1476,14 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Function Name="AddAddTask" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="ServiceName" Type="varchar" Mode="In" />
-          <Parameter Name="MethodName" Type="varchar" Mode="In" />
-          <Parameter Name="Parameters" Type="varchar" Mode="In" />
-          <Parameter Name="ID" Type="int" Mode="InOut" />
-        </Function>
         <Function Name="AddAdvertisingEngineAccount" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="AdvertisingEngineAccountID" Type="varchar" Mode="In" />
+          <Parameter Name="AdvertisingEngineAccountID" Type="bigint" Mode="In" />
           <Parameter Name="AdvertisingEngine" Type="nvarchar" Mode="In" />
           <Parameter Name="CustomerID" Type="int" Mode="In" />
         </Function>
         <Function Name="AddAdvertisingEnginePromotion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-          <Parameter Name="AdvertisingEngineAccountID" Type="varchar" Mode="In" />
-          <Parameter Name="AdvertisingEngineCampaignID" Type="int" Mode="In" />
+          <Parameter Name="AdvertisingEngineAccountID" Type="bigint" Mode="In" />
+          <Parameter Name="AdvertisingEngineCampaignID" Type="bigint" Mode="In" />
           <Parameter Name="PromotionID" Type="int" Mode="In" />
           <Parameter Name="IsSearchNetwork" Type="bit" Mode="In" />
           <Parameter Name="IsDisplayNetwork" Type="bit" Mode="In" />
@@ -1516,10 +1513,15 @@
           <Parameter Name="Parameters" Type="varchar" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
+        <Function Name="fn_diagramobjects" ReturnType="int" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="GetAdvertisingEnginePromotion" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="AdvertisingEngineAccountID" Type="varchar" Mode="In" />
         </Function>
         <Function Name="GetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="GetNextScheduleTime" ReturnType="datetime" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDateTime" Type="datetime" Mode="In" />
+          <Parameter Name="Frequency" Type="varchar" Mode="In" />
+        </Function>
         <Function Name="SetBidObject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ProductGroupPK" Type="int" Mode="In" />
           <Parameter Name="PromotionPK" Type="int" Mode="In" />
@@ -1543,11 +1545,40 @@
           <Parameter Name="IsSuccessful" Type="bit" Mode="In" />
           <Parameter Name="ErrorMessage" Type="varchar" Mode="In" />
         </Function>
+        <Function Name="sp_alterdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_creatediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="version" Type="int" Mode="In" />
+          <Parameter Name="definition" Type="varbinary(max)" Mode="In" />
+        </Function>
+        <Function Name="sp_dropdiagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
         <Function Name="sp_GetRigtsRolesInteraction" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="roleId" Type="int" Mode="In" />
         </Function>
-      </Schema>
-    </edmx:StorageModels>
+        <Function Name="sp_helpdiagramdefinition" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_helpdiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="sp_renamediagram" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="diagramname" Type="nvarchar" Mode="In" />
+          <Parameter Name="owner_id" Type="int" Mode="In" />
+          <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
+        </Function>
+        <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -1819,7 +1850,7 @@
             <End Role="Promotion" EntitySet="Promotions" />
           </AssociationSet>
           <FunctionImport Name="sp_GetRigtsRolesInteraction" ReturnType="Collection(SemplestModel.sp_GetRigtsRolesInteraction_Result)">
-            <Parameter Name="roleId" Mode="In" Type="Int32" />
+          <Parameter Name="roleId" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Address">
@@ -2225,6 +2256,8 @@
           <NavigationProperty Name="PromotionKeywordAssociations" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" FromRole="Promotion" ToRole="PromotionKeywordAssociation" />
           <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Promotion_Schedule_2" FromRole="Promotion" ToRole="Schedule" />
           <NavigationProperty Name="AdvertisingEngines" Relationship="SemplestModel.PromotionAdEngineSelected" FromRole="Promotion" ToRole="AdvertisingEngine" />
+          <Property Type="Boolean" Name="IsCompleted" Nullable="false" />
+          <Property Type="Boolean" Name="IsLaunched" Nullable="false" />
         </EntityType>
         <EntityType Name="PromotionAd">
           <Key>
@@ -2409,6 +2442,7 @@
           <Property Name="MicroCost" Type="Int32" Nullable="false" />
           <Property Name="NumberClicks" Type="Int32" Nullable="false" />
           <NavigationProperty Name="KeywordBid" Relationship="SemplestModel.REL_KeywordBid_TrafficEstimator_1" FromRole="TrafficEstimator" ToRole="KeywordBid" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -3460,6 +3494,8 @@
           <EntitySetMapping Name="Promotions">
             <EntityTypeMapping TypeName="SemplestModel.Promotion">
               <MappingFragment StoreEntitySet="Promotion">
+                <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
                 <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
                 <ScalarProperty Name="ProductGroupFK" ColumnName="ProductGroupFK" />
                 <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
@@ -3636,6 +3672,7 @@
           <EntitySetMapping Name="TrafficEstimators">
             <EntityTypeMapping TypeName="SemplestModel.TrafficEstimator">
               <MappingFragment StoreEntitySet="TrafficEstimator">
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="TrafficEstimatorPK" ColumnName="TrafficEstimatorPK" />
                 <ScalarProperty Name="KeywordBidFK" ColumnName="KeywordBidFK" />
                 <ScalarProperty Name="MicroCost" ColumnName="MicroCost" />

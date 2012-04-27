@@ -18,6 +18,7 @@ namespace SemplestModel
         public Nullable<int> KeywordBidFK { get; set; }
         public int MicroCost { get; set; }
         public int NumberClicks { get; set; }
+        public System.DateTime CreatedDate { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }
     }
