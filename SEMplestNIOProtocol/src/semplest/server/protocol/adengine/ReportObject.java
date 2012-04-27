@@ -1,8 +1,5 @@
 package semplest.server.protocol.adengine;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-
 import org.joda.time.DateTime;
 
 public class ReportObject
