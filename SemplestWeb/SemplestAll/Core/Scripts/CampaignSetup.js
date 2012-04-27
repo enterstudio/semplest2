@@ -31,6 +31,8 @@
     //DropdownlistBindig
     $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
 
+    // Dropdownlist Range in BillingLaunch
+    $("#dropDownRange").kendoDropDownList();
 
     // event handler for select
     var onSelect = function (e) {
@@ -153,6 +155,23 @@
             });
         }
     });
+
+    $("#viewSelectedKeywords").click(function () {
+        var length = tabStrip.items().length;
+        var isAdditionalLinksAdded = false;
+        for (var item = 0; item < length; item++) {
+            if (tabStrip.items().item(item).innerText == "View Keywords") {
+                isAdditionalLinksAdded = true;
+                break;
+            }
+        }
+        if (!isAdditionalLinksAdded)
+            tabStrip.append({
+                text: "View Keywords",
+                contentUrl: '/Campaign/KeyWords'
+            });
+    });
+
 });
 
 function removeNestedForm(element, container, deleteElement) {
