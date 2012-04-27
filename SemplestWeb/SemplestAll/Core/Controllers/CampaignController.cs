@@ -39,22 +39,15 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "GetCategories")]
         public ActionResult GetCategories(CampaignSetupModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    model = _campaignRepository.GetCategories(model);
-                    // save this some how while getting the keywords this is becoming null
-                    Session.Add("AllCategories", model.AllCategories);
-                    Session.Add("AdModelProp", model.AdModelProp);
-                    Session.Add("ProductGroup", model.ProductGroup);
-                }
-                return PartialView("Categories", model);
+                model = _campaignRepository.GetCategories(model);
+                // save this some how while getting the keywords this is becoming null
+                Session.Add("AllCategories", model.AllCategories);
+                Session.Add("AdModelProp", model.AdModelProp);
+                Session.Add("ProductGroup", model.ProductGroup);
             }
-            catch (Exception)
-            {
-                return View(model);
-            }
+            return null;
         }
 
         [HttpPost]
@@ -62,21 +55,15 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "GetKeywords")]
         public ActionResult GetKeywords(CampaignSetupModel model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
-                {
-                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-                    model = _campaignRepository.GetKeyWords(model);
-                    Session.Add("FullModel", model);
-                }
-                return PartialView("KeyWords", model);
+                model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+                model = _campaignRepository.GetKeyWords(model);
+                model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
+                Session.Add("FullModel", model);
             }
-            catch (Exception)
-            {
-                //string err = ex.Message + "\\r\\n" + ex.StackTrace;
-                return View(model);
-            }
+            //return PartialView("KeyWords", model);
+            return PartialView("BillingLaunch", model);
         }
 
         #region Nested type: AcceptSubmitTypeAttribute
@@ -120,6 +107,7 @@ namespace Semplest.Core.Controllers
         }
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
+            model = (CampaignSetupModel)Session["FullModel"];
             return PartialView(model);
         }
         [HttpPost]
