@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import semplest.bidding.estimation.EstimatorData;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
@@ -30,6 +31,43 @@ public class BidGeneratorObj {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
 	
+	
+	public HashMap<String,Double> GetMonthlyBudgetPerSE (ArrayList<String> searchEngine, 
+			Double TotalMonthlyBudget)  throws Exception  {
+		
+		HashSet<String> setSE = new HashSet<String>(); 
+		for (String s : searchEngine){
+			if(setSE.contains(s)){
+				throw new Exception("Search engine "+s+" appears twice!!");
+			} else {
+				setSE.add(s);
+			}
+			if (!AdEngine.existsAdEngine(s)){
+				throw new Exception(s + " Not Found");
+			}
+		}
+		
+		
+		HashMap<String,Double> budgetMap = new HashMap<String,Double>();
+
+		switch (searchEngine.size()) {
+			case 2:
+				if(searchEngine.get(0).equalsIgnoreCase("Google") && searchEngine.get(1).equalsIgnoreCase("MSN") ||
+						searchEngine.get(0).equalsIgnoreCase("MSN") && searchEngine.get(1).equalsIgnoreCase("Geogle") ) {
+					budgetMap.put("Google", new Double(0.7*TotalMonthlyBudget));
+					budgetMap.put("MSN", new Double(0.3*TotalMonthlyBudget));
+					break;
+				}
+				throw new Exception("Invalid combination of search engine options!");
+			case 1:
+				budgetMap.put(searchEngine.get(0), new Double(TotalMonthlyBudget));
+			default:
+				throw new Exception("Invalid number of search engines.. Received "+searchEngine.size()+" search engine names!");
+		}
+
+		
+		return budgetMap;
+	}
 	
 	
 	
