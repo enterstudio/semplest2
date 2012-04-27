@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Net.Mail;
 using Semplest.WebSite.Models;
+using SemplestModel;
 
 namespace Semplest.WebSite.Controllers
 {
