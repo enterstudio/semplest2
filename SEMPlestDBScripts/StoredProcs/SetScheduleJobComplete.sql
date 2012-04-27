@@ -28,6 +28,7 @@ BEGIN TRY
 		where ScheduleJobPK = @ScheduleJobID	
 		
 
+
 	--Get the schedule parameters
 	DECLARE @StartDateTime				DATETIME, 
 			@Frequency					VARCHAR(15)
@@ -40,6 +41,7 @@ BEGIN TRY
 	INNER JOIN dbo.Frequency f on f.FrequencyPK = s.FrequencyFK
 	WHERE sj.ScheduleJobPK = @ScheduleJobID;
 	
+	print @Frequency
 	--Check to see if we need to add a new Job
 	IF @Frequency IS NOT NULL
 	BEGIN
@@ -50,14 +52,14 @@ BEGIN TRY
 			FROM dbo.ScheduleJob s
 			WHERE s.ScheduleJobPK = @ScheduleJobID;
 			
-			DECLARE @NextTimeToRun DATETIME;
+			DECLARE @NextTimeToRun DATETIME2;
 			SELECT @NextTimeToRun = dbo.GetNextScheduleTime(@StartDateTime, @Frequency);
-															
+																			
 			--Add next job to run
-			INSERT INTO ScheduleJob(ScheduleFK,IsComplete,IsSuccessful,ExecutionStartTime)
-			SELECT sj.ScheduleFK,0,0,@NextTimeToRun FROM ScheduleJob sj 
+			INSERT INTO ScheduleJob(ScheduleFK,IsComplete,IsSuccessful,ExecutionStartTime, CreatedDate)
+			SELECT sj.ScheduleFK,0,0,@NextTimeToRun, CURRENT_TIMESTAMP FROM ScheduleJob sj 
 				inner join Schedule s on s.SchedulePK = sj.ScheduleFK 
-			where sj.ScheduleJobPK = @ScheduleJobID and @NextTimeToRun <= ISNULL(s.EndDate, '2050-01-01')	
+			where sj.ScheduleJobPK = @ScheduleJobID and (s.EndDate is null or @NextTimeToRun <= s.EndDate)	
 			
 		END
 	END
