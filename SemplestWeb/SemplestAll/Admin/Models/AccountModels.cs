@@ -142,7 +142,7 @@ namespace Semplest.Admin.Models
     {
         public int AccountNumber { get; set; }
         
-        [Required]
+      
         public string Customer { get; set; }
         
         [Required]
