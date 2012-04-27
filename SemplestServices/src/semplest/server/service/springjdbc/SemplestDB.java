@@ -13,6 +13,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
@@ -174,7 +175,18 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.query(strSQL, new Object[]
 		{ promotionID, advertisingEngine }, bidObjMapper);
 	}
+	
+	/*
+	 * Report calls
+	 */
 
+	private static void storeAdvertisingEngineBidData(ArrayList<ReportObject> reportObjList)
+	{
+		for (ReportObject rptObj : reportObjList)
+		{
+			//logger.info()
+		}
+	}
 	/*
 	 * Account calls
 	 */

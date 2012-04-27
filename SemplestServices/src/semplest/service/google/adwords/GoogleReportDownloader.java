@@ -15,12 +15,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.joda.time.DateTime;
 
 import semplest.server.protocol.adengine.ReportObject;
-import semplest.server.protocol.adengine.ReportObject.Transaction;
 
 /**
  * * Helper class to download the specified reportDefinition XML to a temporary
@@ -57,7 +55,7 @@ public class GoogleReportDownloader
 		return File.createTempFile("reportDownload-" + this.accountID + "-", ".report");
 	}
 	
-	public ReportObject getReportObject(String authToken, String developerToken) throws Exception
+	public ArrayList<ReportObject> getReportObject(String authToken, String developerToken) throws Exception
 	{
 		try{
 			
@@ -88,10 +86,10 @@ public class GoogleReportDownloader
 				}
 				
 				//the first 2 lines are header, and the last line is conclusion. throw them.
-				ReportObject report = new ReportObject();
+				ArrayList<ReportObject> reportObjectList = new ArrayList<ReportObject>();
 				for (int i = 2; i < lines.size()-1; i++){
 					String[] data = lines.get(i).split(",");
-					Transaction rdata = report.new Transaction();
+					ReportObject rdata = new ReportObject();
 					
 					//parse the data to ReportObject					
 					rdata.setKeyword(data[3]);
@@ -109,10 +107,10 @@ public class GoogleReportDownloader
 					rdata.setFirstPageCPC(Integer.valueOf(data[13]));
 					rdata.setCreatedDate(new DateTime(data[0]));
 					
-					report.addTransaction(rdata);
+					reportObjectList.add(rdata);
 				}
 				
-				return report;
+				return reportObjectList;
 			}
 			else
 			{

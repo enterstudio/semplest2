@@ -11,7 +11,6 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,18 +29,18 @@ import org.joda.time.DateTime;
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
 import semplest.other.KeywordEstimate;
-import semplest.other.Maybe;
 import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
-import semplest.other.SemplestError;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
-import semplest.server.protocol.*;
+import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
-import semplest.server.protocol.adengine.ReportObject.Transaction;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.msn.*;
+import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.server.protocol.msn.MsnAdObject;
+import semplest.server.protocol.msn.MsnKeywordObject;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.gson.Gson;
@@ -195,8 +194,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
 			
-			ReportObject ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
-			for(Transaction t: ret.getTransactions()){
+			ArrayList<ReportObject> ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
+			for(ReportObject t: ret){
 				logger.info("Keyword = " + t.getKeyword());
 				logger.info("BidAmount = " + t.getBidAmount());
 				logger.info("BidMatchType = " + t.getBidMatchType());
@@ -2430,7 +2429,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		logger.debug("call getKeywordReport(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		ReportObject ret = null;
+		ArrayList<ReportObject> ret = null;
 		try {
 			ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
 					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")),
@@ -2442,7 +2441,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public ReportObject getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
+	public ArrayList<ReportObject> getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
 		
 		ReportObject ret = new ReportObject();
 		
@@ -2451,10 +2450,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		//getReportData
 		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
-		
+		ArrayList<ReportObject> reportObjectList = new  ArrayList<ReportObject>();
 		if(ret2.get("keyword") != null){
 			for(int i = 0; i < ret2.get("keyword").length; i++){
-				Transaction data = ret.new Transaction();
+				ReportObject data = new ReportObject();
 				data.setKeyword(ret2.get("keyword")[i]);
 				data.setBidAmount((int)(Double.valueOf(ret2.get("currentmaxcpc")[i])*1000000));
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
@@ -2468,10 +2467,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				String[] t = ret2.get("week")[i].split("/");
 				data.setCreatedDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0));
 				
-				ret.addTransaction(data);			
+				reportObjectList.add(data);			
 			}
 		}
 		
-		return ret;
+		return reportObjectList;
 	}
 }

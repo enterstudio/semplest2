@@ -1,13 +1,5 @@
 package semplest.service.google.adwords;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,19 +15,15 @@ import semplest.other.DateTimeFloored;
 import semplest.server.protocol.adengine.BidObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
-import semplest.server.protocol.adengine.ReportObject.Transaction;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.service.google.adwords.GoogleReportDownloader.HttpException;
-import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
 import com.google.api.adwords.lib.AdWordsUser;
 import com.google.api.adwords.lib.AuthToken;
-import com.google.api.adwords.lib.AuthTokenException;
 import com.google.api.adwords.lib.utils.MapUtils;
 import com.google.api.adwords.v201109.cm.Ad;
 import com.google.api.adwords.v201109.cm.AdGroup;
@@ -83,9 +71,6 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
-import com.google.api.adwords.v201109.cm.ReportDefinitionField;
-import com.google.api.adwords.v201109.cm.ReportDefinitionReportType;
-import com.google.api.adwords.v201109.cm.ReportDefinitionService;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -116,7 +101,6 @@ import com.google.api.adwords.v201109.o.TrafficEstimatorResult;
 import com.google.api.adwords.v201109.o.TrafficEstimatorSelector;
 import com.google.api.adwords.v201109.o.TrafficEstimatorServiceInterface;
 import com.google.gson.Gson;
-import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
@@ -241,8 +225,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
-			ReportObject f = g.getReportForAccount(accountID);
-			for(Transaction t : f.getTransactions()){
+			ArrayList<ReportObject> f = g.getReportForAccount(accountID);
+			for(ReportObject t : f){
 				logger.info("Keyword: " + t.getKeyword() + "; "
 						+ "Bidamount: " + t.getBidAmount() + "; "
 						+ "BidMatchType: " + t.getBidMatchType() + "; "
@@ -1848,16 +1832,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	public ReportObject getReportForAccount(String accountID) throws Exception
+	public ArrayList<ReportObject> getReportForAccount(String accountID) throws Exception
 	{
 		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID));//
 		
 		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
 		
-		ReportObject ret = report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
+		return report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
 		
-		return ret;
-
 	}
 
 	@Override
