@@ -1,0 +1,149 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using SemplestModel;
+using System.Linq;
+
+namespace Semplest.Core.Models
+{
+    public class CampaignSetupModel
+    {
+        public CampaignSetupModel()
+        {
+            ProductGroup = new ProductGroupModel();
+            AdModelProp = new AdModel();
+            BillingLaunch = new BillingLaunchModel();
+            // for categories
+            AllCategories = new List<CategoriesModel>();
+            SelectedCategories = new List<CategoriesModel>();
+            CategoryIds = new List<int>();
+            // for keywords
+            AllKeywords = new List<KeywordsModel>();
+            SelectedKeywords = new List<KeywordsModel>();
+            KeywordIds = new List<int>();
+            
+        }
+        public ProductGroupModel ProductGroup { get; set; }
+        public AdModel AdModelProp { get; set; }
+        public BillingLaunchModel BillingLaunch { get; set; }
+        
+        #region Nested type: CategoriesModel
+
+        public List<int> CategoryIds { get; set; }
+        public List<CategoriesModel> SelectedCategories { get; set; }
+        public List<CategoriesModel> AllCategories { get; set; }
+        
+
+        public class CategoriesModel
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+
+        #endregion
+
+        #region Nested type: KeywordsModel
+        public List<KeywordsModel> AllKeywords { get; set; }
+        public List<KeywordsModel> SelectedKeywords { get; set; }
+        public List<int> KeywordIds { get; set; }
+
+        public class KeywordsModel
+        {
+            public int Id { get; set; }
+            public string Name { get; set; }
+        }
+      
+        #endregion
+
+    }
+
+    public class MapAddressModel
+    {
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string State { get; set; }
+        public string Zip { get; set; }
+        public decimal Longitude { get; set; }
+        public decimal Latitude { get; set; }
+        public decimal ProximityRadius { get; set; }
+    }
+
+    public class AdModel
+    {
+        public AdModel ()
+        {
+            Addresses = new List<GeoTargeting> { new GeoTargeting() };
+            Ads = new List<PromotionAd> { new PromotionAd() }; 
+        }
+        public List<GeoTargeting> Addresses { get; set; }
+        public List<PromotionAd> Ads { get; set; }
+        public string Url { get; set; }
+       
+       
+
+    }
+
+    public class AdEngineSelectModel
+    {
+        bool IsSelected { get; set; }
+        string Name { get; set; }
+    }
+
+    public class ProductGroupModel
+    {
+        public ProductGroupModel()
+        {
+            //using (SemplestEntities dbcontext = new SemplestEntities())
+            //{
+            //    try
+            //    {
+            //        var query = from c in dbcontext.AdvertisingEngines select c.AdvertisingEngine1;
+            //        if (query.Count() > 0)
+            //        {
+            //            AdEnginesList = query.ToList();
+            //        }
+            //        else
+            //        {
+            //            AdEnginesList = new List<string>();
+            //        }
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        string msg = ex.Message;
+            //        throw;
+            //    }
+            //}
+
+            AdEnginesSelectedList = new List<AdEngineSelectModel>();
+        }
+
+        public string ProductGroupName { get; set; }
+        public string ProductPromotionName { get; set; }
+        public string Words { get; set; }
+        public decimal Budget { get; set; }
+        //public DateTime StartDate { get; set; }
+        //public DateTime EndDate { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+        public List<string> AdEnginesList { get; set; }
+        public List<AdEngineSelectModel> AdEnginesSelectedList { get; set; }
+        public bool Google { get; set; }
+        public bool YahooBing { get; set; }
+    }
+
+    public class BillingLaunchModel
+    {
+        public int KeywordsCount { get; set; }
+        public string Range { get; set; }
+    }
+
+    public class AdditionalLinks
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+        public string Url { get; set; }
+    }
+}

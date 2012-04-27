@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title - SEMPLEST</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="Stylesheet" />
+    <link href="@Url.Content("~/Content/kendo.metro.min.css")"  rel="Stylesheet" />
+    <link href="@Url.Content("~/Content/example.css")"  rel="Stylesheet" />
+    <script src="@Url.Content("~/Scripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"></script>
+</head>
+<body>
+<div id="exceptFooterWrap">
+    <div id="exceptFooter">
+        <div id="header">
+                <div class="floatWrap centerWrap">
+                    <img src="@Url.Content("~/Content/themes/base/images/logo.png")" height="41px" />
+                    <a id="referenceUrl" href="/"></a>
+                    <ul class="centerWrap floatWrap">
+                        <li style="margin-left: 0;">
+                            @Html.ActionLink("Create User", "Index", "Home", new { area = "" }, null)</li>
+                        <li>@Html.ActionLink("Campaign", "CampaignSetup", "Campaign", new { area = "Campaign" }, null)</li>
+                        <li>@Html.ActionLink("Search Keywords", "SearchKeywords", "Home")</li>
+@*                        <li>@Html.ActionLink("BillType", "BillType", "Entity")</li>
+                        <li>@Html.ActionLink("Phone", "Index", "Test")</li>
+*@                    </ul>
+                </div>
+            </div>
+            <div id="flowerWrap">
+                <div class="flowers">
+                </div>
+            </div>
+        <div id="navmainWrap" class="floatWrap centerWrap hasNavigation">
+            <div id="navWrap">
+                @RenderSection("Navbar");
+            </div>
+            <div id="main">
+                @RenderBody();
+            </div>
+        </div>
+    </div>
+    <!-- / exceptFooter -->
+</div>
+</body>
+</html>

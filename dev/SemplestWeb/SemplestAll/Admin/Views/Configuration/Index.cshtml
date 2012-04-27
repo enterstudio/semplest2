@@ -1,0 +1,217 @@
+﻿@model SemplestModel.Configuration
+
+@{
+    ViewBag.Title = "Edit";
+}
+@section Title{
+System Defaults
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+
+<p>
+    @Html.ActionLink("System Defaults", "../Configuration") |
+    @Html.ActionLink("Security", "../Roles") 
+</p>
+
+
+
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+    <fieldset>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerMinOrderAmount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CustomerMinOrderAmount)
+            @Html.ValidationMessageFor(model => model.CustomerMinOrderAmount)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerDefaultMonthlyFlatFeeAmount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CustomerDefaultMonthlyFlatFeeAmount)
+            @Html.ValidationMessageFor(model => model.CustomerDefaultMonthlyFlatFeeAmount)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount)
+            @Html.ValidationMessageFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount)
+            @Html.ValidationMessageFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultMediaComissionPercentage)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultMediaComissionPercentage)
+            @Html.ValidationMessageFor(model => model.DefaultMediaComissionPercentage)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultSalesPersonCommissionPercentage)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultSalesPersonCommissionPercentage)
+            @Html.ValidationMessageFor(model => model.DefaultSalesPersonCommissionPercentage)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MinSalespersonCommissionPercentage)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MinSalespersonCommissionPercentage)
+            @Html.ValidationMessageFor(model => model.MinSalespersonCommissionPercentage)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MaxSalespersonCommissionPercentage)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MaxSalespersonCommissionPercentage)
+            @Html.ValidationMessageFor(model => model.MaxSalespersonCommissionPercentage)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefalutBudgetMixPercentageGoogle)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefalutBudgetMixPercentageGoogle)
+            @Html.ValidationMessageFor(model => model.DefalutBudgetMixPercentageGoogle)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefalutBudgetMixPercentageBing)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefalutBudgetMixPercentageBing)
+            @Html.ValidationMessageFor(model => model.DefalutBudgetMixPercentageBing)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultSemplestBannerImageUrl)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultSemplestBannerImageUrl)
+            @Html.ValidationMessageFor(model => model.DefaultSemplestBannerImageUrl)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultSemplestStyleSheetUrl)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultSemplestStyleSheetUrl)
+            @Html.ValidationMessageFor(model => model.DefaultSemplestStyleSheetUrl)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.MaxNumberOfSitelinks)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.MaxNumberOfSitelinks)
+            @Html.ValidationMessageFor(model => model.MaxNumberOfSitelinks)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastAccountNumberUsed)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastAccountNumberUsed)
+            @Html.ValidationMessageFor(model => model.LastAccountNumberUsed)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.LastSEMplestEmployeeIDused)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.LastSEMplestEmployeeIDused)
+            @Html.ValidationMessageFor(model => model.LastSEMplestEmployeeIDused)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultEmailContactUs)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultEmailContactUs)
+            @Html.ValidationMessageFor(model => model.DefaultEmailContactUs)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefalutEmailContactMe)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefalutEmailContactMe)
+            @Html.ValidationMessageFor(model => model.DefalutEmailContactMe)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultProductGroupName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultProductGroupName)
+            @Html.ValidationMessageFor(model => model.DefaultProductGroupName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.DefaultProductPromotionName)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.DefaultProductPromotionName)
+            @Html.ValidationMessageFor(model => model.DefaultProductPromotionName)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SamplestDevelopmentEmail)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SamplestDevelopmentEmail)
+            @Html.ValidationMessageFor(model => model.SamplestDevelopmentEmail)
+        </div>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
+            @Html.ValidationMessageFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.BillingDaysOffset)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.BillingDaysOffset)
+            @Html.ValidationMessageFor(model => model.BillingDaysOffset)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.OnErrorEmail)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.OnErrorEmail)
+            @Html.ValidationMessageFor(model => model.OnErrorEmail)
+        </div>
+
+        <p>
+            <input type="submit" value="Save" />
+            <input type="submit" value="Cancel" />
+        </p>
+    </fieldset>
+}

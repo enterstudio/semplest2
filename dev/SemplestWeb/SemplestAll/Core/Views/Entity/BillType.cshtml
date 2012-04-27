@@ -1,0 +1,70 @@
+﻿@model IEnumerable<SemplestWebApp.Models.BillType>
+
+@{
+    ViewBag.Title = "BillType";
+}
+
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script>
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                {
+                    text: "Home",
+                    items: [
+                        { text: "My Account" },
+                        { text: "Reporting" },
+                        { text: "Billing" }
+                    ]
+                },
+                {
+                    text: "Product Groups",
+                    items: [
+                        { text: "Insurance", items: [{ text: "Health Insurance" }, { text: "Car Insurance" }] },
+                        { text: "Safty Tips", items: [{ text: "Auto Mobile" }] },
+                        { text: "Agents", items: [{ text: "Best Agents" }] }
+                    ]
+                }
+            ]
+        });
+
+    </script>
+}
+
+<h2>BillType</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table>
+    <tr>
+        <th>
+            BillTypePK
+        </th>
+        <th>
+            BillType1
+        </th>
+        <th></th>
+    </tr>
+
+    @if (Model != null)
+    {
+        foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BillTypePK)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BillType1)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new {/* id=item.PrimaryKey */}) |
+                    @Html.ActionLink("Details", "Details", new {/* id=item.PrimaryKey */}) |
+                    @Html.ActionLink("Delete", "Delete", new {/* id=item.PrimaryKey */})
+                </td>
+            </tr>
+        }
+    }
+</table>

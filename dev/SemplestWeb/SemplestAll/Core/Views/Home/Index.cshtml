@@ -1,0 +1,66 @@
+@{
+    ViewBag.Title = "Create User";
+}
+@section Title{
+    Create Account
+}
+@section Links
+{}
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script>
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" },
+                        { text: "Create User", url: "Home" },
+                        { text: "Campaign", url: "Campaign/CampaignSetup" },
+                        { text: "Search Keywords", url: "Home/SearchKeywords" }
+                    ]
+                }
+            ]
+        });
+
+    </script>
+}
+<h2>
+    Welcome!</h2>
+<div >
+    <div id="options" align="center" >
+        <h3>
+            User Name</h3>
+        <input id="color" />
+        <h3>
+            Temporary Password</h3>
+        <input id="temppwd" />
+        <br />
+        <br />
+        <button class="k-button" id="get">
+            Authenticate Account</button>
+        <h3>
+            New Password</h3>
+        <input id="color1" />
+        <h3>
+            Verify Password</h3>
+        <input id="temppwd1" />
+        <br />
+        <br />
+        <button class="k-button" id="get">
+            Create Account</button>
+    </div>
+</div>
+<style scoped>
+    #datasource-views {
+        border-bottom-color: Black;
+        border-radius: 10px;
+        border-style: solid;
+        border-width: 2px;
+        overflow: hidden;
+        padding: 22px;
+    }
+</style>

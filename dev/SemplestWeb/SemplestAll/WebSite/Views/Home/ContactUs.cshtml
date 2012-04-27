@@ -1,0 +1,163 @@
+﻿@model Semplest.WebSite.Models.SEMCustomerDetail
+           
+@{
+    ViewBag.Title = "ContactUs";
+}
+<br />
+<br />
+
+<h2>Yes, Please Contact Me</h2>
+
+    <br />
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+    <table align="center">
+        <tr>
+            <td>
+                First Name
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.FirstName, new { style = "width: 400px" })
+                @Html.ValidationMessageFor(model => model.FirstName, null, new { @class = "error" })
+           </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="height: 5px">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Last Name
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.LastName, new { style = "width: 400px" })
+                @Html.ValidationMessageFor(model => model.LastName, null, new { @class = "error" })
+            </td>
+        </tr>
+         <tr>
+            <td colspan="2" style="height: 5px">
+            </td>
+        </tr>
+       <tr>
+            <td>
+                Company
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.Company, new { style = "width: 400px" })
+                @Html.ValidationMessageFor(model => model.Company, null, new { @class = "error" })
+           </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="height: 5px">
+            </td>
+        </tr>
+    </table>
+
+    <table align="right" style="margin-right: 290px">
+        <tr>
+            <td align="left" >
+                @Html.CheckBoxFor(m => m.CallMe)  Call Me
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.Phone, new { style = "width: 320px" })
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="height: 5px"></td>
+        </tr>
+        <tr>
+            <td>
+                @Html.CheckBoxFor(m => m.EmailMe)  E-Mail Me
+            </td>
+            <td align="right">
+                 @Html.TextBoxFor(model => model.email, new { style = "width: 320px" })
+           </td>
+        </tr>
+        <tr>
+            <td colspan="2" style="height: 10px">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2" align="center">
+@*                <input type="submit" class="k-button k-state-selected" value="SUBMIT" onclick="return Validate()"/>
+*@                <input type="submit" class="k-button k-state-selected" value="SUBMIT"/>
+            </td>
+        </tr>
+
+    </table>
+                <p style="vertical-align:bottom">Your contact information will not be used for any purpose other than your request
+                            for more information from SEMplest</p>
+    <p></p>
+    <p></p>
+    <p></p>
+   
+}
+
+<script>
+
+    $(document).ready(function () {
+
+        //alert('document ready');
+        // $("form").validate();
+    });
+
+    $(":submit").click(function () {
+        //alert('button clicked');
+        //            var f = $("#myform");
+        //            if (f.valid()) {
+        //                //alert('valid');
+        //            }
+
+        if (($("#CallMe:checked").val() == undefined) && ($("#EmailMe:checked").val() == undefined)) {
+            alert('One of the check boxes need to be checked');
+            //$("form").submit(function () { return false; });
+        }
+        else {
+//            alert(' in else');
+//            $("form").submit(function () { return true; });
+//            if (($("#CallMe:checked").val() == true) || ($("#EmailMe:checked").val() == true)) {
+//                alert('one of them is true');
+//                $("form").submit(function () { return true; });
+//            }
+        }
+    });
+
+</script>
+
+<style>
+    .a
+    {
+        color: #8ebc00;
+        font-size: 12px;
+        text-decoration: underline;
+        line-height: 1.5em;
+        font-family: arial;
+        font-weight: bold;
+    }
+    h2
+    {
+        color: #8ebc00;
+        font-size: 24px;
+        line-height: 1.5em;
+        font-family: arial;
+    }
+    p
+    {
+        margin-top: 120px;
+        text-align: center;
+        font-size: 15px;
+        line-height: 1.5em;
+        font-family: arial;
+        color: grey;
+    }
+    .error 
+    {
+        color: red;
+        width: 13em; /* Ensures that the div won't exceed right padding of form */
+        margin-top: -1.5em;  /*Moves the div up to the same level as input */
+        margin-left: 5em;   /*Moves div to the right */
+        font-size: .9em;     /*Makes sure that the error div is smaller than input */
+    }
+
+</style>

@@ -1,0 +1,73 @@
+@{
+    ViewBag.Title = "Create User";
+}
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script>
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                        {
+                            text: "Home",
+                            items: [
+                                { text: "Quick Start Guide" },
+                                { text: "FAQs" },
+                                { text: "Contact Us" }
+                            ]
+                        }
+                    ]
+        });
+
+
+    </script>
+}
+<div id="exampleTitleBg">
+    <h1 id="exampleTitle">
+        <span class="exampleIcon overviewIcon"></span>Create Account
+    </h1>
+</div>
+<div id="exampleWrap">
+    <div id="example" class="k-content">
+        <div id="datasource-views" class="k-header" style="background-color: #f2f2f2; border-bottom-color: Black;">
+            <h2>
+                Welcome!</h2>
+            <div id="cap-view" class="k-header">
+                <div id="cap" class="black-cap">
+                </div>
+                <div id="options" align="center" style="background-color: #f2f2f2">
+                    <h3>
+                        User Name</h3>
+                    <input id="color" />
+                    <h3>
+                        Temporary Password</h3>
+                    <input id="temppwd" type="password" />
+                    <br />
+                    <br />
+                    <button class="k-button" id="get">
+                        Authenticate Account</button>
+                    <h3>
+                        New Password</h3>
+                    <input id="color1" type="password" />
+                    <h3>
+                        Verify Password</h3>
+                    <input id="temppwd1" type="password" />
+                    <br />
+                    <br />
+                    <button class="k-button" id="get">
+                        Create Account</button>
+                </div>
+            </div>
+        </div>
+        <style scoped>
+            #datasource-views
+            {
+                padding: 20px;
+                border-bottom-color: Black;
+                border-radius: 10px;
+                border-style: solid;
+                border-width: 2px;
+                overflow: hidden;
+            }
+        </style>
+    </div>
+</div>
