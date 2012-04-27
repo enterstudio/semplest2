@@ -83,11 +83,23 @@ namespace Semplest.WebSite.Controllers
             }
         }
 
-
         private void SendMail(SEMCustomerDetail model, string sEmail)
         {
+            string strSmtpHost = "172.18.9.36";
+            int iSmtpPort =25;
+
+            // get from config file
+            // smtp host
+            string smtphostSetting = System.Configuration.ConfigurationManager.AppSettings["SmtpHost"];
+            if (!String.IsNullOrEmpty(smtphostSetting))
+                strSmtpHost = smtphostSetting;
+            // smtp port
+            string smtpportSetting = System.Configuration.ConfigurationManager.AppSettings["SmtpPort"];
+            if (!String.IsNullOrEmpty(smtpportSetting))
+                iSmtpPort = Convert.ToInt32(smtpportSetting);
+
             MailMessage mail = new MailMessage();
-            SmtpClient SmtpServer = new SmtpClient("172.18.9.36", 25);
+            SmtpClient SmtpServer = new SmtpClient(strSmtpHost, iSmtpPort);
 
             mail.From = new MailAddress(model.email);
             mail.To.Add(sEmail);
