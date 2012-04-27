@@ -151,5 +151,23 @@ namespace Semplest.Core.Controllers
         {
             return View();
         }
+
+        //****************************************
+        //URL:/Account/ParentProfile
+        //****************************************
+
+        public ActionResult PatentProfile()
+        {
+            return View();
+        }
+
+        //****************************************
+        //URL:/Account/ChildProfile
+        //****************************************
+
+        public ActionResult ChildProfile()
+        {
+            return View();
+        }
     }
 }
