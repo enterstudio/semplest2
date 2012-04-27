@@ -119,6 +119,7 @@ public class ESBServer
 		executor = new ThreadPoolExecutor(serverData.getAsynchServletCorePoolSize(), serverData.getAsynchServletMaxPoolSize(), 50000L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(serverData.getAsynchServletMaxWorkInQueue()));
 		Server server = new Server(Integer.parseInt(serverData.getWebServerPort()));
 		server.getConnectors()[0].setRequestHeaderSize(serverData.getHeaderBufferSize());
+		server.getConnectors()[0].setResponseBufferSize(serverData.getHeaderBufferSize());
 		
 		ServletHolder sh = new ServletHolder(ServletContainer.class);
 		sh.setInitParameter("com.sun.jersey.config.property.resourceConfigClass", "com.sun.jersey.api.core.PackagesResourceConfig");
