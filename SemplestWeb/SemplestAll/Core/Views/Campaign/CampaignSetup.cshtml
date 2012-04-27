@@ -95,10 +95,18 @@ Ad Setup
     }
     function OnSuccess() {
         $.unblockUI();
+//        if ($("#hiddenfield").val() == "done") {
+//            tabStrip.append({
+//                text: "KeyWords",
+//                contentUrl: '@Url.Action("KeyWords")'
+//            }, tabStrip.tabGroup.children("li:last")).select();
+//            $("#hiddenfield").val("done1");
+//        }
+        //        
         if ($("#hiddenfield").val() == "done") {
             tabStrip.append({
-                text: "KeyWords",
-                contentUrl: '@Url.Action("KeyWords")'
+                text: "BillingLaunch",
+                contentUrl: '@Url.Action("BillingLaunch")'
             }, tabStrip.tabGroup.children("li:last")).select();
             $("#hiddenfield").val("done1");
         }
