@@ -28,6 +28,7 @@ import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_Campaign
 import org.joda.time.DateTime;
 
 import semplest.other.AdCenterCredentials;
+import semplest.other.AdCenterCredentialsProduction;
 import semplest.other.KeywordEstimate;
 import semplest.other.Maybe;
 import semplest.other.Money;
@@ -35,6 +36,7 @@ import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.SemplestError;
 import semplest.other.TimeServer;
+import semplest.other.TimeServerImpl;
 import semplest.server.protocol.*;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.ReportObject.Transaction;
@@ -173,15 +175,34 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public static final int DEFAULT_TIMEOUT = 80000; // 80 seconds. See
 														// setTimeout :P
 	private NameServiceUniqueMsn uniqueMsnNameService;
-	private AdCenterCredentials adCenterCredentials;
+	private AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
 	private int timeoutMillis = DEFAULT_TIMEOUT;
-	private TimeServer timeServer;
+	private TimeServer timeServer = new TimeServerImpl();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
 	
 	private static String separator = "#";
+
+	public static void main(String[] args)
+	{
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		
+		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
+		DateTime lastDay = new DateTime(2012,4,31,0,0,0,0);
+		try{
+			//ReportObject ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Monthly);
+			
+			String ret1 = test.requestKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Monthly);
+			test.printReportToConsole(ret1, 1595249L);
+			
+			
+		}
+		catch(Exception e){
+			System.out.println(e.getMessage());
+		}
+	}
 
 	@Override
 	public boolean isProduction()
@@ -2418,6 +2439,16 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		//getReportData
 		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
+		
+		//xnxnxn
+		logger.info(ret2);
+		for(String s : ret2.keySet()){
+			logger.info(s);
+			for(String s1 : ret2.get(s)){
+				logger.info(s1);
+			}
+			logger.info("============================");
+		}
 		
 		if(ret2.get("keyword") != null){
 			for(int i = 0; i < ret2.get("keyword").length; i++){
