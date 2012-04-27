@@ -1,0 +1,31 @@
+﻿<div class="k-header">
+    <span class="infoHead">Adding a negative keyword to your product group means that your
+        ads won't show for searches containing that term. By filtering out unwanted impressions,
+        negative keywords can help you reach the most appropriate prospects. </span>
+    <div class="configuration1">
+        <span>Please type in several words or phrases that you never want associated with your
+            ad (separated by commas): </span>
+        <input id="negvalues" class="k-textbox" style="width: 42.3em" />
+    </div>
+    <div class="options" style="margin-top: 100px">
+        <button class="k-button" id="back3" type="button">
+            <span class="k-back k-icon"></span>back</button>
+        <button class="k-button" id="saveNeg" type="submit">
+            <span class="k-update k-icon"></span>Save And Continue</button>
+    </div>
+</div>
+<script>
+    $('#back3').click(function () {
+        tabChange();
+    });
+    $('#saveNeg').click(function () {
+        tabChange();
+    });
+    function tabChange(parameters) {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+    }
+</script>

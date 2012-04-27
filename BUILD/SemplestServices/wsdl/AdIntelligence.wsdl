@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<wsdl:definitions xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tns="https://adcenter.microsoft.com/v8" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="AdIntelligenceService" targetNamespace="https://adcenter.microsoft.com/v8">
+  <wsp:Policy wsu:Id="BasicHttpBinding_IAdIntelligenceService_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <sp:HttpsToken RequireClientCertificate="false"/>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256/>
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict/>
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema targetNamespace="https://adcenter.microsoft.com/v8/Imports">
+      <xsd:import namespace="https://adcenter.microsoft.com/v8" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc?xsd=xsd0"/>
+      <xsd:import namespace="https://adapi.microsoft.com" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc?xsd=xsd4"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc?xsd=xsd1"/>
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc?xsd=xsd2"/>
+      <xsd:import namespace="http://schemas.datacontract.org/2004/07/Microsoft.AdCenter.Advertiser.CampaignManagement.Api.DataContracts" schemaLocation="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc?xsd=xsd3"/>
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GetPublisherKeywordPerformanceRequest">
+    <wsdl:part element="tns:GetPublisherKeywordPerformanceRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetPublisherKeywordPerformanceRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetPublisherKeywordPerformanceResponse">
+    <wsdl:part element="tns:GetPublisherKeywordPerformanceResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetPublisherKeywordPerformanceResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetPublisherKeywordPerformance_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q1="https://adapi.microsoft.com" element="q1:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetPublisherKeywordPerformance_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsForUrlRequest">
+    <wsdl:part element="tns:SuggestKeywordsForUrlRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsForUrlRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsForUrlResponse">
+    <wsdl:part element="tns:SuggestKeywordsForUrlResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsForUrlResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_SuggestKeywordsForUrl_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_SuggestKeywordsForUrl_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q2="https://adapi.microsoft.com" element="q2:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordIdsRequest">
+    <wsdl:part element="tns:GetEstimatedBidByKeywordIdsRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordIdsRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordIdsResponse">
+    <wsdl:part element="tns:GetEstimatedBidByKeywordIdsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordIdsResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedBidByKeywordIds_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q3="https://adapi.microsoft.com" element="q3:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedBidByKeywordIds_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordIdsRequest">
+    <wsdl:part element="tns:GetEstimatedPositionByKeywordIdsRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordIdsRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordIdsResponse">
+    <wsdl:part element="tns:GetEstimatedPositionByKeywordIdsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordIdsResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedPositionByKeywordIds_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedPositionByKeywordIds_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q4="https://adapi.microsoft.com" element="q4:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordsRequest">
+    <wsdl:part element="tns:GetEstimatedBidByKeywordsRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordsRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordsResponse">
+    <wsdl:part element="tns:GetEstimatedBidByKeywordsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedBidByKeywordsResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedBidByKeywords_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q5="https://adapi.microsoft.com" element="q5:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordsRequest">
+    <wsdl:part element="tns:GetEstimatedPositionByKeywordsRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordsRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordsResponse">
+    <wsdl:part element="tns:GetEstimatedPositionByKeywordsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetEstimatedPositionByKeywordsResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedPositionByKeywords_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetEstimatedPositionByKeywords_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q6="https://adapi.microsoft.com" element="q6:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalSearchCountRequest">
+    <wsdl:part element="tns:GetHistoricalSearchCountRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalSearchCountRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalSearchCountResponse">
+    <wsdl:part element="tns:GetHistoricalSearchCountResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalSearchCountResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetHistoricalSearchCount_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q7="https://adapi.microsoft.com" element="q7:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetHistoricalSearchCount_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalKeywordPerformanceRequest">
+    <wsdl:part element="tns:GetHistoricalKeywordPerformanceRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalKeywordPerformanceRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalKeywordPerformanceResponse">
+    <wsdl:part element="tns:GetHistoricalKeywordPerformanceResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="GetHistoricalKeywordPerformanceResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetHistoricalKeywordPerformance_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q8="https://adapi.microsoft.com" element="q8:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_GetHistoricalKeywordPerformance_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsFromExistingKeywordsRequest">
+    <wsdl:part element="tns:SuggestKeywordsFromExistingKeywordsRequest" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsFromExistingKeywordsRequest_Headers">
+    <wsdl:part element="tns:ApplicationToken" name="ApplicationToken"/>
+    <wsdl:part element="tns:CustomerAccountId" name="CustomerAccountId"/>
+    <wsdl:part element="tns:CustomerId" name="CustomerId"/>
+    <wsdl:part element="tns:DeveloperToken" name="DeveloperToken"/>
+    <wsdl:part element="tns:Password" name="Password"/>
+    <wsdl:part element="tns:UserName" name="UserName"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsFromExistingKeywordsResponse">
+    <wsdl:part element="tns:SuggestKeywordsFromExistingKeywordsResponse" name="parameters"/>
+  </wsdl:message>
+  <wsdl:message name="SuggestKeywordsFromExistingKeywordsResponse_Headers">
+    <wsdl:part element="tns:TrackingId" name="TrackingId"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_SuggestKeywordsFromExistingKeywords_AdApiFaultDetailFault_FaultMessage">
+    <wsdl:part xmlns:q9="https://adapi.microsoft.com" element="q9:AdApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:message name="IAdIntelligenceService_SuggestKeywordsFromExistingKeywords_ApiFaultDetailFault_FaultMessage">
+    <wsdl:part element="tns:ApiFaultDetail" name="detail"/>
+  </wsdl:message>
+  <wsdl:portType msc:usingSession="false" name="IAdIntelligenceService">
+    <wsdl:operation name="GetPublisherKeywordPerformance">
+      <wsdl:input message="tns:GetPublisherKeywordPerformanceRequest" name="GetPublisherKeywordPerformanceRequest" wsaw:Action="GetPublisherKeywordPerformance"/>
+      <wsdl:output message="tns:GetPublisherKeywordPerformanceResponse" name="GetPublisherKeywordPerformanceResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetPublisherKeywordPerformanceResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetPublisherKeywordPerformance_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetPublisherKeywordPerformanceAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetPublisherKeywordPerformance_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetPublisherKeywordPerformanceApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="SuggestKeywordsForUrl">
+      <wsdl:input message="tns:SuggestKeywordsForUrlRequest" name="SuggestKeywordsForUrlRequest" wsaw:Action="SuggestKeywordsForUrl"/>
+      <wsdl:output message="tns:SuggestKeywordsForUrlResponse" name="SuggestKeywordsForUrlResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsForUrlResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_SuggestKeywordsForUrl_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsForUrlApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_SuggestKeywordsForUrl_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsForUrlAdApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedBidByKeywordIds">
+      <wsdl:input message="tns:GetEstimatedBidByKeywordIdsRequest" name="GetEstimatedBidByKeywordIdsRequest" wsaw:Action="GetEstimatedBidByKeywordIds"/>
+      <wsdl:output message="tns:GetEstimatedBidByKeywordIdsResponse" name="GetEstimatedBidByKeywordIdsResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordIdsResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedBidByKeywordIds_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordIdsAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedBidByKeywordIds_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordIdsApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedPositionByKeywordIds">
+      <wsdl:input message="tns:GetEstimatedPositionByKeywordIdsRequest" name="GetEstimatedPositionByKeywordIdsRequest" wsaw:Action="GetEstimatedPositionByKeywordIds"/>
+      <wsdl:output message="tns:GetEstimatedPositionByKeywordIdsResponse" name="GetEstimatedPositionByKeywordIdsResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordIdsResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedPositionByKeywordIds_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordIdsApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedPositionByKeywordIds_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordIdsAdApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedBidByKeywords">
+      <wsdl:input message="tns:GetEstimatedBidByKeywordsRequest" name="GetEstimatedBidByKeywordsRequest" wsaw:Action="GetEstimatedBidByKeywords"/>
+      <wsdl:output message="tns:GetEstimatedBidByKeywordsResponse" name="GetEstimatedBidByKeywordsResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordsResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedBidByKeywords_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordsAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedBidByKeywordsApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedPositionByKeywords">
+      <wsdl:input message="tns:GetEstimatedPositionByKeywordsRequest" name="GetEstimatedPositionByKeywordsRequest" wsaw:Action="GetEstimatedPositionByKeywords"/>
+      <wsdl:output message="tns:GetEstimatedPositionByKeywordsResponse" name="GetEstimatedPositionByKeywordsResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordsResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedPositionByKeywords_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordsApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetEstimatedPositionByKeywords_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetEstimatedPositionByKeywordsAdApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetHistoricalSearchCount">
+      <wsdl:input message="tns:GetHistoricalSearchCountRequest" name="GetHistoricalSearchCountRequest" wsaw:Action="GetHistoricalSearchCount"/>
+      <wsdl:output message="tns:GetHistoricalSearchCountResponse" name="GetHistoricalSearchCountResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalSearchCountResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetHistoricalSearchCount_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalSearchCountAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetHistoricalSearchCount_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalSearchCountApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="GetHistoricalKeywordPerformance">
+      <wsdl:input message="tns:GetHistoricalKeywordPerformanceRequest" name="GetHistoricalKeywordPerformanceRequest" wsaw:Action="GetHistoricalKeywordPerformance"/>
+      <wsdl:output message="tns:GetHistoricalKeywordPerformanceResponse" name="GetHistoricalKeywordPerformanceResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalKeywordPerformanceResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetHistoricalKeywordPerformance_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalKeywordPerformanceAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_GetHistoricalKeywordPerformance_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/GetHistoricalKeywordPerformanceApiFaultDetailFault"/>
+    </wsdl:operation>
+    <wsdl:operation name="SuggestKeywordsFromExistingKeywords">
+      <wsdl:input message="tns:SuggestKeywordsFromExistingKeywordsRequest" name="SuggestKeywordsFromExistingKeywordsRequest" wsaw:Action="SuggestKeywordsFromExistingKeywords"/>
+      <wsdl:output message="tns:SuggestKeywordsFromExistingKeywordsResponse" name="SuggestKeywordsFromExistingKeywordsResponse" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsFromExistingKeywordsResponse"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_SuggestKeywordsFromExistingKeywords_AdApiFaultDetailFault_FaultMessage" name="AdApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsFromExistingKeywordsAdApiFaultDetailFault"/>
+      <wsdl:fault message="tns:IAdIntelligenceService_SuggestKeywordsFromExistingKeywords_ApiFaultDetailFault_FaultMessage" name="ApiFaultDetailFault" wsaw:Action="https://adcenter.microsoft.com/v8/IAdIntelligenceService/SuggestKeywordsFromExistingKeywordsApiFaultDetailFault"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="BasicHttpBinding_IAdIntelligenceService" type="tns:IAdIntelligenceService">
+    <wsp:PolicyReference URI="#BasicHttpBinding_IAdIntelligenceService_policy"/>
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="GetPublisherKeywordPerformance">
+      <soap:operation soapAction="GetPublisherKeywordPerformance" style="document"/>
+      <wsdl:input name="GetPublisherKeywordPerformanceRequest">
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetPublisherKeywordPerformanceRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetPublisherKeywordPerformanceResponse">
+        <soap:header message="tns:GetPublisherKeywordPerformanceResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SuggestKeywordsForUrl">
+      <soap:operation soapAction="SuggestKeywordsForUrl" style="document"/>
+      <wsdl:input name="SuggestKeywordsForUrlRequest">
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsForUrlRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SuggestKeywordsForUrlResponse">
+        <soap:header message="tns:SuggestKeywordsForUrlResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedBidByKeywordIds">
+      <soap:operation soapAction="GetEstimatedBidByKeywordIds" style="document"/>
+      <wsdl:input name="GetEstimatedBidByKeywordIdsRequest">
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetEstimatedBidByKeywordIdsResponse">
+        <soap:header message="tns:GetEstimatedBidByKeywordIdsResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedPositionByKeywordIds">
+      <soap:operation soapAction="GetEstimatedPositionByKeywordIds" style="document"/>
+      <wsdl:input name="GetEstimatedPositionByKeywordIdsRequest">
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetEstimatedPositionByKeywordIdsResponse">
+        <soap:header message="tns:GetEstimatedPositionByKeywordIdsResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedBidByKeywords">
+      <soap:operation soapAction="GetEstimatedBidByKeywords" style="document"/>
+      <wsdl:input name="GetEstimatedBidByKeywordsRequest">
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetEstimatedBidByKeywordsRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetEstimatedBidByKeywordsResponse">
+        <soap:header message="tns:GetEstimatedBidByKeywordsResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetEstimatedPositionByKeywords">
+      <soap:operation soapAction="GetEstimatedPositionByKeywords" style="document"/>
+      <wsdl:input name="GetEstimatedPositionByKeywordsRequest">
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetEstimatedPositionByKeywordsRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetEstimatedPositionByKeywordsResponse">
+        <soap:header message="tns:GetEstimatedPositionByKeywordsResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetHistoricalSearchCount">
+      <soap:operation soapAction="GetHistoricalSearchCount" style="document"/>
+      <wsdl:input name="GetHistoricalSearchCountRequest">
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetHistoricalSearchCountRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetHistoricalSearchCountResponse">
+        <soap:header message="tns:GetHistoricalSearchCountResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetHistoricalKeywordPerformance">
+      <soap:operation soapAction="GetHistoricalKeywordPerformance" style="document"/>
+      <wsdl:input name="GetHistoricalKeywordPerformanceRequest">
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:GetHistoricalKeywordPerformanceRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="GetHistoricalKeywordPerformanceResponse">
+        <soap:header message="tns:GetHistoricalKeywordPerformanceResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SuggestKeywordsFromExistingKeywords">
+      <soap:operation soapAction="SuggestKeywordsFromExistingKeywords" style="document"/>
+      <wsdl:input name="SuggestKeywordsFromExistingKeywordsRequest">
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="ApplicationToken" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="CustomerAccountId" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="CustomerId" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="DeveloperToken" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="Password" use="literal"/>
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsRequest_Headers" part="UserName" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="SuggestKeywordsFromExistingKeywordsResponse">
+        <soap:header message="tns:SuggestKeywordsFromExistingKeywordsResponse_Headers" part="TrackingId" use="literal"/>
+        <soap:body use="literal"/>
+      </wsdl:output>
+      <wsdl:fault name="AdApiFaultDetailFault">
+        <soap:fault name="AdApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+      <wsdl:fault name="ApiFaultDetailFault">
+        <soap:fault name="ApiFaultDetailFault" use="literal"/>
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="AdIntelligenceService">
+    <wsdl:port binding="tns:BasicHttpBinding_IAdIntelligenceService" name="BasicHttpBinding_IAdIntelligenceService">
+      <soap:address location="https://adcenterapi.microsoft.com/Api/Advertiser/V8/CampaignManagement/AdIntelligenceService.svc"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

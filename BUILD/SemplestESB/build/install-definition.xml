@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+  <!-- Ant properties in this file can be referenced with @{}, 
+       otherwise use variables below in installer files with ${} -->
+  <info>
+    <appname>@{product.name}</appname>
+    <appversion>@{product.version}</appversion>
+    <authors>
+    	<author name="SEMplest" email="mitch@semplest.com"/>
+  	</authors>
+    
+  </info>
+
+  <guiprefs width="600" height="480" resizable="no">
+    <modifier key="useHeadingPanel" value="yes"/>
+    <modifier key="useHeadingForSummary" value="yes"/>
+    <modifier key="headingLineCount" value="2"/>
+    <modifier key="headingFontSize" value="1.5"/>
+    <modifier key="headingBackgroundColor" value="0x00ffffff"/>
+    <modifier key="headingPanelCounter" value="text"/>
+    <modifier key="headingPanelCounterPos" value="inHeading"/>
+  </guiprefs>
+  
+  <locale>
+    <langpack iso3="eng"/>
+  </locale>
+
+  <!-- Need to define ant properties we want to use during install as variables -->
+  <variables>
+    <variable name="app.name" value="@{app.name}"/>
+    <variable name="default.dest.dir.sql" value="@{default.dest.dir.sql}"/>
+    <variable name="UserPathPanelVariable" value="@{default.dest.dir.sql}"/>
+    <variable name="UserPathPanelDependsName" value="Postgres Database Installation"/>
+     <!-- For Post-Install Tasks -->
+    <variable name="release.description" value="@{buildVersion}"/>
+    <variable name="base.version" value="@{product.base}"/>
+    <variable name="major.number" value="@{major.number}"/>
+    <variable name="minor.number" value="@{minor.number}"/>
+    <variable name="build.number" value="@{build.number}"/>
+  </variables>
+ 
+  <resources>
+    <!-- default-dir.txt is written by the calling build.xml -->
+    <res id="ProcessPanel.Spec.xml" src="@{build}/post-install-tasks.xml"/>
+    <res id="userInputSpec.xml" src="@{build}/userInputSpec.xml" />
+    <res id="uninstaller.warning" src="@{install.res}/uninstall-warn.txt"/>
+    <res id="TargetPanel.dir" src="@{dist}/path.txt" />
+    <!-- default-dir.txt is written by the calling build.xml -->
+    <!-- <res id="TargetPanel.dir" src="@{install.res}/default-dir.txt"/>
+   
+    <res id="shortcutSpec.xml" src="@{install.res}/shortcuts-win.xml"/>
+    -->
+  </resources>
+
+  
+  <panels>
+    <panel classname="HelloPanel"/>
+    <!-- <panel classname="HTMLInfoPanel"/> -->
+    <panel classname="TargetPanel"/>
+    <panel classname="PacksPanel"/>
+    <panel classname="UserInputPanel" id="UserInputPanel.0"/>
+    <panel classname="UserInputPanel" id="UserInputPanel.1"/>
+    <panel classname="UserPathPanel"/>
+    <panel classname="InstallPanel"/>
+    <panel classname="ProcessPanel"/>
+    <panel classname="SimpleFinishPanel"/>
+  </panels>
+ 
+ <listeners>
+      <listener installer="SummaryLoggerInstallerListener">
+          <os family="windows"/>
+      </listener>
+  </listeners>  
+  
+  
+  <packs>
+     
+    <pack name="Post-Install Tasks" required="yes">
+      <description>Configuration and cleanup required for the installation.</description>
+      <file src="ant" targetdir="$INSTALL_PATH"/>
+      <file src="post-install-tasks.bat" targetdir="$INSTALL_PATH"/>
+      <file src="build.xml" targetdir="$INSTALL_PATH"/>
+      <file src="Uninstall_semplestESB.bat" targetdir="$INSTALL_PATH"/>
+      <parsable targetfile="$INSTALL_PATH/post-install-tasks.bat"/>
+      <parsable targetfile="$INSTALL_PATH/build.xml"/>
+      <parsable targetfile="$INSTALL_PATH/Uninstall_semplestESB.bat"/>
+     </pack>
+    <pack name="Complete" required="yes">
+      <description>The entire set of application files</description>
+      <file src="@{install.res}/uninstall.ico" targetdir="$INSTALL_PATH/Uninstaller"/>
+      <file src="." targetdir="$INSTALL_PATH"/>
+    </pack>
+ </packs>
+  
+</installation>

@@ -1,0 +1,106 @@
+﻿@using System.Globalization
+@model IEnumerable<Semplest.Admin.Models.HomeModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+Account Service
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Headscript{
+ <script src="@Url.Content("~/Scripts/jquery.maskedinput.js")" type="text/javascript"></script>
+ <script type="text/jscript">
+     $(document).ready(function () {
+         $("#grid").kendoGrid(
+      {
+          groupable: false,
+          scrollable: false,
+          sortable: false,
+          pageable: false
+      }
+      );
+     });
+</script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+@using (Html.BeginForm("Index"))
+{
+    <div class="configuration1">
+        <ul class="options">
+            <li>Search
+                <input type="text" id="ProductGroupName" name="usersearch" class="k-textbox"
+                    required validationmessage="Please enter {0}" />
+                Account #
+                <input type="text" id="ProductPromotionName" name="accountnumbersearch" class="k-textbox"
+                    required validationmessage="Please enter {0}" />
+                Email
+                <input type="text" id="ProductPromotionName" name="emailsearch" class="k-textbox"
+                    required validationmessage="Please enter {0}" />
+                <input type="submit" value="Go" class="k-button" />
+            </li>
+            <li> <input type="radio" name="searchtype" value="Customer">Customer 
+                 <input type="radio" name="searchtype" value="LastName">Last Name
+
+             </li>
+        </ul>
+    </div>
+}
+@if (!Model.Any())
+{
+    // table is empty
+}
+else
+{ 
+ <div class="tableresults" id="grid">
+    <table>
+        <tr>
+            <th>
+                Customer
+            </th>
+            <th>
+                Account #
+            </th>
+            <th>
+                First Name
+            </th>
+            <th>
+                Last Name
+            </th>
+            <th>
+                Email
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+             <tr>
+                <td>
+                    @Html.RouteLink(item.Customer, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                </td>
+                <td>
+                    @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                </td>
+                <td>
+                    @Html.RouteLink(item.FirstName, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                </td>
+                <td>
+                    @Html.RouteLink(item.LastName, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                </td>
+                <td>
+                    @Html.RouteLink(item.Email, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                </td>        
+    </tr>
+        }
+    </table>
+    </div>
+}
+
+<ul style="display: block" class="kendo-nav">
+    <li> @Html.RouteLink("Add New Customer", new { Controller = "CustomerAccount", action = "Add"}) </li>
+    
+</ul>
+

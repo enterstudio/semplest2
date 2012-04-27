@@ -1,0 +1,81 @@
+<project name="Post-Install Tasks" default="build" basedir=".">
+  <!--
+    This file is processed by ant on the target machine after 
+    the files have been installed.
+ 
+    The following variables are set in the user input panels and need to be
+    set in the appropriate files or used for processing:
+    
+    db.type
+    db.service.name
+    db.service.password
+    db.su.password
+   -->
+  <available file="${basedir}/CSServer.sql" type="file" property="sql.file.exists"/>
+  <available file="${basedir}/activemq.sql" type="file" property="activemqsql.file.exists"/>
+  <available file="${basedir}/postgresql" type="dir" property="postgresql.dir.exists"/>
+	
+	  <property name="db.su" value="postgres"/>
+	  <property name="db.su.password" value="SCpostgres@123"/>
+	  <property name="db.name" value="CSServer"/>
+	  <property name="activemqdb.name" value="activemq"/>
+	  <property name="db.driver" value="org.postgresql.Driver"/>
+	  <property name="db.url" value="jdbc:postgresql://localhost/?autoReconnect=true"/>
+	  <property name="db.db.url" value="jdbc:postgresql://localhost/${db.name}?autoReconnect=true"/>
+	 <property name="db.activemqdb.url" value="jdbc:postgresql://localhost/${activemqdb.name}?autoReconnect=true"/>
+
+  <target name="build" >
+    <tstamp>
+      <format property="TODAY" pattern="yyyy-MM-dd"/>
+    </tstamp>
+    
+    <antcall target="service-tasks"/>
+    <antcall target="cleanup"/>
+  </target>
+  
+ 
+      
+	<target name="service-tasks">
+	    <!-- Move this call from up top to here as an update will trigger it.
+         We should only be performing a new install if we get to this point -->
+    <antcall target="install-service"/>
+    <copy file="Uninstall_semplestESB.bat" toDir="Uninstaller"/>
+  </target>
+  
+  <!-- Install CS Server as a Windows service -->
+  <!-- This will always be true unless the user deselects it in the 
+       CS Install pack - even if the update pack runs! -->
+  <target name="install-service">
+    
+    <echo message="Installing semplestESB Server as a service."/>
+    <exec executable="cmd">
+      <arg value="/c"/>
+      <arg value="Install_Service.bat"/>
+    </exec>
+    <echo message="Starting service."/>
+    <exec executable="cmd">
+      <arg value="/c"/>
+      <arg value="net"/>
+      <arg value="start"/>
+      <arg value="semplestESB"/>
+    </exec>
+  </target>
+
+    
+  <target name="cleanup">
+    <propertyfile file="Uninstaller/install.properties" comment="Install generated file, do not remove">
+      <entry key="release.description" value="${release.description}"/>
+      <entry key="base.version" value="${base.version}"/>
+      <entry key="major.number" value="${major.number}"/>
+      <entry key="minor.number" value="${minor.number}"/>
+      <entry key="build.number" value="${build.number}"/>
+      <entry key="install.base" value="${basedir}"/>
+    </propertyfile>
+    <delete failonerror="false" dir="postgresql"/>
+    <delete failonerror="false" dir="sql"/>
+    <move file=".installationinformation" tofile="Uninstaller/install.dat" />
+    <delete failonerror="false" file="Uninstall_semplestESB.bat"/>
+  </target>
+  
+  
+</project>
