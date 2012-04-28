@@ -17,15 +17,18 @@ namespace SemplestModel
         public Employee()
         {
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
+            this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
     
         public int EmployeePK { get; set; }
         public int EmployeeTypeFK { get; set; }
         public int UsersFK { get; set; }
         public Nullable<int> ReportingTo { get; set; }
+        public Nullable<System.DateTime> HireDate { get; set; }
     
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
         public virtual EmployeeType EmployeeType { get; set; }
         public virtual User User { get; set; }
+        public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
     }
 }

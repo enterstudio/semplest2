@@ -17,6 +17,7 @@ namespace SemplestModel
         public Phone()
         {
             this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
+            this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
     
         public int PhonePK { get; set; }
@@ -28,5 +29,6 @@ namespace SemplestModel
     
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
         public virtual PhoneType PhoneType { get; set; }
+        public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
     }
 }
