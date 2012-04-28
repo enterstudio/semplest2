@@ -232,7 +232,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			ArrayList<ReportObject> f = g.getReportForAccount(ss.toSemplestString(accountID));
 			for(ReportObject t : f){
 				logger.info("Keyword: " + t.getKeyword() + "; "
-						+ "Bidamount: " + t.getBidAmount() + "; "
+						+ "Bidamount: " + t.getMicroBidAmount() + "; "
 						+ "BidMatchType: " + t.getBidMatchType() + "; "
 						+ "NumberImpressions: " + t.getNumberImpressions() + "; "
 						+ "NumberClick: " + t.getNumberClick() + "; "

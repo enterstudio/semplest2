@@ -180,11 +180,11 @@ public class SemplestDB extends BaseDB
 	 * Report calls
 	 */
 
-	private static void storeAdvertisingEngineBidData(ArrayList<ReportObject> reportObjList)
+	public static void storeAdvertisingEngineBidData(ArrayList<ReportObject> reportObjList)
 	{
 		for (ReportObject rptObj : reportObjList)
 		{
-			//logger.info()
+			logger.info(rptObj.getKeyword());
 		}
 	}
 	/*

@@ -98,7 +98,7 @@ public class GoogleReportDownloader
 					String maxCpcStr = data[14];
 					if(maxCpcStr.equals(" --"))
 						maxCpcStr = "0";
-					rdata.setBidAmount(Integer.valueOf(maxCpcStr));
+					rdata.setMicroBidAmount(Long.valueOf(maxCpcStr));
 					rdata.setBidMatchType(data[4]);
 					rdata.setNumberImpressions(Integer.valueOf(data[5]));
 					rdata.setNumberClick(Integer.valueOf(data[6]));

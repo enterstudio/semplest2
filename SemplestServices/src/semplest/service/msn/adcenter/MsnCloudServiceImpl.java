@@ -197,7 +197,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			ArrayList<ReportObject> ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			for(ReportObject t: ret){
 				logger.info("Keyword = " + t.getKeyword());
-				logger.info("BidAmount = " + t.getBidAmount());
+				logger.info("BidAmount = " + t.getMicroBidAmount());
 				logger.info("BidMatchType = " + t.getBidMatchType());
 				logger.info("NumberImpressions = " + t.getNumberImpressions());
 				logger.info("NumberClick = " + t.getNumberClick());
@@ -2445,7 +2445,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setAccountID(accountId);
 				data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 				data.setKeyword(ret2.get("keyword")[i]);
-				data.setBidAmount((int)(Double.valueOf(ret2.get("currentmaxcpc")[i])*1000000));
+				Long maxcpc = Long.valueOf(ret2.get("currentmaxcpc")[i]) * 1000000L;
+				data.setMicroBidAmount(maxcpc);
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
 				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
