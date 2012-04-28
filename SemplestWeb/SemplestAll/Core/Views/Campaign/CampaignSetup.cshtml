@@ -91,6 +91,7 @@ Ad Setup
     function OnSuccess(id) {
         $.unblockUI();
         var tab;
+        //alert(id);
         if (id == "Categories") {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
@@ -117,7 +118,7 @@ Ad Setup
                 tabStrip.select(tab);
             }
         }
-        else if (id == "viewSelectedKeywords") {
+        else if (id == "Keywords" || id == "KeyWords" || id == "viewSelectedKeywords") {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
                     text: "View Keywords",
