@@ -73,3 +73,29 @@
 
     </div>
 </div>
+
+<script type="text/javascript">
+    $("#viewSelectedKeywords").click(function () {
+        alert('in viewSelectedKeywords');
+        var length = tabStrip.items().length;
+        var isSelectedKeywordsAdded = false;
+        for (var item = 0; item < length; item++) {
+            alert('tst:' + tabStrip.items().item(item).innerText);
+            if (tabStrip.items().item(item).innerText == "KeyWords") {
+                isSelectedKeywordsAdded = true;
+                break;
+            }
+        }
+        if (!isSelectedKeywordsAdded)
+            tabStrip.append({
+                text: "KeyWords",
+                contentUrl: '/Campaign/KeyWords'
+            });
+//        $.ajax({
+//            type: "GET",
+//            url: "/Campaign/KeyWords",
+//            success: OnSuccess
+//        });
+//        $.getJSON('/Campaign/KeyWords');
+    });
+</script>
