@@ -41,7 +41,15 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                //model = _campaignRepository.GetCategories(model);
+                // we need save to database the ProductGroup and Promotion information
+                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                //int userid = 1; // for testing
+                //SemplestDataService ds = new SemplestDataService();
+                //ds.SaveProductGroupAndCampaign(userid, model);
+
+                // get the categoris from the web service
+                model = _campaignRepository.GetCategories(model);
+
                 // save this some how while getting the keywords this is becoming null
                 Session.Add("AllCategories", model.AllCategories);
                 Session.Add("AdModelProp", model.AdModelProp);
@@ -57,8 +65,8 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                //model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-                //model = _campaignRepository.GetKeyWords(model);
+                model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+                model = _campaignRepository.GetKeyWords(model);
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);
             }
