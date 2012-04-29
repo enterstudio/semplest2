@@ -32,7 +32,7 @@ Ad Setup
     <div id="example" class="k-content">
         @*@using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", UpdateTargetId = "example" }))*@
         @*@using (Html.BeginForm("CampaignSetup", "Campaign"))*@
-        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin" }))
+        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure"}))
         {
             @Html.ValidationSummary(true, "Campaign creation was unsuccessful. Please correct the errors and try again.")
             <div id="tabstrip">
@@ -135,10 +135,8 @@ Ad Setup
     }
     function OnFailure(ajaxContext) {
         $.unblockUI();
-        var response = ajaxContext.get_response();
-        var statusCode = response.get_statusCode();
-        alert('Failure');
-        $('#example').empty();
+        var response = ajaxContext.responseText;
+        alert(response);
     }
 
 </script>
