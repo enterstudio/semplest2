@@ -52,10 +52,9 @@
     });
 
     function tabChange(parameters) {
-        var nextItem = tabStrip.select().prev();
-        if (nextItem.length)
-            tabStrip.select(nextItem);
-        else
-            tabStrip.select(tabStrip.tabGroup.children().first());
+        var tab = tabStrip.select(),
+        otherTab = tab.prev();
+        tabStrip.remove(tab);
+        tabStrip.select(otherTab);
     }
 </script>

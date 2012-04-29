@@ -142,6 +142,8 @@
                 text: "Additional Links",
                 contentUrl: '/Campaign/AdditionalLinks'
             });
+            tab = tabStrip.tabGroup.children('li:contains("Additional Links")');
+            tabStrip.select(tab);
     });
 
     $("#negativeKeyWords").click(function () {
@@ -159,6 +161,8 @@
                 contentUrl: '/Campaign/NegativeKeyWords'
             });
         }
+        tab = tabStrip.tabGroup.children('li:contains("Negative Keywords")');
+        tabStrip.select(tab);
     });
 
     $("#viewSelectedKeywords").click(function () {
@@ -176,7 +180,10 @@
                 text: "View Keywords",
                 contentUrl: '/Campaign/KeyWords'
             });
-    });
+        });
+        tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
+        tabStrip.select(tab);
+    
 
 });
 
