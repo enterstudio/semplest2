@@ -23,11 +23,15 @@
 </div>
 <script>
     $('#backKey').click(function () {
-        var nextItem = tabStrip.select().prev();
-        if (nextItem.length)
-            tabStrip.select(nextItem);
-        else
-            tabStrip.select(tabStrip.tabGroup.children().first());
-
+        tabChange();
     });
+    $('#getBillingLaunch').click(function () {
+        //tabChange();
+    });
+    function tabChange(parameters) {
+        var tab = tabStrip.select(),
+        otherTab = tab.prev();
+        tabStrip.remove(tab);
+        tabStrip.select(otherTab);
+    }
 </script>
