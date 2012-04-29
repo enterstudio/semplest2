@@ -86,7 +86,13 @@ namespace Semplest.Core.Controllers
                 model = _campaignRepository.GetKeyWords(model);
 
                 // save the keywords here
-                ds.SaveKeywords(promoId, new List<string>(model.AllKeywords.Select(m => m.Name)));
+                List<string> keyList = new List<string>();
+                foreach (CampaignSetupModel.KeywordsModel kwm in model.AllKeywords)
+                {
+                    keyList.Add(kwm.Name);
+                }
+                // save to database
+                ds.SaveKeywords(promoId, keyList);
 
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);
