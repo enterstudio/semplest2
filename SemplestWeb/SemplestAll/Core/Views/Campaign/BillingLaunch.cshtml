@@ -80,26 +80,21 @@
 
 <script type="text/javascript">
     $("#viewSelectedKeywords").click(function () {
-        alert('in viewSelectedKeywords');
+        //alert('in viewSelectedKeywords');
         var length = tabStrip.items().length;
         var isSelectedKeywordsAdded = false;
         for (var item = 0; item < length; item++) {
-            alert('tst:' + tabStrip.items().item(item).innerText);
-            if (tabStrip.items().item(item).innerText == "KeyWords") {
+            if (tabStrip.items().item(item).innerText == "View Keywords") {
                 isSelectedKeywordsAdded = true;
                 break;
             }
         }
         if (!isSelectedKeywordsAdded)
             tabStrip.append({
-                text: "KeyWords",
+                text: "View Keywords",
                 contentUrl: '/Campaign/KeyWords'
             });
-//        $.ajax({
-//            type: "GET",
-//            url: "/Campaign/KeyWords",
-//            success: OnSuccess
-//        });
-//        $.getJSON('/Campaign/KeyWords');
+            var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
+            tabStrip.select(tab); 
     });
 </script>
