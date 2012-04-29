@@ -57,30 +57,19 @@ namespace Semplest.Core.Models
 
     }
 
-    public class MapAddressModel
-    {
-        public string Address { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public string Zip { get; set; }
-        public decimal Longitude { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal ProximityRadius { get; set; }
-    }
-
     public class AdModel
     {
         public AdModel ()
         {
             Addresses = new List<GeoTargeting> { new GeoTargeting() };
-            Ads = new List<PromotionAd> { new PromotionAd() }; 
+            Ads = new List<PromotionAd> { new PromotionAd() };
+            SiteLinks = new List<SiteLink> { new SiteLink() };
         }
         public List<GeoTargeting> Addresses { get; set; }
         public List<PromotionAd> Ads { get; set; }
+        public List<SiteLink> SiteLinks { get; set; }
+        public List<string> NegativeKeywords { get; set; }
         public string Url { get; set; }
-       
-       
-
     }
 
     public class AdEngineSelectModel
