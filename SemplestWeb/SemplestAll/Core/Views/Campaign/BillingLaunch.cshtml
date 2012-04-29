@@ -51,7 +51,7 @@
             </li>        
             </ul>
             <ul>
-            <li><input type="text" class="k-input" id="txtbudget" style="width:100px;" value="$400.00"/>
+            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @style="width:100px" })
          
             <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left:10px;">Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$400.00"/>
             <label id="Label2" class="k-label">"Output Field Which is a Conditional note"</label>
@@ -60,11 +60,11 @@
     </div>
     <div class="configuration1">
     </div>
-        <ul class="options">
+@*        <ul class="options">
             <li>Budget:</li>
-            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input"})</li>
+            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @style="width:100px" })</li>
         </ul>
-    
+*@    
     <div class="options">
     <label id="lblAddProductSummary" class="k-label">Ad Product Summary:</label>
         <button class="k-button" id="editadproduct" type="button">
