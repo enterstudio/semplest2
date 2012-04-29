@@ -4,7 +4,6 @@ var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&c
 var advancedOptions = '';
 var outFormat = '';
 var index = '';
-
 function showOptionsURL(type, city, state, zip, proximity) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = {};

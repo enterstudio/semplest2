@@ -73,8 +73,20 @@ namespace SemplestModel
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]
     public partial class SEMCustomerDetail
-    { 
+    {
 
+    }
+
+    [MetadataType(typeof(PromotionAdMetaData))]
+    public partial class PromotionAd
+    {
+        internal sealed class PromotionAdMetaData
+        {
+            [Required]
+            public string AdTitle { get; set; }
+            [Required]
+            public string AdText { get; set; }
+        }
     }
 
     public class SEMCustomerDetailMetaData
@@ -86,7 +98,7 @@ namespace SemplestModel
         [Required]
         public string Company { get; set; }
 
-        [DataType(DataType.EmailAddress,  ErrorMessage = "Invalid Email Address")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
         [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
         public string email { get; set; }
     }

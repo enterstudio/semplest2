@@ -5,6 +5,7 @@
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
+    var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
         if (validator.validate()) {
@@ -16,7 +17,10 @@
         }
     });
     $('#getCategories').click(function () {
-        $("#hiddenfield").val("Categories");
+        if (validator1.validate()) {
+        } else {
+            status.text("Oops! There is invalid data in the form.").addClass("invalid");
+        }
     });
     // Previous and Save And Continue Button tab changed Logic
     $("#save2").click(function () {
@@ -31,9 +35,6 @@
     //    $("#back2").click(function () { tabStrip.select(1); });
     //    $("#back3").click(function () { tabStrip.select(2); });
     $("#save").click(function () { tabStrip.select(0); });
-    //DropdownlistBindig
-
-    $("#dropDownList").kendoDropDownList({ dataTextField: "text", dataValueField: "value", dataSource: [{ text: "Item1", value: "1" }, { text: "Item2", value: "2"}] });
 
     // Dropdownlist Range in BillingLaunch
     $("#dropDownRange").kendoDropDownList();

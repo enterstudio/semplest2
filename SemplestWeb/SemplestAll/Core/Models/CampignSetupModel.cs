@@ -69,6 +69,7 @@ namespace Semplest.Core.Models
         public List<PromotionAd> Ads { get; set; }
         public List<SiteLink> SiteLinks { get; set; }
         public List<string> NegativeKeywords { get; set; }
+        [Required]
         public string Url { get; set; }
     }
 

@@ -30,7 +30,9 @@ namespace Semplest.SharedResources.Helpers
                 _dbContext.SaveChanges();
                 //send email
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+            catch (Exception ex) { Console.WriteLine(ex.ToString());
+                throw;
+            }
             // Log filterContext.Exception in some way.  
             //}
         }

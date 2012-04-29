@@ -55,8 +55,9 @@ namespace Semplest.Core.Controllers
                 Session.Add("AllCategories", model.AllCategories);
                 Session.Add("AdModelProp", model.AdModelProp);
                 Session.Add("ProductGroup", model.ProductGroup);
+                return Json("Categories");
             }
-            return Json("Categories");
+            return View(model);
         }
 
         [HttpPost]
