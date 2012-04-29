@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
 using KendoGridBinder;
@@ -43,9 +44,9 @@ namespace Semplest.Core.Controllers
             {
                 // we need save to database the ProductGroup and Promotion information
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                //int userid = 1; // for testing
-                //SemplestDataService ds = new SemplestDataService();
-                //ds.SaveProductGroupAndCampaign(userid, model);
+                int userid = 1; // for testing
+                SemplestDataService ds = new SemplestDataService();
+                ds.SaveProductGroupAndCampaign(userid, model);
 
                 // get the categoris from the web service
                 model = _campaignRepository.GetCategories(model);
@@ -66,7 +67,27 @@ namespace Semplest.Core.Controllers
             if (ModelState.IsValid)
             {
                 model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+
+                // get selected categories
+                var catList = new List<string>();
+                foreach (var cat in model.AllCategories)
+                {
+                    catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
+                }
+
+                // save the selected categories here
+                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                int userid = 1; // for testing
+                SemplestDataService ds = new SemplestDataService();
+                int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                ds.SaveSelectedCategories(promoId, catList);
+
+                // get the keywords from web service
                 model = _campaignRepository.GetKeyWords(model);
+
+                // save the keywords here
+                ds.SaveKeywords(promoId, new List<string>(model.AllKeywords.Select(m => m.Name)));
+
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);
             }
