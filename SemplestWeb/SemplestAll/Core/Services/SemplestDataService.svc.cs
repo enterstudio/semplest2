@@ -28,7 +28,7 @@ namespace SemplestWebApp.Services
             {
                 // get the customerfk from userid
                 var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
-                int custfk = (int)queryCustFk.First();
+                int custfk = (int)queryCustFk.FirstOrDefault();
 
                 // check if the ProductGroupName already exists
                 var queryProdGrp = from c in dbcontext.ProductGroups 
@@ -36,7 +36,7 @@ namespace SemplestWebApp.Services
                 if (queryProdGrp.Count() > 0)
                 {
                     // product grp already exists so update the product group 
-                    var updateProdGrp = queryProdGrp.First();
+                    var updateProdGrp = queryProdGrp.FirstOrDefault();
                     updateProdGrp.ProductGroupName = model.ProductGroup.ProductGroupName;
                     updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
                     updateProdGrp.EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate);
@@ -88,7 +88,7 @@ namespace SemplestWebApp.Services
 
                     // get the ProductGroup FK
                     var prodGrpFk =
-                        dbcontext.ProductGroups.Where(c => c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName).First().ProductGroupPK;
+                        dbcontext.ProductGroups.Where(c => c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName).FirstOrDefault().ProductGroupPK;
 
                     // set promo
                     promo.ProductGroupFK = prodGrpFk;
