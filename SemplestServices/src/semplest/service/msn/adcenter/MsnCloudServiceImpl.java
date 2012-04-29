@@ -204,7 +204,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				logger.info("AveragePosition = " + t.getAveragePosition());
 				logger.info("QualityScore = " + t.getQualityScore());
 				logger.info("AverageCPC = " + t.getAverageCPC());
-				logger.info("CreatedDate = " + t.getCreatedDate());
+				logger.info("CreatedDate = " + t.getTransactionDate());
 				logger.info("===========================");
 			}
 			
@@ -2445,7 +2445,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setAccountID(accountId);
 				data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 				data.setKeyword(ret2.get("keyword")[i]);
-				Long maxcpc = Long.valueOf(ret2.get("currentmaxcpc")[i]) * 1000000L;
+				Long maxcpc = new Double(ret2.get("currentmaxcpc")[i]).longValue() * 1000000L;
 				data.setMicroBidAmount(maxcpc);
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
@@ -2456,7 +2456,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setApprovalStatus(null);
 				data.setFirstPageCPC(-1);
 				String[] t = ret2.get("week")[i].split("/");
-				data.setCreatedDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0));
+				data.setTransactionDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0).toDate());
 				
 				reportObjectList.add(data);			
 			}

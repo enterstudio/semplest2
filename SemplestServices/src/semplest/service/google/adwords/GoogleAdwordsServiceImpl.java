@@ -241,7 +241,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						+ "QualityScore: " + t.getQualityScore()+ "; "
 						+ "ApprovalStatus: " + t.getApprovalStatus()+ "; "
 						+ "FirstPageCPC: " + t.getFirstPageCPC()+ "; "
-						+ "CreatedDate: " + t.getCreatedDate()+ "; "
+						+ "TransactionDate: " + t.getTransactionDate()+ "; "
 						+ "AccountID: " + t.getAccountID()+ "; "
 						+ "CampaignID: " + t.getCampaignID()+ "; "
 						);

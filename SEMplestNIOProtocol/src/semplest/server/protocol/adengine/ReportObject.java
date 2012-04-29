@@ -1,6 +1,6 @@
 package semplest.server.protocol.adengine;
 
-import org.joda.time.DateTime;
+import java.util.Date;
 /*
 
 CREATE TABLE [dbo].[AdvertisingEngineBidData](
@@ -20,6 +20,7 @@ public class ReportObject
 	private Long accountID;
 	private Long campaignID;
 	private String Keyword;
+	private Date transactionDate;
 	private Long microBidAmount;
 	private String BidMatchType;
 	private Integer numberImpressions;
@@ -29,7 +30,7 @@ public class ReportObject
 	private Integer qualityScore;
 	private String approvalStatus;
 	private Integer firstPageCPC;
-	private DateTime createdDate;
+	private Date createdDate;
 	public Long getAccountID()
 	{
 		return accountID;
@@ -126,13 +127,22 @@ public class ReportObject
 	{
 		this.firstPageCPC = firstPageCPC;
 	}
-	public DateTime getCreatedDate()
+	
+	public Date getCreatedDate()
 	{
 		return createdDate;
 	}
-	public void setCreatedDate(DateTime createdDate)
+	public void setCreatedDate(Date createdDate)
 	{
 		this.createdDate = createdDate;
+	}
+	public Date getTransactionDate()
+	{
+		return transactionDate;
+	}
+	public void setTransactionDate(Date transactionDate)
+	{
+		this.transactionDate = transactionDate;
 	}
 
 	

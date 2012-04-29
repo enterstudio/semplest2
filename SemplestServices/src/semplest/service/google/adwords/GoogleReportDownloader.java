@@ -14,9 +14,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
-import org.joda.time.DateTime;
+import java.util.Date;
 
 import semplest.server.protocol.adengine.ReportObject;
 
@@ -27,7 +27,7 @@ import semplest.server.protocol.adengine.ReportObject;
 // No charge for reports
 public class GoogleReportDownloader
 {
-	
+	private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private static final int BUF_SIZE = 0x1000;
 	// Customer ID to download.
 	private final long accountID;
@@ -107,7 +107,8 @@ public class GoogleReportDownloader
 					rdata.setQualityScore(Integer.valueOf(data[8]));
 					rdata.setApprovalStatus(data[15]);
 					rdata.setFirstPageCPC(Integer.valueOf(data[13]));
-					rdata.setCreatedDate(new DateTime(data[0]));
+					//yyyy-mm-dd
+					rdata.setTransactionDate(dateFormatter.parse(data[0]));
 					
 					reportObjectList.add(rdata);
 				}
