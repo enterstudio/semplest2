@@ -174,6 +174,7 @@ namespace Semplest.Admin.Controllers
                    RoleName = r.RoleName,
                    Email = u.Email,
                     ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value),
+                    HireDate = e.HireDate, 
                     isActive=u.IsActive 
                };
 
@@ -259,6 +260,7 @@ namespace Semplest.Admin.Controllers
             var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             employee.EmployeeTypeFK = m.SelectedEmployeeTypeID;
             employee.ReportingTo = m.SelectedReportingToID == -1 ?  default(int?) : m.SelectedReportingToID;
+            employee.HireDate = m.EmployeeSetup.HireDate;
             UpdateModel(employee);
 
             var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
@@ -365,7 +367,7 @@ namespace Semplest.Admin.Controllers
                 UserRolesAssociation ura = dbcontext.UserRolesAssociations.Add(new UserRolesAssociation { Role = r, User = u });
 
                 EmployeeType et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
-                Employee e = dbcontext.Employees.Add(new Employee { EmployeeType = et, User = u });
+                Employee e = dbcontext.Employees.Add(new Employee { EmployeeType = et, User = u, HireDate=m.EmployeeSetup.HireDate  });
                 Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
 
 

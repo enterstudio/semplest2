@@ -215,6 +215,7 @@ namespace Semplest.Admin.Models
 
         public int ReportingTo { get; set; }
         public bool isActive { get; set; }
+        public  DateTime?  HireDate { get; set; }
     }
 
 

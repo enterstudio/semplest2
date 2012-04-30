@@ -13,13 +13,15 @@ Edit Employee:
     
      
      $(document).ready(function () {
-         $("#datePicker").kendoDatePicker();
+          $("#EmployeeSetup_HireDate").kendoDatePicker();
      });
 
 
      jQuery(function ($) {
-         
+
          $("#EmployeeSetup_MiddleInitial").mask("a");
+//         $("#EmployeeSetup_HireDate").mask(("99/99/9999");
+
      });
 
 </script>
@@ -71,12 +73,12 @@ Edit Employee:
 
          
         <div class="editor-label">
-        <label>Effective Date:</label>
+        <label>Hire Date:</label>
         
         </div>
 
         <div class="editor-field">
-            <input type="text" id="datePicker"/>
+             @Html.TextBoxFor(model => model.EmployeeSetup.HireDate , new { @class = "k-textbox" })
         </div>
 
 
