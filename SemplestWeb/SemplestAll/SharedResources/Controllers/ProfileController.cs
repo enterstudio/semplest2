@@ -24,7 +24,7 @@ namespace Semplest.SharedResources.Controllers
             using (SemplestEntities dbContext = new SemplestEntities())
             {
                 Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = 1;
-                return RedirectToAction("CampaignSetup", "Campaign");
+                return RedirectToAction("Index", "Home");
                 var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
                 if (creds.Count() == 1)
                 {

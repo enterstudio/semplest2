@@ -1,3 +1,4 @@
+@model Semplest.Core.Models.HomeModel
 @{
     ViewBag.Title = "My Account";
 }
@@ -35,15 +36,14 @@
     </script>
 }
 <h4>Quick Stats</h4>
-
-<a href="">85</a> Clients have launched a campaign<br />
-<a href="">23</a> Clients have started a campaign but not launched<br />
-<a href="">16</a> Clients have not logged in<br />
-<a href="">View All Product Groups</a>
+<a href="">@Model.LaunchedCampaigns</a> Clients have launched a campaign<br />
+<a href="">@Model.StartedCampaignsNotLaunched</a> Clients have started a campaign but not launched<br />
+<a href="">@Model.ClientsNotLoggedIn</a> Clients have not logged in<br />
+View All Product Groups
 
 <h4>Create Additional Accounts for Your Clients</h4>
 <ol> 
-<li><a href="">Upload Email Addresses, DMAs and Budgets</a>(from Excel or a CSV file)</li>
+<li>Upload Email Addresses, DMAs and Budgets (from Excel or a CSV file)</li>
 <li>Select search engine preferences</li>
 </ol>
 
@@ -67,4 +67,4 @@
 <p>All live campaigns to date</p>
 
 
-<p><a href="">Account Information</a></p>
+<p>@Html.ActionLink("Account Information", "ParentProfile", "Account") </p>

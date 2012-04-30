@@ -11,20 +11,44 @@
         <input type="button" class="k-button rounded" value="Billing" id="btnThree" />
     </div>
 }
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script type="text/javascript">
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" },
+                        { text: "Create User", url: "Home" },
+                        { text: "Campaign", url: "/Campaign/CampaignSetup" },
+                        { text: "Search Keywords", url: "Home/SearchKeywords" }
+                    ]
+                }
+            ]
+        });
+
+    </script>
+    }
 <br />
 <br />
-<p><a href="">Create New Product Group</a></p>
-<p><a href="">Create Duplicate Product Group</a></p>
+<p>@Html.ActionLink("Create New Product Group", "CampaignSetup", "Campaign")</p>
+<p>Create Duplicate Product Group</p>
 
-<p><b>Live Product Groups</b> scroll over to see summary, click to edit</p>
-<a href="">Insurance</a>
+<p><b>Live Product Groups</b></p>
+Insurance
 
-<p><b>Unfinished Product Groups</b></p><br />
-<a href="">Safety Tips</a>
+<p><b>Unfinished Product Groups</b></p>
+Safety Tips
 
-<p>Paused Product Groups</p><br />
-<a href="">Agents</a>
+<p><b>Paused Product Groups</b></p>
+Agents
 
-Reporting Snapshot
+<p>Reporting Snap Shot </p>
+<p>@Html.ActionLink("Account Information", "ChildProfile", "Account") </p>
+ 
 
 

@@ -6,6 +6,8 @@ using Semplest.Core.Models;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
 using Semplest.SharedResources.Services;
+using SemplestModel;
+using System.Linq;
 
 namespace SemplestWebApp.Controllers
 {
@@ -13,9 +15,23 @@ namespace SemplestWebApp.Controllers
     [AuthorizeRole]
     public class HomeController : Controller
     {
+        
         public ActionResult Index()
         {
-            return View();
+            HomeModel hm = new HomeModel();
+            SemplestEntities dbContext = new SemplestEntities();
+            foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == int.Parse(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString())).First().Customer.ProductGroups)
+            {
+                foreach (Promotion p in pg.Promotions)
+                {
+                    if (p.IsLaunched)
+                        hm.LaunchedCampaigns++;
+                    else
+                        hm.StartedCampaignsNotLaunched++;
+                }
+            }
+
+            return View(hm);
         }
 
         

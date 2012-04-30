@@ -19,34 +19,7 @@ namespace Semplest.Admin.Controllers
         //
         // GET: /Roles/
 
-        public void AddRightToDatabase(string label, string controllerName, string vAction)
-        {
-            
-            bool found = false;
-            string myController = ControllerContext.RouteData.Values["Controller"].ToString();
-            string controllerActionName = controllerName + "." + vAction;
-            if (controllerName != myController && !string.IsNullOrEmpty(label))
-            {
-                using (SemplestEntities dbContext = new SemplestEntities())
-                {
-                    foreach (Right r in dbContext.Rights)
-                    {
-                        if (label == r.Label && controllerActionName == r.Controller)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                    {
-                        dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
-                        dbContext.SaveChanges();
-                    }
-                }
-            }
-        }
-
-        public ActionResult Index()
+       public ActionResult Index()
         {
             IEnumerable<SemplestModel.Role> viewModel = _dbContext.Roles;
             return View(viewModel);

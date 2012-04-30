@@ -130,6 +130,7 @@
     <Compile Include="Helpers\toProperty.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\CampignSetupModel.cs" />
+    <Compile Include="Models\HomeModel.cs" />
     <Compile Include="Models\Repositories\CampaignRepository.cs" />
     <Compile Include="Models\Repositories\ICampaignRepository.cs" />
     <Compile Include="Models\SearchKeywordsModel.cs" />
