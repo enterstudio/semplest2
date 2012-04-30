@@ -43,13 +43,36 @@ namespace SemplestWebApp.Services
 
                     // get promotion and update it
                     var updatePromotion = GetPromotionFromProductGroup(updateProdGrp, model.ProductGroup.ProductPromotionName);
-                    updatePromotion.LandingPageURL = model.AdModelProp.Url;
-                    updatePromotion.PromotionDescription = model.ProductGroup.Words;
-                    updatePromotion.CycleBudgetAmount = model.ProductGroup.Budget;
-                    updatePromotion.EditedDate = DateTime.Now;
-                    // update promotion ads
-                    foreach (PromotionAd pad in updatePromotion.PromotionAds)
+                    // if this is null means promotion name changed so create a new promotion
+                    if (updatePromotion == null)
                     {
+                        updatePromotion = new Promotion
+                        {
+                            PromotionName = model.ProductGroup.ProductPromotionName,
+                            ProductGroupFK = updateProdGrp.ProductGroupPK,
+                            LandingPageURL = model.AdModelProp.Url,
+                            PromotionDescription = model.ProductGroup.Words,
+                            CycleBudgetAmount = model.ProductGroup.Budget,
+                            IsPaused = false,
+                            IsCompleted = false,
+                            IsLaunched = false
+                        };
+
+                        // need to add promotion ads and others
+
+                        dbcontext.Promotions.Add(updatePromotion);
+                    }
+                    else
+                    {
+                        updatePromotion.LandingPageURL = model.AdModelProp.Url;
+                        updatePromotion.PromotionDescription = model.ProductGroup.Words;
+                        updatePromotion.CycleBudgetAmount = model.ProductGroup.Budget;
+                        updatePromotion.EditedDate = DateTime.Now;
+                        // update promotion ads
+                        foreach (PromotionAd pad in updatePromotion.PromotionAds)
+                        {
+                        }
+
                     }
 
                     dbcontext.SaveChanges();
@@ -80,7 +103,9 @@ namespace SemplestWebApp.Services
                         LandingPageURL = model.AdModelProp.Url,
                         PromotionDescription = model.ProductGroup.Words,
                         CycleBudgetAmount = model.ProductGroup.Budget,
-                        IsPaused = false
+                        IsPaused = false,
+                        IsCompleted = false,
+                        IsLaunched = false
                     };
                     foreach (PromotionAd pad in model.AdModelProp.Ads)
                     {
@@ -185,6 +210,9 @@ namespace SemplestWebApp.Services
 
             using (var dbcontext = new SemplestEntities())
             {
+                // todo need to fix this
+                return true;
+
                 foreach (string keyword in keywordsList)
                 {
                     if (dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Count() == 0)
@@ -209,21 +237,21 @@ namespace SemplestWebApp.Services
                     {
                         // todo find out more
 
-                        //var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
-                        //if (query.Count() == 0)
-                        //{
-                        //    int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
-                        //    dbcontext.PromotionKeywordAssociations.Add(
-                        //        new PromotionKeywordAssociation
-                        //        {
-                        //            PromotionFK = promotionId,
-                        //            KeywordFK = keywordId,
-                        //            IsActive = true,
-                        //            IsDeleted = false,
-                        //            IsNegative = false
-                        //        });
+                        var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
+                        if (query.Count() == 0)
+                        {
+                            int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
+                            dbcontext.PromotionKeywordAssociations.Add(
+                                new PromotionKeywordAssociation
+                                {
+                                    PromotionFK = promotionId,
+                                    KeywordFK = keywordId,
+                                    IsActive = true,
+                                    IsDeleted = false,
+                                    IsNegative = false
+                                });
 
-                        //}
+                        }
                     }
                 }
                 retFlag = true;
