@@ -95,6 +95,21 @@
                 contentUrl: '/Campaign/KeyWords'
             });
             var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
-            tabStrip.select(tab); 
-    });
+            tabStrip.select(tab);
+        });
+
+        $("#editadproduct").click(function () {
+            tabChange();
+        });
+
+        $("#getLaunchAdProduct").click(function () {
+        });
+
+        function tabChange(parameters) {
+            var tab = tabStrip.select();
+            tabStrip.remove(tab);
+            var reqtab = tabStrip.tabGroup.children('li:contains("DEFINE PRODUCT")');
+            tabStrip.select(reqtab);
+        }
+
 </script>
