@@ -18,9 +18,10 @@ namespace SemplestWebApp.Controllers
         
         public ActionResult Index()
         {
-            HomeModel hm = new HomeModel();
+            HomeModelParent hm = new HomeModelParent();
             SemplestEntities dbContext = new SemplestEntities();
-            foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == int.Parse(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString())).First().Customer.ProductGroups)
+            int userId = int.Parse(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString());
+            foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == userId).First().Customer.ProductGroups)
             {
                 foreach (Promotion p in pg.Promotions)
                 {
@@ -37,7 +38,9 @@ namespace SemplestWebApp.Controllers
         
         public ActionResult Index2()
         {
-            return View();
+            SemplestEntities dbContext = new SemplestEntities();
+
+            return View(dbContext.ProductGroups);
         }
 
 

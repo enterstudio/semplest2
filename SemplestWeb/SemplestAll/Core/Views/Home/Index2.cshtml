@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<SemplestModel.ProductGroup>
+@{
     ViewBag.Title = "My Account";
 }
 @section Title{
@@ -39,7 +40,10 @@
 <p>Create Duplicate Product Group</p>
 
 <p><b>Live Product Groups</b></p>
-Insurance
+@foreach (SemplestModel.ProductGroup p in Model)
+{
+    @Html.ActionLink(p.ProductGroupName, "", "")<br />
+}
 
 <p><b>Unfinished Product Groups</b></p>
 Safety Tips

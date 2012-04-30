@@ -1,5 +1,6 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+
 namespace Semplest.SharedResources.Helpers
 {
     public class AuthorizeRoleAttribute : AuthorizeAttribute
@@ -8,6 +9,8 @@ namespace Semplest.SharedResources.Helpers
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
+
+            httpContext.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = 1;
             return true;
             string userId = string.Empty;
             if (HttpContext.Current.Session["UserId"] != null)
