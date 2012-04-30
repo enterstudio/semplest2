@@ -142,6 +142,20 @@
 			<jar destfile="${dist}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">
 			</jar>  
 		 <echo message="Done."/> 
+		
+		<!-- Copy folder for ChaseOrbitalGateway -->
+		<echo message="Copy folders for ChaseOrbitalGateway..."/>
+  	 	<mkdir dir="${dist}/logs"/>
+  	 	<mkdir dir="${dist}/xml"/>
+  	 	<copydir src="${basedir}/xml"
+  	 		dest="${dist}/xml"
+  	 	    includes="**/*.*"
+  	 	/>
+  	 	<mkdir dir="${dist}/config"/>
+		<copydir src="${basedir}/config"
+  	 		dest="${dist}/config"
+  	 	    includes="**/*.*"
+  	 	/>	
 	  	
 	  	<!-- Create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>	 
