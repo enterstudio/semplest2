@@ -207,21 +207,23 @@ namespace SemplestWebApp.Services
                     }
                     else  // keyword already there in the Keywords table, setup an association with promotion if its not there
                     {
-                        var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
-                        if (query.Count() == 0)
-                        {
-                            int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
-                            dbcontext.PromotionKeywordAssociations.Add(
-                                new PromotionKeywordAssociation
-                                {
-                                    PromotionFK = promotionId,
-                                    KeywordFK = keywordId,
-                                    IsActive = true,
-                                    IsDeleted = false,
-                                    IsNegative = false
-                                });
+                        // todo find out more
 
-                        }
+                        //var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
+                        //if (query.Count() == 0)
+                        //{
+                        //    int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
+                        //    dbcontext.PromotionKeywordAssociations.Add(
+                        //        new PromotionKeywordAssociation
+                        //        {
+                        //            PromotionFK = promotionId,
+                        //            KeywordFK = keywordId,
+                        //            IsActive = true,
+                        //            IsDeleted = false,
+                        //            IsNegative = false
+                        //        });
+
+                        //}
                     }
                 }
                 retFlag = true;
