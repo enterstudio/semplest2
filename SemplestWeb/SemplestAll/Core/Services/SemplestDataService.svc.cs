@@ -52,6 +52,8 @@ namespace SemplestWebApp.Services
                     {
                     }
 
+                    dbcontext.SaveChanges();
+
                     retFlag = true;
                 }
                 else
@@ -73,6 +75,7 @@ namespace SemplestWebApp.Services
                     // create promotion
                     var promo = new Promotion 
                     { 
+                        ProductGroupFK = prodgroup.ProductGroupPK,
                         PromotionName = model.ProductGroup.ProductPromotionName,
                         LandingPageURL = model.AdModelProp.Url,
                         PromotionDescription = model.ProductGroup.Words,
@@ -82,18 +85,18 @@ namespace SemplestWebApp.Services
                     foreach (PromotionAd pad in model.AdModelProp.Ads)
                     {
                         var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
-                        // todo need to add sitelinks
+                        // add sitelinks
+                        foreach (SiteLink slink in model.AdModelProp.SiteLinks)
+                        {
+                            slink.PromotionAdsFK = cad.PromotionAdsPK;
+                            cad.SiteLinks.Add(slink);
+                        }
+
                         promo.PromotionAds.Add(cad);
                     }
 
-                    // get the ProductGroup FK
-                    var prodGrpFk =
-                        dbcontext.ProductGroups.Where(c => c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName).FirstOrDefault().ProductGroupPK;
-
-                    // set promo
-                    promo.ProductGroupFK = prodGrpFk;
+                    // set promotion
                     dbcontext.Promotions.Add(promo);
-
                     dbcontext.SaveChanges();
                     retFlag = true;
                 }
@@ -103,7 +106,7 @@ namespace SemplestWebApp.Services
 
         private Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
-            var promo = prodGroup.Promotions.Where(m => m.PromotionName == promotionName).First();
+            var promo = prodGroup.Promotions.Where(m => m.PromotionName == promotionName).FirstOrDefault();
             return promo;
         }
 
@@ -143,6 +146,24 @@ namespace SemplestWebApp.Services
                 var query = dbcontext.KeywordCategories.Where(c => c.PromotionFK == promotionId);
                 if (query.Count() == 0)
                 {
+                    foreach (string category in selectedCategories)
+                    {
+                        KeywordCategory keyCategory = new KeywordCategory();
+                        keyCategory.PromotionFK = promotionId;
+                        keyCategory.KeywordCategory1 = category;
+                        dbcontext.KeywordCategories.Add(keyCategory);
+                    }
+                    dbcontext.SaveChanges();
+                }
+                else  // categories exists so update them
+                {
+                    // delete them first
+                    foreach (KeywordCategory kc in query)
+                    {
+                        dbcontext.KeywordCategories.Remove(kc);
+                    }
+                    dbcontext.SaveChanges();
+                    // add them
                     foreach (string category in selectedCategories)
                     {
                         KeywordCategory keyCategory = new KeywordCategory();
