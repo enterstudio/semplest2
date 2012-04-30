@@ -42,6 +42,13 @@ Employee Setup
 
 }
 
+
+@if (TempData["message"] != null)
+{
+    <div style="color:red;">
+    @TempData["message"]
+    </div>
+}
     
 @if (!Model.Any())
     {

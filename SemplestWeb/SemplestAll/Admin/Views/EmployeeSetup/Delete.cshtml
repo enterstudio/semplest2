@@ -1,0 +1,24 @@
+﻿@model Semplest.Admin.Models.EmployeeSetupWithRolesModel
+@section NavBar {
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@{
+    ViewBag.Title = "Delete";
+}
+
+@section Title{
+Delete Employee:
+}
+
+
+@using (Html.BeginForm("Delete"))
+{
+    @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
+    @Html.HiddenFor(model => model.EmployeeSetup.FirstName)
+    @Html.HiddenFor(model => model.EmployeeSetup.LastName )
+
+    <h2>Delete Employee @Html.DisplayFor(Model => Model.EmployeeSetup.FirstName) @Html.DisplayFor(Model => Model.EmployeeSetup.LastName) (@Html.DisplayFor(Model => Model.EmployeeSetup.Email))?</h2>
+    <br />
+    <input type="submit" name="command" value="Delete" class="k-button" />
+    <input type="submit" name="command" value="Cancel" class="k-button" />    
+}

@@ -127,7 +127,14 @@ Edit Employee:
         <p>
             <input type="submit" value="Save" class="k-button" />
         </p>
+
+ <ul style="display: block" class="kendo-nav">
+    <li> @Html.RouteLink("Delete Employee", new { Controller = "EmployeeSetup", action = "Delete", id = Model.EmployeeSetup.EmployeePK  }) </li>
+    </ul>
     </fieldset>
+     
+   
+    
 }
 <div>
     @Html.ActionLink("Back to List", "Index")

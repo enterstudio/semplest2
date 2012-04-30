@@ -7,6 +7,7 @@ using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
+using System.Data.Objects;
 
 
 namespace Semplest.Admin.Controllers
@@ -630,6 +631,157 @@ namespace Semplest.Admin.Controllers
 
             return RedirectToAction("Index");
         }
+
+
+
+        public ActionResult Delete(int id)
+        {
+
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            var viewModel =
+                from u in dbcontext.Users
+                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
+                join caa in dbcontext.CustomerAddressAssociations on c.CustomerPK equals caa.CustomerFK
+                join a in dbcontext.Addresses on caa.AddressFK equals a.AddressPK
+                join sc in dbcontext.StateCodes on a.StateAbbrFK equals sc.StateAbbrPK
+                join at in dbcontext.AddressTypes on caa.AddressTypeFK equals at.AddressTypePK
+                join cpa in dbcontext.CustomerPhoneAssociations on c.CustomerPK equals cpa.CustomerFK
+                join p in dbcontext.Phones on cpa.PhoneFK equals p.PhonePK
+                join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
+                join n in dbcontext.CustomerNotes.DefaultIfEmpty() on c.CustomerPK equals n.CustomerFK
+
+                where (c.CustomerPK == id)
+                select new CustomerAccount
+                {
+                    AccountNumber = c.CustomerPK,
+                    Customer = c.Name,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    MiddleInitial = u.MiddleInitial,
+                    Address1 = a.Address1,
+                    Address2 = a.Address2,
+                    City = a.City,
+                    State = sc.StateAbbr,
+                    Zip = a.ZipCode,
+                    Phone = p.Phone1,
+                    Email = u.Email,
+                    BillType = b.BillType1,
+                    UserPK = u.UserPK,
+                    StateID = sc.StateAbbrPK,
+                    CustomerNote = (n.Note == null ? null : n.Note),
+                    isActive = u.IsActive
+                };
+
+            CustomerAccountWithEmployeeModel x = new CustomerAccountWithEmployeeModel();
+            x.CustomerAccount = viewModel.Single(c => c.AccountNumber == id);
+
+
+            return View(x);
+            //return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Delete(CustomerAccountWithEmployeeModel m, string command)
+        {
+            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestEntities context = new SemplestEntities();
+
+
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+            if (command.ToLower() == "delete")
+            {
+
+                try
+                {
+
+                    var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.CustomerAccount.UserPK);
+
+                    
+                    var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.CustomerAccount.AccountNumber);
+                    var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
+                    var customerstyle = dbcontext.CustomerStyles.ToList().Find(p=>p.CustomerFK.Equals( m.CustomerAccount.AccountNumber));
+                    var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
+                    var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK.Equals(customerphoneassociation.PhoneFK));
+                    var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
+                    var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
+
+
+                    var productgroup = dbcontext.ProductGroups.ToList().Find(p => p.CustomerFK.Equals(customer.CustomerPK));
+                    if (productgroup != null) throw new Exception("Could not delete customer");
+
+                    
+                    //UPDATE: no need to check for promotion, won't be deleting any customer that has a productgroup assigned!!!
+                    //var promotion = dbcontext.Promotions.ToList().Find(p => p.ProductGroupFK.Equals(productgroup.ProductGroupPK));
+                    //if (promotion != null) throw new Exception("Could not delete customer");
+
+
+                    //Message = "The operation failed: The relationship could not be changed because one or more of the foreign-key properties is non-nullable. When a change is made to a relationship, the related foreign-key property is set to a null value. If the foreign-key does not sup...
+                    //dbcontext.Customers.Remove(customer);
+                    //dbcontext.Users.Remove(user);
+                    //dbcontext.EmployeeCustomerAssociations.Remove(employeecustomerassociation);
+                    //if (customerstyle!=null)
+                    //    dbcontext.CustomerStyles.Remove(customerstyle);
+                    //dbcontext.CustomerPhoneAssociations.Remove(customerphoneassociation);
+                    //dbcontext.Phones.Remove(phone);
+                    //dbcontext.Credentials.Remove(credentials);
+                    //if(userrolesassociation!=null)
+                    //    dbcontext.UserRolesAssociations.Remove(userrolesassociation);
+
+                    //workaround for deletion:
+
+                    EmployeeCustomerAssociation eca = employeecustomerassociation;
+                    dbcontext.EmployeeCustomerAssociations.Remove(eca);
+                    
+                    Customer c = customer;
+                    dbcontext.Customers.Remove(c);
+
+                     Credential cr = credentials;
+                    dbcontext.Credentials.Remove(cr);
+
+                    User u = user;
+                    dbcontext.Users.Remove(u);
+                     
+
+                    CustomerPhoneAssociation cpa = customerphoneassociation;
+                    dbcontext.CustomerPhoneAssociations.Remove(cpa);
+
+                    Phone ph = phone;
+                    dbcontext.Phones.Remove(ph);
+
+               
+                    if (customerstyle != null)
+                    {
+                        CustomerStyle cs = customerstyle;
+                        dbcontext.CustomerStyles.Remove(cs);
+                    }
+
+                    if (userrolesassociation != null)
+                    {
+                        UserRolesAssociation ura = userrolesassociation;
+                        dbcontext.UserRolesAssociations.Remove(ura);    
+                    }
+                    
+
+
+
+                    dbcontext.SaveChanges();
+                    
+                    TempData["message"] = "Customer Account #" + m.CustomerAccount.AccountNumber + " (" + m.CustomerAccount.Customer + ") has been successfully deleted.";
+                }
+
+                catch (Exception ex)
+                {
+                    TempData["message"] = "Customer Account #" + m.CustomerAccount.AccountNumber + " (" + m.CustomerAccount.Customer + ") could NOT be deleted.";
+                }
+
+
+
+            }
+            //return View();
+            return RedirectToAction("Index");
+        }
+
 
     }
 }

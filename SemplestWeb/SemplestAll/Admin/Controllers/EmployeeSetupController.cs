@@ -409,6 +409,95 @@ namespace Semplest.Admin.Controllers
         }
 
 
+        public ActionResult Delete(int id)
+        {
+
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            var viewModel =
+              from e in dbcontext.Employees
+              join u in dbcontext.Users on e.UsersFK equals u.UserPK
+              join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+              join ura in dbcontext.UserRolesAssociations on e.UsersFK equals ura.UsersFK
+              join r in dbcontext.Roles on ura.RolesFK equals r.RolePK
+              where e.EmployeePK.Equals(id)
+              select new EmployeeSetup
+              {
+                  EmployeePK = e.EmployeePK,
+                  EmployeeTypeFK = e.EmployeeTypeFK,
+                  EmployeeTypeID = et.EmployeeTypeID,
+                  RolesFK = ura.RolesFK,
+                  UserPK = u.UserPK,
+                  EmployeeType = e.EmployeeType.EmployeeType1,
+                  FirstName = u.FirstName,
+                  MiddleInitial = u.MiddleInitial,
+                  LastName = u.LastName,
+                  RoleName = r.RoleName,
+                  Email = u.Email,
+                  ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value),
+                  HireDate = e.HireDate,
+                  isActive = u.IsActive
+              };
+
+            EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
+            x.EmployeeSetup = viewModel.FirstOrDefault();
+            
+
+            return View(x);
+            //return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Delete(EmployeeSetupWithRolesModel m, string command)
+        {
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+            if (command.ToLower() == "delete") {
+
+                try
+                { 
+
+                var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
+                
+                //need to add effective date to db ---><><>
+
+                var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+                
+                var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+
+                var credential = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+
+
+                var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.EmployeeFK.Equals(m.EmployeeSetup.UserPK));
+
+                if (employeecustomerassociation != null) throw new Exception("Could not delete employee");
+
+                dbcontext.Users.Remove(user);
+                dbcontext.Employees.Remove(employee);
+                dbcontext.UserRolesAssociations.Remove(userrolesassociation);
+                dbcontext.Credentials.Remove(credential);
+
+                    ///
+                
+                dbcontext.SaveChanges();
+                TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " has been successfully deleted.";
+                }
+                
+                catch(Exception ex)
+                {
+                    TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " could NOT be deleted."; 
+                }
+
+
+
+            }
+            //return View();
+            return RedirectToAction("Index");
+        }
+
+
+
 
     }
 }

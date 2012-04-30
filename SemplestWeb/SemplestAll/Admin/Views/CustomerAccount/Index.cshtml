@@ -50,6 +50,14 @@ Account Service
         </ul>
     </div>
 }
+
+@if (TempData["message"] != null)
+{
+    <div style="color:red;">
+    @TempData["message"]
+    </div>
+}
+
 @if (!Model.Any())
 {
     // table is empty
