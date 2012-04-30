@@ -6,7 +6,8 @@ import org.apache.log4j.Logger;
 
 import semplest.server.service.ServiceInterface;
 
-public class ChaseOrbitalGatewayService implements ServiceInterface {
+public class ChaseOrbitalGatewayService implements ServiceInterface 
+{
 
 	private static final Logger logger = Logger.getLogger(ChaseOrbitalGatewayService.class);
 

@@ -6,6 +6,15 @@ import com.paymentech.orbital.sdk.util.exceptions.InitializationException;
 
 public class ChaseOrbitalGatewayObject extends Thread
 {
+	/*
+	 * THESE NEED TO BE PUT INTO CONFIG DATABASE
+	 */
+	public static String SALEM_PLATFORM = "000001";
+	public static String MERCHANTID_TEST = "041756";
+	public static String ORBITAL_USERNAME = "TSEMPLEST01";
+	public static String ORBITAL_PASSWORD = "01tsemplest";
+	
+	
 	private TransactionProcessorIF transactionProcessor = null;
 
 	public void run()
