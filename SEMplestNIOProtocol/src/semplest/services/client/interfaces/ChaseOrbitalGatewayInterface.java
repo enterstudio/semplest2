@@ -1,8 +1,9 @@
 package semplest.services.client.interfaces;
 
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
+import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 
 public interface ChaseOrbitalGatewayInterface extends ServiceInitialize
 {
-	public abstract String CreateProfile(CustomerObject customerObject, String creditCardNumber)throws Exception; 
+	public abstract GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY)throws Exception; 
 }
