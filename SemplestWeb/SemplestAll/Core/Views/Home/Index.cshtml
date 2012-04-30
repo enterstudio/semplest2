@@ -47,10 +47,7 @@ View All Product Groups
 <li>Select search engine preferences</li>
 </ol>
 
-<table>
-<tr><td>x</td><td>Google</td></tr>
-<tr><td>x</td><td>MSN</td></tr>
-</table>
+@Html.Partial("_AdvertisingEngine", Model.AdvertisingEngines)
 
 <b>Billing </b>
 <input type="radio" name="billing "value="i" />Invoice 

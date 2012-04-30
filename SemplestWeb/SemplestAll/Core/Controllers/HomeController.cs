@@ -31,7 +31,7 @@ namespace SemplestWebApp.Controllers
                         hm.StartedCampaignsNotLaunched++;
                 }
             }
-
+            hm.AdvertisingEngines = dbContext.AdvertisingEngines;
             return View(hm);
         }
 
