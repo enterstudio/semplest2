@@ -63,7 +63,9 @@
 	
   <property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />
   <property name="semplest.clientapi.lib" value="${basedir}/../SemplestServicesClient/lib" />
-
+	
+  <property name="semplest.chaseorbit.dir" value="${basedir}/../ChaseOrbitalGateway" />
+  <property name="semplest.chaseorbit.lib" value="${basedir}/../ChaseOrbitalGateway/lib" />
  	
   <property name="ant.contrib.dir" value="${basedir}/../ant-contrib" />
   <property name="install.root.local" value="${basedir}/build/install-root" />
@@ -200,6 +202,43 @@
 			<jar destfile="${dist}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">
 					 
 			</jar>  
+		
+		<!-- Create a Jar for ChaseOrbitalGateway, and copy its folders to SemplestServices -->
+		<echo message="Creating Jar for ChaseOrbitalGateway..."/>
+		  <!-- copy folders -->
+  	 	<mkdir dir="${dist}/logs"/>
+  	 	<mkdir dir="${dist}/xml"/>
+  	 	<copydir src="${semplest.chaseorbit.dir}/xml"
+  	 		dest="${dist}/xml"
+  	 	    includes="**/*.*"
+  	 	/>
+  	 	<mkdir dir="${dist}/config"/>
+		<copydir src="${semplest.chaseorbit.dir}/config"
+  	 		dest="${dist}/config"
+  	 	    includes="**/*.*"
+  	 	/>		
+		  <!-- compile and create jar -->
+		<copy todir="${dist}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.chaseorbit.lib}" includes="**/*.jar" />
+		</copy>
+		<path id="credit.path">
+			<pathelement location="${classes}"/>
+			<fileset dir="${semplest.chaseorbit.lib}" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.chaseorbit.dir}/temp"/>
+		<javac srcdir="${semplest.chaseorbit.dir}" destdir="${semplest.chaseorbit.dir}/temp" classpathref="credit.path"
+			target="1.6"
+			source="1.6"
+			debug="${java.debug}"   	
+			includes="**/*.java" >
+			<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${dist}/lib/SemplestChaseOrbitService.jar" basedir="${semplest.chaseorbit.dir}/temp">
+			 <manifest>
+			 	<attribute name="Main-Class" value="semplest.server.service.orbital.test"/>
+			 </manifest>
+		</jar>  			
 	  	
 	  	<!-- If it's a Keyword service, then create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 	  	<if>
