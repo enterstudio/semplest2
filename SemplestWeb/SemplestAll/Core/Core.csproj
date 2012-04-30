@@ -269,6 +269,9 @@
     <Content Include="Views\Campaign\BillingLaunch.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Views\Home\Index2.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="Views\Account\ParentProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -1,11 +1,17 @@
 @{
-    ViewBag.Title = "Create User";
+    ViewBag.Title = "My Account";
 }
 @section Title{
-    Create Account
+    My Account
 }
-@section Links
-{}
+@section Links{
+    <div id="examplesThemeChooser">
+        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnOne" />
+        <input type="button" class="k-button rounded" value="Reporting" id="btnTwo" />
+        <input type="button" class="k-button rounded" value="Billing" id="btnThree" />
+    </div>
+}
+
 @section Navbar{
     <div id="panelbar-images">
     </div>
@@ -28,39 +34,37 @@
 
     </script>
 }
-<h2>
-    Welcome!</h2>
-<div >
-    <div id="options" align="center" >
-        <h3>
-            User Name</h3>
-        <input id="color" />
-        <h3>
-            Temporary Password</h3>
-        <input id="temppwd" />
-        <br />
-        <br />
-        <button class="k-button" id="get">
-            Authenticate Account</button>
-        <h3>
-            New Password</h3>
-        <input id="color1" />
-        <h3>
-            Verify Password</h3>
-        <input id="temppwd1" />
-        <br />
-        <br />
-        <button class="k-button" id="get">
-            Create Account</button>
-    </div>
-</div>
-<style scoped>
-    #datasource-views {
-        border-bottom-color: Black;
-        border-radius: 10px;
-        border-style: solid;
-        border-width: 2px;
-        overflow: hidden;
-        padding: 22px;
-    }
-</style>
+<h4>Quick Stats</h4>
+
+<a href="">85</a> Clients have launched a campaign<br />
+<a href="">23</a> Clients have started a campaign but not launched<br />
+<a href="">16</a> Clients have not logged in<br />
+<a href="">View All Product Groups</a>
+
+<h4>Create Additional Accounts for Your Clients</h4>
+<ol> 
+<li><a href="">Upload Email Addresses, DMAs and Budgets</a>(from Excel or a CSV file)</li>
+<li>Select search engine preferences</li>
+</ol>
+
+<table>
+<tr><td>x</td><td>Google</td></tr>
+<tr><td>x</td><td>MSN</td></tr>
+</table>
+
+<b>Billing </b>
+<input type="radio" name="billing "value="i" />Invoice 
+<input type="radio" name="billing "value="c" />Credit Card
+
+<table><tr><th>Type</th><th>Occurs</th><th>Amount or %</th><th>Via</th><th>Start Date</th><th>End Date</th><th>Scale</th></tr >
+       <tr><td>Flat Fee Billing</td><td>Per Month</td><td>200.00</td><td>Bill</td><td>04-01-2012</td><td>10-31-2012</td><td>&nbsp;</td></tr>
+       <tr><td>API Fee</td><td>Per Campaign</td><td>15.00</td><td>C Card</td><td>04-01-2012</td><td>12-31-2099</td><td>&nbsp;</td></tr>
+       <tr><td>Service Fee</td><td>Per Ad Group</td><td>35.00%</td><td>C Card</td><td>04-01-2012</td><td>07-31-2099</td><td>Max. $300</td></tr>
+</table>
+
+<p><b>Reporting</b></p>
+
+<p>All live campaigns to date</p>
+
+
+<p><a href="">Account Information</a></p>
