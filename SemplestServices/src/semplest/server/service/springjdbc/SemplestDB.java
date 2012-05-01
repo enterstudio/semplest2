@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
@@ -129,6 +130,22 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 
+	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
+	public static BudgetObject getBudget(int PromotionID, String searchEngine)
+	{
+		try
+		{
+			String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,p.CycleEndDate,CURRENT_TIMESTAMP) [RemainingDays] from Promotion p where PromotionPK = ?";
+			return jdbcTemplate.queryForObject(strSQL, new Object[]
+			{ PromotionID }, BudgetObjMapper);
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<KeywordDataObject> bidObjects, String advertisingEngine)
 			throws Exception
 	{
