@@ -52,8 +52,8 @@ namespace SemplestWebApp.Services
                             ProductGroupFK = updateProdGrp.ProductGroupPK,
                             LandingPageURL = model.AdModelProp.Url,
                             PromotionDescription = model.ProductGroup.Words,
-                            CycleBudgetAmount = model.ProductGroup.Budget,
-                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                            PromotionBudgetAmount = model.ProductGroup.Budget,
+                            PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
                             IsPaused = false,
                             IsCompleted = false,
                             IsLaunched = false
@@ -67,8 +67,8 @@ namespace SemplestWebApp.Services
                     {
                         updatePromotion.LandingPageURL = model.AdModelProp.Url;
                         updatePromotion.PromotionDescription = model.ProductGroup.Words;
-                        updatePromotion.CycleBudgetAmount = model.ProductGroup.Budget;
-                        updatePromotion.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+                        updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
+                        updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
                         updatePromotion.EditedDate = DateTime.Now;
                         // update promotion ads
                         foreach (PromotionAd pad in updatePromotion.PromotionAds)
@@ -105,8 +105,8 @@ namespace SemplestWebApp.Services
                             PromotionName = model.ProductGroup.ProductPromotionName,
                             LandingPageURL = model.AdModelProp.Url,
                             PromotionDescription = model.ProductGroup.Words,
-                            CycleBudgetAmount = model.ProductGroup.Budget,
-                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                            PromotionBudgetAmount = model.ProductGroup.Budget,
+                            PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
                             IsPaused = false,
                             IsCompleted = false,
                             IsLaunched = false
