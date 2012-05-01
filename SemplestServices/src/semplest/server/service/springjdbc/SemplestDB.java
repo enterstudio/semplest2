@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -207,8 +208,21 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Account calls
 	 */
-	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(
-			AdvertisingEnginePromotionObj.class);
+	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper(AdEngineID.class);
+
+	public static AdEngineID getAdEngineID(Long customerID, String adEngine) throws Exception
+	{
+		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], p.AdEngineAdGroupID [AdGroupID] from Customer c " +
+				"inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK" +
+				"inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
+				"inner join Promotion p on aep.PromotionFK = p.PromotionPK " +
+				"where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
+		return jdbcTemplate.queryForObject(strSQL, new Object[]
+		{ customerID, adEngine}, adEngineObjMapper);
+	}
+	
+	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(AdvertisingEnginePromotionObj.class);
 
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(String advertisingEngineAccountID) throws Exception
 	{
