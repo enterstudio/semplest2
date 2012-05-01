@@ -49,10 +49,13 @@ import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerM
 import com.microsoft.adcenter.api.customermanagement.CustomerManagementServiceLocator;
 import com.microsoft.adcenter.api.customermanagement.GetAccountRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountResponse;
+import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoRequest;
+import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoResponse;
 import com.microsoft.adcenter.api.customermanagement.ICustomerManagementService;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerRequest;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountInfo;
 import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
 import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
@@ -296,7 +299,36 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 	}
 
-
+		public HashMap<String,Long> getAccountIDs() throws MsnCloudException{
+		try
+		{
+			ICustomerManagementService customerManagementService = getCustomerManagementService();
+			HashMap<String, Long> accountIDs = new HashMap<String,Long>();
+			GetAccountsInfoRequest req = new GetAccountsInfoRequest();
+			GetAccountsInfoResponse signupCustomerResponse = customerManagementService.getAccountsInfo(req);
+			AccountInfo[] acInf = signupCustomerResponse.getAccountsInfo();
+			for(int i=0; i<acInf.length;i++){
+				Long accountID =  acInf[i].getId();
+				String accountName = acInf[i].getName();
+				logger.info("accountName: "+accountName);
+				logger.info("accountID: "+accountID);
+				accountIDs.put(accountName, accountID);
+			}
+			return accountIDs;
+		}
+		catch (AdApiFaultDetail e)
+		{
+			throw new MsnCloudException(e);
+		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException(e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException(e);
+		}
+	}
 	public String getAccountById(String json) throws Exception
 	{	
 		logger.debug("call getAccountById(String json)" + json);
