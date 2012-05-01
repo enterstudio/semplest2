@@ -30,9 +30,6 @@ namespace SemplestModel
         public string PromotionName { get; set; }
         public string PromotionDescription { get; set; }
         public string LandingPageURL { get; set; }
-        public decimal CycleBudgetAmount { get; set; }
-        public System.DateTime StartDate { get; set; }
-        public Nullable<System.DateTime> EndDate { get; set; }
         public bool IsPaused { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
