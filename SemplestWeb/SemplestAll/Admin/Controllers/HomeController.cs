@@ -27,7 +27,7 @@ namespace Semplest.Admin.Controllers
                 join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
                 where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)) )
                 select new HomeModel
-                {
+                    {
                     Customer = c.Name,
                     AccountNumber = c.CustomerPK,
                     FirstName = u.FirstName,
