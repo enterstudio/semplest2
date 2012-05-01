@@ -699,7 +699,16 @@ namespace Semplest.Admin.Controllers
 
                     
                     var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.CustomerAccount.AccountNumber);
-                    var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
+                    var customeraddressassociation = dbcontext.CustomerAddressAssociations.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
+                    var address = dbcontext.Addresses.ToList().Find(p => p.AddressPK.Equals(customeraddressassociation.AddressFK));
+                    var customernotes = dbcontext.CustomerNotes.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
+
+                    var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList();
+                    //var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
+                    //var employeecustomerassociation = from x in dbcontext.EmployeeCustomerAssociations 
+                      //                                where x.CustomerFK.Equals(m.CustomerAccount.AccountNumber)
+                                                      
+
                     var customerstyle = dbcontext.CustomerStyles.ToList().Find(p=>p.CustomerFK.Equals( m.CustomerAccount.AccountNumber));
                     var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
                     var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK.Equals(customerphoneassociation.PhoneFK));
@@ -730,9 +739,28 @@ namespace Semplest.Admin.Controllers
 
                     //workaround for deletion:
 
-                    EmployeeCustomerAssociation eca = employeecustomerassociation;
-                    dbcontext.EmployeeCustomerAssociations.Remove(eca);
-                    
+
+                    CustomerAddressAssociation caa = customeraddressassociation;
+                    Address a = address;
+                    CustomerNote cn = customernotes;
+
+                    dbcontext.CustomerAddressAssociations.Remove(caa);
+                    dbcontext.Addresses.Remove(a);
+                    dbcontext.CustomerNotes.Remove(cn);
+
+
+                    //EmployeeCustomerAssociation eca = employeecustomerassociation;
+                    //dbcontext.EmployeeCustomerAssociations.Remove(eca);
+
+                    foreach (EmployeeCustomerAssociation c1 in employeecustomerassociation)
+                    {
+                        if (c1.CustomerFK.Equals(m.CustomerAccount.AccountNumber))
+                        {
+                            dbcontext.EmployeeCustomerAssociations.Remove(c1);
+                        }
+                    }
+
+
                     Customer c = customer;
                     dbcontext.Customers.Remove(c);
 
