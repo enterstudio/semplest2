@@ -53,11 +53,15 @@ namespace Semplest.Admin.Controllers
                 predicate = (p => p.LastName.ToLower().Contains(usersearch.ToLower()));
             }
 
+            int accnumber;
+            bool validaccountsearch = int.TryParse(accountnumbersearch, out accnumber);
 
-            if ( accountnumbersearch != null && accountnumbersearch!="")
+            if (accountnumbersearch != null && accountnumbersearch != "" && validaccountsearch)
             {
-                predicate = (p => p.AccountNumber.Equals(accountnumbersearch.ToLower()));
+                predicate = (p => p.AccountNumber == accnumber);
             }
+
+            
 
             if (emailsearch != null && emailsearch!="")
             {
