@@ -1,9 +1,11 @@
 package semplest.server.protocol.adengine;
 
+import java.util.Date;
+
 public class KeywordDataObject
 {
 
-	private Long bidID;
+	private Long keywordAdEngineID;
 	private String keyword;
 	private Long microBidAmount;
 	private String approvalStatus;
@@ -13,14 +15,21 @@ public class KeywordDataObject
 	private Boolean IsEligibleForShowing = true;
 	private Boolean isNegative = false;
 	private Double semplestProbability = -1.0;
+	private Date createdDate;
 	
+	public Date getCreatedDate(){
+		return createdDate;
+	}
+	public void setCreatedDate(Date createdDatein){
+		createdDate = createdDatein;
+	}
 	public Long getBidID()
 	{
-		return bidID;
+		return keywordAdEngineID;
 	}
-	public void setBidID(Long bidID)
+	public void setBidID(Long keywordAdEngineID)
 	{
-		this.bidID = bidID;
+		this.keywordAdEngineID = keywordAdEngineID;
 	}
 	public String getKeyword()
 	{
