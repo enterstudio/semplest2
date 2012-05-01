@@ -30,7 +30,7 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for roles dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            var roles = (from r in dbcontext.Roles select r).ToList();
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r=>r.RoleName);
             x.SelectedRoleID = -1;
             x.Roles = roles.Select(r => new SelectListItem
             {
@@ -45,13 +45,14 @@ namespace Semplest.Admin.Controllers
             var reportingto = (
                 from e in dbcontext.Employees
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                where u.IsActive.Equals(true)
                 select new ReportingToModel
                 {
                     EmployeePK = e.EmployeePK,
                     FirstName = u.FirstName,
                     LastName = u.LastName
                 }
-                ).ToList();
+                ).ToList().OrderBy(r=>r.LastName).ThenBy(r=>r.FirstName);
             x.SelectedReportingToID = -1;
 
 
@@ -185,7 +186,7 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for roles dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            var roles  = (from r in dbcontext.Roles  select r).ToList();
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
             x.SelectedRoleID = viewModel.Select(r => r.RolesFK).FirstOrDefault();
             x.Roles = roles.Select(r => new SelectListItem
             {
@@ -201,13 +202,14 @@ namespace Semplest.Admin.Controllers
             var reportingto = (
                 from e in dbcontext.Employees
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                where u.IsActive.Equals(true)
                 select new ReportingToModel 
                 {
                      EmployeePK =e.EmployeePK,
                      FirstName=u.FirstName,
                      LastName=u.LastName 
                 }
-                ).ToList();
+                ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
             x.SelectedReportingToID= viewModel.Select(r => r.ReportingTo).FirstOrDefault();
 
 
