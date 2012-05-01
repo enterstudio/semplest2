@@ -208,6 +208,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				logger.info("QualityScore = " + t.getQualityScore());
 				logger.info("AverageCPC = " + t.getAverageCPC());
 				logger.info("CreatedDate = " + t.getTransactionDate());
+				logger.info("MicroCost = " + t.getMicroCost());
 				logger.info("===========================");
 			}
 			
@@ -1942,7 +1943,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				KeywordPerformanceReportColumn.Clicks, KeywordPerformanceReportColumn.CurrentMaxCpc, 
 				KeywordPerformanceReportColumn.QualityScore, KeywordPerformanceReportColumn.Impressions,
 				KeywordPerformanceReportColumn.AverageCpc, KeywordPerformanceReportColumn.BidMatchType, 
-				KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId
+				KeywordPerformanceReportColumn.TimePeriod, KeywordPerformanceReportColumn.CampaignId, KeywordPerformanceReportColumn.Spend
 		};
 
 		final boolean returnOnlyCompleteData = false;
@@ -2477,8 +2478,11 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setAccountID(accountId);
 				data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 				data.setKeyword(ret2.get("keyword")[i]);
-				Long maxcpc = new Double(ret2.get("currentmaxcpc")[i]).longValue() * 1000000L;
-				data.setMicroBidAmount(maxcpc);
+				Double maxcpc = new Double(ret2.get("currentmaxcpc")[i]);
+				maxcpc = maxcpc*1000000;
+				Double microCost = new Double(ret2.get("spend")[i]);
+				microCost = microCost*1000000;
+				data.setMicroBidAmount(maxcpc.longValue());
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
 				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
@@ -2486,6 +2490,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setAverageCPC((int)(Double.valueOf(ret2.get("averagecpc")[i])*1000000));
 				data.setQualityScore((ret2.get("qualityscore")[i].equals(""))? -1 : (Integer.valueOf(ret2.get("qualityscore")[i])));
 				data.setApprovalStatus(null);
+				data.setMicroCost(microCost.longValue());
 				data.setFirstPageCPC(-1);
 				String[] t = ret2.get("week")[i].split("/");
 				data.setTransactionDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0).toDate());
