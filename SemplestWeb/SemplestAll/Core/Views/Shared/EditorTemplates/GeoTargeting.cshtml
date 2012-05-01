@@ -1,6 +1,6 @@
 ﻿@using SemplestWebApp.Helpers
 @model SemplestModel.GeoTargeting
-<script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
+
 <div class="address">
     <table>
         <tr>
@@ -23,7 +23,8 @@
                 State
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr"), new { @class = "k-dropdownlist" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", 
+"StateAbbr"), new { @class = "k-dropdownlist" })
             </td>
         </tr>
         <tr>
@@ -40,7 +41,16 @@
             </td>
             <td>
                 @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
+                @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
             </td>
         </tr>
     </table>
 </div>
+<style>
+    .hidden
+    {
+        display: none;
+    }
+</style>
+

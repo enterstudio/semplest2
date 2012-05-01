@@ -7,6 +7,7 @@ using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
+using SemplestModel;
 using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
@@ -42,6 +43,8 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
+                   model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
+                model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                 // we need save to database the ProductGroup and Promotion information
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                 int userid = 1; // for testing
@@ -177,18 +180,37 @@ namespace Semplest.Core.Controllers
 
         #endregion
 
-        public ActionResult AdModel(AdModel model)
+        public ActionResult AdditionalLinks(AdModel model)
         {
+            if (Session["SiteLinks"] != null)
+                model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
             return PartialView(model);
         }
-        
-        public ActionResult AdditionalLinks()
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
+        public ActionResult SetAdditionalLinks(AdModel model)
         {
-            return PartialView();
+            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
+            return Json("AdditionalLinks");
         }
-        public ActionResult NegativeKeyWords()
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "SetNegativeKeywords")]
+        public ActionResult SetNegativeKeywords(AdModel model)
         {
-            return PartialView();
+            if (string.IsNullOrEmpty(model.NegativeKeywordsText))
+                return Json("NegativeKeywords");
+            var addl = model.NegativeKeywordsText.Split(',').ToList();
+            addl.ForEach(t => model.NegativeKeywords.Add(t));
+            Session["NegativeKeywords"] = model.NegativeKeywords;
+            return Json("NegativeKeywords");
+        }
+        public ActionResult NegativeKeyWords(AdModel model)
+        {
+            if (Session["NegativeKeywords"] != null)
+                model.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
+            return PartialView(model);
         }
         public ActionResult Categories(CampaignSetupModel model)
         {

@@ -70,6 +70,10 @@ namespace SemplestModel
             get { return new SemplestEntities().StateCodes.ToList(); }
         }
     }
+    public partial class SiteLink
+    {
+        public bool Delete { get; set; }
+    }
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]
     public partial class SEMCustomerDetail

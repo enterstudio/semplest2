@@ -1,4 +1,5 @@
-﻿var HOST_URL = 'http://www.mapquestapi.com';
+﻿
+var HOST_URL = 'http://www.mapquestapi.com';
 var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
 var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderOptions';
 var advancedOptions = '';
@@ -12,13 +13,16 @@ function showOptionsURL(type, city, state, zip, proximity) {
         location.state = $("#AdModelProp_Addresses_0__StateCodeFK option:selected").text();
         location.zip = $('#AdModelProp_Addresses_0__Zip').val();
     } else {
-        location.city = $('#' + city).val();
-        location.state = $('#' + state + ' option:selected').text();
-        location.zip = $('#' + zip).val();
+        location.city = this.$.find("input[id='" + city + "']")[0].value;
+        location.state = this.$.find("select[id='" + state + "'] option:selected")[0].value;
+        location.zip = this.$.find("input[id='" + zip + "']")[0].value;
+        //location.city = $('#' + city).val();
+        //location.state = $('#' + state + ' option:selected').text();
+        //location.zip = $('#' + zip).val();
     }
     var thumbMaps = 'true';
     var maxResults = 1;
-    outFormat = 'json'; 
+    outFormat = 'json';
     advancedOptions += '&outFormat=' + outFormat;
     advancedOptions += '&inFormat=json';
     advancedOptions += "&json=";
@@ -101,11 +105,20 @@ function renderOptions(response) {
         //            html += '<br/>';
         //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
         html += '<img src="' + location.mapUrl + '" style="height: 160px; width:160px;"/>';
-        //alert(index);
-        if (index != 0)
-            $('#optionsNarrative_' + index).html(html);
-        else
+        if (index != 0) {
+            $('#optionsNarrative_' + index.split('.')[1]).html(html);
+            this.$.find("input[id='AdModelProp.Addresses_" + index.split('.')[1] + "__Latitude']")[0].value =
+location.latLng.lat;
+            this.$.find("input[id='AdModelProp.Addresses_" + index.split('.')[1] + "__Longitude']")[0].value =
+location.latLng.lng;
+            //$('#AdModelProp_Addresses_' + index + '__Latitude').val(location.latLng.lat);
+            //$('#AdModelProp_Addresses_' + index + '__Longitude').val(location.latLng.lng);
+        } else {
             $('#optionsNarrative').html(html);
+            $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
+            $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lat);
+        }
+
         return;
     }
     $('#optionsNarrative_' + index).html(html);

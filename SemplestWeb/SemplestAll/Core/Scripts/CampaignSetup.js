@@ -1,4 +1,5 @@
-﻿$(document).ready(function () {
+﻿
+$(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0 });
@@ -142,8 +143,8 @@
                 text: "Additional Links",
                 contentUrl: '/Campaign/AdditionalLinks'
             });
-            tab = tabStrip.tabGroup.children('li:contains("Additional Links")');
-            tabStrip.select(tab);
+        tab = tabStrip.tabGroup.children('li:contains("Additional Links")');
+        tabStrip.select(tab);
     });
 
     $("#negativeKeyWords").click(function () {
@@ -180,10 +181,10 @@
                 text: "View Keywords",
                 contentUrl: '/Campaign/KeyWords'
             });
-        });
-        tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
-        tabStrip.select(tab);
-    
+    });
+    tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
+    tabStrip.select(tab);
+
 
 });
 
@@ -197,8 +198,26 @@ function addNestedForm(container, counter, ticks, content) {
     var nextIndex = $(counter).length;
     var pattern = new RegExp(ticks, "gi");
     content = content.replace(pattern, nextIndex);
-    content = content.replace("doOptions()", "doOptions('Addresses_" + nextIndex + "__City','Addresses_" + nextIndex + "__StateCodeFK','Addresses_" + nextIndex + "__Zip','Addresses_" + nextIndex + "__Proximity')");
-    content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
+    if (container == "#addresses") {
+        content = content.replace("doOptions()", "doOptions('AdModelProp.Addresses_" + nextIndex +
+"__City','AdModelProp.Addresses_" + nextIndex + "__StateCodeFK','AdModelProp.Addresses_" + nextIndex +
+"__Zip','AdModelProp.Addresses_" + nextIndex + "__Proximity')");
+        content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
+    }
+
+    if (container == "#sitelinks") {
+        var deletedElements = $(container).find('input.mark-for-delete[value="True"]').length;
+        if (nextIndex - deletedElements > 9) {
+            alert('Maximul Limit Reached');
+            return;
+        } else {
+            $(container).append(content);
+            return;
+        }
+    }
     $(container).append(content);
-    $("#Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+    if (container == "#addresses") {
+        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+    }
+
 }

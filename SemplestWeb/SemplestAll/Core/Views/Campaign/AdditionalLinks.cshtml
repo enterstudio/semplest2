@@ -1,45 +1,26 @@
-﻿<div>
+﻿
+@using Semplest.Core.Helpers
+@model Semplest.Core.Models.AdModel
+<div>
     <span class="infoHead">Sitelinks is a feature that lets you include additional links
         to other content on your site that's not on the main landing page. They appear below
         your ad copy in the search results</span>
     <div class="configuration1">
         <span>you can enter upto 10 additional links that may be shown with your Ad</span>
-        <div id="grid" style="margin-right: 280px;">
-            <table>
-                <thead>
-                    <tr>
-                        <th align="left">
-                            Name
-                        </th>
-                        <th align='left'>
-                            Url
-                        </th>
-                        <th align="right">
-                            Delete
-                        </th>
-                    </tr>
-                </thead>
-                <tr>
-                    <td>
-                        <input type="text" placeholder="Enter name" data-bind="value: Name" />
-                    </td>
-                    <td>
-                        <input type="text" placeholder="Enter Url" data-bind="value: Url" />
-                    </td>
-                    <td>
-                        <button data-bind="click: addLink" type="button" class="k-button">
-                            <span class="k-add k-icon"></span>Add</button>
-                    </td>
-                </tr>
-                <tbody data-template="row-template" data-bind="source: additionalLinks">
-                </tbody>
-            </table>
+        <div style="text-align: right">
+            @Html.LinkToAddNestedForm("Add", "#sitelinks", ".sitelinks", "SiteLinks", typeof
+(SemplestModel.SiteLink))
+        </div>
+        <div class="table">
+            <ul id="sitelinks">
+                @Html.EditorFor(t => t.SiteLinks)
+            </ul>
         </div>
     </div>
-    <div class="options" style="margin-top: 100px">
+    <div class="options">
         <button class="k-button" id="back2" type="button">
             <span class="k-back k-icon"></span>back</button>
-        <button class="k-button" id="save3" type="button">
+        <button class="k-button" id="save3" type="submit" name="Command" value="SetAdditionalLinks">
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
@@ -47,10 +28,6 @@
     $('#back2').click(function () {
         tabChange();
     });
-    $('#save3').click(function () {
-        tabChange();
-    });
-
     function tabChange(parameters) {
         var tab = tabStrip.select(),
         otherTab = tab.prev();
