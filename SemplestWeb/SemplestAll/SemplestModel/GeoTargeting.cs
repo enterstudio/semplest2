@@ -26,5 +26,6 @@ namespace SemplestModel
     
         public virtual Promotion Promotion { get; set; }
         public virtual StateCode StateCode { get; set; }
+        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }

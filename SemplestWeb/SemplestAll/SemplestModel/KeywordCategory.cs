@@ -19,5 +19,6 @@ namespace SemplestModel
         public string KeywordCategory1 { get; set; }
     
         public virtual Promotion Promotion { get; set; }
+        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }

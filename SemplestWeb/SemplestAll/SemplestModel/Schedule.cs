@@ -43,5 +43,6 @@ namespace SemplestModel
         public virtual ICollection<ScheduleJob> ScheduleJobs { get; set; }
         public virtual ICollection<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
         public virtual User User { get; set; }
+        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }

@@ -23,5 +23,6 @@ namespace SemplestModel
     
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
         public virtual Promotion Promotion { get; set; }
+        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }

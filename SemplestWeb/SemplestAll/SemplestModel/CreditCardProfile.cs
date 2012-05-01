@@ -12,14 +12,12 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionAdEngineSelected
+    public partial class CreditCardProfile
     {
-        public int PromotionAdEngineSelectedPK { get; set; }
-        public int AdvertisingEngineFK { get; set; }
-        public int PromotionFK { get; set; }
-    
-        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        public virtual Promotion Promotion { get; set; }
-        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
+        public int CreditCardProfilePK { get; set; }
+        public int CustomerFK { get; set; }
+        public string CustomerRefNum { get; set; }
+        public string AuthCode { get; set; }
+        public string TxRefNum { get; set; }
     }
 }

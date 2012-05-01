@@ -14,8 +14,10 @@
           <EntitySet Name="AdvertisingEnginePromotion" EntityType="SemplestModel.Store.AdvertisingEnginePromotion" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="BidType" EntityType="SemplestModel.Store.BidType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="BillType" EntityType="SemplestModel.Store.BillType" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="BudgetCycle" EntityType="SemplestModel.Store.BudgetCycle" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Configuration" EntityType="SemplestModel.Store.Configuration" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Credential" EntityType="SemplestModel.Store.Credential" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="CreditCardProfile" EntityType="SemplestModel.Store.CreditCardProfile" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Customer" EntityType="SemplestModel.Store.Customer" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomerAddressAssociation" EntityType="SemplestModel.Store.CustomerAddressAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="CustomerHierarchy" EntityType="SemplestModel.Store.CustomerHierarchy" store:Type="Tables" Schema="dbo" />
@@ -40,6 +42,7 @@
           <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordCategory" EntityType="SemplestModel.Store.KeywordCategory" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordInitialBidData" EntityType="SemplestModel.Store.KeywordInitialBidData" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="MR_TEMP_Promotion" EntityType="SemplestModel.Store.MR_TEMP_Promotion" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Phone" EntityType="SemplestModel.Store.Phone" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="PhoneType" EntityType="SemplestModel.Store.PhoneType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="ProductGroup" EntityType="SemplestModel.Store.ProductGroup" store:Type="Tables" Schema="dbo" />
@@ -132,6 +135,10 @@
             <End Role="BillType" EntitySet="BillType" />
             <End Role="Customer" EntitySet="Customer" />
           </AssociationSet>
+          <AssociationSet Name="REL_BudgetCycle_Promotion_2" Association="SemplestModel.Store.REL_BudgetCycle_Promotion_2">
+            <End Role="BudgetCycle" EntitySet="BudgetCycle" />
+            <End Role="Promotion" EntitySet="Promotion" />
+          </AssociationSet>
           <AssociationSet Name="REL_Customer_AdvertisingEngineAccount_3" Association="SemplestModel.Store.REL_Customer_AdvertisingEngineAccount_3">
             <End Role="Customer" EntitySet="Customer" />
             <End Role="AdvertisingEngineAccount" EntitySet="AdvertisingEngineAccount" />
@@ -190,38 +197,38 @@
           </AssociationSet>
           <AssociationSet Name="REL_ProductGroup_Promotion_1" Association="SemplestModel.Store.REL_ProductGroup_Promotion_1">
             <End Role="ProductGroup" EntitySet="ProductGroup" />
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
           </AssociationSet>
           <AssociationSet Name="REL_ProductGroup_Schedule_4" Association="SemplestModel.Store.REL_ProductGroup_Schedule_4">
             <End Role="ProductGroup" EntitySet="ProductGroup" />
             <End Role="Schedule" EntitySet="Schedule" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_AdvertisingEnginePromotion_1" Association="SemplestModel.Store.REL_Promotion_AdvertisingEnginePromotion_1">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="AdvertisingEnginePromotion" EntitySet="AdvertisingEnginePromotion" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_GeoTargeting_1" Association="SemplestModel.Store.REL_Promotion_GeoTargeting_1">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="GeoTargeting" EntitySet="GeoTargeting" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_KeywordCategory_1" Association="SemplestModel.Store.REL_Promotion_KeywordCategory_1">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="KeywordCategory" EntitySet="KeywordCategory" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_PromotionAdEngineSelected_1" Association="SemplestModel.Store.REL_Promotion_PromotionAdEngineSelected_1">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="PromotionAdEngineSelected" EntitySet="PromotionAdEngineSelected" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_PromotionAds_1" Association="SemplestModel.Store.REL_Promotion_PromotionAds_1">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="PromotionAds" EntitySet="PromotionAds" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_PromotionKeywordAssociation_3" Association="SemplestModel.Store.REL_Promotion_PromotionKeywordAssociation_3">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="PromotionKeywordAssociation" EntitySet="PromotionKeywordAssociation" />
           </AssociationSet>
           <AssociationSet Name="REL_Promotion_Schedule_2" Association="SemplestModel.Store.REL_Promotion_Schedule_2">
-            <End Role="Promotion" EntitySet="Promotion" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
             <End Role="Schedule" EntitySet="Schedule" />
           </AssociationSet>
           <AssociationSet Name="REL_PromotionAds_SiteLinks_1" Association="SemplestModel.Store.REL_PromotionAds_SiteLinks_1">
@@ -340,6 +347,7 @@
           <Property Name="AveragePosition" Type="int" Nullable="false" />
           <Property Name="AverageCPC" Type="money" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime2" Nullable="false" />
         </EntityType>
         <EntityType Name="AdvertisingEnginePromotion">
           <Key>
@@ -365,6 +373,13 @@
           </Key>
           <Property Name="BillTypePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="BillType" Type="nvarchar" Nullable="false" MaxLength="20" />
+        </EntityType>
+        <EntityType Name="BudgetCycle">
+          <Key>
+            <PropertyRef Name="BudgetCyclePK" />
+          </Key>
+          <Property Name="BudgetCyclePK" Type="int" Nullable="false" />
+          <Property Name="BudgetCycle" Type="varchar" Nullable="false" MaxLength="20" />
         </EntityType>
         <EntityType Name="Configuration">
           <Key>
@@ -406,6 +421,16 @@
           <Property Name="RememberMe" Type="bit" Nullable="false" />
           <Property Name="SecurityQuestion" Type="nvarchar" MaxLength="500" />
           <Property Name="SecurityAnswer" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="CreditCardProfile">
+          <Key>
+            <PropertyRef Name="CreditCardProfilePK" />
+          </Key>
+          <Property Name="CreditCardProfilePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="CustomerRefNum" Type="varchar" Nullable="false" MaxLength="22" />
+          <Property Name="AuthCode" Type="varchar" Nullable="false" MaxLength="6" />
+          <Property Name="TxRefNum" Type="varchar" Nullable="false" MaxLength="40" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -582,8 +607,25 @@
           <Property Name="ApprovalStatus" Type="varchar" MaxLength="30" />
           <Property Name="FirstPageMicroCPC" Type="int" />
           <Property Name="IsEligibleForShowing" Type="bit" Nullable="false" />
-          <Property Name="SemplestProbability" Type="float" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="MR_TEMP_Promotion">
+          <Key>
+            <PropertyRef Name="PromotionPK" />
+          </Key>
+          <Property Name="PromotionPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="ProductGroupFK" Type="int" Nullable="false" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="PromotionDescription" Type="nvarchar" Nullable="false" MaxLength="2000" />
+          <Property Name="LandingPageURL" Type="nvarchar" Nullable="false" MaxLength="35" />
+          <Property Name="CycleBudgetAmount" Type="money" Nullable="false" />
+          <Property Name="StartDate" Type="datetime2" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="IsPaused" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="IsCompleted" Type="bit" Nullable="false" />
+          <Property Name="IsLaunched" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Phone">
           <Key>
@@ -632,15 +674,22 @@
           <Property Name="ProductGroupFK" Type="int" Nullable="false" />
           <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
           <Property Name="PromotionDescription" Type="nvarchar" Nullable="false" MaxLength="2000" />
+          <Property Name="PromotionStartDate" Type="datetime2" Nullable="false" />
+          <Property Name="PromotionEndDate" Type="datetime2" />
           <Property Name="LandingPageURL" Type="nvarchar" Nullable="false" MaxLength="35" />
-          <Property Name="CycleBudgetAmount" Type="money" Nullable="false" />
-          <Property Name="StartDate" Type="datetime2" Nullable="false" />
-          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="PromotionBudgetAmount" Type="money" Nullable="false" />
+          <Property Name="BudgetCycleFK" Type="int" Nullable="false" />
+          <Property Name="CycleStartDate" Type="datetime2" />
+          <Property Name="CycleEndDate" Type="datetime2" />
+          <Property Name="StartBudgetInCycle" Type="money" />
+          <Property Name="RemainingBudgetInCycle" Type="money" />
+          <Property Name="BudgetToAddToNextCycle" Type="money" />
+          <Property Name="BudgetToAddDate" Type="datetime2" />
           <Property Name="IsPaused" Type="bit" Nullable="false" />
-          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
-          <Property Name="EditedDate" Type="datetime2" />
           <Property Name="IsCompleted" Type="bit" Nullable="false" />
           <Property Name="IsLaunched" Type="bit" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="EditedDate" Type="datetime2" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -670,6 +719,7 @@
           <Property Name="IsActive" Type="bit" Nullable="false" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="IsNegative" Type="bit" Nullable="false" />
+          <Property Name="SemplestProbability" Type="float" />
         </EntityType>
         <EntityType Name="Rights">
           <Key>
@@ -807,6 +857,7 @@
           <Property Name="MicroCost" Type="int" Nullable="false" />
           <Property Name="NumberClicks" Type="int" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="TransactionDate" Type="datetime2" Nullable="false" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -1047,6 +1098,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="REL_BudgetCycle_Promotion_2">
+          <End Role="BudgetCycle" Type="SemplestModel.Store.BudgetCycle" Multiplicity="1" />
+          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BudgetCycle">
+              <PropertyRef Name="BudgetCyclePK" />
+            </Principal>
+            <Dependent Role="Promotion">
+              <PropertyRef Name="BudgetCycleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="REL_Customer_AdvertisingEngineAccount_3">
           <End Role="Customer" Type="SemplestModel.Store.Customer" Multiplicity="1" />
           <End Role="AdvertisingEngineAccount" Type="SemplestModel.Store.AdvertisingEngineAccount" Multiplicity="*" />
@@ -1217,12 +1280,12 @@
         </Association>
         <Association Name="REL_ProductGroup_Promotion_1">
           <End Role="ProductGroup" Type="SemplestModel.Store.ProductGroup" Multiplicity="1" />
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="*" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="ProductGroup">
               <PropertyRef Name="ProductGroupPK" />
             </Principal>
-            <Dependent Role="Promotion">
+            <Dependent Role="MR_TEMP_Promotion">
               <PropertyRef Name="ProductGroupFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -1240,10 +1303,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_AdvertisingEnginePromotion_1">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="AdvertisingEnginePromotion" Type="SemplestModel.Store.AdvertisingEnginePromotion" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="AdvertisingEnginePromotion">
@@ -1252,10 +1315,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_GeoTargeting_1">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="GeoTargeting" Type="SemplestModel.Store.GeoTargeting" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="GeoTargeting">
@@ -1264,10 +1327,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_KeywordCategory_1">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="KeywordCategory" Type="SemplestModel.Store.KeywordCategory" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="KeywordCategory">
@@ -1276,10 +1339,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_PromotionAdEngineSelected_1">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="PromotionAdEngineSelected" Type="SemplestModel.Store.PromotionAdEngineSelected" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="PromotionAdEngineSelected">
@@ -1288,10 +1351,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_PromotionAds_1">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="PromotionAds" Type="SemplestModel.Store.PromotionAds" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="PromotionAds">
@@ -1300,10 +1363,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_PromotionKeywordAssociation_3">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="1" />
           <End Role="PromotionKeywordAssociation" Type="SemplestModel.Store.PromotionKeywordAssociation" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="PromotionKeywordAssociation">
@@ -1312,10 +1375,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="REL_Promotion_Schedule_2">
-          <End Role="Promotion" Type="SemplestModel.Store.Promotion" Multiplicity="0..1" />
+          <End Role="MR_TEMP_Promotion" Type="SemplestModel.Store.MR_TEMP_Promotion" Multiplicity="0..1" />
           <End Role="Schedule" Type="SemplestModel.Store.Schedule" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Promotion">
+            <Principal Role="MR_TEMP_Promotion">
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="Schedule">
@@ -1593,6 +1656,22 @@
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
         <Function Name="SetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="SetReportObject" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="AccountID" Type="bigint" Mode="In" />
+          <Parameter Name="CampaignID" Type="bigint" Mode="In" />
+          <Parameter Name="Keyword" Type="nvarchar" Mode="In" />
+          <Parameter Name="TransactionDate" Type="datetime2" Mode="In" />
+          <Parameter Name="MicroBidAmount" Type="int" Mode="In" />
+          <Parameter Name="ApprovalStatus" Type="varchar" Mode="In" />
+          <Parameter Name="BidType" Type="varchar" Mode="In" />
+          <Parameter Name="FirstPageMicroCpc" Type="int" Mode="In" />
+          <Parameter Name="QualityScore" Type="int" Mode="In" />
+          <Parameter Name="IsEligibleForShowing" Type="bit" Mode="In" />
+          <Parameter Name="IsBidActive" Type="bit" Mode="In" />
+          <Parameter Name="IsNegative" Type="bit" Mode="In" />
+          <Parameter Name="AdvertisingEngine" Type="varchar" Mode="In" />
+          <Parameter Name="SemplestProbability" Type="float" Mode="In" />
+        </Function>
         <Function Name="SetScheduleJobComplete" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ScheduleJobID" Type="int" Mode="In" />
           <Parameter Name="IsSuccessful" Type="bit" Mode="In" />
@@ -1919,6 +1998,45 @@
             <End Role="Promotion" EntitySet="Promotions" />
             <End Role="PromotionAdEngineSelected" EntitySet="PromotionAdEngineSelecteds" />
           </AssociationSet>
+          <EntitySet Name="BudgetCycles" EntityType="SemplestModel.BudgetCycle" />
+          <EntitySet Name="CreditCardProfiles" EntityType="SemplestModel.CreditCardProfile" />
+          <EntitySet Name="MR_TEMP_Promotion" EntityType="SemplestModel.MR_TEMP_Promotion" />
+          <AssociationSet Name="REL_Promotion_AdvertisingEnginePromotion_11" Association="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_11">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="AdvertisingEnginePromotion" EntitySet="AdvertisingEnginePromotions" />
+          </AssociationSet>
+          <AssociationSet Name="REL_BudgetCycle_Promotion_2" Association="SemplestModel.REL_BudgetCycle_Promotion_2">
+            <End Role="BudgetCycle" EntitySet="BudgetCycles" />
+            <End Role="Promotion" EntitySet="Promotions" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_GeoTargeting_11" Association="SemplestModel.REL_Promotion_GeoTargeting_11">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="GeoTargeting" EntitySet="GeoTargetings" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_KeywordCategory_11" Association="SemplestModel.REL_Promotion_KeywordCategory_11">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="KeywordCategory" EntitySet="KeywordCategories" />
+          </AssociationSet>
+          <AssociationSet Name="REL_ProductGroup_Promotion_11" Association="SemplestModel.REL_ProductGroup_Promotion_11">
+            <End Role="ProductGroup" EntitySet="ProductGroups" />
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_PromotionAdEngineSelected_11" Association="SemplestModel.REL_Promotion_PromotionAdEngineSelected_11">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="PromotionAdEngineSelected" EntitySet="PromotionAdEngineSelecteds" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_PromotionAds_11" Association="SemplestModel.REL_Promotion_PromotionAds_11">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="PromotionAd" EntitySet="PromotionAds" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_PromotionKeywordAssociation_31" Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_31">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="PromotionKeywordAssociation" EntitySet="PromotionKeywordAssociations" />
+          </AssociationSet>
+          <AssociationSet Name="REL_Promotion_Schedule_21" Association="SemplestModel.REL_Promotion_Schedule_21">
+            <End Role="MR_TEMP_Promotion" EntitySet="MR_TEMP_Promotion" />
+            <End Role="Schedule" EntitySet="Schedules" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -1977,6 +2095,7 @@
           <Property Name="AverageCPC" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="KeywordBid" Relationship="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" FromRole="AdvertisingEngineBidData" ToRole="KeywordBid" />
+          <Property Type="DateTime" Name="TransactionDate" Nullable="false" />
         </EntityType>
         <EntityType Name="AdvertisingEnginePromotion">
           <Key>
@@ -1990,6 +2109,7 @@
           <Property Name="AdvertisingEngineBudget" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <NavigationProperty Name="AdvertisingEngineAccount" Relationship="SemplestModel.REL_AdvertisingEngineAccount_AdvertisingEnginePromotion_3" FromRole="AdvertisingEnginePromotion" ToRole="AdvertisingEngineAccount" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_1" FromRole="AdvertisingEnginePromotion" ToRole="Promotion" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_11" FromRole="AdvertisingEnginePromotion" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="BidType">
           <Key>
@@ -2194,6 +2314,7 @@
           <Property Name="ProximityRadius" Type="Decimal" Precision="18" Scale="2" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_GeoTargeting_1" FromRole="GeoTargeting" ToRole="Promotion" />
           <NavigationProperty Name="StateCode" Relationship="SemplestModel.REL_StateCode_GeoTargeting_2" FromRole="GeoTargeting" ToRole="StateCode" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_GeoTargeting_11" FromRole="GeoTargeting" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="HelpDefinition">
           <Key>
@@ -2241,6 +2362,7 @@
           <Property Name="PromotionFK" Type="Int32" Nullable="false" />
           <Property Name="KeywordCategory1" Type="String" Nullable="false" MaxLength="500" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_KeywordCategory_1" FromRole="KeywordCategory" ToRole="Promotion" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_KeywordCategory_11" FromRole="KeywordCategory" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="KeywordInitialBidData">
           <Key>
@@ -2252,7 +2374,6 @@
           <Property Name="ApprovalStatus" Type="String" MaxLength="30" Unicode="false" FixedLength="false" />
           <Property Name="FirstPageMicroCPC" Type="Int32" />
           <Property Name="IsEligibleForShowing" Type="Boolean" Nullable="false" />
-          <Property Name="SemplestProbability" Type="Double" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
           <NavigationProperty Name="KeywordBid" Relationship="SemplestModel.REL_KeywordBid_KeywordInitialBidData_1" FromRole="KeywordInitialBidData" ToRole="KeywordBid" />
         </EntityType>
@@ -2293,6 +2414,7 @@
           <NavigationProperty Name="Customer" Relationship="SemplestModel.Cust_Camp_rel" FromRole="ProductGroup" ToRole="Customer" />
           <NavigationProperty Name="Promotions" Relationship="SemplestModel.REL_ProductGroup_Promotion_1" FromRole="ProductGroup" ToRole="Promotion" />
           <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_ProductGroup_Schedule_4" FromRole="ProductGroup" ToRole="Schedule" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_ProductGroup_Promotion_11" FromRole="ProductGroup" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="ProductGroupCycleType">
           <Key>
@@ -2312,9 +2434,6 @@
           <Property Name="PromotionName" Type="String" Nullable="false" MaxLength="150" Unicode="true" FixedLength="false" />
           <Property Name="PromotionDescription" Type="String" Nullable="false" MaxLength="2000" Unicode="true" FixedLength="false" />
           <Property Name="LandingPageURL" Type="String" Nullable="false" MaxLength="35" Unicode="true" FixedLength="false" />
-          <Property Name="CycleBudgetAmount" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
-          <Property Name="StartDate" Type="DateTime" Nullable="false" />
-          <Property Name="EndDate" Type="DateTime" />
           <Property Name="IsPaused" Type="Boolean" Nullable="false" />
           <Property Name="CreatedDate" Type="DateTime" Nullable="false" />
           <Property Name="EditedDate" Type="DateTime" />
@@ -2328,6 +2447,17 @@
           <Property Type="Boolean" Name="IsCompleted" Nullable="false" />
           <Property Type="Boolean" Name="IsLaunched" Nullable="false" />
           <NavigationProperty Name="PromotionAdEngineSelecteds" Relationship="SemplestModel.REL_Promotion_PromotionAdEngineSelected_1" FromRole="Promotion" ToRole="PromotionAdEngineSelected" />
+          <Property Type="DateTime" Name="PromotionStartDate" Nullable="false" />
+          <Property Type="DateTime" Name="PromotionEndDate" />
+          <Property Type="Decimal" Name="PromotionBudgetAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="BudgetCycleFK" Nullable="false" />
+          <Property Type="DateTime" Name="CycleStartDate" />
+          <Property Type="DateTime" Name="CycleEndDate" />
+          <Property Type="Decimal" Name="StartBudgetInCycle" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="RemainingBudgetInCycle" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="BudgetToAddToNextCycle" Precision="19" Scale="4" />
+          <Property Type="DateTime" Name="BudgetToAddDate" />
+          <NavigationProperty Name="BudgetCycle" Relationship="SemplestModel.REL_BudgetCycle_Promotion_2" FromRole="Promotion" ToRole="BudgetCycle" />
         </EntityType>
         <EntityType Name="PromotionAd">
           <Key>
@@ -2339,6 +2469,7 @@
           <Property Name="AdText" Type="String" Nullable="false" MaxLength="4000" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAds_1" FromRole="PromotionAds" ToRole="Promotion" />
           <NavigationProperty Name="SiteLinks" Relationship="SemplestModel.REL_PromotionAds_SiteLinks_1" FromRole="PromotionAds" ToRole="SiteLinks" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAds_11" FromRole="PromotionAd" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="PromotionKeywordAssociation">
           <Key>
@@ -2354,6 +2485,8 @@
           <NavigationProperty Name="Keyword" Relationship="SemplestModel.REL_Keyword_PromotionKeywordAssociation_2" FromRole="PromotionKeywordAssociation" ToRole="Keyword" />
           <NavigationProperty Name="KeywordBids" Relationship="SemplestModel.REL_PromotionKeywordAssociation_KeywordBid_1" FromRole="PromotionKeywordAssociation" ToRole="KeywordBid" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" FromRole="PromotionKeywordAssociation" ToRole="Promotion" />
+          <Property Type="Double" Name="SemplestProbability" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_31" FromRole="PromotionKeywordAssociation" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="Right">
           <Key>
@@ -2411,6 +2544,7 @@
           <NavigationProperty Name="ScheduleJobs" Relationship="SemplestModel.REL_Schedule_ScheduleJob_1" FromRole="Schedule" ToRole="ScheduleJob" />
           <NavigationProperty Name="ScheduleTaskAssociations" Relationship="SemplestModel.REL_Schedule_ScheduleTaskAssociation_1" FromRole="Schedule" ToRole="ScheduleTaskAssociation" />
           <NavigationProperty Name="User" Relationship="SemplestModel.REL_Users_Schedule_5" FromRole="Schedule" ToRole="Users" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_Schedule_21" FromRole="Schedule" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <EntityType Name="ScheduleJob">
           <Key>
@@ -2513,6 +2647,7 @@
           <Property Name="NumberClicks" Type="Int32" Nullable="false" />
           <NavigationProperty Name="KeywordBid" Relationship="SemplestModel.REL_KeywordBid_TrafficEstimator_1" FromRole="TrafficEstimator" ToRole="KeywordBid" />
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="DateTime" Name="TransactionDate" Nullable="false" />
         </EntityType>
         <EntityType Name="TransactionHistory">
           <Key>
@@ -3226,6 +3361,7 @@
           <Property Type="Int32" Name="PromotionFK" Nullable="false" />
           <NavigationProperty Name="AdvertisingEngine" Relationship="SemplestModel.REL_AdvertisingEngine_PromotionAdEngineSelected_2" FromRole="PromotionAdEngineSelected" ToRole="AdvertisingEngine" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAdEngineSelected_1" FromRole="PromotionAdEngineSelected" ToRole="Promotion" />
+          <NavigationProperty Name="MR_TEMP_Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAdEngineSelected_11" FromRole="PromotionAdEngineSelected" ToRole="MR_TEMP_Promotion" />
         </EntityType>
         <Association Name="REL_AdvertisingEngine_PromotionAdEngineSelected_2">
           <End Type="SemplestModel.AdvertisingEngine" Role="AdvertisingEngine" Multiplicity="1" />
@@ -3271,6 +3407,158 @@
               <PropertyRef Name="PromotionPK" />
             </Principal>
             <Dependent Role="PromotionAdEngineSelected">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="BudgetCycle">
+          <Key>
+            <PropertyRef Name="BudgetCyclePK" />
+          </Key>
+          <Property Type="Int32" Name="BudgetCyclePK" Nullable="false" />
+          <Property Type="String" Name="BudgetCycle1" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Promotions" Relationship="SemplestModel.REL_BudgetCycle_Promotion_2" FromRole="BudgetCycle" ToRole="Promotion" />
+        </EntityType>
+        <EntityType Name="CreditCardProfile">
+          <Key>
+            <PropertyRef Name="CreditCardProfilePK" />
+          </Key>
+          <Property Type="Int32" Name="CreditCardProfilePK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="CustomerFK" Nullable="false" />
+          <Property Type="String" Name="CustomerRefNum" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AuthCode" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TxRefNum" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="MR_TEMP_Promotion">
+          <Key>
+            <PropertyRef Name="PromotionPK" />
+          </Key>
+          <Property Type="Int32" Name="PromotionPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="ProductGroupFK" Nullable="false" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PromotionDescription" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LandingPageURL" Nullable="false" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="CycleBudgetAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" />
+          <Property Type="DateTime" Name="EndDate" />
+          <Property Type="Boolean" Name="IsPaused" Nullable="false" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="DateTime" Name="EditedDate" />
+          <Property Type="Boolean" Name="IsCompleted" Nullable="false" />
+          <Property Type="Boolean" Name="IsLaunched" Nullable="false" />
+          <NavigationProperty Name="AdvertisingEnginePromotions" Relationship="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_11" FromRole="MR_TEMP_Promotion" ToRole="AdvertisingEnginePromotion" />
+          <NavigationProperty Name="GeoTargetings" Relationship="SemplestModel.REL_Promotion_GeoTargeting_11" FromRole="MR_TEMP_Promotion" ToRole="GeoTargeting" />
+          <NavigationProperty Name="KeywordCategories" Relationship="SemplestModel.REL_Promotion_KeywordCategory_11" FromRole="MR_TEMP_Promotion" ToRole="KeywordCategory" />
+          <NavigationProperty Name="ProductGroup" Relationship="SemplestModel.REL_ProductGroup_Promotion_11" FromRole="MR_TEMP_Promotion" ToRole="ProductGroup" />
+          <NavigationProperty Name="PromotionAdEngineSelecteds" Relationship="SemplestModel.REL_Promotion_PromotionAdEngineSelected_11" FromRole="MR_TEMP_Promotion" ToRole="PromotionAdEngineSelected" />
+          <NavigationProperty Name="PromotionAds" Relationship="SemplestModel.REL_Promotion_PromotionAds_11" FromRole="MR_TEMP_Promotion" ToRole="PromotionAd" />
+          <NavigationProperty Name="PromotionKeywordAssociations" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_31" FromRole="MR_TEMP_Promotion" ToRole="PromotionKeywordAssociation" />
+          <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Promotion_Schedule_21" FromRole="MR_TEMP_Promotion" ToRole="Schedule" />
+        </EntityType>
+        <Association Name="REL_Promotion_AdvertisingEnginePromotion_11">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.AdvertisingEnginePromotion" Role="AdvertisingEnginePromotion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="AdvertisingEnginePromotion">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_BudgetCycle_Promotion_2">
+          <End Type="SemplestModel.BudgetCycle" Role="BudgetCycle" Multiplicity="1" />
+          <End Type="SemplestModel.Promotion" Role="Promotion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BudgetCycle">
+              <PropertyRef Name="BudgetCyclePK" />
+            </Principal>
+            <Dependent Role="Promotion">
+              <PropertyRef Name="BudgetCycleFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_GeoTargeting_11">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.GeoTargeting" Role="GeoTargeting" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="GeoTargeting">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_KeywordCategory_11">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.KeywordCategory" Role="KeywordCategory" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="KeywordCategory">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_ProductGroup_Promotion_11">
+          <End Type="SemplestModel.ProductGroup" Role="ProductGroup" Multiplicity="1" />
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ProductGroup">
+              <PropertyRef Name="ProductGroupPK" />
+            </Principal>
+            <Dependent Role="MR_TEMP_Promotion">
+              <PropertyRef Name="ProductGroupFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_PromotionAdEngineSelected_11">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.PromotionAdEngineSelected" Role="PromotionAdEngineSelected" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="PromotionAdEngineSelected">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_PromotionAds_11">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.PromotionAd" Role="PromotionAd" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="PromotionAd">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_PromotionKeywordAssociation_31">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="1" />
+          <End Type="SemplestModel.PromotionKeywordAssociation" Role="PromotionKeywordAssociation" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="PromotionKeywordAssociation">
+              <PropertyRef Name="PromotionFK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="REL_Promotion_Schedule_21">
+          <End Type="SemplestModel.MR_TEMP_Promotion" Role="MR_TEMP_Promotion" Multiplicity="0..1" />
+          <End Type="SemplestModel.Schedule" Role="Schedule" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MR_TEMP_Promotion">
+              <PropertyRef Name="PromotionPK" />
+            </Principal>
+            <Dependent Role="Schedule">
               <PropertyRef Name="PromotionFK" />
             </Dependent>
           </ReferentialConstraint>
@@ -3323,6 +3611,7 @@
           <EntitySetMapping Name="AdvertisingEngineBidDatas">
             <EntityTypeMapping TypeName="SemplestModel.AdvertisingEngineBidData">
               <MappingFragment StoreEntitySet="AdvertisingEngineBidData">
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
                 <ScalarProperty Name="AdvertisingEngineBidDataPK" ColumnName="AdvertisingEngineBidDataPK" />
                 <ScalarProperty Name="KeywordBidFK" ColumnName="KeywordBidFK" />
                 <ScalarProperty Name="MicroBidAmount" ColumnName="MicroBidAmount" />
@@ -3580,7 +3869,6 @@
                 <ScalarProperty Name="ApprovalStatus" ColumnName="ApprovalStatus" />
                 <ScalarProperty Name="FirstPageMicroCPC" ColumnName="FirstPageMicroCPC" />
                 <ScalarProperty Name="IsEligibleForShowing" ColumnName="IsEligibleForShowing" />
-                <ScalarProperty Name="SemplestProbability" ColumnName="SemplestProbability" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -3631,6 +3919,16 @@
           <EntitySetMapping Name="Promotions">
             <EntityTypeMapping TypeName="SemplestModel.Promotion">
               <MappingFragment StoreEntitySet="Promotion">
+                <ScalarProperty Name="BudgetToAddDate" ColumnName="BudgetToAddDate" />
+                <ScalarProperty Name="BudgetToAddToNextCycle" ColumnName="BudgetToAddToNextCycle" />
+                <ScalarProperty Name="RemainingBudgetInCycle" ColumnName="RemainingBudgetInCycle" />
+                <ScalarProperty Name="StartBudgetInCycle" ColumnName="StartBudgetInCycle" />
+                <ScalarProperty Name="CycleEndDate" ColumnName="CycleEndDate" />
+                <ScalarProperty Name="CycleStartDate" ColumnName="CycleStartDate" />
+                <ScalarProperty Name="BudgetCycleFK" ColumnName="BudgetCycleFK" />
+                <ScalarProperty Name="PromotionBudgetAmount" ColumnName="PromotionBudgetAmount" />
+                <ScalarProperty Name="PromotionEndDate" ColumnName="PromotionEndDate" />
+                <ScalarProperty Name="PromotionStartDate" ColumnName="PromotionStartDate" />
                 <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
                 <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
                 <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
@@ -3638,9 +3936,6 @@
                 <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
                 <ScalarProperty Name="PromotionDescription" ColumnName="PromotionDescription" />
                 <ScalarProperty Name="LandingPageURL" ColumnName="LandingPageURL" />
-                <ScalarProperty Name="CycleBudgetAmount" ColumnName="CycleBudgetAmount" />
-                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
-                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
                 <ScalarProperty Name="IsPaused" ColumnName="IsPaused" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
@@ -3660,6 +3955,7 @@
           <EntitySetMapping Name="PromotionKeywordAssociations">
             <EntityTypeMapping TypeName="SemplestModel.PromotionKeywordAssociation">
               <MappingFragment StoreEntitySet="PromotionKeywordAssociation">
+                <ScalarProperty Name="SemplestProbability" ColumnName="SemplestProbability" />
                 <ScalarProperty Name="KeywordFK" ColumnName="KeywordFK" />
                 <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -3809,6 +4105,7 @@
           <EntitySetMapping Name="TrafficEstimators">
             <EntityTypeMapping TypeName="SemplestModel.TrafficEstimator">
               <MappingFragment StoreEntitySet="TrafficEstimator">
+                <ScalarProperty Name="TransactionDate" ColumnName="TransactionDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="TrafficEstimatorPK" ColumnName="TrafficEstimatorPK" />
                 <ScalarProperty Name="KeywordBidFK" ColumnName="KeywordBidFK" />
@@ -3882,6 +4179,44 @@
                 <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
                 <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
                 <ScalarProperty Name="PromotionAdEngineSelectedPK" ColumnName="PromotionAdEngineSelectedPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BudgetCycles">
+            <EntityTypeMapping TypeName="SemplestModel.BudgetCycle">
+              <MappingFragment StoreEntitySet="BudgetCycle">
+                <ScalarProperty Name="BudgetCycle1" ColumnName="BudgetCycle" />
+                <ScalarProperty Name="BudgetCyclePK" ColumnName="BudgetCyclePK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CreditCardProfiles">
+            <EntityTypeMapping TypeName="SemplestModel.CreditCardProfile">
+              <MappingFragment StoreEntitySet="CreditCardProfile">
+                <ScalarProperty Name="TxRefNum" ColumnName="TxRefNum" />
+                <ScalarProperty Name="AuthCode" ColumnName="AuthCode" />
+                <ScalarProperty Name="CustomerRefNum" ColumnName="CustomerRefNum" />
+                <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+                <ScalarProperty Name="CreditCardProfilePK" ColumnName="CreditCardProfilePK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MR_TEMP_Promotion">
+            <EntityTypeMapping TypeName="SemplestModel.MR_TEMP_Promotion">
+              <MappingFragment StoreEntitySet="MR_TEMP_Promotion">
+                <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
+                <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="IsPaused" ColumnName="IsPaused" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="CycleBudgetAmount" ColumnName="CycleBudgetAmount" />
+                <ScalarProperty Name="LandingPageURL" ColumnName="LandingPageURL" />
+                <ScalarProperty Name="PromotionDescription" ColumnName="PromotionDescription" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="ProductGroupFK" ColumnName="ProductGroupFK" />
+                <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -3993,7 +4328,7 @@
         <AssociationConnector Association="SemplestModel.REL_AdvertisingEngineAccount_AdvertisingEnginePromotion_3" ManuallyRouted="false">
           <ConnectorPoint PointX="9.75" PointY="32.78125" />
           <ConnectorPoint PointX="9.9166666666666661" PointY="32.78125" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="32.78125" />
+          <ConnectorPoint PointX="10.145833333333334" PointY="32.78125" />
           <ConnectorPoint PointX="10.84375" PointY="32.78125" />
           <ConnectorPoint PointX="10.84375" PointY="38.125" />
         </AssociationConnector>
@@ -4004,16 +4339,17 @@
           <ConnectorPoint PointX="8.25" PointY="34.766337890625" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_AdvertisingEngineBidData_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="16.1562525" PointY="34.625" />
-          <ConnectorPoint PointX="16.1562525" PointY="33.343747500000006" />
-          <ConnectorPoint PointX="17.25" PointY="33.343747500000006" />
+          <ConnectorPoint PointX="16.5" PointY="34.845896809895834" />
+          <ConnectorPoint PointX="17.25" PointY="34.845896809895834" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="7.9804659375" PointY="41.375" />
-          <ConnectorPoint PointX="7.9804659375" PointY="39.403595377604169" />
-          <ConnectorPoint PointX="8.6930351510416664" PointY="39.403595377604169" />
-          <ConnectorPoint PointX="8.8597018177083342" PointY="39.403595377604169" />
-          <ConnectorPoint PointX="10.5" PointY="39.403595377604169" />
+          <ConnectorPoint PointX="7.9038056171875" PointY="41.375" />
+          <ConnectorPoint PointX="7.9038056171875" PointY="39.189918561197928" />
+          <ConnectorPoint PointX="8.6029476002604159" PointY="39.189918561197928" />
+          <ConnectorPoint PointX="8.7696142669270838" PointY="39.189918561197928" />
+          <ConnectorPoint PointX="9.4166666666666661" PointY="39.189918561197928" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="39.189918561197928" />
+          <ConnectorPoint PointX="10.5" PointY="39.189918561197928" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_BidType_KeywordBid_2" ManuallyRouted="false">
           <ConnectorPoint PointX="14.25" PointY="36.672841796875" />
@@ -4025,6 +4361,8 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Credential_1" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="49.403595377604162" />
+          <ConnectorPoint PointX="7.072916666666667" PointY="49.403595377604162" />
+          <ConnectorPoint PointX="7.270833333333333" PointY="49.403595377604162" />
           <ConnectorPoint PointX="7.5" PointY="49.403595377604162" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Child_Rel" ManuallyRouted="false">
@@ -4036,10 +4374,10 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Cust_Camp_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="3.75" PointY="36.239807942708325" />
-          <ConnectorPoint PointX="3.75" PointY="44.692047526041662" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="44.692047526041662" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="44.692047526041662" />
-          <ConnectorPoint PointX="5.25" PointY="44.692047526041662" />
+          <ConnectorPoint PointX="3.75" PointY="44.7881982421875" />
+          <ConnectorPoint PointX="4.0729186666666672" PointY="44.7881982421875" />
+          <ConnectorPoint PointX="4.2395853333333333" PointY="44.7881982421875" />
+          <ConnectorPoint PointX="5.25" PointY="44.7881982421875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Customer_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="4.5" PointY="31.642538248697914" />
@@ -4070,10 +4408,14 @@
           <ConnectorPoint PointX="5.25" PointY="33.461293945312505" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_CustomerStyle_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.1562525" PointY="36.239807942708325" />
-          <ConnectorPoint PointX="4.1562525" PointY="38.797841796875005" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="38.797841796875005" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="3.343748" PointY="36.239807942708325" />
+          <ConnectorPoint PointX="3.343748" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="3.6666666666666665" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="3.8333333333333335" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="4.0729186666666672" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="4.2395853333333333" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="4.2760446666666665" PointY="38.797841796875005" />
+          <ConnectorPoint PointX="4.4427113333333326" PointY="38.797841796875005" />
           <ConnectorPoint PointX="5.25" PointY="38.797841796875005" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_EmployeeCustomerAssociation_2" ManuallyRouted="false">
@@ -4081,34 +4423,36 @@
           <ConnectorPoint PointX="7.854166666666667" PointY="35.3987939453125" />
           <ConnectorPoint PointX="8.0208333333333339" PointY="35.3987939453125" />
           <ConnectorPoint PointX="9.9166666666666661" PointY="35.3987939453125" />
-          <ConnectorPoint PointX="10.083333333333334" PointY="35.3987939453125" />
+          <ConnectorPoint PointX="10.145833333333334" PointY="35.3987939453125" />
           <ConnectorPoint PointX="10.760416666666666" PointY="35.3987939453125" />
           <ConnectorPoint PointX="10.927083333333334" PointY="35.3987939453125" />
           <ConnectorPoint PointX="11.96875" PointY="35.3987939453125" />
           <ConnectorPoint PointX="11.96875" PointY="34.855286458333339" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_Schedule_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="3.3437475" PointY="36.239807942708325" />
-          <ConnectorPoint PointX="3.3437475" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="3.6666666666666665" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="3.8333333333333335" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="7.897132604166667" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="8.0637992708333339" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="8.4068996354166661" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="8.5735663020833339" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="8.6930351510416664" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="8.8597018177083342" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="12.681029135907158" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.1391682356771" />
-          <ConnectorPoint PointX="15.75" PointY="41.1391682356771" />
+          <ConnectorPoint PointX="4.3593779999999995" PointY="36.239807942708325" />
+          <ConnectorPoint PointX="4.3593779999999995" PointY="41.125" />
+          <ConnectorPoint PointX="7.8204722838541674" PointY="41.125" />
+          <ConnectorPoint PointX="7.9871389505208334" PointY="41.125" />
+          <ConnectorPoint PointX="8.226724533854167" PointY="41.125" />
+          <ConnectorPoint PointX="8.3933912005208349" PointY="41.125" />
+          <ConnectorPoint PointX="8.6029476002604159" PointY="41.125" />
+          <ConnectorPoint PointX="8.7696142669270838" PointY="41.125" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="41.125" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="41.125" />
+          <ConnectorPoint PointX="12.3125" PointY="41.125" />
+          <ConnectorPoint PointX="12.3125" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="12.312501249999999" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="12.583333333333334" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="15.25" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="15.25" PointY="43.486418393229172" />
+          <ConnectorPoint PointX="15.385416666666666" PointY="43.486418393229172" />
+          <ConnectorPoint PointX="15.552083333333334" PointY="43.486418393229172" />
+          <ConnectorPoint PointX="15.75" PointY="43.486418393229172" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.UserCustomer_rel" ManuallyRouted="false">
-          <ConnectorPoint PointX="4.3593787499999994" PointY="36.239807942708325" />
-          <ConnectorPoint PointX="4.3593787499999994" PointY="51.393951822916677" />
+          <ConnectorPoint PointX="4.156252" PointY="36.239807942708325" />
+          <ConnectorPoint PointX="4.156252" PointY="51.393951822916677" />
           <ConnectorPoint PointX="5.25" PointY="51.393951822916677" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneCust_rel" ManuallyRouted="false">
@@ -4119,41 +4463,49 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Employee_EmployeeCustomerAssociation_1" ManuallyRouted="false">
           <ConnectorPoint PointX="12" PointY="51.49974609375" />
-          <ConnectorPoint PointX="12.3750025" PointY="51.49974609375" />
-          <ConnectorPoint PointX="12.3750025" PointY="34.855286458333339" />
+          <ConnectorPoint PointX="12.197916666666666" PointY="51.49974609375" />
+          <ConnectorPoint PointX="12.364583333333334" PointY="51.49974609375" />
+          <ConnectorPoint PointX="12.395834583333333" PointY="51.49974609375" />
+          <ConnectorPoint PointX="12.395834583333333" PointY="34.855286458333339" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_EmployeeType_Employee_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9.53125" PointY="60.625" />
-          <ConnectorPoint PointX="9.53125" PointY="50.21875" />
-          <ConnectorPoint PointX="10.5" PointY="50.21875" />
+          <ConnectorPoint PointX="9.53125" PointY="52.531962890624996" />
+          <ConnectorPoint PointX="10.5" PointY="52.531962890624996" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Employee_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.75" PointY="52.64613932291666" />
-          <ConnectorPoint PointX="7.229166666666667" PointY="52.64613932291666" />
-          <ConnectorPoint PointX="7.395833333333333" PointY="52.64613932291666" />
-          <ConnectorPoint PointX="9.2916666666666661" PointY="52.64613932291666" />
-          <ConnectorPoint PointX="9.6145833333333339" PointY="52.64613932291666" />
-          <ConnectorPoint PointX="10.5" PointY="52.64613932291666" />
+          <ConnectorPoint PointX="6.75" PointY="52.765727539062496" />
+          <ConnectorPoint PointX="7.072916666666667" PointY="52.765727539062496" />
+          <ConnectorPoint PointX="7.395833333333333" PointY="52.765727539062496" />
+          <ConnectorPoint PointX="9.2291666666666661" PointY="52.765727539062496" />
+          <ConnectorPoint PointX="9.6145833333333339" PointY="52.765727539062496" />
+          <ConnectorPoint PointX="10.5" PointY="52.765727539062496" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Error_1" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="53.480210338141049" />
           <ConnectorPoint PointX="6.90625" PointY="53.636460338141049" />
           <ConnectorPoint PointX="6.90625" PointY="52.78125" />
+          <ConnectorPoint PointX="7.0973244349011217" PointY="52.972324434901118" />
+          <ConnectorPoint PointX="7.2464255650988791" PointY="53.121425565098882" />
           <ConnectorPoint PointX="7.2535744349011217" PointY="53.128574434901118" />
           <ConnectorPoint PointX="7.3714255650988791" PointY="53.246425565098882" />
           <ConnectorPoint PointX="7.5" PointY="53.375" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" ManuallyRouted="false">
           <ConnectorPoint PointX="14.65625" PointY="46.625" />
-          <ConnectorPoint PointX="14.65625" PointY="41.656125546874996" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="41.656125546874996" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.656125546874996" />
-          <ConnectorPoint PointX="15.75" PointY="41.656125546874996" />
+          <ConnectorPoint PointX="14.65625" PointY="41.800219667968754" />
+          <ConnectorPoint PointX="15.041666666666666" PointY="41.800219667968754" />
+          <ConnectorPoint PointX="15.333333333333334" PointY="41.800219667968754" />
+          <ConnectorPoint PointX="15.385416666666666" PointY="41.800219667968754" />
+          <ConnectorPoint PointX="15.552083333333334" PointY="41.800219667968754" />
+          <ConnectorPoint PointX="15.75" PointY="41.800219667968754" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_1" ManuallyRouted="false">
           <ConnectorPoint PointX="9" PointY="44.365143229166662" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="44.365143229166662" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="44.365143229166662" />
           <ConnectorPoint PointX="12.166666666666666" PointY="44.365143229166662" />
-          <ConnectorPoint PointX="12.458335833333335" PointY="44.365143229166662" />
+          <ConnectorPoint PointX="12.479167916666667" PointY="44.365143229166662" />
           <ConnectorPoint PointX="12.75" PointY="44.365143229166662" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_StateCode_GeoTargeting_2" ManuallyRouted="false">
@@ -4177,101 +4529,127 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Keyword_PromotionKeywordAssociation_2" ManuallyRouted="false">
           <ConnectorPoint PointX="12" PointY="41.687306692307693" />
-          <ConnectorPoint PointX="12.188583318545176" PointY="41.514359569827505" />
-          <ConnectorPoint PointX="12.311416681454825" PointY="41.40171081158276" />
-          <ConnectorPoint PointX="12.313585818545176" PointY="41.399721526311211" />
-          <ConnectorPoint PointX="12.436419181454825" PointY="41.287072768066466" />
-          <ConnectorPoint PointX="12.438583318545176" PointY="41.285088068224944" />
-          <ConnectorPoint PointX="12.561416681454825" PointY="41.1724393099802" />
-          <ConnectorPoint PointX="12.75" PointY="40.99949218750001" />
+          <ConnectorPoint PointX="12.19107443490112" PointY="41.496232257406575" />
+          <ConnectorPoint PointX="12.371425565098878" PointY="41.315881127208812" />
+          <ConnectorPoint PointX="12.4375" PointY="41.249806692307693" />
+          <ConnectorPoint PointX="12.4375" PointY="41.696595052083325" />
+          <ConnectorPoint PointX="12.44107443490112" PointY="41.693020617182206" />
+          <ConnectorPoint PointX="12.558925565098878" PointY="41.575169486984443" />
+          <ConnectorPoint PointX="12.749999999999993" PointY="41.384095052083332" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_KeywordInitialBidData_1" ManuallyRouted="false">
           <ConnectorPoint PointX="16.5" PointY="36.99974609375" />
           <ConnectorPoint PointX="17.25" PointY="36.99974609375" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_KeywordBid_TrafficEstimator_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="15.375" PointY="38.720602213541667" />
-          <ConnectorPoint PointX="15.375" PointY="47.2112939453125" />
-          <ConnectorPoint PointX="16.385416666666668" PointY="47.2112939453125" />
-          <ConnectorPoint PointX="16.552083333333332" PointY="47.2112939453125" />
-          <ConnectorPoint PointX="17.25" PointY="47.2112939453125" />
+          <ConnectorPoint PointX="15.46875" PointY="38.720602213541667" />
+          <ConnectorPoint PointX="15.46875" PointY="47.307444661458334" />
+          <ConnectorPoint PointX="15.994789166666665" PointY="47.307444661458334" />
+          <ConnectorPoint PointX="16.161455833333331" PointY="47.307444661458334" />
+          <ConnectorPoint PointX="16.385416666666668" PointY="47.307444661458334" />
+          <ConnectorPoint PointX="16.552083333333332" PointY="47.307444661458334" />
+          <ConnectorPoint PointX="17.25" PointY="47.307444661458334" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_PromotionKeywordAssociation_KeywordBid_1" ManuallyRouted="false">
           <ConnectorPoint PointX="14.25" PointY="38.485301106770834" />
           <ConnectorPoint PointX="15" PointY="38.485301106770834" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_KeywordCategory_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="45.69862658134123" />
-          <ConnectorPoint PointX="9.75" PointY="45.69862658134123" />
+          <ConnectorPoint PointX="9" PointY="46.115143229166669" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="46.115143229166669" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="46.115143229166669" />
+          <ConnectorPoint PointX="9.75" PointY="46.115143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.PhoneType_rel" ManuallyRouted="false">
           <ConnectorPoint PointX="5.25" PointY="15.797841796874998" />
           <ConnectorPoint PointX="6" PointY="15.797841796874998" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_ProductGroup_Promotion_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.75" PointY="44.692047526041662" />
-          <ConnectorPoint PointX="7.5" PointY="44.692047526041662" />
+          <ConnectorPoint PointX="6.75" PointY="44.7881982421875" />
+          <ConnectorPoint PointX="7.5" PointY="44.7881982421875" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_ProductGroup_Schedule_4" ManuallyRouted="false">
           <ConnectorPoint PointX="6" PointY="43.125" />
-          <ConnectorPoint PointX="6" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="7.897132604166667" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="8.0637992708333339" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="8.4068996354166661" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="8.5735663020833339" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="8.6930351510416664" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="8.8597018177083342" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="12.583333333333334" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.264422141927092" />
-          <ConnectorPoint PointX="15.75" PointY="41.264422141927092" />
+          <ConnectorPoint PointX="6" PointY="41.109375" />
+          <ConnectorPoint PointX="7.8204722838541674" PointY="41.109375" />
+          <ConnectorPoint PointX="7.9871389505208334" PointY="41.109375" />
+          <ConnectorPoint PointX="8.226724533854167" PointY="41.109375" />
+          <ConnectorPoint PointX="8.3933912005208349" PointY="41.109375" />
+          <ConnectorPoint PointX="8.6029476002604159" PointY="41.109375" />
+          <ConnectorPoint PointX="8.7696142669270838" PointY="41.109375" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="41.109375" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="41.109375" />
+          <ConnectorPoint PointX="12.166666666666666" PointY="41.109375" />
+          <ConnectorPoint PointX="12.479167916666667" PointY="41.109375" />
+          <ConnectorPoint PointX="12.53125" PointY="41.109375" />
+          <ConnectorPoint PointX="12.53125" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="15.125" PointY="41.634095052083325" />
+          <ConnectorPoint PointX="15.125" PointY="44.432817316406251" />
+          <ConnectorPoint PointX="15.385416666666666" PointY="44.432817316406251" />
+          <ConnectorPoint PointX="15.552083333333334" PointY="44.432817316406251" />
+          <ConnectorPoint PointX="15.75" PointY="44.432817316406251" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAds_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="46.430954528846165" />
-          <ConnectorPoint PointX="9.375" PointY="46.805954528846165" />
-          <ConnectorPoint PointX="9.375" PointY="54.836293945312505" />
-          <ConnectorPoint PointX="9.4479166666666661" PointY="54.836293945312505" />
-          <ConnectorPoint PointX="9.6145833333333339" PointY="54.836293945312505" />
-          <ConnectorPoint PointX="9.75" PointY="54.836293945312505" />
+          <ConnectorPoint PointX="9" PointY="48.546270284054479" />
+          <ConnectorPoint PointX="9.2535744349011217" PointY="48.7998447189556" />
+          <ConnectorPoint PointX="9.3714255650988783" PointY="48.917695849153361" />
+          <ConnectorPoint PointX="9.375" PointY="48.921270284054479" />
+          <ConnectorPoint PointX="9.375" PointY="54.932444661458334" />
+          <ConnectorPoint PointX="9.4166666666666661" PointY="54.932444661458334" />
+          <ConnectorPoint PointX="9.6145833333333339" PointY="54.932444661458334" />
+          <ConnectorPoint PointX="9.75" PointY="54.932444661458334" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" ManuallyRouted="false">
-          <ConnectorPoint PointX="8.49023296875" PointY="41.375" />
-          <ConnectorPoint PointX="8.49023296875" PointY="40.840838971354181" />
-          <ConnectorPoint PointX="8.6930351510416664" PointY="40.840838971354181" />
-          <ConnectorPoint PointX="8.8597018177083342" PointY="40.840838971354181" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="40.840838971354181" />
-          <ConnectorPoint PointX="12.583333333333334" PointY="40.840838971354181" />
-          <ConnectorPoint PointX="12.75" PointY="40.840838971354181" />
+          <ConnectorPoint PointX="8.3100578671875009" PointY="41.375" />
+          <ConnectorPoint PointX="8.3100578671875009" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="8.6029476002604159" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="8.7696142669270838" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="12.166666666666666" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="12.583333333333334" PointY="41.023183593750005" />
+          <ConnectorPoint PointX="12.75" PointY="41.023183593750005" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_Schedule_2" ManuallyRouted="false">
-          <ConnectorPoint PointX="9" PointY="41.453062773437495" />
-          <ConnectorPoint PointX="12.166666666666666" PointY="41.453062773437495" />
-          <ConnectorPoint PointX="12.583333333333334" PointY="41.453062773437495" />
-          <ConnectorPoint PointX="15.291666666666666" PointY="41.453062773437495" />
-          <ConnectorPoint PointX="15.458333333333334" PointY="41.453062773437495" />
-          <ConnectorPoint PointX="15.75" PointY="41.453062773437495" />
+          <ConnectorPoint PointX="9" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="12.126128306891035" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="12.739583333333334" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="15.385416666666666" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="15.552083333333334" PointY="41.477845052083325" />
+          <ConnectorPoint PointX="15.75" PointY="41.477845052083325" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_PromotionAds_SiteLinks_1" ManuallyRouted="false">
           <ConnectorPoint PointX="11.25" PointY="54.865143229166669" />
+          <ConnectorPoint PointX="11.416666666666666" PointY="54.865143229166669" />
+          <ConnectorPoint PointX="11.583333333333334" PointY="54.865143229166669" />
           <ConnectorPoint PointX="12" PointY="54.865143229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Rights_RolesRightsAssociation_2" ManuallyRouted="false">
           <ConnectorPoint PointX="9.75" PointY="64.393992513020834" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="64.393992513020834" />
+          <ConnectorPoint PointX="10.364583333333334" PointY="64.393992513020834" />
           <ConnectorPoint PointX="11.25" PointY="64.393992513020834" />
           <ConnectorPoint PointX="11.25" PointY="59.42258789062501" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Roles_RolesRightsAssociation_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6" PointY="56.287985026041667" />
-          <ConnectorPoint PointX="6" PointY="59.208639322916682" />
-          <ConnectorPoint PointX="9.4479166666666661" PointY="59.208639322916682" />
-          <ConnectorPoint PointX="9.6145833333333339" PointY="59.208639322916682" />
-          <ConnectorPoint PointX="10.5" PointY="59.208639322916682" />
+          <ConnectorPoint PointX="6.75" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="7.041666666666667" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="7.270833333333333" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="9.2291666666666661" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="9.6145833333333339" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="10.197916666666666" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="10.364583333333334" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="11.416666666666666" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="11.583333333333334" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="11.625" PointY="56.232687174479167" />
+          <ConnectorPoint PointX="11.625" PointY="57.25" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Roles_UserRolesAssociation_2" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="54.562306692307693" />
-          <ConnectorPoint PointX="7.0660744349011209" PointY="54.246232257406575" />
-          <ConnectorPoint PointX="7.1839255650988791" PointY="54.128381127208812" />
+          <ConnectorPoint PointX="7.06607443490112" PointY="54.246232257406575" />
+          <ConnectorPoint PointX="7.2464255650988791" PointY="54.065881127208812" />
           <ConnectorPoint PointX="7.3125" PointY="53.999806692307693" />
           <ConnectorPoint PointX="7.3125" PointY="51.365143229166662" />
           <ConnectorPoint PointX="7.5" PointY="51.365143229166662" />
@@ -4285,15 +4663,21 @@
           <ConnectorPoint PointX="21" PointY="40.177643229166669" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Schedule_5" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.75" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="6.822916666666667" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="6.989583333333333" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="7.0702620442708293" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="7.395833333333333" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="9.2916666666666661" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="9.6145833333333339" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="16.46875" PointY="53.028595377604162" />
-          <ConnectorPoint PointX="16.46875" PointY="45.124410807291667" />
+          <ConnectorPoint PointX="6.75" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="7.072916666666667" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="7.270833333333333" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="9.2291666666666661" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="11.166666666666666" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="11.333333333333334" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="12.197916666666666" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="12.479167916666667" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="13.666666666666666" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="13.833333333333334" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="15.994789166666665" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="16.161455833333331" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="16.46875" PointY="49.841095377604162" />
+          <ConnectorPoint PointX="16.46875" PointY="45.316712239583339" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_ScheduleJob_ScheduleLog_1" ManuallyRouted="false">
           <ConnectorPoint PointX="19.5" PointY="42.432444661458334" />
@@ -4305,13 +4689,15 @@
           <ConnectorPoint PointX="21" PointY="39.307569114583345" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_TransactionHistory_1" ManuallyRouted="false">
-          <ConnectorPoint PointX="6.7257692307692318" PointY="53.537903645833353" />
-          <ConnectorPoint PointX="7.125" PointY="53.937134415064122" />
+          <ConnectorPoint PointX="6.75" PointY="53.536748799679508" />
+          <ConnectorPoint PointX="7.125" PointY="53.911748799679508" />
           <ConnectorPoint PointX="7.125" PointY="57.653595377604177" />
           <ConnectorPoint PointX="7.5" PointY="57.653595377604177" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_UserRolesAssociation_1" ManuallyRouted="false">
           <ConnectorPoint PointX="6.75" PointY="50.807571614583331" />
+          <ConnectorPoint PointX="7.072916666666667" PointY="50.807571614583331" />
+          <ConnectorPoint PointX="7.270833333333333" PointY="50.807571614583331" />
           <ConnectorPoint PointX="7.5" PointY="50.807571614583331" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.EmployeePhoneAssociation" Width="1.5" PointX="13.75" PointY="31.75" Height="1.9802864583333246" />
@@ -4328,8 +4714,8 @@
           <ConnectorPoint PointX="11.25" PointY="47.162985026041667" />
           <ConnectorPoint PointX="12.25" PointY="47.162985026041667" />
           <ConnectorPoint PointX="12.25" PointY="35.105286458333339" />
-          <ConnectorPoint PointX="12.291669166666667" PointY="35.105286458333339" />
-          <ConnectorPoint PointX="12.458335833333335" PointY="35.105286458333339" />
+          <ConnectorPoint PointX="12.312501249999999" PointY="35.105286458333339" />
+          <ConnectorPoint PointX="12.479167916666667" PointY="35.105286458333339" />
           <ConnectorPoint PointX="13" PointY="35.105286458333339" />
           <ConnectorPoint PointX="13" PointY="32.740143229166662" />
           <ConnectorPoint PointX="13.416666666666666" PointY="32.740143229166662" />
@@ -4342,11 +4728,107 @@
           <ConnectorPoint PointX="14.5" PointY="31.75" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAdEngineSelected_1" >
-          <ConnectorPoint PointX="8.776368484375" PointY="41.375" />
-          <ConnectorPoint PointX="8.776368484375" PointY="38.105286458333339" />
+          <ConnectorPoint PointX="8.68628093359375" PointY="41.375" />
+          <ConnectorPoint PointX="8.68628093359375" PointY="38.105286458333339" />
           <ConnectorPoint PointX="10" PointY="38.105286458333339" />
-          <ConnectorPoint PointX="10" PointY="30.615143229166662" />
-          <ConnectorPoint PointX="10.75" PointY="30.615143229166662" />
+          <ConnectorPoint PointX="10" PointY="30.7112939453125" />
+          <ConnectorPoint PointX="10.75" PointY="30.7112939453125" />
+        </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.BudgetCycle" Width="1.5" PointX="5.25" PointY="57.125" Height="1.5956835937499818" />
+        <EntityTypeShape EntityType="SemplestModel.CreditCardProfile" Width="1.5" PointX="5.375" PointY="3.75" Height="1.9802864583333246" />
+        <EntityTypeShape EntityType="SemplestModel.MR_TEMP_Promotion" Width="1.5" PointX="7.5" PointY="66.25" Height="5.0571093749999818" />
+        <AssociationConnector Association="SemplestModel.REL_Promotion_AdvertisingEnginePromotion_11" >
+          <ConnectorPoint PointX="8.25" PointY="66.25" />
+          <ConnectorPoint PointX="8.25" PointY="65.537985026041667" />
+          <ConnectorPoint PointX="8.7760446666666656" PointY="65.537985026041667" />
+          <ConnectorPoint PointX="8.9427113333333335" PointY="65.537985026041667" />
+          <ConnectorPoint PointX="10" PointY="65.537985026041667" />
+          <ConnectorPoint PointX="10" PointY="56.614889322916667" />
+          <ConnectorPoint PointX="9.6145833333333339" PointY="56.614889322916667" />
+          <ConnectorPoint PointX="9.4479166666666661" PointY="56.614889322916667" />
+          <ConnectorPoint PointX="9.4375" PointY="56.614889322916667" />
+          <ConnectorPoint PointX="9.4375" PointY="40.063457374348971" />
+          <ConnectorPoint PointX="10.5" PointY="40.063457374348971" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_BudgetCycle_Promotion_2" >
+          <ConnectorPoint PointX="6.75" PointY="57.187306692307693" />
+          <ConnectorPoint PointX="7.0660744349011209" PointY="56.871232257406575" />
+          <ConnectorPoint PointX="7.1839255650988791" PointY="56.753381127208812" />
+          <ConnectorPoint PointX="7.1875" PointY="56.749806692307693" />
+          <ConnectorPoint PointX="7.1875" PointY="46.6990636861979" />
+          <ConnectorPoint PointX="7.5" PointY="46.6990636861979" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_11" >
+          <ConnectorPoint PointX="9" PointY="68.778554687499991" />
+          <ConnectorPoint PointX="13.75" PointY="68.778554687499991" />
+          <ConnectorPoint PointX="13.75" PointY="48.47068359375001" />
+          <ConnectorPoint PointX="13.25" PointY="48.47068359375001" />
+          <ConnectorPoint PointX="13.25" PointY="45.82639648437501" />
+          <ConnectorPoint PointX="13.5" PointY="45.82639648437501" />
+          <ConnectorPoint PointX="13.5" PointY="45.451396484375" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_KeywordCategory_11" >
+          <ConnectorPoint PointX="8.656252" PointY="66.25" />
+          <ConnectorPoint PointX="8.656252" PointY="65.787985026041667" />
+          <ConnectorPoint PointX="8.7760446666666656" PointY="65.787985026041667" />
+          <ConnectorPoint PointX="8.9427113333333335" PointY="65.787985026041667" />
+          <ConnectorPoint PointX="10.0625" PointY="65.787985026041667" />
+          <ConnectorPoint PointX="10.0625" PointY="56.364889322916667" />
+          <ConnectorPoint PointX="9.6145833333333339" PointY="56.364889322916667" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="56.364889322916667" />
+          <ConnectorPoint PointX="9.3125" PointY="56.364889322916667" />
+          <ConnectorPoint PointX="9.3125" PointY="46.641466843749996" />
+          <ConnectorPoint PointX="9.3541666666666661" PointY="46.641466843749996" />
+          <ConnectorPoint PointX="9.5833333333333339" PointY="46.641466843749996" />
+          <ConnectorPoint PointX="9.75" PointY="46.641466843749996" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_ProductGroup_Promotion_11" >
+          <ConnectorPoint PointX="6.75" PointY="46.4190877920673" />
+          <ConnectorPoint PointX="7.15625" PointY="46.8253377920673" />
+          <ConnectorPoint PointX="7.15625" PointY="68.778554687499991" />
+          <ConnectorPoint PointX="7.5" PointY="68.778554687499991" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAdEngineSelected_11" >
+          <ConnectorPoint PointX="7.843748" PointY="66.25" />
+          <ConnectorPoint PointX="7.843748" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="8.1666666666666661" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="8.3333333333333339" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="8.7760446666666656" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="8.9427113333333335" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="10.125" PointY="65.662985026041667" />
+          <ConnectorPoint PointX="10.125" PointY="56.489889322916667" />
+          <ConnectorPoint PointX="9.5" PointY="56.489889322916667" />
+          <ConnectorPoint PointX="9.5" PointY="38.355286458333339" />
+          <ConnectorPoint PointX="10.0625" PointY="38.355286458333339" />
+          <ConnectorPoint PointX="10.0625" PointY="31.285692917968746" />
+          <ConnectorPoint PointX="10.75" PointY="31.285692917968746" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionAds_11" >
+          <ConnectorPoint PointX="9" PointY="67.48302484375" />
+          <ConnectorPoint PointX="10.28125" PointY="67.48302484375" />
+          <ConnectorPoint PointX="10.28125" PointY="56.114889322916667" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_PromotionKeywordAssociation_31" >
+          <ConnectorPoint PointX="8.859378" PointY="66.25" />
+          <ConnectorPoint PointX="8.859378" PointY="65.412985026041667" />
+          <ConnectorPoint PointX="9.9166666666666661" PointY="65.412985026041667" />
+          <ConnectorPoint PointX="10.145833333333334" PointY="65.412985026041667" />
+          <ConnectorPoint PointX="10.1875" PointY="65.412985026041667" />
+          <ConnectorPoint PointX="10.1875" PointY="56.739889322916667" />
+          <ConnectorPoint PointX="10.197916666666666" PointY="56.739889322916667" />
+          <ConnectorPoint PointX="10.364583333333334" PointY="56.739889322916667" />
+          <ConnectorPoint PointX="11.5" PointY="56.739889322916667" />
+          <ConnectorPoint PointX="11.5" PointY="53.124492187499996" />
+          <ConnectorPoint PointX="12.28125" PointY="53.124492187499996" />
+          <ConnectorPoint PointX="12.28125" PointY="39.605339796875008" />
+          <ConnectorPoint PointX="12.312501249999999" PointY="39.605339796875008" />
+          <ConnectorPoint PointX="12.583333333333334" PointY="39.605339796875008" />
+          <ConnectorPoint PointX="12.75" PointY="39.605339796875008" />
+        </AssociationConnector>
+        <AssociationConnector Association="SemplestModel.REL_Promotion_Schedule_21" >
+          <ConnectorPoint PointX="9" PointY="70.07408453124998" />
+          <ConnectorPoint PointX="16.0781225" PointY="70.07408453124998" />
+          <ConnectorPoint PointX="16.0781225" PointY="45.316712239583339" />
         </AssociationConnector>
       </Diagram>
     </Diagrams>

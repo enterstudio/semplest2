@@ -12,17 +12,17 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class Promotion
+    public partial class MR_TEMP_Promotion
     {
-        public Promotion()
+        public MR_TEMP_Promotion()
         {
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
             this.KeywordCategories = new HashSet<KeywordCategory>();
+            this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
             this.PromotionAds = new HashSet<PromotionAd>();
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
             this.Schedules = new HashSet<Schedule>();
-            this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
         }
     
         public int PromotionPK { get; set; }
@@ -38,25 +38,14 @@ namespace SemplestModel
         public Nullable<System.DateTime> EditedDate { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsLaunched { get; set; }
-        public System.DateTime PromotionStartDate { get; set; }
-        public Nullable<System.DateTime> PromotionEndDate { get; set; }
-        public decimal PromotionBudgetAmount { get; set; }
-        public int BudgetCycleFK { get; set; }
-        public Nullable<System.DateTime> CycleStartDate { get; set; }
-        public Nullable<System.DateTime> CycleEndDate { get; set; }
-        public Nullable<decimal> StartBudgetInCycle { get; set; }
-        public Nullable<decimal> RemainingBudgetInCycle { get; set; }
-        public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
-        public Nullable<System.DateTime> BudgetToAddDate { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
         public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
         public virtual ProductGroup ProductGroup { get; set; }
+        public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
-        public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
-        public virtual BudgetCycle BudgetCycle { get; set; }
     }
 }

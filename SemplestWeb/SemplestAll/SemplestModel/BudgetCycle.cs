@@ -12,14 +12,16 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionAdEngineSelected
+    public partial class BudgetCycle
     {
-        public int PromotionAdEngineSelectedPK { get; set; }
-        public int AdvertisingEngineFK { get; set; }
-        public int PromotionFK { get; set; }
+        public BudgetCycle()
+        {
+            this.Promotions = new HashSet<Promotion>();
+        }
     
-        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        public virtual Promotion Promotion { get; set; }
-        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
+        public int BudgetCyclePK { get; set; }
+        public string BudgetCycle1 { get; set; }
+    
+        public virtual ICollection<Promotion> Promotions { get; set; }
     }
 }

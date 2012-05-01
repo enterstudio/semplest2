@@ -22,6 +22,7 @@ namespace SemplestModel
         public int AveragePosition { get; set; }
         public decimal AverageCPC { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public System.DateTime TransactionDate { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }
     }

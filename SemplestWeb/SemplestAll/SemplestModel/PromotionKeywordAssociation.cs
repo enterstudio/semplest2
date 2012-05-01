@@ -25,9 +25,11 @@ namespace SemplestModel
         public bool IsActive { get; set; }
         public bool IsDeleted { get; set; }
         public bool IsNegative { get; set; }
+        public Nullable<double> SemplestProbability { get; set; }
     
         public virtual Keyword Keyword { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
         public virtual Promotion Promotion { get; set; }
+        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }
