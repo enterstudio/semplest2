@@ -26,8 +26,8 @@ namespace Semplest.Core.Controllers
 
         public ActionResult CampaignSetup()
         {
-            //var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading" };
-            //Logger.Write(logEnty);
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
+            Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             var campaignSetupModel = new CampaignSetupModel();
@@ -45,16 +45,36 @@ namespace Semplest.Core.Controllers
                 // we need save to database the ProductGroup and Promotion information
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                 int userid = 1; // for testing
+                string msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
+                Logger.Write(logEnty);
+
                 SemplestDataService ds = new SemplestDataService();
                 ds.SaveProductGroupAndCampaign(userid, model);
+
+                msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
+
+                msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
 
                 // get the categoris from the web service
                 model = _campaignRepository.GetCategories(model);
 
+                msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
+
                 // save this some how while getting the keywords this is becoming null
                 Session.Add("AllCategories", model.AllCategories);
-                Session.Add("AdModelProp", model.AdModelProp);
-                Session.Add("ProductGroup", model.ProductGroup);
+                //Session.Add("AdModelProp", model.AdModelProp);
+                //Session.Add("ProductGroup", model.ProductGroup);
                 return Json("Categories");
             }
             return View(model);
@@ -79,12 +99,33 @@ namespace Semplest.Core.Controllers
                 // save the selected categories here
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                 int userid = 1; // for testing
+
+                string msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
+                Logger.Write(logEnty);
+
                 SemplestDataService ds = new SemplestDataService();
                 int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 ds.SaveSelectedCategories(promoId, catList);
 
+                msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
+
+                msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting keywords form web service";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
+
                 // get the keywords from web service
                 model = _campaignRepository.GetKeyWords(model);
+
+                msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After getting keywords form web service";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
 
                 // save the keywords here
                 List<string> keyList = new List<string>();
@@ -113,6 +154,9 @@ namespace Semplest.Core.Controllers
                 //ds.SaveAd(model);
             }
             //return PartialView("KeyWords", model);
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
+            Logger.Write(logEnty);
+
             return View();
         }
 
