@@ -25,8 +25,8 @@ public class TestChaseOrbitalGateway
 			customerObject.setPhone("5555555555");
 			customerObject.setStateAbbr("NY");
 			customerObject.setZipCode("67676");
-			GatewayReturnObject r = gatew.CreateProfile(customerObject, "1234512345123456", "0912");
-			
+			GatewayReturnObject r = gatew.CreateProfile(customerObject, "376751317521031", "0912");
+			//ref 1460103
 			System.out.println(r.getAuthCode() + ":" + r.getCustomerRefNum() + ":" + r.getIsGood() + r.getMessage());
 
 		}

@@ -31,16 +31,9 @@ public class ReportObject
 	private String approvalStatus;
 	private Integer firstPageCPC;
 	private Date createdDate;
-	private Long cost;
+	private Long microCost;
 	
-	public Long getCost()
-	{
-		return cost;
-	}
-	public void setCost(Long costIn)
-	{
-		cost = costIn;
-	}
+	
 	public Long getAccountID()
 	{
 		return accountID;
@@ -153,6 +146,14 @@ public class ReportObject
 	public void setTransactionDate(Date transactionDate)
 	{
 		this.transactionDate = transactionDate;
+	}
+	public Long getMicroCost()
+	{
+		return microCost;
+	}
+	public void setMicroCost(Long microCost)
+	{
+		this.microCost = microCost;
 	}
 
 	

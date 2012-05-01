@@ -107,7 +107,7 @@ public class GoogleReportDownloader
 					rdata.setQualityScore(Integer.valueOf(data[8]));
 					rdata.setApprovalStatus(data[15]);
 					rdata.setFirstPageCPC(Integer.valueOf(data[13]));
-					rdata.setCost(Long.valueOf(data[7]));
+					rdata.setMicroCost(Long.valueOf(data[7]));
 					//yyyy-mm-dd
 					rdata.setTransactionDate(dateFormatter.parse(data[0]));
 					
