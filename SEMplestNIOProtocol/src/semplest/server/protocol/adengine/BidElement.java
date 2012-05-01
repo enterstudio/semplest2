@@ -10,6 +10,7 @@ public class BidElement
 	private String matchType;
 	private String competitiveType;
 	private Date startDate;
+	private Boolean isDefaultValue;
 	
 	public String getKeyword()
 	{
@@ -59,6 +60,14 @@ public class BidElement
 	public void setStartDate(Date startDate)
 	{
 		this.startDate = startDate;
+	}
+	public Boolean getIsDefaultValue()
+	{
+		return isDefaultValue;
+	}
+	public void setIsDefaultValue(Boolean isDefaultValue)
+	{
+		this.isDefaultValue = isDefaultValue;
 	}
 
 }
