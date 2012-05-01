@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 

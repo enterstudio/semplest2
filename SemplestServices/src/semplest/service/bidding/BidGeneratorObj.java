@@ -17,7 +17,7 @@ import semplest.bidding.estimation.EstimatorData;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -101,8 +101,8 @@ public class BidGeneratorObj {
 		// and form competitive and non-competitive groups 
 		
 		
-		BidObject[] bidObjects = null;
-		BidObject bidObject;
+		KeywordDataObject[] bidObjects = null;
+		KeywordDataObject bidObject;
 		TrafficEstimatorObject o;
 
 		int k;

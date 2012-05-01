@@ -1,6 +1,6 @@
 package semplest.server.protocol.adengine;
 
-public class BidObject
+public class KeywordDataObject
 {
 
 	private Long bidID;

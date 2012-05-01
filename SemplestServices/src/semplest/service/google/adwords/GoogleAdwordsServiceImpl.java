@@ -14,7 +14,7 @@ import org.apache.log4j.Logger;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -143,7 +143,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Long campaignID = 77290470L;
 
 
-			BidObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+			KeywordDataObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
 			/*
 			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
@@ -551,21 +551,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
-		BidObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
+		KeywordDataObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public BidObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
+	public KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
 	{
-		List<BidObject> result = new ArrayList<BidObject>();
+		List<KeywordDataObject> result = new ArrayList<KeywordDataObject>();
 		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			if (criterion instanceof BiddableAdGroupCriterion)
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) criterion;
-				BidObject bidRes = new BidObject();
+				KeywordDataObject bidRes = new KeywordDataObject();
 				if (res.getQualityInfo() != null)
 				{
 					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -600,7 +600,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				result.add(bidRes);
 			}
 		}
-		return result.toArray(new BidObject[result.size()]);
+		return result.toArray(new KeywordDataObject[result.size()]);
 	}
 
 	public String getAllAdGroupKeywords(String json) throws Exception
@@ -618,7 +618,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		List<String> keywords = new ArrayList<String>();
-		for (BidObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID, ActiveOnly))
+		for (KeywordDataObject criterion : getAllBiddableAdGroupCriteria(accountID, adGroupID, ActiveOnly))
 		{
 			keywords.add(criterion.getKeyword());
 		}
@@ -829,7 +829,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		BidObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
+		KeywordDataObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
 				KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
 
 		// convert result to Json String
@@ -837,7 +837,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public BidObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
+	public KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
 			throws Exception
 	{
 		try{
@@ -870,7 +870,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
-				BidObject bidRes = new BidObject();
+				KeywordDataObject bidRes = new KeywordDataObject();
 				if (res.getQualityInfo() != null)
 				{
 					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -888,7 +888,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			else
 			{
-				return new BidObject();
+				return new KeywordDataObject();
 			}
 		}
 		catch (ServiceException e)
@@ -912,13 +912,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		BidObject res = setBidForKeyWord(data.get("accountID"), keywordID, adGroupID, microBidAmount);
+		KeywordDataObject res = setBidForKeyWord(data.get("accountID"), keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public BidObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
+	public KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
 		try{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -947,7 +947,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
 				Keyword keyword = ((Keyword) res.getCriterion());
-				BidObject bidRes = new BidObject();
+				KeywordDataObject bidRes = new KeywordDataObject();
 				if (res.getQualityInfo() != null)
 				{
 					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
@@ -964,7 +964,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			else
 			{
-				return new BidObject();
+				return new KeywordDataObject();
 			}
 		}
 		catch (ServiceException e)

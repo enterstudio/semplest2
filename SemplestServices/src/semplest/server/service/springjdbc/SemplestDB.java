@@ -12,7 +12,7 @@ import org.springframework.jdbc.core.RowMapper;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
@@ -129,7 +129,7 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 
-	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<BidObject> bidObjects, String advertisingEngine)
+	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<KeywordDataObject> bidObjects, String advertisingEngine)
 			throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
@@ -139,7 +139,7 @@ public class SemplestDB extends BaseDB
 		if (bidObjects != null && bidObjects.size() > 0)
 		{
 			AddBidSP addBid = new AddBidSP();
-			for (BidObject bid : bidObjects)
+			for (KeywordDataObject bid : bidObjects)
 			{
 				try
 				{
@@ -157,9 +157,9 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<BidObject> bidObjMapper = new BeanPropertyRowMapper(BidObject.class);
+	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
 
-	public static List<BidObject> getBidObjects(Integer promotionID, String advertisingEngine) throws Exception
+	public static List<KeywordDataObject> getBidObjects(Integer promotionID, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{

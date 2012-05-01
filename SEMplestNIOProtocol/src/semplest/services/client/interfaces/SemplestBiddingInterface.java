@@ -3,7 +3,7 @@ package semplest.services.client.interfaces;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import semplest.server.protocol.adengine.BidObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 
 public interface SemplestBiddingInterface extends ServiceInitialize {
 	
