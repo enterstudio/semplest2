@@ -25,7 +25,6 @@ CREATE PROCEDURE dbo.SetBidObject
 	@IsBidActive			BIT = 1,
 	@IsNegative				BIT = 0,
 	@AdvertisingEngine		VARCHAR(50),
-	@SemplestProbability    float = null,
 	@ID int output
 )
 AS
@@ -120,8 +119,8 @@ BEGIN TRY
 	  END
 	if (@QualityScore is not null or @ApprovalStatus is not null or @FirstPageMicroCpc is not null or @IsEligibleForShowing is not null)
 	BEGIN
-		INSERT INTO KeywordInitialBidData(KeywordBidFK,QualityScore,ApprovalStatus,FirstPageMicroCPC,IsEligibleForShowing,SemplestProbability,CreatedDate)
-		values (@keywordBidPK, @QualityScore,@ApprovalStatus,@FirstPageMicroCpc,@IsEligibleForShowing,@SemplestProbability,@currentTime)
+		INSERT INTO KeywordInitialBidData(KeywordBidFK,QualityScore,ApprovalStatus,FirstPageMicroCPC,IsEligibleForShowing,CreatedDate)
+		values (@keywordBidPK, @QualityScore,@ApprovalStatus,@FirstPageMicroCpc,@IsEligibleForShowing,@currentTime)
 	END
 	   		
 	COMMIT TRANSACTION	
