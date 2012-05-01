@@ -173,7 +173,7 @@ Add Customer Account:
         <label>Status:</label>
         </div>
       <div class="editor-field">Active
-     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "True")
+     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "True", new {  @checked = "checked" })
      Inactive
      @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "False")
      </div>

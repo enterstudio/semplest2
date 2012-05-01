@@ -120,7 +120,7 @@ Add Employee:
         <label>Status:</label>
         </div>
       <div class="editor-field">Active
-     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True")
+     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True", new {  @checked = "checked" })
      Inactive
      @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
      </div>

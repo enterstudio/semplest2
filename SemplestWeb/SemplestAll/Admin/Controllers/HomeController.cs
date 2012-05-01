@@ -61,7 +61,7 @@ namespace Semplest.Admin.Controllers
 
 
             //ordering by lastname, firstname
-            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName); 
+            viewModel = viewModel.OrderBy(p=>p.Customer).ThenBy(p => p.LastName).ThenBy(p => p.FirstName); 
             viewModel = viewModel.AsExpandable().Where(predicate);
 
             return View(viewModel);
