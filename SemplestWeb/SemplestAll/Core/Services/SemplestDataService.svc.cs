@@ -53,6 +53,7 @@ namespace SemplestWebApp.Services
                             LandingPageURL = model.AdModelProp.Url,
                             PromotionDescription = model.ProductGroup.Words,
                             CycleBudgetAmount = model.ProductGroup.Budget,
+                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
                             IsPaused = false,
                             IsCompleted = false,
                             IsLaunched = false
@@ -67,6 +68,7 @@ namespace SemplestWebApp.Services
                         updatePromotion.LandingPageURL = model.AdModelProp.Url;
                         updatePromotion.PromotionDescription = model.ProductGroup.Words;
                         updatePromotion.CycleBudgetAmount = model.ProductGroup.Budget;
+                        updatePromotion.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
                         updatePromotion.EditedDate = DateTime.Now;
                         // update promotion ads
                         foreach (PromotionAd pad in updatePromotion.PromotionAds)
@@ -81,49 +83,80 @@ namespace SemplestWebApp.Services
                 }
                 else
                 {
-                    // create product group
-                    var prodgroup = new ProductGroup
+                    try
                     {
-                        ProductGroupName = model.ProductGroup.ProductGroupName,
-                        IsActive = true,
-                        CustomerFK = custfk,
-                        StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
-                        EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
-                    };
-                    // we need to add productgroup now 
-                    // to get the foreignkey that needs tobe passed into Promotion
-                    dbcontext.ProductGroups.Add(prodgroup);
-                    dbcontext.SaveChanges();
-
-                    // create promotion
-                    var promo = new Promotion 
-                    { 
-                        ProductGroupFK = prodgroup.ProductGroupPK,
-                        PromotionName = model.ProductGroup.ProductPromotionName,
-                        LandingPageURL = model.AdModelProp.Url,
-                        PromotionDescription = model.ProductGroup.Words,
-                        CycleBudgetAmount = model.ProductGroup.Budget,
-                        IsPaused = false,
-                        IsCompleted = false,
-                        IsLaunched = false
-                    };
-                    foreach (PromotionAd pad in model.AdModelProp.Ads)
-                    {
-                        var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
-                        // add sitelinks
-                        foreach (SiteLink slink in model.AdModelProp.SiteLinks)
+                        // create product group
+                        var prodgroup = new ProductGroup
                         {
-                            slink.PromotionAdsFK = cad.PromotionAdsPK;
-                            cad.SiteLinks.Add(slink);
+                            ProductGroupName = model.ProductGroup.ProductGroupName,
+                            IsActive = true,
+                            CustomerFK = custfk,
+                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                            EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
+                        };
+                        // we need to add productgroup now 
+                        // to get the foreignkey that needs tobe passed into Promotion
+                        //dbcontext.SaveChanges();
+
+                        // create promotion
+                        var promo = new Promotion
+                        {
+                            //ProductGroupFK = prodgroup.ProductGroupPK,
+                            PromotionName = model.ProductGroup.ProductPromotionName,
+                            LandingPageURL = model.AdModelProp.Url,
+                            PromotionDescription = model.ProductGroup.Words,
+                            CycleBudgetAmount = model.ProductGroup.Budget,
+                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                            IsPaused = false,
+                            IsCompleted = false,
+                            IsLaunched = false
+                        };
+
+                        // uncomment when geotargetting validation is added in view
+
+                        // promotion geotargeting
+                        //foreach (GeoTargeting geo in model.AdModelProp.Addresses)
+                        //{
+                        //    var geotarget = new GeoTargeting
+                        //        {
+                        //            Address = geo.Address,
+                        //            City = geo.City,
+                        //            StateCodeFK = geo.StateCodeFK,
+                        //            Zip = geo.Zip,
+                        //            ProximityRadius = geo.ProximityRadius,
+                        //        };
+                        //    promo.GeoTargetings.Add(geotarget);
+                        //}
+
+                        // promotion ads
+                        foreach (PromotionAd pad in model.AdModelProp.Ads)
+                        {
+                            var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
+
+                            // uncomment when validation added
+
+                            // add sitelinks
+                            //foreach (SiteLink slink in model.AdModelProp.SiteLinks)
+                            //{
+                            //    var slinkobj = new SiteLink { LinkText = "mylink", LinkURL = "mylink.com" };
+                            //    cad.SiteLinks.Add(slinkobj);
+                            //}
+
+                            promo.PromotionAds.Add(cad);
                         }
 
-                        promo.PromotionAds.Add(cad);
-                    }
+                        // set promotion
+                        dbcontext.ProductGroups.Add(prodgroup);
+                        dbcontext.Promotions.Add(promo);
+                        dbcontext.SaveChanges();
+                        retFlag = true;
 
-                    // set promotion
-                    dbcontext.Promotions.Add(promo);
-                    dbcontext.SaveChanges();
-                    retFlag = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = ex.Message;
+                        throw;
+                    }
                 }
             }
             return retFlag;
