@@ -142,6 +142,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// ==================================
 	// Keyword Estimates
 	// ==================================
+	// Maximum 1000 words per call!!
 	public abstract TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
 	// please don't use this method, use the one above
 	public abstract KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid) throws Exception;
