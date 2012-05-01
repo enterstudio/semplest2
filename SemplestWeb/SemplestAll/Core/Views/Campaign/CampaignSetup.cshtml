@@ -31,14 +31,13 @@ Ad Setup
 }
 <div id="exampleWrap">
     <div id="example" class="k-content">
-        @*@using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = 
+        @*@using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = 
+
 "OnSuccess", UpdateTargetId = "example" }))*@
         @*@using (Html.BeginForm("CampaignSetup", "Campaign"))*@
-        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = 
-"OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure" }))
+        @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure" }))
         {
-            @Html.ValidationSummary(true, "Campaign creation was unsuccessful. Please correct the errors and try 
-again.")
+            @Html.ValidationSummary(true, "Campaign creation was unsuccessful. Please correct the errors and try again.")
             <div id="tabstrip">
                 <ul>
                     <li class="k-state-active">DEFINE PRODUCT</li>
