@@ -31,6 +31,16 @@ public class ReportObject
 	private String approvalStatus;
 	private Integer firstPageCPC;
 	private Date createdDate;
+	private Long cost;
+	
+	public Long getCost()
+	{
+		return cost;
+	}
+	public void setCost(Long costIn)
+	{
+		cost = costIn;
+	}
 	public Long getAccountID()
 	{
 		return accountID;
