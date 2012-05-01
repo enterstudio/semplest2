@@ -231,7 +231,7 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            x.SelectedRepID = selectedrep.ToList().First().employeePK ;
+            x.SelectedRepID = selectedrep.ToList().FirstOrDefault().employeePK;
 
             //x.Reps=allreps.Select(r=>new SelectListItem 
             //            {
