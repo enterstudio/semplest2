@@ -244,6 +244,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						+ "TransactionDate: " + t.getTransactionDate()+ "; "
 						+ "AccountID: " + t.getAccountID()+ "; "
 						+ "CampaignID: " + t.getCampaignID()+ "; "
+						+ "Cost: " + t.getCost()+ "; "
 						);
 			}
 			//*/
