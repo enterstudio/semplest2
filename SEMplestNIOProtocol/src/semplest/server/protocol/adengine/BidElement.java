@@ -1,20 +1,16 @@
 package semplest.server.protocol.adengine;
 
+import java.util.Date;
+
 public class BidElement
 {
-	private Long bidID;
+	private Long keywordAdEngineID;
 	private String keyword;
 	private Long microBidAmount;
 	private String matchType;
 	private String competitiveType;
-	public Long getBidID()
-	{
-		return bidID;
-	}
-	public void setBidID(Long bidID)
-	{
-		this.bidID = bidID;
-	}
+	private Date startDate;
+	
 	public String getKeyword()
 	{
 		return keyword;
@@ -46,6 +42,23 @@ public class BidElement
 	public void setCompetitiveType(String competitiveType)
 	{
 		this.competitiveType = competitiveType;
+	}
+	
+	public Long getKeywordAdEngineID()
+	{
+		return keywordAdEngineID;
+	}
+	public void setKeywordAdEngineID(Long keywordAdEngineID)
+	{
+		this.keywordAdEngineID = keywordAdEngineID;
+	}
+	public Date getStartDate()
+	{
+		return startDate;
+	}
+	public void setStartDate(Date startDate)
+	{
+		this.startDate = startDate;
 	}
 
 }

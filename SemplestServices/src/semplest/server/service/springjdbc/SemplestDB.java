@@ -13,6 +13,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.adengine.AdEngineID;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -131,14 +132,38 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 
+
+	
+	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper(BidElement.class);
+	public static List<BidElement> getLatestBids(int promotionID, String searchEngine)
+	{
+		try
+		{
+			String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType,kb.CompetitionType, kb.StartDate from Promotion p  " +
+					"inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK " +
+					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
+					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
+					"where p.PromotionPK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1";
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ promotionID, searchEngine }, bidElementMapper);
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
-	public static BudgetObject getBudget(int PromotionID, String searchEngine)
+	public static BudgetObject getBudget(int promotionID, String searchEngine)
 	{
 		try
 		{
 			String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,p.CycleEndDate,CURRENT_TIMESTAMP) [RemainingDays] from Promotion p where PromotionPK = ?";
 			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ PromotionID }, BudgetObjMapper);
+			{ promotionID }, BudgetObjMapper);
 		}
 		catch (Exception e)
 		{
