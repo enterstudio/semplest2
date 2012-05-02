@@ -45,6 +45,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
+	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
 	private static String separator = "#";
 	
@@ -493,7 +494,15 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		
 	}
 
-	
+	@Override
+	public HashMap<String,Long> getAccountIDs() throws Exception
+	{
+		String json = " ";
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountIDs", json, null);
+		HashMap<String,Long> ret = protocolJson.getHashMapFromJson(returnData);
+		return ret;
+	}
 
 	@Override
 	public Account getAccountById(Long accountId) throws Exception

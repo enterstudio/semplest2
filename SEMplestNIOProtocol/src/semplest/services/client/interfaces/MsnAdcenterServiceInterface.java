@@ -1,6 +1,7 @@
 package semplest.services.client.interfaces;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,8 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	public abstract MsnManagementIds createAccount(SemplestString name) throws Exception;  
 	
 	public abstract Account getAccountById(Long accountId) throws Exception;
+	
+	public abstract HashMap<String,Long> getAccountIDs() throws Exception;
 	
 	// ==================================
 	// Campaign Methods
