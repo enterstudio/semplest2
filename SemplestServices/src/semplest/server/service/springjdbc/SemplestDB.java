@@ -3,6 +3,7 @@ package semplest.server.service.springjdbc;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -18,12 +19,15 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
+import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
 
 public class SemplestDB extends BaseDB
 {
@@ -43,12 +47,10 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.query(strSQL, CustomerObjMapper); // new
 																// CustomerRowMapper());
 	}
+
 	/*
-	public void startTransaction()
-	{
-		jdbcTemplate
-	}
-	*/
+	 * public void startTransaction() { jdbcTemplate }
+	 */
 
 	/*
 	 * Scheduler Calls
@@ -88,8 +90,6 @@ public class SemplestDB extends BaseDB
 		}
 
 	}
-
-	
 
 	/*
 	 * public static int getFrequencyID(String Frequency) { SqlFunction sf = new
@@ -134,31 +134,74 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Bidding calls
 	 */
+	public static void storeTrafficEstimatorData(int promotionID, String AdEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
+	{
+		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		HashMap<String, HashMap<String, HashMap<Double, BidData>>> trafficData = trafficEstimatorObj.getBidDataMap();
+		// go through each keyword
+		if (trafficData.keySet().isEmpty())
+		{
+			return;
+		}
+		Iterator<String> keywords = trafficData.keySet().iterator();
+		while (keywords.hasNext())
+		{
+			String keyword = keywords.next();
+			HashMap<String, HashMap<Double, BidData>> matchTypeMap = trafficData.get(keyword);
+			// go through match types
+			if (matchTypeMap != null && matchTypeMap.size() > 0)
+			{
+				Iterator<String> matchTypes = matchTypeMap.keySet().iterator();
+				while (matchTypes.hasNext())
+				{
+					String matchType = matchTypes.next();
+					// get the map of points
+					HashMap<Double, BidData> biddata = matchTypeMap.get(matchType);
+					if (biddata != null && biddata.size() > 0)
+					{
+						Iterator<Double> microbids = biddata.keySet().iterator();
+						while (microbids.hasNext())
+						{
+							Double microBid = microbids.next();
+							BidData data = biddata.get(microBid);
+							// add the data to the DB
+							addTrafficEstSP.execute(promotionID, keyword, AdEngine, matchType, microBid,
+									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),
+									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid),
+									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid),
+									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid));
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public static void storeKeywordDataObjects(int promotionID, String AdEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception
 	{
 		AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
 		if (keywordDataObjectList != null && keywordDataObjectList.size() > 0)
 		{
-			for (int i =0; i < keywordDataObjectList.size(); i++)
+			for (int i = 0; i < keywordDataObjectList.size(); i++)
 			{
 				KeywordDataObject kdObj = keywordDataObjectList.get(i);
-				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(), kdObj.getApprovalStatus(),
-						kdObj.getFirstPageCpc(), kdObj.isIsEligibleForShowing());
+				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
+						kdObj.getApprovalStatus(), kdObj.getFirstPageCpc(), kdObj.isIsEligibleForShowing());
 			}
 		}
 	}
-	
+
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper(BidElement.class);
+
 	public static List<BidElement> getLatestBids(int promotionID, String searchEngine)
 	{
 		try
 		{
-			String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType,kb.CompetitionType, kb.StartDate from Promotion p  " +
-					"inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
-					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-					"where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
+			String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType,kb.CompetitionType, kb.StartDate from Promotion p  "
+					+ "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+					+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+					+ "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
 			return jdbcTemplate.query(strSQL, new Object[]
 			{ promotionID, searchEngine }, bidElementMapper);
 		}
@@ -169,8 +212,8 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
-	
-	public static HashMap<String,ArrayList<BidElement>> getAllBids(int promotionID, String searchEngine, Date startDate, Date endDate)
+
+	public static HashMap<String, ArrayList<BidElement>> getAllBids(int promotionID, String searchEngine, Date startDate, Date endDate)
 	{
 		try
 		{
@@ -178,28 +221,28 @@ public class SemplestDB extends BaseDB
 			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
 			if (endDate == null)
 			{
-				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
-					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-					"where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? " +
-					"order by k.Keyword";
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb "
+						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+						+ "where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? "
+						+ "order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
-						{ promotionID, searchEngine, startDateSQL}, new AllBidRSExtactor());
+				{ promotionID, searchEngine, startDateSQL }, new AllBidRSExtactor());
 			}
 			else
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " +
-						"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-						"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
-						"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-						"where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)" +
-						"order by k.Keyword";
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb "
+						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+						+ "where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)"
+						+ "order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
-						{ promotionID, searchEngine, startDateSQL, endDateSQL}, new AllBidRSExtactor());
+				{ promotionID, searchEngine, startDateSQL, endDateSQL }, new AllBidRSExtactor());
 			}
-			
+
 		}
 		catch (Exception e)
 		{
@@ -208,8 +251,9 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
-	
+
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
+
 	public static BudgetObject getBudget(int promotionID, String searchEngine)
 	{
 		try
@@ -225,8 +269,8 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
-	public static void storeBidObjects(int promotionID,String advertisingEngine, ArrayList<BidElement> bidObjects)
-			throws Exception
+
+	public static void storeBidObjects(int promotionID, String advertisingEngine, ArrayList<BidElement> bidObjects) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
@@ -239,8 +283,8 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(),
-							bid.getMatchType(),advertisingEngine);
+					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(),
+							advertisingEngine);
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -251,10 +295,9 @@ public class SemplestDB extends BaseDB
 			}
 		}
 	}
-	
-	
 
 	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
+
 	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
@@ -271,7 +314,7 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.query(strSQL, new Object[]
 		{ promotionID, advertisingEngine }, bidObjMapper);
 	}
-	
+
 	/*
 	 * Report calls
 	 */
@@ -283,6 +326,7 @@ public class SemplestDB extends BaseDB
 			logger.info(rptObj.getKeyword());
 		}
 	}
+
 	/*
 	 * Account calls
 	 */
@@ -290,17 +334,17 @@ public class SemplestDB extends BaseDB
 
 	public static AdEngineID getAdEngineID(Long customerID, String adEngine) throws Exception
 	{
-		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], p.AdEngineAdGroupID [AdGroupID] from Customer c " +
-				"inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK " +
-				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK" +
-				"inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
-				"inner join Promotion p on aep.PromotionFK = p.PromotionPK " +
-				"where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
+		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], p.AdEngineAdGroupID [AdGroupID] from Customer c "
+				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK"
+				+ "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
+				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK " + "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
 		return jdbcTemplate.queryForObject(strSQL, new Object[]
-		{ customerID, adEngine}, adEngineObjMapper);
+		{ customerID, adEngine }, adEngineObjMapper);
 	}
-	
-	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(AdvertisingEnginePromotionObj.class);
+
+	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(
+			AdvertisingEnginePromotionObj.class);
 
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(String advertisingEngineAccountID) throws Exception
 	{
