@@ -1758,7 +1758,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 						{ "US" }, Currency.USDollar, new MatchType[]{matchType});
 				GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
 				KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
-				Double bidAmount = bid[i].getDoubleDollars();	
+				Long bidAmount = bid[i].getMicroDollars(); //.getDoubleDollars();	
 				KeywordEstimatedPosition k = keywordEstimatedPositions[0];
 				String keyword = k.getKeyword();
 				for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){

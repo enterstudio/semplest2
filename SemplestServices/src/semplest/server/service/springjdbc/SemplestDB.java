@@ -137,7 +137,7 @@ public class SemplestDB extends BaseDB
 	public static void storeTrafficEstimatorData(int promotionID, String AdEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
-		HashMap<String, HashMap<String, HashMap<Double, BidData>>> trafficData = trafficEstimatorObj.getBidDataMap();
+		HashMap<String, HashMap<String, HashMap<Long, BidData>>> trafficData = trafficEstimatorObj.getBidDataMap();
 		// go through each keyword
 		if (trafficData.keySet().isEmpty())
 		{
@@ -147,7 +147,7 @@ public class SemplestDB extends BaseDB
 		while (keywords.hasNext())
 		{
 			String keyword = keywords.next();
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = trafficData.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = trafficData.get(keyword);
 			// go through match types
 			if (matchTypeMap != null && matchTypeMap.size() > 0)
 			{
@@ -156,14 +156,13 @@ public class SemplestDB extends BaseDB
 				{
 					String matchType = matchTypes.next();
 					// get the map of points
-					HashMap<Double, BidData> biddata = matchTypeMap.get(matchType);
+					HashMap<Long, BidData> biddata = matchTypeMap.get(matchType);
 					if (biddata != null && biddata.size() > 0)
 					{
-						Iterator<Double> microbids = biddata.keySet().iterator();
+						Iterator<Long> microbids = biddata.keySet().iterator();
 						while (microbids.hasNext())
 						{
-							Double microBid = microbids.next();
-							BidData data = biddata.get(microBid);
+							Long microBid = microbids.next();
 							// add the data to the DB
 							addTrafficEstSP.execute(promotionID, keyword, AdEngine, matchType, microBid,
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),

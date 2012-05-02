@@ -1707,7 +1707,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						
 						StatsEstimate min = keywordEstimates[i].getMin();
 						StatsEstimate max = keywordEstimates[i].getMax();
-						estimatorObj.setBidData(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getText(), Double.valueOf(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getMaxCpc().getMicroAmount()),
+						estimatorObj.setBidData(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getText(), adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getMaxCpc().getMicroAmount(),
 								adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getMatchType().toString(), min.getAverageCpc().getMicroAmount(), max.getAverageCpc().getMicroAmount(),min.getAveragePosition(), max.getAveragePosition(), min.getClicksPerDay(), max.getClicksPerDay(),
 						min.getTotalCost().getMicroAmount(),max.getTotalCost().getMicroAmount());
 					}

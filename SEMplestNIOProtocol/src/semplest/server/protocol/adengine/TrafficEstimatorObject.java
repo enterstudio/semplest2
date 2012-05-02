@@ -10,9 +10,9 @@ public class TrafficEstimatorObject
 {
 	// keyword, matchtype, [list of bids]
 
-	private HashMap<String, HashMap<String, HashMap<Double, BidData>>> bidDataMap = new HashMap<String, HashMap<String, HashMap<Double, BidData>>>();
+	private HashMap<String, HashMap<String, HashMap<Long, BidData>>> bidDataMap = new HashMap<String, HashMap<String, HashMap<Long, BidData>>>();
 
-	public void setBidData(String keyword, Double bidAmount, String matchType, Long minAveCPC, Long maxAveCPC, Double minAvePosition,
+	public void setBidData(String keyword, Long bidAmount, String matchType, Long minAveCPC, Long maxAveCPC, Double minAvePosition,
 			Double maxAvePosition, Float minClickPerDay, Float maxClickPerDay, Long minTotalDailyMicroCost, Long maxTotalDailyMicroCost)
 			throws Exception
 	{
@@ -20,16 +20,16 @@ public class TrafficEstimatorObject
 				minTotalDailyMicroCost, maxTotalDailyMicroCost);
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap != null && matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				data.put(bidAmount, biddata);
 			}
 			else
 			// new match type
 			{
-				HashMap<Double, BidData> data = new HashMap<Double, BidData>();
+				HashMap<Long, BidData> data = new HashMap<Long, BidData>();
 				data.put(bidAmount, biddata);
 				matchTypeMap.put(matchType, data);
 				bidDataMap.put(keyword, matchTypeMap);
@@ -37,28 +37,28 @@ public class TrafficEstimatorObject
 		}
 		else
 		{
-			HashMap<Double, BidData> data = new HashMap<Double, BidData>();
+			HashMap<Long, BidData> data = new HashMap<Long, BidData>();
 			data.put(bidAmount, biddata);
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = new HashMap<String, HashMap<Double, BidData>>();
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = new HashMap<String, HashMap<Long, BidData>>();
 			matchTypeMap.put(matchType, data);
 			bidDataMap.put(keyword, matchTypeMap);
 		}
 	}
 
-	private void setBidData(String keyword, String matchType, Double bidAmount, BidData biddata)
+	private void setBidData(String keyword, String matchType, Long bidAmount, BidData biddata)
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap != null && matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				data.put(bidAmount, biddata);
 			}
 			else
 			// new match type
 			{
-				HashMap<Double, BidData> data = new HashMap<Double, BidData>();
+				HashMap<Long, BidData> data = new HashMap<Long, BidData>();
 				data.put(bidAmount, biddata);
 				matchTypeMap.put(matchType, data);
 				bidDataMap.put(keyword, matchTypeMap);
@@ -66,9 +66,9 @@ public class TrafficEstimatorObject
 		}
 		else
 		{
-			HashMap<Double, BidData> data = new HashMap<Double, BidData>();
+			HashMap<Long, BidData> data = new HashMap<Long, BidData>();
 			data.put(bidAmount, biddata);
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = new HashMap<String, HashMap<Double, BidData>>();
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = new HashMap<String, HashMap<Long, BidData>>();
 			matchTypeMap.put(matchType, data);
 			bidDataMap.put(keyword, matchTypeMap);
 		}
@@ -79,15 +79,15 @@ public class TrafficEstimatorObject
 		return bidDataMap.keySet().toArray(new String[bidDataMap.keySet().size()]);
 	}
 
-	public Double[] getBidList(String keyword, String matchType)
+	public Long[] getBidList(String keyword, String matchType)
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchType != null && matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
-				return data.keySet().toArray(new Double[bidDataMap.keySet().size()]);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
+				return data.keySet().toArray(new Long[bidDataMap.keySet().size()]);
 			}
 			else
 			{
@@ -101,14 +101,14 @@ public class TrafficEstimatorObject
 
 	}
 
-	public HashMap<Double, BidData> getMapOfPoints(String keyword, String matchType)
+	public HashMap<Long, BidData> getMapOfPoints(String keyword, String matchType)
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchType != null && matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				return data;
 			}
 			else
@@ -129,11 +129,11 @@ public class TrafficEstimatorObject
 			String[] keywords = trafficData.getListOfKeywords();
 			for (int i = 0; i < keywords.length; i++)
 			{
-				HashMap<Double, BidData> ptData = trafficData.getMapOfPoints(keywords[i], matchType);
-				Iterator<Double> bidsIT = ptData.keySet().iterator();
+				HashMap<Long, BidData> ptData = trafficData.getMapOfPoints(keywords[i], matchType);
+				Iterator<Long> bidsIT = ptData.keySet().iterator();
 				while (bidsIT.hasNext())
 				{
-					Double bid = bidsIT.next();
+					Long bid = bidsIT.next();
 					BidData aBidData = ptData.get(bid);
 					this.setBidData(keywords[i], matchType, bid, aBidData);
 				}
@@ -141,14 +141,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Long getMinAveCPC(String keyword, String matchType, Double bid) throws Exception
+	public Long getMinAveCPC(String keyword, String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMinAveCPC();
@@ -169,14 +169,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Long getMaxAveCPC(String keyword, String matchType, Double bid) throws Exception
+	public Long getMaxAveCPC(String keyword, String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMaxAveCPC();
@@ -197,14 +197,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Double getAveCPC(String keyword, String matchType, Double bid) throws Exception
+	public Double getAveCPC(String keyword, String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return ((data.get(bid).getMinAveCPC() + data.get(bid).getMaxAveCPC()) / 2.0);
@@ -226,14 +226,14 @@ public class TrafficEstimatorObject
 	}
 
 	// Position
-	public Double getMinAvePosition(String keyword,String matchType, Double bid) throws Exception
+	public Double getMinAvePosition(String keyword,String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMinAvePosition();
@@ -254,14 +254,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Double getMaxAvePosition(String keyword,String matchType, Double bid) throws Exception
+	public Double getMaxAvePosition(String keyword,String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMaxAvePosition();
@@ -282,15 +282,15 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Double getAvePosition(String keyword, String matchType,Double bid) throws Exception
+	public Double getAvePosition(String keyword, String matchType,Long bid) throws Exception
 	{
 
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return (data.get(bid).getMinAvePosition() + data.get(bid).getMaxAvePosition()) / 2.0;
@@ -313,14 +313,14 @@ public class TrafficEstimatorObject
 	}
 
 	// clicks
-	public Float getMinAveClickPerDay(String keyword,String matchType,  Double bid) throws Exception
+	public Float getMinAveClickPerDay(String keyword,String matchType,  Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMinClickPerDay();
@@ -341,14 +341,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Float getMaxAveClickPerDay(String keyword,String matchType, Double bid) throws Exception
+	public Float getMaxAveClickPerDay(String keyword,String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMaxClickPerDay();
@@ -369,15 +369,15 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Float getAveClickPerDay(String keyword,String matchType,  Double bid) throws Exception
+	public Float getAveClickPerDay(String keyword,String matchType,  Long bid) throws Exception
 	{
 
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return (data.get(bid).getMinClickPerDay() + data.get(bid).getMaxClickPerDay()) / 2.0F;
@@ -400,14 +400,14 @@ public class TrafficEstimatorObject
 
 	// dailycost
 
-	public Long getMinTotalDailyMicroCost(String keyword,String matchType, Double bid) throws Exception
+	public Long getMinTotalDailyMicroCost(String keyword,String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMinTotalDailyMicroCost();
@@ -428,14 +428,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Long getMaxTotalDailyMicroCost(String keyword,String matchType,  Double bid) throws Exception
+	public Long getMaxTotalDailyMicroCost(String keyword,String matchType,  Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return data.get(bid).getMaxTotalDailyMicroCost();
@@ -456,14 +456,14 @@ public class TrafficEstimatorObject
 		}
 	}
 
-	public Double getAveTotalDailyMicroCost(String keyword,String matchType, Double bid) throws Exception
+	public Double getAveTotalDailyMicroCost(String keyword,String matchType, Long bid) throws Exception
 	{
 		if (bidDataMap.containsKey(keyword))
 		{
-			HashMap<String, HashMap<Double, BidData>> matchTypeMap = bidDataMap.get(keyword);
+			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchTypeMap.containsKey(matchType))
 			{
-				HashMap<Double, BidData> data = matchTypeMap.get(matchType);
+				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
 				if (data.containsKey(bid))
 				{
 					return (data.get(bid).getMinTotalDailyMicroCost() + data.get(bid).getMinTotalDailyMicroCost()) / 2.0;
@@ -607,7 +607,7 @@ public class TrafficEstimatorObject
 
 	}
 
-	public HashMap<String, HashMap<String, HashMap<Double, BidData>>> getBidDataMap()
+	public HashMap<String, HashMap<String, HashMap<Long, BidData>>> getBidDataMap()
 	{
 		return bidDataMap;
 	}
