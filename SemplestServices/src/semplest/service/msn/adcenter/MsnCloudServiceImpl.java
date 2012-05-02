@@ -20,6 +20,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.AdPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
@@ -176,7 +177,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 
 	public static final int DEFAULT_TIMEOUT = 80000; // 80 seconds. See
 														// setTimeout :P
-	private NameServiceUniqueMsn uniqueMsnNameService;
+	private NameServiceUniqueMsn uniqueMsnNameService = new NameServiceUniqueMsnPsuedoRandom();
 	private AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
 	private int timeoutMillis = DEFAULT_TIMEOUT;
 	private TimeServer timeServer = new TimeServerImpl();
@@ -196,8 +197,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		try{	
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
-			
-			ArrayList<ReportObject> ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
+			/*
+			ArrayList<ReportObject> ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily);
 			for(ReportObject t: ret){
 				logger.info("Keyword = " + t.getKeyword());
 				logger.info("BidAmount = " + t.getMicroBidAmount());
@@ -211,7 +212,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				logger.info("MicroCost = " + t.getMicroCost());
 				logger.info("===========================");
 			}
-			
+			*/
+			/*
+			String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily);					
+			//getReportData
+			Map<String, String[]> ret2 = test.getReportData(ret1, 1617082L);
+			for(String s: ret2.keySet()){
+				logger.info(s);
+				String[] data = ret2.get(s);
+				for(String d: data){
+					logger.info(d);
+				}
+				logger.info("=============");
+			}
+			*/
 			
 		}
 		catch(Exception e){
@@ -1721,10 +1735,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		logger.debug("call getKeywordEstimateByBids(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		TrafficEstimatorObject ret = null;
-		String bidStr = data.get("bid");
-		Money bid = gson.fromJson(bidStr, Money.class);
 		try {
-			ret = getKeywordEstimateByBids(new Long(data.get("accountId")), data.get("keywords").split(separator), bid);
+			ret = getKeywordEstimateByBids(new Long(data.get("accountId")), gson.fromJson(data.get("keywords"), String[].class), 
+					gson.fromJson( data.get("bid"), Money[].class), gson.fromJson(data.get("matchType"), MatchType.class));
 		} catch (MsnCloudException e) {
 			throw new Exception(e);
 		}
@@ -1732,30 +1745,33 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws MsnCloudException
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money[] bid, MatchType matchType) throws MsnCloudException
 	{
 		TrafficEstimatorObject ret = new TrafficEstimatorObject();
 		try
 		{
 			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
-			IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
-			GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
-					bid.getDoubleDollars(), "English", new String[]
-					{ "US" }, Currency.USDollar, new MatchType[]
-					{ MatchType.Exact, MatchType.Phrase, MatchType.Broad });
-			GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords;
-			estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
-			KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
-			Double bidAmount = bid.getDoubleDollars();
-			for(KeywordEstimatedPosition k : keywordEstimatedPositions){
+			for (int i = 0; i < bid.length; i++){
+				IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
+				GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
+						bid[i].getDoubleDollars(), "English", new String[]
+						{ "US" }, Currency.USDollar, new MatchType[]{matchType});
+				GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
+				KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
+				Double bidAmount = bid[i].getDoubleDollars();	
+				KeywordEstimatedPosition k = keywordEstimatedPositions[0];
 				String keyword = k.getKeyword();
 				for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
+					String adPosition = et.getEstimatedAdPosition().getValue();
+					Double baseVal = 0.0;
+					if(adPosition.contains("SideBar")) baseVal = 5.0;
+					Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
 					ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
-							new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), Double.valueOf(et.getEstimatedAdPosition().getValue()), 
+							new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), estAdPosition, 
 							(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
 							new Long((new Double(et.getMinTotalCostPerWeek()/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()/7.0).longValue())));
 				}
-			}			
+			}
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -2492,7 +2508,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setApprovalStatus(null);
 				data.setMicroCost(microCost.longValue());
 				data.setFirstPageCPC(-1);
-				String[] t = ret2.get("week")[i].split("/");
+				String[] t = ret2.get("gregoriandate")[i].split("/");
 				data.setTransactionDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0).toDate());
 				
 				reportObjectList.add(data);			

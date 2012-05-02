@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
 
 import semplest.other.KeywordEstimate;
@@ -1107,18 +1108,13 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money[] bid, MatchType matchType) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		String keywordsList = "";
-		for (int i = 0; i < keywords.length-1; i++){
-			keywordsList += keywords[i] + separator;
-		}
-		keywordsList += keywords[keywords.length-1];
-		String bidStr = gson.toJson(bid);
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
-		jsonHash.put("keywords", keywordsList);
-		jsonHash.put("bid", bidStr);		
+		jsonHash.put("keywords", gson.toJson(keywords));
+		jsonHash.put("bid", gson.toJson(bid));	
+		jsonHash.put("matchType", gson.toJson(matchType));
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordEstimateByBids", json, null);

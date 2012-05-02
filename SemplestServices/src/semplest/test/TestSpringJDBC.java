@@ -34,7 +34,7 @@ public class TestSpringJDBC
 			List ll= SemplestDB.getAdEngineAccount(2, "Google");
 			//Test Scheduler
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask1", "mitch@semplest.com", "mitch@semplest.com", "Hello");
+			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask1", "nan@semplest.com", "nan@semplest.com", "Hello");
 			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask2", "mitch@semplest.com", "mitch@semplest.com", "Hello");
 			listOfTasks.add(mailTask1);
 			listOfTasks.add(mailTask2);

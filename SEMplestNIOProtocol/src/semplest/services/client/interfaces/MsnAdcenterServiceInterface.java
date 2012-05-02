@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
 
 import semplest.other.KeywordEstimate;
-import semplest.other.Maybe;
 import semplest.other.Money;
-import semplest.other.MsnCloudKeywordProxy;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
@@ -143,7 +141,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// Keyword Estimates
 	// ==================================
 	// Maximum 1000 words per call!!
-	public abstract TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money bid) throws Exception;
+	public abstract TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money[] bid, MatchType matchType) throws Exception;
 	// please don't use this method, use the one above
 	public abstract KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid) throws Exception;
 	//	please don't use this method, use the first getKeywordEstimateByBids method
