@@ -36,28 +36,26 @@ public class AddBidSP extends StoredProcedure
 		declareParameter(new SqlParameter("KeywordAdEngineID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
 		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
-		declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
+		//declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
 		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
-		declareParameter(new SqlParameter("FirstPageMicroCpc", Types.INTEGER));
-		declareParameter(new SqlParameter("QualityScore", Types.INTEGER));
-		declareParameter(new SqlParameter("IsEligibleForShowing", Types.BIT));
-		declareParameter(new SqlParameter("IsBidActive", Types.BIT));
-		declareParameter(new SqlParameter("IsNegative", Types.BIT));
+		//declareParameter(new SqlParameter("FirstPageMicroCpc", Types.INTEGER));
+		//declareParameter(new SqlParameter("QualityScore", Types.INTEGER));
+		//declareParameter(new SqlParameter("IsEligibleForShowing", Types.BIT));
+		//declareParameter(new SqlParameter("IsBidActive", Types.BIT));
+		//declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
-		declareParameter(new SqlParameter("SemplestProbability", Types.FLOAT));
+		//declareParameter(new SqlParameter("SemplestProbability", Types.FLOAT));
 		
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		compile();
 	}
 
 	/*
-	 * returns the next schedule job to run
+	 * returns KeywordBidPK
 	 */
-	public Integer execute(int ProductGroupPK, int PromotionPK, int KeywordAdEngineID, String Keyword, Long MicroBidAmount, String ApprovalStatus, String BidType, Long FirstPageMicroCpc, Integer QualityScore,
-			Boolean IsEligibleForShowing, boolean IsBidActive, Boolean IsNegative, String AdvertisingEngine, Double semplestProbabilty) throws Exception
+	public Integer execute(int PromotionPK, Integer KeywordAdEngineID, String Keyword, Long MicroBidAmount, String BidType, String AdvertisingEngine) throws Exception
 	{
-		Map<String, Object> results = super.execute(ProductGroupPK, PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, ApprovalStatus, BidType, FirstPageMicroCpc, QualityScore,
-				IsEligibleForShowing,IsBidActive, IsNegative, AdvertisingEngine,semplestProbabilty);
+		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, AdvertisingEngine);
 		if (results.get("ID") == null)
 		{
 			return null;

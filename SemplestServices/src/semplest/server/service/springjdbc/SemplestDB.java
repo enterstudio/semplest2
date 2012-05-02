@@ -131,9 +131,6 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Bidding calls
 	 */
-
-
-	
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper(BidElement.class);
 	public static List<BidElement> getLatestBids(int promotionID, String searchEngine)
 	{
@@ -172,7 +169,7 @@ public class SemplestDB extends BaseDB
 			return null;
 		}
 	}
-	public static void storeBidObjects(Integer productGroupID, Integer promotionID, ArrayList<KeywordDataObject> bidObjects, String advertisingEngine)
+	public static void storeBidObjects(int promotionID,String advertisingEngine, ArrayList<BidElement> bidObjects)
 			throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
@@ -182,13 +179,12 @@ public class SemplestDB extends BaseDB
 		if (bidObjects != null && bidObjects.size() > 0)
 		{
 			AddBidSP addBid = new AddBidSP();
-			for (KeywordDataObject bid : bidObjects)
+			for (BidElement bid : bidObjects)
 			{
 				try
 				{
-					addBid.execute(productGroupID, promotionID, bid.getBidID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getApprovalStatus(),
-							bid.getMatchType(), bid.getFirstPageCpc(), bid.getQualityScore(), bid.isIsEligibleForShowing(), true, bid.isNegative(),
-							advertisingEngine, bid.getSemplestProbability());
+					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(),
+							bid.getMatchType(),advertisingEngine);
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
