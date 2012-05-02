@@ -116,7 +116,7 @@ location.latLng.lng;
         } else {
             $('#optionsNarrative').html(html);
             $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
-            $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lat);
+            $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
         }
 
         return;
