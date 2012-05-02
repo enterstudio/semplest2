@@ -2,6 +2,7 @@ package semplest.server.service.springjdbc;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -17,6 +18,7 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
@@ -153,6 +155,45 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
+	public static HashMap<String,ArrayList<BidElement>> getAllBids(int promotionID, String searchEngine, Date startDate, Date endDate)
+	{
+		try
+		{
+			String strSQL = null;
+			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
+			if (endDate == null)
+			{
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " +
+					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
+					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
+					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.StartDate >= ? " +
+					"order by k.Keyword";
+				return jdbcTemplate.query(strSQL, new Object[]
+						{ promotionID, searchEngine, startDateSQL}, new AllBidRSExtactor());
+			}
+			else
+			{
+				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " +
+						"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+						"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
+						"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
+						"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)" +
+						"order by k.Keyword";
+				return jdbcTemplate.query(strSQL, new Object[]
+						{ promotionID, searchEngine, startDateSQL, endDateSQL}, new AllBidRSExtactor());
+			}
+			
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
 	public static BudgetObject getBudget(int promotionID, String searchEngine)
 	{
@@ -195,10 +236,11 @@ public class SemplestDB extends BaseDB
 			}
 		}
 	}
+	
+	
 
 	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
-
-	public static List<KeywordDataObject> getBidObjects(Integer promotionID, String advertisingEngine) throws Exception
+	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
