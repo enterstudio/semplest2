@@ -16,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="lib/adwords-api-8.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/flanagan.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

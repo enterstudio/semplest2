@@ -1,6 +1,7 @@
 package semplest.services.client.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -590,6 +591,19 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportForAccount", json,timeoutMS);
 		return gson.fromJson(returnData, ArrayList.class);
+	}
+
+	@Override
+	public Long getSpentAPIUnitsPerAccountID(Long accountID, Date startDate,
+			Date endDate) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", String.valueOf(accountID));
+		jsonHash.put("startDate", gson.toJson(startDate));
+		jsonHash.put("endDate", gson.toJson(endDate));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getSpentAPIUnitsPerAccountID", json,timeoutMS);
+		return gson.fromJson(returnData, Long.class);
 	}
 
 }

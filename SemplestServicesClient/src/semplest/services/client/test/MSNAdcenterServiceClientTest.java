@@ -1,5 +1,14 @@
 package semplest.services.client.test;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +32,7 @@ import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.*;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -33,6 +43,8 @@ import com.microsoft.adcenter.v8.*;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
+
+import flanagan.plot.PlotGraph;
 import semplest.services.client.api.MSNAdcenterServiceClient;
 /**
  * This test has been generated to create campaigns using MSN  and test the data obtained from them.
@@ -45,33 +57,41 @@ public class MSNAdcenterServiceClientTest {
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_SummitFloristNJ";
-	String url = "www.summithillsfloristnj.com";
+	String accountName = "_StudioBloom";
+	String url = "www.studio-bloomed.com";
 	String productSubcategory = "Wedding Flowers";
-	double msnMonthlyBudget = 50.0; //In dolars
+	double msnMonthlyBudget = 250.0; //In dolars
 			
 	//Add1
-	String adTitle1 =  "NJ Wedding Floral Artists";
-	String adText1 = "Invest 30 minutes to book your wedding.10% Confidence discount.";
+	String adTitle1 =  "$10.00 OFF";
+	String adText1 = "Discount valid on orders $50.00 or more. Offer code: vday12";
 	//Add2
-	String adTitle2 =  "Easy Elegance Tabletops";
-	String adText2 = "Inexpensive blooms turned into platinum wedding flowers.15% off now!";
+	String adTitle2 =  "20% off any purchase";
+	String adText2 = "Any purchase of $100.00 or more. Use coupon code: vday20";
 	
 	//Accounts and campaigns
-	Long accountID = 1613923L;
-	Long campaignID = 120123568L;
-	Long adGroupID = 728133376L;	
+	Long accountID = 1617082L;
+	Long campaignID = 110138069L;
+	Long adGroupID = 706138552L;	
 	Long addID1 = 907897094L; 
 	Long addID2 = 907897096L;
+	long[] keywordIDs;
 	
 	public static void main(String[] args)
 	{
 		
 		try
-		{
+		{	
+			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
-			msn.createCampaign();
+			//msn.createCampaign();
+			msn.getIds();
 			
+			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
+			//msn.insertKeywords2("/semplest/data/biddingTest/StudioBloom/keywords.txt");
+			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/SummitFlowersNJ/keywords1500.txt", 1500);
+			//msn.plotdata(bidMap);
+			//logger.info(bidMap);
 		}
 		catch (Exception e)
 		{
@@ -79,6 +99,177 @@ public class MSNAdcenterServiceClientTest {
 			e.printStackTrace();
 		}
 
+	}
+	public void getIds() throws Exception{
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		Campaign[] ret = test.getCampaignsByAccountId(accountID);
+		campaignID = ret[0].getId();
+		logger.info("campaignID: "+campaignID);
+		AdGroup[] retad = test.getAdGroupsByCampaignId(accountID, campaignID);
+		adGroupID = retad[0].getId();
+	}
+	public void insertKeywords2(String filename) throws Exception{
+		
+		
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		//createKeywords
+		Keyword[] keywords = new Keyword[500];
+		FileInputStream fstream = new FileInputStream(filename);
+	    // Get the object of DataInputStream
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    //Read File Line By Line
+	    String strLine;
+	    int i=-1000;
+	    while ((strLine = br.readLine()) != null)   {
+	    	if(i>=0){
+	    		if(i>=keywords.length) break ;
+		      // Print the content on the console
+		      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+		      logger.info("Adding "+ strLine);
+		      keywords[i] = new Keyword();
+		      keywords[i].setText(strLine);
+		      Bid exactMatchBid1 = new Bid();
+		      exactMatchBid1.setAmount(1.00);
+		      Bid defaultBid1 = new Bid();
+		      defaultBid1.setAmount(0.00);
+		      keywords[i].setExactMatchBid(exactMatchBid1);
+		      keywords[i].setBroadMatchBid(defaultBid1);
+		      keywords[i].setContentMatchBid(defaultBid1);
+		      keywords[i].setPhraseMatchBid(defaultBid1);
+		      
+	    	}
+	    	i++;
+	    }
+	    //Close the input stream
+	    in.close();
+	    keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
+	}
+	
+	public void insertKeywords(String filename) throws Exception{
+		
+		
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		//createKeywords
+		FileInputStream fstream = new FileInputStream(filename);
+	    // Get the object of DataInputStream
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    //Read File Line By Line
+	    String strLine;
+	    int i=0;
+	    while ((strLine = br.readLine()) != null)   {
+	   
+	      // Print the content on the console
+	      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+	      logger.info("Adding "+ strLine);
+	      Bid exactMatchBid1 = new Bid();
+	      exactMatchBid1.setAmount(1.00);
+	      Bid Bid1 = new Bid();
+	      Bid1.setAmount(0.00);
+	      long ret = test.createKeyword(accountID, adGroupID, strLine, Bid1, Bid1, exactMatchBid1, Bid1);	
+	      logger.info("KeywordID"+ret);
+	      i++;
+	    }
+	    //Close the input stream
+	    in.close();
+
+	}
+	/*Pending on finishes from Nan
+	public HashMap<String, Double[][]> getKeywordEstimates(String filename, int numKw) throws Exception{
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		String[] keywords;
+		HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
+		
+		//Create bid points
+		ArrayList<Double> bids = this.createbids(2.0, 4.0, 0.01);
+		Double[][] bidDat = new Double[bids.size()][3];
+		int v=0;
+		for(Double bidpoint:bids){
+			FileInputStream fstream = new FileInputStream(filename);
+		    // Get the object of DataInputStream
+		    DataInputStream in = new DataInputStream(fstream);
+		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		    String strLine="";
+		    //Read File Line By Line
+		    int j=0;
+		    int n=0;
+		    while(j<numKw && strLine!=null){
+		    	keywords = new String[1000];
+		    	int i=0;
+			    while ((strLine = br.readLine()) != null)   {
+			    	if(i>=keywords.length) break ;
+			      // Print the content on the console
+			      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+			      logger.info("Adding "+ strLine);
+			      keywords[i] = strLine;
+			      keywords[i] = strLine;
+			      j++;
+			      i++;
+			    }
+			    //Close the input stream
+			    
+			    long bidL = (long) (bidpoint*100000);
+				Money bid = new Money(bidL);
+				int m=0;
+				String[] keywordsaux = new String[1000];
+				for(String kw: keywords){
+					if(kw!=null){
+						keywordsaux[m]=kw;
+						m++;
+					}
+				}
+				keywords = new String[m];
+				m=0;
+				for(String kw: keywordsaux){
+					if(kw!=null){
+						keywords[m]=kw;
+						m++;
+					}
+				}
+				Money[] bid
+				TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, keywords, bid);
+				String[] keywrds = ret.getListOfKeywords();
+				for(String k : keywrds){
+					
+
+						logger.info("keyword = " + k);
+						//for(EstimatedPositionAndTraffic pt : pts){
+						if(pts.length>0){
+							EstimatedPositionAndTraffic pt = ret.getAvePosition(keyword, bid);//Get only exact match
+							double averDaylyCost = (pt.getMaxTotalCostPerWeek()+pt.getMinTotalCostPerWeek())/14.0;
+							double averDaylyClicks = (pt.getMinClicksPerWeek()+pt.getMaxClicksPerWeek())/14.0;
+							if(!bidMap.containsKey(k.getKeyword()))
+								bidDat = new Double[bids.size()][3]; 
+							else
+								bidDat =bidMap.get(k.getKeyword());
+							if(v==1)
+								logger.info("here");
+							bidDat[v][0]= bidpoint;
+							bidDat[v][1]= averDaylyCost;
+							bidDat[v][2]= averDaylyClicks;
+							bidMap.put(k.getKeyword(), bidDat);
+							n++;
+						}
+					
+				}
+		    }
+			logger.info("Total Number of kw with info: "+ n);
+			logger.info("Total Number of kw: "+ j);
+			in.close();
+			v++;
+		}
+		return bidMap;
+	}*/
+	public ArrayList<Double> createbids(double start, double end, double step){
+		ArrayList<Double> bids = new ArrayList<Double>();
+		Double bid = start;
+		
+		while(bid<end){
+			bids.add(bid);
+			bid = bid+step;
+		}
+		return bids;
 	}
 	public void createCampaign() throws Exception{
 		//Parameters to create campaign and adds
@@ -97,7 +288,7 @@ public class MSNAdcenterServiceClientTest {
 		
 		//createCampaign
 		CampaignStatus cpst = null;
-		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), msnMonthlyBudget, cpst.Paused);
+		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), msnMonthlyBudget, cpst.Active);
 		logger.info("campaignID: "+campaignID);	
 		//createAdGroup
 		adGroupID = test.createAdGroup(accountID, campaignID);
@@ -107,6 +298,63 @@ public class MSNAdcenterServiceClientTest {
 		addID2 = test.createAd(accountID, adGroupID, adTitle2, adText2, url, url);
 		logger.info("adID1: "+addID1);	
 		logger.info("adID2: "+addID2);
+	}
+	
+	public void plotdata(HashMap<String,Double[][]> bidMap) throws IOException{
+		PrintStream fileoutput = new PrintStream(new FileOutputStream("/semplest/data/msnData/"+accountName));
+		Set<String> keySet = bidMap.keySet();
+		for ( String key : keySet ){
+			boolean plot=false;
+			Double[][] bidData = bidMap.get(key);
+			double [][] dataclicks = PlotGraph.data(1,bidData.length);
+			double [][] datacost = PlotGraph.data(1,bidData.length);
+
+	    	// Read in the data
+	    	int[] nPoints = new int[bidData.length];
+	    	for(int i=0; i< bidData.length ; i++){
+	        	if(bidData[i][1] != null){
+	        		dataclicks[0][i]=bidData[i][0];       // x-axis data
+	           		dataclicks[1][i]=bidData[i][2];     // y-axis data
+	           		if(bidData[i][2]>0) plot = true;
+	           		datacost[0][i]=bidData[i][0];       // x-axis data
+	           		datacost[1][i]=bidData[i][1];     // y-axis data
+	           		if(bidData[i][1]>0) plot = true;
+	        	}
+	        	else{
+	        		dataclicks[0][i]=0;       // x-axis data
+	           		dataclicks[1][i]=0;     // y-axis data
+	           		datacost[0][i]=0;       // x-axis data
+	           		datacost[1][i]=0;     // y-axis data
+	        	}
+	    	}
+
+	    	// Create an instance of PlotGraph
+	    	if(plot==true){
+		    	PlotGraph pgclicks = new PlotGraph(dataclicks);
+		    	PlotGraph pgcost = new PlotGraph(datacost);
+		    	pgclicks.setGraphTitle("Clicks :"+key);            // Enter graph title
+		    	pgcost.setGraphTitle("Cost :"+key);
+		    	int[] pointOptions = {1};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+		    	pgclicks.setPoint(pointOptions);
+		    	pgclicks.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+		    	
+		    	pgcost.setPoint(pointOptions);
+		    	pgcost.setLine(1);
+		    	// Call plotting method
+		    	pgclicks.plot();
+		    	pgcost.plot();
+		    	System.in.read();
+		    	PrintStream stdout = System.out;
+		    	System.setOut(fileoutput);
+		    	System.out.println("Keyword: "+key);
+		    	System.out.println("Clicks and cost");
+		    	for(int v= 0; v<dataclicks[0].length;v++){
+		    		System.out.println(dataclicks[0][v]+"\t"+dataclicks[1][v]+"\t"+datacost[1][v]+"\t");
+		    	}
+		    	System.setOut(stdout);
+	    	}
+		}
+		
 	}
 	
 }
