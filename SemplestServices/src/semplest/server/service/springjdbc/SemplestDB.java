@@ -21,6 +21,7 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
+import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 
@@ -133,6 +134,20 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Bidding calls
 	 */
+	public static void storeKeywordDataObjects(int promotionID, String AdEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception
+	{
+		AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
+		if (keywordDataObjectList != null && keywordDataObjectList.size() > 0)
+		{
+			for (int i =0; i < keywordDataObjectList.size(); i++)
+			{
+				KeywordDataObject kdObj = keywordDataObjectList.get(i);
+				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(), kdObj.getApprovalStatus(),
+						kdObj.getFirstPageCpc(), kdObj.isIsEligibleForShowing());
+			}
+		}
+	}
+	
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper(BidElement.class);
 	public static List<BidElement> getLatestBids(int promotionID, String searchEngine)
 	{
@@ -143,7 +158,7 @@ public class SemplestDB extends BaseDB
 					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
 					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
 					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-					"where p.PromotionPK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1";
+					"where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
 			return jdbcTemplate.query(strSQL, new Object[]
 			{ promotionID, searchEngine }, bidElementMapper);
 		}
@@ -167,7 +182,7 @@ public class SemplestDB extends BaseDB
 					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
 					"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
 					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.StartDate >= ? " +
+					"where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? " +
 					"order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
 						{ promotionID, searchEngine, startDateSQL}, new AllBidRSExtactor());
@@ -179,7 +194,7 @@ public class SemplestDB extends BaseDB
 						"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
 						"inner join Keyword k on k.KeywordPK = kb.KeywordFK " +
 						"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " +
-						"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)" +
+						"where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)" +
 						"order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
 						{ promotionID, searchEngine, startDateSQL, endDateSQL}, new AllBidRSExtactor());

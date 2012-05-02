@@ -1,7 +1,6 @@
 package semplest.server.service.springjdbc.storedproc;
 
 import java.sql.Types;
-import java.util.Date;
 import java.util.Map;
 
 import org.springframework.jdbc.core.SqlOutParameter;
@@ -13,21 +12,7 @@ import semplest.server.service.springjdbc.BaseDB;
 public class AddBidSP extends StoredProcedure
 {
 	private static final String SPROC_NAME = "SetBidObject";
-	/*
-	 * @ProductGroupPK			INT,
-	@PromotionPK            INT,
-	@KeywordAdEngineID      INT,
-	@Keyword				NVARCHAR(250),
-	@MicroBidAmount			INT,
-	@ApprovalStatus			VARCHAR(30) = null,
-	@BidType				VARCHAR(25),
-	@FirstPageMicroCpc      INT = null,
-	@QualityScore           INT = null,
-	@IsEligibleForShowing	BIT = 1,
-	@IsBidActive			BIT = 1,
-	@IsNegative				BIT = 0,
-	@AdvertisingEngine		VARCHAR(50),
-	 */
+	
 	public AddBidSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
