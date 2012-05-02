@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Data.Entity.Validation;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Admin.Controllers
 {
@@ -93,21 +94,22 @@ namespace Semplest.Admin.Controllers
         //
         // GET: /Roles/Delete/5
 
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+
 
         //
         // POST: /Roles/Delete/5
 
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(int id)
         {
             try
             {
                 // TODO: Add delete logic here
-
+                SemplestEntities dbContext = new SemplestEntities();
+                Role r = dbContext.Roles.Where(x => x.RolePK == id).First();
+                r.RolesRightsAssociations.Clear();
+               dbContext.Roles.Remove(r);
+               dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }
             catch

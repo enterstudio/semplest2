@@ -182,6 +182,7 @@
     <Content Include="Scripts\jquery.maskedinput-1.3.js" />
     <Content Include="Scripts\jquery.maskedinput-1.3.min.js" />
     <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\Jquery.UiBlock.js" />
     <Content Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
