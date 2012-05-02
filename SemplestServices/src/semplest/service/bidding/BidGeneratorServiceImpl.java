@@ -46,15 +46,32 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	
+	public String GetMonthlyBudgetPercentPerSE(String json) throws Exception
+	{
+		logger.debug("call  GetMonthlyBudgetPercentPerSE(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
+		HashMap<String,Integer> res = GetMonthlyBudgetPercentPerSE(promotionID, searchEngine);
+		return gson.toJson(res);
+	}
+	@Override
+	public HashMap<String,Integer> GetMonthlyBudgetPercentPerSE (Integer promotionID, 
+			ArrayList<String> searchEngine)  throws Exception  {
+		
+		BidGeneratorObj bidGenerator = new BidGeneratorObj();
+		return bidGenerator.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
+
+	}
+	
 	public void setBidsInitial(String json) throws Exception
 	{
-		logger.debug("call  getBidsInitial(String json)" + json);
+		logger.debug("call  setBidsInitial(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		String searchEngine = data.get("searchEngine");
 		setBidsInitial( promotionID, searchEngine);
 	}
-	
 	@Override
 	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
@@ -62,8 +79,35 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			throw new Exception(searchEngine + " Not Found");
 		}
 		BidGeneratorObj bidGenerator = new BidGeneratorObj();
-		bidGenerator.setBidsInitialGoogle(promotionID, searchEngine);
+		bidGenerator.setBidsInitial(promotionID, searchEngine);
 	}
+	
+	
+	public void setBidsUpdate(String json) throws Exception
+	{
+		logger.debug("call  setBidsUpdate(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		String searchEngine = data.get("searchEngine");
+		setBidsInitial( promotionID, searchEngine);
+	}
+	@Override
+	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
+		BidGeneratorObj bidGenerator = new BidGeneratorObj();
+		bidGenerator.setBidsInitial(promotionID, searchEngine);
+	}
+	
+	
+	
+	
+	
+	
+	
+	/* *********************************** OLD METHODS ********************************** */
 	
 	public void getBidsInitial(String json) throws Exception
 	{
@@ -177,7 +221,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 	public String GetMonthlyBudgetPerSE(String json) throws Exception
 	{
-		logger.debug("call  getBid(String json)" + json);
+		logger.debug("call  GetMonthlyBudgetPerSE(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
 		Double TotalMonthlyBudget = Double.parseDouble(data.get("TotalMonthlyBudget"));

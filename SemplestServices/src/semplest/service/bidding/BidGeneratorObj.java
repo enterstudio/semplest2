@@ -29,17 +29,24 @@ public class BidGeneratorObj {
 	
 	
 	private static Gson gson = new Gson();
-	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
+	private static final Logger logger = Logger.getLogger(BidGeneratorObj.class);
 	
 	
 	
 	
 
-
-	public void setBidsInitialGoogle(Integer promotionID, String searchEngine) {
+	public HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(
+			Integer promotionID, ArrayList<String> searchEngine) throws Exception {
 		// TODO Auto-generated method stub
-		
+		return null;
 	}
+	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+		// TODO Auto-generated method stub	
+	}
+	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+		// TODO Auto-generated method stub	
+	}
+
 	
 	
 	
@@ -589,6 +596,11 @@ public class BidGeneratorObj {
 			e.printStackTrace();
 		}
 	}
+
+
+
+
+
 
 
 	
