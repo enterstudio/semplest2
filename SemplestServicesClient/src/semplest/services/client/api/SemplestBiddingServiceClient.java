@@ -174,17 +174,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 //		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
-	@Override
-	public HashMap<String,Double> GetMonthlyBudgetPerSE(ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception {
-		
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
-		jsonHash.put("TotalMonthlyBudget", String.valueOf(TotalMonthlyBudget));
-		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPerSE", json, timeoutMS);
-		return gson.fromJson(returnData, HashMap.class);
-	}
 
 
 }
