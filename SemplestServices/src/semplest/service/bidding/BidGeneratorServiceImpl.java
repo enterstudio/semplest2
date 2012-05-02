@@ -59,8 +59,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	public HashMap<String,Integer> GetMonthlyBudgetPercentPerSE (Integer promotionID, 
 			ArrayList<String> searchEngine)  throws Exception  {
 		
-		BidGeneratorObj bidGenerator = new BidGeneratorObj();
-		return bidGenerator.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
+		return BidGeneratorObj.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
 
 	}
 	
@@ -78,8 +77,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
-		BidGeneratorObj bidGenerator = new BidGeneratorObj();
-		bidGenerator.setBidsInitial(promotionID, searchEngine);
+		BidGeneratorObj.setBidsInitial(promotionID, searchEngine);
 	}
 	
 	
@@ -97,8 +95,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
-		BidGeneratorObj bidGenerator = new BidGeneratorObj();
-		bidGenerator.setBidsInitial(promotionID, searchEngine);
+		BidGeneratorObj.setBidsInitial(promotionID, searchEngine);
 	}
 	
 	
@@ -108,7 +105,8 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	
 	/* *********************************** OLD METHODS ********************************** */
-	
+	/* ***************************** WILL BE REMOVED IN FUTURE ************************** */
+
 	public void getBidsInitial(String json) throws Exception
 	{
 		logger.debug("call  getBidsInitial(String json)" + json);
