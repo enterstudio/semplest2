@@ -182,6 +182,16 @@ namespace Semplest.Admin.Models
         [DisplayName("SEMplest Internal Note:")] 
         public string CustomerNote { get; set; }
         public bool isActive { get; set; }
+
+        [Required]
+        [DisplayName("User ID")]
+        public string UserID { get; set; }
+
+        [Required ]
+        [DisplayName("Password")]
+        public string UserPassword { get; set; }
+
+
     }
 
     public class EmployeeSetup
@@ -262,6 +272,12 @@ namespace Semplest.Admin.Models
         //for rep dropdown
         public int SelectedSalesPersonID { get; set; }
         public IEnumerable<SelectListItem> SalesPersons { get; set; }
+
+
+        //for parent dropdown
+        public int SelectedParentID { get; set; }
+        public IEnumerable<SelectListItem> Parents { get; set; }
+
 
     }
 

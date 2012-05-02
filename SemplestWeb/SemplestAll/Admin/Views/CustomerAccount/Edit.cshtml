@@ -42,7 +42,8 @@ Edit Customer Account:
         Super Parent Name:<input type="text" /></label> <br />
 
     <label>
-        Parent Name:<input type="text" /></label> <br />
+        Parent Name: @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents )
+        </label> <br />
     <label>
         Company Name:<br />
 
@@ -186,6 +187,29 @@ Edit Customer Account:
     </div>
     
     
+
+    <br />
+    <br />
+    <br />
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.UserID)
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.UserID, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.UserID)
+    </div>
+   
+    
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.UserPassword)
+    </div>
+    <div class="editor-field">
+    
+        @*@Html.PasswordFor(model => model.CustomerAccount.UserPassword, new { value = Model.CustomerAccount.UserPassword})*@
+        <input class="k-textbox" data-val="true" data-val-required="The Password field is required." id="CustomerAccount_UserPassword" name="CustomerAccount.UserPassword" type="password" value=@Model.CustomerAccount.UserPassword  />
+        @Html.ValidationMessageFor(model => model.CustomerAccount.UserPassword)
+    </div>
 
     <br />
     <br />

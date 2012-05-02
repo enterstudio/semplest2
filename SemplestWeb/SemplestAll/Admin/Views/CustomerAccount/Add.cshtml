@@ -40,7 +40,9 @@ Add Customer Account:
         Super Parent Name:<input type="text" /></label> <br />
 
     <label>
-        Parent Name:<input type="text" /></label> <br />
+        Parent Name:  @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents)
+        
+        </label> <br />
     <label>
         Company Name:<br />
 
@@ -182,6 +184,30 @@ Add Customer Account:
     <br />
     <br />
 
+   <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.UserID)
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.UserID, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.UserID)
+    </div>
+   
+    
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.UserPassword)
+    </div>
+    <div class="editor-field">
+        @Html.PasswordFor(model => model.CustomerAccount.UserPassword, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.UserPassword)
+    </div>
+   
+     
+    <br />
+    <br />
+    <br />
+
+    
+    
 
     <h3>
         Billing:</h3>
