@@ -12,15 +12,15 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class KeywordInitialBidData
+    public partial class KeywordBidData
     {
-        public int KeywordInitialBidDataPK { get; set; }
-        public int KeywordBidFK { get; set; }
+        public int KeywordBidDataPK { get; set; }
         public Nullable<int> QualityScore { get; set; }
         public string ApprovalStatus { get; set; }
         public Nullable<int> FirstPageMicroCPC { get; set; }
         public bool IsEligibleForShowing { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public Nullable<int> KeywordBidFK { get; set; }
     
         public virtual KeywordBid KeywordBid { get; set; }
     }

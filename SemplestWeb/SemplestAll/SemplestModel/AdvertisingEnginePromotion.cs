@@ -20,9 +20,9 @@ namespace SemplestModel
         public bool IsSearchNetwork { get; set; }
         public bool IsDisplayNetwork { get; set; }
         public decimal AdvertisingEngineBudget { get; set; }
+        public decimal DefaultBid { get; set; }
     
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
         public virtual Promotion Promotion { get; set; }
-        public virtual MR_TEMP_Promotion MR_TEMP_Promotion { get; set; }
     }
 }

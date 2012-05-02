@@ -45,6 +45,7 @@ namespace SemplestModel
         public Nullable<decimal> RemainingBudgetInCycle { get; set; }
         public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
         public Nullable<System.DateTime> BudgetToAddDate { get; set; }
+        public Nullable<long> AdEngineAdGroupID { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }

@@ -30,7 +30,6 @@ namespace SemplestModel
         public DbSet<AddressType> AddressTypes { get; set; }
         public DbSet<AdvertisingEngine> AdvertisingEngines { get; set; }
         public DbSet<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
-        public DbSet<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
         public DbSet<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public DbSet<BidType> BidTypes { get; set; }
         public DbSet<BillType> BillTypes { get; set; }
@@ -52,7 +51,6 @@ namespace SemplestModel
         public DbSet<Keyword> Keywords { get; set; }
         public DbSet<KeywordBid> KeywordBids { get; set; }
         public DbSet<KeywordCategory> KeywordCategories { get; set; }
-        public DbSet<KeywordInitialBidData> KeywordInitialBidDatas { get; set; }
         public DbSet<Phone> Phones { get; set; }
         public DbSet<PhoneType> PhoneTypes { get; set; }
         public DbSet<ProductGroup> ProductGroups { get; set; }
@@ -80,7 +78,8 @@ namespace SemplestModel
         public DbSet<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public DbSet<BudgetCycle> BudgetCycles { get; set; }
         public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
-        public DbSet<MR_TEMP_Promotion> MR_TEMP_Promotion { get; set; }
+        public DbSet<KeywordBidData> KeywordBidDatas { get; set; }
+        public DbSet<AdvertisingEngineBidData> AdvertisingEngineBidDatas { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {
