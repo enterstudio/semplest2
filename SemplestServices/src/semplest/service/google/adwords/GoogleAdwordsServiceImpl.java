@@ -2,6 +2,7 @@ package semplest.service.google.adwords;
 
 import java.io.File;
 import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,9 @@ import java.util.Map;
 
 import javax.xml.rpc.ServiceException;
 
+
 import org.apache.log4j.Logger;
+
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
@@ -62,6 +65,8 @@ import com.google.api.adwords.v201109.cm.Criterion;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscape;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
 import com.google.api.adwords.v201109.cm.DataServiceInterface;
+import com.google.api.adwords.v201109.cm.Date;
+import com.google.api.adwords.v201109.cm.DateRange;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
@@ -76,6 +81,11 @@ import com.google.api.adwords.v201109.cm.PredicateOperator;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
+import com.google.api.adwords.v201109.info.ApiUsageInfo;
+import com.google.api.adwords.v201109.info.ApiUsageType;
+import com.google.api.adwords.v201109.info.InfoSelector;
+import com.google.api.adwords.v201109.info.InfoService;
+import com.google.api.adwords.v201109.info.InfoServiceInterface;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
 import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
@@ -137,13 +147,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(camp[i].getName()); } }
 			 */
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
+			//String accountID = "2188810777"; // "5058200123";// "8019925375"; //
 			// "6048920973";
 			Long adGroupID = 3074331030L;
 			Long campaignID = 77290470L;
+			Long accountID = 9036397375L;
+			
+			g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new java.util.Date());
 
-
-			KeywordDataObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+			
+			//KeywordDataObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
 			/*
 			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
@@ -227,7 +240,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * res.getMatchTypesForKeyword(keys.get(i)); for (int j = 0; j <
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
-			///*
+			/*
 			SemplestString ss = new SemplestString();
 			ArrayList<ReportObject> f = g.getReportForAccount(ss.toSemplestString(accountID));
 			for(ReportObject t : f){
@@ -258,7 +271,53 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 
 	}
+	public String getSpentAPIUnitsPerAccountID(String json) throws Exception
+	{
+		logger.debug("call getSpentAPIUnitsPerAccountID(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class); // protocolJson.getHashMapFromJson(json);
+		Long accountID = Long.parseLong(data.get("accountID"));
+		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class), gson.fromJson(data.get("endDate"), java.util.Date.class));
+		// convert result to Json String
+		return gson.toJson(unitsSpent);
+	}
+	@Override
+	public Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception{	
+		try{
+		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+		// Get the INFO_SERVICe.
 
+		InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
+		InfoSelector selector = new InfoSelector();
+		selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
+		selector.setClientCustomerIds(new long[]{accountID});
+		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd");
+		String start = "";
+		String end = "";
+		if(startDate!=null && endDate != null){
+			start = form.format(startDate);
+			end= form.format(endDate);
+		}else{
+			throw new Exception("Date is null");
+		}
+		//selector.setClientEmails(new String[]{email});
+		selector.setDateRange(new DateRange(start,end));
+		ApiUsageInfo info  = infoService.get(selector);
+		//System.out.println("API Usage Record :" +info.getApiUsageRecords(0).getCost());
+		return info.getApiUsageRecords(0).getCost();
+		
+		} catch(ServiceException se){
+			throw new Exception(se);
+		}
+		catch (ApiFault e)
+		{
+			throw new Exception(e.dumpToString());
+		}
+		catch (RemoteException e)
+		{
+			throw new Exception(e);
+		}
+		
+	}
 	/*
 	 * Account
 	 */
