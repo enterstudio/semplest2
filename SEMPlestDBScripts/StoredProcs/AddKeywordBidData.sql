@@ -12,7 +12,7 @@ GO
 CREATE PROCEDURE dbo.AddKeywordBidData
 (
 
-	@PromotionID        BIGINT,
+	@PromotionID			INT,
 	@Keyword				NVARCHAR(250),
 	@AdvertisingEngine		VARCHAR(50),
 	@BidType				VARCHAR(25),
