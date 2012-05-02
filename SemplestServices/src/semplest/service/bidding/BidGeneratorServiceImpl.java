@@ -217,25 +217,6 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	// End Naive Bidder-------------------------------------------------
 
-//	public String GetMonthlyBudgetPerSE(String json) throws Exception
-//	{
-//		logger.debug("call  GetMonthlyBudgetPerSE(String json)" + json);
-//		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-//		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
-//		Double TotalMonthlyBudget = Double.parseDouble(data.get("TotalMonthlyBudget"));
-//		HashMap<String,Double> res = GetMonthlyBudgetPerSE(searchEngine, TotalMonthlyBudget);
-//		return gson.toJson(res);
-//	}
-//
-//	@Override
-//	public HashMap<String,Double> GetMonthlyBudgetPerSE (ArrayList<String> searchEngine, 
-//			Double TotalMonthlyBudget)  throws Exception  {
-//		
-//		BidGeneratorObj bidGenerator = new BidGeneratorObj();
-//		return bidGenerator.GetMonthlyBudgetPerSE (searchEngine, TotalMonthlyBudget);
-//
-//	}
-
 
 	public String getBid(String json) throws Exception
 	{
