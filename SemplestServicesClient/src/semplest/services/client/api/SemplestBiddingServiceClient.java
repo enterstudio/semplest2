@@ -86,6 +86,15 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 	@Override
+	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
+	}
+	@Override
 	public void getBidsInitial(String accountID,
 			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
 		
