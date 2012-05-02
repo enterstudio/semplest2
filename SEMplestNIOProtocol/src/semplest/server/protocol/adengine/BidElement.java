@@ -10,7 +10,9 @@ public class BidElement
 	private String matchType;
 	private String competitiveType;
 	private Date startDate;
+	private Date endDate;
 	private Boolean isDefaultValue;
+	private Boolean isActive;
 	
 	public String getKeyword()
 	{
@@ -68,6 +70,22 @@ public class BidElement
 	public void setIsDefaultValue(Boolean isDefaultValue)
 	{
 		this.isDefaultValue = isDefaultValue;
+	}
+	public Boolean getIsActive()
+	{
+		return isActive;
+	}
+	public void setIsActive(Boolean isActive)
+	{
+		this.isActive = isActive;
+	}
+	public Date getEndDate()
+	{
+		return endDate;
+	}
+	public void setEndDate(Date endDate)
+	{
+		this.endDate = endDate;
 	}
 
 }

@@ -430,5 +430,11 @@ public class TrafficEstimatorObject
 		
 	}
 
+
+	public HashMap<String, HashMap<Double, BidData>> getBidDataMap()
+	{
+		return bidDataMap;
+	}
+
 	
 }
