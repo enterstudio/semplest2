@@ -61,6 +61,36 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine)
+			throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
+		return gson.fromJson(returnData, HashMap.class);
+	}
+	@Override
+	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
+	}
+	@Override
+	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
+	}
 
 	@Override
 	public HashMap<String, Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception
@@ -84,15 +114,6 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			optionalTimeoutMS = timeoutMS;
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
-	}
-	@Override
-	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
-		
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
-		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
 	}
 	@Override
 	public void getBidsInitial(String accountID,
@@ -164,5 +185,6 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPerSE", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 	}
+
 
 }
