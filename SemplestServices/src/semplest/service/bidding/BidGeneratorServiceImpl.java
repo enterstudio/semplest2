@@ -45,6 +45,26 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 	}
 	
+	
+	public void setBidsInitial(String json) throws Exception
+	{
+		logger.debug("call  getBidsInitial(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		String searchEngine = data.get("searchEngine");
+		setBidsInitial( promotionID, searchEngine);
+	}
+	
+	@Override
+	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+		if (!AdEngine.existsAdEngine(searchEngine))
+		{
+			throw new Exception(searchEngine + " Not Found");
+		}
+		BidGeneratorObj bidGenerator = new BidGeneratorObj();
+		bidGenerator.setBidsInitialGoogle(promotionID, searchEngine);
+	}
+	
 	public void getBidsInitial(String json) throws Exception
 	{
 		logger.debug("call  getBidsInitial(String json)" + json);

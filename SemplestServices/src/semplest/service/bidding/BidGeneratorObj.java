@@ -32,6 +32,18 @@ public class BidGeneratorObj {
 	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
 	
 	
+	
+	
+
+
+	public void setBidsInitialGoogle(Integer promotionID, String searchEngine) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	
 	public HashMap<String,Double> GetMonthlyBudgetPerSE (ArrayList<String> searchEngine, 
 			Double TotalMonthlyBudget)  throws Exception  {
 		
@@ -577,5 +589,7 @@ public class BidGeneratorObj {
 			e.printStackTrace();
 		}
 	}
+
+
 	
 }
