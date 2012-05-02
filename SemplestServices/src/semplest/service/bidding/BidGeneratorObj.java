@@ -33,22 +33,12 @@ public class BidGeneratorObj {
 	
 	
 	
-	
-
-	public static HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(
-			Integer promotionID, ArrayList<String> searchEngine) throws Exception {
-		
-		return BidSplitter.GetMonthlyBudgetPercentPerSE(promotionID, searchEngine);
-	} // GetMonthlyBudgetPercentPerSE()
-	
-	
-	
 	public static void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
 		// TODO Auto-generated method stub	
-	}
+	} // setBidsInitial()
 	public static void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
 		// TODO Auto-generated method stub	
-	}
+	} // setBidsUpdate()
 
 	
 	

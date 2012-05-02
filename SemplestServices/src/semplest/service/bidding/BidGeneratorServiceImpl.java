@@ -59,7 +59,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	public HashMap<String,Integer> GetMonthlyBudgetPercentPerSE (Integer promotionID, 
 			ArrayList<String> searchEngine)  throws Exception  {
 		
-		return BidGeneratorObj.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
+		return BidSplitter.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
 
 	}
 	
