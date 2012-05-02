@@ -35,49 +35,52 @@ namespace SemplestWebApp.Services
                                        where c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName select c;
                 if (queryProdGrp.Count() > 0)
                 {
-                    // product grp already exists so update the product group 
-                    var updateProdGrp = queryProdGrp.FirstOrDefault();
-                    updateProdGrp.ProductGroupName = model.ProductGroup.ProductGroupName;
-                    updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
-                    updateProdGrp.EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate);
-
-                    // get promotion and update it
-                    var updatePromotion = GetPromotionFromProductGroup(updateProdGrp, model.ProductGroup.ProductPromotionName);
-                    // if this is null means promotion name changed so create a new promotion
-                    if (updatePromotion == null)
+                    try
                     {
-                        updatePromotion = new Promotion
-                        {
-                            PromotionName = model.ProductGroup.ProductPromotionName,
-                            ProductGroupFK = updateProdGrp.ProductGroupPK,
-                            LandingPageURL = model.AdModelProp.Url,
-                            PromotionDescription = model.ProductGroup.Words,
-                            PromotionBudgetAmount = model.ProductGroup.Budget,
-                            PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
-                            IsPaused = false,
-                            IsCompleted = false,
-                            IsLaunched = false
-                        };
+                        // product grp already exists so update the product group 
+                        var updateProdGrp = queryProdGrp.FirstOrDefault();
+                        updateProdGrp.ProductGroupName = model.ProductGroup.ProductGroupName;
+                        updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+                        updateProdGrp.EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate);
 
-                        // need to add promotion ads and others
-
-                        dbcontext.Promotions.Add(updatePromotion);
-                    }
-                    else
-                    {
-                        updatePromotion.LandingPageURL = model.AdModelProp.Url;
-                        updatePromotion.PromotionDescription = model.ProductGroup.Words;
-                        updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
-                        updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
-                        updatePromotion.EditedDate = DateTime.Now;
-                        // update promotion ads
-                        foreach (PromotionAd pad in updatePromotion.PromotionAds)
+                        // get promotion and update it
+                        var updatePromotion = GetPromotionFromProductGroup(updateProdGrp, model.ProductGroup.ProductPromotionName);
+                        // if this is null means promotion name changed so create a new promotion
+                        if (updatePromotion == null)
                         {
+                            // create new promotion
+                            updatePromotion = CreatePromotionFromModel(model);
+                            updatePromotion.ProductGroupFK = updateProdGrp.ProductGroupPK;
+                                
+                            // add geotargeting to promotion
+                            AddGeoTargetingToPromotion(updatePromotion, model);
+                            // promotion ads
+                            AddPromotionAdsToPromotion(updatePromotion, model);
+
+                            dbcontext.Promotions.Add(updatePromotion);
+                        }
+                        else
+                        {
+                            updatePromotion.LandingPageURL = model.AdModelProp.Url;
+                            updatePromotion.PromotionDescription = model.ProductGroup.Words;
+                            updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
+                            updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+                            updatePromotion.EditedDate = DateTime.Now;
+                            // update promotion ads
+                            foreach (PromotionAd pad in updatePromotion.PromotionAds)
+                            {
+                            }
+
                         }
 
-                    }
+                        dbcontext.SaveChanges();
 
-                    dbcontext.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+                        string msg = ex.Message;
+                        throw;
+                    }
 
                     retFlag = true;
                 }
@@ -94,59 +97,19 @@ namespace SemplestWebApp.Services
                             StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
                             EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
                         };
-                        // we need to add productgroup now 
-                        // to get the foreignkey that needs tobe passed into Promotion
-                        //dbcontext.SaveChanges();
 
                         // create promotion
-                        var promo = new Promotion
-                        {
-                            //ProductGroupFK = prodgroup.ProductGroupPK,
-                            PromotionName = model.ProductGroup.ProductPromotionName,
-                            LandingPageURL = model.AdModelProp.Url,
-                            PromotionDescription = model.ProductGroup.Words,
-                            PromotionBudgetAmount = model.ProductGroup.Budget,
-                            PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
-                            IsPaused = false,
-                            IsCompleted = false,
-                            IsLaunched = false
-                        };
+                        var promo = CreatePromotionFromModel(model);
 
-                        // uncomment when geotargetting validation is added in view
-
-                        // promotion geotargeting
-                        //foreach (GeoTargeting geo in model.AdModelProp.Addresses)
-                        //{
-                        //    var geotarget = new GeoTargeting
-                        //        {
-                        //            Address = geo.Address,
-                        //            City = geo.City,
-                        //            StateCodeFK = geo.StateCodeFK,
-                        //            Zip = geo.Zip,
-                        //            ProximityRadius = geo.ProximityRadius,
-                        //        };
-                        //    promo.GeoTargetings.Add(geotarget);
-                        //}
+                        // add geotargeting to promotion
+                        AddGeoTargetingToPromotion(promo, model);
 
                         // promotion ads
-                        foreach (PromotionAd pad in model.AdModelProp.Ads)
-                        {
-                            var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
+                        AddPromotionAdsToPromotion(promo, model);
 
-                            // uncomment when validation added
-
-                            // add sitelinks
-                            //foreach (SiteLink slink in model.AdModelProp.SiteLinks)
-                            //{
-                            //    var slinkobj = new SiteLink { LinkText = "mylink", LinkURL = "mylink.com" };
-                            //    cad.SiteLinks.Add(slinkobj);
-                            //}
-
-                            promo.PromotionAds.Add(cad);
-                        }
-
-                        // set promotion
+                        // add product group
                         dbcontext.ProductGroups.Add(prodgroup);
+                        // add promotion
                         dbcontext.Promotions.Add(promo);
                         dbcontext.SaveChanges();
                         retFlag = true;
@@ -193,6 +156,87 @@ namespace SemplestWebApp.Services
                 }
             }
             return -1;
+        }
+
+        private int GetBudgetCycleId(string budgetCycleName)
+        {
+            using (var dbcontext = new SemplestEntities())
+            {
+                var queryBudgetCycle = dbcontext.BudgetCycles.Where(m => m.BudgetCycle1 == budgetCycleName);
+                if (queryBudgetCycle.Count() > 0)
+                {
+                    return queryBudgetCycle.FirstOrDefault().BudgetCyclePK;
+                }
+            }
+                return -1;
+        }
+
+        private Promotion CreatePromotionFromModel(CampaignSetupModel model)
+        {
+            var promo = new Promotion
+            {
+                PromotionName = model.ProductGroup.ProductPromotionName,
+                LandingPageURL = model.AdModelProp.Url,
+                PromotionDescription = model.ProductGroup.Words,
+                PromotionBudgetAmount = model.ProductGroup.Budget,
+                BudgetCycleFK = GetBudgetCycleId("Monthly"),
+                PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                IsPaused = false,
+                IsCompleted = false,
+                IsLaunched = false
+            };
+
+            return promo;
+
+        }
+
+        private void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model)
+        {
+            if (model.AdModelProp.Addresses != null)
+            {
+                foreach (GeoTargeting geo in model.AdModelProp.Addresses)
+                {
+                    // this is check should be removed once we fix the logic in partialview and model
+                    if (!String.IsNullOrEmpty(geo.Zip) || (!String.IsNullOrEmpty(geo.City) && geo.StateCodeFK > 0))
+                    {
+                        var geotarget = new GeoTargeting
+                        {
+                            Address = geo.Address,
+                            City = geo.City,
+                            StateCodeFK = geo.StateCodeFK,
+                            Zip = geo.Zip,
+                            ProximityRadius = geo.ProximityRadius,
+                        };
+                        promo.GeoTargetings.Add(geotarget);
+                    }
+                }
+            }
+        }
+
+        private void AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model)
+        {
+            foreach (PromotionAd pad in model.AdModelProp.Ads)
+            {
+                var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
+
+                // uncomment when validation added
+
+                if (model.AdModelProp.SiteLinks != null)
+                {
+                    // add sitelinks
+                    foreach (SiteLink slink in model.AdModelProp.SiteLinks)
+                    {
+                        // this is check should be removed once we fix the logic in partialview and model
+                        if (!String.IsNullOrEmpty(slink.LinkText) && !String.IsNullOrEmpty(slink.LinkURL))
+                        {
+                            var slinkobj = new SiteLink { LinkText = slink.LinkText, LinkURL = slink.LinkURL };
+                            cad.SiteLinks.Add(slinkobj);
+                        }
+                    }
+                }
+
+                promo.PromotionAds.Add(cad);
+            }
         }
 
         public bool SaveSelectedCategories(int promotionId, List<string> selectedCategories)
