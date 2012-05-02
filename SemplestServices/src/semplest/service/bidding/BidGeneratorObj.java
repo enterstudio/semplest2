@@ -199,7 +199,7 @@ public class BidGeneratorObj {
 		String[] words = o.getListOfKeywords();
 		for (int i=0; i < words.length; i++)
 		{
-			HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i]);
+			HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
 			Iterator<Double> bidIT = points.keySet().iterator();
 			while(bidIT.hasNext())
 			{
@@ -249,7 +249,7 @@ public class BidGeneratorObj {
 		words = o.getListOfKeywords();
 		for (int i=0; i < words.length; i++)
 		{
-			HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i]);
+			HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
 			Iterator<Double> bidIT = points.keySet().iterator();
 			while(bidIT.hasNext())
 			{
@@ -311,7 +311,7 @@ public class BidGeneratorObj {
 			words = o.getListOfKeywords();
 			for (int i=0; i < words.length; i++)
 			{
-				HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i]);
+				HashMap<Double, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
 				Iterator<Double> bidIT = points.keySet().iterator();
 				while(bidIT.hasNext())
 				{
@@ -518,7 +518,7 @@ public class BidGeneratorObj {
 					o=o2;
 					firstLoop=false;
 				} else {
-					o.addGoogleTrafficEstimatorObject(o2);
+					o.addGoogleTrafficEstimatorObject(o2,KeywordMatchType.EXACT.getValue());
 				}
 			} // if(i/500==0) 
 		} // while(it.hasNext())
