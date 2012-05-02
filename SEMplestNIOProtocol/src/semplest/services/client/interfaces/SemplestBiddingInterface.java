@@ -7,7 +7,9 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 
 public interface SemplestBiddingInterface extends ServiceInitialize {
 	
+	HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine) throws Exception;	
 	void setBidsInitial(Integer promotionID, String searchEngine) throws Exception;
+	void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception;
 
 	
 	HashMap<String,Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception ;
@@ -18,6 +20,8 @@ public interface SemplestBiddingInterface extends ServiceInitialize {
 	void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception;
 	void getBidsUpdateNaive(String accountID, Long campaignID, Long adGroupID, String searchEngine) throws Exception;
 	
-	HashMap<String,Double> GetMonthlyBudgetPerSE(ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception;	
+	HashMap<String,Double> GetMonthlyBudgetPerSE(ArrayList<String> searchEngine, Double TotalMonthlyBudget) throws Exception;
+
+
 
 }
