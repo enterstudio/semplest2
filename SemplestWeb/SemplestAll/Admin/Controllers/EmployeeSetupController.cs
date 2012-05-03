@@ -362,7 +362,9 @@ namespace Semplest.Admin.Controllers
                     MiddleInitial = m.EmployeeSetup.MiddleInitial,
                     LastName = m.EmployeeSetup.LastName,
                     CustomerFK=null,
-                    IsActive=m.EmployeeSetup.isActive 
+                    IsActive=m.EmployeeSetup.isActive,
+                    IsRegistered=true //only for admin, force registered=true (Andre)
+
                 });
 
                 Role r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
