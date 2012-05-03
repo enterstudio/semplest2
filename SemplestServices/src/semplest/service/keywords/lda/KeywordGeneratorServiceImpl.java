@@ -67,7 +67,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		String[] searchEngines =  gson.fromJson(data.get("searchEngines"), String[].class);
 		String url = data.get("url");
 		Integer[] nGrams = gson.fromJson(data.get("nGrams"), Integer[].class);
-		GeoTargetObject gt = gson.fromJson(data.get("gt"), GeoTargetObject.class);
+		GeoTargetObject[] gt = gson.fromJson(data.get("gt"), GeoTargetObject[].class);
 		ArrayList<ArrayList<KeywordProbabilityObject>> res = kwGen.getKeywords(categories,companyName, searchEngines,
 				searchTerm, description, adds,  url,  gt,  nGrams);
 		return gson.toJson(res);
@@ -75,7 +75,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 
 	@Override
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
-			String searchTerm, String description, String[] adds, String url, GeoTargetObject gt, Integer[] nGrams) throws Exception {
+			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		kwGen =  new KWGenDmozLDAServer();
 		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = kwGen.getKeywords(categories,companyName, searchEngines,
 				searchTerm, description, adds,  url,  gt,  nGrams) ;

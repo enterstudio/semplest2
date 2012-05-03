@@ -72,7 +72,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	@Override
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
-			String searchTerm, String description, String[] adds, String url, GeoTargetObject gt, Integer[] nGrams) throws Exception {
+			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
 		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
 		searchTerm = searchTerm.toLowerCase();

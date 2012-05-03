@@ -9,5 +9,5 @@ public interface SemplestKeywordLDAServiceInterface extends ServiceInitialize
 {
 	public abstract ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception;
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
-			String searchTerm, String description, String[] adds, String url, GeoTargetObject gt, Integer[] nGrams) throws Exception ;
+			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception ;
 }

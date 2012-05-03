@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -101,7 +101,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 	@Override
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
-			String searchTerm, String description, String[] adds, String url, GeoTargetObject gt, Integer[] nGrams) throws Exception {
+			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String jsonCategories = gson.toJson(categories, ArrayList.class);
 		jsonHash.put("categories", jsonCategories);
@@ -109,7 +109,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		jsonHash.put("searchTerm", searchTerm);
 		String jsonAdds = gson.toJson(adds, String[].class);
 		String jsonSEngines = gson.toJson(searchEngines, String[].class);
-		String jsonGt = gson.toJson(gt , GeoTargetObject.class);
+		String jsonGt = gson.toJson(gt , GeoTargetObject[].class);
 		jsonHash.put("gt", jsonGt);
 		jsonHash.put("searchEngines", jsonSEngines);
 		jsonHash.put("adds", jsonAdds);

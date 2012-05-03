@@ -84,11 +84,11 @@ public class MSNAdcenterServiceClientTest {
 		{	
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
-			//msn.createCampaign();
+			msn.createCampaign();
 			msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			//msn.insertKeywords2("/semplest/data/biddingTest/StudioBloom/keywords.txt");
+			msn.insertKeywords2("/semplest/data/biddingTest/StudioBloom/keywords.txt");
 			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/SummitFlowersNJ/keywords1500.txt", 1500);
 			//msn.plotdata(bidMap);
 			//logger.info(bidMap);
@@ -288,7 +288,8 @@ public class MSNAdcenterServiceClientTest {
 		
 		//createCampaign
 		CampaignStatus cpst = null;
-		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), msnMonthlyBudget, cpst.Active);
+		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), 
+				msnMonthlyBudget, cpst.Paused);
 		logger.info("campaignID: "+campaignID);	
 		//createAdGroup
 		adGroupID = test.createAdGroup(accountID, campaignID);
