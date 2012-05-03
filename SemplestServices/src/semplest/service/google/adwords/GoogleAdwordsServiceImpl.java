@@ -1626,7 +1626,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.debug("call getTrafficEstimationForOneKeyword" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		HashMap<String, Double> KeywordWithBid = gson.fromJson(data.get("KeywordWithBid"), HashMap.class);
+		HashMap<String, Long> KeywordWithBid = gson.fromJson(data.get("KeywordWithBid"), HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		// String accountID, Long campaignID, KeywordMatchType matchType,
 		// HashMap<String, ArrayList<Double>> KeywordWithBid
@@ -1638,7 +1638,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	@Override
 	public TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
-			HashMap<String, Double> KeywordWithBid) throws Exception
+			HashMap<String, Long> newKeywordWithBid) throws Exception
 	{
 		try{
 			AdWordsServiceLogger.log();
@@ -1650,7 +1650,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			TrafficEstimatorServiceInterface trafficEstimatorService = user.getService(AdWordsService.V201109.TRAFFIC_ESTIMATOR_SERVICE);
 	
 			// for each keyword
-			String[] keywords = KeywordWithBid.keySet().toArray(new String[] {});
+			String[] keywords = newKeywordWithBid.keySet().toArray(new String[] {});
 	
 			for (int i = 0; i < keywords.length; i++)
 			{
@@ -1663,14 +1663,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				// Sets up one Campaign EStimate for each Keyword/bid - Campaign
 				// budget
 				// is unlimited
-				Double bidamount = KeywordWithBid.get(keyword);
+				Long microBidamount = newKeywordWithBid.get(keyword);
 	
-				if (bidamount != null)
+				if (microBidamount != null)
 				{
 					// one keyword estimate request
 					KeywordEstimateRequest keywordEstimateRequest = new KeywordEstimateRequest();
 					keywordEstimateRequest.setKeyword(keywrd);
-					keywordEstimateRequest.setMaxCpc(new Money(null, new Long((long) (bidamount * 1000000.0))));
+					keywordEstimateRequest.setMaxCpc(new Money(null, new Long(microBidamount)));
 					keywordEstimateRequests.add(keywordEstimateRequest);
 				}
 			}
