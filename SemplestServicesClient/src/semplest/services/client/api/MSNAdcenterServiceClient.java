@@ -500,7 +500,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = " ";
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountIDs", json, null);
-		HashMap<String,Long> ret = protocolJson.getHashMapFromJson(returnData);
+		HashMap<String,Long> ret = gson.fromJson(returnData, HashMap.class);
 		return ret;
 	}
 
