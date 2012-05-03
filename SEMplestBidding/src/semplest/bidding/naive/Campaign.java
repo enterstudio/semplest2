@@ -133,14 +133,16 @@ public class Campaign {
   public static void main(String[] args) {
 
     Double radius = 20.0;
-    String addr   = "dfjfjdhfdjfjdfh";
+    String addr   = "195 Broadway";
     String city   = "New York";
     String state  = "NY";
     String zip    = "10007";
 
     try {
-      long caid   = Long.parseLong( GawUtils.cId );
-      Campaign c = new Campaign( GawUtils.clientId, caid );
+      // long caid   = Long.parseLong( GawUtils.cId );
+      String clientId = "8982168071";
+      long campaignId   = 76709721L;
+      Campaign c = new Campaign( clientId, campaignId );
       long ra = c.setGeoLoc( radius, addr, city, state, zip );
       long rs = c.setGeoLoc( "NY" );
       System.out.println( ra + "," + rs );
