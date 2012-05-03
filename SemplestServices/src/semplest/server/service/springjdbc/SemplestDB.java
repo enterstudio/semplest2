@@ -18,6 +18,7 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
@@ -426,7 +427,7 @@ public class SemplestDB extends BaseDB
 
 	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper(ReportObject.class);
 
-	private static List<ReportObject> getReportData(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
+	public static List<ReportObject> getReportData(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
 			throws Exception
 	{
 
@@ -466,6 +467,54 @@ public class SemplestDB extends BaseDB
 					+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ? and aerd.CreatedDate <= ?";
 			return jdbcTemplate.query(strSQL, new Object[]
 			{ promotionID, adEngine, startDateSQL, endDateSQL }, reportObjectjMapper);
+		}
+	}
+
+	private static final RowMapper<TargetedDailyBudget> targetedDailyBudgetMapper = new BeanPropertyRowMapper(TargetedDailyBudget.class);
+
+	public static TargetedDailyBudget getLatestTargetedDailyBudget(int promotionID, String adEngine) throws Exception
+	{
+
+		if (!AdEngine.existsAdEngine(adEngine))
+		{
+			throw new Exception(adEngine + " Not Found");
+		}
+		String strSQL = "select top 1 tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+				+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? " + "order by tdb.CreatedDate";
+
+		return jdbcTemplate.queryForObject(strSQL, new Object[]
+		{ promotionID, adEngine }, targetedDailyBudgetMapper);
+	}
+
+	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
+			throws Exception
+	{
+
+		if (!AdEngine.existsAdEngine(adEngine))
+		{
+			throw new Exception(adEngine + " Not Found");
+		}
+		String strSQL = null;
+		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
+		if (endDate == null)
+		{
+			strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+					+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ?";
+
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ promotionID, adEngine, startDateSQL }, targetedDailyBudgetMapper);
+		}
+		else
+		{
+			java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
+			strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+					+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ? and tdb.CreatedDate <= ?";
+
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ promotionID, adEngine, startDateSQL, endDateSQL }, targetedDailyBudgetMapper);
 		}
 	}
 
