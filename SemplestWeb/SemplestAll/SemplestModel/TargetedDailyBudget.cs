@@ -12,14 +12,16 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class CustomerHierarchy
+    public partial class TargetedDailyBudget
     {
-        public int CustomerHierarchyPK { get; set; }
-        public int CustomerFK { get; set; }
-        public Nullable<int> CustomerParentFK { get; set; }
+        public int TargetedDailyBudgetPK { get; set; }
+        public long TargetedDailyMicroBudget { get; set; }
+        public int TargetedDailyClicks { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public int PromotionFK { get; set; }
+        public int AdvertisingEngineFK { get; set; }
     
-        public virtual Customer Customer { get; set; }
-        public virtual Customer Customer1 { get; set; }
+        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }

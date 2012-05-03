@@ -16,12 +16,14 @@ namespace SemplestModel
     {
         public BidType()
         {
+            this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
             this.KeywordBids = new HashSet<KeywordBid>();
         }
     
         public int BidTypePK { get; set; }
         public string BidType1 { get; set; }
     
+        public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
     }
 }

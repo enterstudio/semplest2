@@ -19,7 +19,5 @@ namespace SemplestModel
         public string CustomerRefNum { get; set; }
         public string AuthCode { get; set; }
         public string TxRefNum { get; set; }
-    
-        public virtual Customer Customer { get; set; }
     }
 }

@@ -28,7 +28,7 @@ namespace SemplestModel
         public Nullable<System.DateTime> EditedDate { get; set; }
     
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
-        public virtual PhoneType PhoneType { get; set; }
         public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
+        public virtual PhoneType PhoneType { get; set; }
     }
 }

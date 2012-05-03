@@ -12,7 +12,7 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class AdvertisingEngineBidData
+    public partial class AdvertisingEngineReportData
     {
         public int AdvertisingEngineBidDataPK { get; set; }
         public int KeywordBidFK { get; set; }
@@ -22,8 +22,14 @@ namespace SemplestModel
         public int NumberClick { get; set; }
         public int AveragePosition { get; set; }
         public decimal AverageCPC { get; set; }
+        public Nullable<int> BidTypeFK { get; set; }
+        public Nullable<int> QualityScore { get; set; }
+        public string ApprovalStatus { get; set; }
+        public Nullable<int> FirstPageMicroCPC { get; set; }
+        public Nullable<int> MicroCost { get; set; }
         public System.DateTime CreatedDate { get; set; }
     
+        public virtual BidType BidType { get; set; }
         public virtual KeywordBid KeywordBid { get; set; }
     }
 }

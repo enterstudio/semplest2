@@ -60,10 +60,10 @@
     <Compile Include="AdvertisingEngineAccount.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="AdvertisingEngineBidData.cs">
+    <Compile Include="AdvertisingEnginePromotion.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="AdvertisingEnginePromotion.cs">
+    <Compile Include="AdvertisingEngineReportData.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="BidType.cs">
@@ -213,6 +213,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="sysdiagram.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TargetedDailyBudget.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Task.cs">
