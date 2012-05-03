@@ -699,8 +699,8 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				for(String s:kep.getListOfKeywords()){
 					System.out.println("keyword = " + s);
-					HashMap<Double, BidData> map = kep.getMapOfPoints(s, MatchType.Broad.getValue());
-					for(Double b:kep.getBidList(s, MatchType.Broad.getValue())){
+					HashMap<Long, BidData> map = kep.getMapOfPoints(s, MatchType.Broad.getValue());
+					for(Long b:kep.getBidList(s, MatchType.Broad.getValue())){
 						System.out.println("bidAmount = " + b);
 						System.out.println("AveClickPerDay = " + kep.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
 						System.out.println("AveCPC = " + kep.getAveCPC(s, MatchType.Broad.getValue(), b));

@@ -336,7 +336,6 @@ public class GoogleServiceTest {
 					System.out.println("MicroBidAmount = " + k.getMicroBidAmount());
 					System.out.println("FirstPageCpc = " + k.getFirstPageCpc());
 					System.out.println("QualityScore = " + k.getQualityScore());
-					System.out.println("SemplestProbability = " + k.getSemplestProbability());
 					System.out.println("ApprovalStatus = " + k.getApprovalStatus());
 				}
 			}
@@ -356,7 +355,6 @@ public class GoogleServiceTest {
 				System.out.println("MicroBidAmount = " + k.getMicroBidAmount());
 				System.out.println("FirstPageCpc = " + k.getFirstPageCpc());
 				System.out.println("QualityScore = " + k.getQualityScore());
-				System.out.println("SemplestProbability = " + k.getSemplestProbability());
 				System.out.println("ApprovalStatus = " + k.getApprovalStatus());		
 				
 				keywordID = k.getBidID();
@@ -377,7 +375,6 @@ public class GoogleServiceTest {
 				System.out.println("MicroBidAmount = " + k.getMicroBidAmount());
 				System.out.println("FirstPageCpc = " + k.getFirstPageCpc());
 				System.out.println("QualityScore = " + k.getQualityScore());
-				System.out.println("SemplestProbability = " + k.getSemplestProbability());
 				System.out.println("ApprovalStatus = " + k.getApprovalStatus());			
 			}
 			catch(Exception e){
@@ -389,15 +386,15 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getTrafficEstimationForKeywords:");		
 			try{
-				HashMap<String, Double> KeywordWithBid = new HashMap<String, Double>();
-				KeywordWithBid.put("wedding", 2.30);
-				KeywordWithBid.put("bridal", 3.40);
-				KeywordWithBid.put("flower", 4.50);
+				HashMap<String, Long> KeywordWithBid = new HashMap<String, Long>();
+				KeywordWithBid.put("wedding", 2300000L);
+				KeywordWithBid.put("bridal", 3400000L);
+				KeywordWithBid.put("flower", 4500000L);
 				TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(accountID,campaignID, KeywordMatchType.BROAD, KeywordWithBid);
 				System.out.println("OK");	
 				for(String s:ret.getListOfKeywords()){
 					System.out.println("keyword = " + s);
-					for(Double b:ret.getBidList(s, MatchType.Broad.getValue())){
+					for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
 						System.out.println("bidAmount = " + b);
 						System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
 						System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b));
