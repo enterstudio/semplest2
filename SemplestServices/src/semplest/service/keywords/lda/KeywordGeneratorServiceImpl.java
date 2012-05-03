@@ -68,7 +68,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		String url = data.get("url");
 		Integer[] nGrams = gson.fromJson(data.get("nGrams"), Integer[].class);
 		GeoTargetObject[] gt = gson.fromJson(data.get("gt"), GeoTargetObject[].class);
-		ArrayList<KeywordProbabilityObject> res = kwGen.getKeywords(categories,companyName, searchEngines, searchTerm, description, adds,  url,  gt,  nGrams);
+		ArrayList<KeywordProbabilityObject> res = getKeywords(categories,companyName, searchEngines, searchTerm, description, adds,  url,  gt,  nGrams);
 		return gson.toJson(res);
 	}
 
