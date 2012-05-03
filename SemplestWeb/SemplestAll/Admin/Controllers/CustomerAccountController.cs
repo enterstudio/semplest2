@@ -114,7 +114,8 @@ namespace Semplest.Admin.Controllers
                    UserPK = u.UserPK,
                    StateID = sc.StateAbbrPK,
                    CustomerNote = (n.Note == null ? null : n.Note),
-                   isActive = u.IsActive
+                   isActive = u.IsActive,
+                   selectedBillTypeid=c.BillTypeFK
                };
 
             //viewmodel2 might not be needed
@@ -166,6 +167,19 @@ namespace Semplest.Admin.Controllers
                 select c;
 
 
+            /////////////////////////////////////////////////////////////////////////////
+            ////for billtype dropdown
+            /////////////////////////////////////////////////////////////////////////////
+            var selectedbilltype =
+               from bt in dbcontext.BillTypes 
+               select bt;
+
+            var allbilltypes =
+                from bt in dbcontext.BillTypes 
+                select bt;
+
+
+
             var selectedsales =
                 from e in dbcontext.Employees
                 join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
@@ -182,10 +196,6 @@ namespace Semplest.Admin.Controllers
                     LastName = u.LastName,
                     EmployeeUserPK = u.UserPK
                 };
-
-
-
-
 
 
             /////////////////////////////////////////////////////////////////////////////////
@@ -338,6 +348,22 @@ namespace Semplest.Admin.Controllers
 
 
 
+
+
+            //////////////////////////////////
+            //// for billtype dropdown
+            ////////////////////////////////
+            
+            x.BillTypes= allbilltypes.ToList().Select(r => new SelectListItem
+            {
+                Value = r.BillTypePK.ToString(),
+                Text = r.BillType1.ToString()
+            });
+
+
+            x.SelectedBillTypeID = x.CustomerAccount.selectedBillTypeid;
+
+       
             //List<Customer> ll3 = allparents.ToList();
             //List<SelectListItem> sl3 = new List<SelectListItem>();
             //foreach (Customer s in ll3)
@@ -385,6 +411,7 @@ namespace Semplest.Admin.Controllers
 
 
             customer.Name = m.CustomerAccount.Customer;
+            customer.BillTypeFK = m.SelectedBillTypeID;
 
             address.Address1 = m.CustomerAccount.Address1;
             address.Address2 = m.CustomerAccount.Address2;
@@ -393,6 +420,10 @@ namespace Semplest.Admin.Controllers
             address.EditedDate = DateTime.Now;
             address.StateAbbrFK = m.SelectedStateID;
 
+            var customerphoneassociation= dbcontext.CustomerPhoneAssociations.ToList().Find(p=>p.CustomerFK==m.CustomerAccount.AccountNumber);
+            var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK == customerphoneassociation.PhoneFK);
+
+            phone.Phone1 = m.CustomerAccount.Phone;
 
 
             var rep = from c in dbcontext.Customers
@@ -555,6 +586,19 @@ namespace Semplest.Admin.Controllers
 
 
             /////////////////////////////////////////////////////////////////////////////////
+            //for billtype dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var allbilltypes = (from a in dbcontext.BillTypes select a).ToList();
+
+            x.SelectedBillTypeID = 1;
+            x.BillTypes = allbilltypes.Select(r => new SelectListItem
+            {
+                Value = r.BillTypePK.ToString(),
+                Text = r.BillType1.ToString()
+            });
+
+
+            /////////////////////////////////////////////////////////////////////////////////
             //for state dropdown
             /////////////////////////////////////////////////////////////////////////////////
             var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
@@ -631,11 +675,13 @@ namespace Semplest.Admin.Controllers
             {
                 SemplestEntities dbcontext = new SemplestEntities();
 
-                BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
+
+                //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
+
 
                 ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
-                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillType = bt, ProductGroupCycleType = pgct });
+                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer,  BillTypeFK  = m.SelectedBillTypeID , ProductGroupCycleType = pgct });
                 User u = dbcontext.Users.Add(new User
                 {
                     Customer = c,
