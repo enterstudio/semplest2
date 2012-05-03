@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.SharedResources.Services;
+using SemplestWebApp.Services;
 
 namespace Semplest.Core.Models.Repositories
 {
@@ -51,6 +52,92 @@ namespace Semplest.Core.Models.Repositories
         }
 
         public CampaignSetupModel GetKeyWords(CampaignSetupModel model)
+        {
+            if (model.AllCategories.Count == 0)
+            {
+                //model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            }
+
+            var catList = new List<string>();
+
+            foreach (var cat in model.AllCategories)
+            {
+                catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
+            }
+
+            var scw = new ServiceClientWrapper();
+            // create AdCopy array
+            List<string> adtitletextList = new List<string>();
+            foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
+            {
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+            }
+
+            // THIS IS ONLY FOR TESTING
+            model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = true });
+            model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = true });
+
+            // get keywords from the web service
+            //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
+            var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(), model.ProductGroup.ProductPromotionName,
+                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
+            if (keywords != null && keywords.Count > 0)
+            {
+                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key }))
+                {
+                    model.AllKeywords.Add(kwm);
+                }
+            }
+            else
+            {
+                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Could not get Keywords from web service" };
+                Logger.Write(logEnty);
+            }
+            return model;
+        }
+
+        public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
+        {
+            List<string> adEnginesSelected = new List<string>();
+            foreach (AdEngineSelectModel aesm in model.ProductGroup.AdEnginesSelectedList)
+            {
+                adEnginesSelected.Add(aesm.Name);
+            }
+
+            return adEnginesSelected;
+        }
+
+        public List<GeoTargetObject> SerializeToGeoTargetObjectArray(CampaignSetupModel model)
+        {
+            List<GeoTargetObject> geoList = new List<GeoTargetObject>();
+            foreach (SemplestModel.GeoTargeting geo in model.AdModelProp.Addresses)
+            {
+                GeoTargetObject geoTObj = new GeoTargetObject();
+                geoTObj.setAddress(geo.Address);
+                geoTObj.setCity(geo.City);
+                geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
+                geoTObj.setZip(geo.Zip);
+                geoTObj.setRadius((double)geo.ProximityRadius);
+                geoTObj.setLatitude((double)geo.Latitude);
+                geoTObj.setLongitude((double)geo.Longitude);
+                geoList.Add(geoTObj);
+            }
+            return geoList;   
+        }
+
+        public string GetStateNameFromDb(int stateCode)
+        {
+            var sds = new SemplestDataService();
+            return sds.GetStateNameFromCode(stateCode);
+        }
+
+        public List<string> GetAdEnginesListFromDb()
+        {
+            var sds = new SemplestDataService();
+            return sds.GetAdEngines();
+        }
+
+        public CampaignSetupModel GetKeyWordsOld(CampaignSetupModel model)
         {
             if (model.AllCategories.Count == 0)
             {
