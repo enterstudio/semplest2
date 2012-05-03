@@ -1,30 +1,42 @@
 package semplest.test.unittest;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Map;
-import java.util.Random;
+import java.util.Properties;
 
-import org.joda.time.DateTime;
+import javax.mail.Message;
+import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 
-import com.microsoft.adcenter.v8.ReportAggregation;
+import semplest.server.service.SEMplestService;
+import semplest.server.service.mail.MailSessionObject;
 
-import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.adengine.ReportObject;
-import semplest.server.protocol.msn.MsnAccountObject;
-import semplest.server.service.adengine.SemplestAdengineServiceImpl;
-import semplest.service.msn.adcenter.MsnCloudServiceImpl;
-import semplest.other.MsnManagementIds;
 
 public class UnitTests {
 	
-	private static String now;
+	private static String now = "";
+	
+	private static int numMsnStandaloneError = 0;
+	private static int numMsnServiceError = 0;
+	private static int numGoogleStandaloneError = 0;
+	private static int numGoogleServiceError = 0;
+	private static int numAdEngineStandalongError = 0;
+	private static int numAdEngineServiceError = 0;
+	private static int numKeywordStandaloneError = 0;
+	private static int numKeywordServiceError = 0;
+	private static int numBiddingStandaloneError = 0;
+	private static int numBiddingServiceError = 0;	
+	private static int numAllErrs = 0;
+	
+	public static String eol = System.getProperty("line.separator");
 	
 	public static void main(String[] args)
 	{
@@ -43,57 +55,114 @@ public class UnitTests {
 			Date date = new Date();
 			now = dateFormat.format(date);
 			String reportName = "UnitTestReport" + now + ".txt";
-			String reportPath = "\\Z:\\TestReports\\" + reportName;
+			String reportPath = "\\Z:\\TestReports\\UnitTest\\" + reportName;
 			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
 			System.setOut(out);
 			
-			System.out.println("******************************************");
-			System.out.println("*                                        *");
-			System.out.println("*       SEMplest Unit Test Report        *");
-			System.out.println("*                                        *");
-			System.out.println("******************************************");
+			System.out.println("************************************************************************************");
+			System.out.println("*                                                                                  *");
+			System.out.println("*                             SEMplest Unit Test Report                            *");
+			System.out.println("*                                                                                  *");
+			System.out.println("************************************************************************************");
 			System.out.println("Report Time: " + now);
 			System.out.println("   ");
 			
 			//Start Test
-			MsnServiceTest msnServiceTest = new MsnServiceTest();
-			msnServiceTest.Test_MsnServices();	
+			
+			//Test Msn Service
+			//MsnServiceTest msnServiceTest = new MsnServiceTest();
+			//msnServiceTest.Test_MsnServices_Standalone();	
+			
+			//Test Google Service
+			GoogleServiceTest googleServiceTest = new GoogleServiceTest();
+			numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
+			int ret = (numGoogleStandaloneError > 0)? googleServiceTest.testFailed() : googleServiceTest.testPassed();
+			
+			//Test Adengine Service
+			
+			
+			//Test Keyword Service
+			
+			
+			//Test Bidding Service		
 			
 			
 		}
 		catch(Exception e){
 			e.printStackTrace();
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println("ERROR:");
 			System.out.println(e.getMessage());
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println(" ");
-			System.out.println("******************************************");
-			System.out.println("*                                        *");
-			System.out.println("*       SEMplest Unit Test FAILED        *");
-			System.out.println("*                                        *");
-			System.out.println("******************************************");
+			System.out.println("************************************************************************************");
+			System.out.println("*                                                                                  *");
+			System.out.println("*                             SEMplest Unit Test FAILED                            *");
+			System.out.println("*                                                                                  *");
+			System.out.println("************************************************************************************");
+
 		}
-			
+		
+		numAllErrs = numMsnStandaloneError + numMsnServiceError + numGoogleStandaloneError + numGoogleServiceError 
+				+ numAdEngineStandalongError + numAdEngineServiceError + numKeywordStandaloneError + numKeywordServiceError 
+				+ numBiddingStandaloneError + numBiddingServiceError;
+		
+		UnitTests unitTest = new UnitTests();
+		String summary = unitTest.reportSummary();
+		
+		System.out.println(" ");
+		System.out.println("************************************************************************************");
+		System.out.println("*                                                                                  *");
+		System.out.println("*                                UNIT TEST SUMMARY                                 *");
+		System.out.println("*                                                                                  *");
+		System.out.println("************************************************************************************");
+		System.out.println(" ");
+		System.out.println(summary);
+		
+		//send email of the test result
+		String testResult = (numAllErrs > 0)? "FAILED" : "SUCCESSFUL";
+		String subject = "[Test Result] Semplest Unit Test is " + testResult;
+		unitTest.sendEmail(subject, "nan@semplest.com", "nan@semplest.com", summary);
+		unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
+        
+	}	
+	
+	private String reportSummary(){
+		StringBuilder sb = new StringBuilder();
+        sb.append("Unit test finished with " + numAllErrs + " errors in total." + eol);
+        sb.append("Msn Service (Standalone): 		" + numMsnStandaloneError + " errors" + eol);
+        sb.append("Msn Service (Service): 			" + numMsnServiceError + " errors" + eol);
+        sb.append("Google Service (Standalone): 		" + numGoogleStandaloneError + " errors" + eol);
+        sb.append("Google Service (Service): 		" + numGoogleServiceError + " errors" + eol);
+        sb.append("Adengine Service (Standalone): 		" + numAdEngineStandalongError + " errors" + eol);
+        sb.append("Adengine Service (Service): 		" + numAdEngineServiceError + " errors" + eol);
+        sb.append("Keyword Service (Standalone): 		" + numKeywordStandaloneError + " errors" + eol);
+        sb.append("Keyword Service (Service): 		" + numKeywordServiceError + " errors" + eol);
+        sb.append("Bidding Service (Standalone): 		" + numBiddingStandaloneError + " errors" + eol);
+        sb.append("Bidding Service (Service):	 	" + numBiddingServiceError + " errors" + eol);
+        
+        return sb.toString();		
 	}
 	
-	public void Test1_AdengineService(){
-		//function not finished yet
-		try{
-			SemplestAdengineServiceImpl adengineService = new SemplestAdengineServiceImpl();
-			int customerID = 0;
-			Long productGroupID = 0L;
-			int PromotionID = 0;
-			ArrayList<String> adEngineList = new ArrayList<String>();
-			adEngineList.add(AdEngine.Google.name());
-			adEngineList.add(AdEngine.MSN.name());
-			adengineService.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}		
+	private void sendEmail(String subject, String from, String to, String msg)
+	{
+	      String host = "VMJAVA2";
+	      Properties properties = System.getProperties();
+	      properties.setProperty("mail.smtp.host", host);
+	      Session session = Session.getDefaultInstance(properties);
+	      try{
+	         MimeMessage message = new MimeMessage(session);
+	         message.setFrom(new InternetAddress(from));
+	         message.addRecipient(Message.RecipientType.TO,
+	                                  new InternetAddress(to));
+	         message.setSubject(subject);
+	         message.setText(msg);
+	         
+	         Transport.send(message);
+	         
+	      }catch (Exception e) {
+	         e.printStackTrace();
+	      }
 	}
-	
-	
 
 }

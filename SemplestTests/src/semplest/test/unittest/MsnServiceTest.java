@@ -116,7 +116,7 @@ public class MsnServiceTest {
 		}
 	}
 	
-	public void Test_MsnServices(){
+	public void Test_MsnServices_Standalone(){
 		
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 
@@ -128,11 +128,11 @@ public class MsnServiceTest {
 		String now = String.valueOf(System.currentTimeMillis());
 		
 		try{
-			System.out.println("##########################################");
-			System.out.println("#                                        #");
-			System.out.println("#            MSN Service Test            #");
-			System.out.println("#                                        #");
-			System.out.println("##########################################");	
+			System.out.println("####################################################################################");
+			System.out.println("#                                                                                  #");
+			System.out.println("#                        MSN Service Test (Standalone)                             #");
+			System.out.println("#                                                                                  #");
+			System.out.println("####################################################################################");	
 			
 				
 			//getAccountById
@@ -607,13 +607,13 @@ public class MsnServiceTest {
 			System.out.println("OK");
 			for(String s:kep.getListOfKeywords()){
 				System.out.println("keyword = " + s);
-				HashMap<Double, BidData> map = kep.getMapOfPoints(s);
-				for(Double b:kep.getBidList(s)){
+				HashMap<Double, BidData> map = kep.getMapOfPoints(s, MatchType.Broad.getValue());
+				for(Double b:kep.getBidList(s, MatchType.Broad.getValue())){
 					System.out.println("bidAmount = " + b);
-					System.out.println("AveClickPerDay = " + kep.getAveClickPerDay(s, b));
-					System.out.println("AveCPC = " + kep.getAveCPC(s, b));
-					System.out.println("AvePosition = " + kep.getAvePosition(s, b));
-					System.out.println("AveTotalDailyMicroCost = " + kep.getAveTotalDailyMicroCost(s, b));
+					System.out.println("AveClickPerDay = " + kep.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
+					System.out.println("AveCPC = " + kep.getAveCPC(s, MatchType.Broad.getValue(), b));
+					System.out.println("AvePosition = " + kep.getAvePosition(s, MatchType.Broad.getValue(), b));
+					System.out.println("AveTotalDailyMicroCost = " + kep.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
 				}
 			}
 			
@@ -667,11 +667,9 @@ public class MsnServiceTest {
 			}
 			System.out.println("clean up done");
 			
-			System.out.println("##########################################");
-			System.out.println("#                                        #");
-			System.out.println("#        MSN Service Test PASSED         #");
-			System.out.println("#                                        #");
-			System.out.println("##########################################");
+			System.out.println("####################################################################################");
+			System.out.println("#                           MSN Service Test PASSED                                #");
+			System.out.println("####################################################################################");
 			
 		}
 		catch(RemoteException e){
@@ -694,18 +692,17 @@ public class MsnServiceTest {
 				System.out.println("clean up failed");
 			}			
 			System.out.println(" ");
-			System.out.println("##########################################");
-			System.out.println("#                                        #");
-			System.out.println("#        MSN Service Test FAILED         #");
-			System.out.println("#                                        #");
-			System.out.println("##########################################");
+			System.out.println("####################################################################################");
+			System.out.println("#                           MSN Service Test FAILED                                #");
+			System.out.println("####################################################################################");
 		}
 		catch(Exception e){
 			e.printStackTrace();
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println("ERROR:");
 			System.out.println(e.getMessage());
-			System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+			System.out.println("");
+			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println(" ");
 			System.out.println("==========================================");
 			System.out.println("clean up and finish the test...");
@@ -720,11 +717,9 @@ public class MsnServiceTest {
 				System.out.println("clean up failed");
 			}			
 			System.out.println(" ");
-			System.out.println("##########################################");
-			System.out.println("#                                        #");
-			System.out.println("#        MSN Service Test FAILED         #");
-			System.out.println("#                                        #");
-			System.out.println("##########################################");
+			System.out.println("####################################################################################");
+			System.out.println("#                      MSN Service Test (Standalone) FAILED                        #");
+			System.out.println("####################################################################################");
 		}
 	}
 
