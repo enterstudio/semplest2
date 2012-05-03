@@ -71,7 +71,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	@Override
-	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
+	public ArrayList<KeywordProbabilityObject> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
 		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
@@ -100,7 +100,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		String stemdata1 = new String();
 		stemdata1 = this.stemvString( data1, data.dict );
 		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, searchTerm, stemdata1, data.numKeywords, srchE, nGrams);
-		return keywords;
+		ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
+		for(ArrayList<KeywordProbabilityObject> list1 : keywords){
+			for(KeywordProbabilityObject kwrd : list1 ){
+				keywordsList.add(kwrd);
+			}
+		}
+		return keywordsList;
 	}
 	
 	
@@ -691,25 +697,23 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			
 			Integer[] nGrams = {50,50};
-			ArrayList<ArrayList<KeywordProbabilityObject>> kw = kwGen.getKeywords(categories,null, new String[] {"Google", "MSN"}, searchTerm[0], uInf, adds, url, null ,nGrams);
+			ArrayList<KeywordProbabilityObject> kw = kwGen.getKeywords(categories,null, new String[] {"Google", "MSN"}, searchTerm[0], uInf, adds, url, null ,nGrams);
 			
-			for(int n=0; n<4; n++){
-				System.out.println("\n"+ (n+2)+" word keywords:");
-				for(KeywordProbabilityObject k: kw.get(n)){
-					String kaux=k.getKeyword().replaceAll("wed", "wedding");
-					System.out.print(kaux+" "+k.getSemplestProbability()+", ");
-				}
+			for(KeywordProbabilityObject k: kw){
+				String kaux=k.getKeyword().replaceAll("wed", "wedding");
+				System.out.print(kaux+" "+k.getSemplestProbability()+", ");
 			}
+			
 			
 			PrintStream stdout = System.out;
 			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
-			for(int n=0; n<4; n++){
-				//System.out.println("\n"+ (n+2)+" word keywords:");
-				for(KeywordProbabilityObject k: kw.get(n)){
-					String kaux=k.getKeyword().replaceAll("wed", "wedding");
-					System.out.println(kaux);
-				}
+
+			//System.out.println("\n"+ (n+2)+" word keywords:");
+			for(KeywordProbabilityObject k: kw){
+				String kaux=k.getKeyword().replaceAll("wed", "wedding");
+				System.out.println(kaux);
 			}
+			
 			System.setOut(stdout);
 			}catch(Exception e){
 				logger.error(e);

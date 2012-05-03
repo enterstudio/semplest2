@@ -44,16 +44,16 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 			selectCateg.add(res.get(1));
 			System.out.println("Selected:"+res.get(1));
 			
-			ArrayList<ArrayList<KeywordProbabilityObject>> kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
+			ArrayList<KeywordProbabilityObject> kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 					"coffee machine", null, null, "http://www.wholelattelove.com/", null ,new Integer[]{50,50});
 			sec = (double) (System.currentTimeMillis() - start)/1000.0;
-			for(int n=0; n<4; n++){
-				System.out.println("\n"+ (n+2)+" word keywords:");
-				for(KeywordProbabilityObject k: kw.get(n)){
-					String kaux=k.getKeyword();
-					System.out.print(kaux+" "+k.getSemplestProbability()+", ");
-				}
+
+
+			for(KeywordProbabilityObject k: kw){
+				String kaux=k.getKeyword();
+				System.out.println(kaux+" "+k.getSemplestProbability());
 			}
+			
 
 			
 		}
@@ -100,7 +100,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
+	public ArrayList<KeywordProbabilityObject> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		String jsonCategories = gson.toJson(categories, ArrayList.class);

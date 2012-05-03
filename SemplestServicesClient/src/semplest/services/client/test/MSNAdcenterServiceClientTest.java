@@ -22,6 +22,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
 
 import semplest.other.KeywordEstimate;
@@ -57,17 +58,17 @@ public class MSNAdcenterServiceClientTest {
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_StudioBloom";
-	String url = "www.studio-bloomed.com";
-	String productSubcategory = "Wedding Flowers";
-	double msnMonthlyBudget = 250.0; //In dolars
+	String accountName = "_TovahPhoto";
+	String url = "www.tovahphotography.com";
+	String productSubcategory = "Event and portrait photos";
+	double msnMonthlyBudget = 50.0; //In dolars
 			
 	//Add1
-	String adTitle1 =  "$10.00 OFF";
-	String adText1 = "Discount valid on orders $50.00 or more. Offer code: vday12";
+	String adTitle1 =  "Event Photography";
+	String adText1 = "Your event is unique and special and your photos should be, too!";
 	//Add2
-	String adTitle2 =  "20% off any purchase";
-	String adText2 = "Any purchase of $100.00 or more. Use coupon code: vday20";
+	String adTitle2 =  "Personalized Portraits";
+	String adText2 = "Natural light photography to reflect your personality!";
 	
 	//Accounts and campaigns
 	Long accountID = 1617082L;
@@ -84,12 +85,13 @@ public class MSNAdcenterServiceClientTest {
 		{	
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
-			msn.createCampaign();
+			//msn.createCampaign();
+			msn.getAccountID();
 			msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			msn.insertKeywords2("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/SummitFlowersNJ/keywords1500.txt", 1500);
+			//msn.insertKeywords2("/semplest/data/biddingTest/TovahPhoto/keywords.txt");
+			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/TovahPhoto/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			//logger.info(bidMap);
 		}
@@ -99,6 +101,12 @@ public class MSNAdcenterServiceClientTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void getAccountID() throws Exception{
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		 HashMap<String,Long> accounts = test.getAccountIDs();
+		 accountID =  accounts.get(accountName);
 	}
 	public void getIds() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
@@ -175,17 +183,27 @@ public class MSNAdcenterServiceClientTest {
 	    in.close();
 
 	}
-	/*Pending on finishes from Nan
-	public HashMap<String, Double[][]> getKeywordEstimates(String filename, int numKw) throws Exception{
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
-		String[] keywords;
-		HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
+	
+	public ArrayList<Double> createbids(double start, double end, double step){
+		ArrayList<Double> bids = new ArrayList<Double>();
+		Double bid = start;
 		
-		//Create bid points
-		ArrayList<Double> bids = this.createbids(2.0, 4.0, 0.01);
-		Double[][] bidDat = new Double[bids.size()][3];
-		int v=0;
-		for(Double bidpoint:bids){
+		while(bid<end){
+			bids.add(bid);
+			bid = bid+step;
+		}
+		return bids;
+	}
+	public HashMap<String, Double[][]> getKeywordEstimates(String filename, int numKw) throws Exception{
+
+			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+			String[] keywords;
+			HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
+			
+			//Create bid points
+			ArrayList<Double> bids = this.createbids(2.0, 4.0, 0.01);
+			Double[][] bidDat = new Double[bids.size()][3];
+
 			FileInputStream fstream = new FileInputStream(filename);
 		    // Get the object of DataInputStream
 		    DataInputStream in = new DataInputStream(fstream);
@@ -194,6 +212,11 @@ public class MSNAdcenterServiceClientTest {
 		    //Read File Line By Line
 		    int j=0;
 		    int n=0;
+		    Money[] bidsMoney = new Money[bids.size()]; 
+		    for(int f =0 ; f< bids.size();f++){
+		    	long bidL = (long) (bids.get(f)*100000);
+		    	bidsMoney[f] = new Money(bidL);
+		    }
 		    while(j<numKw && strLine!=null){
 		    	keywords = new String[1000];
 		    	int i=0;
@@ -207,70 +230,34 @@ public class MSNAdcenterServiceClientTest {
 			      j++;
 			      i++;
 			    }
-			    //Close the input stream
-			    
-			    long bidL = (long) (bidpoint*100000);
-				Money bid = new Money(bidL);
-				int m=0;
-				String[] keywordsaux = new String[1000];
-				for(String kw: keywords){
-					if(kw!=null){
-						keywordsaux[m]=kw;
-						m++;
-					}
-				}
-				keywords = new String[m];
-				m=0;
-				for(String kw: keywordsaux){
-					if(kw!=null){
-						keywords[m]=kw;
-						m++;
-					}
-				}
-				Money[] bid
-				TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, keywords, bid);
-				String[] keywrds = ret.getListOfKeywords();
-				for(String k : keywrds){
-					
-
-						logger.info("keyword = " + k);
-						//for(EstimatedPositionAndTraffic pt : pts){
-						if(pts.length>0){
-							EstimatedPositionAndTraffic pt = ret.getAvePosition(keyword, bid);//Get only exact match
-							double averDaylyCost = (pt.getMaxTotalCostPerWeek()+pt.getMinTotalCostPerWeek())/14.0;
-							double averDaylyClicks = (pt.getMinClicksPerWeek()+pt.getMaxClicksPerWeek())/14.0;
-							if(!bidMap.containsKey(k.getKeyword()))
-								bidDat = new Double[bids.size()][3]; 
-							else
-								bidDat =bidMap.get(k.getKeyword());
-							if(v==1)
-								logger.info("here");
-							bidDat[v][0]= bidpoint;
-							bidDat[v][1]= averDaylyCost;
-							bidDat[v][2]= averDaylyClicks;
-							bidMap.put(k.getKeyword(), bidDat);
-							n++;
-						}
-					
-				}
-		    }
-			logger.info("Total Number of kw with info: "+ n);
-			logger.info("Total Number of kw: "+ j);
-			in.close();
-			v++;
-		}
-		return bidMap;
-	}*/
-	public ArrayList<Double> createbids(double start, double end, double step){
-		ArrayList<Double> bids = new ArrayList<Double>();
-		Double bid = start;
+	    	
+			    TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, keywords, bidsMoney, MatchType.Exact);
+			    for(String k : keywords){
+					logger.info("keyword = " + k);
+					int v=0;
+					for(Long bidList:ret.getBidList(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString())){
+						ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList);
 		
-		while(bid<end){
-			bids.add(bid);
-			bid = bid+step;
+						double averDaylyCPC = (ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList))/14.0;
+						double averDaylyClicks = (ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList))/14.0;
+						if(!bidMap.containsKey(k))
+							bidDat = new Double[bids.size()][3]; 
+						else
+							bidDat =bidMap.get(k);
+
+						bidDat[v][0]= bidList.doubleValue();
+						bidDat[v][1]= averDaylyCPC;
+						bidDat[v][2]= averDaylyClicks;
+						bidMap.put(k, bidDat);
+						v++;
+						
+					}
+			    }
+		    }
+			return bidMap;
 		}
-		return bids;
-	}
+		    
+	
 	public void createCampaign() throws Exception{
 		//Parameters to create campaign and adds
 		
@@ -356,6 +343,95 @@ public class MSNAdcenterServiceClientTest {
 	    	}
 		}
 		
+		/* Old version
+		public HashMap<String, Double[][]> getKeywordEstimates(String filename, int numKw) throws Exception{
+			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+			String[] keywords;
+			HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
+			
+			//Create bid points
+			ArrayList<Double> bids = this.createbids(2.0, 4.0, 0.01);
+			Double[][] bidDat = new Double[bids.size()][3];
+			int v=0;
+			for(Double bidpoint:bids){
+				FileInputStream fstream = new FileInputStream(filename);
+			    // Get the object of DataInputStream
+			    DataInputStream in = new DataInputStream(fstream);
+			    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			    String strLine="";
+			    //Read File Line By Line
+			    int j=0;
+			    int n=0;
+			    while(j<numKw && strLine!=null){
+			    	keywords = new String[1000];
+			    	int i=0;
+				    while ((strLine = br.readLine()) != null)   {
+				    	if(i>=keywords.length) break ;
+				      // Print the content on the console
+				      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+				      logger.info("Adding "+ strLine);
+				      keywords[i] = strLine;
+				      keywords[i] = strLine;
+				      j++;
+				      i++;
+				    }
+				    //Close the input stream
+				    
+				    long bidL = (long) (bidpoint*100000);
+					Money bid = new Money(bidL);
+					int m=0;
+					String[] keywordsaux = new String[1000];
+					for(String kw: keywords){
+						if(kw!=null){
+							keywordsaux[m]=kw;
+							m++;
+						}
+					}
+					keywords = new String[m];
+					m=0;
+					for(String kw: keywordsaux){
+						if(kw!=null){
+							keywords[m]=kw;
+							m++;
+						}
+					}
+					Money[] bids;
+					Double amount = 0.05;
+		
+					
+					TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, keywords, bid);
+					String[] keywrds = ret.getListOfKeywords();
+					for(String k : keywrds){
+						
+
+							logger.info("keyword = " + k);
+							//for(EstimatedPositionAndTraffic pt : pts){
+							if(pts.length>0){
+								EstimatedPositionAndTraffic pt = ret.getAvePosition(keyword, bid);//Get only exact match
+								double averDaylyCost = (pt.getMaxTotalCostPerWeek()+pt.getMinTotalCostPerWeek())/14.0;
+								double averDaylyClicks = (pt.getMinClicksPerWeek()+pt.getMaxClicksPerWeek())/14.0;
+								if(!bidMap.containsKey(k.getKeyword()))
+									bidDat = new Double[bids.size()][3]; 
+								else
+									bidDat =bidMap.get(k.getKeyword());
+								if(v==1)
+									logger.info("here");
+								bidDat[v][0]= bidpoint;
+								bidDat[v][1]= averDaylyCost;
+								bidDat[v][2]= averDaylyClicks;
+								bidMap.put(k.getKeyword(), bidDat);
+								n++;
+							}
+						
+					}
+			    }
+				logger.info("Total Number of kw with info: "+ n);
+				logger.info("Total Number of kw: "+ j);
+				in.close();
+				v++;
+			}
+			return bidMap;
+		}*/
 	}
 	
 }
