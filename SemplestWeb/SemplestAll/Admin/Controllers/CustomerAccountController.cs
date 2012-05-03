@@ -333,7 +333,7 @@ namespace Semplest.Admin.Controllers
                 }
                 else
                 {
-                    x.SelectedParentID = selectedparent.ToList().FirstOrDefault().CustomerParentFK;
+                    x.SelectedParentID = selectedparent.ToList().FirstOrDefault().CustomerParentFK.Value;
                 }
 
 
@@ -457,7 +457,7 @@ namespace Semplest.Admin.Controllers
             }
             else if (m.SelectedParentID == -1) //parent
             {
-                //parents.CustomerParentFK = null;
+                parents.CustomerParentFK = null;
             }
             else
             {
@@ -669,14 +669,14 @@ namespace Semplest.Admin.Controllers
                 CustomerHierarchy ch;
                 if (m.SelectedParentID == -1) //set parent
                 {
-                    //waiting for db change, refresh model
-                    //ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK=c.CustomerPK , CustomerParentFK=null  }); 
+                    
+                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK=c.CustomerPK , CustomerParentFK=null  }); 
                 }
                 else if (m.SelectedParentID == 0) //set self
                 {
                     ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK });
                 }
-                else //assign parent
+                else //assign a parent
                 {
                     ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = m.SelectedParentID });
                 }
