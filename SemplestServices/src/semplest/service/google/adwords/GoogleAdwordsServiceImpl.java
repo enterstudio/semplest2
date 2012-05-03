@@ -846,10 +846,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				// Update the AdGroup Status
 				adGroupAd = new AdGroupAd();
 				adGroupAd.setAdGroupId(adGroupID.longValue());
+				adGroupAd.setAd(textAd);
 				adGroupAd.setStatus(AdGroupAdStatus.ENABLED);
 				AdGroupAdOperation operation2 = new AdGroupAdOperation();
-				operation.setOperand(adGroupAd);
-				operation.setOperator(Operator.SET);
+				operation2.setOperand(adGroupAd);
+				operation2.setOperator(Operator.SET);
 				AdGroupAdOperation[] operations2 = new AdGroupAdOperation[]
 				{ operation2 };
 				// Update ad.
