@@ -29,9 +29,16 @@
             <p>
                 <input type="submit" value="Log On" class ="k-button" id="btnSubmit" />
             </p>
-            @if (Model != null && Model.IsRegistered != null && !Model.IsRegistered)
+            @if (Model != null)
             {
-                <div class="passwordverify">@Html.Partial("_Password", Model)</div>
+                if (!Model.LoggedInSucceeded)
+                {            
+                    <div class="editor-label">@Model.LoginFailedMessage</div>
+                }
+                else if (!Model.IsRegistered)
+                {
+                    <div class="passwordverify">@Html.Partial("_Password", Model)</div>
+                }
             }
             </div>
         </fieldset>

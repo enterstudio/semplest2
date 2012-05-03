@@ -137,18 +137,20 @@ WriteLiteral("\r\n            </div>\r\n            <p>\r\n                <inpu
 
             
             #line 32 "..\..\Views\Profile\LogIn.cshtml"
-             if (Model != null && Model.IsRegistered != null && !Model.IsRegistered)
+             if (Model != null)
             {
+                if (!Model.LoggedInSucceeded)
+                {            
 
             
             #line default
             #line hidden
-WriteLiteral("                <div class=\"passwordverify\">");
+WriteLiteral("                    <div class=\"editor-label\">");
 
 
             
-            #line 34 "..\..\Views\Profile\LogIn.cshtml"
-                                       Write(Html.Partial("_Password", Model));
+            #line 36 "..\..\Views\Profile\LogIn.cshtml"
+                                         Write(Model.LoginFailedMessage);
 
             
             #line default
@@ -157,7 +159,30 @@ WriteLiteral("</div>\r\n");
 
 
             
-            #line 35 "..\..\Views\Profile\LogIn.cshtml"
+            #line 37 "..\..\Views\Profile\LogIn.cshtml"
+                }
+                else if (!Model.IsRegistered)
+                {
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                    <div class=\"passwordverify\">");
+
+
+            
+            #line 40 "..\..\Views\Profile\LogIn.cshtml"
+                                           Write(Html.Partial("_Password", Model));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("</div>\r\n");
+
+
+            
+            #line 41 "..\..\Views\Profile\LogIn.cshtml"
+                }
             }
 
             
@@ -167,7 +192,7 @@ WriteLiteral("            </div>\r\n        </fieldset>\r\n");
 
 
             
-            #line 38 "..\..\Views\Profile\LogIn.cshtml"
+            #line 45 "..\..\Views\Profile\LogIn.cshtml"
         
 }
 
