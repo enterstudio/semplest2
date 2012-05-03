@@ -76,8 +76,8 @@ namespace Semplest.Core.Models
 
     public class AdEngineSelectModel
     {
-        bool IsSelected { get; set; }
-        string Name { get; set; }
+        public bool IsSelected { get; set; }
+        public string Name { get; set; }
     }
 
     public class ProductGroupModel
