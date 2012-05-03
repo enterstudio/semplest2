@@ -50,7 +50,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 			for(int n=0; n<4; n++){
 				System.out.println("\n"+ (n+2)+" word keywords:");
 				for(KeywordProbabilityObject k: kw.get(n)){
-					String kaux=k.getKeyword().replaceAll("wed", "wedding");
+					String kaux=k.getKeyword();
 					System.out.print(kaux+" "+k.getSemplestProbability()+", ");
 				}
 			}
