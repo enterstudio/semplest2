@@ -21,11 +21,13 @@ public class ServicePingHandler implements Runnable
 	private final String serviceOffered;
 	
 	private final int delayMS = 500; 
+	private Object synchObject = null;
 	
 	static final Logger logger = Logger.getLogger(ServicePingHandler.class);
 	
 	public ServicePingHandler(NIOServer nio, ESBServer esb, String service, String serviceOffered, int pingFrequencyMS)
 	{
+		synchObject = new Object();
 		this.nioServer = nio;
 		this.esb = esb;
 		this.client = service;
@@ -35,7 +37,7 @@ public class ServicePingHandler implements Runnable
 	public synchronized boolean handleResponse(String serviceName)
 	{
 		this.serviceName = serviceName;
-		this.notify();
+		synchObject.notify();
 		return true;
 	}
 
@@ -45,7 +47,7 @@ public class ServicePingHandler implements Runnable
 		{
 			try
 			{
-				this.wait(pingFrequencyPlusDelayMS);
+				synchObject.wait(pingFrequencyPlusDelayMS);
 				if (this.serviceName == null)
 				{
 					logger.debug("No response from client: " + client);

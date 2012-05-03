@@ -123,15 +123,17 @@ public class NIOServer implements Runnable
 		}
 	}
 
-	public void RegisterClient(SocketChannel socket, ProtocolSocketDataObject response) throws JsonParseException, JsonMappingException, IOException, JMSException
+	public void RegisterClient(SocketChannel socket, ProtocolSocketDataObject response) throws JsonParseException, JsonMappingException, IOException,
+			JMSException
 	{
-		
-		//ProtocolSocketDataObject response = json.createSocketDataObjFromJSON(data.toString());
+
+		// ProtocolSocketDataObject response =
+		// json.createSocketDataObjFromJSON(data.toString());
 		String clientServiceName = response.getclientServiceName();
 		String serviceOffered = response.getServiceOffered();
 		int pingFreqMS = response.getPingFrequency();
-		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered );
-		
+		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered);
+
 		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
 		// Make sure not already registered
 		if (!serviceRegistrationMap.containsKey(clientServiceName))
@@ -139,25 +141,25 @@ public class NIOServer implements Runnable
 			// add Queue to ActiveMQ
 			String serviceSendQueueName = clientServiceName + "_Send";
 			String serviceRecQueueName = clientServiceName + "_Rec";
-			//ESB produces messages on the Serive Rec Queue
-			this.esbServer.getMQConnection().createProducerAndConsumerQueue(serviceRecQueueName,serviceSendQueueName);
-			//ESB Rec messares on the Service send queue
-			//this.esbServer.getMQConnection().createConsumer(serviceSendQueueName);
+			// ESB produces messages on the Serive Rec Queue
+			this.esbServer.getMQConnection().createProducerAndConsumerQueue(serviceRecQueueName, serviceSendQueueName);
+			// ESB Rec messares on the Service send queue
+			// this.esbServer.getMQConnection().createConsumer(serviceSendQueueName);
 			ServiceRegistrationData regData = new ServiceRegistrationData();
 			regData.setMessageProducer(this.esbServer.getMQConnection().getMessageProducerByQueue(serviceRecQueueName));
 			regData.setESBRecQueueName(serviceSendQueueName);
 			regData.setESBSendQueueName(serviceRecQueueName);
 			regData.setRegTime(new java.util.Date());
 			regData.setServiceOffered(serviceOffered);
-			//create thread for handling ping
-			ServicePingHandler pingHandler = new ServicePingHandler(this,this.esbServer,clientServiceName,serviceOffered,pingFreqMS);
+			// create thread for handling ping
+			ServicePingHandler pingHandler = new ServicePingHandler(this, this.esbServer, clientServiceName, serviceOffered, pingFreqMS);
 			regData.setPingHandler(pingHandler);
 			Thread pingThread = new Thread(pingHandler);
 			pingThread.setPriority(Thread.MAX_PRIORITY);
 			pingThread.start();
 			serviceRegistrationMap.put(clientServiceName, regData);
-			ESBServer.esb.setServiceNameList(serviceOffered,clientServiceName);
-			//setup currentServiceIndexMap
+			ESBServer.esb.setServiceNameList(serviceOffered, clientServiceName);
+			// setup currentServiceIndexMap
 			if (!ESBServer.esb.getCurrentServiceIndexMap().containsKey(serviceOffered))
 			{
 				AtomicInteger currentServiceIndex = new AtomicInteger(0);
@@ -171,8 +173,8 @@ public class NIOServer implements Runnable
 			returndata.setmessageQueueIP(esbServer.getServerData().getBrokerIP());
 			returndata.setmessageQueuePort(esbServer.getServerData().getBrokerPort());
 			String jsonStr = json.createJSONFromSocketDataObj(returndata);
-			byte[] returnData =ProtocolJSON.createBytePacketFromString(jsonStr);
-			send(socket,returnData);
+			byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
+			send(socket, returnData);
 			logger.info("Register " + clientServiceName);
 		}
 		else
@@ -181,7 +183,6 @@ public class NIOServer implements Runnable
 			logger.info("Already Registered " + clientServiceName);
 		}
 
-		
 	}
 
 	public void ShutdownFromClient(ProtocolSocketDataObject socketDataObject)
@@ -193,33 +194,42 @@ public class NIOServer implements Runnable
 		if (serviceRegistrationMap.containsKey(client))
 		{
 			serviceRegistrationMap.remove(client);
-			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size() );
+			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
 			if (servicesList.contains(client))
-			{	
+			{
 				servicesList.remove(client);
 			}
 			logger.debug("Removed: " + client);
 		}
 		else
 		{
-			logger.debug(client + "not in registrationMap" );
+			logger.debug(client + "not in registrationMap");
 		}
 	}
+
 	public void ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
 	{
-		
+
 		try
 		{
 			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-			//Vector<String> servicesList = ESBServer.esb.getServicesList();
+			// Vector<String> servicesList = ESBServer.esb.getServicesList();
 			logger.info("PING " + socketDataObject.getclientServiceName() + " serviceRegistrationMap size" + serviceRegistrationMap.size());
 			ServiceRegistrationData regData = serviceRegistrationMap.get(socketDataObject.getclientServiceName());
-			regData.getPingHandler().handleResponse(socketDataObject.getclientServiceName());
-			ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
-			returndata.setHeader(ProtocolJSON.SEMplest_PING);
-			String jsonStr = json.createJSONFromSocketDataObj(returndata);
-			byte[] returnData =ProtocolJSON.createBytePacketFromString(jsonStr);
-			send(socket,returnData);
+			if (regData == null)
+			{
+				logger.error("Registration Data for:" + socketDataObject.getclientServiceName() + " is NULL");
+			}
+			else
+			{
+				regData.getPingHandler().handleResponse(socketDataObject.getclientServiceName());
+				ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
+				returndata.setHeader(ProtocolJSON.SEMplest_PING);
+				String jsonStr = json.createJSONFromSocketDataObj(returndata);
+				byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
+				logger.debug("Send response back to Client: " + socketDataObject.getclientServiceName());
+				send(socket, returnData);
+			}
 		}
 		catch (Exception e)
 		{
