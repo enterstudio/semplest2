@@ -31,8 +31,9 @@ public class GoogleServiceTest {
 	GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
 	
 	private int errorCounter = 0;
+	private int sleepTime = 100;
 	
-	private String accountID = "7250251887";
+	private String accountID = "7250251887";	
 	
 	
 	public static void main(String[] args){
@@ -120,7 +121,8 @@ public class GoogleServiceTest {
 			}
 			catch(Exception e){
 				errorHandler(e);
-			}			
+			}		
+			Thread.sleep(sleepTime);
 			
 			//deleteCampaign
 			System.out.println("------------------------------------------------------------");
@@ -136,6 +138,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//changeCampaignStatus
 			System.out.println("------------------------------------------------------------");
@@ -148,6 +151,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//changeCampaignBudget
 			System.out.println("------------------------------------------------------------");
@@ -160,6 +164,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//UpdateCampaignName
 			System.out.println("------------------------------------------------------------");
@@ -173,6 +178,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getCampaignsByAccountId
 			System.out.println("------------------------------------------------------------");
@@ -187,6 +193,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//AddAdGroup
 			System.out.println("------------------------------------------------------------");
@@ -200,6 +207,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//addTextAd
 			System.out.println("------------------------------------------------------------");
@@ -213,6 +221,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}	
+			Thread.sleep(sleepTime);
 			
 			//getAdGroupsByCampaignId
 			System.out.println("------------------------------------------------------------");
@@ -227,6 +236,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//updateAD
 			System.out.println("------------------------------------------------------------");
@@ -239,6 +249,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//deleteAD
 			System.out.println("------------------------------------------------------------");
@@ -251,6 +262,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//deleteAdGroup
 			System.out.println("------------------------------------------------------------");
@@ -265,6 +277,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//GetRelatedKeywords
 			System.out.println("------------------------------------------------------------");
@@ -279,6 +292,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//GetRelatedKeywordsForURL
 			System.out.println("------------------------------------------------------------");
@@ -293,6 +307,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getAllAdGroupKeywords
 			System.out.println("------------------------------------------------------------");
@@ -307,6 +322,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getAllBiddableAdGroupCriteria
 			System.out.println("------------------------------------------------------------");
@@ -327,6 +343,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//addKeyWordToAdGroup
 			System.out.println("------------------------------------------------------------");
@@ -347,6 +364,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//setBidForKeyWord
 			System.out.println("------------------------------------------------------------");
@@ -365,6 +383,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getTrafficEstimationForKeywords
 			System.out.println("------------------------------------------------------------");
@@ -390,6 +409,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getBidLandscapeForKeyword
 			System.out.println("------------------------------------------------------------");
@@ -416,6 +436,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getBidLandscapeForAdgroup
 			System.out.println("------------------------------------------------------------");
@@ -442,6 +463,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getAllAdGroupCriteria
 			System.out.println("------------------------------------------------------------");
@@ -461,6 +483,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			//getReportForAccount
 			System.out.println("------------------------------------------------------------");
@@ -490,6 +513,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			Thread.sleep(sleepTime);
 			
 			
 			//---Methods not ready. to be implemented.
@@ -501,6 +525,9 @@ public class GoogleServiceTest {
 			//addAccountBudget
 			//updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget
 			
+		}
+		catch(Exception e){
+			e.printStackTrace();
 		}
 		finally{
 			cleanUp();

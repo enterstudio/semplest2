@@ -49,13 +49,15 @@ public class UnitTests {
 		 * 	- BiddingService
 		 * 
 		 */				
+		
+		DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
+		Date date = new Date();
+		now = dateFormat.format(date);
+		String reportName = "UnitTestReport" + now + ".txt";
+		String reportPath = "\\Z:\\TestReports\\UnitTest\\" + reportName;
+		
 		try{
-			//Create Report
-			DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
-			Date date = new Date();
-			now = dateFormat.format(date);
-			String reportName = "UnitTestReport" + now + ".txt";
-			String reportPath = "\\Z:\\TestReports\\UnitTest\\" + reportName;
+			//Create Report						
 			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
 			System.setOut(out);
 			
@@ -68,15 +70,19 @@ public class UnitTests {
 			System.out.println("   ");
 			
 			//Start Test
+			int ret = 0;
 			
 			//Test Msn Service
-			//MsnServiceTest msnServiceTest = new MsnServiceTest();
-			//msnServiceTest.Test_MsnServices_Standalone();	
+			MsnServiceTest msnServiceTest = new MsnServiceTest();
+			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
+			ret = (numMsnStandaloneError > 0)? msnServiceTest.testFailed() : msnServiceTest.testPassed();
 			
-			//Test Google Service
+			//Test Google Service as Standalone
 			GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 			numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
-			int ret = (numGoogleStandaloneError > 0)? googleServiceTest.testFailed() : googleServiceTest.testPassed();
+			ret = (numGoogleStandaloneError > 0)? googleServiceTest.testFailed() : googleServiceTest.testPassed();
+			
+			//If Google Service passed standalone test, test it through client api
 			
 			//Test Adengine Service
 			
@@ -121,9 +127,10 @@ public class UnitTests {
 		
 		//send email of the test result
 		String testResult = (numAllErrs > 0)? "FAILED" : "SUCCESSFUL";
+		summary = summary + eol + "Detail report is at \\semplest\\TestReports\\UnitTest\\" + reportName;
 		String subject = "[Test Result] Semplest Unit Test is " + testResult;
 		unitTest.sendEmail(subject, "nan@semplest.com", "nan@semplest.com", summary);
-		unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
+		//unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
         
 	}	
 	
