@@ -61,16 +61,8 @@ namespace SemplestWebApp.Services
                         }
                         else
                         {
-                            updatePromotion.LandingPageURL = model.AdModelProp.Url;
-                            updatePromotion.PromotionDescription = model.ProductGroup.Words;
-                            updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
-                            updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
-                            updatePromotion.EditedDate = DateTime.Now;
-                            // update promotion ads
-                            foreach (PromotionAd pad in updatePromotion.PromotionAds)
-                            {
-                            }
-
+                            // update promotion
+                            UpdatePromotionFromModel(updatePromotion, model, dbcontext);
                         }
 
                         dbcontext.SaveChanges();
@@ -190,6 +182,35 @@ namespace SemplestWebApp.Services
 
         }
 
+        private void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestEntities dbcontext)
+        {
+            updatePromotion.LandingPageURL = model.AdModelProp.Url;
+            updatePromotion.PromotionDescription = model.ProductGroup.Words;
+            updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
+            updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+            updatePromotion.EditedDate = DateTime.Now;
+
+            // update Geotargeting
+            foreach (GeoTargeting geo in updatePromotion.GeoTargetings.ToList())
+            {
+                dbcontext.GeoTargetings.Remove(geo);
+            }
+
+            // update promotion ads; delete first and add them again
+            foreach (PromotionAd pad in updatePromotion.PromotionAds.ToList())
+            {
+                foreach (SiteLink sli in pad.SiteLinks.ToList())
+                {
+                    dbcontext.SiteLinks.Remove(sli);
+                }
+                dbcontext.PromotionAds.Remove(pad);
+            }
+
+
+            AddGeoTargetingToPromotion(updatePromotion, model);
+            AddPromotionAdsToPromotion(updatePromotion, model);
+        }
+
         private void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model)
         {
             if (model.AdModelProp.Addresses != null)
@@ -218,8 +239,6 @@ namespace SemplestWebApp.Services
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
                 var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
-
-                // uncomment when validation added
 
                 if (model.AdModelProp.SiteLinks != null)
                 {
@@ -332,6 +351,26 @@ namespace SemplestWebApp.Services
                     }
                 }
                 retFlag = true;
+            }
+
+            return retFlag;
+        }
+
+        public bool SaveSiteLinks(int userid, CampaignSetupModel model)
+        {
+            bool retFlag = false;
+
+            int promoId = GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+            using (SemplestEntities dbcontext = new SemplestEntities())
+            {
+                var query = dbcontext.PromotionAds.Where(c => c.PromotionFK == promoId);
+                if (query.Count() > 0)
+                {
+                    foreach (PromotionAd pad in query)
+                    {
+                    }
+                }
+
             }
 
             return retFlag;
