@@ -24,7 +24,7 @@ import semplest.keywords.javautils.dictUtils;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
-public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterface{
+public class KWGenDmozLDAServerTest {
 	
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServerTest.class);
 	//Search index for categories
@@ -32,7 +32,6 @@ public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterfac
 	public KWGenDmozLDAServerTest() {
 
 	}
-	@Override
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
 		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
 		if(url!=null) url = TextUtils.formURL(url);
@@ -65,7 +64,7 @@ public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterfac
 		return optList;
 	}
 	
-	@Override
+
 	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception {
 		
 		if(categories==null || categories.size()==0){
@@ -452,7 +451,6 @@ public class KWGenDmozLDAServerTest implements SemplestKeywordLDAServiceInterfac
 	    
 	}
 	
-	@Override
 	public void initializeService(String str) throws Exception {
 		data = new KWGenDmozLDAdataTest();
 		Thread thread = new Thread(data);

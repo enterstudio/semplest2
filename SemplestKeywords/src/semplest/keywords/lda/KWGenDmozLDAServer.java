@@ -20,6 +20,8 @@ import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
+import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
@@ -28,6 +30,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
 	//Search index for categories
 	private static KWGenDmozLDAdata data;
+	private static enum SearchEngine {
+		Google, MSN;
+	}
 	public KWGenDmozLDAServer() {
 
 	}
@@ -35,6 +40,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
 		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
 		if(url!=null) url = TextUtils.formURL(url);
+		searchTerm = searchTerm.toLowerCase();
 		ArrayList<String> categories = this.getCategories(searchTerm);
 		return categories;
 	}
@@ -65,8 +71,20 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	}
 	
 	@Override
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories,String companyName, String searchTerm, String description, String[] adds, String url, Integer[] nGrams) throws Exception {
-		
+	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
+			String searchTerm, String description, String[] adds, String url, GeoTargetObject gt, Integer[] nGrams) throws Exception {
+		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
+		if(searchTerm==null || searchTerm.length()==0) throw new Exception("No search term provided");
+		searchTerm = searchTerm.toLowerCase();
+		for(int i=0; i< searchEngines.length; i++){
+			for (SearchEngine se : SearchEngine.values()){
+				if(searchEngines[i].equalsIgnoreCase(se.toString())&& !srchE.contains(se))
+					srchE.add(se);
+			}
+			if(srchE.size()<1){
+				throw new Exception("Not valid Search Engines");
+			}
+		}
 		if(categories==null || categories.size()==0){
 			throw new Exception("No categories provided");
 		}
@@ -81,17 +99,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		if(dataCount.length<30) throw new Exception("Not enough data provided");
 		String stemdata1 = new String();
 		stemdata1 = this.stemvString( data1, data.dict );
-		ArrayList<ArrayList<String>> keywords = this.getKeywords(categories, searchTerm, stemdata1, data.numKeywords, nGrams);
+		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, searchTerm, stemdata1, data.numKeywords, srchE, nGrams);
 		return keywords;
 	}
 	
 	
-	public ArrayList<ArrayList<String>> getKeywords(ArrayList<String> categories, String searchTerm, String data1, int numkw, Integer[] nGrams) throws Exception {
+	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories, String searchTerm, String data1,  
+			int numkw, ArrayList<SearchEngine> srchE, Integer[] nGrams) throws Exception {
 		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 		//with data form those categories
 		ArrayList<String> optCateg = new ArrayList<String>();
-		ArrayList<ArrayList<String>> keywordsfull = new ArrayList<ArrayList<String>>();
-		ArrayList<ArrayList<String>> keywords = new ArrayList<ArrayList<String>>();
+		ArrayList<ArrayList<KeywordProbabilityObject>> keywordsfull = new ArrayList<ArrayList<KeywordProbabilityObject>>();
+		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = new ArrayList<ArrayList<KeywordProbabilityObject>>();
 		Set<String> labels = data.TrainingData.keySet();
 		String cataux;
 		int numNod;
@@ -121,17 +140,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    logger.info("wordMap Size: "+ wordM.size());
 	    
 	    logger.info("Generating Kewyords");
+	    Set<String> kwSet = wordM.keySet();
 	    
 	    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
-	    keywordsfull= this.getKwMultiCombined(optCateg, searchTerm, nGrams, wordMap, 5);
+	    keywordsfull= this.getKwMultiCombined(optCateg, searchTerm, nGrams, wordMap, 5, srchE);
 	    int kwCount = 0;
 	    int iter = 0;
-	    ArrayList<String> finalkwList;
-	    for(ArrayList<String> kwList: keywordsfull){
+	    ArrayList<KeywordProbabilityObject> finalkwList;
+	    for(ArrayList<KeywordProbabilityObject> kwList: keywordsfull){
 	    	if(iter<2){
 	    		finalkwList = kwList;
 	    	}else{
-	    		finalkwList = new ArrayList<String>();
+	    		finalkwList = new ArrayList<KeywordProbabilityObject>();
 	    	}
 	    	int remain = numkw - kwCount;
 	    	int num2Gen=0;
@@ -140,7 +160,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		   		num2Gen = remain/2;
 		    if(iter==3) num2Gen = remain;
 		    int j=0;
-		    for(String keyw: kwList){
+		    for(KeywordProbabilityObject keyw: kwList){
 		    		if(j>= num2Gen) break;
 		    		finalkwList.add(keyw);
 		    		j++;
@@ -164,6 +184,26 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		System.setOut(stdout);
 		//**************************************************************************/
 		return keywords;
+	}
+	
+	private ArrayList<String> expandCategories(ArrayList<String> categories){
+		ArrayList<String> optCateg = new ArrayList<String>();
+		Set<String> labels = data.TrainingData.keySet();
+		String cataux;
+		int numNod;
+	    for (String label : labels){
+	    	for (int n=0; n<categories.size();n++){
+	    		cataux=catUtils.parent(categories.get(n));
+	    		numNod = catUtils.nodes(cataux);
+	    		if(catUtils.take(label, numNod).equals(catUtils.take(cataux,numNod))){
+	    			if (!optCateg.contains(label)){
+	    				//logger.debug(label);
+	    				optCateg.add(label);
+	    			}
+	    		}
+	    	}
+	    }
+	    return optCateg;
 	}
 	
 	private HashMap<String, Double> createWordMap(String data1, ArrayList<String> trainLines, String searchTerm) throws Exception{
@@ -195,27 +235,37 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		return wordMap;
 	}
 	
-	private ArrayList<ArrayList<String>> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, HashMap<String, Double> wordMap, int nGramsmax) throws Exception{
+	private ArrayList<ArrayList<KeywordProbabilityObject>> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, 
+			HashMap<String, Double> wordMap, int nGramsmax, ArrayList<SearchEngine> srchE) throws Exception{
 		
 		//Returns 4 grams combining 2 and 3 grams
-		ArrayList<String> bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2);
-		ArrayList<String> trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3);
-		ArrayList<ArrayList<String>> results = new ArrayList<ArrayList<String>>();
+		ArrayList<KeywordProbabilityObject> bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2, srchE);
+		ArrayList<KeywordProbabilityObject> trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3, srchE);
+		int iter=0;
+		while (iter<3 && (bigrams.size()<10 || trigrams.size()<10)){
+			optCateg = this.expandCategories(optCateg);
+			bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2, srchE);
+			trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3, srchE);
+			logger.info("Expanding categories");
+			iter++;
+			
+		}
+		ArrayList<ArrayList<KeywordProbabilityObject>> results = new ArrayList<ArrayList<KeywordProbabilityObject>>();
 		results.add(bigrams);
 		results.add(trigrams);
 		
 		HashMap<String,ArrayList<String>> biGMap= new HashMap<String,ArrayList<String>>();
 		// Create Hashmap of biwords;
-		for(String base: bigrams){
-			String[] words = base.split("\\s+");
+		for(KeywordProbabilityObject base: bigrams){
+			String[] words = base.getKeyword().split("\\s+");
 			ArrayList<String> aux;
 			for(int i=0; i<words.length; i++){
 				if(biGMap.containsKey(words[i])){
 					aux = biGMap.get(words[i]);
-					aux.add(base);
+					aux.add(base.getKeyword());
 				}else{
 					aux = new ArrayList<String>();
-					aux.add(base);
+					aux.add(base.getKeyword());
 					biGMap.put(words[i], aux);
 				}
 			}
@@ -226,13 +276,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		//Extend keyword list
 		if(nGramsmax>=4){
 			for(int m = 4; m<=nGramsmax; m++){
-				ArrayList<String> tempArray = new ArrayList<String>();
+				ArrayList<KeywordProbabilityObject> tempArray = new ArrayList<KeywordProbabilityObject>();
 				HashMap<String,Double> temp = new HashMap<String,Double>();
 				ValueComparator bvc =  new ValueComparator(temp);
 				TreeMap<String,Double> sorted_map = new TreeMap<String,Double>(bvc);
-				ArrayList<String> baseList = results.get(m-3);
-				for(String base: baseList){
-					String[] words = base.split("\\s+");
+				ArrayList<KeywordProbabilityObject> baseList = results.get(m-3);
+				for(KeywordProbabilityObject base: baseList){
+					String[] words = base.getKeyword().split("\\s+");
 					ArrayList<String> aux;
 					for(int i=0; i<words.length; i++){
 						if(biGMap.containsKey(words[i])){
@@ -241,13 +291,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 								boolean flag=false;
 								String[] prts = gr.split("\\s+");
 								for(int n=0;n<prts.length;n++){
-									if(!prts[n].equals(words[i]) && base.contains(prts[n])){
+									if(!prts[n].equals(words[i]) && base.getKeyword().contains(prts[n])){
 										flag=true;
 										break;
 									}
 								}
 								if(!flag){
-									String kwnew = base.replace(words[i],gr);
+									String kwnew = base.getKeyword().replace(words[i],gr);
 									kwnew=kwnew.replaceAll("\\s+", " ");
 									temp.put(kwnew,this.calculateKWProb(kwnew, wordMap));
 								}
@@ -258,7 +308,18 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 				sorted_map.putAll(temp);
 				Set<String> keySet = sorted_map.keySet();
 				for(String key: keySet){
-					tempArray.add(key);
+					KeywordProbabilityObject kProb = new KeywordProbabilityObject();
+					if(srchE.contains(SearchEngine.Google))
+						kProb.setIsTargetGoogle(true);
+					else
+						kProb.setIsTargetGoogle(false);
+					if(srchE.contains(SearchEngine.MSN))
+						kProb.setIsTargetMSN(true);
+					else
+						kProb.setIsTargetMSN(false);
+					kProb.setKeyword(key);
+					kProb.setSemplestProbability(temp.get(key));
+					tempArray.add(kProb);
 				}
 				results.add(tempArray);
 			}
@@ -278,15 +339,27 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	  return new Double(wProb);
 	}
 	
-	private ArrayList<String> getKwMulti(String searchTerms,ArrayList<String> optCateg, int numkw, HashMap<String, Double> wordMap, int nGrams) throws Exception{
+	private ArrayList<KeywordProbabilityObject> getKwMulti(String searchTerms,ArrayList<String> optCateg, 
+			int numkw, HashMap<String, Double> wordMap, int nGrams, ArrayList<SearchEngine> srchE) throws Exception{
 		//Generates keywords with nGrams words
 
 		MultiWordCollect[] nGramsA=data.biGrams;
-		ArrayList<String> keywords = new ArrayList<String>();
+		ArrayList<KeywordProbabilityObject> keywords = new ArrayList<KeywordProbabilityObject>();
 		//Select bigrams or trigrams based on nGrams value
 		switch (nGrams){
 		case 2: nGramsA=data.biGrams; 
-				keywords.add(searchTerms);
+				KeywordProbabilityObject kProb = new KeywordProbabilityObject();
+				if(srchE.contains(SearchEngine.Google))
+					kProb.setIsTargetGoogle(true);
+				else
+					kProb.setIsTargetGoogle(false);
+				if(srchE.contains(SearchEngine.MSN))
+					kProb.setIsTargetMSN(true);
+				else
+					kProb.setIsTargetMSN(false);
+				kProb.setKeyword(searchTerms.toLowerCase());
+				kProb.setSemplestProbability(1.0);
+				keywords.add(kProb);
 				break;
 		case 3: nGramsA=data.triGrams; break;
 		default: throw new Exception("nGrams value not valid");
@@ -332,8 +405,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 							kwrd=kwrd+subWrds[n]+" ";
 						}
 						
-						if(!in && wProb>0){
-							multWMap.put(kwrd, wProb);
+						if(!in && wProb>0 && !multWMap.containsKey(kwrd)){
+								multWMap.put(kwrd, wProb);
 						}
 						
 					}
@@ -349,12 +422,23 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		    String keyword;
 		    i=0;
 		    iterator=keySet.iterator();
-		    String stcompare = searchTerms.replaceAll("\\s+", "");
+		    String stcompare = searchTerms.replaceAll("\\s+$", "").replaceAll("^\\s+", "");
 		    while(i<numkw){
 		    		if(iterator.hasNext())keyword =iterator.next();
 		    		else break;
-		    		if(!keyword.replaceAll("\\s+", "").equals(stcompare)){
-		    			keywords.add(keyword);
+		    		if(!keyword.replaceAll("\\s+$", "").replaceAll("^\\s+", "").equals(stcompare)){
+		    			KeywordProbabilityObject kProb = new KeywordProbabilityObject();
+		    			if(srchE.contains(SearchEngine.Google))
+							kProb.setIsTargetGoogle(true);
+						else
+							kProb.setIsTargetGoogle(false);
+						if(srchE.contains(SearchEngine.MSN))
+							kProb.setIsTargetMSN(true);
+						else
+							kProb.setIsTargetMSN(false);
+						kProb.setKeyword(keyword);
+						kProb.setSemplestProbability(multWMap.get(keyword));
+						keywords.add(kProb);
 				    	i++;
 		    		}
 		    }
@@ -507,18 +591,27 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		thread.start();
 	}
 	
-	private String stemvString( String raws, dictUtils dict){
+	private String stemvString( String raws, dictUtils dict) throws Exception{
 		//Returns the stemmed version of a word
 	    String os = "";
-	    for( String w: raws.split("\\s+"))
-	      os = os + dict.getStemWord( w ) + " ";
+	    boolean flag = false;
+	    for( String w: raws.split("\\s+")){
+	    	String newword = dict.getStemWord( w.toLowerCase() );
+	    	if(newword != null){
+	    		os = os + newword + " ";
+	    		flag = true;
+	    	}
+	    }
+    	if(!flag){
+    		throw new Exception("Not a valid product promotion name");
+    	}
 	    return os;
 	  }
 	private String stemvStringNoFilter( String raws, dictUtils dict){
 		//Returns the stemmed version of a word
 	    String os = "";
 	    for( String w: raws.split("\\s+")){
-	    	String aux = dictUtils.getStemWord( w );
+	    	String aux = dictUtils.getStemWord( w.toLowerCase() );
 	    	if(aux != null)
 	    		os = os + aux + " ";
 	    	else 
@@ -598,13 +691,13 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			
 			Integer[] nGrams = {50,50};
-			ArrayList<ArrayList<String>> kw = kwGen.getKeywords(categories,null, searchTerm[0], uInf, adds, url,nGrams);
+			ArrayList<ArrayList<KeywordProbabilityObject>> kw = kwGen.getKeywords(categories,null, new String[] {"Google", "MSN"}, searchTerm[0], uInf, adds, url, null ,nGrams);
 			
 			for(int n=0; n<4; n++){
 				System.out.println("\n"+ (n+2)+" word keywords:");
-				for(String k: kw.get(n)){
-					k=k.replaceAll("wed", "wedding");
-					System.out.print(k+", ");
+				for(KeywordProbabilityObject k: kw.get(n)){
+					String kaux=k.getKeyword().replaceAll("wed", "wedding");
+					System.out.print(kaux+" "+k.getSemplestProbability()+", ");
 				}
 			}
 			
@@ -612,9 +705,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
 			for(int n=0; n<4; n++){
 				//System.out.println("\n"+ (n+2)+" word keywords:");
-				for(String k: kw.get(n)){
-					k=k.replaceAll("wed", "wedding");
-					System.out.println(k);
+				for(KeywordProbabilityObject k: kw.get(n)){
+					String kaux=k.getKeyword().replaceAll("wed", "wedding");
+					System.out.println(kaux);
 				}
 			}
 			System.setOut(stdout);
