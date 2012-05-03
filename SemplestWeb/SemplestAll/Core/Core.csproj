@@ -239,7 +239,9 @@
     <Content Include="Views\Entity\Create.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Test\Create.cshtml" />
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\Home\SearchKeywords.cshtml" />
     <Content Include="Views\Home\Profile.cshtml" />
   </ItemGroup>
@@ -299,7 +301,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>61294</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
