@@ -525,7 +525,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	@Override
 	public TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
-			HashMap<String, Double> KeywordWithBid)
+			HashMap<String, Long> KeywordWithBid)
 			throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -533,6 +533,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		//jsonHash.put("keyword", keyword);
 		jsonHash.put("matchType", matchType.getValue());
+		jsonHash.put("KeywordWithBid", gson.toJson(KeywordWithBid,HashMap.class));
 		//String bidLevelStr = gson.toJson(bidLevels, ArrayList.class);
 		//jsonHash.put("bidLevels",bidLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
