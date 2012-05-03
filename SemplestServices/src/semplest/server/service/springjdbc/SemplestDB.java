@@ -246,11 +246,12 @@ public class SemplestDB extends BaseDB
 		}
 
 	}
-	
+
 	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
 
 	/*
-	 * This get the last created KeywordBid Data for all keywords associated with campaign
+	 * This get the last created KeywordBid Data for all keywords associated
+	 * with campaign
 	 */
 	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, String advertisingEngine) throws Exception
 	{
@@ -258,122 +259,118 @@ public class SemplestDB extends BaseDB
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
-		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, " +
-				"ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative, ki.CreatedDate from KeywordBid kb  " +
-				"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-				"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-				"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-				"inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK " +
-				"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-				"inner join  " +
-				"(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd " +
-				"group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate " +
-				"where pka.PromotionFK = ? and a.AdvertisingEngine = ?";
+		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, "
+				+ "ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative, ki.CreatedDate from KeywordBid kb  "
+				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+				+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+				+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
+				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join  "
+				+ "(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd "
+				+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate "
+				+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ?";
 		return jdbcTemplate.query(strSQL, new Object[]
 		{ promotionID, advertisingEngine }, bidObjMapper);
 	}
-	
-	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate, Date endDate )
+
+	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate,
+			Date endDate)
 	{
 		String strSQL = null;
 		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
 		if (endDate == null)
 		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, " +
-					"ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative,ki.CreatedDate from KeywordBid kb  " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-					"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-					"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-					"inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK " +
-					"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"inner join  " +
-					"(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd " +
-					"group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate " +
-					"where pka.PromotionFK = ? and a.AdvertisingEngine = ? and ki.CreatedDate >= ?";
-			
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, "
+					+ "ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative,ki.CreatedDate from KeywordBid kb  "
+					+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+					+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+					+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
+					+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join  "
+					+ "(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd "
+					+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate "
+					+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ? and ki.CreatedDate >= ?";
+
 			return jdbcTemplate.query(strSQL, new Object[]
 			{ promotionID, adEngine, startDateSQL }, new AllBiddableRSExtractor());
 		}
 		else
 		{
 			java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, " +
-					"ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative, ki.CreatedDate from KeywordBid kb  " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-					"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-					"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-					"inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK " +
-					"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"inner join  " +
-					"(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd " +
-					"group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate " +
-					"where pka.PromotionFK = ? and a.AdvertisingEngine = ? and ki.CreatedDate >= ? and ki.CreatedDate <= ?";
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, "
+					+ "ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative, ki.CreatedDate from KeywordBid kb  "
+					+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+					+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+					+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
+					+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join  "
+					+ "(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd "
+					+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate "
+					+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ? and ki.CreatedDate >= ? and ki.CreatedDate <= ?";
 			return jdbcTemplate.query(strSQL, new Object[]
 			{ promotionID, adEngine, startDateSQL, endDateSQL }, new AllBiddableRSExtractor());
 		}
 	}
-	
-	
+
 	private static final RowMapper<TrafficEstimatorDataObject> trafficEstDataObjMapper = new BeanPropertyRowMapper(TrafficEstimatorDataObject.class);
+
 	/*
-	 * This get the last created Traffic Estimator Data for one keyword associated with campaign
+	 * This get the last created Traffic Estimator Data for one keyword
+	 * associated with campaign
 	 */
-	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, String advertisingEngine) throws Exception
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, String advertisingEngine)
+			throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
-		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC,b.BidType,p.IsNegative, te.CreatedDate " +
-				"from KeywordBid kb " +
-				"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-				"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-				"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-				"inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
-				"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-				"inner join  " +
-				"(select te.KeywordBidFK,MAX(te.CreatedDate) [lastDate]  from TrafficEstimator te " +
-				"group by te.KeywordBidFK) mte on te.KeywordBidFK = kb.KeywordBidPK and mte.lastDate = te.CreatedDate " +
-				"where pka.PromotionFK = ? and k.Keyword = ? and a.AdvertisingEngine = ?";
+		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC,b.BidType,p.IsNegative, te.CreatedDate "
+				+ "from KeywordBid kb "
+				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+				+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+				+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  "
+				+ "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK "
+				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+				+ "inner join  "
+				+ "(select te.KeywordBidFK,MAX(te.CreatedDate) [lastDate]  from TrafficEstimator te "
+				+ "group by te.KeywordBidFK) mte on te.KeywordBidFK = kb.KeywordBidPK and mte.lastDate = te.CreatedDate "
+				+ "where pka.PromotionFK = ? and k.Keyword = ? and a.AdvertisingEngine = ?";
 		return jdbcTemplate.query(strSQL, new Object[]
 		{ promotionID, keyword, advertisingEngine }, trafficEstDataObjMapper);
 	}
-	/*
-	public static List<TrafficEstimatorDataObject> getAllTrafficEstimatorForKeyword(Integer promotionID, String keyword, String adEngine, Date startDate, Date endDate )
-	{
-		String strSQL = null;
-		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
-		if (endDate == null)
-		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  " +
-					"from KeywordBid kb  " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-					"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-					"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-					"inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
-					"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? ";
-			
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, keyword, adEngine, startDateSQL },trafficEstDataObjMapper);
-		}
-		else
-		{
-			java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  " +
-					"from KeywordBid kb  " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
-					"inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
-					"inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-					"inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
-					"inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? and te.CreatedDate <= ?";
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, keyword, adEngine, startDateSQL, endDateSQL }, trafficEstDataObjMapper);
-		}
-	}
 
-*/
+	/*
+	 * public static List<TrafficEstimatorDataObject>
+	 * getAllTrafficEstimatorForKeyword(Integer promotionID, String keyword,
+	 * String adEngine, Date startDate, Date endDate ) { String strSQL = null;
+	 * java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime()); if
+	 * (endDate == null) { strSQL =
+	 * "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  "
+	 * + "from KeywordBid kb  " +
+	 * "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+	 * +
+	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+	 * + "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
+	 * "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
+	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+	 * +
+	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? "
+	 * ;
+	 * 
+	 * return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword,
+	 * adEngine, startDateSQL },trafficEstDataObjMapper); } else { java.sql.Date
+	 * endDateSQL = new java.sql.Date(endDate.getTime()); strSQL =
+	 * "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  "
+	 * + "from KeywordBid kb  " +
+	 * "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
+	 * +
+	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
+	 * + "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
+	 * "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
+	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+	 * +
+	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? and te.CreatedDate <= ?"
+	 * ; return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword,
+	 * adEngine, startDateSQL, endDateSQL }, trafficEstDataObjMapper); } }
+	 */
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
 
 	public static BudgetObject getBudget(int promotionID, String searchEngine) throws Exception
@@ -410,8 +407,6 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	
-
 	/*
 	 * Report calls
 	 */
@@ -421,10 +416,56 @@ public class SemplestDB extends BaseDB
 		AddReportDataSP setReportSP = new AddReportDataSP();
 		for (ReportObject rptObj : reportObjList)
 		{
-			setReportSP.execute(rptObj.getAccountID(),rptObj.getCampaignID(), rptObj.getKeyword(), new java.sql.Date(rptObj.getTransactionDate().getTime()), rptObj.getMicroBidAmount(), rptObj.getBidMatchType(), 
-					rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getQualityScore(), rptObj.getApprovalStatus(),
-					rptObj.getFirstPageCPC(), rptObj.getMicroCost());
+			setReportSP.execute(rptObj.getAccountID(), rptObj.getCampaignID(), rptObj.getKeyword(), new java.sql.Date(rptObj.getTransactionDate()
+					.getTime()), rptObj.getMicroBidAmount(), rptObj.getBidMatchType(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj
+					.getAveragePosition(), rptObj.getAverageCPC(), rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC(),
+					rptObj.getMicroCost());
 			logger.info(rptObj.getKeyword());
+		}
+	}
+
+	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper(ReportObject.class);
+
+	private static List<ReportObject> getReportData(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
+			throws Exception
+	{
+
+		if (!AdEngine.existsAdEngine(adEngine))
+		{
+			throw new Exception(adEngine + " Not Found");
+		}
+		String strSQL = null;
+		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
+		if (endDate == null)
+		{
+			strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
+					+ "bt.BidType,aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+					+ "from AdvertisingEngineReportData aerd "
+					+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
+					+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+					+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
+					+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
+					+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+					+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ?";
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ promotionID, adEngine, startDateSQL }, reportObjectjMapper);
+		}
+		else
+		{
+			java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
+			strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
+					+ "bt.BidType,aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+					+ "from AdvertisingEngineReportData aerd "
+					+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
+					+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+					+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
+					+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
+					+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+					+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ? and aerd.CreatedDate <= ?";
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ promotionID, adEngine, startDateSQL, endDateSQL }, reportObjectjMapper);
 		}
 	}
 
