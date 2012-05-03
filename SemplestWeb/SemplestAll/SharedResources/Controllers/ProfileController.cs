@@ -23,29 +23,47 @@ namespace Semplest.SharedResources.Controllers
         {
             using (SemplestEntities dbContext = new SemplestEntities())
             {
-
                 var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
                 if (creds.Count() == 1)
                 {
                     Credential c = creds.First();
-                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = c.UsersFK;
-                    if (c.User.UserRolesAssociations.First().RolesFK == 2)
-                        //means this is an admin user
-                        return RedirectToAction("Index", "Home");
-                    else if (c.User.IsRegistered)
-                        //user is a regular core user
-                        return RedirectToAction("CampaignSetup", "Campaign");
-                    else if (!string.IsNullOrEmpty(pm.SecurityAnswer) && !string.IsNullOrEmpty(pm.SecurityQuestion))
+                    if (c.User.IsActive)
                     {
-                        //authenticated properly but hasn't registered yet
-                        c.SecurityAnswer = pm.SecurityAnswer;
-                        c.SecurityQuestion = pm.SecurityQuestion;
-                        c.User.IsRegistered = true;
-                        dbContext.SaveChanges();
-                        return RedirectToAction("Index", "Home");
+                        Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = c.UsersFK;
+                        if (c.User.IsRegistered)
+                        {
+                            //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
+                            if (string.IsNullOrEmpty(c.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
+                                return RedirectToAction("Index", "Home");
+                            else if (c.User.IsRegistered)
+                                //user is a regular core user
+                                return RedirectToAction("Index2", "Home");
+                        }
+                        else if (!string.IsNullOrEmpty(pm.SecurityAnswer) && !string.IsNullOrEmpty(pm.SecurityQuestion))
+                        {
+                            //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
+                            c.SecurityAnswer = pm.SecurityAnswer;
+                            c.SecurityQuestion = pm.SecurityQuestion;
+                            c.User.IsRegistered = true;
+                            dbContext.SaveChanges();
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
+                            pm.IsRegistered = false;
+                        }
                     }
                     else
-                        pm.IsRegistered = false;
+                    {
+                        pm.LoggedInSucceeded = false;
+                        pm.LoginFailedMessage = "Sorry, your account is currently disabled, please contact SEMplest Customer Service for assistance.";
+                    }
+                }
+                else
+                {
+                    pm.LoggedInSucceeded = false;
+                    pm.LoginFailedMessage = "Your userid or password is invalid please try again.";
                 }
                 return View(pm);
             }
