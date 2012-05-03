@@ -26,6 +26,7 @@ import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
+import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
@@ -317,7 +318,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * This get the last created Traffic Estimator Data for one keyword associated with campaign
 	 */
-	public static TrafficEstimatorDataObject getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, String advertisingEngine) throws Exception
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, String advertisingEngine) throws Exception
 	{
 		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
@@ -334,10 +335,10 @@ public class SemplestDB extends BaseDB
 				"(select te.KeywordBidFK,MAX(te.CreatedDate) [lastDate]  from TrafficEstimator te " +
 				"group by te.KeywordBidFK) mte on te.KeywordBidFK = kb.KeywordBidPK and mte.lastDate = te.CreatedDate " +
 				"where pka.PromotionFK = ? and k.Keyword = ? and a.AdvertisingEngine = ?";
-		return jdbcTemplate.queryForObject(strSQL, new Object[]
+		return jdbcTemplate.query(strSQL, new Object[]
 		{ promotionID, keyword, advertisingEngine }, trafficEstDataObjMapper);
 	}
-	
+	/*
 	public static List<TrafficEstimatorDataObject> getAllTrafficEstimatorForKeyword(Integer promotionID, String keyword, String adEngine, Date startDate, Date endDate )
 	{
 		String strSQL = null;
@@ -372,6 +373,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
+*/
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
 
 	public static BudgetObject getBudget(int promotionID, String searchEngine) throws Exception
@@ -414,10 +416,14 @@ public class SemplestDB extends BaseDB
 	 * Report calls
 	 */
 
-	public static void storeAdvertisingEngineBidData(ArrayList<ReportObject> reportObjList) throws Exception
+	public static void storeAdvertisingEngineReportData(String adEngine, List<ReportObject> reportObjList) throws Exception
 	{
+		AddReportDataSP setReportSP = new AddReportDataSP();
 		for (ReportObject rptObj : reportObjList)
 		{
+			setReportSP.execute(rptObj.getAccountID(),rptObj.getCampaignID(), rptObj.getKeyword(), new java.sql.Date(rptObj.getTransactionDate().getTime()), rptObj.getMicroBidAmount(), rptObj.getBidMatchType(), 
+					rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getQualityScore(), rptObj.getApprovalStatus(),
+					rptObj.getFirstPageCPC(), rptObj.getMicroCost());
 			logger.info(rptObj.getKeyword());
 		}
 	}

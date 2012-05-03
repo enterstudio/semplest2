@@ -2480,7 +2480,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public ArrayList<ReportObject> getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
 		
-		ReportObject ret = new ReportObject();
+		//ReportObject ret = new ReportObject();
 		
 		//requestKeywordReport
 		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, aggregation);		
