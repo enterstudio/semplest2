@@ -313,6 +313,18 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new MsnCloudException(e);
 		}
 	}
+	
+	public String getAccountIDs(String json) throws Exception
+	{	
+		logger.debug("call getAccountIDs(String json)" + json);
+		HashMap<String,Long> ret = null;
+		try {
+			ret = getAccountIDs();
+		} catch (MsnCloudException e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	} 
 
 		public HashMap<String,Long> getAccountIDs() throws MsnCloudException{
 		try
