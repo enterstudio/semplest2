@@ -14,7 +14,7 @@ public class KeywordDataObject
 	private Integer qualityScore;
 	private Boolean IsEligibleForShowing = true;
 	private Boolean isNegative = false;
-	private Double semplestProbability = -1.0;
+	
 	private Date createdDate;
 	
 	public Date getCreatedDate(){
@@ -87,14 +87,6 @@ public class KeywordDataObject
 	public void setNegative(Boolean isNegative)
 	{
 		this.isNegative = isNegative;
-	}
-	public Double getSemplestProbability()
-	{
-		return semplestProbability;
-	}
-	public void setSemplestProbability(Double semplestProbability)
-	{
-		this.semplestProbability = semplestProbability;
 	}
 	public Boolean isIsEligibleForShowing()
 	{
