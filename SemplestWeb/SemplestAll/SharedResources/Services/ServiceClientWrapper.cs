@@ -37,7 +37,7 @@ namespace Semplest.SharedResources.Services
         }
 
 
-        public List<string> GetKeywords(List<string> categories, string companyName, string[] searchEngines,
+        public List<KeywordProbabilityObject> GetKeywords(List<string> categories, string companyName, string[] searchEngines,
                                 string searchTerm, string description, string[] adds, string url,
                                 GeoTargetObject[] gt, Int32[] nGrams)
         {
@@ -66,15 +66,16 @@ namespace Semplest.SharedResources.Services
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
 
-            var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-            var newstrlist = new List<string>();
+            //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+            var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
+            var newKPOlist = new List<KeywordProbabilityObject>();
 
-            foreach (var strlis in listoflist)
+            foreach (var kpolis in listoflist)
             {
-                newstrlist.AddRange(strlis);
+                newKPOlist.Add(kpolis);
             }
 
-            return newstrlist;
+            return newKPOlist;
         }
 
         public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm,
