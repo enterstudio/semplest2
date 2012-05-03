@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SemplestModel;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.SharedResources.Helpers
 {
@@ -28,10 +29,11 @@ namespace Semplest.SharedResources.Helpers
                 er.CreatedDate = DateTime.Now;
                 _dbContext.Errors.Add(er);
                 _dbContext.SaveChanges();
-                //send email
+                var scw = new ServiceClientWrapper();
+                scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
             }
             catch (Exception ex) { Console.WriteLine(ex.ToString());
-                throw;
+                //throw;
             }
             // Log filterContext.Exception in some way.  
             //}
