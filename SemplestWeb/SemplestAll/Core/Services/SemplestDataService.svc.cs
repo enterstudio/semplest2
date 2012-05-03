@@ -5,6 +5,7 @@ using System.Data.Services;
 using System.Data.Services.Common;
 using Semplest.Core.Models;
 using SemplestModel;
+using Semplest.SharedResources.Services;
 
 namespace SemplestWebApp.Services
 {
@@ -300,7 +301,67 @@ namespace SemplestWebApp.Services
             return retFlag;
         }
 
-        public bool SaveKeywords(int promotionId, List<string> keywordsList)
+        public bool SaveKeywords(int promotionId, CampaignSetupModel model)
+        {
+            bool retFlag = false;
+
+            using (var dbcontext = new SemplestEntities())
+            {
+                // todo need to fix this
+                //return true;
+
+                foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
+                {
+                    if (dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Count() == 0)
+                    {
+                        // add it in Keywords table and in PromotionKeywordAssociations
+                        dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.getKeyword() });
+                        dbcontext.SaveChanges();
+
+                        int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Select(c => c.KeywordPK).First();
+                        dbcontext.PromotionKeywordAssociations.Add(
+                            new PromotionKeywordAssociation
+                            {
+                                PromotionFK = promotionId,
+                                KeywordFK = keywordId,
+                                IsActive = true,
+                                IsDeleted = false,
+                                IsNegative = false
+                            });
+
+                    }
+                    else  // keyword already there in the Keywords table, setup an association with promotion if its not there
+                    {
+                        // todo find out more
+
+                        var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
+                        if (query.Count() == 0)
+                        {
+                            int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Select(c => c.KeywordPK).First();
+                            dbcontext.PromotionKeywordAssociations.Add(
+                                new PromotionKeywordAssociation
+                                {
+                                    PromotionFK = promotionId,
+                                    KeywordFK = keywordId,
+                                    IsActive = true,
+                                    IsDeleted = false,
+                                    IsNegative = false,
+                                    SemplestProbability = kpo.getSemplestProbability(),
+                                    IsTargetMSN = kpo.getIsTargetMSN(),
+                                    IsTargetGoogle = kpo.getIsTargetGoogle()
+                                });
+
+                        }
+                    }
+                }
+                retFlag = true;
+            }
+
+            return retFlag;
+        }
+
+
+        public bool SaveKeywordsOld(int promotionId, List<string> keywordsList)
         {
             bool retFlag = false;
 

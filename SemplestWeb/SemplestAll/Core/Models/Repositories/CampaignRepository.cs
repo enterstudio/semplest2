@@ -83,7 +83,7 @@ namespace Semplest.Core.Models.Repositories
                                             model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
             if (keywords != null && keywords.Count > 0)
             {
-                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key }))
+                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key.getKeyword() }))
                 {
                     model.AllKeywords.Add(kwm);
                 }

@@ -11,6 +11,7 @@ using SemplestModel;
 using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Controllers
 {
@@ -31,6 +32,9 @@ namespace Semplest.Core.Controllers
             Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
+            //var scw = new ServiceClientWrapper();
+            //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
+
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
         }
@@ -137,7 +141,18 @@ namespace Semplest.Core.Controllers
                     keyList.Add(kwm.Name);
                 }
                 // save to database
-                ds.SaveKeywords(promoId, keyList);
+                //ds.SaveKeywords(promoId, keyList);
+                msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before saving keywords to database";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
+
+                ds.SaveKeywords(promoId, model);
+
+                msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
+                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                logEnty.Message = msg;
+                Logger.Write(logEnty);
 
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);

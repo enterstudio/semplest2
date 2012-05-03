@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
 using System.Linq;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Models
 {
@@ -43,6 +44,7 @@ namespace Semplest.Core.Models
         #endregion
 
         #region Nested type: KeywordsModel
+        public List<KeywordProbabilityObject> AllKeywordProbabilityObjects { get; set; }
         public List<KeywordsModel> AllKeywords { get; set; }
         public List<KeywordsModel> SelectedKeywords { get; set; }
         public List<int> KeywordIds { get; set; }
