@@ -5,10 +5,10 @@
     <table>
         <tr>
             <td>
-                City
+                Street
             </td>
             <td>
-                @Html.TextBoxFor(t => t.City, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.Address, new { @class = "k-textbox k-textboxAd" })
                 <button type="button" class="k-button" style="vertical-align: top" onclick="doOptions()">
                     <span class="k-search k-icon"></span>
                 </button>
@@ -18,12 +18,21 @@
                 </div>
             </td>
         </tr>
-        <tr>
+         <tr>
+            <td>
+                City
+            </td>
+            <td>
+                @Html.TextBoxFor(t => t.City, new { @class = "k-textbox k-textboxAd" })
+            </td>
+        </tr>
+       <tr>
             <td>
                 State
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", 
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", 
+
 "StateAbbr"), new { @class = "k-dropdownlist" })
             </td>
         </tr>
