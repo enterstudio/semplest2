@@ -105,7 +105,7 @@ Edit Customer Account:
     
     
     <label>
-        Rep Name/ID: 
+        Rep: 
         
         @Html.DropDownListFor(r => r.SelectedRepID, Model.Reps)
      
@@ -127,7 +127,7 @@ Edit Customer Account:
 
 
     <label>
-        ASR Name/ID:
+        Salesperson:
         @Html.DropDownListFor(r => r.SelectedSalesPersonID, Model.SalesPersons)
 
    @*     @Html.DropDownListFor(m => m.employeeitemIDs, new SelectList(Model.EmployeeList, "ID", "Name", Model.employeeitemIDs))*@
@@ -219,8 +219,18 @@ Edit Customer Account:
     <h3>
         Billing:</h3>
     <br />
-    <input type="checkbox" id="check1" title="Invoice" value="Invoice">Invoice</input><input
-        type="checkbox" id="check2" title="Credit Card" value="Credit Card"> Credit Card</input> 
+
+    <div class="editor-label">
+    @Html.LabelFor(model => model.BillTypes)
+            
+    </div>
+    <div class="editor-field">
+    @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes )
+   
+    </div>
+
+
+   
 
     <h3>
         Enter Your Creditcard Information:</h3>

@@ -136,6 +136,8 @@ namespace Semplest.Admin.Models
         public bool  isActive { get; set; }
         //no credit table in the database --> need to add these
         //no rep, salesperson  
+       
+
       }
 
     public class CustomerAccount
@@ -190,6 +192,7 @@ namespace Semplest.Admin.Models
         [Required ]
         [DisplayName("Password")]
         public string UserPassword { get; set; }
+        public int selectedBillTypeid { get; set; }
 
 
     }
@@ -277,6 +280,12 @@ namespace Semplest.Admin.Models
         //for parent dropdown
         public int SelectedParentID { get; set; }
         public IEnumerable<SelectListItem> Parents { get; set; }
+
+        //for billtype dropdown
+        public int SelectedBillTypeID { get; set; }
+
+        [DisplayName("Bill Type")]
+        public IEnumerable<SelectListItem> BillTypes { get; set; }
 
 
     }
