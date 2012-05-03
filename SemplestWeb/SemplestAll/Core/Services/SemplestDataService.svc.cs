@@ -307,7 +307,7 @@ namespace SemplestWebApp.Services
             using (var dbcontext = new SemplestEntities())
             {
                 // todo need to fix this
-                return true;
+                //return true;
 
                 foreach (string keyword in keywordsList)
                 {
@@ -411,6 +411,25 @@ namespace SemplestWebApp.Services
                 //db.AdvertisingEngines.Add(ae);
                 db.SaveChanges();
             }
+        }
+
+        public string GetStateNameFromCode(int stateCode)
+        {
+            string stateName = String.Empty;
+            using (var db = new SemplestEntities())
+            {
+                stateName = db.StateCodes.Where(m => m.StateAbbrPK == stateCode).First().StateAbbr;
+            }
+            return stateName;
+        }
+
+        public List<string> GetAdEngines()
+        {
+            using (var db = new SemplestEntities())
+            {
+                return db.AdvertisingEngines.Select(m => m.AdvertisingEngine1).ToList();
+            }
+
         }
     }
 }
