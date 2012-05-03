@@ -14,6 +14,22 @@ public class BidElement
 	private Boolean isDefaultValue;
 	private Boolean isActive;
 	
+	
+	public BidElement() {
+		// do nothing!!
+	}
+	
+	public BidElement(String keyword, Long keywordAdEngineID, Long microBidAmount, 
+			String matchType, String competitiveType, Boolean isDefaultValue, 
+			Boolean isActive){ // leaving the Date fields out of the constructor
+		this.keyword = keyword;
+		this.keywordAdEngineID = keywordAdEngineID;
+		this.microBidAmount = microBidAmount;
+		this.matchType = matchType;
+		this.competitiveType = competitiveType;
+		this.isDefaultValue = isDefaultValue;
+	}
+	
 	public String getKeyword()
 	{
 		return keyword;
