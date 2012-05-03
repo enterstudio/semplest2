@@ -26,6 +26,8 @@ namespace SemplestModel
         public bool IsDeleted { get; set; }
         public bool IsNegative { get; set; }
         public Nullable<double> SemplestProbability { get; set; }
+        public bool IsTargetMSN { get; set; }
+        public bool IsTargetGoogle { get; set; }
     
         public virtual Keyword Keyword { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }

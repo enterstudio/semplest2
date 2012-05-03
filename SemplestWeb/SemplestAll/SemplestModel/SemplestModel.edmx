@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="SemplestModel.Store" Alias="Self" Provider="System.Data.SqlClient" ProviderManifestToken="2008" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="SemplestModelStoreContainer">
           <EntitySet Name="Address" EntityType="SemplestModel.Store.Address" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="AddressType" EntityType="SemplestModel.Store.AddressType" store:Type="Tables" Schema="dbo" />
@@ -27,13 +27,11 @@
           <EntitySet Name="Employee" EntityType="SemplestModel.Store.Employee" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EmployeeCustomerAssociation" EntityType="SemplestModel.Store.EmployeeCustomerAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="EmployeePhoneAssociation" EntityType="SemplestModel.Store.EmployeePhoneAssociation" store:Type="Tables" store:Schema="dbo" store:Name="EmployeePhoneAssociation">
-            <DefiningQuery>
-              SELECT
-              [EmployeePhoneAssociation].[PhoneFK] AS [PhoneFK],
-              [EmployeePhoneAssociation].[EmployeeFK] AS [EmployeeFK],
-              [EmployeePhoneAssociation].[CreatedDate] AS [CreatedDate]
-              FROM [dbo].[EmployeePhoneAssociation] AS [EmployeePhoneAssociation]
-            </DefiningQuery>
+            <DefiningQuery>SELECT 
+      [EmployeePhoneAssociation].[PhoneFK] AS [PhoneFK], 
+      [EmployeePhoneAssociation].[EmployeeFK] AS [EmployeeFK], 
+      [EmployeePhoneAssociation].[CreatedDate] AS [CreatedDate]
+      FROM [dbo].[EmployeePhoneAssociation] AS [EmployeePhoneAssociation]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="EmployeeType" EntityType="SemplestModel.Store.EmployeeType" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Error" EntityType="SemplestModel.Store.Error" store:Type="Tables" Schema="dbo" />
@@ -43,17 +41,15 @@
           <EntitySet Name="Keyword" EntityType="SemplestModel.Store.Keyword" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordBid" EntityType="SemplestModel.Store.KeywordBid" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="KeywordBidData" EntityType="SemplestModel.Store.KeywordBidData" store:Type="Tables" store:Schema="dbo" store:Name="KeywordBidData">
-            <DefiningQuery>
-              SELECT
-              [KeywordBidData].[KeywordBidDataPK] AS [KeywordBidDataPK],
-              [KeywordBidData].[QualityScore] AS [QualityScore],
-              [KeywordBidData].[ApprovalStatus] AS [ApprovalStatus],
-              [KeywordBidData].[FirstPageMicroCPC] AS [FirstPageMicroCPC],
-              [KeywordBidData].[IsEligibleForShowing] AS [IsEligibleForShowing],
-              [KeywordBidData].[CreatedDate] AS [CreatedDate],
-              [KeywordBidData].[KeywordBidFK] AS [KeywordBidFK]
-              FROM [dbo].[KeywordBidData] AS [KeywordBidData]
-            </DefiningQuery>
+            <DefiningQuery>SELECT 
+      [KeywordBidData].[KeywordBidDataPK] AS [KeywordBidDataPK], 
+      [KeywordBidData].[QualityScore] AS [QualityScore], 
+      [KeywordBidData].[ApprovalStatus] AS [ApprovalStatus], 
+      [KeywordBidData].[FirstPageMicroCPC] AS [FirstPageMicroCPC], 
+      [KeywordBidData].[IsEligibleForShowing] AS [IsEligibleForShowing], 
+      [KeywordBidData].[CreatedDate] AS [CreatedDate], 
+      [KeywordBidData].[KeywordBidFK] AS [KeywordBidFK]
+      FROM [dbo].[KeywordBidData] AS [KeywordBidData]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="KeywordCategory" EntityType="SemplestModel.Store.KeywordCategory" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Phone" EntityType="SemplestModel.Store.Phone" store:Type="Tables" Schema="dbo" />
@@ -743,6 +739,8 @@
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
           <Property Name="IsNegative" Type="bit" Nullable="false" />
           <Property Name="SemplestProbability" Type="float" />
+          <Property Name="IsTargetMSN" Type="bit" Nullable="false" />
+          <Property Name="IsTargetGoogle" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Rights">
           <Key>
@@ -1791,8 +1789,7 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="SemplestModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -2097,7 +2094,7 @@
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
           <FunctionImport Name="sp_GetRigtsRolesInteraction" ReturnType="Collection(SemplestModel.sp_GetRigtsRolesInteraction_Result)">
-            <Parameter Name="roleId" Mode="In" Type="Int32" />
+          <Parameter Name="roleId" Mode="In" Type="Int32" />
           </FunctionImport>
         </EntityContainer>
         <EntityType Name="Address">
@@ -2599,6 +2596,8 @@
           <NavigationProperty Name="Keyword" Relationship="SemplestModel.REL_Keyword_PromotionKeywordAssociation_2" FromRole="PromotionKeywordAssociation" ToRole="Keyword" />
           <NavigationProperty Name="KeywordBids" Relationship="SemplestModel.REL_PromotionKeywordAssociation_KeywordBid_1" FromRole="PromotionKeywordAssociation" ToRole="KeywordBid" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" FromRole="PromotionKeywordAssociation" ToRole="Promotion" />
+          <Property Type="Boolean" Name="IsTargetMSN" Nullable="false" />
+          <Property Type="Boolean" Name="IsTargetGoogle" Nullable="false" />
         </EntityType>
         <EntityType Name="Right">
           <Key>
@@ -4001,6 +4000,8 @@
           <EntitySetMapping Name="PromotionKeywordAssociations">
             <EntityTypeMapping TypeName="SemplestModel.PromotionKeywordAssociation">
               <MappingFragment StoreEntitySet="PromotionKeywordAssociation">
+                <ScalarProperty Name="IsTargetGoogle" ColumnName="IsTargetGoogle" />
+                <ScalarProperty Name="IsTargetMSN" ColumnName="IsTargetMSN" />
                 <ScalarProperty Name="SemplestProbability" ColumnName="SemplestProbability" />
                 <ScalarProperty Name="IsNegative" ColumnName="IsNegative" />
                 <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
