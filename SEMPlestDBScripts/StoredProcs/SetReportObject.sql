@@ -17,15 +17,16 @@ CREATE PROCEDURE dbo.SetReportObject
 	@Keyword				NVARCHAR(250),
 	@TransactionDate        datetime2,
 	@MicroBidAmount			INT,
-	@ApprovalStatus			VARCHAR(30) = null,
-	@BidType				VARCHAR(25),
-	@FirstPageMicroCpc      INT = null,
+	@BidMatchType				VARCHAR(25),
+	@NumberImpressions		INT,
+	@NumberClick			INT,
+	@AveragePosition		FLOAT,
+	@AverageCPC				FLOAT,
 	@QualityScore           INT = null,
-	@IsEligibleForShowing	BIT = 1,
-	@IsBidActive			BIT = 1,
-	@IsNegative				BIT = 0,
-	@AdvertisingEngine		VARCHAR(50),
-	@SemplestProbability    float = null
+	@ApprovalStatus			VARCHAR(30) = null,
+	@FirstPageMicroCpc      INT = null,
+	@MicroCost				bigint
+	
 )
 AS
 BEGIN TRY
@@ -34,9 +35,10 @@ BEGIN TRY
 			@AdEngineID int,@keywordPK int
 		 
 	-- get the keyword bid PK
-	select @keywordBidPK = kb.KeywordBidPK from AdvertisingEngineAccount a
+	select @keywordBidPK = kb.KeywordBidPK, @AdEngineID = a.AdvertisingEngineFK from AdvertisingEngineAccount a
 	inner join AdvertisingEnginePromotion ap on a.AdvertisingEngineAccountPK = ap.AdvertisingEngineAccountFK
 	inner join KeywordBid kb on kb.PromotionFK = ap.PromotionFK
+	inner join BidType bt on bt.BidTypePK = kb.BidTypeFK
 	inner join Keyword k on k.KeywordPK = kb.KeywordFK 
 	where a.AdvertisingEngineAccountPK = @AccountID and ap.AdvertisingEngineCampaignPK = @CampaignID 
 		and k.Keyword =@Keyword
@@ -45,12 +47,15 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Keyword Bid was not found for keyword.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
-		
+	--insert the report data
+	INSERT INTO AdvertisingEngineReportData(KeywordBidFK,TransactionDate,MicroBidAmount, NumberImpressions,NumberClick,AveragePosition,AverageCPC,BidTypeFK,
+				QualityScore,ApprovalStatus,FirstPageMicroCPC, MicroCost,CreatedDate)
+		VALUES(@keywordBidPK, @TransactionDate,@MicroBidAmount,@NumberImpressions,@NumberClick,@AveragePosition,@AverageCPC,@BidTypeID,
+				@QualityScore,@ApprovalStatus,@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)		
 	
 END TRY
 BEGIN CATCH
- IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
-    ROLLBACK TRANSACTION;
+
 	DECLARE @ErrMessage	nvarchar(4000),
           @ErrorSeverity	int,
           @ErrorState		int;
