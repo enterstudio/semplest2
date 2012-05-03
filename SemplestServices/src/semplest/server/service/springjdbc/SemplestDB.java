@@ -134,6 +134,13 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Bidding calls
 	 */
+	public static void storeTargetedDailyBudget(int promotionID, String AdEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
+	{
+		jdbcTemplate.update("insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyBudgetPK,TargetedDailyClicks,CreatedDate) " +
+				"select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[]
+				{ promotionID,  TargetedDailyMicroBudget, TargetedDailyClicks,AdEngine });
+		
+	}
 	public static void storeTrafficEstimatorData(int promotionID, String AdEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
@@ -331,13 +338,14 @@ public class SemplestDB extends BaseDB
 	 */
 	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper(AdEngineID.class);
 
-	public static AdEngineID getAdEngineID(Long customerID, String adEngine) throws Exception
+	public static AdEngineID getAdEngineID(Integer customerID, String adEngine) throws Exception
 	{
 		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], p.AdEngineAdGroupID [AdGroupID] from Customer c "
 				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK"
 				+ "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
-				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK " + "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
+				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK " 
+				+ "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
 		return jdbcTemplate.queryForObject(strSQL, new Object[]
 		{ customerID, adEngine }, adEngineObjMapper);
 	}
@@ -345,7 +353,7 @@ public class SemplestDB extends BaseDB
 	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(
 			AdvertisingEnginePromotionObj.class);
 
-	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(String advertisingEngineAccountID) throws Exception
+	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(Long advertisingEngineAccountID) throws Exception
 	{
 		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID],"
 				+ "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.AdvertisingEngineBudget "
