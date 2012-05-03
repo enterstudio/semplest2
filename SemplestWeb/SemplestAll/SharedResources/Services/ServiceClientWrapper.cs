@@ -10,6 +10,7 @@ namespace Semplest.SharedResources.Services
     public class ServiceClientWrapper
     {
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
+        private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
         private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
         private static String timeoutMS = "40000";
 
@@ -78,8 +79,10 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("recipient", recipient);
             jsonHash.Add("msgTxt", msgTxt);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
-            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
-            return (bool)JsonConvert.DeserializeObject(returnData);
+            string returnData = runMethod(BASEURLTEST, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            string boolResult = dict.Values.First();
+            return Convert.ToBoolean(boolResult);
         }
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
