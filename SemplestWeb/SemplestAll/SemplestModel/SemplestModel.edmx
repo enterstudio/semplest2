@@ -747,8 +747,8 @@
             <PropertyRef Name="RightsPK" />
           </Key>
           <Property Name="RightsPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
-          <Property Name="Controller" Type="nvarchar" Nullable="false" MaxLength="40" />
-          <Property Name="Label" Type="nvarchar" Nullable="false" MaxLength="40" />
+          <Property Name="Controller" Type="nvarchar" Nullable="false" MaxLength="250" />
+          <Property Name="Label" Type="nvarchar" Nullable="false" MaxLength="250" />
         </EntityType>
         <EntityType Name="Roles">
           <Key>
