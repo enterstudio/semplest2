@@ -28,10 +28,6 @@ namespace SemplestModel
         public decimal MinSalespersonCommissionPercentage { get; set; }
         [DisplayName("Max Salesperson Commission Percentage:")]
         public Nullable<decimal> MaxSalespersonCommissionPercentage { get; set; }
-        [DisplayName("Default Budget Mix Percentage Google:")]
-        public Nullable<decimal> DefalutBudgetMixPercentageGoogle { get; set; }
-        [DisplayName("Default Budget Mix Percentage Bing:")]
-        public Nullable<decimal> DefalutBudgetMixPercentageBing { get; set; }
         [DisplayName("SEMplese Banner Image:")]
         public string DefaultSemplestBannerImageUrl { get; set; }
         [DisplayName("SEMplest Style Sheet:")]
