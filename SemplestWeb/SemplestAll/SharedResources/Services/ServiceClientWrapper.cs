@@ -36,6 +36,47 @@ namespace Semplest.SharedResources.Services
             return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
         }
 
+
+        public List<string> GetKeywords(List<string> categories, string companyName, string[] searchEngines,
+                                string searchTerm, string description, string[] adds, string url,
+                                GeoTargetObject[] gt, Int32[] nGrams)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            String jsonCategories = JsonConvert.SerializeObject(categories);
+            jsonHash.Add("categories", jsonCategories);
+            jsonHash.Add("companyName", companyName);
+            jsonHash.Add("searchTerm", searchTerm);
+            string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+            jsonHash.Add("adds", jsonAdds);
+            string jsonSEngines = JsonConvert.SerializeObject(searchEngines);
+            jsonHash.Add("searchEngines", jsonSEngines);
+            string jsonGt = JsonConvert.SerializeObject(gt);
+            jsonHash.Add("gt", jsonGt);
+            jsonHash.Add("description", description);
+            jsonHash.Add("url", url);
+            nGrams = new[] { 50, 50 };
+            //nGrams = new Int32[] { 1,2,3 };
+            string jsonNgrams = JsonConvert.SerializeObject(nGrams);
+            jsonHash.Add("nGrams", jsonNgrams);
+            string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+            //string returnData = string.Empty;
+            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+
+            var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+            var newstrlist = new List<string>();
+
+            foreach (var strlis in listoflist)
+            {
+                newstrlist.AddRange(strlis);
+            }
+
+            return newstrlist;
+        }
+
         public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm,
                                         string description, string[] adds, string url, Int32[] nGrams)
         {
@@ -106,6 +147,114 @@ namespace Semplest.SharedResources.Services
             //WebResource webResource = client.resource(baseURL);
             //return webResource.queryParams(queryParams).get(String.class);
             return s;
+        }
+
+    }
+
+    public class GeoTargetObject
+    {
+        private String address;
+        private String city;
+        private String state;
+        private String zip;
+        private Double latitude;
+        private Double longitude;
+        private Double radius;
+        public String getAddress()
+        {
+            return address;
+        }
+        public void setAddress(String address)
+        {
+            this.address = address;
+        }
+        public String getCity()
+        {
+            return city;
+        }
+        public void setCity(String city)
+        {
+            this.city = city;
+        }
+        public String getState()
+        {
+            return state;
+        }
+        public void setState(String state)
+        {
+            this.state = state;
+        }
+        public String getZip()
+        {
+            return zip;
+        }
+        public void setZip(String zip)
+        {
+            this.zip = zip;
+        }
+        public Double getLatitude()
+        {
+            return latitude;
+        }
+        public void setLatitude(Double latitude)
+        {
+            this.latitude = latitude;
+        }
+        public Double getLongitude()
+        {
+            return longitude;
+        }
+        public void setLongitude(Double longitude)
+        {
+            this.longitude = longitude;
+        }
+        public Double getRadius()
+        {
+            return radius;
+        }
+        public void setRadius(Double radius)
+        {
+            this.radius = radius;
+        }
+    }
+
+    public class KeywordProbabilityObject
+    {
+        private String keyword;
+        private Double semplestProbability;
+        private Boolean isTargetMSN;
+        private Boolean isTargetGoogle;
+        public String getKeyword()
+        {
+            return keyword;
+        }
+        public void setKeyword(String keyword)
+        {
+            this.keyword = keyword;
+        }
+        public Double getSemplestProbability()
+        {
+            return semplestProbability;
+        }
+        public void setSemplestProbability(Double semplestProbability)
+        {
+            this.semplestProbability = semplestProbability;
+        }
+        public Boolean getIsTargetMSN()
+        {
+            return isTargetMSN;
+        }
+        public void setIsTargetMSN(Boolean isTargetMSN)
+        {
+            this.isTargetMSN = isTargetMSN;
+        }
+        public Boolean getIsTargetGoogle()
+        {
+            return isTargetGoogle;
+        }
+        public void setIsTargetGoogle(Boolean isTargetGoogle)
+        {
+            this.isTargetGoogle = isTargetGoogle;
         }
     }
 }
