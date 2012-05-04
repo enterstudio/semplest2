@@ -231,6 +231,15 @@ namespace Semplest.Admin.Models
         
         public bool isActive { get; set; }
         public  DateTime?  HireDate { get; set; }
+
+        [Required]
+        [DisplayName("User ID")]
+        public string UserID { get; set; }
+
+        [Required]
+        [DisplayName("Password")]
+        public string UserPassword { get; set; }
+
     }
 
 
