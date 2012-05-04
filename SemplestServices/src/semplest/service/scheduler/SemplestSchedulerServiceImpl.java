@@ -44,7 +44,7 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 
 	public String NewSchedule(String json) throws Exception
 	{
-		logger.debug("call deleteAd(String json)" + json);
+		logger.debug("call NewSchedule(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer scheduleJobID = Integer.parseInt(data.get("scheduleJobID"));
 		Integer ScheduleID = Integer.parseInt(data.get("ScheduleID"));

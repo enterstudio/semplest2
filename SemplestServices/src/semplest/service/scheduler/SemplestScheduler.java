@@ -384,6 +384,7 @@ public class SemplestScheduler extends Thread
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			logger.error(e.getMessage());		
 			return false;
 		}
 
@@ -437,8 +438,7 @@ public class SemplestScheduler extends Thread
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());				
 			}
 		}
 		else
