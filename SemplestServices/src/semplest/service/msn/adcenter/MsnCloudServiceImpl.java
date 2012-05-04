@@ -195,6 +195,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try{	
+			HashMap<String,Long> map =test.getAccountIDs();
+			System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
 			/*
