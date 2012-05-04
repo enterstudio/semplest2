@@ -41,8 +41,8 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -440,9 +440,20 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			*/
 			//getKeywordReport
 			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
-			DateTime lastDay = new DateTime(2012,3,31,0,0,0,0);
-			ArrayList<ReportObject> ret = test.getKeywordReport(1595249L, 130129414L, firstDay, lastDay, ReportAggregation.Daily);
-			
+			DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
+			ReportObject[] ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily);
+			for(ReportObject t: ret){
+				logger.info("Keyword = " + t.getKeyword());
+				logger.info("BidAmount = " + t.getMicroBidAmount());
+				logger.info("BidMatchType = " + t.getBidMatchType());
+				logger.info("NumberImpressions = " + t.getNumberImpressions());
+				logger.info("NumberClick = " + t.getNumberClick());
+				logger.info("AveragePosition = " + t.getAveragePosition());
+				logger.info("QualityScore = " + t.getQualityScore());
+				logger.info("AverageCPC = " + t.getAverageCPC());
+				logger.info("CreatedDate = " + t.getTransactionDate());
+				logger.info("===========================");
+			}
 			
 			
 			
@@ -1231,7 +1242,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return ret;
 	}
 	
-	public ArrayList<ReportObject> getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
+	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
@@ -1242,7 +1253,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, null);
-		ArrayList<ReportObject> ret = gson.fromJson(returnData, ArrayList.class);
+		ReportObject[] ret = gson.fromJson(returnData, ReportObject[].class);
 
 		logger.debug("getKeywordReport: ok");
 		
