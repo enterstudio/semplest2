@@ -35,7 +35,7 @@ import com.google.gson.Gson;
 public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
 	private String timeoutMS = "20000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -75,6 +75,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(BASEURLTEST);
 			
+			/*
 			//String accountID = "2188810777";
 			String accountID = "218881";  //nan test- to trigger error
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
@@ -90,6 +91,8 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			{
 				System.out.println(c[i].getKeyword() + ":" + c[i].getBidID() + ":"  + c[i].getQualityScore() + ":" + c[i].getFirstPageCpc());
 			}
+			
+			*/
 			//String[] keys = client.getAllAdGroupKeywords(accountID, adGroupID);
 			
 			/*
@@ -585,13 +588,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	
 	@Override
-	public ArrayList<ReportObject> getReportForAccount(SemplestString accountID) throws Exception {
+	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID.toString());
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportForAccount", json,timeoutMS);
-		return gson.fromJson(returnData, ArrayList.class);
+		return gson.fromJson(returnData, ReportObject[].class);
 	}
 
 	@Override
