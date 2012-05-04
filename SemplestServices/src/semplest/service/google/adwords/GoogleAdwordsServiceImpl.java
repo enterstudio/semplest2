@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.other.Money;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
@@ -49,6 +50,7 @@ import com.google.api.adwords.v201109.cm.AdGroupPage;
 import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.ApiException;
 import com.google.api.adwords.v201109.cm.Bid;
 import com.google.api.adwords.v201109.cm.BidLandscapeLandscapePoint;
 import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
@@ -72,7 +74,6 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
 import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
-import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
@@ -113,7 +114,7 @@ import com.google.api.adwords.v201109.o.TrafficEstimatorResult;
 import com.google.api.adwords.v201109.o.TrafficEstimatorSelector;
 import com.google.api.adwords.v201109.o.TrafficEstimatorServiceInterface;
 import com.google.gson.Gson;
-import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
+
 
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
@@ -308,7 +309,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		} catch(ServiceException se){
 			throw new Exception(se);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -368,7 +369,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -379,6 +380,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 
+	
 	@Override
 	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
 	{
@@ -420,6 +422,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// TODO Auto-generated method stub
 
 	}
+	
 
 	/*
 	 * Add Group and Ads
@@ -468,7 +471,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -530,7 +533,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -594,7 +597,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -737,7 +740,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -790,7 +793,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -873,7 +876,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -916,7 +919,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			keywordBiddableAdGroupCriterion.setCriterion(keywrd);
 			// add bid amount
 			ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
-			bid.setMaxCpc(new Bid(new Money(null, microBidAmount)));
+			bid.setMaxCpc(new Bid(new Money(microBidAmount).toGoogleMoney()));
 			keywordBiddableAdGroupCriterion.setBids(bid);
 			// Create operations.
 			AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
@@ -955,7 +958,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -992,7 +995,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			biddableAdGroupCriterion.setCriterion(criterion);
 			// Create bids.
 			ManualCPCAdGroupCriterionBids bids = new ManualCPCAdGroupCriterionBids();
-			bids.setMaxCpc(new Bid(new Money(null, microBidAmount)));
+			bids.setMaxCpc(new Bid(new Money(microBidAmount).toGoogleMoney()));
 			biddableAdGroupCriterion.setBids(bids);
 			// Create operations.
 			AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
@@ -1031,7 +1034,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1049,7 +1052,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Money budget = new Money(null, Long.parseLong(data.get("budgetAmount"))); // set
+		Money budget = new Money(Long.parseLong(data.get("budgetAmount"))); // set
 																					// MicroAmount
 		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"),
 				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), budget);
@@ -1080,7 +1083,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				period = BudgetBudgetPeriod.MONTHLY;
 			}
 			budget.setPeriod(period);
-			budget.setAmount(budgetAmount);
+			budget.setAmount(budgetAmount.toGoogleMoney());
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			campaign.setBudget(budget);
 	
@@ -1107,7 +1110,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1193,7 +1196,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1247,7 +1250,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1288,7 +1291,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1303,7 +1306,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call changeCampaignStatus" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
-		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, new Money(null, Long.valueOf(data.get("budgetAmount"))));
+		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, new Money(Long.valueOf(data.get("budgetAmount"))));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
@@ -1316,7 +1319,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_TARGET_SERVICE);
 			Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
-			budget.setAmount(budgetAmount);
+			budget.setAmount(budgetAmount.toGoogleMoney());
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
 			CampaignReturnValue ret = campaignService.mutate(operations);
@@ -1333,7 +1336,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1396,7 +1399,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1438,7 +1441,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1530,7 +1533,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1613,7 +1616,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1671,7 +1674,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					// one keyword estimate request
 					KeywordEstimateRequest keywordEstimateRequest = new KeywordEstimateRequest();
 					keywordEstimateRequest.setKeyword(keywrd);
-					keywordEstimateRequest.setMaxCpc(new Money(null, new Long(microBidamount)));
+					keywordEstimateRequest.setMaxCpc(new Money(new Long(microBidamount)).toGoogleMoney());
 					keywordEstimateRequests.add(keywordEstimateRequest);
 				}
 			}
@@ -1725,7 +1728,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1804,7 +1807,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
@@ -1877,7 +1880,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		catch (ApiFault e)
+		catch (ApiException e)
 		{
 			throw new Exception(e.dumpToString());
 		}
