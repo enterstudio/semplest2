@@ -48,14 +48,14 @@ public class ProtocolEnum {
 		}
 	}
 	
-	public static enum MatchType
+	public static enum SemplestMatchType
 	{
 		Exact,Broad,Phrase;
 		public static boolean existsMatchType(String matchType)
 		{
 			if (matchType != null)
 			{
-				for (MatchType val : MatchType.values())
+				for (SemplestMatchType val : SemplestMatchType.values())
 				{
 					if (val.name().equalsIgnoreCase(matchType))
 					{
