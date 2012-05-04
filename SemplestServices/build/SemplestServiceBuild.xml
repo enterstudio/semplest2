@@ -238,7 +238,7 @@
 	  	<if>
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
-	  	 	<echo message="This is KeywordGeneratorService."/>	 
+	  	 	<echo message="This is KeywordGeneratorService."/>	 	  	 	
 	  	 	<mkdir dir="${dist}/data"/>
 	  	 	<copydir src="${semplest.keywords.dir}/data"
 	  	 		dest="${dist}/data"
