@@ -41,7 +41,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
@@ -437,7 +437,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			Collection<String[]> values = ret2.values();
 			logger.info(keys.toString());
 			logger.info(values.toString());
-			*/
+			
 			//getKeywordReport
 			DateTime firstDay = new DateTime(2012,3,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
@@ -454,7 +454,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 				logger.info("CreatedDate = " + t.getTransactionDate());
 				logger.info("===========================");
 			}
-			
+			*/
 			
 			
 			

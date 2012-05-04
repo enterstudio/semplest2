@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.other.Money;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
@@ -28,7 +29,6 @@ import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
-import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
@@ -276,7 +276,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		jsonHash.put("campaignName", campaignName);
 		jsonHash.put("campaignStatus", campaignStatus.getValue());
 		jsonHash.put("period", period.getValue());
-		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroAmount()));
+		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroDollars()));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "CreateOneCampaignForAccount", json,timeoutMS);
@@ -487,7 +487,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
-		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroAmount()));
+		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroDollars()));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "changeCampaignBudget", json,timeoutMS);
