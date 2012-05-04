@@ -4,9 +4,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using SemplestModel;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.SharedResources.Controllers
 {
+    [ExceptionHelper]
     public class ProfileController : Controller
     {
         //
@@ -103,23 +105,33 @@ namespace Semplest.SharedResources.Controllers
 
             bool found = false;
             string myController = ControllerContext.RouteData.Values["Controller"].ToString();
-            string controllerActionName = controllerName + "." + vAction;
-            if (controllerName != myController && !string.IsNullOrEmpty(label))
+            if (controllerName != "Roles")
             {
-                using (SemplestEntities dbContext = new SemplestEntities())
+                string controllerActionName = controllerName + "." + vAction;
+                if (controllerName != myController && !string.IsNullOrEmpty(label))
                 {
-                    foreach (Right r in dbContext.Rights)
+                    using (SemplestEntities dbContext = new SemplestEntities())
                     {
-                        if (label == r.Label && controllerActionName == r.Controller)
+                        foreach (Right r in dbContext.Rights)
                         {
-                            found = true;
-                            break;
+                            if (label == r.Label && controllerActionName == r.Controller)
+                            {
+                                found = true;
+                                break;
+                            }
                         }
-                    }
-                    if (!found)
-                    {
-                        dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
-                        dbContext.SaveChanges();
+                        try
+                        {
+                            if (!found)
+                            {
+                                dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
+                                dbContext.SaveChanges();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.ToString());
+                        }
                     }
                 }
             }

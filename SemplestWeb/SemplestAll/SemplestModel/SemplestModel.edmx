@@ -2604,8 +2604,8 @@
             <PropertyRef Name="RightsPK" />
           </Key>
           <Property Type="Int32" Name="RightsPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="String" Name="Controller" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="Label" Nullable="false" MaxLength="40" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Controller" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="Label" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="RolesRightsAssociations" Relationship="SemplestModel.REL_Rights_RolesRightsAssociation_2" FromRole="Right" ToRole="RolesRightsAssociation" />
         </EntityType>
         <EntityType Name="Role">
