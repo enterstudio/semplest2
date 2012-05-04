@@ -96,7 +96,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
-		BidGeneratorObj.setBidsUpdate(promotionID, searchEngine);
+		// TODO
+		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		// bidGeneratorObj.setBidsUpdate(promotionID, searchEngine);
+		bidGeneratorObj.setBidsInitial(promotionID, searchEngine);
 	}
 	
 	

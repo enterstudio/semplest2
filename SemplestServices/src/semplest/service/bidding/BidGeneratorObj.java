@@ -21,6 +21,7 @@ import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -112,7 +113,7 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// declarations
 		int k;
-		TrafficEstimatorObject o = null;
+		TrafficEstimatorObject o = null, o2 = null;
 
 		
 		/* ******************************************************************************************* */
@@ -267,9 +268,30 @@ public class BidGeneratorObj {
 		//    b. [msn] use all keywords
 		
 		
-		// TODO
 		defaultMicroBid = 1000000L;
+		Long totalDailyCost = 0L;
+		Float totalDailyClick = 0F;
 		
+		if(searchEngine.equalsIgnoreCase("Google")){
+			o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
+					KeywordMatchType.EXACT,	wordBidMap);
+			String[] words = o2.getListOfKeywords();
+			for (int i=0; i < words.length; i++)
+			{
+				HashMap<Long, TrafficEstimatorObject.BidData> points = o2.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
+				Iterator<Long> bidIT = points.keySet().iterator();
+				while(bidIT.hasNext())
+				{
+					Long abid= bidIT.next();
+					totalDailyClick += (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2;
+					totalDailyCost += (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/2;
+				}
+			}
+			if(totalDailyClick>0.01){
+				defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
+			}
+			
+		} // if(searchEngine.equalsIgnoreCase("Google"))
 		
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
@@ -298,22 +320,21 @@ public class BidGeneratorObj {
 		// remember to update the bids for the words with default bid with database
 		
 		// TODO: waiting for Mitch
-		/*
-		if(defaultMicroBid != SemplestDB.getLatestDefaultBid(promotionID, searchEngine)) {
+		
+		if(defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine)) {
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
-			SemplestDB.updateBidsToDefaultBid(promotionID, searchEngine);
+			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 		}
-		*/
+		
 		
 		
 		
 		/* ******************************************************************************************* */
 		// 14. Database call: write bid, matchType, competition status
-		// TODO
 		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
 		
 		String competitiveType="";
-		String matchType = "EXACT";
+		String matchType = "EXACT";  // TODO
 		Boolean isActive = true;
 		
 		Iterator<String> keyIT = wordBidMap.keySet().iterator();
@@ -340,10 +361,18 @@ public class BidGeneratorObj {
 		
 		
 		
+		
 
 		
 		/* ******************************************************************************************* */
-		// 15. SE API call: Update matchType, bid for keywords
+		// 15. Database call: write targeted daily budget etc
+		SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
+		
+		
+
+		
+		/* ******************************************************************************************* */
+		// 16. SE API call: Update matchType, bid for keywords
 		if(searchEngine.equalsIgnoreCase("Google")){
 			keyIT = wordBidMap.keySet().iterator();
 			while(keyIT.hasNext())
@@ -361,20 +390,23 @@ public class BidGeneratorObj {
 		
 		
 		/* ******************************************************************************************* */
-		// 16. SE API call: Update default bid for campaign
+		// 17. SE API call: Update default bid for campaign
 
 		
 	} // setBidsInitial()
 	
 	
-	
-	
-	public static void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+
+
+
+
+	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
 		throw new Exception("setBidsUpdate not yet implemented!!");	
 	} // setBidsUpdate()
 
 	
-		
+	
+
 	
 	private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Exception{
 		
@@ -394,7 +426,7 @@ public class BidGeneratorObj {
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
-				o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, clientGoogle);
+				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -450,7 +482,7 @@ public class BidGeneratorObj {
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
-				o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, clientGoogle);
+				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -518,7 +550,7 @@ public class BidGeneratorObj {
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
-					o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, clientGoogle);
+					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 					break;
 				} catch (Exception e) {
 					if (k<=maxRetry) {
@@ -583,8 +615,9 @@ public class BidGeneratorObj {
 
 	
 	
-	private TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
-			HashMap<String, Long> KeywordWithBid, GoogleAdwordsServiceImpl client) throws Exception {
+	private TrafficEstimatorObject getTrafficEstimationForKeywordsGoogle(String accountID, Long campaignID, KeywordMatchType matchType,
+			HashMap<String, Long> KeywordWithBid) throws Exception {
+//			HashMap<String, Long> KeywordWithBid, GoogleAdwordsServiceImpl client) throws Exception {
 //		HashMap<String, Double> KeywordWithBid, GoogleAdwordsServiceClient client) throws Exception {
 		
 		TrafficEstimatorObject o = null, o2;
@@ -596,14 +629,16 @@ public class BidGeneratorObj {
 		while(it.hasNext()){
 			Map.Entry me = (Map.Entry) it.next();
 			String s = (String) me.getKey();
-			newKeywordWithBid.put(s,KeywordWithBid.get(s));
-			i++;
+			if (KeywordWithBid.get(s) != null){
+				newKeywordWithBid.put(s,KeywordWithBid.get(s));
+				i++;
+			}
 			if(i%500==0 || (!it.hasNext())){
 				k=1;
 				while(true) {
 					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 					try {
-						o2 = client.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+						o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
 						break;
 					} catch (Exception e) {
 						if (k<=maxRetry) {
@@ -728,7 +763,7 @@ public class BidGeneratorObj {
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
-				o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, client);
+				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -784,7 +819,7 @@ public class BidGeneratorObj {
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
-				o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, client);
+				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -852,7 +887,7 @@ public class BidGeneratorObj {
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
-					o = getTrafficEstimationForKeywords(googleAccountID, campaignID, KeywordMatchType.EXACT, bids, client);
+					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 					break;
 				} catch (Exception e) {
 					if (k<=maxRetry) {
