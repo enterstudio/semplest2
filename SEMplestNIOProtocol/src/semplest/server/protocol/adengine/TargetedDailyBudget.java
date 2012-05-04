@@ -5,6 +5,9 @@ public class TargetedDailyBudget
 	private Long TargetedDailyMicroBudget;
 	private Integer TargetedDailyClicks;
 	
+	public TargetedDailyBudget(){
+	}
+	
 	public TargetedDailyBudget(Long TargetedDailyMicroBudget, Integer TargetedDailyClicks){
 		this.TargetedDailyMicroBudget = TargetedDailyMicroBudget;
 		this.TargetedDailyClicks = TargetedDailyClicks;
