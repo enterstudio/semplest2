@@ -69,20 +69,17 @@ public class UnitTests {
 			System.out.println("Report Time: " + now);
 			System.out.println("   ");
 			
-			//Start Test
-			int ret = 0;
+			//Start to Test
 			
 			//Test Msn Service
 			MsnServiceTest msnServiceTest = new MsnServiceTest();
 			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
-			ret = (numMsnStandaloneError > 0)? msnServiceTest.testFailed() : msnServiceTest.testPassed();
+			numMsnServiceError = msnServiceTest.Test_MsnServices_Service();
 			
-			//Test Google Service as Standalone
+			//Test Google Service
 			GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 			numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
-			ret = (numGoogleStandaloneError > 0)? googleServiceTest.testFailed() : googleServiceTest.testPassed();
-			
-			//If Google Service passed standalone test, test it through client api
+			numGoogleServiceError = googleServiceTest.Test_GoogleService_Service();
 			
 			//Test Adengine Service
 			
