@@ -1893,7 +1893,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		SemplestString accountId = new SemplestString();
 		accountId.setSemplestString(data.get("accountID"));
-		ArrayList<ReportObject> res = getReportForAccount(accountId);
+		ReportObject[] res = getReportForAccount(accountId);
 		// convert result to Json String
 		return gson.toJson(res);
 	}
@@ -1912,13 +1912,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	public ArrayList<ReportObject> getReportForAccount(SemplestString accountID) throws Exception
+	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception
 	{
 		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID.getSemplestString()));//
 		
 		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
 		
-		return report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
+		return (ReportObject[])report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken).toArray();
 		
 	}
 	/*
