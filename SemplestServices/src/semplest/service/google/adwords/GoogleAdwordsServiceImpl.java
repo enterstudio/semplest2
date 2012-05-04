@@ -1921,6 +1921,31 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
 		
 	}
+	/*
+	 * GeoTargeting
+	 */
+	public String setGeoTarget(String json) throws Exception
+	{   
+	  logger.debug("call CreateOneAccountService(String json)" + json);
+	  HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+	  Long campaignId 	= Long.parseLong( 		data.get("campaignId"));
+	  Double radius 	= Double.parseDouble( 	data.get("radius"));
+	  Boolean retval 	= setGeoTarget(			data.get("accountId"), campaignId, radius, data. get("addr"), data.get("city"), data.get("state"), data.get("zip"));
+	  return gson.toJson( retval );
+	}                               
+	@Override                         
+	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception 
+	{
+	  semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign( accountId, campaignId);
+	  long res = 0;
+	  if (radius <= 0)
+		  	res = c.setGeoLoc( state );
+	  else 	res = c.setGeoLoc( radius, addr, city, state, zip);
+	  if (res == 0) return false;
+	  return true;                                  
+	}
+
+	
 
 	@Override
 	public void initializeService(String input) throws Exception
