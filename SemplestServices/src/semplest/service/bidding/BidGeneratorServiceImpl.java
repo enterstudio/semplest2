@@ -63,6 +63,19 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 	}
 	
+	public void setInitialDefaultBid(String json) throws Exception {
+		logger.debug("call  setInitialDefaultBid(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
+	}
+	@Override
+	public void setInitialDefaultBid(Integer promotionID, 
+			ArrayList<String> searchEngine) throws Exception {
+		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		bidGeneratorObj.setInitialDefaultBids(promotionID, searchEngine);
+	}
+	
 	public void setBidsInitial(String json) throws Exception
 	{
 		logger.debug("call  setBidsInitial(String json)" + json);

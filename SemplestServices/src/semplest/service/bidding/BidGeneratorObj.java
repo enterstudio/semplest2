@@ -107,6 +107,18 @@ public class BidGeneratorObj {
 	}
 	
 	
+	public void setInitialDefaultBids(Integer promotionID, 
+			ArrayList<String> searchEngine) throws Exception{
+		for (String se : searchEngine) {
+			if (!AdEngine.existsAdEngine(se)){
+				throw new Exception("Ad engine "+ se + " Not Found");
+			}
+			Long defaultMicroBid = 100000L; // $0.10
+			SemplestDB.storeDefaultBid(promotionID, se, defaultMicroBid);			
+		}
+	}
+	
+	
 	
 	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
 		
