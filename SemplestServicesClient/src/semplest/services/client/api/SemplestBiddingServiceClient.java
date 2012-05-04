@@ -63,6 +63,18 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 	
 	@Override
+	public void setInitialDefaultBid(Integer promotionID,
+			ArrayList<String> searchEngine) throws Exception {
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		runMethod(BASEURLTEST, SERVICEOFFERED, "setInitialDefaultBid", json, timeoutMS);
+		
+	}
+	@Override
 	public HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine)
 			throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -115,6 +127,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
+
 	@Override
 	public void getBidsInitial(String accountID,
 			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
@@ -174,6 +187,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 //		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
+
 
 
 
