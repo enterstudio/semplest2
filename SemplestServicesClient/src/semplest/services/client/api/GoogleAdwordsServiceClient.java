@@ -75,6 +75,32 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		{
 			GoogleAdwordsServiceClient client = new GoogleAdwordsServiceClient(BASEURLTEST);
 			
+			
+			
+			/*********************************************************************************************
+			 * GeoTarget Testing
+			 */
+			Double radius 	= 20.0;
+			String addr 	= "195 Broadway";
+			String city		= "New York";
+			String state 	= "NY";
+			String zip 		= "10007";
+			
+			String clientId = "8982168071";
+			long   campaignId = 76709721L;
+			
+			Boolean res1 = client.setGeoTarget( clientId, campaignId, radius, addr, city, state, zip);
+			Boolean res2 = client.setGeoTarget( clientId, campaignId, radius, "", "", "", zip);
+			Boolean res3 = client.setGeoTarget( clientId, campaignId, 0.0, "", "", state, "");
+			assert( res1 == true && res2 == true && res3 == true);
+			
+			/*
+			 * End GeoTarget Testing
+			 ***********************************************************************************************/
+			
+			
+			
+			
 			/*
 			//String accountID = "2188810777";
 			String accountID = "218881";  //nan test- to trigger error
