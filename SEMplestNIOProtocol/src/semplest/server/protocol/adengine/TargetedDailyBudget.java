@@ -4,6 +4,12 @@ public class TargetedDailyBudget
 {
 	private Long TargetedDailyMicroBudget;
 	private Integer TargetedDailyClicks;
+	
+	public TargetedDailyBudget(Long TargetedDailyMicroBudget, Integer TargetedDailyClicks){
+		this.TargetedDailyMicroBudget = TargetedDailyMicroBudget;
+		this.TargetedDailyClicks = TargetedDailyClicks;
+	}
+	
 	public Long getTargetedDailyMicroBudget()
 	{
 		return TargetedDailyMicroBudget;
