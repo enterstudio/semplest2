@@ -59,17 +59,17 @@ public class MSNAdcenterServiceClientTest {
 			":9898/semplest";
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_TovahPhoto";
-	String url = "www.tovahphotography.com";
+	String accountName = "_PiperHall";
+	String url = "www.piperhall.com";
 	String productSubcategory = "Event and portrait photos";
-	double msnMonthlyBudget = 50.0; //In dolars
+	double msnMonthlyBudget = 150.0; //In dolars
 			
 	//Add1
-	String adTitle1 =  "Event Photography";
-	String adText1 = "Your event is unique and special and your photos should be, too!";
+	String adTitle1 =  "Corporate Event Space";
+	String adText1 = "Event space rental located in Fort Worth's W. 7th Street district.";
 	//Add2
-	String adTitle2 =  "Personalized Portraits";
-	String adText2 = "Natural light photography to reflect your personality!";
+	String adTitle2 =  "Company Events Fort Worth";
+	String adText2 = "Piper Hall is the perfect place for your company party or event.";
 	
 	//Accounts and campaigns
 	Long accountID = 1632282L;
@@ -91,7 +91,7 @@ public class MSNAdcenterServiceClientTest {
 			msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			msn.insertKeywords2("/semplest/data/biddingTest/TovahPhoto/keywords.txt");
+			msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
 			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/TovahPhoto/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			//logger.info(bidMap);
@@ -106,8 +106,8 @@ public class MSNAdcenterServiceClientTest {
 	
 	public void getAccountID() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
-		 HashMap<String,String> accounts = test.getAccountIDs();
-		 accountID =  Long.parseLong(accounts.get(accountName));
+		 HashMap<String,Double> accounts = test.getAccountIDs();
+		 accountID =  accounts.get(accountName).longValue();
 	}
 	public void getIds() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
@@ -238,11 +238,11 @@ public class MSNAdcenterServiceClientTest {
 			    for(String k : keywords){
 					logger.info("keyword = " + k);
 					int v=0;
-					for(Long bidList:ret.getBidList(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString())){
-						ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList);
+					for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
+						ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList);
 		
-						double averDaylyCPC = (ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList))/14.0;
-						double averDaylyClicks = (ret.getAveClickPerDay(k, semplest.server.protocol.ProtocolEnum.MatchType.Exact.toString(), bidList))/14.0;
+						double averDaylyCPC = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+						double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
 						if(!bidMap.containsKey(k))
 							bidDat = new Double[bids.size()][3]; 
 						else

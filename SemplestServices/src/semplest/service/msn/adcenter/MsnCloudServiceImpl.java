@@ -195,7 +195,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try{	
-			HashMap<String,String> map =test.getAccountIDs();
+			HashMap<String,Double> map =test.getAccountIDs();
 			System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
@@ -319,7 +319,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public String getAccountIDs(String json) throws Exception
 	{	
 		logger.debug("call getAccountIDs(String json)" + json);
-		HashMap<String,String> ret = null;
+		HashMap<String,Double> ret = null;
 		try {
 			ret = getAccountIDs();
 		} catch (MsnCloudException e) {
@@ -328,11 +328,11 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return gson.toJson(ret);
 	} 
 	@Override
-	public HashMap<String,String> getAccountIDs() throws MsnCloudException{
+	public HashMap<String,Double> getAccountIDs() throws MsnCloudException{
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();
-			HashMap<String, String> accountIDs = new HashMap<String,String>();
+			HashMap<String, Double> accountIDs = new HashMap<String,Double>();
 			GetAccountsInfoRequest req = new GetAccountsInfoRequest();
 			GetAccountsInfoResponse signupCustomerResponse = customerManagementService.getAccountsInfo(req);
 			AccountInfo[] acInf = signupCustomerResponse.getAccountsInfo();
@@ -341,7 +341,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				String accountName = acInf[i].getName();
 				logger.info("accountName: "+accountName);
 				logger.info("accountID: "+accountID);
-				accountIDs.put(accountName, accountID.toString());
+				accountIDs.put(accountName, accountID.doubleValue());
 			}
 			return accountIDs;
 		}
