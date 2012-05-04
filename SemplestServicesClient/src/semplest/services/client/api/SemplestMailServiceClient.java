@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();

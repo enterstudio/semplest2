@@ -2480,7 +2480,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		logger.debug("call getKeywordReport(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		ArrayList<ReportObject> ret = null;
+		ReportObject[] ret = null;
 		try {
 			ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
 					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")),
@@ -2492,7 +2492,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public ArrayList<ReportObject> getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
+	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
 		
 		//ReportObject ret = new ReportObject();
 		
@@ -2529,6 +2529,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			}
 		}
 		
-		return reportObjectList;
+		return (ReportObject[])reportObjectList.toArray();
 	}
 }
