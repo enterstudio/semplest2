@@ -30,9 +30,9 @@ public class Campaign {
     return sGeoLocation( cCriterion( state )); }
   public long setGeoLoc( Double r, int lat, int lon) throws Exception {
     return sGeoLocation( cProximity( r, lat, lon ));}
-  public long setGeoLoc( Double r,String addr, String city, String state) 
-    throws Exception { 
-    return sGeoLocation( cCriterion( r, addr, city, state, "" ));}
+  public long setGeoLoc( Double r,
+      String addr, String city, String state, String zip) throws Exception { 
+    return sGeoLocation( cCriterion( r, addr, city, state, zip ));}
   public long setGeoLoc( Double r, String zip) throws Exception { 
     return sGeoLocation( cCriterion( r, "", "", "", zip ));}
   public long setGeoLoc( Long id ) throws Exception { 
@@ -143,7 +143,7 @@ public class Campaign {
       String clientId = "8982168071";
       long campaignId   = 76709721L;
       Campaign c = new Campaign( clientId, campaignId );
-      long ra = c.setGeoLoc( radius, addr, city, state );
+      long ra = c.setGeoLoc( radius, addr, city, state, zip );
       long rz = c.setGeoLoc( radius, zip );
       long rs = c.setGeoLoc( "NY" );
       System.out.println( ra + "," + rs + "," + rz);
