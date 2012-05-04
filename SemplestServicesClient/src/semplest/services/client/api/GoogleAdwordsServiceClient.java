@@ -606,5 +606,23 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getSpentAPIUnitsPerAccountID", json,timeoutMS);
 		return gson.fromJson(returnData, Long.class);
 	}
+	
+	@Override 
+	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", accountId);
+		jsonHash.put("campaignId",	String.valueOf(campaignId));
+		jsonHash.put("radius", 		String.valueOf(radius));
+		jsonHash.put("addr", 		addr);
+		jsonHash.put("city", 		city);
+		jsonHash.put("state", 		state);
+		jsonHash.put("zip", 		zip);
+		
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		String returnData = runMethod(baseurl,SERVICEOFFERED,"setGeoTarget", json, timeoutMS);
+		return gson.fromJson(returnData,Boolean.class);
+	}
+
 
 }
+
