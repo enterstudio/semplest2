@@ -93,8 +93,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			//assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			Long campaignID =  0l;
-					//google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
+			Long campaignID =  0L; //google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
 			return campaignID;
 		}
 		

@@ -178,6 +178,7 @@ public class SEMplestService
 					pingThread.start();
 				}
 				// create a connection to the destination queue
+				logger.debug("setting up MQ IP: " + data.getmessageQueueIP() + ":" + data.getmessageQueuePort() + " sendQ=" + data.getServiceSendQueueName() + " RecQ=" +  data.getServiceRecQueueName());
 				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
 				mq.createProducer(data.getServiceSendQueueName());
 				mq.createConsumer(data.getServiceRecQueueName());
@@ -186,12 +187,17 @@ public class SEMplestService
 				
 
 			}
+			else
+			{
+				logger.error("ERROR - The Data Header rec from ESB was not SEMplest REGISTER");
+				return false;
+			}
 			logger.debug("Done wit Reg to ESB");
 			return true;
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			return false;
 		}

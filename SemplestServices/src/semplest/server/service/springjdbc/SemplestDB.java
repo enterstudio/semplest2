@@ -31,6 +31,7 @@ import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
+import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 
 public class SemplestDB extends BaseDB
 {
@@ -137,6 +138,47 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Bidding calls
 	 */
+
+	public static Long getDefaultBid(int promotionID, String adEngine) throws Exception
+	{
+		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  "
+				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
+				+ "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
+
+		Integer defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]
+		{ promotionID, adEngine }, Integer.class);
+		if (defBid != null)
+		{
+			return new Long(defBid);
+		}
+		else
+		{
+			return null;
+		}
+
+	}
+	
+	public static void storeDefaultBid(int promotionID, String adEngine, Long microDefaultBid) throws Exception
+	{
+		Integer microBid =  microDefaultBid.intValue();
+		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  " +
+				"from AdvertisingEnginePromotion aep  " +
+				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " +
+				"where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
+
+		jdbcTemplate.update(sql, new Object[]
+		{ microBid, promotionID, adEngine });
+
+	}
+	
+	public static void UpdateDefaultBidForKeywords(int promotionID, String adEngine) throws Exception
+	{
+		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
+		updateDefBiAmounts.execute(promotionID, adEngine);
+	}
+
 	public static void storeTargetedDailyBudget(int promotionID, String AdEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
 			throws Exception
 	{
@@ -487,8 +529,8 @@ public class SemplestDB extends BaseDB
 		{ promotionID, adEngine }, targetedDailyBudgetMapper);
 	}
 
-	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
-			throws Exception
+	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, String adEngine, java.util.Date startDate,
+			java.util.Date endDate) throws Exception
 	{
 
 		if (!AdEngine.existsAdEngine(adEngine))
