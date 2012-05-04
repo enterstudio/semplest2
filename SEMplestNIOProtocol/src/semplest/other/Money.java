@@ -26,6 +26,12 @@ public class Money implements Comparable<Money>, Serializable {
 		this.milliCents = milliCents;
 	}
 	
+	public com.google.api.adwords.v201109.cm.Money toGoogleMoney(){
+		com.google.api.adwords.v201109.cm.Money ret = new com.google.api.adwords.v201109.cm.Money();
+		ret.setMicroAmount(milliCents*10);
+		return ret;
+	}
+	
 	public static Money withMilliCents(long milliCents) {
 		return new Money(milliCents);
 	}
