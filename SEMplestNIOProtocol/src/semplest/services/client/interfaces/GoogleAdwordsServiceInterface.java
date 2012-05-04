@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.other.Money;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
@@ -21,7 +22,6 @@ import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
-import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 
 
