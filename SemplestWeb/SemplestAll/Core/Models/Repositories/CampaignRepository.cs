@@ -117,9 +117,9 @@ namespace Semplest.Core.Models.Repositories
                 geoTObj.setCity(geo.City);
                 geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
                 geoTObj.setZip(geo.Zip);
-                geoTObj.setRadius((double)geo.ProximityRadius);
-                geoTObj.setLatitude((double)geo.Latitude);
-                geoTObj.setLongitude((double)geo.Longitude);
+                geoTObj.setRadius((double)(geo.ProximityRadius == null ? 0 : geo.ProximityRadius ));
+                geoTObj.setLatitude((double)(geo.Latitude == null ? 0 : geo.Latitude));
+                geoTObj.setLongitude((double)(geo.Longitude == null ? 0 : geo.Longitude));
                 geoList.Add(geoTObj);
             }
             return geoList;   
