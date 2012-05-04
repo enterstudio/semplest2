@@ -326,8 +326,11 @@ namespace SemplestWebApp.Services
                                 KeywordFK = keywordId,
                                 IsActive = true,
                                 IsDeleted = false,
-                                IsNegative = false
-                            });
+                                IsNegative = false,
+                                SemplestProbability = kpo.getSemplestProbability(),
+                                IsTargetMSN = kpo.getIsTargetMSN(),
+                                IsTargetGoogle = kpo.getIsTargetGoogle()
+                          });
 
                     }
                     else  // keyword already there in the Keywords table, setup an association with promotion if its not there
