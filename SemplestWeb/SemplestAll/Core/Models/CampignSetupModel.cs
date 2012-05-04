@@ -20,6 +20,7 @@ namespace Semplest.Core.Models
             CategoryIds = new List<int>();
             // for keywords
             AllKeywords = new List<KeywordsModel>();
+            AllKeywordProbabilityObjects = new List<KeywordProbabilityObject>();
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
             
