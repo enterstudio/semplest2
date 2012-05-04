@@ -46,8 +46,10 @@ public class AsyncServletListener implements AsyncListener
 				asyncContext.getResponse().setContentType("text/html");
 				try
 				{
+					asyncContext.getResponse().setContentLength(ESBServer.esb.getServerData().getHeaderBufferSize() + 12);
 					PrintWriter out = asyncContext.getResponse().getWriter();
 					out.print(ret);
+					out.flush();
 				}
 				catch (Exception e)
 				{
