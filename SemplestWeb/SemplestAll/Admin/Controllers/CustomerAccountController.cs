@@ -115,7 +115,7 @@ namespace Semplest.Admin.Controllers
                    StateID = sc.StateAbbrPK,
                    CustomerNote = (n.Note == null ? null : n.Note),
                    isActive = u.IsActive,
-                   selectedBillTypeid=c.BillTypeFK
+                   selectedBillTypeid = c.BillTypeFK
                };
 
             //viewmodel2 might not be needed
@@ -171,11 +171,11 @@ namespace Semplest.Admin.Controllers
             ////for billtype dropdown
             /////////////////////////////////////////////////////////////////////////////
             var selectedbilltype =
-               from bt in dbcontext.BillTypes 
+               from bt in dbcontext.BillTypes
                select bt;
 
             var allbilltypes =
-                from bt in dbcontext.BillTypes 
+                from bt in dbcontext.BillTypes
                 select bt;
 
 
@@ -243,9 +243,9 @@ namespace Semplest.Admin.Controllers
 
 
             //add userid and password to model
-            var credential = dbcontext.Credentials.First(r=>r.UsersFK.Equals(x.CustomerAccount.UserPK));
-            x.CustomerAccount.UserID=credential.Username;
-            x.CustomerAccount.UserPassword=credential.Password;
+            var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(x.CustomerAccount.UserPK));
+            x.CustomerAccount.UserID = credential.Username;
+            x.CustomerAccount.UserPassword = credential.Password;
 
 
 
@@ -353,8 +353,8 @@ namespace Semplest.Admin.Controllers
             //////////////////////////////////
             //// for billtype dropdown
             ////////////////////////////////
-            
-            x.BillTypes= allbilltypes.ToList().Select(r => new SelectListItem
+
+            x.BillTypes = allbilltypes.ToList().Select(r => new SelectListItem
             {
                 Value = r.BillTypePK.ToString(),
                 Text = r.BillType1.ToString()
@@ -363,7 +363,7 @@ namespace Semplest.Admin.Controllers
 
             x.SelectedBillTypeID = x.CustomerAccount.selectedBillTypeid;
 
-       
+
             //List<Customer> ll3 = allparents.ToList();
             //List<SelectListItem> sl3 = new List<SelectListItem>();
             //foreach (Customer s in ll3)
@@ -420,7 +420,7 @@ namespace Semplest.Admin.Controllers
             address.EditedDate = DateTime.Now;
             address.StateAbbrFK = m.SelectedStateID;
 
-            var customerphoneassociation= dbcontext.CustomerPhoneAssociations.ToList().Find(p=>p.CustomerFK==m.CustomerAccount.AccountNumber);
+            var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
             var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK == customerphoneassociation.PhoneFK);
 
             phone.Phone1 = m.CustomerAccount.Phone;
@@ -479,7 +479,7 @@ namespace Semplest.Admin.Controllers
             UpdateModel(customernote);
 
 
-            var parents = dbcontext.CustomerHierarchies.FirstOrDefault(p => p.CustomerFK==m.CustomerAccount.AccountNumber);
+            var parents = dbcontext.CustomerHierarchies.FirstOrDefault(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
             //var parents = dbcontext.CustomerHierarchies.FirstOrDefault();
 
             if (m.SelectedParentID == 0) //self
@@ -499,7 +499,7 @@ namespace Semplest.Admin.Controllers
 
 
 
-           
+
 
 
             return RedirectToAction("Index");
@@ -681,7 +681,7 @@ namespace Semplest.Admin.Controllers
 
                 ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
-                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer,  BillTypeFK  = m.SelectedBillTypeID , ProductGroupCycleType = pgct });
+                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillTypeFK = m.SelectedBillTypeID, ProductGroupCycleType = pgct });
                 User u = dbcontext.Users.Add(new User
                 {
                     Customer = c,
@@ -694,7 +694,7 @@ namespace Semplest.Admin.Controllers
 
 
                 //
-                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.CustomerAccount.UserID, Password = m.CustomerAccount.UserPassword  }); 
+                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.CustomerAccount.UserID, Password = m.CustomerAccount.UserPassword });
 
 
                 PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
@@ -715,8 +715,8 @@ namespace Semplest.Admin.Controllers
                 CustomerHierarchy ch;
                 if (m.SelectedParentID == -1) //set parent
                 {
-                    
-                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK=c.CustomerPK , CustomerParentFK=null  }); 
+
+                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = null });
                 }
                 else if (m.SelectedParentID == 0) //set self
                 {
