@@ -36,8 +36,8 @@ Add Customer Account:
     @Html.HiddenFor(model => model.CustomerAccount.AccountNumber)*@
     
     
-    <label>
-        Super Parent Name:<input type="text" /></label> <br />
+    @*<label>
+        Super Parent Name:<input type="text" /></label> <br />*@
 
     <label>
         Parent Name:  @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents)
@@ -88,8 +88,6 @@ Add Customer Account:
             @Html.ValidationMessageFor(model => model.CustomerAccount.Email)
         </div>
     </label> <br />
-    
-    
     
 
     <label>
@@ -276,17 +274,17 @@ Add Customer Account:
     <br />
     <br />
 
-    <label>
-        Type Of Accounts:
-        <br />
-        <input type="checkbox" id="Parent Pay/Parent Create">Invoice</input><br />
-        <input type="checkbox" id="check1">Parent Pay/Child Create</input><br />
-        <input type="checkbox" id="check1">Child Pay/Child Create</input><br />
-    </label>
-    <br />
-    <br />
-    <br />
+    
+    <div class="editor-label">
+    </div>
+    <div class="editor-field">
+    <input type="checkbox" name="customeremail" value="send"  checked="checked"/>Send Customer Email<br />
 
+    </div>
+    
+    <br />
+    
+    
 
     <input type="submit" value="Save" class="k-button"/> 
     <br />

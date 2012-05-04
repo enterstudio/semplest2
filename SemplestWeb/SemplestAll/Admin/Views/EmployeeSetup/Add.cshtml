@@ -6,22 +6,21 @@
 Add Employee:
 }
 @section headscript{
- <script src="@Url.Content("~/Scripts/jquery.maskedinput-1.3.js")" type="text/javascript"></script>
- <script type="text/jscript">
-     $(document).ready(function () {
-         $("#EmployeeSetup_HireDate").kendoDatePicker();
-     });
+    <script src="@Url.Content("~/Scripts/jquery.maskedinput-1.3.js")" type="text/javascript"></script>
+    <script type="text/jscript">
+        $(document).ready(function () {
+            $("#EmployeeSetup_HireDate").kendoDatePicker();
+        });
 
 
-     jQuery(function ($) {
+        jQuery(function ($) {
 
-         $("#EmployeeSetup_MiddleInitial").mask("a");
-         
-     });
+            $("#EmployeeSetup_MiddleInitial").mask("a");
+
+        });
 
 
-</script>
-
+    </script>
 }
 @section Links{
     @Html.Partial("TopMenu")
@@ -32,105 +31,93 @@ Add Employee:
 {
     @Html.ValidationSummary(true)
     <fieldset>
-        
-         
         <div class="editor-label">
             @Html.LabelFor(model => model.EmployeeSetup.FirstName)
         </div>
-
         <div class="editor-field">
             @Html.TextBoxFor(model => model.EmployeeSetup.FirstName, new { @class = "k-textbox" })
             @Html.ValidationMessageFor(model => model.EmployeeSetup.FirstName)
         </div>
-        
-            <div class="editor-label">
-            @Html.LabelFor(model => model.EmployeeSetup.MiddleInitial )
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.MiddleInitial)
         </div>
         <div class="editor-field">
-            @Html.TextBoxFor(model => model.EmployeeSetup.MiddleInitial , new { @class = "k-textbox" })
+            @Html.TextBoxFor(model => model.EmployeeSetup.MiddleInitial, new { @class = "k-textbox" })
             @Html.ValidationMessageFor(model => model.EmployeeSetup.MiddleInitial)
         </div>
-
         <div class="editor-label">
-            @Html.LabelFor(model => model.EmployeeSetup.LastName )
+            @Html.LabelFor(model => model.EmployeeSetup.LastName)
         </div>
         <div class="editor-field">
-            @Html.TextBoxFor(model => model.EmployeeSetup.LastName , new { @class = "k-textbox" })
+            @Html.TextBoxFor(model => model.EmployeeSetup.LastName, new { @class = "k-textbox" })
             @Html.ValidationMessageFor(model => model.EmployeeSetup.LastName)
         </div>
-
         <div class="editor-label">
-            @Html.LabelFor(model => model.EmployeeSetup.Email )
+            @Html.LabelFor(model => model.EmployeeSetup.Email)
         </div>
         <div class="editor-field">
-            @Html.TextBoxFor(model => model.EmployeeSetup.Email , new { @class = "k-textbox" })
-            @Html.ValidationMessageFor(model => model.EmployeeSetup.Email )
+            @Html.TextBoxFor(model => model.EmployeeSetup.Email, new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.Email)
         </div>
-        
-        
-
         <div class="editor-label">
-        <label>Hire Date:</label>
-        
+            <label>
+                Hire Date:</label>
         </div>
-
         <div class="editor-field">
-            @Html.TextBoxFor(model => model.EmployeeSetup.HireDate , new { @class = "k-textbox" })
-            
+            @Html.TextBoxFor(model => model.EmployeeSetup.HireDate, new { @class = "k-textbox" })
         </div>
-
-
         <div class="editor-label">
-        <label> Role</label>
+            <label>
+                Role</label>
         </div>
-
         <div class="editor-field">
-        @Html.DropDownListFor(r=>r.SelectedRoleID, Model.Roles)
+            @Html.DropDownListFor(r => r.SelectedRoleID, Model.Roles)
         </div>
-
-
         <div class="editor-label">
-        <label> Employee Type</label>
+            <label>
+                Employee Type</label>
         </div>
-
         <div class="editor-field">
-        @Html.DropDownListFor(r=>r.SelectedEmployeeTypeID , Model.EmployeeTypes )
+            @Html.DropDownListFor(r => r.SelectedEmployeeTypeID, Model.EmployeeTypes)
         </div>
-
-
-        <div class="editor-label">
-            <label>Sales Comission</label>
-        </div>
-
-        <div class="editor-field">
-            <input type="text" />
-        </div>
-        
         
         <div class="editor-label">
-            <label>Reporting To</label>
+            <label>
+                Reporting To</label>
         </div>
-
         <div class="editor-field">
-         @Html.DropDownListFor(r=>r.SelectedReportingToID, Model.ReportingTo)    
+            @Html.DropDownListFor(r => r.SelectedReportingToID, Model.ReportingTo)
         </div>
-        
-        
-         <div class="editor-label">
-        <label>Status:</label>
+        <br />
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.UserID)
         </div>
-      <div class="editor-field">Active
-     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True", new {  @checked = "checked" })
-     Inactive
-     @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
-     </div>
-
-     
+        <div class="editor-field">
+            @Html.TextBoxFor(model => model.EmployeeSetup.UserID, new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.UserID)
+        </div>
+        <div class="editor-label">
+            @Html.LabelFor(model => model.EmployeeSetup.UserPassword)
+        </div>
+        <div class="editor-field">
+            @Html.PasswordFor(model => model.EmployeeSetup.UserPassword, new { @class = "k-textbox" })
+            @Html.ValidationMessageFor(model => model.EmployeeSetup.UserPassword)
+        </div>
+        <br />
+        <div class="editor-label">
+            Status
+        </div>
+        <div class="editor-field">
+            Active
+            @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "True", new { @checked = "checked" })
+            Inactive
+            @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
+        </div>
     </fieldset>   
     
     <p>
-            <input type="submit" value="Save" class="k-button" />
-        </p>
+        <input type="submit" value="Save" class="k-button" />
+    </p>
 }
 <div>
     @Html.ActionLink("Back to List", "Index")
