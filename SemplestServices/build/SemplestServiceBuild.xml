@@ -213,43 +213,37 @@
   	 		dest="${dist}/config"
   	 	    includes="**/*.*"
   	 	/>		
-	  	
-	  	<!-- If it's a Keyword service, then create JAR for SemplestKeywords and put it to SemplestServices/lib -->
+		
+		<!-- Create a Jar for SemplestKeywords, and put it to SemplestServices/lib -->
+  	 	<copy todir="${dist}/lib" filtering="off">
+  	 		<flattenmapper />
+  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
+  	 	</copy>
+			<path id="keywords.path">
+				<pathelement location="${classes}"/>
+					<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
+				</path>
+				<mkdir dir="${semplest.keywords.dir}/temp"/>
+			<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
+					target="1.6"
+					source="1.6"
+					debug="${java.debug}"   	
+					includes="**/*.java" >
+					<exclude name="**/*.svn"/>
+			</javac>
+			<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
+			</jar>
+		
+	  	<!-- If it's a Keyword service, copy data folder -->
 	  	<if>
 	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
 	  	 <then>  	   
 	  	 	<echo message="This is KeywordGeneratorService."/>	 
-	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
-	  	 	<copy todir="${dist}/lib" filtering="off">
-	  	 		<flattenmapper />
-	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
-	  	 	</copy>
-	  	 	<!-- Copy Data folder of SemplestKeywords to SemplestServices/dist -->
 	  	 	<mkdir dir="${dist}/data"/>
 	  	 	<copydir src="${semplest.keywords.dir}/data"
 	  	 		dest="${dist}/data"
 	  	 	    includes="**/*.*"
 	  	 	/>
-	  	 	<!-- Compile SemplestKeywords -->
-	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
-	  	 	<path id="keywords.path">
-	  	 		<pathelement location="${classes}"/>
-	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
-	  	 	</path>
-	  	 	<mkdir dir="${semplest.keywords.dir}/temp"/>
-	  	 	<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
-	  	 		target="1.6"
-	  	 	  	source="1.6"
-	  	 	  	debug="${java.debug}"   	
-	  	 	  	includes="**/*.java" >
-	  	 		<exclude name="**/*.svn"/>
-	  	 	</javac>
-	  	 	<!-- Create Jar for SemplestKeywords, and put it to SemplestServices/dist/lib -->
-	  	 	<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">
-	  	 		<manifest>
-	  	 	    	<attribute name="Main-Class" value="semplest.keywords.lda"/>
-	  	 	    </manifest>
-	  	 	</jar>
 	  	 </then>
 	  	</if>
 	</target>
