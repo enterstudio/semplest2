@@ -55,7 +55,8 @@ import semplest.services.client.api.MSNAdcenterServiceClient;
 
 public class MSNAdcenterServiceClientTest {
 
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String BASEURLTEST = "http://" +
+			":9898/semplest";
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
 	String accountName = "_TovahPhoto";
@@ -71,7 +72,7 @@ public class MSNAdcenterServiceClientTest {
 	String adText2 = "Natural light photography to reflect your personality!";
 	
 	//Accounts and campaigns
-	Long accountID = 1617082L;
+	Long accountID = 1632282L;
 	Long campaignID = 110138069L;
 	Long adGroupID = 706138552L;	
 	Long addID1 = 907897094L; 
@@ -90,7 +91,7 @@ public class MSNAdcenterServiceClientTest {
 			msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			//msn.insertKeywords2("/semplest/data/biddingTest/TovahPhoto/keywords.txt");
+			msn.insertKeywords2("/semplest/data/biddingTest/TovahPhoto/keywords.txt");
 			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/TovahPhoto/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			//logger.info(bidMap);
@@ -105,8 +106,8 @@ public class MSNAdcenterServiceClientTest {
 	
 	public void getAccountID() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
-		 HashMap<String,Long> accounts = test.getAccountIDs();
-		 accountID =  accounts.get(accountName);
+		 HashMap<String,String> accounts = test.getAccountIDs();
+		 accountID =  Long.parseLong(accounts.get(accountName));
 	}
 	public void getIds() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
@@ -121,16 +122,20 @@ public class MSNAdcenterServiceClientTest {
 		
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
 		//createKeywords
-		Keyword[] keywords = new Keyword[500];
+		Keyword[] keywords = new Keyword[1000];
 		FileInputStream fstream = new FileInputStream(filename);
 	    // Get the object of DataInputStream
 	    DataInputStream in = new DataInputStream(fstream);
 	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
 	    //Read File Line By Line
 	    String strLine;
-	    int i=-1000;
+	    int i=0;
 	    while ((strLine = br.readLine()) != null)   {
-	    	if(i>=0){
+	    	if(i>=1000){
+	    		keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
+	    		keywords = new Keyword[500];
+	    		i=0;
+	    	}
 	    		if(i>=keywords.length) break ;
 		      // Print the content on the console
 		      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
@@ -145,8 +150,6 @@ public class MSNAdcenterServiceClientTest {
 		      keywords[i].setBroadMatchBid(defaultBid1);
 		      keywords[i].setContentMatchBid(defaultBid1);
 		      keywords[i].setPhraseMatchBid(defaultBid1);
-		      
-	    	}
 	    	i++;
 	    }
 	    //Close the input stream

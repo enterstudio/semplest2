@@ -54,7 +54,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	
 	public abstract Account getAccountById(Long accountId) throws Exception;
 	
-	public abstract HashMap<String,Long> getAccountIDs() throws Exception;
+	public abstract HashMap<String,String> getAccountIDs() throws Exception;
 	
 	// ==================================
 	// Campaign Methods
