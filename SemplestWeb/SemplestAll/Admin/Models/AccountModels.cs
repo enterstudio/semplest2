@@ -134,6 +134,7 @@ namespace Semplest.Admin.Models
         public string Email { get; set; }
         public string BillType { get; set; }
         public bool  isActive { get; set; }
+
         //no credit table in the database --> need to add these
         //no rep, salesperson  
        
@@ -312,6 +313,7 @@ namespace Semplest.Admin.Models
     {
         public AccountServiceModel AccountServiceModel { get; set; }
         public IEnumerable<EmployeeCustomerAssociaitionModel> EmployeeCustomerAssociaitionModel { get; set; }
+        public string ParentName { get; set; }
     }
 
 
