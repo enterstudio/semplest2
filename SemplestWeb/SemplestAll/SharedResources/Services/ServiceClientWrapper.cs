@@ -26,13 +26,25 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("url", url);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
-            //string returnData = string.Empty;
-            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+            string returnData = string.Empty;
+            try
+            {
+                returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+            }
+            catch (Exception ex)
+            {
+                string errmsg = ex.Message;
+                throw;
+            }
             //return JsonConvert.DeserializeObject<List<string>>(returnData);
 
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
+            if (jsonstrlist == "Service Timeout")
+            {
+                throw new Exception("Service Timeout for GetCategories");
+            }
             return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
         }
 
