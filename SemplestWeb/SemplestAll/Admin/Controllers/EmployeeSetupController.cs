@@ -181,7 +181,14 @@ namespace Semplest.Admin.Controllers
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
             x.EmployeeSetup = viewModel.FirstOrDefault(c => c.UserPK.Equals(id));
-             
+
+
+
+            //add userid and password to model
+            var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(x.EmployeeSetup.UserPK));
+            x.EmployeeSetup.UserID = credential.Username;
+            x.EmployeeSetup.UserPassword = credential.Password;
+
 
             /////////////////////////////////////////////////////////////////////////////////
             //for roles dropdown
@@ -268,6 +275,13 @@ namespace Semplest.Admin.Controllers
             var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             userrolesassociation.RolesFK = m.SelectedRoleID;
             UpdateModel(userrolesassociation);
+
+            var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+            credentials.Username = m.EmployeeSetup.UserID;
+            credentials.Password = m.EmployeeSetup.UserPassword;
+
+            UpdateModel(credentials);
+
             dbcontext.SaveChanges();
 
 
@@ -372,7 +386,13 @@ namespace Semplest.Admin.Controllers
 
                 EmployeeType et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
                 Employee e = dbcontext.Employees.Add(new Employee { EmployeeType = et, User = u, HireDate=m.EmployeeSetup.HireDate  });
-                Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
+                //Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
+
+                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.EmployeeSetup.UserID, Password = m.EmployeeSetup.UserPassword }); 
+
+
+                
+
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
