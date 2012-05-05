@@ -43,6 +43,7 @@ namespace Semplest.SharedResources.Services
             string jsonstrlist = lis[0];
             if (jsonstrlist == "Service Timeout")
             {
+
                 throw new Exception("Service Timeout for GetCategories");
             }
             return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
@@ -77,6 +78,10 @@ namespace Semplest.SharedResources.Services
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
+            if (jsonstrlist == "Service Timeout")
+            {
+                throw new Exception("Service Timeout for GetKeywords");
+            }
 
             //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
             //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
