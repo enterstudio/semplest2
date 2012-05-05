@@ -312,13 +312,14 @@ namespace SemplestWebApp.Services
 
                 foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
                 {
-                    if (dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Count() == 0)
+                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.keyword);
+                    if (queryKeyword.Count() == 0)
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
-                        dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.getKeyword() });
+                        var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword });
                         dbcontext.SaveChanges();
 
-                        int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Select(c => c.KeywordPK).First();
+                        int keywordId = newKeyword.KeywordPK;
                         dbcontext.PromotionKeywordAssociations.Add(
                             new PromotionKeywordAssociation
                             {
@@ -327,20 +328,23 @@ namespace SemplestWebApp.Services
                                 IsActive = true,
                                 IsDeleted = false,
                                 IsNegative = false,
-                                SemplestProbability = kpo.getSemplestProbability(),
-                                IsTargetMSN = kpo.getIsTargetMSN(),
-                                IsTargetGoogle = kpo.getIsTargetGoogle()
+                                SemplestProbability = kpo.semplestProbability,
+                                IsTargetMSN = kpo.isTargetMSN,
+                                IsTargetGoogle = kpo.isTargetGoogle
                           });
+
+                        dbcontext.SaveChanges();
 
                     }
                     else  // keyword already there in the Keywords table, setup an association with promotion if its not there
                     {
                         // todo find out more
+                        return true;
 
-                        var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
-                        if (query.Count() == 0)
+                        int keywordId = queryKeyword.First().KeywordPK;
+                        var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
+                        if (queryPka.Count() == 0)
                         {
-                            int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.getKeyword()).Select(c => c.KeywordPK).First();
                             dbcontext.PromotionKeywordAssociations.Add(
                                 new PromotionKeywordAssociation
                                 {
@@ -349,11 +353,22 @@ namespace SemplestWebApp.Services
                                     IsActive = true,
                                     IsDeleted = false,
                                     IsNegative = false,
-                                    SemplestProbability = kpo.getSemplestProbability(),
-                                    IsTargetMSN = kpo.getIsTargetMSN(),
-                                    IsTargetGoogle = kpo.getIsTargetGoogle()
+                                    SemplestProbability = kpo.semplestProbability,
+                                    IsTargetMSN = kpo.isTargetMSN,
+                                    IsTargetGoogle = kpo.isTargetGoogle
                                 });
 
+                            dbcontext.SaveChanges();
+
+                        }
+                        else
+                        {
+                            var pka = queryPka.First();
+                            pka.SemplestProbability = kpo.semplestProbability;
+                            pka.IsTargetMSN = kpo.isTargetMSN;
+                            pka.IsTargetGoogle = kpo.isTargetGoogle;
+
+                            dbcontext.SaveChanges();
                         }
                     }
                 }
@@ -433,6 +448,75 @@ namespace SemplestWebApp.Services
                     foreach (PromotionAd pad in query)
                     {
                     }
+                }
+
+            }
+
+            return retFlag;
+        }
+
+        public bool SaveNegativeKeywords(int userid, CampaignSetupModel model)
+        {
+            bool retFlag = false;
+            int promoId = GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+            using (SemplestEntities dbcontext = new SemplestEntities())
+            {
+                foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
+                {
+                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
+                    if (queryKeyword.Count() > 0)
+                    {
+                        int keywordId = queryKeyword.First().KeywordPK;
+                        var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promoId && c.KeywordFK == keywordId);
+                        if (queryPka.Count() == 0)
+                        {
+                            dbcontext.PromotionKeywordAssociations.Add(
+                                new PromotionKeywordAssociation
+                                {
+                                    PromotionFK = promoId,
+                                    KeywordFK = keywordId,
+                                    IsActive = true,
+                                    IsDeleted = false,
+                                    IsNegative = false,
+                                    SemplestProbability = 0,
+                                    IsTargetMSN = false,
+                                    IsTargetGoogle = false
+                                });
+
+                            dbcontext.SaveChanges();
+
+                        }
+                        else
+                        {
+                            var pka = queryPka.First();
+                            pka.IsNegative = true;
+
+                            dbcontext.SaveChanges();
+                        }
+
+                    }
+                    else
+                    {
+                        var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword });
+                        dbcontext.SaveChanges();
+
+                        int keywordId = newNegKeyword.KeywordPK;
+                        dbcontext.PromotionKeywordAssociations.Add(
+                            new PromotionKeywordAssociation
+                            {
+                                PromotionFK = promoId,
+                                KeywordFK = keywordId,
+                                IsActive = true,
+                                IsDeleted = false,
+                                IsNegative = true,
+                                SemplestProbability = 0,
+                                IsTargetMSN = false,
+                                IsTargetGoogle = false
+                            });
+
+                    }
+
+
                 }
 
             }
