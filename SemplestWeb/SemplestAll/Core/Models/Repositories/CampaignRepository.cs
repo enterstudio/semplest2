@@ -73,17 +73,16 @@ namespace Semplest.Core.Models.Repositories
                 adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
             }
 
-            // THIS IS ONLY FOR TESTING
-            model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = true });
-            model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = true });
 
             // get keywords from the web service
             //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
             var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(), model.ProductGroup.ProductPromotionName,
                                             model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
+
             if (keywords != null && keywords.Count > 0)
             {
-                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key.getKeyword() }))
+                model.AllKeywordProbabilityObjects.AddRange(keywords);
+                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword }))
                 {
                     model.AllKeywords.Add(kwm);
                 }
@@ -98,6 +97,16 @@ namespace Semplest.Core.Models.Repositories
 
         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
         {
+            // THIS IS ONLY FOR TESTING
+            if (model.ProductGroup.Google)
+                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = true });
+            else
+                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = false });
+            if (model.ProductGroup.YahooBing)
+                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = true });
+            else
+                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = false });
+
             List<string> adEnginesSelected = new List<string>();
             foreach (AdEngineSelectModel aesm in model.ProductGroup.AdEnginesSelectedList)
             {
