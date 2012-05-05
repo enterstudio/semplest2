@@ -79,7 +79,8 @@ namespace Semplest.SharedResources.Services
             string jsonstrlist = lis[0];
 
             //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-            var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
+            //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
+            var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
             var newKPOlist = new List<KeywordProbabilityObject>();
 
             foreach (var kpolis in listoflist)
@@ -233,41 +234,10 @@ namespace Semplest.SharedResources.Services
 
     public class KeywordProbabilityObject
     {
-        private String keyword;
-        private Double semplestProbability;
-        private Boolean isTargetMSN;
-        private Boolean isTargetGoogle;
-        public String getKeyword()
-        {
-            return keyword;
-        }
-        public void setKeyword(String keyword)
-        {
-            this.keyword = keyword;
-        }
-        public Double getSemplestProbability()
-        {
-            return semplestProbability;
-        }
-        public void setSemplestProbability(Double semplestProbability)
-        {
-            this.semplestProbability = semplestProbability;
-        }
-        public Boolean getIsTargetMSN()
-        {
-            return isTargetMSN;
-        }
-        public void setIsTargetMSN(Boolean isTargetMSN)
-        {
-            this.isTargetMSN = isTargetMSN;
-        }
-        public Boolean getIsTargetGoogle()
-        {
-            return isTargetGoogle;
-        }
-        public void setIsTargetGoogle(Boolean isTargetGoogle)
-        {
-            this.isTargetGoogle = isTargetGoogle;
-        }
+        public string keyword { get; set; }
+        public double semplestProbability { get; set; }
+        public bool isTargetMSN { get; set; }
+        public bool isTargetGoogle { get; set; }
     }
+
 }
