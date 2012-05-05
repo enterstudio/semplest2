@@ -87,6 +87,13 @@ namespace Semplest.Core.Controllers
             return View(model);
         }
 
+        private void WriteLog(string msg, CampaignSetupModel model)
+        {
+            msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
+            Logger.Write(logEnty);
+        }
+
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "GetKeywords")]
@@ -107,52 +114,33 @@ namespace Semplest.Core.Controllers
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                 int userid = 1; // for testing
 
-                string msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
-                Logger.Write(logEnty);
+                String msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                WriteLog(msg, model);
 
                 SemplestDataService ds = new SemplestDataService();
                 int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 ds.SaveSelectedCategories(promoId, catList);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                logEnty.Message = msg;
-                Logger.Write(logEnty);
+                WriteLog(msg, model);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting keywords form web service";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                logEnty.Message = msg;
-                Logger.Write(logEnty);
+                WriteLog(msg, model);
 
                 // get the keywords from web service
                 model = _campaignRepository.GetKeyWords(model);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After getting keywords form web service";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                logEnty.Message = msg;
-                Logger.Write(logEnty);
+                WriteLog(msg, model);
 
-                // save the keywords here
-                List<string> keyList = new List<string>();
-                foreach (CampaignSetupModel.KeywordsModel kwm in model.AllKeywords)
-                {
-                    keyList.Add(kwm.Name);
-                }
-                // save to database
-                //ds.SaveKeywords(promoId, keyList);
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before saving keywords to database";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                logEnty.Message = msg;
-                Logger.Write(logEnty);
+                WriteLog(msg, model);
 
+                // save the keywords to database
                 ds.SaveKeywords(promoId, model);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
-                msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                logEnty.Message = msg;
-                Logger.Write(logEnty);
+                WriteLog(msg, model);
 
                 model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                 Session.Add("FullModel", model);
@@ -219,12 +207,22 @@ namespace Semplest.Core.Controllers
             var addl = model.NegativeKeywordsText.Split(',').ToList();
             addl.ForEach(t => model.NegativeKeywords.Add(t));
             Session["NegativeKeywords"] = model.NegativeKeywords;
+            Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
+
+            //SemplestDataService ds = new SemplestDataService();
+            //int userid = 1;
+            //CampaignSetupModel fullmodel = 
+            //ds.SaveNegativeKeywords(userid, model);
+
             return Json("NegativeKeywords");
         }
         public ActionResult NegativeKeyWords(AdModel model)
         {
             if (Session["NegativeKeywords"] != null)
+            {
                 model.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
+                model.NegativeKeywordsText = (string)Session["NegativeKeywordsText"];
+            }
             return PartialView(model);
         }
         public ActionResult Categories(CampaignSetupModel model)
