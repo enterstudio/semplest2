@@ -67,6 +67,7 @@ namespace Semplest.Core.Models
             Addresses = new List<GeoTargeting> { new GeoTargeting() };
             Ads = new List<PromotionAd> { new PromotionAd() };
             SiteLinks = new List<SiteLink> { new SiteLink() };
+            NegativeKeywords = new List<string>();
         }
         public List<GeoTargeting> Addresses { get; set; }
         public List<PromotionAd> Ads { get; set; }
