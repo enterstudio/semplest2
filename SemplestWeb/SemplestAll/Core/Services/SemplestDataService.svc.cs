@@ -317,14 +317,14 @@ namespace SemplestWebApp.Services
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
                         var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword });
-                        dbcontext.SaveChanges();
+                        //dbcontext.SaveChanges();
 
                         int keywordId = newKeyword.KeywordPK;
                         dbcontext.PromotionKeywordAssociations.Add(
                             new PromotionKeywordAssociation
                             {
                                 PromotionFK = promotionId,
-                                KeywordFK = keywordId,
+                                //KeywordFK = keywordId,
                                 IsActive = true,
                                 IsDeleted = false,
                                 IsNegative = false,
