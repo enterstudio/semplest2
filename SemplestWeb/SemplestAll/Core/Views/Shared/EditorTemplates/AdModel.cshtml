@@ -8,30 +8,31 @@
                 Location (Enter Address,City,State or Zip)</h3>
         </li>
         <li>
-            <table>
-                <tr>
-                    <td style="vertical-align: top">
-                        <span>Business Address</span>
-                    </td>
-                    <td>
-                        <div id="addresses">
-                            @Html.EditorFor(t => t.Addresses)
-                        </div>
-                        <div style="text-align: right">
-                            @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", 
-"AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting))
-                        </div>
-                    </td>
-                </tr>
-            </table>
+            <fieldset>
+                <legend>Business Address</legend>
+                    <table>
+                        <tr>
+                            <td>
+                                <div id="addresses">
+                                    @Html.EditorFor(t => t.Addresses)
+                                </div>
+                                <div style="text-align: left;margin-left: 56px">
+                                    @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting))
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                
+            </fieldset>
         </li>
         <li class="infoHead">
             <h3>
                 Ad Copy</h3>
         </li>
-        <li><label style="width: 45px">URL</label> 
-            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox", @required = true, 
-@validationmessage = "Please enter {0}" })
+        <li>
+            <label style="width: 45px">
+                URL</label>
+            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
             <span>This url will appears in all of your ads</span> </li>
         <li>
             <div id="ads">
@@ -41,8 +42,7 @@
         <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association
             with your business</a></li>
         <li>
-            @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof
-(SemplestModel.PromotionAd))</li>
+            @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd))</li>
         <li class="options">
             <button class="k-button" id="back1" type="button">
                 <span class="k-back k-icon"></span>back</button>
@@ -55,6 +55,10 @@
         .k-textboxAd
         {
             width: 145px;
+        }
+         .k-textboxAd1
+        {
+            width: 190px;
         }
     </style>
 </div>

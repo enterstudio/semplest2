@@ -1,24 +1,22 @@
 ﻿@model SemplestModel.PromotionAd
-<div class="ads" style="margin-left: -40px">
-    <ul class="options">
-        <li>
-            <label>
-                Ad #</label>
-        </li>
-        <li>
-            <label style="min-width: 45px">
-                Title</label>
-                @Html.HiddenFor(t=>t.PromotionAdsPK)
-            @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
-        </li>
-        <li>
-            <label>
-                Ad Copy</label>
-            @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
-        </li>
-        <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
-        </li>
-    </ul>
+<div class="ads">
+    <fieldset>
+        <legend>Ad #</legend>
+        <ul class="options">
+            <li>
+                <label style="min-width: 45px">
+                    Title</label>
+                @Html.HiddenFor(t => t.PromotionAdsPK)
+                @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+            </li>
+            <li>
+                <label>
+                    Ad Copy</label>
+                @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+            </li>
+            <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
+            </li>
+        </ul>
+    </fieldset>
 </div>
-
 <script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>

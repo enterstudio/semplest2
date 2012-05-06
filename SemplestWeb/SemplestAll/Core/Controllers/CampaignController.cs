@@ -274,21 +274,28 @@ namespace Semplest.Core.Controllers
 
         public ActionResult GetSideBar()
         {
-            SemplestEntities semplestEntities = new SemplestEntities();
+            var semplestEntities = new SemplestEntities();
             var promotions = semplestEntities.ProductGroups.Include("Promotions");
             var navBars = new List<NavBar>();
-            var homeBar = new NavBar();
-            homeBar.SubItems = new List<NavBar>();
-            homeBar.SubItems.Add(new NavBar { Name = "Quick Start Guide" });
-            homeBar.SubItems.Add(new NavBar { Name = "FAQs" });
-            homeBar.SubItems.Add(new NavBar() { Name = "Contact Us" });
-            homeBar.SubItems.Add(new NavBar() { Name = "Create User" });
-            homeBar.SubItems.Add(new NavBar());
-            homeBar.SubItems.Add(new NavBar());
+            var homeBar = new NavBar
+                              {
+                                  Name = "Home",
+                                  SubItems = new List<NavBar>
+                                                 {
+                                                     new NavBar {Name = "Quick Start Guide"},
+                                                     new NavBar {Name = "FAQs"},
+                                                     new NavBar {Name = "Contact Us"},
+                                                     new NavBar {Name = "Create User"},
+                                                     new NavBar {Name = "Campaign"},
+                                                     new NavBar {Name = "Campaign"},
+                                                     new NavBar {Name = "Search Keywords"}
+                                                 }
+                              };
             navBars.Add(homeBar);
+            var productGroupsBar = new NavBar { Name = "Product Groups.." };
             foreach (var promotion in promotions)
             {
-
+                productGroupsBar.SubItems.Add(new NavBar() { Name = promotion.ProductGroupName });
             }
             return Json(navBars, JsonRequestBehavior.AllowGet);
         }
