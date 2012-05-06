@@ -45,10 +45,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="JsAction">
-      <HintPath>..\packages\JsAction.0.5\lib\net40\JsAction.dll</HintPath>
+      <HintPath>..\packages\JsAction.dll</HintPath>
     </Reference>
     <Reference Include="JsAction.BASE">
-      <HintPath>..\packages\JsAction.0.5\lib\net40\JsAction.BASE.dll</HintPath>
+      <HintPath>..\packages\JsAction.BASE.dll</HintPath>
     </Reference>
     <Reference Include="KendoGridBinder">
       <HintPath>..\packages\KendoGridBinder.1.3\lib\KendoGridBinder.dll</HintPath>
