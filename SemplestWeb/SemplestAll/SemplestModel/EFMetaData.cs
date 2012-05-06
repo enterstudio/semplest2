@@ -65,6 +65,7 @@ namespace SemplestModel
         {
             get { return new SemplestEntities().StateCodes.ToList(); }
         }
+        public bool Delete { get; set; }
     }
     public partial class SiteLink
     {
@@ -86,7 +87,9 @@ namespace SemplestModel
             public string AdTitle { get; set; }
             [Required]
             public string AdText { get; set; }
+
         }
+        public bool Delete { get; set; }
     }
 
     public class SEMCustomerDetailMetaData

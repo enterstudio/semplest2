@@ -1,4 +1,5 @@
-﻿@model SemplestModel.PromotionAd
+﻿@using Semplest.Core.Helpers
+@model SemplestModel.PromotionAd
 <div class="ads">
     <fieldset>
         <legend>Ad #</legend>
@@ -15,6 +16,10 @@
                 @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
             </li>
             <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
+            </li>
+            <li>
+                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
             </li>
         </ul>
     </fieldset>

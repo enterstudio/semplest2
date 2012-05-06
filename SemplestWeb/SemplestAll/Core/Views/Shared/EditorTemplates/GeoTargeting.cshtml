@@ -1,6 +1,6 @@
-﻿@using SemplestWebApp.Helpers
+﻿@using Semplest.Core.Helpers
+@using SemplestWebApp.Helpers
 @model SemplestModel.GeoTargeting
-
 <div class="address">
     <table>
         <tr>
@@ -16,9 +16,11 @@
             <td rowspan="4">
                 <div id="optionsNarrative">
                 </div>
+                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                @Html.LinkToRemoveNestedForm("Delete", "div.address", "input.mark-for-delete")
             </td>
         </tr>
-         <tr>
+        <tr>
             <td>
                 City
             </td>
@@ -26,12 +28,12 @@
                 @Html.TextBoxFor(t => t.City, new { @class = "k-textbox k-textboxAd" })
             </td>
         </tr>
-       <tr>
+        <tr>
             <td>
                 State
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK","StateAbbr"), new { @class = "k-dropdownlist" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr"), new { @class = "k-dropdownlist" })
             </td>
         </tr>
         <tr>
@@ -64,4 +66,3 @@
         display: none;
     }
 </style>
-
