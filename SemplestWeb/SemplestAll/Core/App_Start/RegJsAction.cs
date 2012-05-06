@@ -1,0 +1,12 @@
+using System;
+
+[assembly: WebActivator.PreApplicationStartMethod(
+    typeof(Semplest.Core.App_Start.RegJsAction), "PreStart")]
+
+namespace Semplest.Core.App_Start {
+    public static class RegJsAction {
+        public static void PreStart() {
+            System.Web.Routing.RouteTable.Routes.Add("JsActionRoute", JsAction.JsActionRouteHandlerInstance.JsActionRoute);
+        }
+    }
+}
