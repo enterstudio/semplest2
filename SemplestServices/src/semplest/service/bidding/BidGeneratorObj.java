@@ -152,7 +152,7 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 2. Database call: get remaining days and budget
-		BudgetObject budgetData = SemplestDB.getBudget(promotionID, searchEngine);
+		BudgetObject budgetData = SemplestDB.getBudget(promotionID);
 		Double remBudget = budgetData.getRemainingBudgetInCycle();
 		Integer remDays = budgetData.getRemainingDays();
 		double targetDailyBudget = (remBudget/remDays)*7; // use weekly budget as target daily budget

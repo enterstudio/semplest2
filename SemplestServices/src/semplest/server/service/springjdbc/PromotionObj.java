@@ -4,17 +4,30 @@ import java.util.Date;
 
 public class PromotionObj
 {
+	/*
+	 * p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,
+		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
+		p.BudgetToAddToNextCycle,p.CycleStartDate,
+		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
+		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate 
+	 */
 	private Integer PromotionPK;
 	private Integer ProductGroupFK;
 	private String PromotionName;
 	private String PromotionDescription;
-	private String LandingPageURL;
-	private Double CycleBudgetAmount;
-	private Date StartDate;
-	private Date EndDate;
-	private Boolean IsPaused;
-	private Date CreatedDate;
+	private Double PromotionBudgetAmount;
+	private Date PromotionStartDate;
+	private Date PromotionEndDate;
+	private String BudgetCycle;
+	private Double BudgetToAddToNextCycle;
+	private Date CycleStartDate;
+	private Double RemainingBudgetInCycle;
+	private Double StartBudgetInCycle;
 	private Date EditedDate;
+	private Boolean isLaunched; 
+	private Boolean isCompleted;
+	private Boolean isPaused;
+	private Date CreatedDate;
 	public Integer getPromotionPK()
 	{
 		return PromotionPK;
@@ -47,53 +60,69 @@ public class PromotionObj
 	{
 		PromotionDescription = promotionDescription;
 	}
-	public String getLandingPageURL()
+	public Double getPromotionBudgetAmount()
 	{
-		return LandingPageURL;
+		return PromotionBudgetAmount;
 	}
-	public void setLandingPageURL(String landingPageURL)
+	public void setPromotionBudgetAmount(Double promotionBudgetAmount)
 	{
-		LandingPageURL = landingPageURL;
+		PromotionBudgetAmount = promotionBudgetAmount;
 	}
-	public Double getCycleBudgetAmount()
+	public Date getPromotionStartDate()
 	{
-		return CycleBudgetAmount;
+		return PromotionStartDate;
 	}
-	public void setCycleBudgetAmount(Double cycleBudgetAmount)
+	public void setPromotionStartDate(Date promotionStartDate)
 	{
-		CycleBudgetAmount = cycleBudgetAmount;
+		PromotionStartDate = promotionStartDate;
 	}
-	public Date getStartDate()
+	public Date getPromotionEndDate()
 	{
-		return StartDate;
+		return PromotionEndDate;
 	}
-	public void setStartDate(Date startDate)
+	public void setPromotionEndDate(Date promotionEndDate)
 	{
-		StartDate = startDate;
+		PromotionEndDate = promotionEndDate;
 	}
-	public Date getEndDate()
+	public String getBudgetCycle()
 	{
-		return EndDate;
+		return BudgetCycle;
 	}
-	public void setEndDate(Date endDate)
+	public void setBudgetCycle(String budgetCycle)
 	{
-		EndDate = endDate;
+		BudgetCycle = budgetCycle;
 	}
-	public Boolean getIsPaused()
+	public Double getBudgetToAddToNextCycle()
 	{
-		return IsPaused;
+		return BudgetToAddToNextCycle;
 	}
-	public void setIsPaused(Boolean isPaused)
+	public void setBudgetToAddToNextCycle(Double budgetToAddToNextCycle)
 	{
-		IsPaused = isPaused;
+		BudgetToAddToNextCycle = budgetToAddToNextCycle;
 	}
-	public Date getCreatedDate()
+	public Date getCycleStartDate()
 	{
-		return CreatedDate;
+		return CycleStartDate;
 	}
-	public void setCreatedDate(Date createdDate)
+	public void setCycleStartDate(Date cycleStartDate)
 	{
-		CreatedDate = createdDate;
+		CycleStartDate = cycleStartDate;
+	}
+	public Double getRemainingBudgetInCycle()
+	{
+		return RemainingBudgetInCycle;
+	}
+	public void setRemainingBudgetInCycle(Double remainingBudgetInCycle)
+	{
+		RemainingBudgetInCycle = remainingBudgetInCycle;
+	}
+	public Double getStartBudgetInCycle()
+	{
+		return StartBudgetInCycle;
+	}
+	public void setStartBudgetInCycle(Double startBudgetInCycle)
+	{
+		StartBudgetInCycle = startBudgetInCycle;
 	}
 	public Date getEditedDate()
 	{
@@ -103,4 +132,37 @@ public class PromotionObj
 	{
 		EditedDate = editedDate;
 	}
+	public Boolean getIsLaunched()
+	{
+		return isLaunched;
+	}
+	public void setIsLaunched(Boolean isLaunched)
+	{
+		this.isLaunched = isLaunched;
+	}
+	public Boolean getIsCompleted()
+	{
+		return isCompleted;
+	}
+	public void setIsCompleted(Boolean isCompleted)
+	{
+		this.isCompleted = isCompleted;
+	}
+	public Boolean getIsPaused()
+	{
+		return isPaused;
+	}
+	public void setIsPaused(Boolean isPaused)
+	{
+		this.isPaused = isPaused;
+	}
+	public Date getCreatedDate()
+	{
+		return CreatedDate;
+	}
+	public void setCreatedDate(Date createdDate)
+	{
+		CreatedDate = createdDate;
+	}
+	
 }

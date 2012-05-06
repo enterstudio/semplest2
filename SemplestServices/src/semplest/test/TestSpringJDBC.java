@@ -2,6 +2,7 @@ package semplest.test;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
@@ -31,15 +32,20 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			//List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			List<LinkedHashMap<String, Object>> AdEngineAccoutRow =SemplestDB.getAdEngineAccount(2, "Google");
+			
+			String companyName = (String) AdEngineAccoutRow.get(0).get("CustomerName");
+			System.out.println("companyName=" + companyName);
 			//Test Scheduler
+			/*
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask1", "nan@semplest.com", "nan@semplest.com", "Hello");
 			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("Test Scheduler mailTask2", "mitch@semplest.com", "mitch@semplest.com", "Hello");
 			listOfTasks.add(mailTask1);
 			listOfTasks.add(mailTask2);
 			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
-			
+			*/
 			
 			
 			//SemplestDB op = new SemplestDB();

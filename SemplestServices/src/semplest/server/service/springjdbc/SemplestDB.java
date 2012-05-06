@@ -31,6 +31,7 @@ import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 
 public class SemplestDB extends BaseDB
@@ -416,7 +417,7 @@ public class SemplestDB extends BaseDB
 	 */
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
 
-	public static BudgetObject getBudget(int promotionID, String searchEngine) throws Exception
+	public static BudgetObject getBudget(int promotionID) throws Exception
 	{
 
 		String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,p.CycleEndDate,CURRENT_TIMESTAMP) [RemainingDays] from Promotion p where PromotionPK = ?";
@@ -582,21 +583,36 @@ public class SemplestDB extends BaseDB
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(Long advertisingEngineAccountID) throws Exception
 	{
 		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID],"
-				+ "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.AdvertisingEngineBudget "
+				+ "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.MicroDefaultBid "
 				+ "from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
 		return jdbcTemplate.query(strSQL, new Object[]
 		{ advertisingEngineAccountID }, advertisingEnginePromotionObjMapper);
 	}
+	/*
+	 * Get campaign for a given 
+	 */
+	public static AdvertisingEnginePromotionObj getAdvertisingEngineCampaignID(Long advertisingEngineAccountID, int promotionID) throws Exception
+	{
+		String strSQL = "select aep.AdvertisingEngineAccountFK [AdvertisingEngineAccountID], aep.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID], " +
+				"p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid from AdvertisingEnginePromotion aep " +
+				"inner join Promotion p on p.PromotionPK = aep.PromotionFK " +
+				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
+				"where aea.AdvertisingEngineAccountPK = ? and p.PromotionPK = ?";
+		return jdbcTemplate.queryForObject(strSQL, new Object[]
+		{ advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
+	}
+	
+	
 
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
 	public static List getAdEngineAccount(int customerID, String adEngine) throws Exception
 	{
-		String strSQL = "select ae.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
+		String strSQL = "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
 				+ "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK "
 				+ "left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK "
-				+ "where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
+				+ "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
 
 		return jdbcTemplate.queryForList(strSQL, new Object[]
 		{ customerID, adEngine });
@@ -632,15 +648,4 @@ public class SemplestDB extends BaseDB
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
 
 	}
-
-	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper(PromotionObj.class);
-
-	public static List<PromotionObj> getPromotionObjects(Integer promotionID) throws Exception
-	{
-		String strSQL = " select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,"
-				+ "p.CycleBudgetAmount,p.StartDate,p.EditedDate,p.IsPaused,p.CreatedDate,p.EditedDate from Promotion p where p.PromotionPK = ?";
-		return jdbcTemplate.query(strSQL, new Object[]
-		{ promotionID }, promotionObjMapper);
-	}
-
 }

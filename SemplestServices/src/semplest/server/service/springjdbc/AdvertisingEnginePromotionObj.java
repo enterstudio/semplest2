@@ -3,20 +3,13 @@ package semplest.server.service.springjdbc;
 public class AdvertisingEnginePromotionObj
 {
 	private Long AdvertisingEngineAccountID;
-	private Integer AdvertisingEngineCampaignID;
+	private Long AdvertisingEngineCampaignID;
 	private Integer PromotionID;
 	private Boolean IsSearchNetwork;
 	private Boolean IsDisplayNetwork;
-	private Double AdvertisingEngineBudget;
+	private Double MicroDefaultBid;
 	
-	public Integer getAdvertisingEngineCampaignID()
-	{
-		return AdvertisingEngineCampaignID;
-	}
-	public void setAdvertisingEngineCampaignID(Integer advertisingEngineCampaignID)
-	{
-		AdvertisingEngineCampaignID = advertisingEngineCampaignID;
-	}
+	
 	public Integer getPromotionID()
 	{
 		return PromotionID;
@@ -41,14 +34,7 @@ public class AdvertisingEnginePromotionObj
 	{
 		IsDisplayNetwork = isDisplayNetwork;
 	}
-	public Double getAdvertisingEngineBudget()
-	{
-		return AdvertisingEngineBudget;
-	}
-	public void setAdvertisingEngineBudget(Double advertisingEngineBudget)
-	{
-		AdvertisingEngineBudget = advertisingEngineBudget;
-	}
+	
 	public Long getAdvertisingEngineAccountID()
 	{
 		return AdvertisingEngineAccountID;
@@ -56,6 +42,22 @@ public class AdvertisingEnginePromotionObj
 	public void setAdvertisingEngineAccountID(Long advertisingEngineAccountID)
 	{
 		AdvertisingEngineAccountID = advertisingEngineAccountID;
+	}
+	public Double getMicroDefaultBid()
+	{
+		return MicroDefaultBid;
+	}
+	public void setMicroDefaultBid(Double microDefaultBid)
+	{
+		MicroDefaultBid = microDefaultBid;
+	}
+	public Long getAdvertisingEngineCampaignID()
+	{
+		return AdvertisingEngineCampaignID;
+	}
+	public void setAdvertisingEngineCampaignID(Long advertisingEngineCampaignID)
+	{
+		AdvertisingEngineCampaignID = advertisingEngineCampaignID;
 	}
 
 }

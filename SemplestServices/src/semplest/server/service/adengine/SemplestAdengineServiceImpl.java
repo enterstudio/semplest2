@@ -1,6 +1,8 @@
 package semplest.server.service.adengine;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -9,16 +11,19 @@ import org.apache.log4j.Logger;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.BudgetObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
+import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
-import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
-import com.google.api.adwords.v201109.cm.CampaignStatus;
-import com.google.api.adwords.v201109.cm.Money;
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
@@ -26,12 +31,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 {
 	private static final Logger logger = Logger.getLogger(SemplestAdengineServiceImpl.class);
 	private static Gson gson = new Gson();
+	private String esbURL = "http://VMJAVA1:9898/semplest";
 	
 
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// TODO Auto-generated method stub
+		// call the DB to get the config
 		
 	}
 
@@ -39,7 +45,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Long productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
+		//setup the budget for each ad engine
+		HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList);
 		String companyName = null;
+		//Get all common info - promotion data,  Ads, Geotargeting
+		GetAllPromotionDataSP getPromoDataSP  = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(PromotionID);
 		//for each ad Engine
 		for (String advertisingEngine : adEngineList)
 		{
@@ -64,22 +75,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				accountID = new Long((Integer) AdEngineAccoutRow.get(0).get("AccountID"));
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
-			//if no promo group then add
-			List<PromotionObj> promotionDataList =  SemplestDB.getPromotionObjects(PromotionID);
-			if (promotionDataList == null || promotionDataList.size() == 0 )
+			//if no campaign then add
+			AdvertisingEnginePromotionObj promotionDataList =  SemplestDB.getAdvertisingEngineCampaignID(accountID, PromotionID);
+			Long campaignID = null;
+			if (promotionDataList == null  )
 			{
-				throw new Exception("No promotion data found for " + PromotionID);
-			}
-			Long prodGroupID = null;
-			if (productGroupID == null)
-			{
+				//create campaign on ad engine
 				//create the campaign
-				prodGroupID = createCampaign(accountID, advertisingEngine);
+				Double budget = remainingBudgetMap.get(advertisingEngine);
+				campaignID = createCampaign(accountID,PromotionID,customerID, advertisingEngine, budget);
 				//store new product group for ad engine 
 			}
 			else
 			{
-				prodGroupID = productGroupID;
+				campaignID = promotionDataList.getAdvertisingEngineCampaignID();
 			}
 			//create the Ad Engine AdGroup
 			
@@ -87,13 +96,39 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		 
 		return null;
 	}
-	private Long createCampaign(Long accountID, String adEngine)
+	private HashMap<String, Double> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	{
+		HashMap<String, Double> remainingBudgetMap = new HashMap<String, Double>();
+		//Get the split
+		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbURL);
+		HashMap<String, Integer> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngineList);
+		//get remaining Budget
+		BudgetObject remainingBudget =  SemplestDB.getBudget(PromotionID);
+		Iterator<String> adEngineIT = AdEngineBudgetPercent.keySet().iterator();
+		
+		while(adEngineIT.hasNext())
+		{
+			String adEng = adEngineIT.next();
+			Double budgetSplit = remainingBudget.getRemainingBudgetInCycle() * (0.01 *  AdEngineBudgetPercent.get(adEng));
+			remainingBudgetMap.put(adEng, budgetSplit);
+		}	
+		return remainingBudgetMap;
+	}
+	private Long createAdGroupAndAds()
+	{
+		//Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status)
+		//Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
+		//KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
+		return null;
+	}
+	private Long createCampaign(Long accountID,Integer promotionID, Integer customerID, String adEngine, Double microbudgetAmount)
 	{
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			//assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			Long campaignID =  0L; //google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
+			//get the promotion name/ campaign name,  Budget period, 
+			Long campaignID =  0L;//google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
 			return campaignID;
 		}
 		
