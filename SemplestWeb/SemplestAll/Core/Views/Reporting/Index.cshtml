@@ -1,0 +1,75 @@
+﻿@model Semplest.Core.Models.ReportIndexModel
+@{
+    ViewBag.Title = "Index";
+}
+@section Title{
+    Reporting
+}
+@section Links{
+    <div id="examplesThemeChooser">
+        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnOne" />
+        <input type="button" class="k-button rounded" value="Reporting" id="btnTwo" />
+        <input type="button" class="k-button rounded" value="Billing" id="btnThree" />
+    </div>
+}
+@section Navbar{
+    <div id="panelbar-images">
+    </div>
+    <script type="text/javascript">
+        $("#panelbar-images").kendoPanelBar({
+            dataSource: [
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" },
+                        { text: "Create User", url: "../Home" },
+                        { text: "Campaign", url: "../Campaign/CampaignSetup" },
+                        { text: "Search Keywords", url: "../Home/SearchKeywords" }
+                    ]
+                }
+            ]
+        });
+
+    </script>
+}
+
+Please select a product group for which you would like to view reports.  Selecting more than one product group will provide you a report with combined data.
+<ul>
+@foreach (SemplestModel.ProductGroup p in Model.ProductGroups)
+{
+    <li>@p.ProductGroupName</li>
+    foreach (SemplestModel.Promotion ps in p.Promotions)
+    {
+        @Html.CheckBox("ps.PromotionPK")
+        @ps.PromotionName<br />
+    }
+}
+    
+</ul>
+
+Please select a search engine for which you would like to view reports.  Selecting more than one engine will provide you a report with combined data.
+   <table>
+   
+  @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+  {
+      <tr >
+        <td>@Html.CheckBox("ps.PromotionPK")</td>
+        <td>@item.AdvertisingEngine1</td>
+        </tr>
+  }
+  </table>
+
+  <input type="button" id="btnOne" value="Get Report" class="k-button" />
+
+  <script type="text/javascript">
+      $('#btnOne').click(function () {
+          window.location.href = '../Home/Index2';
+          return false;
+      });
+      $('#btnTwo').click(function () {
+          window.location.href = '../Reporting/Index';
+          return false;
+      });
+</script>
