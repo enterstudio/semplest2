@@ -27,14 +27,14 @@ BEGIN TRY
 	--get general info
 	select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
-		p.BudgetToAddToNextCycle, p.BudgetToAddToNextCycle,p.CycleStartDate,
+		p.BudgetToAddToNextCycle,p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
-		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate,p.EditedDate 
+		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate 
 		from Promotion p 
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
 		where p.PromotionPK  = @PromotionPK
 		--get ADs
-		select pa.AdTitle, pa.AdText from Promotion p
+		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdText from Promotion p
 		inner join PromotionAds pa on pa.PromotionFK = p.PromotionPK
 		where p.PromotionPK = @PromotionPK
 		--get Geotargeting
