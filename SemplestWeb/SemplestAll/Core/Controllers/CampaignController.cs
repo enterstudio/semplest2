@@ -286,17 +286,20 @@ namespace Semplest.Core.Controllers
                                                      new NavBar {Name = "FAQs"},
                                                      new NavBar {Name = "Contact Us"},
                                                      new NavBar {Name = "Create User"},
-                                                     new NavBar {Name = "Campaign"},
-                                                     new NavBar {Name = "Campaign"},
+                                                     new NavBar {Name = "Campaign" , Url = "../Campaign/CampaignSetup"},
                                                      new NavBar {Name = "Search Keywords"}
                                                  }
                               };
             navBars.Add(homeBar);
-            var productGroupsBar = new NavBar { Name = "Product Groups.." };
+            var productGroupsBar = new NavBar { Name = "Product Groups.." , SubItems = new List<NavBar>()};
             foreach (var promotion in promotions)
             {
-                productGroupsBar.SubItems.Add(new NavBar() { Name = promotion.ProductGroupName });
+                var promotionBar = new NavBar {Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>()};
+                foreach(var problem in promotionBar.SubItems)
+                    promotionBar.SubItems.Add(new NavBar { Name = problem.Name, Id = problem.Id, Url = "../Campaign/CampaignSetup" });
+                productGroupsBar.SubItems.Add(promotionBar);
             }
+            navBars.Add(productGroupsBar);
             return Json(navBars, JsonRequestBehavior.AllowGet);
         }
     }
