@@ -241,10 +241,10 @@ namespace SemplestWebApp.Services
             {
                 var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
 
-                if (model.AdModelProp.SiteLinks != null)
+                if (pad.SiteLinks != null)
                 {
                     // add sitelinks
-                    foreach (SiteLink slink in model.AdModelProp.SiteLinks)
+                    foreach (SiteLink slink in pad.SiteLinks)
                     {
                         // this is check should be removed once we fix the logic in partialview and model
                         if (!String.IsNullOrEmpty(slink.LinkText) && !String.IsNullOrEmpty(slink.LinkURL))

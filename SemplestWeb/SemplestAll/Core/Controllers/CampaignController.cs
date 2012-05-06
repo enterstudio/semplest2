@@ -47,7 +47,8 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                   model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
+                var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+                //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                 model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                 // we need save to database the ProductGroup and Promotion information
                 //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
@@ -182,19 +183,37 @@ namespace Semplest.Core.Controllers
         }
 
         #endregion
-
-        public ActionResult AdditionalLinks(AdModel model)
+        public ActionResult AdditionalLinks(string model)
         {
-            if (Session["SiteLinks"] != null)
-                model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-            return PartialView(model);
+            if (Session["AdText"] == null)
+                Session.Add("AdText", model);
+            else
+                Session["AdText"] = model;
+            //if (Session["SiteLinks"] != null)
+            //    model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
+            return PartialView(new PromotionAd { AdText = model });
+            //return PartialView(model);
         }
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
-        public ActionResult SetAdditionalLinks(AdModel model)
+        public ActionResult SetAdditionalLinks(PromotionAd model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
+            model.AdText = (string)Session["AdText"];
+            if (Session["AddsStoreModel"] == null)
+            {
+                Session.Add("AddsStoreModel", new AddsStoreModel { Ads = new List<PromotionAd> { model } });
+            }
+            else
+            {
+                var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+                var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdText.Equals(model.AdText));
+                if (promotionAd != null)
+                    promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
+                else
+                    addsStoreModel.Ads.Add(model);
+                Session["AddsStoreModel"] = addsStoreModel;
+            }
             return Json("AdditionalLinks");
         }
         [HttpPost]
@@ -251,6 +270,27 @@ namespace Semplest.Core.Controllers
                 return Json(0);
             return Json(123);
             // return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult GetSideBar()
+        {
+            SemplestEntities semplestEntities = new SemplestEntities();
+            var promotions = semplestEntities.ProductGroups.Include("Promotions");
+            var navBars = new List<NavBar>();
+            var homeBar = new NavBar();
+            homeBar.SubItems = new List<NavBar>();
+            homeBar.SubItems.Add(new NavBar { Name = "Quick Start Guide" });
+            homeBar.SubItems.Add(new NavBar { Name = "FAQs" });
+            homeBar.SubItems.Add(new NavBar() { Name = "Contact Us" });
+            homeBar.SubItems.Add(new NavBar() { Name = "Create User" });
+            homeBar.SubItems.Add(new NavBar());
+            homeBar.SubItems.Add(new NavBar());
+            navBars.Add(homeBar);
+            foreach (var promotion in promotions)
+            {
+
+            }
+            return Json(navBars, JsonRequestBehavior.AllowGet);
         }
     }
 }

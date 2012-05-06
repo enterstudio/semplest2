@@ -60,18 +60,20 @@ namespace Semplest.Core.Models
 
     }
 
+    public class AddsStoreModel
+    {
+        public List<PromotionAd> Ads { get; set; } 
+    }
     public class AdModel
     {
         public AdModel ()
         {
             Addresses = new List<GeoTargeting> { new GeoTargeting() };
             Ads = new List<PromotionAd> { new PromotionAd() };
-            SiteLinks = new List<SiteLink> { new SiteLink() };
             NegativeKeywords = new List<string>();
         }
         public List<GeoTargeting> Addresses { get; set; }
         public List<PromotionAd> Ads { get; set; }
-        public List<SiteLink> SiteLinks { get; set; }
         public List<string> NegativeKeywords { get; set; }
         public string NegativeKeywordsText { get; set; }
         [Required]
@@ -140,5 +142,13 @@ namespace Semplest.Core.Models
 
         public string Name { get; set; }
         public string Url { get; set; }
+    }
+
+    public class NavBar
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public List<NavBar> SubItems { get; set; }
     }
 }

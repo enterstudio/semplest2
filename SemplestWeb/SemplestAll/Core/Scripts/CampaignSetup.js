@@ -5,7 +5,7 @@ $(document).ready(function () {
     $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0 });
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
-    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
+    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".st    atus");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
@@ -128,25 +128,6 @@ $(document).ready(function () {
 
     //Selected Button Logic
     $("input[type='button']#btnOne").addClass("k-button rounded");
-
-    $("#additionalLinks").click(function () {
-        var length = tabStrip.items().length;
-        var isAdditionalLinksAdded = false;
-        for (var item = 0; item < length; item++) {
-            if (tabStrip.items().item(item).innerText == "Additional Links") {
-                isAdditionalLinksAdded = true;
-                break;
-            }
-        }
-        if (!isAdditionalLinksAdded)
-            tabStrip.append({
-                text: "Additional Links",
-                contentUrl: '/Campaign/AdditionalLinks'
-            });
-        tab = tabStrip.tabGroup.children('li:contains("Additional Links")');
-        tabStrip.select(tab);
-    });
-
     $("#negativeKeyWords").click(function () {
         var length = tabStrip.items().length;
         var isnegativeKeyWordsAdded = false;
