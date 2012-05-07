@@ -85,7 +85,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			//if no campaign then add SINCE this is create there should be no campaign
-			AdvertisingEnginePromotionObj promotionDataList =  SemplestDB.getAdvertisingEngineCampaignID(accountID, PromotionID);
+			AdvertisingEnginePromotionObj promotionDataList =  SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);
 			if (promotionDataList != null)
 			{
 				throw new Exception("A Campaign has already been created for the Promotion " + PromotionID);

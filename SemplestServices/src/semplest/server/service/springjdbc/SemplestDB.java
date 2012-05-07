@@ -591,7 +591,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Get campaign for a given 
 	 */
-	public static AdvertisingEnginePromotionObj getAdvertisingEngineCampaignID(Long advertisingEngineAccountID, int promotionID) throws Exception
+	public static AdvertisingEnginePromotionObj getAdvertisingEngineCampaign(Long advertisingEngineAccountID, int promotionID) throws Exception
 	{
 		String strSQL = "select aep.AdvertisingEngineAccountFK [AdvertisingEngineAccountID], aep.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID], " +
 				"p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid from AdvertisingEnginePromotion aep " +
@@ -602,8 +602,6 @@ public class SemplestDB extends BaseDB
 		{ advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
 	}
 	
-	
-
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
