@@ -59,6 +59,8 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	
 	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId, Boolean ActiveOnly) throws Exception;
 	
+	void updateDefaultBid(String accountID, Long adGroupID, Long microBid) throws Exception; 
+
 	
 	//public GeoTargetList getCampaignGeoTargets(String customerId, long campaignId) throws Exception;
 	//optimization (o)
@@ -81,7 +83,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract ReportObject[] getReportForAccount(SemplestString accountID) throws Exception;
 
 	// GeoTargeting
-	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception; 
+	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception;
 	
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService
