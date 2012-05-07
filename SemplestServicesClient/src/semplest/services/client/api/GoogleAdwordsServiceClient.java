@@ -652,6 +652,17 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData,Boolean.class);
 	}
 
+	@Override
+	public void updateDefaultBid(String accountID, Long adGroupID, Long microBid) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("adGroupID", String.valueOf(adGroupID));
+		jsonHash.put("microBid",  String.valueOf(microBid));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		runMethod(baseurl,SERVICEOFFERED, "getAllBiddableAdGroupCriteria", json,timeoutMS);
+	}
+
 
 }
 
