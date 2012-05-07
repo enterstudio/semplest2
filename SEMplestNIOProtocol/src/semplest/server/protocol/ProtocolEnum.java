@@ -67,6 +67,14 @@ public class ProtocolEnum {
 			}
 			return false;
 		}
+		
+		public static String getGoogleMatchType(String matchType) throws Exception {
+			if(SemplestMatchType.existsMatchType(matchType)) {
+				return matchType.toUpperCase();
+			} else {
+				throw new Exception("Invalid matchtype "+matchType+"!!");
+			}
+		}
 	}
 	
 	public static enum NetworkSetting
