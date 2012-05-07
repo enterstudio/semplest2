@@ -143,6 +143,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				KeywordDataObject keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), matchType, microBidAmount);
 				//Store result in DB including AdEngine KeywordID
 				addKeywordBidDataSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount(), keywordDataObj.getMatchType(), adEngine);
+				Thread.sleep(500);  //Wait for google
 			}
 		}
 		
@@ -184,7 +185,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			adGrpData.setAds(adList);
 			//AD GEOTARGET HERE
-			
+			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
+			for (GeoTargetObject geoObj : geoObjList)
+			{
+				google.setGeoTarget(accountID, campaignID,  geoObj.getRadius(),  geoObj.getAddress(),  geoObj.getCity(),  geoObj.getState(),  geoObj.getZip());
+			}
 			
 		}
 		return adGrpData;
