@@ -98,7 +98,7 @@ public class ProtocolEnum {
 	
 	public static enum NetworkSetting
 	{
-		SearchOnly,SearchNetwork;
+		SearchOnly,displayNetwork;
 		public static boolean existsNetworkSetting(String networkSetting)
 		{
 			if (networkSetting != null)
