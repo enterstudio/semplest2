@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
@@ -31,7 +32,6 @@ import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
-import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
@@ -202,8 +202,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			//get the promotion name/ campaign name,  Budget period,
 			Money budgetAmount = new Money();
-			budgetAmount.setMicroAmount(microbudgetAmount);
-			Campaign campaign =  google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), CampaignStatus.ACTIVE, BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),budgetAmount);
+			budgetAmount.withMicroDollars(microbudgetAmount);
+			Campaign campaign =  google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), CampaignStatus.ACTIVE, 
+					BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),budgetAmount);
 			return campaign.getId();
 		}
 		
