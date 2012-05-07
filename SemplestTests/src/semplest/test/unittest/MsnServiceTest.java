@@ -694,7 +694,7 @@ public class MsnServiceTest {
 				String[] kws2 = new String[2];
 				kws2[0] = "flower";
 				kws2[1] = "rose";
-				Money[] bid = new Money[]{new Money(6000000), new Money(7000000)};
+				Long[] bid = new Long[]{6000000L, 7000000L};
 				TrafficEstimatorObject kep = test.getKeywordEstimateByBids(accountId, kws2, bid, MatchType.Exact);
 				System.out.println("OK");
 				for(String s:kep.getListOfKeywords()){
@@ -1361,7 +1361,7 @@ public class MsnServiceTest {
 				String[] kws2 = new String[2];
 				kws2[0] = "flower";
 				kws2[1] = "rose";
-				Money[] bid = new Money[]{new Money(6000000), new Money(7000000)};
+				Long[] bid = new Long[]{6000000L, 7000000L};
 				TrafficEstimatorObject kep = test.getKeywordEstimateByBids(accountId, kws2, bid, MatchType.Exact);
 				System.out.println("OK");
 				for(String s:kep.getListOfKeywords()){
