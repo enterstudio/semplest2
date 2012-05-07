@@ -8,10 +8,10 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
-import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -20,6 +20,7 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -53,9 +54,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Long productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
+		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbURL);
+		//get the AdEngine Initial Data
+		HashMap<String,AdEngineInitialData>  adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
 		GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		//setup the budget for each ad engine
-		HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList);
+		HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList,bidClient);
 		String companyName = null;
 		//Get all common info - promotion data,  Ads, Geotargeting
 		GetAllPromotionDataSP getPromoDataSP  = new GetAllPromotionDataSP();
@@ -64,6 +68,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		for (String advertisingEngine : adEngineList)
 		{
 			Long accountID = null;
+			AdEngineInitialData  adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
 			if (!AdEngine.existsAdEngine(advertisingEngine))
 			{
 				throw new Exception(advertisingEngine + " Not Found");
@@ -94,39 +99,59 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				//create campaign on ad engine
 				Double budget = remainingBudgetMap.get(advertisingEngine);
-				Long campaignID = createCampaign(String.valueOf(accountID),PromotionID,customerID, advertisingEngine, budget.longValue() * 1000000L, getPromoDataSP);
+				Long campaignID = createCampaign(String.valueOf(accountID),PromotionID,customerID, advertisingEngine, budget.longValue() * 1000000L, getPromoDataSP,adEngineInitialData.getDefaultMicroBid());
 				//Store campaignID
-				
+				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
 				//create the Ad Engine AdGroup
 				AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID ,advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP);
 				//store the result in the DB: AdGroupID, AdID
-				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
+				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 				//Ad the Keywords to the Adgroup with default bid
 				List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false , (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
+				//add all the keywords with default value
+				addKeywordsToAdGroup(String.valueOf(accountID),PromotionID, adGroupData.getAdGroupID(), advertisingEngine,  keywordList, KeywordMatchType.fromString(adEngineInitialData.getSemplestMatchType().getSearchEngineMatchType(adEngineInitialData.getSemplestMatchType().name(), advertisingEngine)), null);
+				//call the initial bidding service
+				bidClient.getBidsInitial(String.valueOf(accountID), campaignID, adGroupData.getAdGroupID(), advertisingEngine);
+				//schedule the on-going bidding
 			}
 		}
 		 
 		return true;
 	}
-	private void addKeywordsToAdGroup(String accountID, Long adGroupID, String adEngine,  List<KeywordProbabilityObject> keywordList, Long microBidAmount) throws Exception
+	
+	/*
+	 * store the adGroupID and AdIDs
+	 */
+	private void storeAdGroupData(String advertisingEngine, Long campaignID, AdgroupData adGroupData) throws Exception
 	{
+		SemplestDB.setAdvertisingEngineAdGroupID(campaignID, adGroupData.getAdGroupID());
+		List<AdsObject> adList = adGroupData.getAds();
+		for (AdsObject adObj : adList)
+		{
+			SemplestDB.setAdIDForAdGroup(adObj.getAdEngineAdID(), advertisingEngine, adObj.getPromotionAdsPK());
+		}
+	}
+	private void addKeywordsToAdGroup(String accountID, Integer promotionID, Long adGroupID, String adEngine,  List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType,Long microBidAmount) throws Exception
+	{
+		AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			//assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			for (KeywordProbabilityObject keywordObj : keywordList)
 			{
-				KeywordDataObject keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), KeywordMatchType.EXACT, microBidAmount);
-				//Store result in DB including AdEngine KeywordID 
+				KeywordDataObject keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), matchType, microBidAmount);
+				//Store result in DB including AdEngine KeywordID
+				addKeywordBidDataSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount(), keywordDataObj.getMatchType(), adEngine);
 			}
 		}
 		
 	}
-	private HashMap<String, Double> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	private HashMap<String, Double> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList, SemplestBiddingServiceClient bidClient) throws Exception
 	{
 		HashMap<String, Double> remainingBudgetMap = new HashMap<String, Double>();
 		//Get the split
-		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbURL);
+		
 		HashMap<String, Integer> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngineList);
 		//get remaining Budget
 		BudgetObject remainingBudget =  SemplestDB.getBudget(PromotionID);
@@ -157,8 +182,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				Long adID =  google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdText(), null, promotionData.getLandingPageURL(),  promotionData.getLandingPageURL());
 				ad.setAdEngineAdID(adID);
 			}
-			//AD GEOTARGET HERE 
 			adGrpData.setAds(adList);
+			//AD GEOTARGET HERE
+			
+			
 		}
 		return adGrpData;
 	}
@@ -194,7 +221,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		
 		
 	}
-	private Long createCampaign(String accountID,Integer promotionID, Integer customerID, String adEngine, Long microbudgetAmount, GetAllPromotionDataSP getPromoDataSP) throws Exception
+	/*
+	 * Assumes Daily budget **NEED TO ADD DEFAULT MICROBID
+	 */
+	private Long createCampaign(String accountID,Integer promotionID, Integer customerID, String adEngine, Long microbudgetAmount, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
 	{
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
@@ -202,7 +232,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			//get the promotion name/ campaign name,  Budget period,
 			Campaign campaign =  google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), CampaignStatus.ACTIVE, 
-					BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),microbudgetAmount);
+					BudgetBudgetPeriod.DAILY,microbudgetAmount/30L);
 			return campaign.getId();
 		}
 		
