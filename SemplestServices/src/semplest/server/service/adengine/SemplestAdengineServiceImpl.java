@@ -201,10 +201,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			//assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			//get the promotion name/ campaign name,  Budget period,
-			Money budgetAmount = new Money();
-			budgetAmount.withMicroDollars(microbudgetAmount);
 			Campaign campaign =  google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), CampaignStatus.ACTIVE, 
-					BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),budgetAmount);
+					BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),microbudgetAmount);
 			return campaign.getId();
 		}
 		

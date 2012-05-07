@@ -16,19 +16,22 @@ public class Money implements Comparable<Money>, Serializable {
 	private static final int DECIMAL_PLACES_IN_MILLI = 5;
 	private static final long serialVersionUID = 1L;
 	@XmlAttribute
-	private final long milliCents;
+	private final long microAmount;
+	private long milliCents;
 	
 	public Money() {
+		microAmount = 0;
 		milliCents = 0;
 	}
 	
-	public Money(long milliCents) {
-		this.milliCents = milliCents;
+	public Money(long microAmount) {
+		this.microAmount = microAmount;
+		//this.milliCents = microAmount/10;
 	}
 	
 	public com.google.api.adwords.v201109.cm.Money toGoogleMoney(){
 		com.google.api.adwords.v201109.cm.Money ret = new com.google.api.adwords.v201109.cm.Money();
-		ret.setMicroAmount(milliCents*10);
+		ret.setMicroAmount(microAmount);
 		return ret;
 	}
 	
