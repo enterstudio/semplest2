@@ -76,8 +76,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	public HashMap<String,AdEngineInitialData> getInitialValues(Integer promotionID, 
 			ArrayList<String> searchEngine) throws Exception {
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		// bidGeneratorObj.setInitialDefaultBids(promotionID, searchEngine);
-		return null;
+		return bidGeneratorObj.getInitialValues(promotionID, searchEngine);
 	}
 	
 	public void setBidsInitial(String json) throws Exception
