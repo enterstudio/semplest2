@@ -27,14 +27,14 @@ public class AsyncServlet extends HttpServlet
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(AsyncServlet.class);
 	private Executor executor = null;
-	private long defaultTimeoutMS;
+	private Long defaultTimeoutMS;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException
 	{
 		super.init(config);
 		executor = ESBServer.esb.getExecutor();
-		defaultTimeoutMS = ESBServer.esb.getServerData().getAsynchCallDefaultTimeoutMS();
+		defaultTimeoutMS = Long.valueOf(ESBServer.esb.getServerData().getAsynchCallDefaultTimeoutMS());
 		logger.info("SERVLET init");
 		
 	}
@@ -86,6 +86,8 @@ public class AsyncServlet extends HttpServlet
 				logger.error("Error Setting timeout.  No timeout set on call");
 			}
 			
+		}else if(defaultTimeoutMS!=null){
+			timeout= true;
 		}
 		//Start Asynch Context
 		AsyncContext asyncCtx = request.startAsync();
