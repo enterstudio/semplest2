@@ -2,7 +2,13 @@
 $(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0 });
+    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0, value: 0 }).data("kendoNumericTextBox");
+    budjet.wrapper
+       .find(".k-numeric-wrap")
+       .addClass("expand-padding")
+       .find(".k-select").hide();
+    budjet.wrapper.find(".k-link")
+        .addClass("k-state-disabled").unbind("mousedown");
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".st    atus");

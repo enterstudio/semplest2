@@ -5,24 +5,24 @@
         <ul class="options">
             <li>
                 <label for="productGroupName" class="required">
-                    Product Group Name
+                    @Html.LabelFor(t => t.Configuration.DefaultProductGroupName)
                 </label>
                 <br />
-                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
+                @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Product Group Name" })
             </li>
             <li>
                 <label for="productPromotionName" class="required">
-                    Product / Promotion Name
+                    @Html.LabelFor(t => t.Configuration.DefaultProductPromotionName)
                 </label>
                 <br />
-                @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
+                @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Promotion Name" })
             </li>
             <li>
                 <h4 class="required">
                     Please type in several words or phrases that describe your business or what you
                     sell or are promoting (separated by commas) to help us build your search campaign:
                 </h4>
-                @Html.TextBoxFor(t => t.Words, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}",@style="min-width:400px" })
+                @Html.TextBoxFor(t => t.Words, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Some Words", @style = "min-width:400px" })
             </li>
             <li>
                 <label for="Budget" class="required">
@@ -49,12 +49,11 @@
                     Search Engines
                 </label>
                 @Html.CheckBoxFor(t => t.Google) Google
-                @Html.CheckBoxFor(t=>t.YahooBing) Yahoo / Bing
-            </li>
+                @Html.CheckBoxFor(t => t.YahooBing) Yahoo / Bing </li>
             <li>
                 <br />
                 <button class="k-button" id="save1" type="button">
-                    <span class="k-update k-icon"></span> Continue
+                    <span class="k-update k-icon"></span>Continue
                 </button>
             </li>
             <li class="status"></li>

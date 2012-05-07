@@ -23,11 +23,15 @@ namespace Semplest.Core.Models
             AllKeywordProbabilityObjects = new List<KeywordProbabilityObject>();
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
-            
+            using(var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
+
         }
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
         public BillingLaunchModel BillingLaunch { get; set; }
+
+        public Configuration Configuration { get; set; }
         
         #region Nested type: CategoriesModel
 
@@ -90,6 +94,8 @@ namespace Semplest.Core.Models
     {
         public ProductGroupModel()
         {
+            using (var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
             //using (SemplestEntities dbcontext = new SemplestEntities())
             //{
             //    try
@@ -114,7 +120,7 @@ namespace Semplest.Core.Models
 
             AdEnginesSelectedList = new List<AdEngineSelectModel>();
         }
-
+        public Configuration Configuration { get; set; }
         public string ProductGroupName { get; set; }
         public string ProductPromotionName { get; set; }
         public string Words { get; set; }
