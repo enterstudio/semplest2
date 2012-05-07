@@ -54,7 +54,6 @@ WriteLiteral("\r\n<h2>Log In</h2>\r\n\r\n");
             #line 8 "..\..\Views\Profile\LogIn.cshtml"
  using (Html.BeginForm())
 {
-    
 
             
             #line default
@@ -65,7 +64,7 @@ WriteLiteral("         <fieldset>\r\n             <legend>Account Information</l
 
 
             
-            #line 15 "..\..\Views\Profile\LogIn.cshtml"
+            #line 14 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.LabelFor(m => m.UserName));
 
             
@@ -75,13 +74,24 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 16 "..\..\Views\Profile\LogIn.cshtml"
+            #line 15 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.HiddenFor(m => m.IsRegistered));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">\r\n                ");
+WriteLiteral("\r\n                ");
+
+
+            
+            #line 16 "..\..\Views\Profile\LogIn.cshtml"
+           Write(Html.CheckBoxFor(m => m.LoggedInSucceeded));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("    \r\n            </div>\r\n            <div class=\"editor-field\">\r\n               " +
+" ");
 
 
             

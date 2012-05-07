@@ -27,8 +27,8 @@ namespace Semplest.SharedResources.Models
         [Display(Name = "Security Answer")]
         public string SecurityAnswer { get; set; }
 
-        public bool IsRegistered;
-        public bool LoggedInSucceeded;
+        public bool IsRegistered { get; set; }
+        public bool LoggedInSucceeded { get; set; }
         public string LoginFailedMessage { get; set; }
     }
 }

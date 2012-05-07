@@ -21,39 +21,55 @@ namespace Semplest.SharedResources.Controllers
         }
 
         [HttpPost]
-        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl)
+        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, FormCollection f)
         {
             using (SemplestEntities dbContext = new SemplestEntities())
             {
-                var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
-                if (creds.Count() == 1)
+                Credential cred = null;
+                if (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] != null)
                 {
-                    Credential c = creds.First();
-                    if (c.User.IsActive)
+                    cred = (Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                }
+                else
+                {
+                    var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+                    if (creds.Count() == 1)
                     {
-                        Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = c.UsersFK;
-                        if (c.User.IsRegistered)
+                        cred = creds.First();
+                    }
+
+                }
+                if (cred == null)
+                {
+                        pm.LoggedInSucceeded = false;
+                        pm.LoginFailedMessage = "Your userid or password is invalid please try again.";
+                }
+                else if (cred.User.IsActive)
+                    {
+                        Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = cred;
+                        if (cred.User.IsRegistered)
                         {
                             //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
-                            if (c.User.CustomerFK == null || string.IsNullOrEmpty(c.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
+                            if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
                                 return RedirectToAction("Index", "Home");
-                            else if (c.User.IsRegistered)
+                            else if (cred.User.IsRegistered)
                                 //user is a regular core user
                                 return RedirectToAction("Index2", "Home");
                         }
                         else if (!string.IsNullOrEmpty(pm.SecurityAnswer) && !string.IsNullOrEmpty(pm.SecurityQuestion))
                         {
                             //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
-                            c.SecurityAnswer = pm.SecurityAnswer;
-                            c.SecurityQuestion = pm.SecurityQuestion;
-                            c.User.IsRegistered = true;
-                            dbContext.SaveChanges();
+                            cred.SecurityAnswer = pm.SecurityAnswer;
+                            cred.SecurityQuestion = pm.SecurityQuestion;
+                            cred.User.IsRegistered = true;
+                            int i = dbContext.SaveChanges();
                             return RedirectToAction("Index", "Home");
                         }
                         else
                         {
                             //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
                             pm.IsRegistered = false;
+                            pm.LoggedInSucceeded = true;
                         }
                     }
                     else
@@ -62,14 +78,9 @@ namespace Semplest.SharedResources.Controllers
                         pm.LoginFailedMessage = "Sorry, your account is currently disabled, please contact SEMplest Customer Service for assistance.";
                     }
                 }
-                else
-                {
-                    pm.LoggedInSucceeded = false;
-                    pm.LoginFailedMessage = "Your userid or password is invalid please try again.";
-                }
+
                 return View(pm);
             }
-        }
 
         public ActionResult Verify(string userName, string password)
         {
@@ -78,7 +89,7 @@ namespace Semplest.SharedResources.Controllers
                 var creds = dbContext.Credentials.Where(c => c.Username == userName && c.Password == password);
                 if (creds.Count() == 1)
                 {
-                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = creds.First().UsersFK;
+                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = creds.First();
                     if (creds.First().User.UserRolesAssociations.First().RolesFK == 2)
                         //means this is an admin user
                         return RedirectToAction("Index", "Home");

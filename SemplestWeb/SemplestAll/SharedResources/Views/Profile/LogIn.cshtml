@@ -7,13 +7,13 @@
 
 @using (Html.BeginForm())
 {
-    
          <fieldset>
              <legend>Account Information</legend>
             <div id="options" align="center" >
             <div class="editor-label">
                 @Html.LabelFor(m => m.UserName)
                 @Html.HiddenFor(m => m.IsRegistered)
+                @Html.CheckBoxFor(m => m.LoggedInSucceeded)    
             </div>
             <div class="editor-field">
                 @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })

@@ -25,7 +25,7 @@ namespace Semplest.SharedResources.Helpers
                 if (HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] == null)
                     er.UsersFK = 1;
                 else
-                    er.UsersFK = string.IsNullOrEmpty(HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString()) ? 1 : int.Parse(HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString());
+                    er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                 er.CreatedDate = DateTime.Now;
                 _dbContext.Errors.Add(er);
                 _dbContext.SaveChanges();
