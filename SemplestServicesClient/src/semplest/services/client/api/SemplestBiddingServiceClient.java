@@ -5,13 +5,12 @@ import java.util.HashMap;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
-
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
-import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
+
+import com.google.gson.Gson;
 
 public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
@@ -68,7 +67,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String searchEngStr = gson.toJson(searchEngine, ArrayList.class);
+		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		runMethod(BASEURLTEST, SERVICEOFFERED, "setInitialDefaultBid", json, timeoutMS);
@@ -79,7 +79,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		String searchEngStr = gson.toJson(searchEngine, ArrayList.class);
+		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
@@ -90,7 +91,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("searchEngine", searchEngine);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
 	}
