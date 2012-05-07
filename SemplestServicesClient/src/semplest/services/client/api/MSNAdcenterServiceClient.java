@@ -1128,12 +1128,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money[] bid, MatchType matchType) throws Exception
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("keywords", gson.toJson(keywords));
-		jsonHash.put("bid", gson.toJson(bid));	
+		jsonHash.put("microBidAmount", gson.toJson(microBidAmount));	
 		jsonHash.put("matchType", gson.toJson(matchType));
 		String json = gson.toJson(jsonHash);
 		

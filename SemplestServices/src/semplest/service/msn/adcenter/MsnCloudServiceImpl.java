@@ -195,12 +195,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-		try{
-			Money[] bids = new Money[1];
-			bids[0] = new Money(100000L);
+		try{			
 			//Traffic Estimator
 			logger.info("Running traffic estimator");
-			TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, bids , MatchType.Exact);
+			TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
 			//HashMap<String,Double> map =test.getAccountIDs();
 			//System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
@@ -1757,7 +1755,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		TrafficEstimatorObject ret = null;
 		try {
 			ret = getKeywordEstimateByBids(new Long(data.get("accountId")), gson.fromJson(data.get("keywords"), String[].class), 
-					gson.fromJson( data.get("bid"), Money[].class), gson.fromJson(data.get("matchType"), MatchType.class));
+					gson.fromJson( data.get("microBidAmount"), Long[].class), gson.fromJson(data.get("matchType"), MatchType.class));
 		} catch (MsnCloudException e) {
 			throw new Exception(e);
 		}
@@ -1765,20 +1763,20 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Money[] bid, MatchType matchType) throws MsnCloudException
+	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType) throws MsnCloudException
 	{
 		TrafficEstimatorObject ret = new TrafficEstimatorObject();
 		try
 		{
 			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
-			for (int i = 0; i < bid.length; i++){
+			for (int i = 0; i < microBidAmount.length; i++){
 				IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
 				GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
-						bid[i].getDoubleDollars(), "English", new String[]
+						(microBidAmount[i]*1.00/1000), "English", new String[]
 						{ "US" }, Currency.USDollar, new MatchType[]{matchType});
 				GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
 				KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
-				Long bidAmount = bid[i].getMicroDollars(); //.getDoubleDollars();	
+				Long bidAmount = microBidAmount[i]; //.getDoubleDollars();	
 				KeywordEstimatedPosition k = keywordEstimatedPositions[0];
 				String keyword = k.getKeyword();
 				if(k.getEstimatedPositions()!=null){
