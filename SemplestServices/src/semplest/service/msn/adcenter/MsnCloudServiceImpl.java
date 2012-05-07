@@ -195,9 +195,14 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-		try{	
-			HashMap<String,Double> map =test.getAccountIDs();
-			System.out.println(map.get("_StudioBloom"));
+		try{
+			Money[] bids = new Money[1];
+			bids[0] = new Money(100000L);
+			//Traffic Estimator
+			logger.info("Running traffic estimator");
+			TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, bids , MatchType.Exact);
+			//HashMap<String,Double> map =test.getAccountIDs();
+			//System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
 			/*
@@ -1776,16 +1781,21 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				Long bidAmount = bid[i].getMicroDollars(); //.getDoubleDollars();	
 				KeywordEstimatedPosition k = keywordEstimatedPositions[0];
 				String keyword = k.getKeyword();
-				for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
-					String adPosition = et.getEstimatedAdPosition().getValue();
-					Double baseVal = 0.0;
-					if(adPosition.contains("SideBar")) baseVal = 5.0;
-					Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
-					ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
-							new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), estAdPosition, 
-							(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
-							new Long((new Double(et.getMinTotalCostPerWeek()/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()/7.0).longValue())));
+				if(k.getEstimatedPositions()!=null){
+					for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
+						String adPosition = et.getEstimatedAdPosition().getValue();
+						Double baseVal = 0.0;
+						if(adPosition.contains("SideBar")) baseVal = 5.0;
+						Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
+						ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
+								new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), estAdPosition, 
+								(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
+								new Long((new Double(et.getMinTotalCostPerWeek()/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()/7.0).longValue())));
+					}
+				}else{
+					ret.setBidData(keyword, bidAmount,null, new Long(0), null, new Double(0), null, null, null, null, null);
 				}
+				
 			}
 		}
 		catch (AdApiFaultDetail e)
