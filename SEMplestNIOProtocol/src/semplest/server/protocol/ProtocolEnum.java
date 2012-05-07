@@ -1,7 +1,24 @@
 package semplest.server.protocol;
 
+import java.util.HashMap;
+
 
 public class ProtocolEnum {
+	
+	private static HashMap<String,HashMap<String, String>> matchTypeMap = new HashMap<String,HashMap<String, String>>();
+	static {
+		HashMap<String,String> googleMap = new HashMap<String,String>();
+		googleMap.put("exact","EXACT");
+		googleMap.put("broad","BROAD");
+		googleMap.put("phrase","PHRASE");
+		matchTypeMap.put("google", googleMap);
+		
+		HashMap<String,String> msnMap = new HashMap<String,String>();
+		msnMap.put("exact","Exact");
+		msnMap.put("broad","Broad");
+		msnMap.put("phrase","Phrase");
+		matchTypeMap.put("msn", msnMap);
+	}
 	
 	
 	/*
@@ -68,13 +85,15 @@ public class ProtocolEnum {
 			return false;
 		}
 		
-		public static String getSearchEngineMatchType(String matchType, String searchEngine) throws Exception {
+		public static String getSearchEngineMatchType(String matchType, String adEngine) throws Exception {
 			if(!SemplestMatchType.existsMatchType(matchType)) {
 				throw new Exception("Invalid matchtype "+matchType+"!!");
-			} else {
-				return matchType.toUpperCase();
+			} 
+			if(!AdEngine.existsAdEngine(adEngine)) {
+				throw new Exception("Invalid ad engine "+adEngine+"!!");
 			}
-		}
+			return matchTypeMap.get(adEngine.toLowerCase()).get(matchType.toLowerCase());
+		}	
 	}
 	
 	public static enum NetworkSetting
@@ -115,6 +134,15 @@ public class ProtocolEnum {
 			val = value;
 		}
 
+	}
+	
+	public static void main(String [] args) {
+		try {
+			System.out.println(ProtocolEnum.SemplestMatchType.getSearchEngineMatchType("EXact", "Msn"));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	
