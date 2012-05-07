@@ -19,7 +19,7 @@ public class SchedulerServiceTest {
 	public static void main(String[] args){
 		
 		SchedulerServiceTest test = new SchedulerServiceTest();
-		test.TestCase2();
+		test.TestCase3();
 	}
 	
 	public void Test_SchedulerService(){
@@ -84,18 +84,23 @@ public class SchedulerServiceTest {
 			System.out.println("============================================================");
 			System.out.println("Test Case #3:");
 			System.out.println("Description: Schedule one good email task followed by a bad task, and then another good task.");
-			System.out.println("Expected Output: should get the 1st and 3rd email tasks, and .");
+			System.out.println("Expected Output: should get the 1st and 3rd email tasks (and skip the 2nd one? or retry it?)");
 			System.out.println("------------------------------------------------------------");
 			
 			BasicConfigurator.configure();
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
 			
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #2-email 1", "nan@semplest.com", "nan@semplest.com", "Scheduler Test - Test Case 2 - email 1");
-			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #2-email 2", "nan@semplest.com", "nan@semplest.com", "Scheduler Test - Test Case 2 - email 2");
+			//good puppy
+			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #3-email 1", "nan@semplest.com", "nan@semplest.com", "I'm the good puppy");
+			//bad puppy
+			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #3-email 2", "nan@semplest,com", "nan@semplest.com", "I'm the bad puppy");
+			//good puppy
+			SemplestSchedulerTaskObject mailTask3 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #3-email 3", "nan@semplest.com", "nan@semplest.com", "I'm the good puppy");
 			listOfTasks.add(mailTask1);
 			listOfTasks.add(mailTask2);
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			listOfTasks.add(mailTask3);
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
 		}
 		catch(Exception e){
 			errorHandler(e);
