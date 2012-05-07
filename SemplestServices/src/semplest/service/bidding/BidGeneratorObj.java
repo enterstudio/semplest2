@@ -413,7 +413,9 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
-
+		if(searchEngine.equalsIgnoreCase("Google")){
+			clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+		}
 		
 	} // setBidsInitial()
 	
