@@ -78,7 +78,7 @@ public class AsyncServlet extends HttpServlet
 		{
 			try
 			{
-				defaultTimeoutMS =  Long.getLong(timeoutParam).longValue();
+				defaultTimeoutMS =  Long.getLong(timeoutParam);
 				timeout = true;
 			}
 			catch (NumberFormatException e)
