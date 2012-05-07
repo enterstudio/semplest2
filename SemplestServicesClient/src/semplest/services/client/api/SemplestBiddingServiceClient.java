@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
@@ -62,7 +63,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 	
 	@Override
-	public void setInitialDefaultBid(Integer promotionID,
+	public HashMap<String,AdEngineInitialData>  getInitialValues(Integer promotionID,
 			ArrayList<String> searchEngine) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -71,7 +72,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "setInitialDefaultBid", json, timeoutMS);
+		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "setInitialDefaultBid", json, timeoutMS);
+		return gson.fromJson(returnData, HashMap.class);
 		
 	}
 	@Override
