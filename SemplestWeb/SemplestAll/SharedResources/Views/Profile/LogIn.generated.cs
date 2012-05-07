@@ -80,22 +80,35 @@ WriteLiteral("\r\n                ");
             
             #line default
             #line hidden
-WriteLiteral("\r\n                ");
+WriteLiteral("\r\n");
 
 
             
             #line 16 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.CheckBoxFor(m => m.LoggedInSucceeded));
+                 if (Model != null)
+                {
+            
+            #line default
+            #line hidden
+            
+            #line 17 "..\..\Views\Profile\LogIn.cshtml"
+            Write(Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded));
 
             
             #line default
             #line hidden
-WriteLiteral("    \r\n            </div>\r\n            <div class=\"editor-field\">\r\n               " +
-" ");
+            
+            #line 17 "..\..\Views\Profile\LogIn.cshtml"
+                                                                           }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("            </div>\r\n            <div class=\"editor-field\">\r\n                ");
 
 
             
-            #line 19 "..\..\Views\Profile\LogIn.cshtml"
+            #line 20 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
 
             
@@ -105,7 +118,7 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 20 "..\..\Views\Profile\LogIn.cshtml"
+            #line 21 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.ValidationMessageFor(m => m.UserName));
 
             
@@ -115,7 +128,7 @@ WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-label\">
 
 
             
-            #line 23 "..\..\Views\Profile\LogIn.cshtml"
+            #line 24 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.LabelFor(m => m.Password1));
 
             
@@ -125,7 +138,7 @@ WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">
 
 
             
-            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+            #line 27 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
 
             
@@ -135,7 +148,7 @@ WriteLiteral("\r\n                ");
 
 
             
-            #line 27 "..\..\Views\Profile\LogIn.cshtml"
+            #line 28 "..\..\Views\Profile\LogIn.cshtml"
            Write(Html.ValidationMessageFor(m => m.Password1));
 
             
@@ -146,7 +159,7 @@ WriteLiteral("\r\n            </div>\r\n            <p>\r\n                <inpu
 
 
             
-            #line 32 "..\..\Views\Profile\LogIn.cshtml"
+            #line 33 "..\..\Views\Profile\LogIn.cshtml"
              if (Model != null)
             {
                 if (!Model.LoggedInSucceeded)
@@ -159,7 +172,7 @@ WriteLiteral("                    <div class=\"editor-label\">");
 
 
             
-            #line 36 "..\..\Views\Profile\LogIn.cshtml"
+            #line 37 "..\..\Views\Profile\LogIn.cshtml"
                                          Write(Model.LoginFailedMessage);
 
             
@@ -169,7 +182,7 @@ WriteLiteral("</div>\r\n");
 
 
             
-            #line 37 "..\..\Views\Profile\LogIn.cshtml"
+            #line 38 "..\..\Views\Profile\LogIn.cshtml"
                 }
                 else if (!Model.IsRegistered)
                 {
@@ -181,7 +194,7 @@ WriteLiteral("                    <div class=\"passwordverify\">");
 
 
             
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
+            #line 41 "..\..\Views\Profile\LogIn.cshtml"
                                            Write(Html.Partial("_Password", Model));
 
             
@@ -191,7 +204,7 @@ WriteLiteral("</div>\r\n");
 
 
             
-            #line 41 "..\..\Views\Profile\LogIn.cshtml"
+            #line 42 "..\..\Views\Profile\LogIn.cshtml"
                 }
             }
 
@@ -202,7 +215,7 @@ WriteLiteral("            </div>\r\n        </fieldset>\r\n");
 
 
             
-            #line 45 "..\..\Views\Profile\LogIn.cshtml"
+            #line 46 "..\..\Views\Profile\LogIn.cshtml"
         
 }
 

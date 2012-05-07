@@ -21,7 +21,7 @@ namespace Semplest.SharedResources.Controllers
         }
 
         [HttpPost]
-        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, FormCollection f)
+        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl)
         {
             using (SemplestEntities dbContext = new SemplestEntities())
             {
@@ -56,12 +56,13 @@ namespace Semplest.SharedResources.Controllers
                                 //user is a regular core user
                                 return RedirectToAction("Index2", "Home");
                         }
-                        else if (!string.IsNullOrEmpty(pm.SecurityAnswer) && !string.IsNullOrEmpty(pm.SecurityQuestion))
+                        else if (pm.LoggedInSucceeded)
                         {
+                            Credential saveCred = dbContext.Credentials.Where(x => x.Username == cred.Username && x.Password == cred.Password).First();
                             //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
-                            cred.SecurityAnswer = pm.SecurityAnswer;
-                            cred.SecurityQuestion = pm.SecurityQuestion;
-                            cred.User.IsRegistered = true;
+                            saveCred.SecurityAnswer = pm.SecurityAnswer;
+                            saveCred.SecurityQuestion = pm.SecurityQuestion;
+                            saveCred.User.IsRegistered = true;
                             int i = dbContext.SaveChanges();
                             return RedirectToAction("Index", "Home");
                         }

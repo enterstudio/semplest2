@@ -13,7 +13,8 @@
             <div class="editor-label">
                 @Html.LabelFor(m => m.UserName)
                 @Html.HiddenFor(m => m.IsRegistered)
-                @Html.CheckBoxFor(m => m.LoggedInSucceeded)    
+                @if (Model != null)
+                {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}
             </div>
             <div class="editor-field">
                 @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
