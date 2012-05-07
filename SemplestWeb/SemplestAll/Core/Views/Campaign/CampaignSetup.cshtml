@@ -45,7 +45,8 @@ Ad Setup
                     @Html.EditorFor(t => t.ProductGroup)
                 </div>
                 <div>
-                    @Html.Partial("AdModel",Model.AdModelProp)
+                    @Html.EditorFor(t=>t.AdModelProp)
+                    @*@Html.Partial("AdModel",Model.AdModelProp)*@
                 </div>
             </div>
         }

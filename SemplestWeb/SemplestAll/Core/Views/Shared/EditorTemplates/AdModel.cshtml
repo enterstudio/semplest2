@@ -17,7 +17,7 @@
                                     @Html.EditorFor(t => t.Addresses)
                                 </div>
                                 <div style="text-align: left;margin-left: 56px">
-                                    @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting))
+                                    @Html.LinkToAddNestedForm("Add Address", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting),"AdModelProp")
                                 </div>
                             </td>
                         </tr>
@@ -42,7 +42,7 @@
         <li><a href="#" id="negativeKeyWords">Click to identify keywords to avoid in association
             with your business</a></li>
         <li>
-            @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd))</li>
+            @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>
         <li class="options">
             <button class="k-button" id="back1" type="button">
                 <span class="k-back k-icon"></span>back</button>

@@ -27,6 +27,24 @@ namespace Semplest.Core.Helpers
             string tag = tb.ToString(TagRenderMode.Normal);
             return MvcHtmlString.Create(tag);
         }
+        public static IHtmlString LinkToAddNestedForm<TModel>(this HtmlHelper<TModel> htmlHelper, string linkText,
+                                                              string containerElement, string counterElement,
+                                                              string collectionProperty, Type nestedType, string prefix)
+        {
+            long ticks = DateTime.UtcNow.Ticks;
+            object nestedObject = Activator.CreateInstance(nestedType);
+            string partial = htmlHelper.EditorFor(x => nestedObject).ToHtmlString().JsEncode();
+            partial = partial.Replace("id=\\\"AdModelProp_nestedObject", "id=\\\"" + collectionProperty + "_" + ticks + "_");
+            partial = partial.Replace("name=\\\"AdModelProp.nestedObject", "name=\\\"" + collectionProperty + "[" + ticks + "]");
+            string js = string.Format("javascript:addNestedForm('{0}','{1}','{2}','{3}');return false;",
+                                      containerElement, counterElement, ticks, partial);
+            var tb = new TagBuilder("button");
+            tb.Attributes.Add("onclick", js);
+            tb.InnerHtml = "<span class=\"k-add k-icon\"></span>" + linkText;
+            tb.Attributes.Add("class", "k-button");
+            string tag = tb.ToString(TagRenderMode.Normal);
+            return MvcHtmlString.Create(tag);
+        }
 
         public static IHtmlString LinkToRemoveNestedForm(this HtmlHelper htmlHelper, string linkText, string container,
                                                          string deleteElement)
