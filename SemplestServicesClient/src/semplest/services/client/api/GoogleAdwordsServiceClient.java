@@ -269,14 +269,14 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	@Override
 	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
-			Money budgetAmount) throws Exception
+			Long microBudgetAmount) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignName", campaignName);
 		jsonHash.put("campaignStatus", campaignStatus.getValue());
 		jsonHash.put("period", period.getValue());
-		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroDollars()));
+		jsonHash.put("microBudgetAmount", String.valueOf(microBudgetAmount));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "CreateOneCampaignForAccount", json,timeoutMS);
@@ -316,7 +316,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
-	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
+	public void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
 		// TODO Auto-generated method stub
 		
@@ -334,19 +334,19 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 	@Override
-	public void updateAccountBudget(Budget budgetForUpdate, Money money, String customerId, String orderId) throws Exception
+	public void updateAccountBudget(Budget budgetForUpdate, Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception
+	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception
 	{
 		// TODO Auto-generated method stub
 		
 	}
 	@Override
-	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount,
+	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Long microBudgetAmount,
 			String string) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -482,12 +482,12 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
-	public Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception
+	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
-		jsonHash.put("budgetAmount", String.valueOf(budgetAmount.getMicroDollars()));
+		jsonHash.put("microBudgetAmount", String.valueOf(microBudgetAmount));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "changeCampaignBudget", json,timeoutMS);

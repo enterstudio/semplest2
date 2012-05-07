@@ -382,7 +382,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	
 	@Override
-	public void addAccountBudget(Money money, String customerId, String orderId) throws Exception
+	public void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
 
 	}
@@ -402,21 +402,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public void updateAccountBudget(Budget budgetForUpdate, Money money, String customerId, String orderId) throws Exception
+	public void updateAccountBudget(Budget budgetForUpdate, Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception
+	public void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception
 	{
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount,
+	public void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Long microBudgetAmount,
 			String string) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -1052,17 +1052,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Money budget = new Money(Long.parseLong(data.get("budgetAmount"))); // set
-																					// MicroAmount
+		
+		// MicroAmount
 		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"),
-				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), budget);
+				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), Long.parseLong(data.get("microBudgetAmount")));
 		// convert result to Json String
 		return gson.toJson(campaign);
 	}
 
 	@Override
 	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
-			Money budgetAmount) throws Exception
+			Long microBudgetAmount) throws Exception
 	{
 		try{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -1083,7 +1083,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				period = BudgetBudgetPeriod.MONTHLY;
 			}
 			budget.setPeriod(period);
-			budget.setAmount(budgetAmount.toGoogleMoney());
+			budget.setAmount(new Money(microBudgetAmount).toGoogleMoney());
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			campaign.setBudget(budget);
 	
@@ -1306,20 +1306,20 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call changeCampaignStatus" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
-		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, new Money(Long.valueOf(data.get("budgetAmount"))));
+		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, Long.valueOf(data.get("microBudgetAmount")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
 
 	@Override
-	public Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception
+	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
 	{
 		try{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_TARGET_SERVICE);
 			Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
-			budget.setAmount(budgetAmount.toGoogleMoney());
+			budget.setAmount(new Money(microBudgetAmount).toGoogleMoney());
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
 			CampaignReturnValue ret = campaignService.mutate(operations);
@@ -1921,7 +1921,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		
 		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
 		
-		return (ReportObject[])report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken).toArray();
+		ArrayList<ReportObject> reportObj = report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
+		ReportObject[] ret = new ReportObject[reportObj.size()];
+		reportObj.toArray(ret);
+		return ret;
 		
 	}
 	/*

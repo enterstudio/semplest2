@@ -115,7 +115,7 @@ public class GoogleServiceTest {
 			System.out.println("CreateOneCampaignForAccount:");		
 			try{
 				String campaignName = "test_" + now;
-				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, new Money(10000000L));
+				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
 				System.out.println("OK");	
 				System.out.println("campaignId = " + cpn.getId());
 				System.out.println("campaign name = " + cpn.getName());
@@ -132,7 +132,7 @@ public class GoogleServiceTest {
 			System.out.println("deleteCampaign:");		
 			try{
 				String campaignName = "temp_" + now;
-				Campaign cpn1 = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, new Money(2050000L));
+				Campaign cpn1 = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 2050000L);
 				System.out.println("created a temp campaign " + cpn1.getId() + ", and we'll delete it now.");
 				boolean ret = test.deleteCampaign(accountID, cpn1.getId());
 				System.out.println("OK");	
@@ -160,7 +160,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("changeCampaignBudget:");		
 			try{
-				boolean ret = test.changeCampaignBudget(accountID, campaignID, new Money(10550000L));
+				boolean ret = test.changeCampaignBudget(accountID, campaignID, 10550000L);
 				System.out.println("OK");	
 				System.out.println("successful = " + ret);
 			}
@@ -574,7 +574,7 @@ public class GoogleServiceTest {
 			System.out.println("CreateOneCampaignForAccount:");		
 			try{
 				String campaignName = "test_" + now;
-				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, new Money(10000000L));
+				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
 				System.out.println("OK");	
 				System.out.println("campaignId = " + cpn.getId());
 				System.out.println("campaign name = " + cpn.getName());
@@ -591,7 +591,7 @@ public class GoogleServiceTest {
 			System.out.println("deleteCampaign:");		
 			try{
 				String campaignName = "temp_" + now;
-				Campaign cpn1 = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, new Money(2050000L));
+				Campaign cpn1 = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 2050000L);
 				System.out.println("created a temp campaign " + cpn1.getId() + ", and we'll delete it now.");
 				boolean ret = test.deleteCampaign(accountID, cpn1.getId());
 				System.out.println("OK");	
@@ -619,7 +619,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("changeCampaignBudget:");		
 			try{
-				boolean ret = test.changeCampaignBudget(accountID, campaignID, new Money(10550000L));
+				boolean ret = test.changeCampaignBudget(accountID, campaignID, 10550000L);
 				System.out.println("OK");	
 				System.out.println("successful = " + ret);
 			}

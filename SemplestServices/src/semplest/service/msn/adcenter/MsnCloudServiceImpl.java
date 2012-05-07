@@ -44,6 +44,7 @@ import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.api.adwords.lib.AuthToken;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
@@ -2529,6 +2530,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			}
 		}
 		
-		return (ReportObject[])reportObjectList.toArray();
+		ReportObject[] ret = new ReportObject[reportObjectList.size()];
+		reportObjectList.toArray(ret);
+		return ret;
 	}
 }
