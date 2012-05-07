@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.AdEngineInitialData;
 //import semplest.server.protocol.ProtocolEnum.NetworkSetting;
 //import semplest.server.protocol.ProtocolEnum.MatchType;
 
@@ -63,17 +64,20 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 	}
 	
-	public void setInitialDefaultBid(String json) throws Exception {
+	public String getInitialValues(String json) throws Exception {
 		logger.debug("call  setInitialDefaultBid(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
+		HashMap<String,AdEngineInitialData> res = getInitialValues(promotionID, searchEngine);
+		return gson.toJson(res);
 	}
 	@Override
-	public void setInitialDefaultBid(Integer promotionID, 
+	public HashMap<String,AdEngineInitialData> getInitialValues(Integer promotionID, 
 			ArrayList<String> searchEngine) throws Exception {
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		bidGeneratorObj.setInitialDefaultBids(promotionID, searchEngine);
+		// bidGeneratorObj.setInitialDefaultBids(promotionID, searchEngine);
+		return null;
 	}
 	
 	public void setBidsInitial(String json) throws Exception
