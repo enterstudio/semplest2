@@ -568,7 +568,7 @@ public class SemplestDB extends BaseDB
 
 	public static AdEngineID getAdEngineID(Integer customerID, String adEngine) throws Exception
 	{
-		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], p.AdEngineAdGroupID [AdGroupID] from Customer c "
+		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], aep.AdvertisingEngineAdGroupID [AdGroupID] from Customer c "
 				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK"
 				+ "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
@@ -629,13 +629,23 @@ public class SemplestDB extends BaseDB
 
 	}
 
-	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID) throws Exception
+	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget) "
-				+ "VALUES (?,?,?,?,?)";
+		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID) "
+				+ "VALUES (?,?,?,?,?, ?)";
 
 		return jdbcTemplate.update(strSQL, new Object[]
-		{ adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0 });
+		{ adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0, advertisingEngineAdGroupID });
+
+	}
+
+	public static Integer setAdvertisingEngineAdGroupID(Long adEngineCampaignID,Long advertisingEngineAdGroupID) throws Exception
+	{
+		String strSQL = "update AdvertisingEnginePromotion set AdvertisingEngineAdGroupID = ? " +
+				"from AdvertisingEnginePromotion aep where aep.AdvertisingEngineCampaignPK = ?";
+
+		return jdbcTemplate.update(strSQL, new Object[]
+		{ advertisingEngineAdGroupID, adEngineCampaignID });
 
 	}
 

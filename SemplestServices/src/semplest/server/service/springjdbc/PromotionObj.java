@@ -15,6 +15,7 @@ public class PromotionObj
 	private Integer ProductGroupFK;
 	private String PromotionName;
 	private String PromotionDescription;
+	private String LandingPageURL;
 	private Double PromotionBudgetAmount;
 	private Date PromotionStartDate;
 	private Date PromotionEndDate;
@@ -163,6 +164,14 @@ public class PromotionObj
 	public void setCreatedDate(Date createdDate)
 	{
 		CreatedDate = createdDate;
+	}
+	public String getLandingPageURL()
+	{
+		return LandingPageURL;
+	}
+	public void setLandingPageURL(String landingPageURL)
+	{
+		LandingPageURL = landingPageURL;
 	}
 	
 }

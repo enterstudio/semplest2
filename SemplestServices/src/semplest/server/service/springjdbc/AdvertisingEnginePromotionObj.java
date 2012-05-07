@@ -8,6 +8,7 @@ public class AdvertisingEnginePromotionObj
 	private Boolean IsSearchNetwork;
 	private Boolean IsDisplayNetwork;
 	private Double MicroDefaultBid;
+	private Long AdvertisingEngineAdGroupID; 
 	
 	
 	public Integer getPromotionID()
@@ -58,6 +59,14 @@ public class AdvertisingEnginePromotionObj
 	public void setAdvertisingEngineCampaignID(Long advertisingEngineCampaignID)
 	{
 		AdvertisingEngineCampaignID = advertisingEngineCampaignID;
+	}
+	public Long getAdvertisingEngineAdGroupID()
+	{
+		return AdvertisingEngineAdGroupID;
+	}
+	public void setAdvertisingEngineAdGroupID(Long advertisingEngineAdGroupID)
+	{
+		AdvertisingEngineAdGroupID = advertisingEngineAdGroupID;
 	}
 
 }

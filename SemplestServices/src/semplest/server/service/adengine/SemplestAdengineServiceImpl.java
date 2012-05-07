@@ -11,19 +11,27 @@ import org.apache.log4j.Logger;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BudgetObject;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
+import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
+import com.google.api.adwords.v201109.cm.Campaign;
+import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
+import com.google.api.adwords.v201109.cm.Money;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 
@@ -45,6 +53,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Long productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
+		GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		//setup the budget for each ad engine
 		HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList);
 		String companyName = null;
@@ -60,7 +69,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				throw new Exception(advertisingEngine + " Not Found");
 			}
 			//see if there is an account on ad engine - call returns two kets: AccountID and CustomerName
-			List<LinkedHashMap<String, Object>> AdEngineAccoutRow =SemplestDB.getAdEngineAccount(customerID,advertisingEngine);
+			List<LinkedHashMap<String, Object>> AdEngineAccoutRow = SemplestDB.getAdEngineAccount(customerID,advertisingEngine);
 			companyName = (String) AdEngineAccoutRow.get(0).get("CustomerName");
 			if  (AdEngineAccoutRow.get(0).get("AccountID") == null)
 			{
@@ -75,26 +84,43 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				accountID = new Long((Integer) AdEngineAccoutRow.get(0).get("AccountID"));
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
-			//if no campaign then add
+			//if no campaign then add SINCE this is create there should be no campaign
 			AdvertisingEnginePromotionObj promotionDataList =  SemplestDB.getAdvertisingEngineCampaignID(accountID, PromotionID);
-			Long campaignID = null;
-			if (promotionDataList == null  )
+			if (promotionDataList != null)
 			{
-				//create campaign on ad engine
-				//create the campaign
-				Double budget = remainingBudgetMap.get(advertisingEngine);
-				campaignID = createCampaign(accountID,PromotionID,customerID, advertisingEngine, budget);
-				//store new product group for ad engine 
+				throw new Exception("A Campaign has already been created for the Promotion " + PromotionID);
 			}
 			else
 			{
-				campaignID = promotionDataList.getAdvertisingEngineCampaignID();
+				//create campaign on ad engine
+				Double budget = remainingBudgetMap.get(advertisingEngine);
+				Long campaignID = createCampaign(String.valueOf(accountID),PromotionID,customerID, advertisingEngine, budget.longValue() * 1000000L, getPromoDataSP);
+				//Store campaignID
+				
+				//create the Ad Engine AdGroup
+				AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID ,advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP);
+				//store the result in the DB: AdGroupID, AdID
+				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
+				//Ad the Keywords to the Adgroup with default bid
+				List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false , (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
 			}
-			//create the Ad Engine AdGroup
-			
 		}
 		 
-		return null;
+		return true;
+	}
+	private void addKeywordsToAdGroup(String accountID, Long adGroupID, String adEngine,  List<KeywordProbabilityObject> keywordList, Long microBidAmount) throws Exception
+	{
+		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
+		{
+			//assume US dollars US timezone
+			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			for (KeywordProbabilityObject keywordObj : keywordList)
+			{
+				KeywordDataObject keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), KeywordMatchType.EXACT, microBidAmount);
+				//Store result in DB including AdEngine KeywordID 
+			}
+		}
+		
 	}
 	private HashMap<String, Double> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
@@ -114,22 +140,71 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}	
 		return remainingBudgetMap;
 	}
-	private Long createAdGroupAndAds()
+	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID ,String adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP) throws Exception
 	{
-		//Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status)
-		//Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
-		//KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
-		return null;
+		AdgroupData adGrpData = new AdgroupData();
+		List<AdsObject> adList =  getPromoDataSP.getAds();
+		List<GeoTargetObject> geoTargetList = getPromoDataSP.getGeoTargets();
+		PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		Long adGroupID = null;
+		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
+		{
+			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			adGroupID =  google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status);
+			adGrpData.setAdGroupID(adGroupID);
+			for (AdsObject ad : adList )
+			{
+				Long adID =  google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdText(), null, promotionData.getLandingPageURL(),  promotionData.getLandingPageURL());
+				ad.setAdEngineAdID(adID);
+			}
+			//AD GEOTARGET HERE 
+			adGrpData.setAds(adList);
+		}
+		return adGrpData;
 	}
-	private Long createCampaign(Long accountID,Integer promotionID, Integer customerID, String adEngine, Double microbudgetAmount)
+	private class AdgroupData
+	{
+		private Long adGroupID;
+		private List<AdsObject> ads = new ArrayList<AdsObject>();
+		private List<GeoTargetObject> geoTargetList = new ArrayList<GeoTargetObject>();
+		public Long getAdGroupID()
+		{
+			return adGroupID;
+		}
+		public void setAdGroupID(Long adGroupID)
+		{
+			this.adGroupID = adGroupID;
+		}
+		public List<AdsObject> getAds()
+		{
+			return ads;
+		}
+		public void setAds(List<AdsObject> ads)
+		{
+			this.ads = ads;
+		}
+		public List<GeoTargetObject> getGeoTargetList()
+		{
+			return geoTargetList;
+		}
+		public void setGeoTargetList(List<GeoTargetObject> geoTargetList)
+		{
+			this.geoTargetList = geoTargetList;
+		}
+		
+		
+	}
+	private Long createCampaign(String accountID,Integer promotionID, Integer customerID, String adEngine, Long microbudgetAmount, GetAllPromotionDataSP getPromoDataSP) throws Exception
 	{
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			//assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			//get the promotion name/ campaign name,  Budget period, 
-			Long campaignID =  0L;//google.CreateOneCampaignForAccount(accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount)
-			return campaignID;
+			//get the promotion name/ campaign name,  Budget period,
+			Money budgetAmount = new Money();
+			budgetAmount.setMicroAmount(microbudgetAmount);
+			Campaign campaign =  google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), CampaignStatus.ACTIVE, BudgetBudgetPeriod.fromValue(getPromoDataSP.getPromotionData().getBudgetCycle()),budgetAmount);
+			return campaign.getId();
 		}
 		
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
@@ -202,5 +277,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	
 
 }
