@@ -20,6 +20,7 @@ namespace SemplestModel
             this.KeywordBids = new HashSet<KeywordBid>();
             this.PromotionAdEngineSelecteds = new HashSet<PromotionAdEngineSelected>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
+            this.AdvertisingEngineAds = new HashSet<AdvertisingEngineAd>();
         }
     
         public int AdvertisingEnginePK { get; set; }
@@ -29,5 +30,6 @@ namespace SemplestModel
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
+        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
     }
 }

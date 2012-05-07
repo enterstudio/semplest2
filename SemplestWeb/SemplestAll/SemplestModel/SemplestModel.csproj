@@ -62,6 +62,9 @@
     <Compile Include="AdvertisingEngineAccount.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="AdvertisingEngineAd.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="AdvertisingEnginePromotion.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

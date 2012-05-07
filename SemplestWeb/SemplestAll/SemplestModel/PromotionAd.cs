@@ -17,6 +17,7 @@ namespace SemplestModel
         public PromotionAd()
         {
             this.SiteLinks = new HashSet<SiteLink>();
+            this.AdvertisingEngineAds = new HashSet<AdvertisingEngineAd>();
         }
     
         public int PromotionAdsPK { get; set; }
@@ -26,5 +27,6 @@ namespace SemplestModel
     
         public virtual Promotion Promotion { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
+        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
     }
 }
