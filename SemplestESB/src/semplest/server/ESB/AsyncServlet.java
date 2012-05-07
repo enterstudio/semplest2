@@ -27,7 +27,7 @@ public class AsyncServlet extends HttpServlet
 	private static final long serialVersionUID = 1L;
 	private static final Logger logger = Logger.getLogger(AsyncServlet.class);
 	private Executor executor = null;
-	private int defaultTimeoutMS;
+	private long defaultTimeoutMS;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException
@@ -78,7 +78,7 @@ public class AsyncServlet extends HttpServlet
 		{
 			try
 			{
-				defaultTimeoutMS = Integer.parseInt(timeoutParam);
+				defaultTimeoutMS =  Long.getLong(timeoutParam).longValue();
 				timeout = true;
 			}
 			catch (NumberFormatException e)
