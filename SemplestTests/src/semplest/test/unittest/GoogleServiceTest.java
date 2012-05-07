@@ -393,16 +393,27 @@ public class GoogleServiceTest {
 				KeywordWithBid.put("wedding", 2300000L);
 				KeywordWithBid.put("bridal", 3400000L);
 				KeywordWithBid.put("flower", 4500000L);
-				TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(accountID,campaignID, KeywordMatchType.BROAD, KeywordWithBid);
+				
+				String test_accountId = "2188810777";
+				Long test_campaignId = 77290470L;
+				TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(test_accountId,test_campaignId, KeywordMatchType.BROAD, KeywordWithBid);
 				System.out.println("OK");	
-				for(String s:ret.getListOfKeywords()){
-					System.out.println("keyword = " + s);
-					for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
-						System.out.println("bidAmount = " + b);
-						System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b));
-						System.out.println("AvePosition = " + ret.getAvePosition(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveTotalDailyMicroCost = " + ret.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+				System.out.println("test accountId is" + test_accountId);
+				System.out.println("test campaignId is " + test_campaignId);
+				
+				if(ret == null){
+					System.out.println("no keyword estimate for the campaign");
+				}
+				else{
+					for(String s:ret.getListOfKeywords()){
+						System.out.println("keyword = " + s);
+						for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
+							System.out.println("bidAmount = " + b);
+							System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b));
+							System.out.println("AvePosition = " + ret.getAvePosition(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveTotalDailyMicroCost = " + ret.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+						}
 					}
 				}
 			}
@@ -489,25 +500,32 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getReportForAccount:");		
 			try{
-				ReportObject[] ret = test.getReportForAccount(new SemplestString().toSemplestString(accountID));
+				String test_accountId = "2188810777";
+				ReportObject[] ret = test.getReportForAccount(new SemplestString().toSemplestString(test_accountId));
 				System.out.println("OK");	
-				for(ReportObject r : ret){
-					System.out.println("->");										
-					System.out.println("AccountID = " + r.getAccountID());
-					System.out.println("keyword = " + r.getKeyword());
-					System.out.println("ApprovalStatus = " + r.getApprovalStatus());		
-					System.out.println("BidMatchType = " + r.getBidMatchType());
-					System.out.println("AverageCPC = " + r.getAverageCPC());
-					System.out.println("AveragePosition = " + r.getAveragePosition());
-					System.out.println("CampaignID = " + r.getCampaignID());
-					System.out.println("FirstPageCPC = " + r.getFirstPageCPC());
-					System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
-					System.out.println("MicroCost = " + r.getMicroCost());
-					System.out.println("NumberClick = " + r.getNumberClick());
-					System.out.println("NumberImpressions = " + r.getNumberImpressions());
-					System.out.println("QualityScore = " + r.getQualityScore());
-					System.out.println("CreatedDate = " + r.getCreatedDate());
-					System.out.println("TransactionDate = " + r.getTransactionDate());
+				System.out.println("test accountId is " + test_accountId);	
+				if(ret == null){
+					System.out.println("no keyword history for the campaign");
+				}
+				else{
+					for(ReportObject r : ret){
+						System.out.println("->");										
+						System.out.println("AccountID = " + r.getAccountID());
+						System.out.println("keyword = " + r.getKeyword());
+						System.out.println("ApprovalStatus = " + r.getApprovalStatus());		
+						System.out.println("BidMatchType = " + r.getBidMatchType());
+						System.out.println("AverageCPC = " + r.getAverageCPC());
+						System.out.println("AveragePosition = " + r.getAveragePosition());
+						System.out.println("CampaignID = " + r.getCampaignID());
+						System.out.println("FirstPageCPC = " + r.getFirstPageCPC());
+						System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
+						System.out.println("MicroCost = " + r.getMicroCost());
+						System.out.println("NumberClick = " + r.getNumberClick());
+						System.out.println("NumberImpressions = " + r.getNumberImpressions());
+						System.out.println("QualityScore = " + r.getQualityScore());
+						System.out.println("CreatedDate = " + r.getCreatedDate());
+						System.out.println("TransactionDate = " + r.getTransactionDate());
+					}
 				}
 			}
 			catch(Exception e){
@@ -852,16 +870,27 @@ public class GoogleServiceTest {
 				KeywordWithBid.put("wedding", 2300000L);
 				KeywordWithBid.put("bridal", 3400000L);
 				KeywordWithBid.put("flower", 4500000L);
-				TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(accountID,campaignID, KeywordMatchType.BROAD, KeywordWithBid);
+				
+				String test_accountId = "2188810777";
+				Long test_campaignId = 77290470L;
+				TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(test_accountId,test_campaignId, KeywordMatchType.BROAD, KeywordWithBid);
 				System.out.println("OK");	
-				for(String s:ret.getListOfKeywords()){
-					System.out.println("keyword = " + s);
-					for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
-						System.out.println("bidAmount = " + b);
-						System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b));
-						System.out.println("AvePosition = " + ret.getAvePosition(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveTotalDailyMicroCost = " + ret.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+				System.out.println("test accountId is" + test_accountId);
+				System.out.println("test campaignId is " + test_campaignId);
+				
+				if(ret == null){
+					System.out.println("no keyword estimate for the campaign");
+				}
+				else{
+					for(String s:ret.getListOfKeywords()){
+						System.out.println("keyword = " + s);
+						for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
+							System.out.println("bidAmount = " + b);
+							System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveCPC = " + ret.getAveCPC(s, MatchType.Broad.getValue(), b));
+							System.out.println("AvePosition = " + ret.getAvePosition(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveTotalDailyMicroCost = " + ret.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+						}
 					}
 				}
 			}

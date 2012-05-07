@@ -154,8 +154,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Long campaignID = 77290470L;
 			Long accountID = 9036397375L;
 			
-			g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new java.util.Date());
-
+			//g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new java.util.Date());
+			
+			ArrayList<HashMap<String, String>> ret = g.getCampaignsByAccountId("2188810777", false);
+			String id = ret.get(0).values().toString();
+			System.out.println(id);
 			
 			//KeywordDataObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
@@ -1055,7 +1058,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		
 		// MicroAmount
 		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"),
-				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), Long.parseLong(data.get("microBudgetAmount")));
+				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), new Long(data.get("microBudgetAmount")));
 		// convert result to Json String
 		return gson.toJson(campaign);
 	}
@@ -1922,9 +1925,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
 		
 		ArrayList<ReportObject> reportObj = report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
-		ReportObject[] ret = new ReportObject[reportObj.size()];
-		reportObj.toArray(ret);
-		return ret;
+		if(reportObj.size() == 0){
+			return null;
+		}
+		else{
+			ReportObject[] ret = new ReportObject[reportObj.size()];
+			reportObj.toArray(ret);
+			return ret;
+		}
 		
 	}
 	/*

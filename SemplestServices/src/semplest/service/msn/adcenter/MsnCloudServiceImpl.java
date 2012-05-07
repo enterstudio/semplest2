@@ -195,10 +195,12 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-		try{			
+		try{						
+			
 			//Traffic Estimator
-			logger.info("Running traffic estimator");
-			TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
+			//logger.info("Running traffic estimator");
+			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
+			
 			//HashMap<String,Double> map =test.getAccountIDs();
 			//System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
@@ -2489,22 +2491,19 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	{
 		logger.debug("call getKeywordReport(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		ReportObject[] ret = null;
 		try {
-			ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
+			ReportObject[] ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
 					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")),
 					ReportAggregation.fromString(data.get("aggregation")));
+			return gson.toJson(ret);
 		} catch (MsnCloudException e) {
 			throw new Exception(e);
-		}
-		return gson.toJson(ret);
+		}		
 	}
 
 	@Override
 	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
-		
-		//ReportObject ret = new ReportObject();
-		
+			
 		//requestKeywordReport
 		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, aggregation);		
 		
@@ -2537,6 +2536,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				reportObjectList.add(data);			
 			}
 		}
+		
+		if(reportObjectList.size() == 0)
+			return null;
 		
 		ReportObject[] ret = new ReportObject[reportObjectList.size()];
 		reportObjectList.toArray(ret);

@@ -695,17 +695,25 @@ public class MsnServiceTest {
 				kws2[0] = "flower";
 				kws2[1] = "rose";
 				Long[] bid = new Long[]{6000000L, 7000000L};
-				TrafficEstimatorObject kep = test.getKeywordEstimateByBids(accountId, kws2, bid, MatchType.Exact);
+				
+				Long test_accountId = 1617055L;
+				TrafficEstimatorObject kep = test.getKeywordEstimateByBids(test_accountId, kws2, bid, MatchType.Exact);
 				System.out.println("OK");
-				for(String s:kep.getListOfKeywords()){
-					System.out.println("keyword = " + s);
-					HashMap<Long, BidData> map = kep.getMapOfPoints(s, MatchType.Broad.getValue());
-					for(Long b:kep.getBidList(s, MatchType.Broad.getValue())){
-						System.out.println("bidAmount = " + b);
-						System.out.println("AveClickPerDay = " + kep.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveCPC = " + kep.getAveCPC(s, MatchType.Broad.getValue(), b));
-						System.out.println("AvePosition = " + kep.getAvePosition(s, MatchType.Broad.getValue(), b));
-						System.out.println("AveTotalDailyMicroCost = " + kep.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+				System.out.println("test accountId is " + test_accountId);
+				if(kep == null){
+					System.out.println("no keyword estimate for the campaign");
+				}
+				else{
+					for(String s:kep.getListOfKeywords()){
+						System.out.println("keyword = " + s);
+						HashMap<Long, BidData> map = kep.getMapOfPoints(s, MatchType.Broad.getValue());
+						for(Long b:kep.getBidList(s, MatchType.Broad.getValue())){
+							System.out.println("bidAmount = " + b);
+							System.out.println("AveClickPerDay = " + kep.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveCPC = " + kep.getAveCPC(s, MatchType.Broad.getValue(), b));
+							System.out.println("AvePosition = " + kep.getAvePosition(s, MatchType.Broad.getValue(), b));
+							System.out.println("AveTotalDailyMicroCost = " + kep.getAveTotalDailyMicroCost(s, MatchType.Broad.getValue(), b));
+						}
 					}
 				}
 			}
@@ -744,19 +752,29 @@ public class MsnServiceTest {
 			try{
 				DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 				DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-				ReportObject[] kwreport = test.getKeywordReport(accountId, campaignId, firstDay, lastDay, ReportAggregation.Daily);			
+				Long test_accountId = 1617055L;
+				Long test_campaignId = 130140291L;
+				ReportObject[] kwreport = test.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay, ReportAggregation.Daily);			
 				System.out.println("OK");
-				for(ReportObject t: kwreport){
-					System.out.println("Keyword = " + t.getKeyword());
-					System.out.println("BidAmount = " + t.getMicroBidAmount());
-					System.out.println("BidMatchType = " + t.getBidMatchType());
-					System.out.println("NumberImpressions = " + t.getNumberImpressions());
-					System.out.println("NumberClick = " + t.getNumberClick());
-					System.out.println("AveragePosition = " + t.getAveragePosition());
-					System.out.println("QualityScore = " + t.getQualityScore());
-					System.out.println("AverageCPC = " + t.getAverageCPC());
-					System.out.println("CreatedDate = " + t.getTransactionDate());
-					System.out.println("===========================");
+				System.out.println("test accountId is " + test_accountId);
+				System.out.println("test campaignId is " + test_campaignId);
+				
+				if(kwreport == null){
+					System.out.println("no keyword history for the campaign");
+				}
+				else{
+					for(ReportObject t: kwreport){
+						System.out.println("->");
+						System.out.println("Keyword = " + t.getKeyword());
+						System.out.println("BidAmount = " + t.getMicroBidAmount());
+						System.out.println("BidMatchType = " + t.getBidMatchType());
+						System.out.println("NumberImpressions = " + t.getNumberImpressions());
+						System.out.println("NumberClick = " + t.getNumberClick());
+						System.out.println("AveragePosition = " + t.getAveragePosition());
+						System.out.println("QualityScore = " + t.getQualityScore());
+						System.out.println("AverageCPC = " + t.getAverageCPC());
+						System.out.println("CreatedDate = " + t.getTransactionDate());						
+					}
 				}
 			}
 			catch(RemoteException e){
@@ -1405,19 +1423,30 @@ public class MsnServiceTest {
 			try{
 				DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 				DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-				ReportObject[] kwreport = test.getKeywordReport(accountId, campaignId, firstDay, lastDay, ReportAggregation.Daily);			
+				Long test_accountId = 1617055L;
+				Long test_campaignId = 130140291L;
+				ReportObject[] kwreport = test.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay, ReportAggregation.Daily);			
 				System.out.println("OK");
-				for(ReportObject t: kwreport){
-					System.out.println("Keyword = " + t.getKeyword());
-					System.out.println("BidAmount = " + t.getMicroBidAmount());
-					System.out.println("BidMatchType = " + t.getBidMatchType());
-					System.out.println("NumberImpressions = " + t.getNumberImpressions());
-					System.out.println("NumberClick = " + t.getNumberClick());
-					System.out.println("AveragePosition = " + t.getAveragePosition());
-					System.out.println("QualityScore = " + t.getQualityScore());
-					System.out.println("AverageCPC = " + t.getAverageCPC());
-					System.out.println("CreatedDate = " + t.getTransactionDate());
-					System.out.println("===========================");
+				System.out.println("test accountId is " + test_accountId);
+				System.out.println("test campaignId is " + test_campaignId);
+				System.out.println("->");
+				
+				if(kwreport == null){
+					System.out.println("no keyword history for the campaign");
+				}
+				else{
+					for(ReportObject t: kwreport){
+						System.out.println("Keyword = " + t.getKeyword());
+						System.out.println("BidAmount = " + t.getMicroBidAmount());
+						System.out.println("BidMatchType = " + t.getBidMatchType());
+						System.out.println("NumberImpressions = " + t.getNumberImpressions());
+						System.out.println("NumberClick = " + t.getNumberClick());
+						System.out.println("AveragePosition = " + t.getAveragePosition());
+						System.out.println("QualityScore = " + t.getQualityScore());
+						System.out.println("AverageCPC = " + t.getAverageCPC());
+						System.out.println("CreatedDate = " + t.getTransactionDate());
+						System.out.println("->");
+					}
 				}
 			}
 			catch(Exception e){
