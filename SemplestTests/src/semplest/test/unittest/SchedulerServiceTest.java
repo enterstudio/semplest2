@@ -19,7 +19,7 @@ public class SchedulerServiceTest {
 	public static void main(String[] args){
 		
 		SchedulerServiceTest test = new SchedulerServiceTest();
-		test.TestCase3();
+		test.TestCase5();
 	}
 	
 	public void Test_SchedulerService(){
@@ -101,6 +101,57 @@ public class SchedulerServiceTest {
 			listOfTasks.add(mailTask2);
 			listOfTasks.add(mailTask3);
 			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+		}
+		catch(Exception e){
+			errorHandler(e);
+		}
+	}
+	
+	public void TestCase4(){
+		try{			
+			System.out.println("============================================================");
+			System.out.println("Test Case #4:");
+			System.out.println("Description: It's a follow-up for Case #3. Send new good tasks to the scheduler, and see if it could run them.");
+			System.out.println("Expected Output: get the new emails");
+			System.out.println("------------------------------------------------------------");
+			
+			BasicConfigurator.configure();
+			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #4-email 1", "nan@semplest.com", "nan@semplest.com", "good");
+			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #4-email 2", "nan@semplest.com", "nan@semplest.com", "good");
+			listOfTasks.add(mailTask1);
+			listOfTasks.add(mailTask2);
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+		}
+		catch(Exception e){
+			errorHandler(e);
+		}
+	}
+	
+	public void TestCase5(){
+		try{			
+			System.out.println("============================================================");
+			System.out.println("Test Case #5:");
+			System.out.println("Description: It's a follow-up of Case #3. Schedule the Case #3 daily, and see if the bad task would block good tasks in future running.");
+			System.out.println("Expected Output: should get the 1st and 3rd email tasks daily. (At least the 1st email daily.)");
+			System.out.println("------------------------------------------------------------");
+			
+			BasicConfigurator.configure();
+			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+			//good puppy
+			SemplestSchedulerTaskObject mailTask1 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #5-email 1", "nan@semplest.com", "nan@semplest.com", "I'm the good daily puppy");
+			//bad puppy
+			SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #5-email 2", "nan@semplest,com", "nan@semplest.com", "I'm the bad daily puppy");
+			//good puppy
+			SemplestSchedulerTaskObject mailTask3 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #5-email 3", "nan@semplest.com", "nan@semplest.com", "I'm the good daily puppy");
+			listOfTasks.add(mailTask1);
+			listOfTasks.add(mailTask2);
+			listOfTasks.add(mailTask3);
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 		}
 		catch(Exception e){
 			errorHandler(e);
