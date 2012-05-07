@@ -13,11 +13,11 @@
                     <span class="k-search k-icon"></span>
                 </button>
             </td>
-            <td rowspan="4">
+            <td rowspan="5">
                 <div id="optionsNarrative">
                 </div>
-                @*@Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
-                @Html.LinkToRemoveNestedForm("Delete", "div.address", "input.mark-for-delete")*@
+                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                @Html.LinkToRemoveNestedForm("Delete", "div.address", "input.mark-for-delete")
             </td>
         </tr>
         <tr>
