@@ -26,6 +26,7 @@ public class Campaign {
     ccs = user.getService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
   }
 
+  // Set
   public long setGeoLoc( String state ) throws Exception { 
     return sGeoLocation( cCriterion( state )); }
   public long setGeoLoc( Double r, int lat, int lon) throws Exception {
@@ -37,7 +38,16 @@ public class Campaign {
     return sGeoLocation( cCriterion( r, "", "", "", zip ));}
   public long setGeoLoc( Long id ) throws Exception { 
     return sGeoLocation( cLocation( id )); }
-  
+
+  // Get
+  public String[] getGeoLocs() throws Exception {
+    ArrayList<String> res = new ArrayList<String>();
+    for( CampaignCriterion c : gCriteria())
+      res.add( gResults( c ) );
+    return res.toArray( new String[]{} );
+  }
+ 
+  // Print
   public void printCC() throws Exception { pCCs( gCriteria() ); }
   public void pCCs( CampaignCriterion[]  crs) throws Exception {
     for( CampaignCriterion c : crs )
@@ -147,7 +157,11 @@ public class Campaign {
       long rz = c.setGeoLoc( radius, zip );
       long rs = c.setGeoLoc( "NY" );
       System.out.println( ra + "," + rs + "," + rz);
-      // c.printCC();
+
+      String[] res = c.getGeoLocs();
+      for( String r : res )
+        System.out.println(r);
+
     } catch (Exception e ){ e.printStackTrace(); }
   }
 }
