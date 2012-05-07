@@ -88,13 +88,14 @@ public class MSNAdcenterServiceClientTest {
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
 			//msn.createCampaign();
 			msn.getAccountID();
+			logger.info(msn.accountID);
 			msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
-			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/TovahPhoto/keywords.txt", 1500);
-			//msn.plotdata(bidMap);
-			//logger.info(bidMap);
+			//msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
+			HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
+			msn.plotdata(bidMap);
+			logger.info(bidMap);
 		}
 		catch (Exception e)
 		{
@@ -204,7 +205,7 @@ public class MSNAdcenterServiceClientTest {
 			HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
 			
 			//Create bid points
-			ArrayList<Double> bids = this.createbids(2.0, 4.0, 0.01);
+			ArrayList<Double> bids = this.createbids(0.5, 10.0, 0.1);
 			Double[][] bidDat = new Double[bids.size()][3];
 
 			FileInputStream fstream = new FileInputStream(filename);
@@ -229,31 +230,43 @@ public class MSNAdcenterServiceClientTest {
 			      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
 			      logger.info("Adding "+ strLine);
 			      keywords[i] = strLine;
-			      keywords[i] = strLine;
 			      j++;
 			      i++;
 			    }
-	    	
-			    TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, keywords, bidsMoney, MatchType.Exact);
+			    int v;
+			    for(v=0; v<keywords.length; v++){
+			    	if(keywords[v]==null) break;
+			    }
+			    String[] kwTrim = new String[v];
+			    for(v=0; v<kwTrim.length; v++){
+			    	kwTrim[v] = keywords[v];
+			    }
+			    
+			    TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, kwTrim, bidsMoney, MatchType.Exact);
 			    for(String k : keywords){
 					logger.info("keyword = " + k);
-					int v=0;
-					for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
-						ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList);
-		
-						double averDaylyCPC = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
-						double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
-						if(!bidMap.containsKey(k))
-							bidDat = new Double[bids.size()][3]; 
-						else
-							bidDat =bidMap.get(k);
+					v=0;
+					if(ret.getBidList(k, MatchType.Exact.getValue())!=null){
+						v=0;
+						for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
+							ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList);
+			
+							double averDaylyCPC = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+							if(!bidMap.containsKey(k))
+								bidDat = new Double[bids.size()][3]; 
+							else
+								bidDat =bidMap.get(k);
 
-						bidDat[v][0]= bidList.doubleValue();
-						bidDat[v][1]= averDaylyCPC;
-						bidDat[v][2]= averDaylyClicks;
+							bidDat[v][0]= bidList.doubleValue();
+							bidDat[v][1]= averDaylyCPC;
+							bidDat[v][2]= averDaylyClicks;
+							bidMap.put(k, bidDat);
+							v++;
+							
+						}
+					} else{
 						bidMap.put(k, bidDat);
-						v++;
-						
 					}
 			    }
 		    }
@@ -278,7 +291,7 @@ public class MSNAdcenterServiceClientTest {
 		
 		//createCampaign
 		CampaignStatus cpst = null;
-		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/4), 
+		campaignID = test.createCampaign(accountID,productSubcategory, BudgetLimitType.DailyBudgetStandard, (msnMonthlyBudget/16), 
 				msnMonthlyBudget, cpst.Paused);
 		logger.info("campaignID: "+campaignID);	
 		//createAdGroup
@@ -297,53 +310,56 @@ public class MSNAdcenterServiceClientTest {
 		for ( String key : keySet ){
 			boolean plot=false;
 			Double[][] bidData = bidMap.get(key);
-			double [][] dataclicks = PlotGraph.data(1,bidData.length);
-			double [][] datacost = PlotGraph.data(1,bidData.length);
-
-	    	// Read in the data
-	    	int[] nPoints = new int[bidData.length];
-	    	for(int i=0; i< bidData.length ; i++){
-	        	if(bidData[i][1] != null){
-	        		dataclicks[0][i]=bidData[i][0];       // x-axis data
-	           		dataclicks[1][i]=bidData[i][2];     // y-axis data
-	           		if(bidData[i][2]>0) plot = true;
-	           		datacost[0][i]=bidData[i][0];       // x-axis data
-	           		datacost[1][i]=bidData[i][1];     // y-axis data
-	           		if(bidData[i][1]>0) plot = true;
-	        	}
-	        	else{
-	        		dataclicks[0][i]=0;       // x-axis data
-	           		dataclicks[1][i]=0;     // y-axis data
-	           		datacost[0][i]=0;       // x-axis data
-	           		datacost[1][i]=0;     // y-axis data
-	        	}
-	    	}
-
-	    	// Create an instance of PlotGraph
-	    	if(plot==true){
-		    	PlotGraph pgclicks = new PlotGraph(dataclicks);
-		    	PlotGraph pgcost = new PlotGraph(datacost);
-		    	pgclicks.setGraphTitle("Clicks :"+key);            // Enter graph title
-		    	pgcost.setGraphTitle("Cost :"+key);
-		    	int[] pointOptions = {1};        // Set point option to open circles on the first graph line and filled circles on the second graph line
-		    	pgclicks.setPoint(pointOptions);
-		    	pgclicks.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
-		    	
-		    	pgcost.setPoint(pointOptions);
-		    	pgcost.setLine(1);
-		    	// Call plotting method
-		    	pgclicks.plot();
-		    	pgcost.plot();
-		    	System.in.read();
-		    	PrintStream stdout = System.out;
-		    	System.setOut(fileoutput);
-		    	System.out.println("Keyword: "+key);
-		    	System.out.println("Clicks and cost");
-		    	for(int v= 0; v<dataclicks[0].length;v++){
-		    		System.out.println(dataclicks[0][v]+"\t"+dataclicks[1][v]+"\t"+datacost[1][v]+"\t");
+			if(bidData !=null){
+				//bidData
+				double [][] dataclicks = PlotGraph.data(1,bidData.length);
+				double [][] datacost = PlotGraph.data(1,bidData.length);
+	
+		    	// Read in the data
+		    	int[] nPoints = new int[bidData.length];
+		    	for(int i=0; i< bidData.length ; i++){
+		        	if(bidData[i][1] != null){
+		        		dataclicks[0][i]=bidData[i][0];       // x-axis data
+		           		dataclicks[1][i]=bidData[i][2];     // y-axis data
+		           		if(bidData[i][2]>0) plot = true;
+		           		datacost[0][i]=bidData[i][0];       // x-axis data
+		           		datacost[1][i]=bidData[i][1];     // y-axis data
+		           		if(bidData[i][1]>0) plot = true;
+		        	}
+		        	else{
+		        		dataclicks[0][i]=0;       // x-axis data
+		           		dataclicks[1][i]=0;     // y-axis data
+		           		datacost[0][i]=0;       // x-axis data
+		           		datacost[1][i]=0;     // y-axis data
+		        	}
 		    	}
-		    	System.setOut(stdout);
-	    	}
+	
+		    	// Create an instance of PlotGraph
+		    	if(plot==true){
+			    	PlotGraph pgclicks = new PlotGraph(dataclicks);
+			    	PlotGraph pgcost = new PlotGraph(datacost);
+			    	pgclicks.setGraphTitle("Clicks :"+key);            // Enter graph title
+			    	pgcost.setGraphTitle("Cost :"+key);
+			    	int[] pointOptions = {1};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+			    	pgclicks.setPoint(pointOptions);
+			    	pgclicks.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+			    	
+			    	pgcost.setPoint(pointOptions);
+			    	pgcost.setLine(1);
+			    	// Call plotting method
+			    	pgclicks.plot();
+			    	pgcost.plot();
+			    	System.in.read();
+			    	PrintStream stdout = System.out;
+			    	System.setOut(fileoutput);
+			    	System.out.println("Keyword: "+key);
+			    	System.out.println("Clicks and cost");
+			    	for(int v= 0; v<dataclicks[0].length;v++){
+			    		System.out.println(dataclicks[0][v]+"\t"+dataclicks[1][v]+"\t"+datacost[1][v]+"\t");
+			    	}
+			    	System.setOut(stdout);
+		    	}
+			}
 		}
 		
 		/* Old version

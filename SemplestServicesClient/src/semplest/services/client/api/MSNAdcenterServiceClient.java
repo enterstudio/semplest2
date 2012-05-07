@@ -43,7 +43,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
-	private static String timeoutMS = "40000";
+	private static String timeoutMS = "200000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClient.class);
@@ -510,7 +510,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	{
 		String json = " ";
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountIDs", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountIDs", json, timeoutMS);
 		HashMap<String,Double> ret = gson.fromJson(returnData, HashMap.class);
 		return ret;
 	}
@@ -522,7 +522,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountById", json, timeoutMS);
 		MsnAccountObject account = gson.fromJson(returnData, MsnAccountObject.class);
 		logger.debug("getAccountById: Name = " + account.getName()
 				+ "; ParentCustomerId = " + account.getParentCustomerId()
@@ -543,7 +543,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("CampaignStatus", CampaignStatus.toString());
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createCampaign", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createCampaign", json, timeoutMS);
 		Long campaignId = gson.fromJson(returnData, Long.class);		
 		logger.debug("createCampaign: campaignId = " + campaignId.toString());		
 		return campaignId;
@@ -557,7 +557,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignById", json, timeoutMS);
 		Campaign campaign = gson.fromJson(returnData, Campaign.class);		
 		logger.debug("getCampaignById: " + ": Name = " + campaign.getName()
 				+ "; CampaignStatus = " + campaign.getStatus().toString());		
@@ -571,7 +571,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignsByAccountId", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignsByAccountId", json, timeoutMS);
 		Campaign[] campaigns = gson.fromJson(returnData, Campaign[].class);	
 		if (campaigns == null)
 			return null;
@@ -592,7 +592,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseCampaignById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseCampaignById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("pauseCampaignById: (if successful returns 0) " + ret);					
 	}
@@ -604,7 +604,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseCampaignsByAccountId", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseCampaignsByAccountId", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("pauseCampaignsByAccountId: (if successful returns 0) " + ret);			
 	}
@@ -617,7 +617,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "resumeCampaignById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "resumeCampaignById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("resumeCampaignById: (if successful returns 0) " + ret);
 	}
@@ -630,7 +630,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteCampaignById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteCampaignById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("deleteCampaignById: (if successful returns 0) " + ret);
 	}
@@ -646,7 +646,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("monthlyBudget", Double.toString(monthlyBudget));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateCampaignBudget", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateCampaignBudget", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("updateCampaignBudget: (if successful returns 0) " + ret);
 	}
@@ -666,7 +666,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("states", stateslist);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "setCampaignStateTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setCampaignStateTargets", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("setCampaignStateTargets: (if successful returns 0) " + ret);
 	}
@@ -680,7 +680,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteCampaignTargets", json, null);		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteCampaignTargets", json, timeoutMS);		
 		int ret = gson.fromJson(returnData, int.class);		
 		logger.debug("deleteCampaignTargets: (if successful returns 0) " + ret);
 		
@@ -695,7 +695,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignTargets", json, null);		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getCampaignTargets", json, timeoutMS);		
 		Target ret = gson.fromJson(returnData, Target.class);		
 		logger.debug("getCampaignTargets: ok");
 		return ret;
@@ -709,7 +709,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAdGroup", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAdGroup", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);		
 		logger.debug("createAdGroup: adGroupId = " + ret);
 		return ret;
@@ -723,7 +723,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupsByCampaignId", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupsByCampaignId", json, timeoutMS);
 		AdGroup[] adgroups = gson.fromJson(returnData, AdGroup[].class);
 		if (adgroups == null)
 			return null;
@@ -744,7 +744,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupById", json, timeoutMS);
 		AdGroup ret = gson.fromJson(returnData, AdGroup.class);
 		logger.debug("getAdGroupById: Id = " + ret.getId()
 				+ "; Name = " + ret.getName());
@@ -760,7 +760,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdGroupById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdGroupById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("deleteAdGroupById: (if successful returns 0) " + ret);
 	}
@@ -780,7 +780,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("states", stateslist);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupStateTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupStateTargets", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("setAdGroupStateTargets: (if successful returns 0) " + ret);
 	}
@@ -800,7 +800,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("cities", citylist);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupCityTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupCityTargets", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("setAdGroupCityTargets: (if successful returns 0) " + ret);
 	}
@@ -820,7 +820,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("metroTargets", metroTargetsList);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupMetroAreaTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setAdGroupMetroAreaTargets", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("setAdGroupMetroAreaTargets: (if successful returns 0) " + ret);
 	}
@@ -834,7 +834,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdGroupTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdGroupTargets", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("deleteAdGroupTargets: (if successful returns 0) " + ret);
 	}
@@ -848,7 +848,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupTargets", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdGroupTargets", json, timeoutMS);
 		Target ret = gson.fromJson(returnData, Target.class);
 		logger.debug("getAdGroupTargets: ok");
 		return ret;
@@ -866,7 +866,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("destinationUrl", destinationUrl);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAd", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAd", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("createAd: AdId = " + ret);
 		return ret;
@@ -881,7 +881,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adId", Long.toString(adId));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdById", json, timeoutMS);
 		MsnAdObject ret = gson.fromJson(returnData, MsnAdObject.class);
 		logger.debug("getAdById: ok");
 		return ret.toAd();
@@ -895,7 +895,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdsByAdGroupId", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAdsByAdGroupId", json, timeoutMS);
 		MsnAdObject[] ret = gson.fromJson(returnData, MsnAdObject[].class);
 		if (ret == null)
 			return null;
@@ -923,7 +923,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("destinationUrl", destinationUrl);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateAdById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateAdById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("updateAdById: (if successful returns 0) " + ret);
 	}
@@ -937,7 +937,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adId", Long.toString(adId));		
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseAdById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseAdById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("pauseAdById: (if successful returns 0) " + ret);
 	}
@@ -951,7 +951,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adId", Long.toString(adId));		
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "resumeAdById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "resumeAdById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("resumeAdById: (if successful returns 0) " + ret);
 	}
@@ -965,7 +965,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("adId", Long.toString(adId));		
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAdById", json, timeoutMS);
 		int ret = gson.fromJson(returnData, int.class);
 		logger.debug("deleteAdById: (if successful returns 0) " + ret);
 	}
@@ -988,7 +988,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeyword", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeyword", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("createKeyword: KeywordId = " + ret);
 		return ret;
@@ -1004,7 +1004,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		MsnKeywordObject ret = null;
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordById", json, timeoutMS);
 		ret = gson.fromJson(returnData, MsnKeywordObject.class);
 		logger.debug("getKeywordById: ok");
 		return ret.toKeyword();
@@ -1019,7 +1019,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		MsnKeywordObject[] ret1 = null;
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordByAdGroupId", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordByAdGroupId", json, timeoutMS);
 		ret1 = gson.fromJson(returnData, MsnKeywordObject[].class);
 		if (ret1 == null)
 			return null;
@@ -1052,7 +1052,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidById", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("updateKeywordBidById: (if successful returns 0) " + ret);
 	}
@@ -1076,7 +1076,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidsByIds", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidsByIds", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("updateKeywordBidsByIds: (if successful returns 0) " + ret);
 	}
@@ -1091,7 +1091,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		int ret = -1;
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseKeywordById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "pauseKeywordById", json, timeoutMS);
 		ret = gson.fromJson(returnData, int.class);
 		logger.debug("pauseKeywordById: (if successful returns 0) " + ret);
 	}
@@ -1106,7 +1106,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		int ret = -1;
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordById", json, timeoutMS);
 		ret = gson.fromJson(returnData, int.class);
 		logger.debug("deleteKeywordById: (if successful returns 0) " + ret);
 	}
@@ -1122,7 +1122,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		int ret = -1;
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordsById", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteKeywordsById", json, timeoutMS);
 		ret = gson.fromJson(returnData, int.class);
 		logger.debug("deleteKeywordsById: (if successful returns 0) " + ret);
 	}
@@ -1137,7 +1137,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("matchType", gson.toJson(matchType));
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordEstimateByBids", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordEstimateByBids", json, timeoutMS);
 		TrafficEstimatorObject ret = gson.fromJson(returnData, TrafficEstimatorObject.class);
 
 		logger.debug("getKeywordEstimateByBids: ok");
@@ -1154,7 +1154,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		ProtocolJSON protocolJson = new ProtocolJSON();
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportData", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportData", json, timeoutMS);
 		HashMap<String,String[]> ret = protocolJson.getHashMapFromJson(returnData);
 		logger.debug("getReportData: ok");
 		
@@ -1173,7 +1173,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = "";
-		returnData = runMethod(baseurl,SERVICEOFFERED, "requestCampaignReport", json, null);
+		returnData = runMethod(baseurl,SERVICEOFFERED, "requestCampaignReport", json, timeoutMS);
 		String ret = returnData;
 		logger.debug("requestCampaignReport: reportID = " + ret);
 
@@ -1194,7 +1194,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = "";
-		returnData = runMethod(baseurl,SERVICEOFFERED, "requestKeywordReport", json, null);
+		returnData = runMethod(baseurl,SERVICEOFFERED, "requestKeywordReport", json, timeoutMS);
 		String ret = returnData;
 		logger.debug("requestKeywordReport: reportID = " + ret);
 
@@ -1209,7 +1209,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("name", name.getSemplestString());
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAccount", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createAccount", json, timeoutMS);
 		MsnManagementIds mngId = gson.fromJson(returnData, MsnManagementIds.class);
 		logger.debug("createAccount: accountId = " + mngId.getAccountId() 
 				+ "; customerId = " + mngId.getCustomerId()
@@ -1232,7 +1232,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("keywords", keywordsList);
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeywords", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeywords", json, timeoutMS);
 		long[] ret = gson.fromJson(returnData, long[].class);
 		if (ret == null)
 			return null;
@@ -1252,7 +1252,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		jsonHash.put("aggregation", aggregation.getValue());
 		String json = gson.toJson(jsonHash);
 		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, null);
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, timeoutMS);
 		ReportObject[] ret = gson.fromJson(returnData, ReportObject[].class);
 
 		logger.debug("getKeywordReport: ok");
