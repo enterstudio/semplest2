@@ -215,10 +215,10 @@ public class MSNAdcenterServiceClientTest {
 		    //Read File Line By Line
 		    int j=0;
 		    int n=0;
-		    Money[] bidsMoney = new Money[bids.size()]; 
+		    Long[] bidsMoney = new Long[bids.size()]; 
 		    for(int f =0 ; f< bids.size();f++){
 		    	long bidL = (long) (bids.get(f)*100000);
-		    	bidsMoney[f] = new Money(bidL);
+		    	bidsMoney[f] = new Long(bidL);
 		    }
 		    while(j<numKw && strLine!=null){
 		    	keywords = new String[1000];
