@@ -63,7 +63,7 @@ namespace SemplestModel
     {
         public List<StateCode> StateCodes
         {
-            get { return new SemplestEntities().StateCodes.ToList(); }
+            get { return new SemplestEntities().StateCodes.OrderBy(t => t.StateAbbr).ToList(); }
         }
         public bool Delete { get; set; }
     }
