@@ -1997,6 +1997,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperator(Operator.SET);
 
 			AdGroupOperation[] operations = new AdGroupOperation[]{operation};
+			AdGroupReturnValue result = adGroupService.mutate(operations);
+
 		}
 		catch (Exception e)
 		{
