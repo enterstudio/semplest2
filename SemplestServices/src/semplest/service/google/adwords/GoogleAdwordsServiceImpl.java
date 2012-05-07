@@ -73,6 +73,7 @@ import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
 import com.google.api.adwords.v201109.cm.ManualCPC;
+import com.google.api.adwords.v201109.cm.ManualCPCAdGroupBids;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
 import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
@@ -1959,7 +1960,51 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	  return true;                                  
 	}
 
-	
+	public void updateDefaultBid(String json) throws Exception
+	{
+		logger.debug("call updateDefaultBid(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		Long microBid = Long.parseLong(data.get("microBid"));
+		updateDefaultBid(data.get("accountID"), adGroupID,microBid);
+		// convert result to Json String
+	}
+
+	@Override
+	public void updateDefaultBid(String accountID, Long adGroupID, Long microBid) throws Exception
+	{
+		try{
+			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			// Get the AdGroupCriterionService.
+			AdGroupServiceInterface adGroupService =
+					user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
+
+			//			      long adGroupId = Long.parseLong(a;
+
+			// Create ad group with updated status.
+			AdGroup adGroup = new AdGroup();
+			adGroup.setId(adGroupID);
+			//			      adGroup.setStatus(AdGroupStatus.ENABLED);
+
+			// Update ad group bid.
+			ManualCPCAdGroupBids adGroupBids = new ManualCPCAdGroupBids();
+			adGroupBids.setKeywordMaxCpc(new Bid(new Money(microBid).toGoogleMoney()));
+			adGroup.setBids(adGroupBids);
+
+			// Create operations.
+			AdGroupOperation operation = new AdGroupOperation();
+			operation.setOperand(adGroup);
+			operation.setOperator(Operator.SET);
+
+			AdGroupOperation[] operations = new AdGroupOperation[]{operation};
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		
+	}
 
 	@Override
 	public void initializeService(String input) throws Exception
