@@ -5,7 +5,6 @@ import java.util.HashMap;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.other.Money;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
@@ -33,10 +32,10 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//management console (mcm)
 	public abstract Account CreateOneAccountService(String currencyCode, String dateTimeZone,String companyName, String descriptiveName) throws Exception;
 	//Campaign Data Management (cm)
-	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,Money budgetAmount) throws Exception;
+	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception;
 	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
 	public abstract Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception;
-	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Money budgetAmount) throws Exception;
+	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;
 	public abstract ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
 	public abstract  Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
@@ -65,17 +64,17 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//optimization (o)
 	
 	//Account Management API Usage
-	public abstract void addAccountBudget(Money money, String customerId, String orderId) throws Exception;
+	public abstract void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception;
 	public abstract String[] getClientAccounts() throws Exception;
 	public abstract Budget[] getAccountBudgets(String customerId) throws Exception;
-	public abstract void updateAccountBudget(Budget budgetForUpdate, Money money, String customerId, String orderId) throws Exception;
+	public abstract void updateAccountBudget(Budget budgetForUpdate, Long microBudgetAmount, String customerId, String orderId) throws Exception;
 	public abstract AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception;
 
 	
 	
 	//public AccountInfo getAccountInfo(String customerId) throws Exception;
-	public abstract void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Money budget, String string) throws Exception;
-	public abstract void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Money newBudgetAmount, String string) throws Exception;
+	public abstract void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
+	public abstract void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
 	//Utility
 	
 	//Report
