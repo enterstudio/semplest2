@@ -74,12 +74,15 @@ public class UnitTests {
 			//Test Msn Service
 			MsnServiceTest msnServiceTest = new MsnServiceTest();
 			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
-			numMsnServiceError = msnServiceTest.Test_MsnServices_Service();
+			//numMsnServiceError = msnServiceTest.Test_MsnServices_Service();
 			
 			//Test Google Service
 			GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 			numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
-			numGoogleServiceError = googleServiceTest.Test_GoogleService_Service();
+			//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //we need only getReport through ESB
+			
+			//Test Scheduler
+			
 			
 			//Test Adengine Service
 			

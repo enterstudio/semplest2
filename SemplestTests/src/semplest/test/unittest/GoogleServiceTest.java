@@ -37,13 +37,35 @@ public class GoogleServiceTest {
 	
 	
 	public static void main(String[] args){
-		GoogleServiceTest t = new GoogleServiceTest();
-		//int ret = t.Test_CreateOneAccountService();
-		//t.cleanUp();
+		
+		try{
+			String test_accountId = "2188810777";
+			Long test_campaignId = 77290470L;
+			
+			GoogleServiceTest t = new GoogleServiceTest();
+			//int ret = t.Test_CreateOneAccountService();
+			//t.cleanUp();
+			
+			//GoogleAdwordsServiceClient service = new GoogleAdwordsServiceClient(null);
+			//service.CreateOneCampaignForAccount("7250251887", "temptest", CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
+			
+			
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			boolean ret = test.changeCampaignStatus(test_accountId, test_campaignId, CampaignStatus.PAUSED);
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public int Test_getReportForAccount(){
 		//getReportForAccount
+		GoogleAdwordsServiceClient test = new GoogleAdwordsServiceClient(null);
+		//GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+		
 		System.out.println("------------------------------------------------------------");
 		System.out.println("getReportForAccount:");		
 		try{
@@ -70,7 +92,6 @@ public class GoogleServiceTest {
 		}
 		catch(Exception e){
 			errorHandler(e);
-			return 1;
 		}
 		return 0;
 	}
@@ -401,12 +422,12 @@ public class GoogleServiceTest {
 				System.out.println("test accountId is" + test_accountId);
 				System.out.println("test campaignId is " + test_campaignId);
 				
-				if(ret == null){
-					System.out.println("no keyword estimate for the campaign");
-				}
-				else{
-					for(String s:ret.getListOfKeywords()){
-						System.out.println("keyword = " + s);
+				for(String s:ret.getListOfKeywords()){
+					System.out.println("keyword = " + s);
+					if(ret.getBidList(s, MatchType.Broad.getValue()) == null){
+						System.out.println("no estimate for the keyword");
+					}
+					else{
 						for(Long b:ret.getBidList(s, MatchType.Broad.getValue())){
 							System.out.println("bidAmount = " + b);
 							System.out.println("AveClickPerDay = " + ret.getAveClickPerDay(s, MatchType.Broad.getValue(), b));
