@@ -68,11 +68,11 @@ public class ProtocolEnum {
 			return false;
 		}
 		
-		public static String getGoogleMatchType(String matchType) throws Exception {
-			if(SemplestMatchType.existsMatchType(matchType)) {
-				return matchType.toUpperCase();
-			} else {
+		public static String getSearchEngineMatchType(String matchType, String searchEngine) throws Exception {
+			if(!SemplestMatchType.existsMatchType(matchType)) {
 				throw new Exception("Invalid matchtype "+matchType+"!!");
+			} else {
+				return matchType.toUpperCase();
 			}
 		}
 	}
