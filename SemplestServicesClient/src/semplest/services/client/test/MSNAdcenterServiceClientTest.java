@@ -55,8 +55,7 @@ import semplest.services.client.api.MSNAdcenterServiceClient;
 
 public class MSNAdcenterServiceClientTest {
 
-	private static String BASEURLTEST = "http://" +
-			":9898/semplest";
+
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
 	String accountName = "_PiperHall";
@@ -106,12 +105,12 @@ public class MSNAdcenterServiceClientTest {
 	}
 	
 	public void getAccountID() throws Exception{
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 		 HashMap<String,Double> accounts = test.getAccountIDs();
 		 accountID =  accounts.get(accountName).longValue();
 	}
 	public void getIds() throws Exception{
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 		Campaign[] ret = test.getCampaignsByAccountId(accountID);
 		campaignID = ret[0].getId();
 		logger.info("campaignID: "+campaignID);
@@ -121,7 +120,7 @@ public class MSNAdcenterServiceClientTest {
 	public void insertKeywords2(String filename) throws Exception{
 		
 		
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 		//createKeywords
 		Keyword[] keywords = new Keyword[1000];
 		FileInputStream fstream = new FileInputStream(filename);
@@ -161,7 +160,7 @@ public class MSNAdcenterServiceClientTest {
 	public void insertKeywords(String filename) throws Exception{
 		
 		
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 		//createKeywords
 		FileInputStream fstream = new FileInputStream(filename);
 	    // Get the object of DataInputStream
@@ -200,12 +199,12 @@ public class MSNAdcenterServiceClientTest {
 	}
 	public HashMap<String, Double[][]> getKeywordEstimates(String filename, int numKw) throws Exception{
 
-			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 			String[] keywords;
 			HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
 			
 			//Create bid points
-			ArrayList<Double> bids = this.createbids(0.5, 10.0, 0.1);
+			ArrayList<Double> bids = this.createbids(0.1, 0.5, 0.1);
 			Double[][] bidDat = new Double[bids.size()][3];
 
 			FileInputStream fstream = new FileInputStream(filename);
@@ -221,6 +220,7 @@ public class MSNAdcenterServiceClientTest {
 		    	long bidL = (long) (bids.get(f)*100000);
 		    	bidsMoney[f] = new Long(bidL);
 		    }
+		    logger.info("Adding Keywords...");
 		    while(j<numKw && strLine!=null){
 		    	keywords = new String[1000];
 		    	int i=0;
@@ -228,7 +228,8 @@ public class MSNAdcenterServiceClientTest {
 			    	if(i>=keywords.length) break ;
 			      // Print the content on the console
 			      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
-			      logger.info("Adding "+ strLine);
+			      //logger.info("Adding "+ strLine);
+			      
 			      keywords[i] = strLine;
 			      j++;
 			      i++;
@@ -243,16 +244,16 @@ public class MSNAdcenterServiceClientTest {
 			    }
 			    
 			    TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, kwTrim, bidsMoney, MatchType.Exact);
-			    for(String k : keywords){
+			    for(String k : kwTrim){
 					logger.info("keyword = " + k);
 					v=0;
 					if(ret.getBidList(k, MatchType.Exact.getValue())!=null){
 						v=0;
+						Long[] bidarray = ret.getBidList(k, MatchType.Exact.getValue());
 						for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
-							ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList);
 			
 							double averDaylyCPC = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
-							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyClicks = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList))/14.0;
 							if(!bidMap.containsKey(k))
 								bidDat = new Double[bids.size()][3]; 
 							else
@@ -266,7 +267,7 @@ public class MSNAdcenterServiceClientTest {
 							
 						}
 					} else{
-						bidMap.put(k, bidDat);
+						bidMap.put(k, null);
 					}
 			    }
 		    }
@@ -278,7 +279,7 @@ public class MSNAdcenterServiceClientTest {
 		//Parameters to create campaign and adds
 		
 		//MSN service instance
-		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(BASEURLTEST);
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
 						
 		
 		//createAccount
