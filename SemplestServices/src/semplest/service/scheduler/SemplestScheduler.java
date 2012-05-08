@@ -417,35 +417,44 @@ public class SemplestScheduler extends Thread
 		
 		TaskOutput previousTaskOutput = null; // First TaskOutput is null
 		//Run the Set of Tasks and return the output
-		List<TaskRunnerObj> listofTasks = SemplestDB.getScheduleTasks(SchedulePK);
-		if (!listofTasks.isEmpty())
+		try
 		{
-			try
+			List<TaskRunnerObj> listofTasks = SemplestDB.getScheduleTasks(SchedulePK);
+			if (!listofTasks.isEmpty())
 			{
-				for (int i = 0; i < listofTasks.size(); i++)
+				try
 				{
-					TaskRunnerObj taskObj = listofTasks.get(i);
-					System.out.println(taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
-					Class taskClass = Class.forName(taskObj.getServiceName());
-					Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
-					SchedulerTaskRunnerInterface taskRunner =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
-					previousTaskOutput = taskRunner.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
-					TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
-					taskRunner = null;
+					for (int i = 0; i < listofTasks.size(); i++)
+					{
+						TaskRunnerObj taskObj = listofTasks.get(i);
+						System.out.println(taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
+						Class taskClass = Class.forName(taskObj.getServiceName());
+						Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
+						SchedulerTaskRunnerInterface taskRunner =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
+						previousTaskOutput = taskRunner.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
+						TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
+						taskRunner = null;
+					}
+					//Update results to the DB and add next Job if necessary
+					getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
 				}
-				//Update results to the DB and add next Job if necessary
-				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
+				catch (Exception e)
+				{
+					logger.error(e.getMessage());				
+				}
 			}
-			catch (Exception e)
+			else
 			{
-				logger.error(e.getMessage());				
+				System.out.println("No tasks found");
 			}
+			return true;
 		}
-		else
+		catch (Exception e)
 		{
-			System.out.println("No tasks found");
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			return false;
 		}
-		return true;
 	}
 	
 	private void getNextJobToExecute(Integer scheduleJobID, boolean IsSuccessful, String ErrorMessage) throws Exception
