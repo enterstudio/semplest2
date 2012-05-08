@@ -50,7 +50,7 @@ namespace Semplest.Core.Controllers
                 var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
                 foreach(var ad in addsStoreModel.Ads)
                 {
-                    var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdText == ad.AdText);
+                    var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
                     if(admodel != null)
                     {
                         admodel.SiteLinks = ad.SiteLinks;
@@ -193,13 +193,13 @@ namespace Semplest.Core.Controllers
         #endregion
         public ActionResult AdditionalLinks(string model)
         {
-            if (Session["AdText"] == null)
-                Session.Add("AdText", model);
+            if (Session["AdTitle"] == null)
+                Session.Add("AdTitle", model);
             else
-                Session["AdText"] = model;
+                Session["AdTitle"] = model;
             //if (Session["SiteLinks"] != null)
             //    model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-            return PartialView(new PromotionAd { AdText = model });
+            return PartialView(new PromotionAd { AdTitle = model });
             //return PartialView(model);
         }
         [HttpPost]
@@ -207,7 +207,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(PromotionAd model)
         {
-            model.AdText = (string)Session["AdText"];
+            model.AdTitle = (string)Session["AdTitle"];
             if (Session["AddsStoreModel"] == null)
             {
                 Session.Add("AddsStoreModel", new AddsStoreModel { Ads = new List<PromotionAd> { model } });
@@ -215,7 +215,7 @@ namespace Semplest.Core.Controllers
             else
             {
                 var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
-                var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdText.Equals(model.AdText));
+                var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
                 if (promotionAd != null)
                     promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
                 else
