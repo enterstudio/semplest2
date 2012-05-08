@@ -20,7 +20,7 @@ namespace SemplestWebApp.Controllers
         {
             HomeModelParent hm = new HomeModelParent();
             SemplestEntities dbContext = new SemplestEntities();
-            int userId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
+            int userId = int.Parse(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID].ToString());
             foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == userId).First().Customer.ProductGroups)
             {
                 foreach (Promotion p in pg.Promotions)
