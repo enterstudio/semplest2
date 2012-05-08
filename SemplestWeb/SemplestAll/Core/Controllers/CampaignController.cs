@@ -263,7 +263,10 @@ namespace Semplest.Core.Controllers
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
         }
-
+        public ActionResult AdEngines(IEnumerable<AdEngineSelectModel> models )
+        {
+            return PartialView(models);
+        }
         public ActionResult SaveDefineProduct(CampaignSetupModel data)
         {
             if (data == null)

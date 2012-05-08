@@ -29,6 +29,7 @@
                     Budget
                 </label>
                 @Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
+                @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
             </li>
             <li>
                 <label for="StartDate" class="required">
@@ -48,8 +49,8 @@
                 <label for="SearchEngines" class="required">
                     Search Engines
                 </label>
-                @Html.CheckBoxFor(t => t.Google) Google
-                @Html.CheckBoxFor(t => t.YahooBing) Yahoo / Bing </li>
+                @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.AdEnginesSelectedList)
+            </li>
             <li>
                 <br />
                 <button class="k-button" id="save1" type="button">

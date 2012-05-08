@@ -98,14 +98,14 @@ namespace Semplest.Core.Models.Repositories
         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
         {
             // THIS IS ONLY FOR TESTING
-            if (model.ProductGroup.Google)
-                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = true });
-            else
-                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = false });
-            if (model.ProductGroup.YahooBing)
-                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = true });
-            else
-                model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = false });
+            //if (model.ProductGroup.Google)
+            //    model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = true });
+            //else
+            //    model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "Google", IsSelected = false });
+            //if (model.ProductGroup.YahooBing)
+            //    model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = true });
+            //else
+            //    model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = false });
 
             List<string> adEnginesSelected = new List<string>();
             foreach (AdEngineSelectModel aesm in model.ProductGroup.AdEnginesSelectedList)
