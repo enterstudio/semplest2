@@ -18,7 +18,7 @@ public class AddScheduleJobSP extends StoredProcedure
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("ScheduleFK", Types.INTEGER));
-		declareParameter(new SqlParameter("ExecutionStartTime", Types.DATE));
+		declareParameter(new SqlParameter("ExecutionStartTime", Types.TIMESTAMP));
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		compile();
 	}

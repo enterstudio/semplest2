@@ -19,7 +19,7 @@ public class AddReportDataSP extends StoredProcedure
 		declareParameter(new SqlParameter("AccountID", Types.BIGINT));
 		declareParameter(new SqlParameter("CampaignID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
-		declareParameter(new SqlParameter("TransactionDate", Types.DATE));
+		declareParameter(new SqlParameter("TransactionDate", Types.TIMESTAMP));
 		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
 		declareParameter(new SqlParameter("BidMatchType", Types.VARCHAR));
 		declareParameter(new SqlParameter("NumberImpressions", Types.INTEGER));
