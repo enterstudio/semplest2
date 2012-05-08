@@ -1,0 +1,18 @@
+CAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTION
+This will drop the Semplest Databas
+CAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTIONCAUTION
+/*USE [master]
+GO
+
+--ALTER DATABASE Semplest 
+    SET SINGLE_USER 
+    WITH ROLLBACK IMMEDIATE
+
+
+/****** Object:  Database [Semplest]    Script Date: 05/08/2012 17:08:54 ******/
+--IF  EXISTS (SELECT name FROM sys.databases WHERE name = N'Semplest')
+DROP DATABASE [Semplest]
+GO
+
+
+*/
