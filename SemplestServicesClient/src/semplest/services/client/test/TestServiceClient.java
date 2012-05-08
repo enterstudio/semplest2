@@ -52,7 +52,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 				HashMap<String, String> jsonHash = new HashMap<String, String>();
 				jsonHash.put("customerID", String.valueOf("1"));
 				String json = protocolJson.createJSONHashmap(jsonHash);
-				return runMethod("http://VMJAVA1:9898/semplest", "semplest.test.TestService", "TestMethod", json, "10000");
+				return runMethod("http://VMJAVA1:9898/semplest", "semplest.test.TestService", "TestMethod", json, "30000");
 			}
 			catch (Exception e)
 			{
