@@ -2,6 +2,7 @@ package semplest.server.protocol.adengine;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 /*
  * All estimates are in dollar amounts
@@ -81,13 +82,19 @@ public class TrafficEstimatorObject
 
 	public Long[] getBidList(String keyword, String matchType)
 	{
+		int size1 = bidDataMap.size();
+		Set kwSet = bidDataMap.keySet();
 		if (bidDataMap.containsKey(keyword))
 		{
 			HashMap<String, HashMap<Long, BidData>> matchTypeMap = bidDataMap.get(keyword);
 			if (matchType != null && matchTypeMap.containsKey(matchType))
 			{
 				HashMap<Long, BidData> data = matchTypeMap.get(matchType);
-				return data.keySet().toArray(new Long[bidDataMap.keySet().size()]);
+				//Test variables;
+				Set kset = data.keySet();
+				int size = bidDataMap.keySet().size();
+				Long[] array = data.keySet().toArray(new Long[bidDataMap.keySet().size()]);
+				return data.keySet().toArray(new Long[data.keySet().size()]);
 			}
 			else
 			{
