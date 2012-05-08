@@ -48,18 +48,23 @@ namespace Semplest.Core.Controllers
             if (ModelState.IsValid)
             {
                 var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
-                foreach(var ad in addsStoreModel.Ads)
+                if (addsStoreModel != null)
                 {
-                    var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
-                    if(admodel != null)
+                    foreach (var ad in addsStoreModel.Ads)
                     {
-                        admodel.SiteLinks = ad.SiteLinks;
+                        var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
+                        if (admodel != null)
+                        {
+                            admodel.SiteLinks = ad.SiteLinks;
+                        }
                     }
                 }
                 //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                 model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                 // we need save to database the ProductGroup and Promotion information
-                int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+
                 //int userid = 1; // for testing
                 string msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
@@ -120,7 +125,8 @@ namespace Semplest.Core.Controllers
                 }
 
                 // save the selected categories here
-                int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
                 //int userid = 1; // for testing
 
                 String msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
