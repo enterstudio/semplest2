@@ -6,6 +6,17 @@ public class AdEngineInitialData
 {
 	private Long defaultMicroBid;
 	private SemplestMatchType semplestMatchType;
+	private String networkSetting;
+
+	
+
+	public String getNetworkSetting() {
+		return networkSetting;
+	}
+	public void setNetworkSetting(String networkSetting) {
+		this.networkSetting = networkSetting;
+	}
+	
 	public Long getDefaultMicroBid()
 	{
 		return defaultMicroBid;
