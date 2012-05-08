@@ -97,6 +97,9 @@ namespace SemplestWebApp.Services
                         // add geotargeting to promotion
                         AddGeoTargetingToPromotion(promo, model);
 
+                        // save negative keywords
+                        SaveNegativeKeywords(promo, model);
+
                         // promotion ads
                         AddPromotionAdsToPromotion(promo, model);
 
@@ -207,8 +210,8 @@ namespace SemplestWebApp.Services
                 dbcontext.PromotionAds.Remove(pad);
             }
 
-
             AddGeoTargetingToPromotion(updatePromotion, model);
+            SaveNegativeKeywords(updatePromotion, model);
             AddPromotionAdsToPromotion(updatePromotion, model);
         }
 
@@ -378,63 +381,6 @@ namespace SemplestWebApp.Services
             return retFlag;
         }
 
-
-        public bool SaveKeywordsOld(int promotionId, List<string> keywordsList)
-        {
-            bool retFlag = false;
-
-            using (var dbcontext = new SemplestEntities())
-            {
-                // todo need to fix this
-                //return true;
-
-                foreach (string keyword in keywordsList)
-                {
-                    if (dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Count() == 0)
-                    {
-                        // add it in Keywords table and in PromotionKeywordAssociations
-                        dbcontext.Keywords.Add(new Keyword { Keyword1 = keyword });
-                        dbcontext.SaveChanges();
-
-                        int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
-                        dbcontext.PromotionKeywordAssociations.Add(
-                            new PromotionKeywordAssociation
-                            {
-                                PromotionFK = promotionId,
-                                KeywordFK = keywordId,
-                                IsActive = true,
-                                IsDeleted = false,
-                                IsNegative = false
-                            });
-
-                    }
-                    else  // keyword already there in the Keywords table, setup an association with promotion if its not there
-                    {
-                        // todo find out more
-
-                        var query = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId);
-                        if (query.Count() == 0)
-                        {
-                            int keywordId = dbcontext.Keywords.Where(c => c.Keyword1 == keyword).Select(c => c.KeywordPK).First();
-                            dbcontext.PromotionKeywordAssociations.Add(
-                                new PromotionKeywordAssociation
-                                {
-                                    PromotionFK = promotionId,
-                                    KeywordFK = keywordId,
-                                    IsActive = true,
-                                    IsDeleted = false,
-                                    IsNegative = false
-                                });
-
-                        }
-                    }
-                }
-                retFlag = true;
-            }
-
-            return retFlag;
-        }
-
         public bool SaveSiteLinks(int userid, CampaignSetupModel model)
         {
             bool retFlag = false;
@@ -447,9 +393,82 @@ namespace SemplestWebApp.Services
                 {
                     foreach (PromotionAd pad in query)
                     {
+                        
                     }
                 }
 
+            }
+
+            return retFlag;
+        }
+
+
+        public bool SaveNegativeKeywords(Promotion promo, CampaignSetupModel model)
+        {
+            bool retFlag = false;
+            using (SemplestEntities dbcontext = new SemplestEntities())
+            {
+                if (model.AdModelProp.NegativeKeywords != null)
+                {
+                    foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
+                    {
+                        var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
+                        if (queryKeyword.Count() > 0)
+                        {
+                            int keywordId = queryKeyword.First().KeywordPK;
+                            var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
+                            if (queryPka.Count() == 0)
+                            {
+                                dbcontext.PromotionKeywordAssociations.Add(
+                                    new PromotionKeywordAssociation
+                                    {
+                                        PromotionFK = promo.PromotionPK,
+                                        KeywordFK = keywordId,
+                                        IsActive = true,
+                                        IsDeleted = false,
+                                        IsNegative = false,
+                                        SemplestProbability = 0,
+                                        IsTargetMSN = false,
+                                        IsTargetGoogle = false
+                                    });
+
+                                dbcontext.SaveChanges();
+
+                            }
+                            else
+                            {
+                                var pka = queryPka.First();
+                                pka.IsNegative = true;
+
+                                dbcontext.SaveChanges();
+                            }
+
+                        }
+                        else
+                        {
+                            var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword });
+                            dbcontext.SaveChanges();
+
+                            int keywordId = newNegKeyword.KeywordPK;
+                            dbcontext.PromotionKeywordAssociations.Add(
+                                new PromotionKeywordAssociation
+                                {
+                                    PromotionFK = promo.PromotionPK,
+                                    KeywordFK = keywordId,
+                                    IsActive = true,
+                                    IsDeleted = false,
+                                    IsNegative = true,
+                                    SemplestProbability = 0,
+                                    IsTargetMSN = false,
+                                    IsTargetGoogle = false
+                                });
+
+                        }
+
+
+                    }
+
+                }
             }
 
             return retFlag;
@@ -522,43 +541,6 @@ namespace SemplestWebApp.Services
             }
 
             return retFlag;
-        }
-
-        public void SaveAd(CampaignSetupModel model)
-        {
-            // Campaign is now called as ProductGroup
-            var campaign = new ProductGroup
-                               {
-                                   ProductGroupName = model.ProductGroup.ProductGroupName,
-                                   IsActive = true,
-                                   CustomerFK = 1,
-                                   StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
-                                   EndDate = Convert.ToDateTime(model.ProductGroup.EndDate),
-                                   //TargetCycleBudget = model.Budget
-                               };
-            //var ae = new AdvertisingEngine { AdvertisingEngine1 = model.Google.ToString() };
-            var promo = new Promotion { ProductGroup = campaign };
-            promo.LandingPageURL = model.AdModelProp.Url;
-            promo.PromotionDescription = model.ProductGroup.Words;
-            // CampaignAds is now called as PromotionAd
-            foreach (PromotionAd pad in model.AdModelProp.Ads)
-            {
-                var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
-                promo.PromotionAds.Add(cad);
-            }
-
-            //promo.
-            //var kewword = new Keyword { Keyword1 = model.Words };
-            using (var db = new SemplestEntities())
-            {
-                db.ProductGroups.Add(campaign);
-
-
-                db.Promotions.Add(promo);
-
-                //db.AdvertisingEngines.Add(ae);
-                db.SaveChanges();
-            }
         }
 
         public string GetStateNameFromCode(int stateCode)
