@@ -117,7 +117,7 @@ public class BidGeneratorObj {
 			if (!AdEngine.existsAdEngine(se)){
 				throw new Exception("Ad engine "+ se + " Not Found");
 			}
-			Long defaultMicroBid = 100000L; // $0.10
+			Long defaultMicroBid = 1000000L; // $1.00
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
 			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact);
 			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
