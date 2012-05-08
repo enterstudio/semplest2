@@ -1,17 +1,12 @@
 package semplest.test;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import semplest.server.protocol.ProtocolEnum;
-import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.service.springjdbc.SemplestDB;
-import semplest.service.scheduler.CreateSchedulerAndTask;
 
 
 public class TestSpringJDBC
@@ -32,11 +27,26 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			//List ll= SemplestDB.getAdEngineAccount(2, "Google");
-			List<LinkedHashMap<String, Object>> AdEngineAccoutRow =SemplestDB.getAdEngineAccount(2, "Google");
+			HashMap<String, Object> configData = SemplestDB.loadConfigurationData();
+			Iterator<String> configIT = configData.keySet().iterator();
+			while (configIT.hasNext())
+			{
+				String key = configIT.next();
+				if (configData.get(key) != null)
+				{
+					System.out.println(key + "=" + configData.get(key).toString());
+				}
+				else
+				{
+					System.out.println(key + "= null");
+				}
+			}
 			
-			String companyName = (String) AdEngineAccoutRow.get(0).get("CustomerName");
-			System.out.println("companyName=" + companyName);
+			//List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			//List<LinkedHashMap<String, Object>> AdEngineAccoutRow =SemplestDB.getAdEngineAccount(2, "Google");
+			
+			//String companyName = (String) AdEngineAccoutRow.get(0).get("CustomerName");
+			//System.out.println("companyName=" + companyName);
 			//Test Scheduler
 			/*
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 

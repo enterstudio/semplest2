@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -31,13 +32,29 @@ import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
-import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
 
+	/*
+	 * Configuration
+	 */
+	public static HashMap<String,Object> loadConfigurationData() throws Exception
+	{
+		String strSQL = "select * from Configuration";
+		List res = jdbcTemplate.queryForList(strSQL);
+		if (res != null)
+		{
+			return (HashMap<String,Object>) res.get(0);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
 	/*
 	 * Customer
 	 */
@@ -598,8 +615,19 @@ public class SemplestDB extends BaseDB
 				"inner join Promotion p on p.PromotionPK = aep.PromotionFK " +
 				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
 				"where aea.AdvertisingEngineAccountPK = ? and p.PromotionPK = ?";
-		return jdbcTemplate.queryForObject(strSQL, new Object[]
-		{ advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
+		try
+		{
+			return jdbcTemplate.queryForObject(strSQL, new Object[]
+			{ advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			return null;
+		}
+		catch (Exception e)
+		{
+			throw e;
+		}
 	}
 	
 	/*
@@ -630,7 +658,7 @@ public class SemplestDB extends BaseDB
 	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
 	{
 		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID) "
-				+ "VALUES (?,?,?,?,?, ?)";
+				+ "VALUES (?,?,?,?,?,?,?)";
 
 		return jdbcTemplate.update(strSQL, new Object[]
 		{ adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0, advertisingEngineAdGroupID });

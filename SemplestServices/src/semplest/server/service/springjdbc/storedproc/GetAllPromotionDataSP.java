@@ -38,9 +38,9 @@ public class GetAllPromotionDataSP extends StoredProcedure
 	/*
 	 * store the resits oin a hashmap
 	 */
-	public void execute(int promotionID)
+	public void execute(Integer promotionID)
 	{
-		results = super.execute(new Object[] {promotionID},new HashMap());
+		results = super.execute(new Object[] {promotionID}); //,new HashMap());
 	}
 	
 	public PromotionObj getPromotionData()

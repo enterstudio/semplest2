@@ -7,9 +7,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
@@ -43,6 +45,29 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private String esbURL = "http://VMJAVA1:9898/semplest";
 	
 
+	//CustomerID = 2	State Farm	coffee machine	promotionID = 4	ProductGroupID=37	coffee machine
+	public static void main(String[] args)
+	{
+		try
+		{
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
+			String advertisingEngine = "Google";
+			List<KeywordProbabilityObject> keywordList = getKeywords.execute(4, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false , (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
+			keywordList.size();
+			/*
+			ArrayList<String> adEngList = new ArrayList<String>();
+			adEngList.add("Google");
+			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+			adEng.AddPromotionToAdEngine(2, 37, 4, adEngList);
+			*/
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void initializeService(String input) throws Exception
 	{
@@ -51,15 +76,24 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Long productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
 		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbURL);
 		//get the AdEngine Initial Data
-		HashMap<String,AdEngineInitialData>  adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
+		//***HashMap<String,AdEngineInitialData>  adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
+		HashMap<String,AdEngineInitialData>  adEngineInitialMap = new HashMap<String,AdEngineInitialData>();
+		AdEngineInitialData data = new AdEngineInitialData();
+		data.setDefaultMicroBid(100000000L);
+		data.setSemplestMatchType(SemplestMatchType.Exact);
+		adEngineInitialMap.put("Google", data);
+		
 		GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		//setup the budget for each ad engine
-		HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList,bidClient);
+		//***HashMap<String, Double> remainingBudgetMap = setupAdEngineBudget(PromotionID, adEngineList,bidClient);
+		HashMap<String, Double> remainingBudgetMap = new HashMap<String, Double>();
+		remainingBudgetMap.put("Google", new Double(50));
+		
 		String companyName = null;
 		//Get all common info - promotion data,  Ads, Geotargeting
 		GetAllPromotionDataSP getPromoDataSP  = new GetAllPromotionDataSP();
@@ -86,7 +120,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				accountID = new Long((Integer) AdEngineAccoutRow.get(0).get("AccountID"));
+				accountID = (Long) AdEngineAccoutRow.get(0).get("AccountID");
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			//if no campaign then add SINCE this is create there should be no campaign
@@ -99,7 +133,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				//create campaign on ad engine
 				Double budget = remainingBudgetMap.get(advertisingEngine);
-				Long campaignID = createCampaign(String.valueOf(accountID),PromotionID,customerID, advertisingEngine, budget.longValue() * 1000000L, getPromoDataSP,adEngineInitialData.getDefaultMicroBid());
+				//***Long campaignID = createCampaign(String.valueOf(accountID),PromotionID,customerID, advertisingEngine, budget.longValue() * 1000000L, getPromoDataSP,adEngineInitialData.getDefaultMicroBid());
+				Long campaignID = 567L;
 				//Store campaignID
 				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
 				//create the Ad Engine AdGroup
@@ -176,20 +211,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			adGroupID =  google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status);
+			//***adGroupID =  google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status);
+			adGroupID = 777L;
 			adGrpData.setAdGroupID(adGroupID);
 			for (AdsObject ad : adList )
 			{
-				Long adID =  google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdText(), null, promotionData.getLandingPageURL(),  promotionData.getLandingPageURL());
+				Long adID =  adGroupID++;//***google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdText(), null, promotionData.getLandingPageURL(),  promotionData.getLandingPageURL());
 				ad.setAdEngineAdID(adID);
 			}
 			adGrpData.setAds(adList);
 			//AD GEOTARGET HERE
+			/*
 			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 			for (GeoTargetObject geoObj : geoObjList)
 			{
 				google.setGeoTarget(accountID, campaignID,  geoObj.getRadius(),  geoObj.getAddress(),  geoObj.getCity(),  geoObj.getState(),  geoObj.getZip());
 			}
+			*/
 			
 		}
 		return adGrpData;

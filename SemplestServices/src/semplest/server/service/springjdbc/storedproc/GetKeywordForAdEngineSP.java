@@ -32,7 +32,7 @@ public class GetKeywordForAdEngineSP extends StoredProcedure
 	
 	public List<KeywordProbabilityObject> execute(int promotionID, boolean isTargetGoogle, boolean isTargetMSN )
 	{
-		Map<String, Object> results = super.execute(new Object[] {promotionID, isTargetGoogle, isTargetMSN}, new HashMap());
+		Map<String, Object> results = super.execute(new Object[] {promotionID, isTargetGoogle, isTargetMSN});
 		if (results.get("keyword") == null)
 		{
 			return null;
