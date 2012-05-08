@@ -27,11 +27,12 @@ BEGIN TRY
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
 	--get general info
+	
 	select k.Keyword, pka.IsTargetGoogle, pka.IsTargetMSN, pka.IsActive, pka.IsDeleted, pka.IsNegative, pka.SemplestProbability
 	from Promotion p 
 	inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK
 	inner join Keyword k on k.KeywordPK = pka.KeywordFK
-	where p.PromotionPK = @PromotionPK and pka.IsTargetGoogle = @IsTargetGoogle and pka.IsTargetMSN = @IsTargetMSN	 
+	where p.PromotionPK = @PromotionPK and (pka.IsTargetGoogle = @IsTargetGoogle or pka.IsTargetMSN = @IsTargetMSN)	 
 	
 END TRY
 BEGIN CATCH
