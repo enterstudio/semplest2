@@ -1772,6 +1772,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			//IAdIntelligenceService adInteligenceService = getAdInteligenceService(adCenterCredentials.getParentCustomerID());
 			for (int i = 0; i < microBidAmount.length; i++){
+				logger.info("bid value estimated - "+microBidAmount[i]);
 				IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
 				GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
 						(microBidAmount[i]*1.00/1000), "English", new String[]
