@@ -10,7 +10,9 @@
     <div class="options">
         @if (Model != null)
         {
-            @Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });
+            @*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+            ////Tudor: added checkbox with listbox
+            @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds));
         }
     </div>
     <div class="options">
@@ -21,7 +23,7 @@
             <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     $('#backKey').click(function () {
         tabChange();
     });
