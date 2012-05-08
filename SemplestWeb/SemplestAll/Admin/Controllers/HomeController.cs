@@ -14,61 +14,63 @@ namespace Semplest.Admin.Controllers
     [AuthorizeRole]
     public class HomeController : Controller
     {
-         public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
+         //public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
+        public ActionResult Index()
         {
 
-            ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-            SemplestEntities dbcontext = new SemplestEntities();
+            //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
+            //SemplestEntities dbcontext = new SemplestEntities();
 
-            //FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
+            ////FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
 
-            var viewModel =
-                from u in dbcontext.Users
-                join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-                where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)) )
-                select new HomeModel
-                    {
-                    Customer = c.Name,
-                    AccountNumber = c.CustomerPK,
-                    FirstName = u.FirstName,
-                    LastName = u.LastName,
-                    Email = u.Email
-                };
+            //var viewModel =
+            //    from u in dbcontext.Users
+            //    join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
+            //    where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)) )
+            //    select new HomeModel
+            //        {
+            //        Customer = c.Name,
+            //        AccountNumber = c.CustomerPK,
+            //        FirstName = u.FirstName,
+            //        LastName = u.LastName,
+            //        Email = u.Email
+            //    };
 
-            var predicate = PredicateBuilder.True<HomeModel>();
-
-
-            if (form["searchtype"] == "Customer" && usersearch != null && usersearch != "")
-            {
-                predicate = (p => p.Customer.ToLower().Contains(usersearch.ToLower()));
-            }
-
-            if (form["searchtype"] == "LastName" && usersearch != null && usersearch != "")
-            {
-                predicate = (p => p.LastName.ToLower().Contains(usersearch.ToLower()));
-            }
+            //var predicate = PredicateBuilder.True<HomeModel>();
 
 
-            int accnumber;
-            bool validaccountsearch = int.TryParse(accountnumbersearch, out accnumber);
+            //if (form["searchtype"] == "Customer" && usersearch != null && usersearch != "")
+            //{
+            //    predicate = (p => p.Customer.ToLower().Contains(usersearch.ToLower()));
+            //}
 
-            if (accountnumbersearch != null && accountnumbersearch != "" && validaccountsearch)
-            {
-                predicate = (p => p.AccountNumber == accnumber);
-            }
-
-
-            if (emailsearch != null && emailsearch != "")
-            {
-                predicate = (p => p.Email.ToLower().Contains(emailsearch.ToLower()));
-            }
+            //if (form["searchtype"] == "LastName" && usersearch != null && usersearch != "")
+            //{
+            //    predicate = (p => p.LastName.ToLower().Contains(usersearch.ToLower()));
+            //}
 
 
-            //ordering by lastname, firstname
-            viewModel = viewModel.OrderBy(p=>p.Customer).ThenBy(p => p.LastName).ThenBy(p => p.FirstName); 
-            viewModel = viewModel.AsExpandable().Where(predicate);
+            //int accnumber;
+            //bool validaccountsearch = int.TryParse(accountnumbersearch, out accnumber);
 
-            return View(viewModel);
+            //if (accountnumbersearch != null && accountnumbersearch != "" && validaccountsearch)
+            //{
+            //    predicate = (p => p.AccountNumber == accnumber);
+            //}
+
+
+            //if (emailsearch != null && emailsearch != "")
+            //{
+            //    predicate = (p => p.Email.ToLower().Contains(emailsearch.ToLower()));
+            //}
+
+
+            ////ordering by lastname, firstname
+            //viewModel = viewModel.OrderBy(p=>p.Customer).ThenBy(p => p.LastName).ThenBy(p => p.FirstName); 
+            //viewModel = viewModel.AsExpandable().Where(predicate);
+
+            //return View(viewModel);
+            return View();
         }
 
         //public ActionResult GetUsers(string query)

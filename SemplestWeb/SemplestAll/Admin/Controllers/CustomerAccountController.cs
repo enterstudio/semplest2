@@ -61,19 +61,16 @@ namespace Semplest.Admin.Controllers
                 predicate = (p => p.AccountNumber == accnumber);
             }
 
-
-
             if (emailsearch != null && emailsearch != "")
             {
                 predicate = (p => p.Email.ToLower().Contains(emailsearch.ToLower()));
             }
 
 
-
+            //ordering by lastname, firstname
+            viewModel = viewModel.OrderBy(p => p.Customer).ThenBy(p => p.LastName).ThenBy(p => p.FirstName);
             viewModel = viewModel.AsExpandable().Where(predicate);
 
-            //ordering by lastname, firstname
-            viewModel = viewModel.OrderBy(p => p.Customer).OrderBy(p => p.LastName).ThenBy(p => p.FirstName);
 
             return View(viewModel);
         }
@@ -205,7 +202,7 @@ namespace Semplest.Admin.Controllers
                           //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                           join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                           join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where (et.EmployeeType1 == "Rep")
+                          where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
                           select new EmployeeCustomerAssociaitionModel
                           {
                               //AccountNumber = eca.CustomerFK,
@@ -224,7 +221,7 @@ namespace Semplest.Admin.Controllers
                                   //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                                   join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                                   join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                                  where (et.EmployeeType1 == "Sales")
+                                  where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
                                   select new EmployeeCustomerAssociaitionModel
                                   {
                                       //AccountNumber = eca.CustomerFK,
@@ -274,7 +271,7 @@ namespace Semplest.Admin.Controllers
             //            });
 
             //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
+            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl1 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
             {
@@ -301,7 +298,7 @@ namespace Semplest.Admin.Controllers
             //    Text = r.FirstName.ToString()
             //});
             //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.ToList();
+            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl2 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll2)
             {

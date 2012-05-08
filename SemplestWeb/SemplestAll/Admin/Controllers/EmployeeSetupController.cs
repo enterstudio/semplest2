@@ -58,7 +58,7 @@ namespace Semplest.Admin.Controllers
 
             //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
             List<SelectListItem> sli = new List<SelectListItem>();
-            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Nobody" });
+            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
 
 
             x.ReportingTo = reportingto.Select(r => new SelectListItem
@@ -222,7 +222,7 @@ namespace Semplest.Admin.Controllers
 
             //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
             List<SelectListItem> sli = new List<SelectListItem>();
-            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Nobody" });
+            sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Not Assigned" });
 
 
             x.ReportingTo= reportingto.Select(r => new SelectListItem
