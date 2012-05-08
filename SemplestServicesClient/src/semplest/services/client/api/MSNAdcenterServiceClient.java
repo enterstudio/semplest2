@@ -41,7 +41,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "2000000";
 	private static Gson gson = new Gson();
