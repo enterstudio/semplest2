@@ -47,6 +47,8 @@ public class BidGeneratorObj {
 	Long maxMicroBid = 3000000L; 
 	Long stepAboveFpCPC = 500000L;
 	Long defaultMicroBid = 1000000L;
+	Long maxDefaultMicroBid = 1500000L; 
+
 	
 	// traffic estimator bid steps
 	Long stepFirst = 100000L; 
@@ -292,7 +294,7 @@ public class BidGeneratorObj {
 		//    b. [msn] use all keywords
 		
 		
-		defaultMicroBid = 1000000L;
+		// defaultMicroBid = 1000000L;
 		Long totalDailyCost = 0L;
 		Float totalDailyClick = 0F;
 		
@@ -313,6 +315,7 @@ public class BidGeneratorObj {
 			}
 			if(totalDailyClick>0.01){
 				defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
+				defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
 			}
 			
 		} // if(searchEngine.equalsIgnoreCase("Google"))
