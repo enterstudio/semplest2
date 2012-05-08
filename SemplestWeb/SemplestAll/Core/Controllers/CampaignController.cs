@@ -59,8 +59,8 @@ namespace Semplest.Core.Controllers
                 //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                 model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                 // we need save to database the ProductGroup and Promotion information
-                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                int userid = 1; // for testing
+                int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                //int userid = 1; // for testing
                 string msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
@@ -120,8 +120,8 @@ namespace Semplest.Core.Controllers
                 }
 
                 // save the selected categories here
-                //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                int userid = 1; // for testing
+                int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                //int userid = 1; // for testing
 
                 String msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                 WriteLog(msg, model);
