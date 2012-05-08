@@ -316,7 +316,7 @@ namespace Semplest.Admin.Controllers
             ////////////////////////////////
             List<SelectListItem> sli = new List<SelectListItem>();
             sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
+            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User »»" });
             x.Parents = allparents.ToList().Select(r => new SelectListItem
             {
                 Value = r.CustomerPK.ToString(),
