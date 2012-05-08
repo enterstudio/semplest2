@@ -48,6 +48,14 @@ namespace Semplest.Core.Controllers
             if (ModelState.IsValid)
             {
                 var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+                foreach(var ad in addsStoreModel.Ads)
+                {
+                    var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdText == ad.AdText);
+                    if(admodel != null)
+                    {
+                        admodel.SiteLinks = ad.SiteLinks;
+                    }
+                }
                 //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                 model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                 // we need save to database the ProductGroup and Promotion information
