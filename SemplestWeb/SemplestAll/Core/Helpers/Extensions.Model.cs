@@ -2,12 +2,126 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Web.Mvc;
+using System.Web.Routing;
+using System.Collections;
+using System.Text;
 
 /// <summary>
 ///  Model-based CheckBoxList extensions
 /// </summary>
 public static class MvcCheckBoxList_Extensions_Model
 {
+ 
+    
+  /// <summary>
+ /// Added by Tudor Saru
+ /// </summary>
+ /// <typeparam name="TModel"></typeparam>
+ /// <typeparam name="TProperty"></typeparam>
+ /// <param name="htmlHelper"></param>
+ /// <param name="expression"></param>
+ /// <param name="selectList"></param>
+ /// <returns></returns>
+
+
+
+    public static MvcHtmlString CheckBoxListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList)
+    {
+
+        return CheckBoxListFor<TModel, TProperty>(htmlHelper, expression, selectList, null, 1);
+
+    }
+
+    public static MvcHtmlString CheckBoxListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList, int numberOfColumns)
+    {
+
+        return CheckBoxListFor<TModel, TProperty>(htmlHelper, expression, selectList, null, numberOfColumns);
+
+    }
+
+    public static MvcHtmlString CheckBoxListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList,
+
+      object htmlAttributes, int numberOfColumns)
+    {
+
+        return CheckBoxListFor<TModel, TProperty>(htmlHelper, expression, selectList, ((IDictionary<string, object>)new RouteValueDictionary(htmlAttributes)), numberOfColumns);
+
+    }
+
+    public static MvcHtmlString CheckBoxListFor<TModel, TProperty>(this HtmlHelper<TModel> htmlHelper, Expression<Func<TModel, TProperty>> expression, IEnumerable<SelectListItem> selectList,
+
+      IDictionary<string, object> htmlAttributes, int numberOfColumns)
+    {
+
+        string name = ExpressionHelper.GetExpressionText((LambdaExpression)expression);
+
+        name = htmlHelper.ViewContext.ViewData.TemplateInfo.GetFullHtmlFieldName(name);
+
+        // Get the property (and assume IEnumerable)
+
+        IEnumerable currentValues = (IEnumerable)expression.Compile().Invoke(htmlHelper.ViewData.Model);
+
+        int columnCount = 0;
+
+        StringBuilder sb = new StringBuilder();
+
+        foreach (var option in selectList)
+        {
+
+            columnCount++;
+
+            TagBuilder builder = new TagBuilder("input");
+
+            if (null != currentValues)
+            {
+
+                var enumerator = currentValues.GetEnumerator();
+
+                while (enumerator.MoveNext())
+                {
+
+                    if ((string)enumerator.Current == option.Value)
+                    {
+
+                        builder.MergeAttribute("checked", "checked");
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            builder.MergeAttributes<string, object>(htmlAttributes);
+
+            builder.MergeAttribute("type", "checkbox");
+
+            builder.MergeAttribute("value", option.Value);
+
+            builder.MergeAttribute("name", name);
+
+            builder.InnerHtml = option.Text;
+
+            sb.Append(builder.ToString(TagRenderMode.Normal));
+
+            if (columnCount == numberOfColumns)
+            {
+
+                columnCount = 0;
+
+                sb.Append("<br />");
+
+            }
+
+        }
+
+        return MvcHtmlString.Create(sb.ToString());
+
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     /// <summary>
     /// Model-Based function (For...)
     /// </summary>
@@ -24,6 +138,9 @@ public static class MvcCheckBoxList_Extensions_Model
     /// <param name="selectedValuesExpr">Data list of selected items (should be of same data type as a source list)</param>
     /// <param name="htmlAttributesExpr">Data list HTML tag attributes for each checkbox</param>
     /// <returns>HTML string containing checkbox list</returns>
+    /// 
+
+
     public static MvcHtmlString CheckBoxListFor<TModel, TProperty, TItem, TValue, TKey>
         (this HtmlHelper<TModel> htmlHelper,
          Expression<Func<TModel, TProperty>> listNameExpr,
