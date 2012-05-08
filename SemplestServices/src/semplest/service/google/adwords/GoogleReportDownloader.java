@@ -55,6 +55,96 @@ public class GoogleReportDownloader
 		return File.createTempFile("reportDownload-" + this.accountID + "-", ".report");
 	}
 	
+	
+	public ArrayList<ReportObject> getSearchQueryReportObject(String authToken, String developerToken) throws Exception
+	{
+		try{
+			
+			HttpURLConnection conn = (HttpURLConnection) new URL("https://adwords.google.com/api/adwords/reportdownload/v201109").openConnection();
+			conn.setDoOutput(true); // You will need to
+
+			conn.setRequestProperty("clientCustomerId", Long.toString(accountID)); //
+			// The AuthToken must be specified as a request header.
+			conn.setRequestProperty("Authorization", "GoogleLogin auth=" + authToken);
+			conn.setRequestProperty("developerToken", developerToken);
+			conn.setRequestProperty("Content-type", "application/x-www-form-urlencoded");
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("returnMoneyInMicros", "true");
+			OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream()); 
+			
+			writer.write("__rdxml=" + URLEncoder.encode(reportDefinitionXml, "UTF-8"));
+			writer.close();
+			int response = conn.getResponseCode();
+			
+			if (response == HttpURLConnection.HTTP_OK)
+			{
+				//read in report data
+				ArrayList<String> lines = new ArrayList<String>();
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				String strLine;
+				while ((strLine = br.readLine()) != null)   {
+					lines.add(strLine);
+				}
+				
+				//the first 2 lines are header, and the last line is conclusion. throw them.
+				ArrayList<ReportObject> reportObjectList = new ArrayList<ReportObject>();
+				for (int i = 2; i < lines.size()-1; i++){
+					
+					String[] data = lines.get(i).split(",");
+					
+					ReportObject rdata = new ReportObject();
+					
+					//parse the data to ReportObject	
+					rdata.setAccountID(accountID);
+					rdata.setCampaignID(Long.valueOf(data[9]));
+					rdata.setSearchTerm(data[2]);
+					
+					/*
+					String maxCpcStr = data[14];
+					if(maxCpcStr.equals(" --"))
+						maxCpcStr = "0";
+					rdata.setMicroBidAmount(Long.valueOf(maxCpcStr));
+					*/
+					rdata.setBidMatchType(data[3]);
+					rdata.setNumberImpressions(Integer.valueOf(data[4]));
+					rdata.setNumberClick(Integer.valueOf(data[5]));
+					rdata.setAveragePosition(Double.valueOf(data[8]));
+					rdata.setAverageCPC(Integer.valueOf(data[7]));
+					// rdata.setQualityScore(Integer.valueOf(data[8]));
+					// rdata.setApprovalStatus(data[15]);
+					// rdata.setFirstPageCPC(Integer.valueOf(data[13]));
+					rdata.setMicroCost(Long.valueOf(data[6]));
+					//yyyy-mm-dd
+					rdata.setTransactionDate(dateFormatter.parse(data[0]));
+					
+					reportObjectList.add(rdata);
+				}
+				
+				return reportObjectList;
+			}
+			else
+			{
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				BufferedOutputStream output = new BufferedOutputStream(baos);
+				copy(conn.getErrorStream(), output);
+				output.close();
+				throw new HttpException(response, baos.toString());
+			}
+		}
+		catch(HttpException e){
+			throw new Exception(e.getMessage());
+		}
+		catch(MalformedURLException e){
+			throw new Exception(e.getMessage());
+		}
+		catch(IOException e){
+			throw new Exception(e);
+		}
+		
+	}
+	
+	
+	
 	public ArrayList<ReportObject> getReportObject(String authToken, String developerToken) throws Exception
 	{
 		try{
@@ -88,7 +178,10 @@ public class GoogleReportDownloader
 				//the first 2 lines are header, and the last line is conclusion. throw them.
 				ArrayList<ReportObject> reportObjectList = new ArrayList<ReportObject>();
 				for (int i = 2; i < lines.size()-1; i++){
+					
+					
 					String[] data = lines.get(i).split(",");
+					
 					ReportObject rdata = new ReportObject();
 					
 					//parse the data to ReportObject	

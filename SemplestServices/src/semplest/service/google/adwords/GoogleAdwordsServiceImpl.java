@@ -1907,6 +1907,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>Custom ADGROUP_PERFORMANCE_REPORT for testing</reportName>"
 			+ "<reportType>ADGROUP_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>LAST_7_DAYS</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
+	
 	private static final String KEYWORD_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
@@ -1914,7 +1915,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>"
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
+	
+	private static final String SEARCH_QUERY_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
+			+ "<fields>AdGroupId</fields><fields>Query</fields><fields>MatchType</fields>"
+			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields>"
+			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields>"
+			+ "</selector><reportName>SEARCH_QUERY_PERFORMANCE_REPORT</reportName>" + "<reportType>SEARCH_QUERY_PERFORMANCE_REPORT</reportType>"
+			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
+	
 	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception
 	{
 		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID.getSemplestString()));//
@@ -1932,6 +1941,25 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		
 	}
+	
+	public ReportObject[] getSearchQueryReportForAccount(SemplestString accountID) throws Exception
+	{
+		GoogleReportDownloader report = new GoogleReportDownloader(SEARCH_QUERY_DEFINITION, new Long(accountID.getSemplestString()));//
+		
+		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
+		
+		ArrayList<ReportObject> reportObj = report.getSearchQueryReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
+		if(reportObj.size() == 0){
+			return null;
+		}
+		else{
+			ReportObject[] ret = new ReportObject[reportObj.size()];
+			reportObj.toArray(ret);
+			return ret;
+		}
+		
+	}
+	
 	/*
 	 * GeoTargeting
 	 */
