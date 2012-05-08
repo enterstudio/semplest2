@@ -1789,10 +1789,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 						Double baseVal = 0.0;
 						if(adPosition.contains("SideBar")) baseVal = 5.0;
 						Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
+						//Test variables///////////////////////////////////////////////
+						Long in1 =new Long((new Double(et.getAverageCPC()*1000000)).longValue());
+						float in2 = (float)(et.getMinClicksPerWeek()/7.0);
+						float in3 = (float)(et.getMaxClicksPerWeek()/7.0);
+						Long in4 = new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue()));
+						Long in5 = new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue()));
+						///////////////////////////////////////////////////////////////*/
 						ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
-								new Long(0), new Long(et.getAverageCPC().longValue()), new Double(0), estAdPosition, 
+								new Long(0), new Long((new Double(et.getAverageCPC()*1000000)).longValue()), new Double(0), estAdPosition, 
 								(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
-								new Long((new Double(et.getMinTotalCostPerWeek()/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()/7.0).longValue())));
+								new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue())));
 					}
 				}else{
 					ret.setBidData(keyword, bidAmount,null, new Long(0), null, new Double(0), null, null, null, null, null);
