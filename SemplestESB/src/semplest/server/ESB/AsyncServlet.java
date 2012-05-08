@@ -78,7 +78,7 @@ public class AsyncServlet extends HttpServlet
 		{
 			try
 			{
-				defaultTimeoutMS =  Long.getLong(timeoutParam);
+				defaultTimeoutMS =  Long.valueOf(timeoutParam);
 				timeout = true;
 			}
 			catch (NumberFormatException e)
@@ -94,7 +94,7 @@ public class AsyncServlet extends HttpServlet
 		asyncCtx.addListener(new AsyncServletListener());
 		if (timeout)
 		{
-			asyncCtx.setTimeout(defaultTimeoutMS);
+			asyncCtx.setTimeout(defaultTimeoutMS.longValue());
 		}
 		// delegate long running process to an "async" thread and return
 		executor.execute(new AsyncServiceDispatcher(asyncCtx));
