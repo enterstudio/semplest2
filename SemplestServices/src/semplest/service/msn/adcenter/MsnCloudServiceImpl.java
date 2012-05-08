@@ -63,104 +63,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
 import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
-import com.microsoft.adcenter.v8.AccountThroughAdGroupReportScope;
-import com.microsoft.adcenter.v8.AccountThroughCampaignReportScope;
-import com.microsoft.adcenter.v8.Ad;
-import com.microsoft.adcenter.v8.AdGroup;
-import com.microsoft.adcenter.v8.AdIntelligenceServiceLocator;
-import com.microsoft.adcenter.v8.AddAdGroupsRequest;
-import com.microsoft.adcenter.v8.AddAdGroupsResponse;
-import com.microsoft.adcenter.v8.AddAdsRequest;
-import com.microsoft.adcenter.v8.AddAdsResponse;
-import com.microsoft.adcenter.v8.AddCampaignsRequest;
-import com.microsoft.adcenter.v8.AddCampaignsResponse;
-import com.microsoft.adcenter.v8.AddKeywordsRequest;
-import com.microsoft.adcenter.v8.AddKeywordsResponse;
-import com.microsoft.adcenter.v8.AddTargetsToLibraryRequest;
-import com.microsoft.adcenter.v8.AddTargetsToLibraryResponse;
-import com.microsoft.adcenter.v8.ApiFaultDetail;
-import com.microsoft.adcenter.v8.BasicHttpBinding_IAdIntelligenceServiceStub;
-import com.microsoft.adcenter.v8.BasicHttpBinding_ICampaignManagementServiceStub;
-import com.microsoft.adcenter.v8.BasicHttpBinding_IReportingServiceStub;
-import com.microsoft.adcenter.v8.Bid;
-import com.microsoft.adcenter.v8.BudgetLimitType;
-import com.microsoft.adcenter.v8.Campaign;
-import com.microsoft.adcenter.v8.CampaignManagementServiceLocator;
-import com.microsoft.adcenter.v8.CampaignPerformanceReportColumn;
-import com.microsoft.adcenter.v8.CampaignPerformanceReportFilter;
-import com.microsoft.adcenter.v8.CampaignPerformanceReportRequest;
-import com.microsoft.adcenter.v8.CampaignReportScope;
-import com.microsoft.adcenter.v8.CampaignStatus;
-import com.microsoft.adcenter.v8.CityTarget;
-import com.microsoft.adcenter.v8.CityTargetBid;
-import com.microsoft.adcenter.v8.DeleteAdGroupsRequest;
-import com.microsoft.adcenter.v8.DeleteAdsRequest;
-import com.microsoft.adcenter.v8.DeleteCampaignsRequest;
-import com.microsoft.adcenter.v8.DeleteKeywordsRequest;
-import com.microsoft.adcenter.v8.DeleteTargetFromAdGroupRequest;
-import com.microsoft.adcenter.v8.DeleteTargetFromCampaignRequest;
-import com.microsoft.adcenter.v8.DeleteTargetsFromLibraryRequest;
-import com.microsoft.adcenter.v8.EditorialApiFaultDetail;
-import com.microsoft.adcenter.v8.GetAdGroupsByCampaignIdRequest;
-import com.microsoft.adcenter.v8.GetAdGroupsByCampaignIdResponse;
-import com.microsoft.adcenter.v8.GetAdGroupsByIdsRequest;
-import com.microsoft.adcenter.v8.GetAdGroupsByIdsResponse;
-import com.microsoft.adcenter.v8.GetAdsByAdGroupIdRequest;
-import com.microsoft.adcenter.v8.GetAdsByAdGroupIdResponse;
-import com.microsoft.adcenter.v8.GetAdsByIdsRequest;
-import com.microsoft.adcenter.v8.GetAdsByIdsResponse;
-import com.microsoft.adcenter.v8.GetCampaignsByAccountIdRequest;
-import com.microsoft.adcenter.v8.GetCampaignsByAccountIdResponse;
-import com.microsoft.adcenter.v8.GetCampaignsByIdsRequest;
-import com.microsoft.adcenter.v8.GetCampaignsByIdsResponse;
-import com.microsoft.adcenter.v8.GetEstimatedPositionByKeywordsRequest;
-import com.microsoft.adcenter.v8.GetEstimatedPositionByKeywordsResponse;
-import com.microsoft.adcenter.v8.GetKeywordsByAdGroupIdRequest;
-import com.microsoft.adcenter.v8.GetKeywordsByAdGroupIdResponse;
-import com.microsoft.adcenter.v8.GetKeywordsByIdsRequest;
-import com.microsoft.adcenter.v8.GetKeywordsByIdsResponse;
-import com.microsoft.adcenter.v8.GetTargetByAdGroupIdRequest;
-import com.microsoft.adcenter.v8.GetTargetByAdGroupIdResponse;
-import com.microsoft.adcenter.v8.GetTargetsByCampaignIdsRequest;
-import com.microsoft.adcenter.v8.GetTargetsByCampaignIdsResponse;
-import com.microsoft.adcenter.v8.IAdIntelligenceService;
-import com.microsoft.adcenter.v8.ICampaignManagementService;
-import com.microsoft.adcenter.v8.IReportingService;
-import com.microsoft.adcenter.v8.IncrementalBidPercentage;
-import com.microsoft.adcenter.v8.Keyword;
-import com.microsoft.adcenter.v8.KeywordPerformanceReportColumn;
-import com.microsoft.adcenter.v8.KeywordPerformanceReportFilter;
-import com.microsoft.adcenter.v8.KeywordPerformanceReportRequest;
-import com.microsoft.adcenter.v8.LocationTarget;
-import com.microsoft.adcenter.v8.MetroAreaTarget;
-import com.microsoft.adcenter.v8.MetroAreaTargetBid;
-import com.microsoft.adcenter.v8.PauseAdsRequest;
-import com.microsoft.adcenter.v8.PauseCampaignsRequest;
-import com.microsoft.adcenter.v8.PauseKeywordsRequest;
-import com.microsoft.adcenter.v8.PollGenerateReportRequest;
-import com.microsoft.adcenter.v8.PollGenerateReportResponse;
-import com.microsoft.adcenter.v8.ReportAggregation;
-import com.microsoft.adcenter.v8.ReportFormat;
-import com.microsoft.adcenter.v8.ReportLanguage;
-import com.microsoft.adcenter.v8.ReportRequest;
-import com.microsoft.adcenter.v8.ReportRequestStatus;
-import com.microsoft.adcenter.v8.ReportRequestStatusType;
-import com.microsoft.adcenter.v8.ReportTime;
-import com.microsoft.adcenter.v8.ReportingServiceLocator;
-import com.microsoft.adcenter.v8.ResumeAdsRequest;
-import com.microsoft.adcenter.v8.ResumeCampaignsRequest;
-import com.microsoft.adcenter.v8.SetTargetToAdGroupRequest;
-import com.microsoft.adcenter.v8.SetTargetToCampaignRequest;
-import com.microsoft.adcenter.v8.StateTarget;
-import com.microsoft.adcenter.v8.StateTargetBid;
-import com.microsoft.adcenter.v8.SubmitAdGroupForApprovalRequest;
-import com.microsoft.adcenter.v8.SubmitGenerateReportRequest;
-import com.microsoft.adcenter.v8.SubmitGenerateReportResponse;
-import com.microsoft.adcenter.v8.Target;
-import com.microsoft.adcenter.v8.TextAd;
-import com.microsoft.adcenter.v8.UpdateAdsRequest;
-import com.microsoft.adcenter.v8.UpdateCampaignsRequest;
-import com.microsoft.adcenter.v8.UpdateKeywordsRequest;
+import com.microsoft.adcenter.v8.*;
 
 public class MsnCloudServiceImpl implements semplest.services.client.interfaces.MsnAdcenterServiceInterface //MsnCloudService
 {
@@ -197,7 +100,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try{						
-			
 			//Traffic Estimator
 			//logger.info("Running traffic estimator");
 			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
@@ -1764,7 +1666,52 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		return gson.toJson(ret);
 	}
+	
+	public Boolean setGeoTarget(Long accountId, Long campaignId, Double radius, String addr, String city, String state, String country, String zip) throws Exception 
+	{
+		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		AddBusinessesRequest requestBus = new AddBusinessesRequest();
 
+
+		Business business = new Business();
+		
+		business.setAddressLine1(addr);
+		business.setCity(city);
+		business.setCountryOrRegion(country);
+		business.setStateOrProvince(state);
+		business.setZipOrPostalCode(zip);
+		
+		requestBus.setBusinesses(new Business[]{business});
+		
+		AddBusinessesResponse responseBus =campaignManagement.addBusinesses(requestBus);
+		
+		long[] busIDs = responseBus.getBusinessIds();
+		
+
+		AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+		Target target = new Target();
+		BusinessTargetBid bid = new BusinessTargetBid();
+		bid.setBusinessId(busIDs[0]);
+		bid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
+		bid.setRadius(radius.intValue());
+		
+		BusinessTarget busTarg = new BusinessTarget();
+		busTarg.setBids(new BusinessTargetBid[] {bid});
+		LocationTarget locTarget = new LocationTarget();
+		locTarget.setBusinessTarget(busTarg);
+		target.setLocation(locTarget);
+		
+		//response =campaignManagement..addBusinesses(requestBus);
+		
+		long res = 0;
+		if (radius ==null || radius <= 0){
+			
+		}
+	  else 	;
+	  if (res == 0) return false;
+	  return true;                                  
+	}
+	
 	@Override
 	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType) throws MsnCloudException
 	{
@@ -1775,34 +1722,38 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			for (int i = 0; i < microBidAmount.length; i++){
 				logger.info("bid value estimated - "+microBidAmount[i]);
 				IAdIntelligenceService adInteligenceService = getAdInteligenceService(accountId);
+				Double bidtest = microBidAmount[i]*1.00/1000000.00;
 				GetEstimatedPositionByKeywordsRequest getEstimatedPositionByKeywordsRequest = new GetEstimatedPositionByKeywordsRequest(keywords,
-						(microBidAmount[i]*1.00/1000), "English", new String[]
+						(microBidAmount[i]*1.00/1000000.00), "English", new String[]
 						{ "US" }, Currency.USDollar, new MatchType[]{matchType});
 				GetEstimatedPositionByKeywordsResponse estimatedPositionByKeywords = adInteligenceService.getEstimatedPositionByKeywords(getEstimatedPositionByKeywordsRequest);
 				KeywordEstimatedPosition[] keywordEstimatedPositions = estimatedPositionByKeywords.getKeywordEstimatedPositions();			
 				Long bidAmount = microBidAmount[i]; //.getDoubleDollars();	
-				KeywordEstimatedPosition k = keywordEstimatedPositions[0];
-				String keyword = k.getKeyword();
-				if(k.getEstimatedPositions()!=null){
-					for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
-						String adPosition = et.getEstimatedAdPosition().getValue();
-						Double baseVal = 0.0;
-						if(adPosition.contains("SideBar")) baseVal = 5.0;
-						Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
-						//Test variables///////////////////////////////////////////////
-						Long in1 =new Long((new Double(et.getAverageCPC()*1000000)).longValue());
-						float in2 = (float)(et.getMinClicksPerWeek()/7.0);
-						float in3 = (float)(et.getMaxClicksPerWeek()/7.0);
-						Long in4 = new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue()));
-						Long in5 = new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue()));
-						///////////////////////////////////////////////////////////////*/
-						ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
-								new Long(0), new Long((new Double(et.getAverageCPC()*1000000)).longValue()), new Double(0), estAdPosition, 
-								(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
-								new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue())));
+				for(int j = 0; j< keywordEstimatedPositions.length; j++){
+					//for each keyword
+					KeywordEstimatedPosition k = keywordEstimatedPositions[j];
+					String keyword = k.getKeyword();
+					if(k.getEstimatedPositions()!=null){
+						for(EstimatedPositionAndTraffic et : k.getEstimatedPositions()){
+							String adPosition = et.getEstimatedAdPosition().getValue();
+							Double baseVal = 0.0;
+							if(adPosition.contains("SideBar")) baseVal = 5.0;
+							Double estAdPosition = Double.valueOf(adPosition.substring(adPosition.length()-1)) + baseVal;
+							//Test variables///////////////////////////////////////////////
+							Long in1 =new Long((new Double(et.getAverageCPC()*1000000)).longValue());
+							float in2 = (float)(et.getMinClicksPerWeek()/7.0);
+							float in3 = (float)(et.getMaxClicksPerWeek()/7.0);
+							Long in4 = new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue()));
+							Long in5 = new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue()));
+							///////////////////////////////////////////////////////////////*/
+							ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
+									new Long(0), new Long((new Double(et.getAverageCPC()*1000000)).longValue()), new Double(0), estAdPosition, 
+									(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
+									new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue())));
+						}
+					}else{
+						ret.setBidData(keyword, bidAmount,null, new Long(0), null, new Double(0), null, null, null, null, null);
 					}
-				}else{
-					ret.setBidData(keyword, bidAmount,null, new Long(0), null, new Double(0), null, null, null, null, null);
 				}
 				
 			}
