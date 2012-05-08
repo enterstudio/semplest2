@@ -120,8 +120,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		}
 		// TODO
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		// Don't do anything for the time being
 		// bidGeneratorObj.setBidsUpdate(promotionID, searchEngine);
-		bidGeneratorObj.setBidsInitial(promotionID, searchEngine);
+		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine);
+		
 	}
 	
 	
