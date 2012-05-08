@@ -4,13 +4,16 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using System.Reflection;
+using Ninject;
+using Ninject.Web.Common;
 
 namespace Semplest.SharedResources
 {
     // Note: For instructions on enabling IIS6 or IIS7 classic mode, 
     // visit http://go.microsoft.com/?LinkId=9394801
 
-    public class MvcApplication : System.Web.HttpApplication
+    public class MvcApplication : NinjectHttpApplication
     {
         public static void RegisterGlobalFilters(GlobalFilterCollection filters)
         {
@@ -29,10 +32,26 @@ namespace Semplest.SharedResources
 
         }
 
-        protected void Application_Start()
-        {
-            AreaRegistration.RegisterAllAreas();
+        //protected void Application_Start()
+        //{
+        //    AreaRegistration.RegisterAllAreas();
 
+        //    RegisterGlobalFilters(GlobalFilters.Filters);
+        //    RegisterRoutes(RouteTable.Routes);
+        //}
+
+        protected override IKernel CreateKernel()
+        {
+            var kernel = new StandardKernel();
+            kernel.Load(Assembly.GetExecutingAssembly());
+            return kernel;
+        }
+
+        protected override void OnApplicationStarted()
+        {
+            base.OnApplicationStarted();
+
+            AreaRegistration.RegisterAllAreas();
             RegisterGlobalFilters(GlobalFilters.Filters);
             RegisterRoutes(RouteTable.Routes);
         }
