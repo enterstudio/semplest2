@@ -108,9 +108,10 @@ namespace Semplest.Core.Models.Repositories
             //    model.ProductGroup.AdEnginesSelectedList.Add(new AdEngineSelectModel { Name = "MSN", IsSelected = false });
 
             List<string> adEnginesSelected = new List<string>();
-            foreach (AdEngineSelectModel aesm in model.ProductGroup.AdEnginesSelectedList)
+            foreach (var aesm in model.ProductGroup.AdEnginesList)
             {
-                adEnginesSelected.Add(aesm.Name);
+                var id = Convert.ToInt32(aesm);
+                adEnginesSelected.Add(model.ProductGroup.AdvertisingEngines.FirstOrDefault(t => t.Id == id).Name);
             }
 
             return adEnginesSelected;
