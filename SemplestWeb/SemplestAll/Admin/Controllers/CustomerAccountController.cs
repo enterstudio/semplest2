@@ -316,7 +316,7 @@ namespace Semplest.Admin.Controllers
             ////////////////////////////////
             List<SelectListItem> sli = new List<SelectListItem>();
             sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Self   »»" });
+            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
             x.Parents = allparents.ToList().Select(r => new SelectListItem
             {
                 Value = r.CustomerPK.ToString(),
@@ -324,9 +324,9 @@ namespace Semplest.Admin.Controllers
             }).Union(sli);
 
 
-            if (selectedparent.FirstOrDefault().CustomerFK == selectedparent.FirstOrDefault().CustomerParentFK) //self
+            if (selectedparent.FirstOrDefault().CustomerFK == selectedparent.FirstOrDefault().CustomerParentFK) //self -- single user
             {
-                //self
+                //self -- single user
                 x.SelectedParentID = 0;
             }
             else
@@ -479,7 +479,7 @@ namespace Semplest.Admin.Controllers
             var parents = dbcontext.CustomerHierarchies.FirstOrDefault(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
             //var parents = dbcontext.CustomerHierarchies.FirstOrDefault();
 
-            if (m.SelectedParentID == 0) //self
+            if (m.SelectedParentID == 0) //self -- single user
             {
                 parents.CustomerParentFK = parents.CustomerFK;
             }
@@ -570,7 +570,7 @@ namespace Semplest.Admin.Controllers
 
 
             sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Self   »»" });
+            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
 
             //x.SelectedParentID = -1;
             x.SelectedParentID = 0;
@@ -715,7 +715,7 @@ namespace Semplest.Admin.Controllers
 
                     ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = null });
                 }
-                else if (m.SelectedParentID == 0) //set self
+                else if (m.SelectedParentID == 0) //set self -- single user
                 {
                     ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK });
                 }
