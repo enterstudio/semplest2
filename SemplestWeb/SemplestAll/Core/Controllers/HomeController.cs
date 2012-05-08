@@ -39,8 +39,9 @@ namespace SemplestWebApp.Controllers
         public ActionResult Index2()
         {
             SemplestEntities dbContext = new SemplestEntities();
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
 
-            return View(dbContext.ProductGroups);
+            return View(dbContext.Credentials.Where(x =>x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups);
         }
 
 

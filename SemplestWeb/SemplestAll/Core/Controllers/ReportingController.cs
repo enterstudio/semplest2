@@ -15,11 +15,11 @@ namespace Semplest.Core.Controllers
 
         public ActionResult Index()
         {
-            
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
             SemplestEntities dbContext = new SemplestEntities();
             ReportIndexModel rim = new ReportIndexModel();
             rim.AdvertisingEngines = dbContext.AdvertisingEngines;
-            rim.ProductGroups = dbContext.ProductGroups;
+            rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
             return View(rim);
         }
 
