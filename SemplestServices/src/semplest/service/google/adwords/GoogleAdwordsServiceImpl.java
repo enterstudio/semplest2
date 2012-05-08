@@ -1,6 +1,5 @@
 package semplest.service.google.adwords;
 
-import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,20 +9,19 @@ import java.util.Map;
 
 import javax.xml.rpc.ServiceException;
 
-
 import org.apache.log4j.Logger;
-
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.other.Money;
 import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
@@ -67,7 +65,6 @@ import com.google.api.adwords.v201109.cm.Criterion;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscape;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
 import com.google.api.adwords.v201109.cm.DataServiceInterface;
-import com.google.api.adwords.v201109.cm.Date;
 import com.google.api.adwords.v201109.cm.DateRange;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
@@ -86,7 +83,6 @@ import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.api.adwords.v201109.info.ApiUsageInfo;
 import com.google.api.adwords.v201109.info.ApiUsageType;
 import com.google.api.adwords.v201109.info.InfoSelector;
-import com.google.api.adwords.v201109.info.InfoService;
 import com.google.api.adwords.v201109.info.InfoServiceInterface;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
@@ -2011,7 +2007,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// TODO Auto-generated method stub
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
 
 	}
 

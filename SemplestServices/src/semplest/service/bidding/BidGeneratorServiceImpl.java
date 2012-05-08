@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.service.SemplestConfiguration;
 //import semplest.server.protocol.ProtocolEnum.NetworkSetting;
 //import semplest.server.protocol.ProtocolEnum.MatchType;
 
@@ -42,7 +43,12 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 
 	@Override
 	public void initializeService(String input) throws Exception {
-		// TODO Auto-generated method stub
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
 		
 	}
 	

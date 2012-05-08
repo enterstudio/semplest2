@@ -19,6 +19,7 @@ import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -71,7 +72,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// call the DB to get the config
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
 		
 	}
 

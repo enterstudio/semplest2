@@ -42,6 +42,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
+import semplest.server.service.SemplestConfiguration;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.api.adwords.lib.AuthToken;
@@ -2484,7 +2485,12 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// TODO Auto-generated method stub
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
 		
 	}	
 	

@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import semplest.keywords.lda.KWGenDmozLDAServer;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
 public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInterface
@@ -49,6 +50,15 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	@Override
 	public void initializeService(String input) throws Exception
 	{
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		/*
+		 * Init Keyword Data
+		 */
 		logger.info("Initialized Keyword generator...");
 		kwGen =  new KWGenDmozLDAServer();
 		kwGen.initializeService(null);

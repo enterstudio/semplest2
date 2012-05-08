@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.storedproc.GetNextScheduleJobSP;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
@@ -20,6 +21,15 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 	@Override
 	public void initializeService(String input) throws Exception
 	{
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		/*
+		 * 
+		 */
 		Object lock = new Object();
 		Vector<SchedulerRecord> recordMessageList = new Vector<SchedulerRecord>();
 		//Start the Scheduler

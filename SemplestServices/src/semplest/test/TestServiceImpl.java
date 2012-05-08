@@ -1,5 +1,6 @@
 package semplest.test;
 
+import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.TestServiceInterface;
 
 
@@ -26,7 +27,12 @@ public class TestServiceImpl implements TestServiceInterface
 	}
 	@Override
 	public void initializeService(String input) throws Exception {
-		// TODO Auto-generated method stub
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
 		
 	}
 

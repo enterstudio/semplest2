@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.ChaseOrbitalGatewayInterface;
 
 import com.paymentech.orbital.sdk.interfaces.RequestIF;
@@ -21,6 +22,15 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public void initializeService(String input) throws Exception
 	{
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 */
+		SemplestConfiguration configDB = new SemplestConfiguration();
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		/*
+		 * Initialize gateway
+		 */
 		gatewayObj = new ChaseOrbitalGatewayObject();
 		gatewayObj.start();
 		logger.info("Initialized Chase Orbital Gateway");
