@@ -39,7 +39,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngineList",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(baseurl, SERVICEOFFERED, "SendEmail", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "AddPromotionToAdEngine", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 
