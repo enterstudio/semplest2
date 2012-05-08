@@ -16,7 +16,7 @@ import com.google.gson.Gson;
 public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();

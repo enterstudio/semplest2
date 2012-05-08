@@ -35,7 +35,7 @@ import com.google.gson.Gson;
 public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwordsServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.google.adwords.GoogleAdwordsService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";  //VMJAVA1
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private String timeoutMS = "20000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();

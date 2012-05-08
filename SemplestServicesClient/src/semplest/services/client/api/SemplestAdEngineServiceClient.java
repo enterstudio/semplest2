@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
