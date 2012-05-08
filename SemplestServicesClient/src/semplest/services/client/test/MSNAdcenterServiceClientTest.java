@@ -58,7 +58,7 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_PiperHall";
+	String accountName = "_SummitFloristNJ";
 	String url = "www.piperhall.com";
 	String productSubcategory = "Event and portrait photos";
 	double msnMonthlyBudget = 150.0; //In dolars
@@ -86,9 +86,9 @@ public class MSNAdcenterServiceClientTest {
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
 			//msn.createCampaign();
-			msn.getAccountID();
-			logger.info(msn.accountID);
-			msn.getIds();
+			//msn.getAccountID();
+			//logger.info(msn.accountID);
+			//msn.getIds();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
 			//msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
@@ -204,7 +204,7 @@ public class MSNAdcenterServiceClientTest {
 			HashMap<String, Double[][]> bidMap = new HashMap<String,Double[][]>();
 			
 			//Create bid points
-			ArrayList<Double> bids = this.createbids(0.1, 0.5, 0.1);
+			ArrayList<Double> bids = this.createbids(0.1, 10.0, 0.1);
 			Double[][] bidDat = new Double[bids.size()][3];
 
 			FileInputStream fstream = new FileInputStream(filename);
@@ -217,12 +217,12 @@ public class MSNAdcenterServiceClientTest {
 		    int n=0;
 		    Long[] bidsMoney = new Long[bids.size()]; 
 		    for(int f =0 ; f< bids.size();f++){
-		    	long bidL = (long) (bids.get(f)*100000);
+		    	long bidL = (long) (bids.get(f)*1000000);
 		    	bidsMoney[f] = new Long(bidL);
 		    }
 		    logger.info("Adding Keywords...");
 		    while(j<numKw && strLine!=null){
-		    	keywords = new String[1000];
+		    	keywords = new String[100];
 		    	int i=0;
 			    while ((strLine = br.readLine()) != null)   {
 			    	if(i>=keywords.length) break ;
@@ -244,7 +244,7 @@ public class MSNAdcenterServiceClientTest {
 			    }
 			    
 			    TrafficEstimatorObject ret = test.getKeywordEstimateByBids(accountID, kwTrim, bidsMoney, MatchType.Exact);
-			    for(String k : kwTrim){
+			    for(String k : ret.getListOfKeywords()){
 					logger.info("keyword = " + k);
 					v=0;
 					if(ret.getBidList(k, MatchType.Exact.getValue())!=null){
@@ -252,8 +252,8 @@ public class MSNAdcenterServiceClientTest {
 						Long[] bidarray = ret.getBidList(k, MatchType.Exact.getValue());
 						for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
 			
-							double averDaylyCPC = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
-							double averDaylyClicks = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyCPC = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
 							if(!bidMap.containsKey(k))
 								bidDat = new Double[bids.size()][3]; 
 							else
@@ -340,7 +340,7 @@ public class MSNAdcenterServiceClientTest {
 			    	PlotGraph pgclicks = new PlotGraph(dataclicks);
 			    	PlotGraph pgcost = new PlotGraph(datacost);
 			    	pgclicks.setGraphTitle("Clicks :"+key);            // Enter graph title
-			    	pgcost.setGraphTitle("Cost :"+key);
+			    	pgcost.setGraphTitle("CPC :"+key);
 			    	int[] pointOptions = {1};        // Set point option to open circles on the first graph line and filled circles on the second graph line
 			    	pgclicks.setPoint(pointOptions);
 			    	pgclicks.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
@@ -350,11 +350,10 @@ public class MSNAdcenterServiceClientTest {
 			    	// Call plotting method
 			    	pgclicks.plot();
 			    	pgcost.plot();
-			    	System.in.read();
 			    	PrintStream stdout = System.out;
 			    	System.setOut(fileoutput);
 			    	System.out.println("Keyword: "+key);
-			    	System.out.println("Clicks and cost");
+			    	System.out.println("Clicks and CPC");
 			    	for(int v= 0; v<dataclicks[0].length;v++){
 			    		System.out.println(dataclicks[0][v]+"\t"+dataclicks[1][v]+"\t"+datacost[1][v]+"\t");
 			    	}
