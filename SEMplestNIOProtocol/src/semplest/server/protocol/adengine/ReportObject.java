@@ -33,7 +33,17 @@ public class ReportObject
 	private Date createdDate;
 	private Long microCost;
 	
+	// added for search query report
+	private String searchTerm;
+
 	
+	
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
 	public Long getAccountID()
 	{
 		return accountID;
