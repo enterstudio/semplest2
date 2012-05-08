@@ -87,19 +87,19 @@ else
         {
              <tr>
                 <td>
-                    @Html.RouteLink(item.Customer, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                    @Html.RouteLink(item.Customer, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                    @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.FirstName, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                    @Html.RouteLink(item.FirstName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.LastName, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                    @Html.RouteLink(item.LastName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>
                 <td>
-                    @Html.RouteLink(item.Email, new { Controller = "CustomerAccount", action = "Edit", id = item.AccountNumber })
+                    @Html.RouteLink(item.Email, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                 </td>        
     </tr>
         }
