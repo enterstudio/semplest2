@@ -121,7 +121,7 @@ public class BidGeneratorObj {
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
 			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact);
 			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
-			adEngineInitialDataObject.setNetworkSetting("SEARCH");
+			adEngineInitialDataObject.setNetworkSetting("SEARCH_ONLY");
 //			adEngineInitialDataObject.setBiddingMethod(biddingMethod)
 			// SemplestDB.storeDefaultBid(promotionID, se, defaultMicroBid);
 			initValues.put(se, adEngineInitialDataObject);
