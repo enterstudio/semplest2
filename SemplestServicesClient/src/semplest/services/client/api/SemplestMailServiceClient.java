@@ -24,7 +24,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 
 		try
 		{
-			SemplestMailServiceClient client = new SemplestMailServiceClient("http://VMJAVA1:9898/semplest");
+			SemplestMailServiceClient client = new SemplestMailServiceClient("http://VMDEVJAVA1:9898/semplest");
 			Boolean ret = client.SendEmail("Test", "mberg@semplest.com", "mitch@semplest.com", "Hello there");
 		}
 		catch (Exception e)
