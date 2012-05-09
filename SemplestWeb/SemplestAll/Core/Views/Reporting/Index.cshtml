@@ -6,10 +6,11 @@
     Reporting
 }
 @section Links{
-    <div id="examplesThemeChooser">
-        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnOne" />
-        <input type="button" class="k-button rounded" value="Reporting" id="btnTwo" />
-        <input type="button" class="k-button rounded" value="Billing" id="btnThree" />
+    <div >
+        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnMyAccount" />
+        <input type="button" class="k-button rounded" value="Ad Setup" id="btnAdSetup" />
+        <input type="button" class="k-button rounded" value="Reporting" id="btnReporting" />
+        <input type="button" class="k-button rounded" value="Billing" id="btnBilling" />
     </div>
 }
 @section Navbar{
@@ -63,13 +64,18 @@ Please select a search engine for which you would like to view reports.  Selecti
 
   <input type="button" id="btnOne" value="Get Report" class="k-button" />
 
-  <script type="text/javascript">
-      $('#btnOne').click(function () {
-          window.location.href = '../Home/Index2';
-          return false;
-      });
-      $('#btnTwo').click(function () {
-          window.location.href = '../Reporting/Index';
-          return false;
-      });
+<script type="text/javascript">
+    $('#btnMyAccount').click(function () {
+        window.location.href = '../Home/Index2';
+        return false;
+    });
+
+    $('#btnAdSetup').click(function () {
+        window.location.href = '../Campaign/CampaignSetup';
+        return false;
+    });
+    $('#btnReporting').click(function () {
+        window.location.href = '../Reporting/Index';
+        return false;
+    });
 </script>
