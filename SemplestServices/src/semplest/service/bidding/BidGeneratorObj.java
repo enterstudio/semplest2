@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import semplest.bidding.estimation.EstimatorData;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.adengine.AdEngineID;
@@ -33,6 +34,10 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.gson.Gson;
 
 public class BidGeneratorObj {
+	
+	
+	String google = ProtocolEnum.AdEngine.Google.name();
+	String msn = ProtocolEnum.AdEngine.MSN.name();
 	
 	
 	private static Gson gson = new Gson();
@@ -152,9 +157,9 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 1. Database call: get campaign specific IDs
 		AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
-		if (searchEngine.equalsIgnoreCase("Google")){
+		if (searchEngine.equalsIgnoreCase(google)){
 			googleAccountID = adEngineInfo.getAccountID().toString();
-		} else if(searchEngine.equalsIgnoreCase("MSN")){
+		} else if(searchEngine.equalsIgnoreCase(msn)){
 			msnAccountID = adEngineInfo.getAccountID();
 		} else {
 			throw new Exception("Ad engine type "+searchEngine+" is not yet implemented!!");
@@ -175,7 +180,7 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 3. [google] API call: get adgroup criterion for all keywords
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			k=1;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
@@ -193,7 +198,7 @@ public class BidGeneratorObj {
 					}
 				} // try-catch
 			} // while(true)
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		for(KeywordDataObject b: keywordDataObjs){
 			wordIDMap.put(b.getKeyword(),b.getBidID());
@@ -203,7 +208,7 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 4. [google] Decide competitive, non-competitive and no-info
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			for(int i=0; i<keywordDataObjs.length; i++){
 				keywordDataObj = keywordDataObjs[i];
 				if(keywordDataObj.getFirstPageCpc()==null){
@@ -221,7 +226,7 @@ public class BidGeneratorObj {
 					} 
 				} // if(keywordDataObj.getFirstPageCpc()==null)
 			} // for(int i=0; i<keywordDataObjs.length; i++)
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		
 		
@@ -233,16 +238,16 @@ public class BidGeneratorObj {
 		//        i. some keywords are pushed back to non-competitive category if
 		//           information available is not useful
 		
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			o = getTrafficEstimatorDataForGoogle();
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		                /* *************************************** */
 		//    b. [msn] for all keywords and compute firstPage CPC from the data
 		
-		if(searchEngine.equalsIgnoreCase("MSN")){
+		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase("MSN"))
+		} // if(searchEngine.equalsIgnoreCase(msn))
 
 		
 		
@@ -298,7 +303,7 @@ public class BidGeneratorObj {
 		Long totalDailyCost = 0L;
 		Float totalDailyClick = 0F;
 		
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
 					KeywordMatchType.EXACT,	wordBidMap);
 			String[] words = o2.getListOfKeywords();
@@ -318,26 +323,26 @@ public class BidGeneratorObj {
 				defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
 			}
 			
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
-		if(searchEngine.equalsIgnoreCase("Google")){
-			SemplestDB.storeKeywordDataObjects(promotionID, "Google", 
+		if(searchEngine.equalsIgnoreCase(google)){
+			SemplestDB.storeKeywordDataObjects(promotionID, google, 
 					new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		
 		
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
-		if(searchEngine.equalsIgnoreCase("Google")){
-			SemplestDB.storeTrafficEstimatorData(promotionID, "Google", o);
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		if(searchEngine.equalsIgnoreCase(google)){
+			SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
-		if(searchEngine.equalsIgnoreCase("MSN")){
+		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase("MSN"))
+		} // if(searchEngine.equalsIgnoreCase(msn))
 		
 		
 		
@@ -400,25 +405,25 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 16. SE API call: Update matchType, bid for keywords
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			keyIT = wordBidMap.keySet().iterator();
 			while(keyIT.hasNext())
 			{
 				String word = keyIT.next();
 				clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
 			}
-		} // if(searchEngine.equalsIgnoreCase("Google"))
+		} // if(searchEngine.equalsIgnoreCase(google))
 		
-		if(searchEngine.equalsIgnoreCase("MSN")){
+		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase("MSN"))
+		} // if(searchEngine.equalsIgnoreCase(msn))
 		
 		
 		
 		
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
-		if(searchEngine.equalsIgnoreCase("Google")){
+		if(searchEngine.equalsIgnoreCase(google)){
 			clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
 		}
 		
