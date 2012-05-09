@@ -82,6 +82,8 @@ import com.google.api.adwords.v201109.cm.PredicateOperator;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
+import com.google.api.adwords.v201109.cm.UserListReturnValue;
+import com.google.api.adwords.v201109.cm.UserListServiceInterface;
 import com.google.api.adwords.v201109.info.ApiUsageInfo;
 import com.google.api.adwords.v201109.info.ApiUsageRecord;
 import com.google.api.adwords.v201109.info.ApiUsageType;
@@ -90,6 +92,9 @@ import com.google.api.adwords.v201109.info.InfoServiceInterface;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
 import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
+import com.google.api.adwords.v201109.mcm.ServicedAccountGraph;
+import com.google.api.adwords.v201109.mcm.ServicedAccountSelector;
+import com.google.api.adwords.v201109.mcm.ServicedAccountServiceInterface;
 import com.google.api.adwords.v201109.o.AdGroupEstimateRequest;
 import com.google.api.adwords.v201109.o.Attribute;
 import com.google.api.adwords.v201109.o.AttributeType;
@@ -124,7 +129,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = false; //true; // // true; //
+	private static boolean useSandbox = true;// true; // // true; //
+
 
 	public static void main(String[] args)
 	{
@@ -146,24 +152,36 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * for(int i = 0; i < camp.length; i++) {
 			 * System.out.println(camp[i].getName()); } }
 			 */
-			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-			g.getClientAccounts();
 			
-			//Campaign c = g.CreateOneCampaignForAccount(null, "test", CampaignStatus.ACTIVE, BudgetBudgetPeriod.MONTHLY, 1000000L);
-			// String accountID = "2188810777"; // "5058200123";// "8019925375";
-			// //
+			/*
+			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, true);
+			ServicedAccountServiceInterface accountService = user.getService(AdWordsService.V201109.SERVICED_ACCOUNT_SERVICE);
+			ServicedAccountGraph ret = accountService.get(new ServicedAccountSelector());
+			Account[] accounts = ret.getAccounts();
+			for(Account a : accounts){
+				System.out.println("accountId = " + a.getCustomerId());
+			}
+			*/
+			
+			/*
+			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			Campaign ret = g.CreateOneCampaignForAccount("54100", "temp1", CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 1000000L);
+			System.out.println("campaignId = " + ret.getId());
+			*/
+			
+			//String accountID = "2188810777"; // "5058200123";// "8019925375"; //
 			// "6048920973";
-			Long adGroupID = 3074331030L;
-			Long campaignID = 77290470L;
-			Long accountID = 9036397375L;
+			//Long adGroupID = 3074331030L;
+			//Long campaignID = 77290470L;
+			//Long accountID = 9036397375L;
 
 			// g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new
 			// java.util.Date());
 
 			/*
-			ArrayList<HashMap<String, String>> ret = g.getCampaignsByAccountId("2188810777", false);
-			String id = ret.get(0).values().toString();
-			System.out.println(id);
+			//ArrayList<HashMap<String, String>> ret = g.getCampaignsByAccountId("2188810777", false);
+			//String id = ret.get(0).values().toString();
+			//System.out.println(id);
 */
 			// KeywordDataObject[] c =
 			// g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
