@@ -10,5 +10,6 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	public abstract Boolean DeleteAd(Integer customerID,Integer promotionID, Integer promotionAdID) throws Exception;
 	public abstract Boolean DeleteSiteLinkForAd(Integer customerID,Integer promotionID, Integer promotionAdID, Integer SiteLinkID) throws Exception;
 	public abstract Boolean UpdateGeoTargeting(Integer customerID,Integer productGroupID, Integer GeoTargetingID ) throws Exception;
+	public abstract Boolean ExecuteBidProcess(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception;
 
 }
