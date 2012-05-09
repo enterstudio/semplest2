@@ -213,7 +213,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		HashMap<String, Double> remainingBudgetMap = new HashMap<String, Double>();
 		//Get the split
 		
-		HashMap<String, Integer> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngineList);
+		HashMap<String, Double> AdEngineBudgetPercent = bidClient.GetMonthlyBudgetPercentPerSE(PromotionID, adEngineList);
 		//get remaining Budget
 		BudgetObject remainingBudget =  SemplestDB.getBudget(PromotionID);
 		Iterator<String> adEngineIT = AdEngineBudgetPercent.keySet().iterator();

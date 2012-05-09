@@ -77,7 +77,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		
 	}
 	@Override
-	public HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine)
+	public HashMap<String, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine)
 			throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));

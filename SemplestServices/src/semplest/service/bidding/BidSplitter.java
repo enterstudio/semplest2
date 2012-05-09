@@ -9,7 +9,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 
 public class BidSplitter {
 	
-	public static HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(
+	public static HashMap<String, Double> GetMonthlyBudgetPercentPerSE(
 			Integer promotionID, ArrayList<String> searchEngine) throws Exception {
 			
 		// Right now always split 70-30 or 100 -- to be changed later
@@ -25,7 +25,7 @@ public class BidSplitter {
 			}
 		}
 
-		HashMap<String,Integer> budgetMap = new HashMap<String,Integer>();
+		HashMap<String,Double> budgetMap = new HashMap<String,Double>();
 
 		String google = ProtocolEnum.AdEngine.Google.name();
 		String msn = ProtocolEnum.AdEngine.MSN.name();
@@ -33,13 +33,13 @@ public class BidSplitter {
 			case 2:
 				if(searchEngine.get(0).equalsIgnoreCase(google) && searchEngine.get(1).equalsIgnoreCase(msn) ||
 						searchEngine.get(0).equalsIgnoreCase(msn) && searchEngine.get(1).equalsIgnoreCase(google) ) {
-					budgetMap.put(google, new Integer(70));
-					budgetMap.put(msn, new Integer(30));
+					budgetMap.put(google, new Double(70.));
+					budgetMap.put(msn, new Double(30.));
 					break;
 				}
 				throw new Exception("Invalid combination of Ad engine options!");
 			case 1:
-				budgetMap.put(searchEngine.get(0), new Integer(100));
+				budgetMap.put(searchEngine.get(0), new Double(100.));
 				break;
 			default:
 				throw new Exception("Invalid number of Ad engines.. Received "+searchEngine.size()+" Ad engine names!");

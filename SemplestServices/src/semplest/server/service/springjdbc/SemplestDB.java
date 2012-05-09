@@ -518,7 +518,7 @@ public class SemplestDB extends BaseDB
 	public static BudgetObject getBudget(int promotionID) throws Exception
 	{
 
-		String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,p.CycleEndDate,CURRENT_TIMESTAMP) [RemainingDays] from Promotion p where PromotionPK = ?";
+		String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,CURRENT_TIMESTAMP, p.CycleEndDate) [RemainingDays] from Promotion p where PromotionPK = ?";
 		try
 		{
 			return jdbcTemplate.queryForObject(strSQL, new Object[]

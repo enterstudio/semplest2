@@ -8,7 +8,7 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 
 public interface SemplestBiddingInterface extends ServiceInitialize {
 	
-	HashMap<String, Integer> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine) throws Exception;
+	HashMap<String, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine) throws Exception;
 	HashMap<String, AdEngineInitialData> getInitialValues(Integer promotionID, ArrayList<String> searchEngine) throws Exception;
 	void setBidsInitial(Integer promotionID, String searchEngine) throws Exception;
 	void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception;

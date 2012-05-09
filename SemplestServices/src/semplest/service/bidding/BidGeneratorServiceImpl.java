@@ -59,11 +59,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		ArrayList<String> searchEngine = gson.fromJson(data.get("searchEngine"),ArrayList.class);
-		HashMap<String,Integer> res = GetMonthlyBudgetPercentPerSE(promotionID, searchEngine);
+		HashMap<String,Double> res = GetMonthlyBudgetPercentPerSE(promotionID, searchEngine);
 		return gson.toJson(res);
 	}
 	@Override
-	public HashMap<String,Integer> GetMonthlyBudgetPercentPerSE (Integer promotionID, 
+	public HashMap<String,Double> GetMonthlyBudgetPercentPerSE (Integer promotionID, 
 			ArrayList<String> searchEngine)  throws Exception  {
 		
 		return BidSplitter.GetMonthlyBudgetPercentPerSE (promotionID, searchEngine);
