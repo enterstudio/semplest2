@@ -38,5 +38,58 @@ namespace SemplestModel
         public string SemplestDefaultBudgetMarkUpOrDown { get; set; }
         public Nullable<int> BillingDaysOffset { get; set; }
         public string OnErrorEmail { get; set; }
+        public string MSNCampaignURL { get; set; }
+        public string MSNCampagnNamespace { get; set; }
+        public string MSNCustomerURL { get; set; }
+        public string MSNCustomerNamespace { get; set; }
+        public string MSNReportingURL { get; set; }
+        public string MSNReportingNamespace { get; set; }
+        public string MSNAdIntelligenceURL { get; set; }
+        public string MSNAdIntelligenceNamespace { get; set; }
+        public Nullable<long> MSNParentCustomerID { get; set; }
+        public string MSNApiUsername { get; set; }
+        public string MSNApiPassword { get; set; }
+        public string MSNUserAccessKey { get; set; }
+        public string AdwordsEmail { get; set; }
+        public string AdwordsPassword { get; set; }
+        public string AdwordsUserAgent { get; set; }
+        public string AdwordsDeveloperToken { get; set; }
+        public string OrbitalGatewaySalemPlatform { get; set; }
+        public string OrbitalGatewayMerchantID { get; set; }
+        public string OrbitalGatewayUsername { get; set; }
+        public string OrbitalGatewayPassword { get; set; }
+        public Nullable<int> SemplestClientAdwordsTimeoutMS { get; set; }
+        public Nullable<int> SemplestClientKeywordTimeoutMS { get; set; }
+        public Nullable<int> SemplestClientBiddingTimeoutMS { get; set; }
+        public Nullable<int> SemplestClientMailTimeoutMS { get; set; }
+        public Nullable<int> SemplestClientSchedulerTimeoutMS { get; set; }
+        public Nullable<int> SemplestClientMSNTimeoutMS { get; set; }
+        public Nullable<int> SemplestBiddingMaxRetry { get; set; }
+        public Nullable<int> SemplestBiddingSleepPeriod { get; set; }
+        public Nullable<int> SemplestBiddingSleepBackOffTime { get; set; }
+        public Nullable<long> SemplestBiddingMaxMicroBid { get; set; }
+        public Nullable<long> SemplestBiddingStepAboveFpCPC { get; set; }
+        public Nullable<long> SemplestBiddingDefaultMicroBid { get; set; }
+        public Nullable<long> SemplestBiddingMaxDefaultMicroBid { get; set; }
+        public Nullable<long> SemplestBiddingStepFirst { get; set; }
+        public Nullable<long> SemplestBiddingStepSecond { get; set; }
+        public Nullable<long> SemplestBiddingStepRest { get; set; }
+        public Nullable<int> SemplestBiddingGooglePercent { get; set; }
+        public Nullable<int> ESBRegServicePort { get; set; }
+        public string ESBBrokerName { get; set; }
+        public Nullable<int> ESBBrokerPort { get; set; }
+        public string ESBBrokerIP { get; set; }
+        public Nullable<int> ESBWebServerPort { get; set; }
+        public Nullable<int> ESBHeaderBufferSize { get; set; }
+        public Nullable<int> ESBAsynchServletCorePoolSize { get; set; }
+        public Nullable<int> ESBAsynchServletMaxPoolSize { get; set; }
+        public Nullable<int> ESBAsynchServletMaxWorkInQueue { get; set; }
+        public Nullable<int> ESBAsynchCallDefaultTimeoutMS { get; set; }
+        public Nullable<int> ServiceESBServerPort { get; set; }
+        public string ServiceESBServerIP { get; set; }
+        public Nullable<int> ServicePingFrequencyMS { get; set; }
+        public Nullable<int> ServiceNumberServiceThreads { get; set; }
+        public string ServiceSMTP { get; set; }
+        public string ESBWebServerURL { get; set; }
     }
 }

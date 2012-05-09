@@ -455,6 +455,59 @@
           <Property Name="SemplestDefaultBudgetMarkUpOrDown" Type="nvarchar" MaxLength="1" />
           <Property Name="BillingDaysOffset" Type="int" />
           <Property Name="OnErrorEmail" Type="nvarchar" MaxLength="150" />
+          <Property Name="MSNCampaignURL" Type="varchar" MaxLength="250" />
+          <Property Name="MSNCampagnNamespace" Type="varchar" MaxLength="100" />
+          <Property Name="MSNCustomerURL" Type="varchar" MaxLength="250" />
+          <Property Name="MSNCustomerNamespace" Type="varchar" MaxLength="100" />
+          <Property Name="MSNReportingURL" Type="varchar" MaxLength="250" />
+          <Property Name="MSNReportingNamespace" Type="varchar" MaxLength="100" />
+          <Property Name="MSNAdIntelligenceURL" Type="varchar" MaxLength="250" />
+          <Property Name="MSNAdIntelligenceNamespace" Type="varchar" MaxLength="100" />
+          <Property Name="MSNParentCustomerID" Type="bigint" />
+          <Property Name="MSNApiUsername" Type="varchar" MaxLength="50" />
+          <Property Name="MSNApiPassword" Type="varchar" MaxLength="50" />
+          <Property Name="MSNUserAccessKey" Type="varchar" MaxLength="150" />
+          <Property Name="AdwordsEmail" Type="varchar" MaxLength="75" />
+          <Property Name="AdwordsPassword" Type="varchar" MaxLength="50" />
+          <Property Name="AdwordsUserAgent" Type="varchar" MaxLength="50" />
+          <Property Name="AdwordsDeveloperToken" Type="varchar" MaxLength="50" />
+          <Property Name="OrbitalGatewaySalemPlatform" Type="varchar" MaxLength="10" />
+          <Property Name="OrbitalGatewayMerchantID" Type="varchar" MaxLength="25" />
+          <Property Name="OrbitalGatewayUsername" Type="varchar" MaxLength="25" />
+          <Property Name="OrbitalGatewayPassword" Type="varchar" MaxLength="25" />
+          <Property Name="SemplestClientAdwordsTimeoutMS" Type="int" />
+          <Property Name="SemplestClientKeywordTimeoutMS" Type="int" />
+          <Property Name="SemplestClientBiddingTimeoutMS" Type="int" />
+          <Property Name="SemplestClientMailTimeoutMS" Type="int" />
+          <Property Name="SemplestClientSchedulerTimeoutMS" Type="int" />
+          <Property Name="SemplestClientMSNTimeoutMS" Type="int" />
+          <Property Name="SemplestBiddingMaxRetry" Type="int" />
+          <Property Name="SemplestBiddingSleepPeriod" Type="int" />
+          <Property Name="SemplestBiddingSleepBackOffTime" Type="int" />
+          <Property Name="SemplestBiddingMaxMicroBid" Type="bigint" />
+          <Property Name="SemplestBiddingStepAboveFpCPC" Type="bigint" />
+          <Property Name="SemplestBiddingDefaultMicroBid" Type="bigint" />
+          <Property Name="SemplestBiddingMaxDefaultMicroBid" Type="bigint" />
+          <Property Name="SemplestBiddingStepFirst" Type="bigint" />
+          <Property Name="SemplestBiddingStepSecond" Type="bigint" />
+          <Property Name="SemplestBiddingStepRest" Type="bigint" />
+          <Property Name="SemplestBiddingGooglePercent" Type="int" />
+          <Property Name="ESBRegServicePort" Type="int" />
+          <Property Name="ESBBrokerName" Type="varchar" MaxLength="25" />
+          <Property Name="ESBBrokerPort" Type="int" />
+          <Property Name="ESBBrokerIP" Type="varchar" MaxLength="50" />
+          <Property Name="ESBWebServerPort" Type="int" />
+          <Property Name="ESBHeaderBufferSize" Type="int" />
+          <Property Name="ESBAsynchServletCorePoolSize" Type="int" />
+          <Property Name="ESBAsynchServletMaxPoolSize" Type="int" />
+          <Property Name="ESBAsynchServletMaxWorkInQueue" Type="int" />
+          <Property Name="ESBAsynchCallDefaultTimeoutMS" Type="int" />
+          <Property Name="ServiceESBServerPort" Type="int" />
+          <Property Name="ServiceESBServerIP" Type="varchar" MaxLength="50" />
+          <Property Name="ServicePingFrequencyMS" Type="int" />
+          <Property Name="ServiceNumberServiceThreads" Type="int" />
+          <Property Name="ServiceSMTP" Type="varchar" MaxLength="50" />
+          <Property Name="ESBWebServerURL" Type="varchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2298,6 +2351,59 @@
           <Property Type="String" Name="SemplestDefaultBudgetMarkUpOrDown" MaxLength="1" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="BillingDaysOffset" />
           <Property Type="String" Name="OnErrorEmail" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="MSNCampaignURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCampagnNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCustomerURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCustomerNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNReportingURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNReportingNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNAdIntelligenceURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNAdIntelligenceNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="MSNParentCustomerID" />
+          <Property Type="String" Name="MSNApiUsername" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNApiPassword" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNUserAccessKey" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsEmail" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsPassword" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsUserAgent" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsDeveloperToken" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewaySalemPlatform" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayMerchantID" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayUsername" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayPassword" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="SemplestClientAdwordsTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientKeywordTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientBiddingTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientMailTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientSchedulerTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientMSNTimeoutMS" />
+          <Property Type="Int32" Name="SemplestBiddingMaxRetry" />
+          <Property Type="Int32" Name="SemplestBiddingSleepPeriod" />
+          <Property Type="Int32" Name="SemplestBiddingSleepBackOffTime" />
+          <Property Type="Int64" Name="SemplestBiddingMaxMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingStepAboveFpCPC" />
+          <Property Type="Int64" Name="SemplestBiddingDefaultMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingMaxDefaultMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingStepFirst" />
+          <Property Type="Int64" Name="SemplestBiddingStepSecond" />
+          <Property Type="Int64" Name="SemplestBiddingStepRest" />
+          <Property Type="Int32" Name="SemplestBiddingGooglePercent" />
+          <Property Type="Int32" Name="ESBRegServicePort" />
+          <Property Type="String" Name="ESBBrokerName" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ESBBrokerPort" />
+          <Property Type="String" Name="ESBBrokerIP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ESBWebServerPort" />
+          <Property Type="Int32" Name="ESBHeaderBufferSize" />
+          <Property Type="Int32" Name="ESBAsynchServletCorePoolSize" />
+          <Property Type="Int32" Name="ESBAsynchServletMaxPoolSize" />
+          <Property Type="Int32" Name="ESBAsynchServletMaxWorkInQueue" />
+          <Property Type="Int32" Name="ESBAsynchCallDefaultTimeoutMS" />
+          <Property Type="Int32" Name="ServiceESBServerPort" />
+          <Property Type="String" Name="ServiceESBServerIP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ServicePingFrequencyMS" />
+          <Property Type="Int32" Name="ServiceNumberServiceThreads" />
+          <Property Type="String" Name="ServiceSMTP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ESBWebServerURL" MaxLength="100" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -3769,6 +3875,59 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="ESBWebServerURL" ColumnName="ESBWebServerURL" />
+                <ScalarProperty Name="ServiceSMTP" ColumnName="ServiceSMTP" />
+                <ScalarProperty Name="ServiceNumberServiceThreads" ColumnName="ServiceNumberServiceThreads" />
+                <ScalarProperty Name="ServicePingFrequencyMS" ColumnName="ServicePingFrequencyMS" />
+                <ScalarProperty Name="ServiceESBServerIP" ColumnName="ServiceESBServerIP" />
+                <ScalarProperty Name="ServiceESBServerPort" ColumnName="ServiceESBServerPort" />
+                <ScalarProperty Name="ESBAsynchCallDefaultTimeoutMS" ColumnName="ESBAsynchCallDefaultTimeoutMS" />
+                <ScalarProperty Name="ESBAsynchServletMaxWorkInQueue" ColumnName="ESBAsynchServletMaxWorkInQueue" />
+                <ScalarProperty Name="ESBAsynchServletMaxPoolSize" ColumnName="ESBAsynchServletMaxPoolSize" />
+                <ScalarProperty Name="ESBAsynchServletCorePoolSize" ColumnName="ESBAsynchServletCorePoolSize" />
+                <ScalarProperty Name="ESBHeaderBufferSize" ColumnName="ESBHeaderBufferSize" />
+                <ScalarProperty Name="ESBWebServerPort" ColumnName="ESBWebServerPort" />
+                <ScalarProperty Name="ESBBrokerIP" ColumnName="ESBBrokerIP" />
+                <ScalarProperty Name="ESBBrokerPort" ColumnName="ESBBrokerPort" />
+                <ScalarProperty Name="ESBBrokerName" ColumnName="ESBBrokerName" />
+                <ScalarProperty Name="ESBRegServicePort" ColumnName="ESBRegServicePort" />
+                <ScalarProperty Name="SemplestBiddingGooglePercent" ColumnName="SemplestBiddingGooglePercent" />
+                <ScalarProperty Name="SemplestBiddingStepRest" ColumnName="SemplestBiddingStepRest" />
+                <ScalarProperty Name="SemplestBiddingStepSecond" ColumnName="SemplestBiddingStepSecond" />
+                <ScalarProperty Name="SemplestBiddingStepFirst" ColumnName="SemplestBiddingStepFirst" />
+                <ScalarProperty Name="SemplestBiddingMaxDefaultMicroBid" ColumnName="SemplestBiddingMaxDefaultMicroBid" />
+                <ScalarProperty Name="SemplestBiddingDefaultMicroBid" ColumnName="SemplestBiddingDefaultMicroBid" />
+                <ScalarProperty Name="SemplestBiddingStepAboveFpCPC" ColumnName="SemplestBiddingStepAboveFpCPC" />
+                <ScalarProperty Name="SemplestBiddingMaxMicroBid" ColumnName="SemplestBiddingMaxMicroBid" />
+                <ScalarProperty Name="SemplestBiddingSleepBackOffTime" ColumnName="SemplestBiddingSleepBackOffTime" />
+                <ScalarProperty Name="SemplestBiddingSleepPeriod" ColumnName="SemplestBiddingSleepPeriod" />
+                <ScalarProperty Name="SemplestBiddingMaxRetry" ColumnName="SemplestBiddingMaxRetry" />
+                <ScalarProperty Name="SemplestClientMSNTimeoutMS" ColumnName="SemplestClientMSNTimeoutMS" />
+                <ScalarProperty Name="SemplestClientSchedulerTimeoutMS" ColumnName="SemplestClientSchedulerTimeoutMS" />
+                <ScalarProperty Name="SemplestClientMailTimeoutMS" ColumnName="SemplestClientMailTimeoutMS" />
+                <ScalarProperty Name="SemplestClientBiddingTimeoutMS" ColumnName="SemplestClientBiddingTimeoutMS" />
+                <ScalarProperty Name="SemplestClientKeywordTimeoutMS" ColumnName="SemplestClientKeywordTimeoutMS" />
+                <ScalarProperty Name="SemplestClientAdwordsTimeoutMS" ColumnName="SemplestClientAdwordsTimeoutMS" />
+                <ScalarProperty Name="OrbitalGatewayPassword" ColumnName="OrbitalGatewayPassword" />
+                <ScalarProperty Name="OrbitalGatewayUsername" ColumnName="OrbitalGatewayUsername" />
+                <ScalarProperty Name="OrbitalGatewayMerchantID" ColumnName="OrbitalGatewayMerchantID" />
+                <ScalarProperty Name="OrbitalGatewaySalemPlatform" ColumnName="OrbitalGatewaySalemPlatform" />
+                <ScalarProperty Name="AdwordsDeveloperToken" ColumnName="AdwordsDeveloperToken" />
+                <ScalarProperty Name="AdwordsUserAgent" ColumnName="AdwordsUserAgent" />
+                <ScalarProperty Name="AdwordsPassword" ColumnName="AdwordsPassword" />
+                <ScalarProperty Name="AdwordsEmail" ColumnName="AdwordsEmail" />
+                <ScalarProperty Name="MSNUserAccessKey" ColumnName="MSNUserAccessKey" />
+                <ScalarProperty Name="MSNApiPassword" ColumnName="MSNApiPassword" />
+                <ScalarProperty Name="MSNApiUsername" ColumnName="MSNApiUsername" />
+                <ScalarProperty Name="MSNParentCustomerID" ColumnName="MSNParentCustomerID" />
+                <ScalarProperty Name="MSNAdIntelligenceNamespace" ColumnName="MSNAdIntelligenceNamespace" />
+                <ScalarProperty Name="MSNAdIntelligenceURL" ColumnName="MSNAdIntelligenceURL" />
+                <ScalarProperty Name="MSNReportingNamespace" ColumnName="MSNReportingNamespace" />
+                <ScalarProperty Name="MSNReportingURL" ColumnName="MSNReportingURL" />
+                <ScalarProperty Name="MSNCustomerNamespace" ColumnName="MSNCustomerNamespace" />
+                <ScalarProperty Name="MSNCustomerURL" ColumnName="MSNCustomerURL" />
+                <ScalarProperty Name="MSNCampagnNamespace" ColumnName="MSNCampagnNamespace" />
+                <ScalarProperty Name="MSNCampaignURL" ColumnName="MSNCampaignURL" />
                 <ScalarProperty Name="OnErrorEmail" ColumnName="OnErrorEmail" />
                 <ScalarProperty Name="BillingDaysOffset" ColumnName="BillingDaysOffset" />
                 <ScalarProperty Name="SemplestDefaultBudgetMarkUpOrDown" ColumnName="SemplestDefaultBudgetMarkUpOrDown" />
@@ -4357,7 +4516,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="108">
+      <Diagram Name="SemplestModel" ZoomLevel="84">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
