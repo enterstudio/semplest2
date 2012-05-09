@@ -36,8 +36,8 @@ import com.google.gson.Gson;
 public class BidGeneratorObj {
 	
 	
-	String google = ProtocolEnum.AdEngine.Google.name();
-	String msn = ProtocolEnum.AdEngine.MSN.name();
+	private String google = ProtocolEnum.AdEngine.Google.name();
+	private String msn = ProtocolEnum.AdEngine.MSN.name();
 	
 	
 	private static Gson gson = new Gson();
@@ -45,50 +45,52 @@ public class BidGeneratorObj {
 	
 	
 
-	int maxRetry = 10; // maximum number of times we will
-	int sleepPeriod = 500; // in millisecond
-	int sleepBackOffTime = 1000; // after k-th failure wait for sleepPeriod + k*sleepBackOffTime ms
+	private int maxRetry = 10; // maximum number of times we will
+	private int sleepPeriod = 500; // in millisecond
+	private int sleepBackOffTime = 1000; // after k-th failure wait for sleepPeriod + k*sleepBackOffTime ms
 	
-	Long maxMicroBid = 3000000L; 
-	Long stepAboveFpCPC = 500000L;
-	Long defaultMicroBid = 1000000L;
-	Long maxDefaultMicroBid = 1500000L; 
+	private Long maxMicroBid = 3000000L; 
+	private Long stepAboveFpCPC = 500000L;
+	private Long defaultMicroBid = 1000000L;
+	private Long maxDefaultMicroBid = 1500000L; 
 
 	
 	// traffic estimator bid steps
-	Long stepFirst = 100000L; 
-	Long stepSecond = 600000L;
-	Long stepRest = 800000L;
+	private Long stepFirst = 100000L; 
+	private Long stepSecond = 600000L;
+	private Long stepRest = 800000L;
 
 	
-	String googleAccountID;
-	Long msnAccountID;
-	Long campaignID;
-	Long adGroupID;
+	private String googleAccountID;
+	private Long msnAccountID;
+	private Long campaignID;
+	private Long adGroupID;
 	
-	GoogleAdwordsServiceImpl clientGoogle;
-	KeywordDataObject[] keywordDataObjs;
-	KeywordDataObject keywordDataObj;
+	private GoogleAdwordsServiceImpl clientGoogle;
+	private KeywordDataObject[] keywordDataObjs;
+	private KeywordDataObject keywordDataObj;
 	
-	HashMap<String,Long> wordIDMap;
-	HashMap<String,Long> wordBidMap;
+	private HashMap<String,Long> wordIDMap;
+	private HashMap<String,Long> wordBidMap;
 
 	
-	HashMap<String,Long> firstPageCPCMap;
-	HashMap<String,Double> qualityScoreMap;
+	private HashMap<String,Long> firstPageCPCMap;
+	private HashMap<String,Double> qualityScoreMap;
 	
-	HashSet<String> compKeywords; // competitive
-	HashSet<String> nonCompKeywords; // non-competitive
-	HashSet<String> noInfoKeywords; // competitive but no-info
-	HashSet<String> notSelectedKeywords; // competitive but not selected by optimizer
+	private HashSet<String> compKeywords; // competitive
+	private HashSet<String> nonCompKeywords; // non-competitive
+	private HashSet<String> noInfoKeywords; // competitive but no-info
+	private HashSet<String> notSelectedKeywords; // competitive but not selected by optimizer
 	
-	HashMap<String,Long> compKeywordBids; // competitive
-	HashMap<String,Long> nonCompKeywordBids; // non-competitive
-	HashMap<String,Long> noInfoKeywordBids; // competitive but no-info
-	HashMap<String,Long> notSelectedKeywordBids; // competitive but not selected by optimizer
+	/*
+	private HashMap<String,Long> compKeywordBids; // competitive
+	private HashMap<String,Long> nonCompKeywordBids; // non-competitive
+	private HashMap<String,Long> noInfoKeywordBids; // competitive but no-info
+	private HashMap<String,Long> notSelectedKeywordBids; // competitive but not selected by optimizer
+		*/
 		
-	HashMap<String,EstimatorData> clickDataMap = new HashMap<String,EstimatorData>();
-	HashMap<String,EstimatorData> costDataMap = new HashMap<String,EstimatorData>();
+	private HashMap<String,EstimatorData> clickDataMap = new HashMap<String,EstimatorData>();
+	private HashMap<String,EstimatorData> costDataMap = new HashMap<String,EstimatorData>();
 	
 	public BidGeneratorObj(){ // constructor
 		clientGoogle = new GoogleAdwordsServiceImpl();
@@ -104,11 +106,12 @@ public class BidGeneratorObj {
 		noInfoKeywords = new HashSet<String>(); // competitive but no-info
 		notSelectedKeywords = new HashSet<String>(); // competitive but not selected by optimizer
 		
+		/*
 		compKeywordBids = new HashMap<String,Long>(); // competitive
 		nonCompKeywordBids = new HashMap<String,Long>(); // non-competitive
 		noInfoKeywordBids = new HashMap<String,Long>(); // competitive but no-info
 		notSelectedKeywordBids = new HashMap<String,Long>(); // competitive but not selected by optimizer
-		
+		*/
 		
 		
 		clickDataMap = new HashMap<String,EstimatorData>();
