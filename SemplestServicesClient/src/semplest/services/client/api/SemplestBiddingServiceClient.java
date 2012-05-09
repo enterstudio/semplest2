@@ -72,7 +72,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "setInitialDefaultBid", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "getInitialValues", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 		
 	}
@@ -85,7 +85,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 	}
 	@Override
@@ -95,7 +95,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", searchEngine);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
 	}
 	@Override
 	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
@@ -104,7 +104,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(BASEURLTEST, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("keywords",keyLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBid", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBid", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 	}
 	@Override
@@ -142,8 +142,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
-//		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
+//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
 	@Override
@@ -157,8 +157,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
-//		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
+//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
 	@Override
@@ -172,7 +172,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsInitialNaive", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "getBidsInitialNaive", json, timeoutMS);
 
 	}
 	@Override
@@ -186,8 +186,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
-		runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdateNaive", json, timeoutMS);
-//		String returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
+		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdateNaive", json, timeoutMS);
+//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
 //		return gson.fromJson(returnData, ArrayList.class);
 	}
 
