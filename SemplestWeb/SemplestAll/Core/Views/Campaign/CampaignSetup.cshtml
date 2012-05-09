@@ -2,7 +2,7 @@
 @Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Campaign";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Campaign/_Layout.cshtml";
 }
 <style>
     .enddate
@@ -15,7 +15,16 @@
 @section Title{
 Ad Setup
 }
+
 @section Links{
+    <div >
+        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnMyAccount" />
+        <input type="button" class="k-button rounded" value="Ad Setup" id="btnAdSetup" />
+        <input type="button" class="k-button rounded" value="Reporting" id="btnReporting" />
+        <input type="button" class="k-button rounded" value="Billing" id="btnBilling" />
+    </div>
+}
+@section SectionNav{
     <div id="examplesThemeChooser">
         Step 1 of 3
         <input type="button" class="k-button k-state-btnerror rounded" value="1" id="btnOne" />
@@ -151,3 +160,16 @@ Ad Setup
 </script>
 <script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>
+
+
+
+<script type="text/javascript">
+    $('#btnMyAccount').click(function () {
+        window.location.href = '../Home/Index2';
+        return false;
+    });
+    $('#btnReporting').click(function () {
+        window.location.href = '../Reporting/Index';
+        return false;
+    });
+</script>
