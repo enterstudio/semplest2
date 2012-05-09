@@ -370,6 +370,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return null;
 	}
 	
+	@Override
+	public Boolean ExecuteBidProcess(Integer customerID,
+			Integer productGroupID, Integer PromotionID,
+			ArrayList<String> adEngineList) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	
 
 }
