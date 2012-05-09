@@ -40,8 +40,8 @@ public class SemplestScheduler extends Thread
 	 */
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
-	//private static String url = "http://VMJAVA1:9898/semplest";
-	private static String url = "http://localhost:9898/semplest";
+	private static String url = "http://VMDEVJAVA1:9898/semplest";
+	//private static String url = "http://localhost:9898/semplest";
 
 	public static ClassPathXmlApplicationContext appContext = null;
 	public static void main(String[] args)
