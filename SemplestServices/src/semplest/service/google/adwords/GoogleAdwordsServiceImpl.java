@@ -3,6 +3,7 @@ package semplest.service.google.adwords;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +14,6 @@ import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.other.Money;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
@@ -72,6 +72,8 @@ import com.google.api.adwords.v201109.cm.Language;
 import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupBids;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
+import com.google.api.adwords.v201109.cm.Money;
+import com.google.api.adwords.v201109.cm.NetworkSetting;
 import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
@@ -81,6 +83,7 @@ import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.api.adwords.v201109.info.ApiUsageInfo;
+import com.google.api.adwords.v201109.info.ApiUsageRecord;
 import com.google.api.adwords.v201109.info.ApiUsageType;
 import com.google.api.adwords.v201109.info.InfoSelector;
 import com.google.api.adwords.v201109.info.InfoServiceInterface;
@@ -112,7 +115,6 @@ import com.google.api.adwords.v201109.o.TrafficEstimatorSelector;
 import com.google.api.adwords.v201109.o.TrafficEstimatorServiceInterface;
 import com.google.gson.Gson;
 
-
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
@@ -122,7 +124,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = false;// true; // // true; //
+	private static boolean useSandbox = false; //true; // // true; //
 
 	public static void main(String[] args)
 	{
@@ -145,59 +147,57 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * System.out.println(camp[i].getName()); } }
 			 */
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-			//String accountID = "2188810777"; // "5058200123";// "8019925375"; //
+			g.getClientAccounts();
+			
+			//Campaign c = g.CreateOneCampaignForAccount(null, "test", CampaignStatus.ACTIVE, BudgetBudgetPeriod.MONTHLY, 1000000L);
+			// String accountID = "2188810777"; // "5058200123";// "8019925375";
+			// //
 			// "6048920973";
 			Long adGroupID = 3074331030L;
 			Long campaignID = 77290470L;
 			Long accountID = 9036397375L;
-			
-			//g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new java.util.Date());
-			
+
+			// g.getSpentAPIUnitsPerAccountID(accountID,new java.util.Date(),new
+			// java.util.Date());
+
+			/*
 			ArrayList<HashMap<String, String>> ret = g.getCampaignsByAccountId("2188810777", false);
 			String id = ret.get(0).values().toString();
 			System.out.println(id);
-			
-			//KeywordDataObject[] c = g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+*/
+			// KeywordDataObject[] c =
+			// g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
 			/*
-			String accountID = "2188810777"; // "5058200123";// "8019925375"; //
-												// "6048920973";
-			Long adGroupID = 3380873349L;
-			Long campaignID = 77290470L;
-
-			
-			HashMap<String, Double> bids = new HashMap<String, Double>();
-			bids.put("wedding flower", 2.0);
-			HashMap<String, Double> bids2 = new HashMap<String, Double>();
-			bids2.put("wedding photo", 8.0);
-
-			GoogleTrafficEstimatorObject o = g.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids);
-			String[] keywords = o.getListOfKeywords();
-			for (int i=0; i < keywords.length; i++)
-			{
-				HashMap<Double, GoogleTrafficEstimatorObject.BidData> points = o.getMapOfPoints(keywords[i]);
-				Iterator<Double> bidIT = points.keySet().iterator();
-				while(bidIT.hasNext())
-				{
-					Double abid= bidIT.next();
-					System.out.println(keywords[i] + ":" + abid + ":" + points.get(abid).getMaxAveCPC());
-				}
-			}
-			GoogleTrafficEstimatorObject o2 = g.getTrafficEstimationForKeywords(accountID, campaignID, KeywordMatchType.EXACT, bids2);
-			o.addGoogleTrafficEstimatorObject(o2);
-			keywords = o.getListOfKeywords();
-			for (int i=0; i < keywords.length; i++)
-			{
-				HashMap<Double, GoogleTrafficEstimatorObject.BidData> points = o.getMapOfPoints(keywords[i]);
-				Iterator<Double> bidIT = points.keySet().iterator();
-				while(bidIT.hasNext())
-				{
-					Double abid= bidIT.next();
-					System.out.println(keywords[i] + ":" + abid + ":" + points.get(abid).getMaxAveCPC());
-				}
-			}
-			
-			*/
+			 * String accountID = "2188810777"; // "5058200123";// "8019925375";
+			 * // // "6048920973"; Long adGroupID = 3380873349L; Long campaignID
+			 * = 77290470L;
+			 * 
+			 * 
+			 * HashMap<String, Double> bids = new HashMap<String, Double>();
+			 * bids.put("wedding flower", 2.0); HashMap<String, Double> bids2 =
+			 * new HashMap<String, Double>(); bids2.put("wedding photo", 8.0);
+			 * 
+			 * GoogleTrafficEstimatorObject o =
+			 * g.getTrafficEstimationForKeywords(accountID, campaignID,
+			 * KeywordMatchType.EXACT, bids); String[] keywords =
+			 * o.getListOfKeywords(); for (int i=0; i < keywords.length; i++) {
+			 * HashMap<Double, GoogleTrafficEstimatorObject.BidData> points =
+			 * o.getMapOfPoints(keywords[i]); Iterator<Double> bidIT =
+			 * points.keySet().iterator(); while(bidIT.hasNext()) { Double abid=
+			 * bidIT.next(); System.out.println(keywords[i] + ":" + abid + ":" +
+			 * points.get(abid).getMaxAveCPC()); } }
+			 * GoogleTrafficEstimatorObject o2 =
+			 * g.getTrafficEstimationForKeywords(accountID, campaignID,
+			 * KeywordMatchType.EXACT, bids2);
+			 * o.addGoogleTrafficEstimatorObject(o2); keywords =
+			 * o.getListOfKeywords(); for (int i=0; i < keywords.length; i++) {
+			 * HashMap<Double, GoogleTrafficEstimatorObject.BidData> points =
+			 * o.getMapOfPoints(keywords[i]); Iterator<Double> bidIT =
+			 * points.keySet().iterator(); while(bidIT.hasNext()) { Double abid=
+			 * bidIT.next(); System.out.println(keywords[i] + ":" + abid + ":" +
+			 * points.get(abid).getMaxAveCPC()); } }
+			 */
 			/*
 			 * Double[] bids = o.getBidList(); for (int i = 0; i < bids.length;
 			 * i++) { System.out.println(bids[i] + " Aveclicks=" +
@@ -242,27 +242,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * match.size(); j++) { System.out.println(match.get(j)); } }
 			 */
 			/*
-			SemplestString ss = new SemplestString();
-			ArrayList<ReportObject> f = g.getReportForAccount(ss.toSemplestString(accountID));
-			for(ReportObject t : f){
-				logger.info("Keyword: " + t.getKeyword() + "; "
-						+ "Bidamount: " + t.getMicroBidAmount() + "; "
-						+ "BidMatchType: " + t.getBidMatchType() + "; "
-						+ "NumberImpressions: " + t.getNumberImpressions() + "; "
-						+ "NumberClick: " + t.getNumberClick() + "; "
-						+ "AveragePosition: " + t.getAveragePosition() + "; "
-						+ "AverageCPC: " + t.getAverageCPC() + "; "
-						+ "QualityScore: " + t.getQualityScore()+ "; "
-						+ "ApprovalStatus: " + t.getApprovalStatus()+ "; "
-						+ "FirstPageCPC: " + t.getFirstPageCPC()+ "; "
-						+ "TransactionDate: " + t.getTransactionDate()+ "; "
-						+ "AccountID: " + t.getAccountID()+ "; "
-						+ "CampaignID: " + t.getCampaignID()+ "; "
-						+ "Cost: " + t.getMicroCost() +  "; "
-						);
-			}
-			//*/
-			
+			 * SemplestString ss = new SemplestString(); ArrayList<ReportObject>
+			 * f = g.getReportForAccount(ss.toSemplestString(accountID));
+			 * for(ReportObject t : f){ logger.info("Keyword: " + t.getKeyword()
+			 * + "; " + "Bidamount: " + t.getMicroBidAmount() + "; " +
+			 * "BidMatchType: " + t.getBidMatchType() + "; " +
+			 * "NumberImpressions: " + t.getNumberImpressions() + "; " +
+			 * "NumberClick: " + t.getNumberClick() + "; " + "AveragePosition: "
+			 * + t.getAveragePosition() + "; " + "AverageCPC: " +
+			 * t.getAverageCPC() + "; " + "QualityScore: " +
+			 * t.getQualityScore()+ "; " + "ApprovalStatus: " +
+			 * t.getApprovalStatus()+ "; " + "FirstPageCPC: " +
+			 * t.getFirstPageCPC()+ "; " + "TransactionDate: " +
+			 * t.getTransactionDate()+ "; " + "AccountID: " + t.getAccountID()+
+			 * "; " + "CampaignID: " + t.getCampaignID()+ "; " + "Cost: " +
+			 * t.getMicroCost() + "; " ); } //
+			 */
 
 		}
 		catch (Exception e)
@@ -272,41 +267,53 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 
 	}
+
 	public String getSpentAPIUnitsPerAccountID(String json) throws Exception
 	{
 		logger.debug("call getSpentAPIUnitsPerAccountID(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class); // protocolJson.getHashMapFromJson(json);
 		Long accountID = Long.parseLong(data.get("accountID"));
-		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class), gson.fromJson(data.get("endDate"), java.util.Date.class));
+		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class),
+				gson.fromJson(data.get("endDate"), java.util.Date.class));
 		// convert result to Json String
 		return gson.toJson(unitsSpent);
 	}
-	@Override
-	public Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception{	
-		try{
-		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
-		// Get the INFO_SERVICe.
 
-		InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
-		InfoSelector selector = new InfoSelector();
-		selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
-		selector.setClientCustomerIds(new long[]{accountID});
-		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd");
-		String start = "";
-		String end = "";
-		if(startDate!=null && endDate != null){
-			start = form.format(startDate);
-			end= form.format(endDate);
-		}else{
-			throw new Exception("Date is null");
+	@Override
+	public Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception
+	{
+		try
+		{
+			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+			// Get the INFO_SERVICe.
+
+			InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
+			InfoSelector selector = new InfoSelector();
+			selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
+			selector.setClientCustomerIds(new long[]
+			{ accountID });
+			SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd");
+			String start = "";
+			String end = "";
+			if (startDate != null && endDate != null)
+			{
+				start = form.format(startDate);
+				end = form.format(endDate);
+			}
+			else
+			{
+				throw new Exception("Date is null");
+			}
+			// selector.setClientEmails(new String[]{email});
+			selector.setDateRange(new DateRange(start, end));
+			ApiUsageInfo info = infoService.get(selector);
+			// System.out.println("API Usage Record :"
+			// +info.getApiUsageRecords(0).getCost());
+			return info.getApiUsageRecords(0).getCost();
+
 		}
-		//selector.setClientEmails(new String[]{email});
-		selector.setDateRange(new DateRange(start,end));
-		ApiUsageInfo info  = infoService.get(selector);
-		//System.out.println("API Usage Record :" +info.getApiUsageRecords(0).getCost());
-		return info.getApiUsageRecords(0).getCost();
-		
-		} catch(ServiceException se){
+		catch (ServiceException se)
+		{
 			throw new Exception(se);
 		}
 		catch (ApiException e)
@@ -317,8 +324,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
-		
+
 	}
+
 	/*
 	 * Account
 	 */
@@ -335,7 +343,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Account CreateOneAccountService(String currencyCode, String dateTimeZone, String companyName, String descriptiveName) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the AccountService.
 			CreateAccountServiceInterface createAccountService = user.getService(AdWordsService.V201109.CREATE_ACCOUNT_SERVICE);
@@ -357,7 +366,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperand(account);
 			operation.setDescriptiveName(descriptiveName);
 			operation.setOperator(Operator.ADD);
-	
+
 			CreateAccountOperation[] operations = new CreateAccountOperation[]
 			{ operation };
 			// Add account.
@@ -380,7 +389,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 
-	
 	@Override
 	public void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
@@ -390,7 +398,26 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public String[] getClientAccounts() throws Exception
 	{
-		// TODO Auto-generated method stub
+		AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+		// Get the InfoService.
+		InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
+		// ClientEmails to look up clientCustomerId for.
+		String[] clientEmails = new String[]
+		{ email };
+		// Create selector.
+		InfoSelector selector = new InfoSelector();
+		selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
+		String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		selector.setDateRange(new DateRange(today, today));
+		selector.setClientEmails(clientEmails);
+		selector.setIncludeSubAccounts(true);
+		// Get api usage info.
+		ApiUsageInfo apiUsageInfo = infoService.get(selector);
+		for (ApiUsageRecord record : apiUsageInfo.getApiUsageRecords())
+		{
+			System.out.printf("Client with email '%s' has ID '%d'.\n", record.getClientEmail(), record.getClientCustomerId());
+
+		}
 		return null;
 	}
 
@@ -422,7 +449,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// TODO Auto-generated method stub
 
 	}
-	
 
 	/*
 	 * Add Group and Ads
@@ -440,7 +466,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupService.
 			AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
@@ -478,7 +505,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		catch (RemoteException e)
 		{
 			throw new Exception(e);
-		}		
+		}
 	}
 
 	public String addTextAd(String json) throws Exception
@@ -496,11 +523,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
 			throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupAdService.
 			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-	
+
 			// Create text ad.
 			TextAd textAd = new TextAd();
 			textAd.setHeadline(headline);
@@ -516,7 +544,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupAdOperation textAdGroupAdOperation = new AdGroupAdOperation();
 			textAdGroupAdOperation.setOperand(textAdGroupAd);
 			textAdGroupAdOperation.setOperator(Operator.ADD);
-	
+
 			AdGroupAdOperation[] operations = new AdGroupAdOperation[]
 			{ textAdGroupAdOperation };
 			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
@@ -557,30 +585,34 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public AdGroupCriterion[] getAllAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupCriterionService.
 			AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
 			// Create selector.
 			Selector selector = new Selector();
-			
+
 			selector.setFields(new String[]
 			{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc", "SystemServingStatus" });
 			selector.setOrdering(new OrderBy[]
 			{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
-			// Create predicates. 
+			// Create predicates.
 			Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
 			{ adGroupID.toString() });
 			if (ActiveOnly)
 			{
-				Predicate statusPredicate = new Predicate("Status", PredicateOperator.IN, new String[] {"ACTIVE"}); 
-				selector.setPredicates(new Predicate[] { adGroupIdPredicate, statusPredicate });
+				Predicate statusPredicate = new Predicate("Status", PredicateOperator.IN, new String[]
+				{ "ACTIVE" });
+				selector.setPredicates(new Predicate[]
+				{ adGroupIdPredicate, statusPredicate });
 			}
 			else
 			{
-				selector.setPredicates(new Predicate[] { adGroupIdPredicate });
+				selector.setPredicates(new Predicate[]
+				{ adGroupIdPredicate });
 			}
-			
+
 			// Get all ad group criteria.
 			AdGroupCriterionPage page = adGroupCriterionService.get(selector);
 			// Display ad group criteria.
@@ -619,7 +651,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID,Boolean ActiveOnly) throws Exception
+	public KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception
 	{
 		List<KeywordDataObject> result = new ArrayList<KeywordDataObject>();
 		for (AdGroupCriterion criterion : getAllAdGroupCriteria(accountID, adGroupID, ActiveOnly))
@@ -637,13 +669,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
 				}
 				bidRes.setBidID(res.getCriterion().getId());
-				if(res.getSystemServingStatus()!=null){
+				if (res.getSystemServingStatus() != null)
+				{
 					if (res.getSystemServingStatus().getValue().equalsIgnoreCase("Eligible"))
 					{
 						bidRes.setIsEligibleForShowing(true);
 					}
 					else
-					{	
+					{
 						bidRes.setIsEligibleForShowing(false);
 					}
 				}
@@ -653,9 +686,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 				Keyword keyword = ((Keyword) criterion.getCriterion());
 				bidRes.setKeyword((keyword.getText()));
-				
+
 				bidRes.setMatchType(keyword.getMatchType().getValue());
-				if (res.getBids() != null)	
+				if (res.getBids() != null)
 				{
 					bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
 				}
@@ -708,7 +741,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupAdService.
 			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
@@ -763,7 +797,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupService.
 			AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
@@ -819,7 +854,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupAdService.
 			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
@@ -903,9 +939,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
 			throws Exception
 	{
-		try{
+		try
+		{
 			// AdWordsServiceLogger.log(); //SOAP XML Logger
-	
+
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupCriterionService.
 			AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
@@ -919,7 +956,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			keywordBiddableAdGroupCriterion.setCriterion(keywrd);
 			// add bid amount
 			ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
-			bid.setMaxCpc(new Bid(new Money(microBidAmount).toGoogleMoney()));
+			Money money = new Money();
+			money.setMicroAmount(microBidAmount);
+			bid.setMaxCpc(new Bid(money));
+			
 			keywordBiddableAdGroupCriterion.setBids(bid);
 			// Create operations.
 			AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
@@ -983,7 +1023,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupCriterionService.
 			AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
@@ -995,7 +1036,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			biddableAdGroupCriterion.setCriterion(criterion);
 			// Create bids.
 			ManualCPCAdGroupCriterionBids bids = new ManualCPCAdGroupCriterionBids();
-			bids.setMaxCpc(new Bid(new Money(microBidAmount).toGoogleMoney()));
+			Money money = new Money();
+			money.setMicroAmount(microBidAmount);
+			bids.setMaxCpc(new Bid(money));
+			
 			biddableAdGroupCriterion.setBids(bids);
 			// Create operations.
 			AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
@@ -1052,10 +1096,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		
+
 		// MicroAmount
 		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"),
-				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")), new Long(data.get("microBudgetAmount")));
+				CampaignStatus.fromString(data.get("campaignStatus")), BudgetBudgetPeriod.fromString(data.get("period")),
+				new Long(data.get("microBudgetAmount")));
 		// convert result to Json String
 		return gson.toJson(campaign);
 	}
@@ -1064,9 +1109,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
 			Long microBudgetAmount) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-	
+
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Campaign campaign = new Campaign();
 			campaign.setName(campaignName);
@@ -1076,26 +1122,40 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			campaign.setStatus(campaignStatus);
 			campaign.setBiddingStrategy(new ManualCPC());
-	
+
 			Budget budget = new Budget();
 			if (period == null)
 			{
 				period = BudgetBudgetPeriod.MONTHLY;
 			}
+			/*
+			 * Default network is Google Search ONLY
+			 */
+			NetworkSetting network = new NetworkSetting();
+			network.setTargetGoogleSearch(true);
+			network.setTargetPartnerSearchNetwork(false);
+			network.setTargetContentNetwork(false);
+			network.setTargetSearchNetwork(false);
+			campaign.setNetworkSetting(network);
+
 			budget.setPeriod(period);
-			budget.setAmount(new Money(microBudgetAmount).toGoogleMoney());
+			
+			Money money = new Money();
+			money.setMicroAmount(microBudgetAmount);
+			
+			budget.setAmount(money);
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			campaign.setBudget(budget);
-	
+
 			CampaignOperation Coperation = new CampaignOperation();
 			Coperation.setOperand(campaign);
-	
+
 			Coperation.setOperator(Operator.ADD);
 			CampaignOperation[] Coperations = new CampaignOperation[]
 			{ Coperation };
-	
+
 			CampaignReturnValue Cresult = campaignService.mutate(Coperations);
-	
+
 			if (Cresult != null && Cresult.getValue() != null)
 			{
 				return Cresult.getValue()[0];
@@ -1133,7 +1193,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupService.
 			AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
@@ -1167,8 +1228,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					 * adGroupStats s = obj.new adGroupStats(); if
 					 * (pages[i].getStats().getAverageCpc() != null) {
 					 * s.setAverageCpc
-					 * (pages[i].getStats().getAverageCpc().getMicroAmount()); } if
-					 * (pages[i].getStats().getAverageCpm() != null) {
+					 * (pages[i].getStats().getAverageCpc().getMicroAmount()); }
+					 * if (pages[i].getStats().getAverageCpm() != null) {
 					 * s.setAverageCpm
 					 * (pages[i].getStats().getAverageCpm().getMicroAmount()); }
 					 * s.setAveragePosition
@@ -1176,10 +1237,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					 * s.setAvgCallDurationSecs
 					 * (pages[i].getStats().getAvgCallDurationSecs());
 					 * s.setClicks(pages[i].getStats().getClicks());
-					 * s.setConversionRate(pages[i].getStats().getConversionRate());
-					 * if (pages[i].getStats().getCost() != null) {
-					 * s.setCost(pages[i].getStats().getCost().getMicroAmount()); }
-					 * if (pages[i].getStats().getCostPerConversion() != null) {
+					 * s.setConversionRate
+					 * (pages[i].getStats().getConversionRate()); if
+					 * (pages[i].getStats().getCost() != null) {
+					 * s.setCost(pages[
+					 * i].getStats().getCost().getMicroAmount()); } if
+					 * (pages[i].getStats().getCostPerConversion() != null) {
 					 * s.setCostPerConversion
 					 * (pages[i].getStats().getCostPerConversion
 					 * ().getMicroAmount()); }
@@ -1189,7 +1252,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					res[i] = obj;
 				}
 			}
-	
+
 			return res;
 		}
 		catch (ServiceException e)
@@ -1219,11 +1282,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean deleteCampaign(String accountID, Long campaignID) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the CampaignService.
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
-	
+
 			// Create campaign with DELETED status.
 			Campaign campaign = new Campaign();
 			campaign.setId(campaignID.longValue());
@@ -1273,7 +1337,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
@@ -1314,12 +1379,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
-			budget.setAmount(new Money(microBudgetAmount).toGoogleMoney());
+			
+			Money money = new Money();
+			money.setMicroAmount(microBudgetAmount);
+			budget.setAmount(money);
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
 			CampaignReturnValue ret = campaignService.mutate(operations);
@@ -1358,20 +1427,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception
 	{
-		try{
+		try
+		{
 
 			// AdWordsServiceLogger.log(); //SOAP XML Logger
-	
+
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
-	
+
 			// Create selector.
 			Selector selectActiveAndPausedCampaigns = new Selector();
 			selectActiveAndPausedCampaigns.setFields(new String[]
 			{ "Id", "Name", "Status", "Amount" });
-			// TODO should only be returning Id, Name and Status from this method
+			// TODO should only be returning Id, Name and Status from this
+			// method
 			// not Campaign[]
-	
+
 			if (!includeDeleted)
 			{
 				selectActiveAndPausedCampaigns.setPredicates(new Predicate[]
@@ -1391,7 +1462,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					row.put("Amount", String.valueOf(campaign.getBudget().getAmount().getMicroAmount()));
 					list.add(row);
 				}
-	
+
 			}
 			return list;
 		}
@@ -1422,7 +1493,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
@@ -1479,7 +1551,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the TargetingIdeaService.
 			TargetingIdeaServiceInterface targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
@@ -1502,7 +1575,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
 			relatedToKeywordSearchParameter.setKeywords(new Keyword[]
 			{ keywrd });
-			// Create keyword match type search parameter to ensure unique results.
+			// Create keyword match type search parameter to ensure unique
+			// results.
 			KeywordMatchTypeSearchParameter keywordMatchTypeSearchParameter = new KeywordMatchTypeSearchParameter();
 			keywordMatchTypeSearchParameter.setKeywordMatchTypes(new KeywordMatchType[]
 			{ matchType });
@@ -1513,7 +1587,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (page != null && page.getEntries() != null)
 			{
 				GoogleRelatedKeywordObject keyObj = new GoogleRelatedKeywordObject(keyword, null);
-	
+
 				for (TargetingIdea targetingIdea : page.getEntries())
 				{
 					Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
@@ -1558,8 +1632,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url, String keyword, KeywordMatchType matchType, int numberResults)
 			throws Exception
 	{
-		try{
-			// Specifically you would use the RelatedToUrlSearchParameter, ideaType
+		try
+		{
+			// Specifically you would use the RelatedToUrlSearchParameter,
+			// ideaType
 			// of KEYWORD, and requestType of IDEAS
 			// TODO Auto-generated method stub
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
@@ -1596,7 +1672,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (page != null && page.getEntries() != null)
 			{
 				GoogleRelatedKeywordObject keyObj = new GoogleRelatedKeywordObject(keyword, null);
-	
+
 				for (TargetingIdea targetingIdea : page.getEntries())
 				{
 					Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
@@ -1644,21 +1720,23 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID, Long campaignID, KeywordMatchType matchType,
 			HashMap<String, Long> newKeywordWithBid) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsServiceLogger.log();
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			List<AdGroupEstimateRequest> adGroupEstimateRequests = new ArrayList<AdGroupEstimateRequest>();
 			ArrayList<KeywordEstimateRequest> keywordEstimateRequests = new ArrayList<KeywordEstimateRequest>();
-	
+
 			// Get the TrafficEstimatorService.
 			TrafficEstimatorServiceInterface trafficEstimatorService = user.getService(AdWordsService.V201109.TRAFFIC_ESTIMATOR_SERVICE);
-	
+
 			// for each keyword
-			String[] keywords = newKeywordWithBid.keySet().toArray(new String[] {});
-	
+			String[] keywords = newKeywordWithBid.keySet().toArray(new String[]
+			{});
+
 			for (int i = 0; i < keywords.length; i++)
 			{
-	
+
 				String keyword = keywords[i];
 				// Use same keyword
 				Keyword keywrd = new Keyword();
@@ -1668,22 +1746,25 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				// budget
 				// is unlimited
 				Long microBidamount = newKeywordWithBid.get(keyword);
-	
+
 				if (microBidamount != null)
 				{
 					// one keyword estimate request
 					KeywordEstimateRequest keywordEstimateRequest = new KeywordEstimateRequest();
 					keywordEstimateRequest.setKeyword(keywrd);
-					keywordEstimateRequest.setMaxCpc(new Money(new Long(microBidamount)).toGoogleMoney());
+					
+					Money money = new Money();
+					money.setMicroAmount(microBidamount);
+					keywordEstimateRequest.setMaxCpc(money);
 					keywordEstimateRequests.add(keywordEstimateRequest);
 				}
 			}
 			AdGroupEstimateRequest adGroupEstimateRequest = new AdGroupEstimateRequest();
 			adGroupEstimateRequest.setKeywordEstimateRequests(keywordEstimateRequests.toArray(new KeywordEstimateRequest[]
-					{ }));
-					
+			{}));
+
 			adGroupEstimateRequests.add(adGroupEstimateRequest);
-					
+
 			CampaignEstimateRequest campaignEstimateRequest = new CampaignEstimateRequest();
 			campaignEstimateRequest.setAdGroupEstimateRequests(adGroupEstimateRequests.toArray(new AdGroupEstimateRequest[]
 			{}));
@@ -1697,30 +1778,32 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			selector.setCampaignEstimateRequests(new CampaignEstimateRequest[]
 			{ campaignEstimateRequest });
 			// Get traffic estimates.
-	
+
 			TrafficEstimatorResult result = trafficEstimatorService.get(selector);
 			// Display traffic estimates.
 			if (result != null && result.getCampaignEstimates() != null)
 			{
 				TrafficEstimatorObject estimatorObj = new TrafficEstimatorObject();
 				KeywordEstimate[] keywordEstimates = result.getCampaignEstimates()[0].getAdGroupEstimates()[0].getKeywordEstimates();
-				
-					
-					for (int i = 0; i < keywordEstimates.length; i++)
-					{
-						
-						StatsEstimate min = keywordEstimates[i].getMin();
-						StatsEstimate max = keywordEstimates[i].getMax();
-						estimatorObj.setBidData(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getText(), adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getMaxCpc().getMicroAmount(),
-								adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getMatchType().toString(), min.getAverageCpc().getMicroAmount(), max.getAverageCpc().getMicroAmount(),min.getAveragePosition(), max.getAveragePosition(), min.getClicksPerDay(), max.getClicksPerDay(),
-						min.getTotalCost().getMicroAmount(),max.getTotalCost().getMicroAmount());
-					}
-				
+
+				for (int i = 0; i < keywordEstimates.length; i++)
+				{
+
+					StatsEstimate min = keywordEstimates[i].getMin();
+					StatsEstimate max = keywordEstimates[i].getMax();
+					estimatorObj.setBidData(adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getText(),
+							adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getMaxCpc().getMicroAmount(),
+							adGroupEstimateRequests.get(0).getKeywordEstimateRequests()[i].getKeyword().getMatchType().toString(), min
+									.getAverageCpc().getMicroAmount(), max.getAverageCpc().getMicroAmount(), min.getAveragePosition(), max
+									.getAveragePosition(), min.getClicksPerDay(), max.getClicksPerDay(), min.getTotalCost().getMicroAmount(), max
+									.getTotalCost().getMicroAmount());
+				}
+
 				return estimatorObj;
 			}
 			else
 			{
-	
+
 				return new TrafficEstimatorObject();
 			}
 		}
@@ -1753,11 +1836,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the DataService.
 			DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
-	
+
 			// Create selector.
 			Selector selector = new Selector();
 			selector.setFields(new String[]
@@ -1765,12 +1849,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// Create predicates.
 			Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
 			{ adGroupID.toString() });
-	
+
 			Predicate criterionIdPredicate = new Predicate("CriterionId", PredicateOperator.IN, new String[]
 			{ keywordID.toString() });
 			selector.setPredicates(new Predicate[]
 			{ adGroupIdPredicate, criterionIdPredicate });
-	
+
 			// Get bid landscape for ad group criteria.
 			CriterionBidLandscapePage page = dataService.getCriterionBidLandscape(selector);
 			// Display bid landscapes.
@@ -1786,7 +1870,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					obj.setCriterionId(criterionBidLandscape.getCriterionId());
 					obj.setEndDate(criterionBidLandscape.getEndDate());
 					obj.setStartDate(criterionBidLandscape.getStartDate());
-	
+
 					for (BidLandscapeLandscapePoint bidLanscapePoint : criterionBidLandscape.getLandscapePoints())
 					{
 						obj.addBidPoint(bidLanscapePoint.getBid().getMicroAmount(), bidLanscapePoint.getClicks(), bidLanscapePoint.getCost()
@@ -1831,11 +1915,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public BidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the DataService.
 			DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
-	
+
 			// Create selector.
 			Selector selector = new Selector();
 			selector.setFields(new String[]
@@ -1859,7 +1944,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					obj.setAdGroupId(adGroupBidLandscape.getAdGroupId());
 					obj.setEndDate(adGroupBidLandscape.getEndDate());
 					obj.setStartDate(adGroupBidLandscape.getStartDate());
-	
+
 					for (BidLandscapeLandscapePoint bidLanscapePoint : adGroupBidLandscape.getLandscapePoints())
 					{
 						obj.addBidPoint(bidLanscapePoint.getBid().getMicroAmount(), bidLanscapePoint.getClicks(), bidLanscapePoint.getCost()
@@ -1889,7 +1974,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception(e);
 		}
 	}
-	
+
 	public String getReportForAccount(String json) throws Exception
 	{
 		logger.debug("call  getReportForAccount" + json);
@@ -1907,15 +1992,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>Custom ADGROUP_PERFORMANCE_REPORT for testing</reportName>"
 			+ "<reportType>ADGROUP_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>LAST_7_DAYS</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
-	
+
 	private static final String KEYWORD_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
-			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>"
-			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>" + "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>"
-			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
-	
+			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>" + "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
+			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>"
+			+ "</reportDefinition>";
+
 	private static final String SEARCH_QUERY_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 			+ "<fields>AdGroupId</fields><fields>Query</fields><fields>MatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields>"
@@ -1923,65 +2008,75 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>SEARCH_QUERY_PERFORMANCE_REPORT</reportName>" + "<reportType>SEARCH_QUERY_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	
 	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception
 	{
 		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID.getSemplestString()));//
-		
-		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
-		
+
+		// File reportFile = report.downloadReport(new AuthToken(email,
+		// password).getAuthToken(), developerToken);
+
 		ArrayList<ReportObject> reportObj = report.getReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
-		if(reportObj.size() == 0){
+		if (reportObj.size() == 0)
+		{
 			return null;
 		}
-		else{
+		else
+		{
 			ReportObject[] ret = new ReportObject[reportObj.size()];
 			reportObj.toArray(ret);
 			return ret;
 		}
-		
+
 	}
-	
+
 	public ReportObject[] getSearchQueryReportForAccount(SemplestString accountID) throws Exception
 	{
 		GoogleReportDownloader report = new GoogleReportDownloader(SEARCH_QUERY_DEFINITION, new Long(accountID.getSemplestString()));//
-		
-		//File reportFile = report.downloadReport(new AuthToken(email, password).getAuthToken(), developerToken);		
-		
+
+		// File reportFile = report.downloadReport(new AuthToken(email,
+		// password).getAuthToken(), developerToken);
+
 		ArrayList<ReportObject> reportObj = report.getSearchQueryReportObject(new AuthToken(email, password).getAuthToken(), developerToken);
-		if(reportObj.size() == 0){
+		if (reportObj.size() == 0)
+		{
 			return null;
 		}
-		else{
+		else
+		{
 			ReportObject[] ret = new ReportObject[reportObj.size()];
 			reportObj.toArray(ret);
 			return ret;
 		}
-		
+
 	}
-	
+
 	/*
 	 * GeoTargeting
 	 */
 	public String setGeoTarget(String json) throws Exception
-	{   
-	  logger.debug("call CreateOneAccountService(String json)" + json);
-	  HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-	  Long campaignId 	= Long.parseLong( 		data.get("campaignId"));
-	  Double radius 	= Double.parseDouble( 	data.get("radius"));
-	  Boolean retval 	= setGeoTarget(			data.get("accountId"), campaignId, radius, data. get("addr"), data.get("city"), data.get("state"), data.get("zip"));
-	  return gson.toJson( retval );
-	}                               
-	@Override                         
-	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception 
 	{
-	  semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign( accountId, campaignId);
-	  long res = 0;
-	  if (radius <= 0)
-		  	res = c.setGeoLoc( state );
-	  else 	res = c.setGeoLoc( radius, addr, city, state, zip);
-	  if (res == 0) return false;
-	  return true;                                  
+		logger.debug("call CreateOneAccountService(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long campaignId = Long.parseLong(data.get("campaignId"));
+		Double radius = Double.parseDouble(data.get("radius"));
+		Boolean retval = setGeoTarget(data.get("accountId"), campaignId, radius, data.get("addr"), data.get("city"), data.get("state"),
+				data.get("zip"));
+		return gson.toJson(retval);
+	}
+
+	@Override
+	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip)
+			throws Exception
+	{
+		semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign(accountId, campaignId);
+		long res = 0;
+		if (radius <= 0)
+			res = c.setGeoLoc(state);
+		else
+			res = c.setGeoLoc(radius, addr, city, state, zip);
+		if (res == 0)
+			return false;
+		return true;
 	}
 
 	public void updateDefaultBid(String json) throws Exception
@@ -1990,29 +2085,31 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBid = Long.parseLong(data.get("microBid"));
-		updateDefaultBid(data.get("accountID"), adGroupID,microBid);
+		updateDefaultBid(data.get("accountID"), adGroupID, microBid);
 		// convert result to Json String
 	}
 
 	@Override
 	public void updateDefaultBid(String accountID, Long adGroupID, Long microBid) throws Exception
 	{
-		try{
+		try
+		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			// Get the AdGroupCriterionService.
-			AdGroupServiceInterface adGroupService =
-					user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
+			AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
 
-			//			      long adGroupId = Long.parseLong(a;
+			// long adGroupId = Long.parseLong(a;
 
 			// Create ad group with updated status.
 			AdGroup adGroup = new AdGroup();
 			adGroup.setId(adGroupID);
-			//			      adGroup.setStatus(AdGroupStatus.ENABLED);
+			// adGroup.setStatus(AdGroupStatus.ENABLED);
 
 			// Update ad group bid.
 			ManualCPCAdGroupBids adGroupBids = new ManualCPCAdGroupBids();
-			adGroupBids.setKeywordMaxCpc(new Bid(new Money(microBid).toGoogleMoney()));
+			Money money = new Money();
+			money.setMicroAmount(microBid);
+			adGroupBids.setKeywordMaxCpc(new Bid(money));
 			adGroup.setBids(adGroupBids);
 
 			// Create operations.
@@ -2020,7 +2117,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.SET);
 
-			AdGroupOperation[] operations = new AdGroupOperation[]{operation};
+			AdGroupOperation[] operations = new AdGroupOperation[]
+			{ operation };
 			AdGroupReturnValue result = adGroupService.mutate(operations);
 
 		}
@@ -2029,14 +2127,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			e.printStackTrace();
 			throw new Exception(e);
 		}
-		
+
 	}
 
 	@Override
 	public void initializeService(String input) throws Exception
 	{
 		/*
-		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 * Read in the Config Data from DB into HashMap<key, Object>
+		 * SemplestConfiguation.configData
 		 */
 		SemplestConfiguration configDB = new SemplestConfiguration();
 		Thread configThread = new Thread(configDB);
