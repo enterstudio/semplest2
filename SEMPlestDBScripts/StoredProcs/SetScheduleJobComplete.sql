@@ -41,7 +41,6 @@ BEGIN TRY
 	INNER JOIN dbo.Frequency f on f.FrequencyPK = s.FrequencyFK
 	WHERE sj.ScheduleJobPK = @ScheduleJobID;
 	
-	print @Frequency
 	--Check to see if we need to add a new Job
 	IF @Frequency IS NOT NULL
 	BEGIN
