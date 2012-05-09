@@ -15,10 +15,10 @@ public class BidSplitter {
 		// Right now always split 70-30 or 100 -- to be changed later
 		HashSet<String> setSE = new HashSet<String>(); 
 		for (String s : searchEngine){
-			if(setSE.contains(s)){
+			if(setSE.contains(s.toLowerCase())){
 				throw new Exception("Ad engine "+s+" appears twice!!");
 			} else {
-				setSE.add(s);
+				setSE.add(s.toLowerCase());
 			}
 			if (!AdEngine.existsAdEngine(s)){
 				throw new Exception("Ad engine "+ s + " Not Found");
