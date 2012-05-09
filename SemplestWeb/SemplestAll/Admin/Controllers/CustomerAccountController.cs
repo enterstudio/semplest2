@@ -30,7 +30,7 @@ namespace Semplest.Admin.Controllers
             var viewModel =
                 from u in dbcontext.Users
                 join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-                //where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)))
+                where ((c.Name.Contains(usersearch) || u.FirstName.Contains(usersearch) || u.LastName.Contains(usersearch)))
                 select new HomeModel
                 {
                     Customer = c.Name,
