@@ -43,7 +43,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 {
 	private static final Logger logger = Logger.getLogger(SemplestAdengineServiceImpl.class);
 	private static Gson gson = new Gson();
-	private String esbURL = "http://VMJAVA1:9898/semplest";
+	private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 	
 
 	//CustomerID = 2	State Farm	coffee machine	promotionID = 4	ProductGroupID=37	coffee machine
@@ -52,16 +52,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		try
 		{
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			/*
 			GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 			String advertisingEngine = "Google";
 			List<KeywordProbabilityObject> keywordList = getKeywords.execute(4, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false , (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
 			keywordList.size();
-			/*
+			*/
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
-			adEng.AddPromotionToAdEngine(2, 37, 4, adEngList);
-			*/
+			//Tovah Photography 2	47	Photography	58	38	Event and portrait photos
+			adEng.AddPromotionToAdEngine(47, 58, 38, adEngList);
+			
 		}
 		catch (Exception e)
 		{
@@ -369,14 +371,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
 	@Override
-	public Boolean ExecuteBidProcess(Integer customerID,
-			Integer productGroupID, Integer PromotionID,
-			ArrayList<String> adEngineList) throws Exception {
+	public Boolean ExecuteBidProcess(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
+			throws Exception
+	{
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
 	
 	
 
