@@ -26,6 +26,22 @@ public class CreateSchedulerAndTask
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	
+	public static SemplestSchedulerTaskObject getTestTask(String uniqueID)
+	{
+		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
+		//Client service name to call from scheduler
+		taskObj.setClientServiceName("semplest.services.client.test.TestService2Client");
+		//method
+		taskObj.setMethodName("TestMethod");		
+		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("uniqueID", uniqueID);		
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		taskObj.setParameters(json);
+		//
+		return taskObj;
+	}
+	
 	public static SemplestSchedulerTaskObject getSendMailTask(String subject, String from, String recipient, String msgTxt)
 	{
 		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
@@ -43,7 +59,7 @@ public class CreateSchedulerAndTask
 		taskObj.setParameters(json);
 		//
 		return taskObj;
-	}
+	}	
 	
 	public static SemplestSchedulerTaskObject getGoogleReportTask(SemplestString accountID)
 	{
