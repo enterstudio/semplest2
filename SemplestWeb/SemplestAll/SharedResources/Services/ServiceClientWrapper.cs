@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
+using SemplestModel;
 
 namespace Semplest.SharedResources.Services
 {
@@ -11,8 +12,14 @@ namespace Semplest.SharedResources.Services
     {
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
         private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
-        private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+        private static String _baseURLTest = "http://VMJAVA1:9898/semplest";
         private static String timeoutMS = "40000";
+
+        public ServiceClientWrapper()
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            _baseURLTest = dbContext.Configurations.First().ESBWebServerURL;
+        }
 
         public List<string> GetCategories(string companyName, string searchTerm, string description, string[] adds,
                                           string url)
@@ -29,7 +36,7 @@ namespace Semplest.SharedResources.Services
             string returnData = string.Empty;
             try
             {
-                returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
             }
             catch (Exception ex)
             {
@@ -74,7 +81,7 @@ namespace Semplest.SharedResources.Services
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
             //string returnData = string.Empty;
-            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+            string returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
@@ -115,7 +122,7 @@ namespace Semplest.SharedResources.Services
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
             //string returnData = string.Empty;
-            string returnData = runMethod(BASEURLTEST, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+            string returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
@@ -139,7 +146,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("recipient", recipient);
             jsonHash.Add("msgTxt", msgTxt);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
-            string returnData = runMethod(BASEURLTEST, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+            string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             string boolResult = dict.Values.First();
             return Convert.ToBoolean(boolResult);
