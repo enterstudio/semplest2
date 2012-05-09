@@ -49,6 +49,7 @@ namespace Semplest.Admin.Controllers
             c.SemplestDefaultBudgetMarkUpOrDown = c2.SemplestDefaultBudgetMarkUpOrDown;
             c.BillingDaysOffset = c2.BillingDaysOffset;
             c.OnErrorEmail = c2.OnErrorEmail;
+            c.ESBWebServerURL = c2.ESBWebServerURL;
             _dbContext.SaveChanges();
             return View(c);
         }
