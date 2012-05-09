@@ -1275,7 +1275,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		try{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_TARGET_SERVICE);
+			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
 			CampaignReturnValue ret = campaignService.mutate(operations);
 			if (ret != null && ret.getValue() != null)
@@ -1316,7 +1316,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		try{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_TARGET_SERVICE);
+			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
 			budget.setAmount(new Money(microBudgetAmount).toGoogleMoney());
