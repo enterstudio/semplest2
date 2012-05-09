@@ -4,8 +4,144 @@
 <link href="@Url.Content("~/Content/MyStylesProfile.css")" rel="Stylesheet" />
 <h2>MyProfile(Parent Customer Page)</h2>
 
-<div id="table">
-<ul>
+<style>
+    .table ul
+    {
+        list-style:none;
+        }
+        .k-input#txtAccntNum
+        {
+           margin-left:50px;
+            }
+            .k-input#txtParentName
+        {
+           margin-left:30px;
+           margin-top:10px;margin-bottom:10px;
+            }
+             .k-input#txtSuperParentName
+        {
+           margin-left:30px;
+           margin-top:10px;margin-bottom:10px;
+            }
+            
+            .k-label#lblSuperParent
+        {
+           margin-left:30px;
+           margin-top:10px;
+            }
+            .k-label#lblFitstName
+        {
+           margin-left:170px;
+           margin-top:20px;
+            }
+            .k-label#lblMiddleName
+        {
+           margin-left:70px;
+           margin-top:20px;
+            }
+            .k-label#lblLastName
+        {
+           margin-left:80px;
+           margin-top:20px;
+            }
+             .k-input#txtFirstName
+        {
+           margin-left:60px;
+           margin-top:10px;margin-bottom:10px;
+            }
+             .k-input#txtMiddleName
+        {
+           margin-left:10px;width:30px;
+           margin-top:10px;margin-bottom:10px;
+            }
+             .k-input#txtLastName
+        {
+           margin-left:10px;
+           margin-top:10px;margin-bottom:10px;
+            }
+            .k-input#txtPhone
+        {
+           margin-left:70px;
+           margin-bottom:10px;
+            }
+            .k-input#txtEmail
+        {
+           margin-left:75px;
+           margin-bottom:10px;
+            }
+            .k-input#txtBillngAddress1
+        {
+           margin-left:20px;
+           margin-bottom:10px;
+            }
+             .k-input#txtBillngAddress2
+        {
+           margin-left:117px;
+           margin-bottom:10px;
+            } 
+              .k-input#txtCity
+        {
+           margin-left:20px;
+           margin-bottom:10px;
+            } 
+             .k-input#txtState
+        {
+           margin-left:10px;width:30px;
+           margin-bottom:10px;
+            } 
+             .k-input#txtZip
+        {
+           margin-left:10px;width:50px;
+           margin-bottom:10px;
+            } 
+             .k-input#txtZip1
+        {
+           margin-left:10px;width:30px;
+           margin-bottom:10px;
+            } 
+            .k-input#txtUserid
+        {
+           margin-left:70px;width:200px;
+           margin-bottom:10px;
+            } 
+            .k-input#txtPassword
+        {
+           margin-left:55px;width:150px;
+           margin-bottom:10px;
+            } 
+            .k-input#txtConfrmPassword
+        {
+           margin-left:10px;width:150px;
+           margin-bottom:10px;
+            } 
+            .k-label#lblConfrmPassword
+        {
+           margin-left:20px;
+           margin-top:20px;
+            }
+            .k-input#txtSecurQues
+        {
+           margin-left:5px;width:400px;
+           margin-bottom:10px;
+            } 
+            .k-input#txtSecurAnswer
+        {
+           margin-left:15px;width:400px;
+           margin-bottom:10px;
+            } 
+            .k-button#btnParentSave
+            {
+                width:100px;
+                margin-left:200px;
+                }
+                .k-button#btnParentCancel
+            {
+                width:100px;
+                margin-left:20px;
+                }
+</style>
+<div class="table">
+<ul class="accept">
 <li>
 <label id="lblAccunt" class="k-label">Account#:</label>
     <input type="text" id="txtAccntNum" class="k-input" />
@@ -17,7 +153,6 @@
     <label id="lblSuperParent" class="k-label">Super Parent:</label>
     <input type="text" id="txtSuperParentName" class="k-input" />
     </li>
-    
     <li>
     <label id="lblFitstName" class="k-label">First</label>
     <label id="lblMiddleName" class="k-label">M</label>
@@ -35,7 +170,6 @@
     <li>
     <label id="lblPhone" class="k-label">Phone:</label>
     <input id="txtPhone" type="text" class="k-input"/>
-    <input id="txtPhone2" type="text" class="k-input"/>
     </li>
     <li>
     <label id="lblEmail" class="k-label">Email:</label>
@@ -76,8 +210,8 @@
     <input id="txtSecurAnswer" class="k-input" type="text"/>
     </li>
     <li>
-    <button id="btnSave" type="submit" class="k-button">Save</button>
-    <button id="btnCancel" type="submit" class="k-button">Cancel</button>
+    <button id="btnParentSave" type="submit" class="k-button">Save</button>
+    <button id="btnParentCancel" type="submit" class="k-button">Cancel</button>
     </li>
     </ul>
     </div>
