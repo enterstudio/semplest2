@@ -664,6 +664,14 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		runMethod(baseurl,SERVICEOFFERED, "getAllBiddableAdGroupCriteria", json,timeoutMS);
 	}
 
+	@Override
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 }
 

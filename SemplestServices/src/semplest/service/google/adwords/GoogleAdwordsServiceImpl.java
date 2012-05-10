@@ -56,6 +56,10 @@ import com.google.api.adwords.v201109.cm.Budget;
 import com.google.api.adwords.v201109.cm.BudgetBudgetDeliveryMethod;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
+import com.google.api.adwords.v201109.cm.CampaignCriterion;
+import com.google.api.adwords.v201109.cm.CampaignCriterionOperation;
+import com.google.api.adwords.v201109.cm.CampaignCriterionReturnValue;
+import com.google.api.adwords.v201109.cm.CampaignCriterionServiceInterface;
 import com.google.api.adwords.v201109.cm.CampaignOperation;
 import com.google.api.adwords.v201109.cm.CampaignPage;
 import com.google.api.adwords.v201109.cm.CampaignReturnValue;
@@ -73,6 +77,7 @@ import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupBids;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
 import com.google.api.adwords.v201109.cm.Money;
+import com.google.api.adwords.v201109.cm.NegativeCampaignCriterion;
 import com.google.api.adwords.v201109.cm.NetworkSetting;
 import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
@@ -82,8 +87,6 @@ import com.google.api.adwords.v201109.cm.PredicateOperator;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
-import com.google.api.adwords.v201109.cm.UserListReturnValue;
-import com.google.api.adwords.v201109.cm.UserListServiceInterface;
 import com.google.api.adwords.v201109.info.ApiUsageInfo;
 import com.google.api.adwords.v201109.info.ApiUsageRecord;
 import com.google.api.adwords.v201109.info.ApiUsageType;
@@ -92,9 +95,6 @@ import com.google.api.adwords.v201109.info.InfoServiceInterface;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
 import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
-import com.google.api.adwords.v201109.mcm.ServicedAccountGraph;
-import com.google.api.adwords.v201109.mcm.ServicedAccountSelector;
-import com.google.api.adwords.v201109.mcm.ServicedAccountServiceInterface;
 import com.google.api.adwords.v201109.o.AdGroupEstimateRequest;
 import com.google.api.adwords.v201109.o.Attribute;
 import com.google.api.adwords.v201109.o.AttributeType;
@@ -1106,6 +1106,72 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
 				bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());
 				bidRes.setKeyword(keyword.getText());
+				bidRes.setMatchType(keyword.getMatchType().getValue());
+				bidRes.setNegative(false);
+				return bidRes;
+			}
+			else
+			{
+				return new KeywordDataObject();
+			}
+		}
+		catch (ServiceException e)
+		{
+			throw new Exception(e);
+		}
+		catch (ApiException e)
+		{
+			throw new Exception(e.dumpToString());
+		}
+		catch (RemoteException e)
+		{
+			throw new Exception(e);
+		}
+	}
+	
+	public String addNegativeKeyWordToAdGroup(String json) throws Exception
+	{
+		logger.debug("call addKeyWordToAdGroup" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		KeywordDataObject res = addNegativeKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),KeywordMatchType.fromString(data.get("matchType")));
+
+		// convert result to Json String
+		return gson.toJson(res);
+	}
+	@Override
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception
+	{
+		try
+		{
+			// Log SOAP XML request and response. AdWordsServiceLogger.log();          
+			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);        
+			// Get the CampaignCriterionService.        
+			CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);         
+			long campaignId = Long.parseLong("INSERT_CAMPAIGN_ID_HERE");          
+			// Create keyword.        
+			Keyword keywrd = new Keyword();        
+			keywrd.setText(keyword);        
+			keywrd.setMatchType(matchType);          
+			// Create negative campaign criterion.        
+			NegativeCampaignCriterion negativeCampaignCriterion = new NegativeCampaignCriterion();        
+			negativeCampaignCriterion.setCampaignId(campaignId);        
+			negativeCampaignCriterion.setCriterion(keywrd);          
+			// Create operations.        
+			CampaignCriterionOperation operation = new CampaignCriterionOperation();        
+			operation.setOperand(negativeCampaignCriterion);        
+			operation.setOperator(Operator.ADD);          
+			// Add campaign criteria.        
+			CampaignCriterionReturnValue result = campaignCriterionService.mutate(new CampaignCriterionOperation[] {operation});  
+			if (result != null && result.getValue() != null && (result.getValue(0) instanceof CampaignCriterion))
+			{
+				CampaignCriterion res = (CampaignCriterion ) result.getValue(0);
+				Keyword akeyword = ((Keyword) res.getCriterion());
+				KeywordDataObject bidRes = new KeywordDataObject();
+				bidRes.setBidID(res.getCriterion().getId());
+				bidRes.setMatchType(akeyword.getMatchType().getValue());
+				bidRes.setKeyword(akeyword.getText());
+				bidRes.setNegative(true);
 				return bidRes;
 			}
 			else
@@ -2182,5 +2248,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		configThread.start();
 
 	}
+
+	
 
 }

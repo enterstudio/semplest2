@@ -16,20 +16,13 @@ public class AddBidSP extends StoredProcedure
 	public AddBidSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("ProductGroupPK", Types.INTEGER));
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
 		declareParameter(new SqlParameter("KeywordAdEngineID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
 		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
-		//declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
 		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
-		//declareParameter(new SqlParameter("FirstPageMicroCpc", Types.INTEGER));
-		//declareParameter(new SqlParameter("QualityScore", Types.INTEGER));
-		//declareParameter(new SqlParameter("IsEligibleForShowing", Types.BIT));
-		//declareParameter(new SqlParameter("IsBidActive", Types.BIT));
-		//declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
-		//declareParameter(new SqlParameter("SemplestProbability", Types.FLOAT));
+		declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		compile();
@@ -38,9 +31,9 @@ public class AddBidSP extends StoredProcedure
 	/*
 	 * returns KeywordBidPK
 	 */
-	public Integer execute(int PromotionPK, Integer KeywordAdEngineID, String Keyword, Long MicroBidAmount, String BidType, String AdvertisingEngine) throws Exception
+	public Integer execute(int PromotionPK, Integer KeywordAdEngineID, String Keyword, Long MicroBidAmount, String BidType, String AdvertisingEngine, Boolean IsNegative) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, AdvertisingEngine);
+		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, AdvertisingEngine, IsNegative);
 		if (results.get("ID") == null)
 		{
 			return null;

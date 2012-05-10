@@ -371,6 +371,7 @@ public class BidGeneratorObj {
 		String competitiveType="";
 		String matchType = "EXACT";  // TODO
 		Boolean isActive = true;
+		Boolean isNegative = false;
 		
 		Iterator<String> keyIT = wordBidMap.keySet().iterator();
 		while(keyIT.hasNext())
@@ -389,7 +390,7 @@ public class BidGeneratorObj {
 			}
 			bidsMatchType.add(new BidElement(word, wordIDMap.get(word), 
 					(wordBidMap.get(word)==null) ? defaultMicroBid : wordBidMap.get(word), 
-					matchType, competitiveType, wordBidMap.get(word)==null, isActive)); 
+					matchType, competitiveType, wordBidMap.get(word)==null, isActive, isNegative)); 
 		}
 		
 		SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);

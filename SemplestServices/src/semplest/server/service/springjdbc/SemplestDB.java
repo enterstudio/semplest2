@@ -284,7 +284,7 @@ public class SemplestDB extends BaseDB
 			{
 				KeywordDataObject kdObj = keywordDataObjectList.get(i);
 				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
-						kdObj.getApprovalStatus(), kdObj.getFirstPageCpc(), kdObj.isIsEligibleForShowing());
+						kdObj.getApprovalStatus(), kdObj.getFirstPageCpc().intValue(), kdObj.isIsEligibleForShowing());
 			}
 		}
 	}
@@ -548,7 +548,7 @@ public class SemplestDB extends BaseDB
 				try
 				{
 					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(),
-							advertisingEngine);
+							advertisingEngine, bid.getIsNegative());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -786,7 +786,7 @@ public class SemplestDB extends BaseDB
 		String strSQL = "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
 				+ "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK "
 				+ "left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK "
-				+ "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
+				+ "where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
 
 		try
 		{

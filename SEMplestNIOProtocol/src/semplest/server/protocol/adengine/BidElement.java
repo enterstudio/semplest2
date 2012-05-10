@@ -13,7 +13,7 @@ public class BidElement
 	private Date endDate;
 	private Boolean isDefaultValue;
 	private Boolean isActive;
-	
+	private Boolean isNegative;
 	
 	public BidElement() {
 		// do nothing!!
@@ -21,13 +21,14 @@ public class BidElement
 	
 	public BidElement(String keyword, Long keywordAdEngineID, Long microBidAmount, 
 			String matchType, String competitiveType, Boolean isDefaultValue, 
-			Boolean isActive){ // leaving the Date fields out of the constructor
+			Boolean isActive, Boolean isNegative){ // leaving the Date fields out of the constructor
 		this.keyword = keyword;
 		this.keywordAdEngineID = keywordAdEngineID;
 		this.microBidAmount = microBidAmount;
 		this.matchType = matchType;
 		this.competitiveType = competitiveType;
 		this.isDefaultValue = isDefaultValue;
+		this.isNegative = isNegative;
 	}
 	
 	public String getKeyword()
@@ -102,6 +103,16 @@ public class BidElement
 	public void setEndDate(Date endDate)
 	{
 		this.endDate = endDate;
+	}
+
+	public Boolean getIsNegative()
+	{
+		return isNegative;
+	}
+
+	public void setIsNegative(Boolean isNegative)
+	{
+		this.isNegative = isNegative;
 	}
 
 }

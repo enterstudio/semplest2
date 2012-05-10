@@ -17,19 +17,23 @@ public class AddKeywordBidDataSP extends StoredProcedure
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
-		declareParameter(new SqlParameter("KeywordAdEngineID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
-		declareParameter(new SqlParameter("MicroBidAmount", Types.INTEGER));
-		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
+		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
+		
+		declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
+		declareParameter(new SqlParameter("FirstPageMicroCpc", Types.INTEGER));
+		declareParameter(new SqlParameter("IsEligibleForShowing", Types.BIT));
+		
+		
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 
 		compile();
 	}
 
-	public void execute(int PromotionID, Long KeywordAdEngineID, String Keyword, Long MicroBidAmount, String BidType, String AdvertisingEngine) throws Exception
+	public void execute(int PromotionID, String Keyword, String AdvertisingEngine, String BidType, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionID, KeywordAdEngineID, Keyword, MicroBidAmount.intValue(), BidType, AdvertisingEngine);
+		Map<String, Object> results = super.execute(PromotionID, Keyword, AdvertisingEngine, BidType, ApprovalStatus, FirstPageMicroCpc, IsEligibleForShowing);
 	}
 
 }
