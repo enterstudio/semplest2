@@ -24,6 +24,8 @@ namespace SemplestModel
         public int PromotionFK { get; set; }
         public string AdTitle { get; set; }
         public string AdText { get; set; }
+        public string AdTextLine1 { get; set; }
+        public string AdTextLine2 { get; set; }
     
         public virtual Promotion Promotion { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }

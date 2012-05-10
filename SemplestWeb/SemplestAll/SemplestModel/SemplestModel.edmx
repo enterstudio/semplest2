@@ -794,8 +794,9 @@
           </Key>
           <Property Name="PromotionAdsPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="PromotionFK" Type="int" Nullable="false" />
-          <Property Name="AdTitle" Type="nvarchar" Nullable="false" MaxLength="100" />
-          <Property Name="AdText" Type="nvarchar" Nullable="false" />
+          <Property Name="AdTitle" Type="nvarchar" Nullable="false" MaxLength="25" />
+          <Property Name="AdTextLine1" Type="nvarchar" Nullable="false" MaxLength="35" />
+          <Property Name="AdTextLine2" Type="nvarchar" MaxLength="35" />
         </EntityType>
         <EntityType Name="PromotionKeywordAssociation">
           <Key>
@@ -1838,6 +1839,7 @@
           <Parameter Name="MicroBidAmount" Type="int" Mode="In" />
           <Parameter Name="BidType" Type="varchar" Mode="In" />
           <Parameter Name="AdvertisingEngine" Type="varchar" Mode="In" />
+          <Parameter Name="IsNegative" Type="bit" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
         <Function Name="SetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
@@ -2750,10 +2752,11 @@
           <Property Type="Int32" Name="PromotionAdsPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="Int32" Name="PromotionFK" Nullable="false" />
           <Property Type="String" Name="AdTitle" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="AdText" Nullable="false" MaxLength="4000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Promotion" Relationship="SemplestModel.REL_Promotion_PromotionAds_1" FromRole="PromotionAd" ToRole="Promotion" />
           <NavigationProperty Name="SiteLinks" Relationship="SemplestModel.REL_PromotionAds_SiteLinks_1" FromRole="PromotionAd" ToRole="SiteLink" />
           <NavigationProperty Name="AdvertisingEngineAds" Relationship="SemplestModel.REL_PromotionAds_AdvertisingEngineAds_1" FromRole="PromotionAd" ToRole="AdvertisingEngineAd" />
+          <Property Type="String" Name="AdTextLine1" Nullable="false" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="AdTextLine2" MaxLength="35" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="PromotionKeywordAssociation">
           <Key>
@@ -4251,7 +4254,8 @@
           <EntitySetMapping Name="PromotionAds">
             <EntityTypeMapping TypeName="SemplestModel.PromotionAd">
               <MappingFragment StoreEntitySet="PromotionAds">
-                <ScalarProperty Name="AdText" ColumnName="AdText" />
+                <ScalarProperty Name="AdTextLine2" ColumnName="AdTextLine2" />
+                <ScalarProperty Name="AdTextLine1" ColumnName="AdTextLine1" />
                 <ScalarProperty Name="AdTitle" ColumnName="AdTitle" />
                 <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
                 <ScalarProperty Name="PromotionAdsPK" ColumnName="PromotionAdsPK" />
@@ -4516,7 +4520,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="84">
+      <Diagram Name="SemplestModel" ZoomLevel="36">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
