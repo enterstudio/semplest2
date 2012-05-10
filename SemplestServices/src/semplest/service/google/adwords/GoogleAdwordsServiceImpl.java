@@ -2083,10 +2083,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getReportForAccount(String json) throws Exception
 	{
 		logger.debug("call  getReportForAccount" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		SemplestString accountId = new SemplestString();
-		accountId.setSemplestString(data.get("accountID"));
-		ReportObject[] res = getReportForAccount(accountId);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);		
+		ReportObject[] res = getReportForAccount(data.get("accountID"), data.get("startDate"), data.get("endDate"));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
@@ -2102,8 +2100,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 			+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
-			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>" + "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
-			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>"
+			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>" 
+			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
+			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>CUSTOM_DATE</dateRangeType><downloadFormat>CSV</downloadFormat>"
 			+ "</reportDefinition>";
 
 	private static final String SEARCH_QUERY_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
@@ -2113,9 +2112,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "</selector><reportName>SEARCH_QUERY_PERFORMANCE_REPORT</reportName>" + "<reportType>SEARCH_QUERY_PERFORMANCE_REPORT</reportType>"
 			+ "<dateRangeType>ALL_TIME</dateRangeType><downloadFormat>CSV</downloadFormat>" + "</reportDefinition>";
 
-	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception
+	public ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception
 	{
-		GoogleReportDownloader report = new GoogleReportDownloader(KEYWORD_DEFINITION, new Long(accountID.getSemplestString()));//
+		String REPORT_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
+				+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
+				+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
+				+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
+				+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>" 
+				+ "<dateRange> <min>" + startDate + "</min> <max>" + endDate + "</max> </dateRange>"
+				+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
+				+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>CUSTOM_DATE</dateRangeType><downloadFormat>CSV</downloadFormat>"
+				+ "</reportDefinition>";
+		
+		GoogleReportDownloader report = new GoogleReportDownloader(REPORT_DEFINITION, new Long(accountID));//
 
 		// File reportFile = report.downloadReport(new AuthToken(email,
 		// password).getAuthToken(), developerToken);

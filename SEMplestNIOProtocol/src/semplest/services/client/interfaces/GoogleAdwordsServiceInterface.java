@@ -81,7 +81,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//Utility
 	
 	//Report
-	public abstract ReportObject[] getReportForAccount(SemplestString accountID) throws Exception;
+	public abstract ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
 
 	// GeoTargeting
 	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception;

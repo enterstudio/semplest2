@@ -615,9 +615,11 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	
 	@Override
-	public ReportObject[] getReportForAccount(SemplestString accountID) throws Exception {
+	public ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID.toString());
+		jsonHash.put("accountID", accountID);
+		jsonHash.put("startDate", startDate);
+		jsonHash.put("endDate", endDate);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getReportForAccount", json,timeoutMS);
