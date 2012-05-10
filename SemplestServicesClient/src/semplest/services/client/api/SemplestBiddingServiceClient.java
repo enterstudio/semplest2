@@ -1,7 +1,10 @@
 package semplest.services.client.api;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -12,6 +15,7 @@ import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
@@ -73,7 +77,10 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "getInitialValues", json, timeoutMS);
-		return gson.fromJson(returnData, HashMap.class);
+		//Define the type for conversion
+		Type type = new TypeToken<Map<String,AdEngineInitialData>>(){}.getType();
+		return gson.fromJson(returnData, type);
+		
 		
 	}
 	@Override
