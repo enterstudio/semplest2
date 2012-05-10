@@ -129,7 +129,7 @@ public class BidGeneratorObj {
 			}
 			// Long defaultMicroBid = 1000000L; // $1.00
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
-			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact);
+			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact.name());
 			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
 			adEngineInitialDataObject.setNetworkSetting("SEARCH_ONLY");
 //			adEngineInitialDataObject.setBiddingMethod(biddingMethod)
