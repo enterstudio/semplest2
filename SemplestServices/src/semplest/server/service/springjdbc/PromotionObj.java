@@ -29,6 +29,9 @@ public class PromotionObj
 	private Boolean isCompleted;
 	private Boolean isPaused;
 	private Date CreatedDate;
+	private Long AdvertisingEngineCampaignPK;
+	private Long AdvertisingEngineAdGroupID;
+	private Long AdvertisingEngineAccountPK; 
 	public Integer getPromotionPK()
 	{
 		return PromotionPK;
@@ -172,6 +175,30 @@ public class PromotionObj
 	public void setLandingPageURL(String landingPageURL)
 	{
 		LandingPageURL = landingPageURL;
+	}
+	public Long getAdvertisingEngineCampaignPK()
+	{
+		return AdvertisingEngineCampaignPK;
+	}
+	public void setAdvertisingEngineCampaignPK(Long advertisingEngineCampaignPK)
+	{
+		AdvertisingEngineCampaignPK = advertisingEngineCampaignPK;
+	}
+	public Long getAdvertisingEngineAdGroupID()
+	{
+		return AdvertisingEngineAdGroupID;
+	}
+	public void setAdvertisingEngineAdGroupID(Long advertisingEngineAdGroupID)
+	{
+		AdvertisingEngineAdGroupID = advertisingEngineAdGroupID;
+	}
+	public Long getAdvertisingEngineAccountPK()
+	{
+		return AdvertisingEngineAccountPK;
+	}
+	public void setAdvertisingEngineAccountPK(Long advertisingEngineAccountPK)
+	{
+		AdvertisingEngineAccountPK = advertisingEngineAccountPK;
 	}
 	
 }

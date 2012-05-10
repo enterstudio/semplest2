@@ -31,9 +31,9 @@ public class AddBidSP extends StoredProcedure
 	/*
 	 * returns KeywordBidPK
 	 */
-	public Integer execute(int PromotionPK, Integer KeywordAdEngineID, String Keyword, Long MicroBidAmount, String BidType, String AdvertisingEngine, Boolean IsNegative) throws Exception
+	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, String AdvertisingEngine, Boolean IsNegative) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,MicroBidAmount, AdvertisingEngine, IsNegative);
+		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword, MicroBidAmount, BidType, AdvertisingEngine, IsNegative);
 		if (results.get("ID") == null)
 		{
 			return null;
