@@ -287,13 +287,14 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	 * AdGroup and Ads
 	 */
 	@Override
-	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception
+	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("AdGroupName", AdGroupName);
 		jsonHash.put("status", status.getValue());
+		jsonHash.put("defaultMicroBid", String.valueOf(defaultMicroBid));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "AddAdGroup", json,timeoutMS);
@@ -667,7 +668,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType)
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
