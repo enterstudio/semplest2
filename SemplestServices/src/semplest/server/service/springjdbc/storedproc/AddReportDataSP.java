@@ -17,7 +17,8 @@ public class AddReportDataSP extends StoredProcedure
 	public AddReportDataSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
+		declareParameter(new SqlParameter("AccountID", Types.BIGINT));
+		declareParameter(new SqlParameter("CampaignID", Types.BIGINT));
 		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("TransactionDate", Types.TIMESTAMP));
@@ -26,7 +27,7 @@ public class AddReportDataSP extends StoredProcedure
 		declareParameter(new SqlParameter("NumberImpressions", Types.INTEGER));
 		declareParameter(new SqlParameter("NumberClick", Types.INTEGER));
 		declareParameter(new SqlParameter("AveragePosition", Types.FLOAT));
-		declareParameter(new SqlParameter("AverageCPC", Types.FLOAT));
+		declareParameter(new SqlParameter("AverageCPC", Types.BIGINT));
 		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
 		declareParameter(new SqlParameter("QualityScore", Types.INTEGER));
 		declareParameter(new SqlParameter("ApprovalStatus", Types.VARCHAR));
@@ -37,8 +38,8 @@ public class AddReportDataSP extends StoredProcedure
 		compile();
 	}
 	
-	public Integer execute(int PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
-			Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Float AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
+	public Integer execute(Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
+			Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
 			Integer FirstPageMicroCpc, Integer MicroCost) throws Exception
 	{
 		Map<String, Object> results = super.execute(PromotionID, Keyword,AdvertisingEngine,  TransactionDate,  MicroBidAmount, 

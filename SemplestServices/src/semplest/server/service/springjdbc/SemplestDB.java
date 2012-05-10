@@ -565,16 +565,27 @@ public class SemplestDB extends BaseDB
 	 * Report calls
 	 */
 
-	public static void storeAdvertisingEngineReportData(String adEngine, List<ReportObject> reportObjList) throws Exception
+	public static void storeAdvertisingEngineReportData(Integer promotionID, String adEngine, ReportObject[] reportObjList) throws Exception
 	{
 		AddReportDataSP setReportSP = new AddReportDataSP();
-		for (ReportObject rptObj : reportObjList)
+		for (int i=0; i < reportObjList.length; i++)
 		{
-			setReportSP.execute(rptObj.getAccountID(), rptObj.getCampaignID(), rptObj.getKeyword(), new java.sql.Date(rptObj.getTransactionDate()
-					.getTime()), rptObj.getMicroBidAmount(), rptObj.getBidMatchType(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj
-					.getAveragePosition(), rptObj.getAverageCPC(), rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC(),
-					rptObj.getMicroCost());
-			logger.info(rptObj.getKeyword());
+			ReportObject rptObj = reportObjList[i];
+			//Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
+			//Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
+			//Integer FirstPageMicroCpc, Integer MicroCost
+			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine, rptObj.getTransactionDate(), 
+					rptObj.getMicroBidAmount().intValue(),  rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getBidMatchType(), 
+					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC(),
+					rptObj.getMicroCost().intValue());
+			if (id == 0)
+			{
+				logger.info(rptObj.getKeyword() + " already inserted");
+			}
+			else
+			{
+				logger.info(rptObj.getKeyword() + " inserted ID = " + id);
+			}
 		}
 	}
 

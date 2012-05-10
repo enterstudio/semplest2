@@ -108,8 +108,8 @@ public class GoogleReportDownloader
 					rdata.setBidMatchType(data[3]);
 					rdata.setNumberImpressions(Integer.valueOf(data[4]));
 					rdata.setNumberClick(Integer.valueOf(data[5]));
-					rdata.setAveragePosition(Double.valueOf(data[8]));
-					rdata.setAverageCPC(Integer.valueOf(data[7]));
+					rdata.setAveragePosition(Float.valueOf(data[8]));
+					rdata.setAverageCPC(Long.valueOf(data[7]));
 					// rdata.setQualityScore(Integer.valueOf(data[8]));
 					// rdata.setApprovalStatus(data[15]);
 					// rdata.setFirstPageCPC(Integer.valueOf(data[13]));
@@ -195,8 +195,8 @@ public class GoogleReportDownloader
 					rdata.setBidMatchType(data[4]);
 					rdata.setNumberImpressions(Integer.valueOf(data[5]));
 					rdata.setNumberClick(Integer.valueOf(data[6]));
-					rdata.setAveragePosition(Double.valueOf(data[10]));
-					rdata.setAverageCPC(Integer.valueOf(data[9]));
+					rdata.setAveragePosition(Float.valueOf(data[10]));
+					rdata.setAverageCPC(Long.valueOf(data[9]));
 					rdata.setQualityScore(Integer.valueOf(data[8]));
 					rdata.setApprovalStatus(data[15]);
 					rdata.setFirstPageCPC(Integer.valueOf(data[13]));

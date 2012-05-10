@@ -2616,8 +2616,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
 				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
-				data.setAveragePosition(Double.valueOf(ret2.get("averageposition")[i]));
-				data.setAverageCPC((int)(Double.valueOf(ret2.get("averagecpc")[i])*1000000));
+				data.setAveragePosition(Float.valueOf(ret2.get("averageposition")[i]));
+				data.setAverageCPC((long)(Double.valueOf(ret2.get("averagecpc")[i])*1000000));
 				data.setQualityScore((ret2.get("qualityscore")[i].equals(""))? -1 : (Integer.valueOf(ret2.get("qualityscore")[i])));
 				data.setApprovalStatus(null);
 				data.setMicroCost(microCost.longValue());
