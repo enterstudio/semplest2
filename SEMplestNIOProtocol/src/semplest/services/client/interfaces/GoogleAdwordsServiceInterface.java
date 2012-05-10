@@ -40,7 +40,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
 	public abstract  Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
 	
-	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception;
+	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
 	public abstract Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
@@ -52,7 +52,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 	public abstract KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 	public abstract KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
-	public abstract KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception;
+	public abstract KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception;
 	public abstract KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
 	public abstract TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID,Long campaignID, KeywordMatchType matchType, HashMap<String, Long> KeywordWithBid) throws Exception;
 	public abstract BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception;
