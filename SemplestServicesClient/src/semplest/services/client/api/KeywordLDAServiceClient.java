@@ -29,29 +29,64 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://VMDEVJAVA1:9898/semplest");
-			long start = System.currentTimeMillis();
-			ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
-			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
-			System.out.println("categories took " + sec + " seconds");
-			for (int i = 0; i < res.size(); i++)
-			{
-				System.out.println(res.get(i));
+			boolean flag = true;
+			while(flag){
+				System.out.println("**************DEV MACHINE 1*****************");
+				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
+				long start = System.currentTimeMillis();
+				ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
+				double sec = (double) (System.currentTimeMillis() - start)/1000.0;
+				System.out.println("categories took " + sec + " seconds");
+				for (int i = 0; i < res.size(); i++)
+				{
+					System.out.println(res.get(i));
+				}
+				
+				start = System.currentTimeMillis();
+				ArrayList<String> selectCateg = new ArrayList<String>();
+				selectCateg.add(res.get(1));
+				System.out.println("Selected:"+res.get(1));
+				
+				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
+						"coffee machine", null, null, "http://www.wholelattelove.com/", null ,new Integer[]{50,50});
+				sec = (double) (System.currentTimeMillis() - start)/1000.0;
+				System.out.println("keywords took " + sec + " seconds");
+				Thread.sleep(30000);
+				
+				for(KeywordProbabilityObject k: kw){
+					String kaux=k.getKeyword();
+					System.out.println(kaux+" "+k.getSemplestProbability());
+					break;
+				}
 			}
-			
-			start = System.currentTimeMillis();
-			ArrayList<String> selectCateg = new ArrayList<String>();
-			selectCateg.add(res.get(1));
-			System.out.println("Selected:"+res.get(1));
-			
-			KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-					"coffee machine", null, null, "http://www.wholelattelove.com/", null ,new Integer[]{50,50});
-			sec = (double) (System.currentTimeMillis() - start)/1000.0;
-
-
-			for(KeywordProbabilityObject k: kw){
-				String kaux=k.getKeyword();
-				System.out.println(kaux+" "+k.getSemplestProbability());
+			while(!flag){
+				System.out.println("**************DEV MACHINE 2*****************");
+				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
+				long start = System.currentTimeMillis();
+				ArrayList<String> res = client.getCategories(null, "peanut butter", null, null, null);
+				double sec = (double) (System.currentTimeMillis() - start)/1000.0;
+				System.out.println("categories took " + sec + " seconds");
+				for (int i = 0; i < res.size(); i++)
+				{
+					System.out.println(res.get(i));
+				}
+				
+				start = System.currentTimeMillis();
+				ArrayList<String> selectCateg = new ArrayList<String>();
+				selectCateg.add(res.get(5));
+				System.out.println("Selected:"+res.get(5));
+				
+				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
+						"coffee machine", null, null, "http://peanutbutterlovers.com/", null ,new Integer[]{50,50});
+				sec = (double) (System.currentTimeMillis() - start)/1000.0;
+				System.out.println("keywords took " + sec + " seconds");
+				Thread.sleep(30000);
+				
+				for(KeywordProbabilityObject k: kw){
+					String kaux=k.getKeyword();
+					System.out.println(kaux+" "+k.getSemplestProbability());
+					break;
+				}
 			}
 			
 
