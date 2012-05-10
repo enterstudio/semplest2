@@ -5,7 +5,7 @@ import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 public class AdEngineInitialData
 {
 	private Long defaultMicroBid;
-	private SemplestMatchType semplestMatchType;
+	private String semplestMatchType;
 	private String networkSetting;
 
 	
@@ -25,13 +25,14 @@ public class AdEngineInitialData
 	{
 		this.defaultMicroBid = defaultMicroBid;
 	}
-	public SemplestMatchType getSemplestMatchType()
+	public String getSemplestMatchType()
 	{
 		return semplestMatchType;
 	}
-	public void setSemplestMatchType(SemplestMatchType semplestMatchType)
+	public void setSemplestMatchType(String semplestMatchType)
 	{
 		this.semplestMatchType = semplestMatchType;
 	}
+	
 
 }

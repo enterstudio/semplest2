@@ -5,7 +5,8 @@ public class AdsObject
 	private Integer PromotionAdsPK;
 	private Integer PromotionFK;
 	private String AdTitle;
-	private String AdText;
+	private String AdTextLine1;
+	private String AdTextLine2;
 	private Long AdEngineAdID;
 	public String getAdTitle()
 	{
@@ -14,14 +15,6 @@ public class AdsObject
 	public void setAdTitle(String adTitle)
 	{
 		AdTitle = adTitle;
-	}
-	public String getAdText()
-	{
-		return AdText;
-	}
-	public void setAdText(String adText)
-	{
-		AdText = adText;
 	}
 	public Integer getPromotionAdsPK()
 	{
@@ -46,5 +39,21 @@ public class AdsObject
 	public void setAdEngineAdID(Long adEngineAdID)
 	{
 		AdEngineAdID = adEngineAdID;
+	}
+	public String getAdTextLine1()
+	{
+		return AdTextLine1;
+	}
+	public void setAdTextLine1(String adTextLine1)
+	{
+		AdTextLine1 = adTextLine1;
+	}
+	public String getAdTextLine2()
+	{
+		return AdTextLine2;
+	}
+	public void setAdTextLine2(String adTextLine2)
+	{
+		AdTextLine2 = adTextLine2;
 	}
 }
