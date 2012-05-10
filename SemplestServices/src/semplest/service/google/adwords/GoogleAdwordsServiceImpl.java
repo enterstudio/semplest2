@@ -129,7 +129,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = true;// true; // // true; //
+	private static boolean useSandbox = false; // true; // // true; //
 
 
 	public static void main(String[] args)
@@ -168,8 +168,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Campaign ret = g.CreateOneCampaignForAccount("54100", "temp1", CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 1000000L);
 			System.out.println("campaignId = " + ret.getId());
 			*/
+
+
+			// Campaign c = g.CreateOneCampaignForAccount(null, "test",
+			// CampaignStatus.ACTIVE, BudgetBudgetPeriod.MONTHLY, 1000000L);
+			// String accountID = "2188810777"; // "5058200123";// "8019925375";
+			// //
+
 			
 			//String accountID = "2188810777"; // "5058200123";// "8019925375"; //
+
 			// "6048920973";
 			//Long adGroupID = 3074331030L;
 			//Long campaignID = 77290470L;
@@ -179,10 +187,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// java.util.Date());
 
 			/*
+
+			 * ArrayList<HashMap<String, String>> ret =
+			 * g.getCampaignsByAccountId("2188810777", false); String id =
+			 * ret.get(0).values().toString(); System.out.println(id);
+			 */
+
 			//ArrayList<HashMap<String, String>> ret = g.getCampaignsByAccountId("2188810777", false);
 			//String id = ret.get(0).values().toString();
 			//System.out.println(id);
-*/
+
 			// KeywordDataObject[] c =
 			// g.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
 
@@ -537,6 +551,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(res);
 	}
 
+	/*
+	 * Ads can show, including spaces, 25 characters for the title, 70
+	 * characters for the ad text and 35 characters for a Display URL (or
+	 * approximately 17 for languages that use non-ASCII (multi-byte)
+	 * characters).
+	 * NEED to Break up 35/Desc1, 35 Desc2
+	 */
 	@Override
 	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
 			throws Exception
@@ -549,11 +570,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 			// Create text ad.
 			TextAd textAd = new TextAd();
-			textAd.setHeadline(headline);
-			textAd.setDescription1(description1);
-			textAd.setDescription2(description2);
-			textAd.setDisplayUrl(displayURL);
-			textAd.setUrl(url);
+			textAd.setHeadline(headline.trim());
+			textAd.setDescription1(description1.trim());
+			textAd.setDescription2(description2.trim());
+			textAd.setDisplayUrl(displayURL.trim());
+			textAd.setUrl(url.trim());
 			// Create ad group ad.
 			AdGroupAd textAdGroupAd = new AdGroupAd();
 			textAdGroupAd.setAdGroupId(adGroupID.longValue());
@@ -977,7 +998,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Money money = new Money();
 			money.setMicroAmount(microBidAmount);
 			bid.setMaxCpc(new Bid(money));
-			
+
 			keywordBiddableAdGroupCriterion.setBids(bid);
 			// Create operations.
 			AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
@@ -1057,7 +1078,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Money money = new Money();
 			money.setMicroAmount(microBidAmount);
 			bids.setMaxCpc(new Bid(money));
-			
+
 			biddableAdGroupCriterion.setBids(bids);
 			// Create operations.
 			AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
@@ -1157,10 +1178,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			campaign.setNetworkSetting(network);
 
 			budget.setPeriod(period);
-			
+
 			Money money = new Money();
 			money.setMicroAmount(microBudgetAmount);
-			
+
 			budget.setAmount(money);
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
 			campaign.setBudget(budget);
@@ -1403,7 +1424,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
-			
+
 			Money money = new Money();
 			money.setMicroAmount(microBudgetAmount);
 			budget.setAmount(money);
@@ -1770,7 +1791,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					// one keyword estimate request
 					KeywordEstimateRequest keywordEstimateRequest = new KeywordEstimateRequest();
 					keywordEstimateRequest.setKeyword(keywrd);
-					
+
 					Money money = new Money();
 					money.setMicroAmount(microBidamount);
 					keywordEstimateRequest.setMaxCpc(money);
@@ -2086,7 +2107,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip)
 			throws Exception
 	{
-		semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign(accountId, campaignId);
+		AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+		semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign(accountId, campaignId, user);
 		long res = 0;
 		if (radius <= 0)
 			res = c.setGeoLoc(state);

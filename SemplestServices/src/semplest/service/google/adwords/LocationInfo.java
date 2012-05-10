@@ -15,8 +15,8 @@ public class LocationInfo {
   LocationCriterionServiceInterface lcs = null; 
  
   // Interface -----------------
-  public LocationInfo( String clid ) throws Exception {
-    user  = GawUtils.getUser( clid );
+  public LocationInfo( String clid, AdWordsUser user ) throws Exception {
+    this.user  = user; // GawUtils.getUser( clid,  );
     lcs = user.getService( AdWordsService.V201109.LOCATION_CRITERION_SERVICE); 
   }
   public Long getId( String s ) throws Exception {return getId( s, "State" ); }
@@ -65,8 +65,9 @@ public class LocationInfo {
   // ---------------------------------------------------------------------------
   public static void main(String[] args) {
     try {
-      Long caid = Long.getLong( GawUtils.cId );
-      LocationInfo l = new LocationInfo( GawUtils.clientId );
+      AdWordsUser user = null;
+      Long caid = Long.getLong( "" );
+      LocationInfo l = new LocationInfo( "", user );
       Long sid = l.getId( "NY" );
       Long cid = l.getId( "NY", "City" );
       Long mid = l.getId( "New York", "Metro" );

@@ -16,8 +16,8 @@ public class GeoLocator {
 
   // Interface -----------
   // - ctr
-  public GeoLocator( String clid) throws Exception {
-    user  = GawUtils.getUser( clid );
+  public GeoLocator( String clid, AdWordsUser user) throws Exception {
+    this.user  = user; //GawUtils.getUser( clid );
     gls   = user.getService( AdWordsService.V201109.GEO_LOCATION_SERVICE );
   }
   public Map.Entry<Integer,Integer>  getLatLon( 
@@ -78,7 +78,8 @@ public class GeoLocator {
     String state    = "NY";
     String zip      = "10007";
     try {
-      GeoLocator gl = new GeoLocator( GawUtils.clientId );
+    	AdWordsUser user = null;
+      GeoLocator gl = new GeoLocator( "",user);
       Map.Entry<Integer,Integer> ll = gl.getLatLon( address, city, state, zip ); 
       System.out.println( ll );
     } catch( Exception e){ e.printStackTrace(); }

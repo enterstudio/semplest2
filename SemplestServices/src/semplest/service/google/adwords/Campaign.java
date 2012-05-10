@@ -19,10 +19,10 @@ public class Campaign {
   CampaignCriterionServiceInterface ccs = null;
 
   // Interface ---------
-  public Campaign( String clientid, Long caid ) throws Exception {
+  public Campaign( String clientid, Long caid, AdWordsUser user ) throws Exception {
     clid  =  clientid;
     cid   =  caid;
-    user  =  GawUtils.getUser( clid );
+    this.user  =  user;
     ccs = user.getService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
   }
 
@@ -91,14 +91,14 @@ public class Campaign {
   }
   // -- Criterion creators --------------
   private Criterion cCriterion( String s ) throws Exception { 
-    return cLocation( new LocationInfo( clid ).getId( s ));}
+    return cLocation( new LocationInfo( clid, user ).getId( s ));}
   private Criterion cCriterion( Double r, String a ) throws Exception {
-    Map.Entry e = (new GeoLocator( clid )).getLatLon( a );
+    Map.Entry e = (new GeoLocator( clid, user )).getLatLon( a );
     return cProximity( r, (Integer)e.getKey(), (Integer) e.getValue());
   }
   private Criterion cCriterion( Double r, 
       String s, String c, String st, String z ) throws Exception {
-    Map.Entry e = (new GeoLocator( clid )).getLatLon( s, c, st, z );
+    Map.Entry e = (new GeoLocator( clid, user )).getLatLon( s, c, st, z );
     return cProximity( r, (Integer)e.getKey(), (Integer) e.getValue());
   }
   private Criterion cLocation( Long lid ){
@@ -152,7 +152,8 @@ public class Campaign {
       // long caid   = Long.parseLong( GawUtils.cId );
       String clientId = "8982168071";
       long campaignId   = 76709721L;
-      Campaign c = new Campaign( clientId, campaignId );
+      AdWordsUser user = null; // new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+      Campaign c = new Campaign( clientId, campaignId, user );
       long ra = c.setGeoLoc( radius, addr, city, state, zip );
       long rz = c.setGeoLoc( radius, zip );
       long rs = c.setGeoLoc( "NY" );
