@@ -49,11 +49,16 @@ import com.google.api.adwords.lib.AuthToken;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
+import com.microsoft.adcenter.api.customermanagement.CustomerManagementService;
 import com.microsoft.adcenter.api.customermanagement.CustomerManagementServiceLocator;
 import com.microsoft.adcenter.api.customermanagement.GetAccountRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountResponse;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoResponse;
+import com.microsoft.adcenter.api.customermanagement.GetCustomerRequest;
+import com.microsoft.adcenter.api.customermanagement.GetCustomerResponse;
+import com.microsoft.adcenter.api.customermanagement.GetCustomersInfoRequest;
+import com.microsoft.adcenter.api.customermanagement.GetCustomersInfoResponse;
 import com.microsoft.adcenter.api.customermanagement.ICustomerManagementService;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerRequest;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
@@ -61,6 +66,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountInfo;
 import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
 import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
+import com.microsoft.adcenter.api.customermanagement.Entities.CustomerInfo;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
@@ -99,7 +105,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		
 		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-		try{						
+		try{		
+			//Pipper Hall
+			Long accountID = 1633818L;
+			Long campaignID = 130147141L;
+			String addr = "90 John";
+			String city = "New York";
+			String state = "New York";
+			String country = "US";
+			String zip = "10038";
+			Double radius = 100.0;
+			Boolean res = test.setGeoTarget(accountID, campaignID, radius, addr, city, state, country, zip);
 			//Traffic Estimator
 			//logger.info("Running traffic estimator");
 			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
@@ -236,6 +252,42 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		return gson.toJson(ret);
 	} 
+	
+	
+	public Long getCustomerID(String name) throws MsnCloudException{
+		try
+		{
+			ICustomerManagementService customerManagementService = getCustomerManagementService();
+			GetCustomersInfoRequest req = new GetCustomersInfoRequest();
+			req.setCustomerNameFilter(name);
+			req.setTopN(1);
+			GetCustomersInfoResponse signupCustomerResponse = customerManagementService.getCustomersInfo(req);
+			
+			Long customerID = null;
+			
+			CustomerInfo[] acInf = signupCustomerResponse.getCustomersInfo();
+			if(acInf==null) {
+				throw new MsnCloudException("No customer corresponding to: "+name);
+			} else{
+				customerID =  acInf[0].getId();
+			}
+
+			return customerID;
+		}
+		catch (AdApiFaultDetail e)
+		{
+			throw new MsnCloudException(e);
+		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException(e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException(e);
+		}
+	}
+	
 	@Override
 	public HashMap<String,Double> getAccountIDs() throws MsnCloudException{
 		try
@@ -248,8 +300,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			for(int i=0; i<acInf.length;i++){
 				Long accountID =  acInf[i].getId();
 				String accountName = acInf[i].getName();
-				logger.info("accountName: "+accountName);
-				logger.info("accountID: "+accountID);
+				logger.debug("accountName: "+accountName);
+				logger.debug("accountID: "+accountID);
 				accountIDs.put(accountName, accountID.doubleValue());
 			}
 			return accountIDs;
@@ -1667,42 +1719,117 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return gson.toJson(ret);
 	}
 	
-	public Boolean setGeoTarget(Long accountId, Long campaignId, Double radius, String addr, String city, String state, String country, String zip) throws Exception 
+	public Boolean setGeoTarget(Long accountId, Long campaignId, Double radius, String addr, String city, String state, 
+			String country, String zip) throws Exception 
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		AddBusinessesRequest requestBus = new AddBusinessesRequest();
-
-
-		Business business = new Business();
+				
+		Account account = getAccountById(accountId);
+		Long customerID = getCustomerID(account.getName());
+		logger.info("accountName: "+ account.getName());
+		if(customerID != null){
+			logger.info("customerID: "+ customerID);
+		}else{
+			throw new Exception("Problems retrieving customerID");
+		}
 		
-		business.setAddressLine1(addr);
-		business.setCity(city);
-		business.setCountryOrRegion(country);
-		business.setStateOrProvince(state);
-		business.setZipOrPostalCode(zip);
+		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerID);
 		
-		requestBus.setBusinesses(new Business[]{business});
+		//Get ids of installed targets
+		GetTargetsByCampaignIdsRequest getTargReq = new GetTargetsByCampaignIdsRequest();
+		getTargReq.setCampaignIds(new long[]{campaignId});
 		
-		AddBusinessesResponse responseBus =campaignManagement.addBusinesses(requestBus);
+		GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
+		Target[] targetsStored = getTargResp.getTargets();
 		
-		long[] busIDs = responseBus.getBusinessIds();
+		//Delete installed targets
+		if(targetsStored[0] != null){
+			DeleteTargetFromCampaignRequest reqDelTarg = new DeleteTargetFromCampaignRequest();
+			reqDelTarg.setCampaignId(campaignId);
+			DeleteTargetFromCampaignResponse respDelTar = campaignManagement.deleteTargetFromCampaign(reqDelTarg);
+		}
 		
-
-		AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+		GetBusinessesInfoRequest busreq = new GetBusinessesInfoRequest();
+		GetBusinessesInfoResponse busres = campaignManagement.getBusinessesInfo(busreq);
+		BusinessInfo[] busInf = busres.getBusinessesInfo();
+		long[] storedBusIDs = new long[busInf.length];
+		
+		DeleteBusinessesRequest delBusReq; 
+		if(busInf.length>0 && busInf[0].getId()>0){
+			for(int i=0; i<busInf.length; i++){
+				delBusReq = new DeleteBusinessesRequest();
+				delBusReq.setBusinessIds(new long[]{busInf[i].getId()});
+				campaignManagement.deleteBusinesses(delBusReq);
+			}
+		}
+		long[] busIDs = new long[0];
 		Target target = new Target();
-		BusinessTargetBid bid = new BusinessTargetBid();
-		bid.setBusinessId(busIDs[0]);
-		bid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-		bid.setRadius(radius.intValue());
+		AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+		for(int j=0; j<3 ; j++){
+			//Create and add business object that will contain location information
+			logger.info("Creating business object with location...");
+			Business business = new Business();
+			business.setName(account.getName()+Math.round(Math.random()*100));
+			if(addr!=null)
+				business.setAddressLine1(addr);
+			if(city!=null)
+				business.setCity(city);
+			if(country!=null)
+				business.setCountryOrRegion(country);
+			if(state!=null)
+				business.setStateOrProvince(state);
+			if(zip!=null)
+				business.setZipOrPostalCode(zip);
+			AddBusinessesRequest requestBus = new AddBusinessesRequest();
+			requestBus.setBusinesses(new Business[]{business});
+			
+			AddBusinessesResponse responseBus =campaignManagement.addBusinesses(requestBus);
+			
+			busIDs = responseBus.getBusinessIds();
+			
+			//Add business object to a target object
+			logger.info("Adding Business to Target...");
+			
+			BusinessTargetBid bid = new BusinessTargetBid();
+			bid.setBusinessId(busIDs[0]);
+			bid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
+			bid.setRadius(radius.intValue());
+			
+			BusinessTarget busTarg = new BusinessTarget();
+			busTarg.setBids(new BusinessTargetBid[] {bid});
+			LocationTarget locTarget = new LocationTarget();
+			locTarget.setBusinessTarget(busTarg);
+			target.setLocation(locTarget);
+		}
 		
-		BusinessTarget busTarg = new BusinessTarget();
-		busTarg.setBids(new BusinessTargetBid[] {bid});
-		LocationTarget locTarget = new LocationTarget();
-		locTarget.setBusinessTarget(busTarg);
-		target.setLocation(locTarget);
+		Target[] targets = new Target[]{target};
+
 		
-		//response =campaignManagement..addBusinesses(requestBus);
+		requestTar.setTargets(targets);
 		
+		AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
+		
+		
+		
+		long[] targetIDs = responseTar.getTargetIds();
+		
+		//Add target object to campaign
+		logger.info("Adding target to campaign...");
+		SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
+		requestCamp.setTargetId(targetIDs[0]);
+		requestCamp.setCampaignId(campaignId);
+		SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
+		
+		
+		//Determine if coordinates resolved and target active
+		GetBusinessesByIdsRequest requestStatus = new GetBusinessesByIdsRequest();
+		requestStatus.setBusinessIds(busIDs);
+		
+		GetBusinessesByIdsResponse responseStatus = campaignManagement.getBusinessesByIds(requestStatus);
+		Business[] storedBus = responseStatus.getBusinesses();
+		BusinessGeoCodeStatus geoStatus = storedBus[0].getGeoCodeStatus();
+		logger.info("GeoCode Status: "+ geoStatus.getValue());
+		logger.info("Latitude: "+storedBus[0].getLatitudeDegrees());
+		logger.info("Longitude: "+storedBus[0].getLongitudeDegrees());
 		long res = 0;
 		if (radius ==null || radius <= 0){
 			
