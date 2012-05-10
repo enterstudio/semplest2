@@ -34,7 +34,7 @@ BEGIN TRY
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
 		where p.PromotionPK  = @PromotionPK
 		--get ADs
-		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdText from Promotion p
+		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdTextLine1, pa.AdTextLine2 from Promotion p
 		inner join PromotionAds pa on pa.PromotionFK = p.PromotionPK
 		where p.PromotionPK = @PromotionPK
 		--get Geotargeting

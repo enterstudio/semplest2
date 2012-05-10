@@ -17,6 +17,7 @@ CREATE PROCEDURE dbo.SetBidObject
 	@MicroBidAmount			INT,
 	@BidType				VARCHAR(25),
 	@AdvertisingEngine		VARCHAR(50),
+	@IsNegative				bit = 1,
 	@ID int output
 )
 AS
@@ -48,6 +49,10 @@ BEGIN TRY
 	END;			
 	select @AdEngineID = a.AdvertisingEnginePK from AdvertisingEngine a where a.AdvertisingEngine = @AdvertisingEngine
 	select @BidTypeID = bt.BidTypePK from BidType bt where bt.BidType = @BidType
+	if (@IsNegative = 1)
+	BEGIN
+		SET @MicroBidAmount = 0
+	END	
 	SET @currentTime = CURRENT_TIMESTAMP
 	
 	BEGIN TRANSACTION
