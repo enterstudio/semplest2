@@ -29,9 +29,11 @@ BEGIN TRY
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
 		p.BudgetToAddToNextCycle,p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
-		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate 
+		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , aea.AdvertisingEngineAccountPK
 		from Promotion p 
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
+		left join AdvertisingEnginePromotion aep on aep.PromotionFK = p.PromotionPK
+		left join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK
 		where p.PromotionPK  = @PromotionPK
 		--get ADs
 		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdTextLine1, pa.AdTextLine2 from Promotion p
