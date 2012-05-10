@@ -30,7 +30,7 @@ namespace Semplest.Core.Controllers
         public ActionResult CampaignSetup()
         {
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
-            Logger.Write(logEnty);
+           //Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             //var scw = new ServiceClientWrapper();
@@ -68,7 +68,7 @@ namespace Semplest.Core.Controllers
                 string msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
-                Logger.Write(logEnty);
+               //Logger.Write(logEnty);
 
                 SemplestDataService ds = new SemplestDataService();
                 //ds.SaveProductGroupAndCampaign(userid, model);
@@ -76,12 +76,12 @@ namespace Semplest.Core.Controllers
                 msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 logEnty.Message = msg;
-                Logger.Write(logEnty);
+               //Logger.Write(logEnty);
 
                 msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 logEnty.Message = msg;
-                Logger.Write(logEnty);
+               //Logger.Write(logEnty);
 
                 // get the categoris from the web service
                 model = _campaignRepository.GetCategories(model);
@@ -89,7 +89,7 @@ namespace Semplest.Core.Controllers
                 msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 logEnty.Message = msg;
-                Logger.Write(logEnty);
+               //Logger.Write(logEnty);
 
                 // save this some how while getting the keywords this is becoming null
                 Session.Add("AllCategories", model.AllCategories);
@@ -104,7 +104,7 @@ namespace Semplest.Core.Controllers
         {
             msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
-            Logger.Write(logEnty);
+           //Logger.Write(logEnty);
         }
 
         [HttpPost]
@@ -175,7 +175,7 @@ namespace Semplest.Core.Controllers
             }
             //return PartialView("KeyWords", model);
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
-            Logger.Write(logEnty);
+           //Logger.Write(logEnty);
 
             return View();
         }
