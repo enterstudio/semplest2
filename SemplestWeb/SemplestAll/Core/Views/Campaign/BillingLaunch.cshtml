@@ -3,12 +3,27 @@
     ViewBag.Title = "Campaign";
 }
 
+
+
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
+<script type ="text/javascript">
+    jQuery(function ($) {
+
+        $("#ProductGroup_Budget").mask("99999999");
+
+    });
+    </script>
+
+
+
+
+
 <div class="configuration1">
     <span class="infoHead">Billing and Launch</span>
     <div class="table">
+    
         <ul>
-            <li>We have selected @Html.TextBoxFor(m => m.BillingLaunch.KeywordsCount, new { @class = "k-input" }) keywords to bid on! <a href="#" id="viewSelectedKeywords" style="margin-left:50px;">View selected keywords</a></li>
+            <li>We have selected @Html.TextBoxFor(m => m.BillingLaunch.KeywordsCount, new { @class = "k-input",@readonly = true  } ) keywords to bid on! <a href="#" id="viewSelectedKeywords" style="margin-left:50px;">View selected keywords</a></li>
         </ul>
     </div>
     <div class="table">
@@ -113,3 +128,4 @@
         }
 
 </script>
+
