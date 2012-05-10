@@ -188,6 +188,7 @@
     <Content Include="Scripts\jquery.busy.js" />
     <Content Include="Scripts\jquery.min.js" />
     <Content Include="Scripts\kendo.web.min.js" />
+    <Content Include="Scripts\livepreview.js" />
     <Content Include="Scripts\Maps.js" />
     <Content Include="Scripts\PanelBar.js" />
     <Content Include="Scripts\Profile.js" />

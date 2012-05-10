@@ -1,27 +1,84 @@
 ﻿@using Semplest.Core.Helpers
+@using Semplest.SharedResources.Helpers
 @model SemplestModel.PromotionAd
 <div class="ads">
     <fieldset>
         <legend>Ad #</legend>
-        <ul class="options">
-            <li>
-                <label style="min-width: 45px">
-                    Title</label>
-                @Html.HiddenFor(t => t.PromotionAdsPK)
-                @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
-            </li>
-            <li>
-                <label>
-                    Ad Copy</label>
-                @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
-            </li>
-            <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
-            </li>
-            <li>
-                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
-                @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
-            </li>
-        </ul>
+        <div class="content">
+            <ul class="options" id="@Html.ClientIdFor(t=>t.PromotionAdsPK)_ul">
+                <li>
+                    <label style="min-width: 45px">
+                        Title</label>
+                    @Html.HiddenFor(t => t.PromotionAdsPK)
+                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+                </li>
+                <li>
+                    <label>
+                        Ad Copy</label>
+                    @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+                </li>
+                <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
+                </li>
+                <li>
+                    @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                    
+                </li>
+            </ul>
+        </div>
+        <div class="content2">
+            <ul class="options">
+                <li>
+                    <div id="@Html.ClientIdFor(t=>t.PromotionAdsPK)_div">
+                    </div>
+                    @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
+                </li>
+            </ul>
+        </div>
     </fieldset>
 </div>
+<style>
+    .content
+    {
+        float: left;
+        width: 350px; /* ie5win fudge begins */
+    }
+    .content2
+    {
+        float: left;
+        width: 300px; /* ie5win fudge begins */
+    }
+</style>
+<script type="text/x-kendo-template" id="template">
+    <fieldset>
+    <legend>Ad  Preview </legend>
+    <ul class="options">
+    <li><a href="#= title #">#= twitter #</a></li>
+    <li>#= content #</li>
+    <li ><a href="#= title #" style="color:green;">#= title #</a></li>
+    </fieldset>
+</script>
+<script>
+    var template = kendo.template($("#template").html());
+
+    function preview() {
+        $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
+            title: $("#AdModelProp_Url").val(),
+            twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
+            content: $("#@Html.ClientIdFor(t => t.AdText)").val()
+        }));
+    }
+    $(document).ready(function () {
+       
+        $("#@Html.ClientIdFor(t => t.AdTitle)").attr("data-bind", "events: { change: listener}");
+        $("#@Html.ClientIdFor(t => t.AdText)").attr("data-bind", "events: { change: listener}");
+        var viewModel = kendo.observable({
+            listener: function (e) {
+                preview();
+            }
+        });
+        kendo.bind($("#@Html.ClientIdFor(t=>t.PromotionAdsPK)_ul"), viewModel);
+
+    });
+    
+</script>
 <script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>

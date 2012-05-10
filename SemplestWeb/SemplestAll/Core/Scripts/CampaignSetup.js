@@ -203,8 +203,24 @@ function addNestedForm(container, counter, ticks, content) {
         }
     }
     $(container).append(content);
-    if (container == "#addresses") {
-        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+    if (container == "#ads") {
+
+        $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdTitle"]').attr("data-bind", "events: { change: listener}");
+        $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdText"]').attr("data-bind", "events: { change: listener}");
+        kendo.bind($(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__PromotionAdsPK_ul"]'), kendo.observable({
+            listener: function (e) {
+                $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__PromotionAdsPK_div"]').html(template({
+                    title: $("#AdModelProp.Url").val(),
+                    twitter: $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdTitle"]').val(),
+                    content: $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdText"]').val()
+                }));
+            }
+        }));
+
     }
+    if (container == "#addresses") {
+        $(container).find('input[id="#AdModelProp.Addresses_' + nextIndex + '__StateCodeFK"]').kendoDropDownList();
+    }
+
 
 }
