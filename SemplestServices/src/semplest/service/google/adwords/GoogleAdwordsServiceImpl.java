@@ -490,13 +490,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call AddAdGroup" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
-		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")));
+		Long defaultMicroBid = Long.parseLong(data.get("defaultMicroBid"));
+		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")),defaultMicroBid);
 		// convert result to Json String
 		return gson.toJson(adGroupID);
 	}
 
 	@Override
-	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status) throws Exception
+	public Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception
 	{
 		try
 		{
@@ -509,6 +510,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			adGroup.setName(AdGroupName);
 			adGroup.setStatus(status);
 			adGroup.setCampaignId(campaignId);
+			
+			// Update ad group bid.
+			ManualCPCAdGroupBids adGroupBids = new ManualCPCAdGroupBids();
+			Money money = new Money();
+			money.setMicroAmount(defaultMicroBid);
+			adGroupBids.setKeywordMaxCpc(new Bid(money));
+			adGroup.setBids(adGroupBids);
 			// Create operations.
 			AdGroupOperation operation = new AdGroupOperation();
 			operation.setOperand(adGroup);
@@ -1140,7 +1148,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(res);
 	}
 	@Override
-	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType) throws Exception
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception
 	{
 		try
 		{
@@ -1148,14 +1156,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);        
 			// Get the CampaignCriterionService.        
 			CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);         
-			long campaignId = Long.parseLong("INSERT_CAMPAIGN_ID_HERE");          
+			       
 			// Create keyword.        
 			Keyword keywrd = new Keyword();        
 			keywrd.setText(keyword);        
 			keywrd.setMatchType(matchType);          
 			// Create negative campaign criterion.        
 			NegativeCampaignCriterion negativeCampaignCriterion = new NegativeCampaignCriterion();        
-			negativeCampaignCriterion.setCampaignId(campaignId);        
+			negativeCampaignCriterion.setCampaignId(campaignID);        
 			negativeCampaignCriterion.setCriterion(keywrd);          
 			// Create operations.        
 			CampaignCriterionOperation operation = new CampaignCriterionOperation();        
