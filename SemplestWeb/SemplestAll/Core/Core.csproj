@@ -180,6 +180,7 @@
     <Content Include="Global.asax" />
     <Content Include="Scripts\AdditionalLinks.js" />
     <Content Include="Scripts\CampaignSetup.js" />
+    <Content Include="Scripts\conditional-validation.js" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\jquery-1.7.2-vsdoc.js" />

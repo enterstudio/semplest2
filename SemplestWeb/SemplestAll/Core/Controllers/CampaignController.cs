@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -38,8 +39,6 @@ namespace Semplest.Core.Controllers
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
         }
-
-
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "GetCategories")]
@@ -72,7 +71,7 @@ namespace Semplest.Core.Controllers
                 Logger.Write(logEnty);
 
                 SemplestDataService ds = new SemplestDataService();
-                ds.SaveProductGroupAndCampaign(userid, model);
+                //ds.SaveProductGroupAndCampaign(userid, model);
 
                 msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                 msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
@@ -134,7 +133,7 @@ namespace Semplest.Core.Controllers
 
                 SemplestDataService ds = new SemplestDataService();
                 int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                ds.SaveSelectedCategories(promoId, catList);
+                //ds.SaveSelectedCategories(promoId, catList);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                 WriteLog(msg, model);
@@ -152,7 +151,7 @@ namespace Semplest.Core.Controllers
                 WriteLog(msg, model);
 
                 // save the keywords to database
-                ds.SaveKeywords(promoId, model);
+                //ds.SaveKeywords(promoId, model);
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
                 WriteLog(msg, model);
@@ -277,7 +276,7 @@ namespace Semplest.Core.Controllers
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
         }
-        public ActionResult AdEngines(IEnumerable<AdEngineSelectModel> models )
+        public ActionResult AdEngines(IEnumerable<AdEngineSelectModel> models)
         {
             return PartialView(models);
         }
@@ -295,9 +294,9 @@ namespace Semplest.Core.Controllers
             var promotions = semplestEntities.ProductGroups.Include("Promotions");
             var navBars = new List<NavBar>();
             var homeBar = new NavBar
-                              {
-                                  Name = "Home",
-                                  SubItems = new List<NavBar>
+            {
+                Name = "Home",
+                SubItems = new List<NavBar>
                                                  {
                                                      new NavBar {Name = "Quick Start Guide"},
                                                      new NavBar {Name = "FAQs"},
@@ -306,13 +305,13 @@ namespace Semplest.Core.Controllers
                                                      new NavBar {Name = "Campaign" , Url = "../Campaign/CampaignSetup"},
                                                      new NavBar {Name = "Search Keywords"}
                                                  }
-                              };
+            };
             navBars.Add(homeBar);
-            var productGroupsBar = new NavBar { Name = "Product Groups.." , SubItems = new List<NavBar>()};
+            var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in promotions)
             {
-                var promotionBar = new NavBar {Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>()};
-                foreach(var problem in promotionBar.SubItems)
+                var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
+                foreach (var problem in promotionBar.SubItems)
                     promotionBar.SubItems.Add(new NavBar { Name = problem.Name, Id = problem.Id, Url = "../Campaign/CampaignSetup" });
                 productGroupsBar.SubItems.Add(promotionBar);
             }

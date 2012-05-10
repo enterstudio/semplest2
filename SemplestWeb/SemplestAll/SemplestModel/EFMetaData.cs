@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
+using SemplestModel.Validations;
 
 namespace SemplestModel
 {
@@ -59,6 +60,7 @@ namespace SemplestModel
         public string RoleName { get; set; }
     }
 
+    [MetadataType(typeof(GeoTargetingMetaData))]
     public partial class GeoTargeting
     {
         public List<StateCode> StateCodes
@@ -66,6 +68,17 @@ namespace SemplestModel
             get { return new SemplestEntities().StateCodes.OrderBy(t => t.StateAbbr).ToList(); }
         }
         public bool Delete { get; set; }
+        internal sealed class GeoTargetingMetaData
+        {
+            public string Address { get; set; }
+            [Compare("Address")]
+            public string City { get; set; }
+            [TwoFieldRequiredAttribute("City", "StateCodeFK", ErrorMessage = "State Is Required..")]
+            public int? StateCodeFK { get; set; }
+            public string Zip { get; set; }
+            [TwoFieldRequiredAttribute("Address", "ProximityRadius", ErrorMessage = "State Is Required..")]
+            public decimal? ProximityRadius { get; set; }
+        }
     }
     public partial class SiteLink
     {
@@ -86,7 +99,9 @@ namespace SemplestModel
             [Required]
             public string AdTitle { get; set; }
             [Required]
-            public string AdText { get; set; }
+            public string AdTextLine1 { get; set; }
+            [Required]
+            public string AdTextLine2 { get; set; }
 
         }
         public bool Delete { get; set; }

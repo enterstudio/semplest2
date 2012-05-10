@@ -5,38 +5,51 @@
     <fieldset>
         <legend>Ad #</legend>
         <div class="content">
-            <ul class="options" id="@Html.ClientIdFor(t=>t.PromotionAdsPK)_ul">
+            <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
                 <li>
                     <label style="min-width: 45px">
                         Title</label>
                     @Html.HiddenFor(t => t.PromotionAdsPK)
                     @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+                    <label class="hint">
+                        25 characters max.</label>
                 </li>
                 <li>
-                    <label>
+                    <label style="vertical-align: top">
                         Ad Copy</label>
-                    @Html.TextBoxFor(m => m.AdText, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAd", @required = true, @validationmessage = "Please enter {0}" })
+                    <label class="hint">
+                        35 characters max.</label>
+                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAd hint", @required = true, @validationmessage = "Please enter {0}" })
+                    <label class="hint">
+                        35 characters max.</label>
                 </li>
                 <li><a href="#" class="additionalLinks">Click to add additional click through options</a>
                 </li>
                 <li>
                     @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
-                    
                 </li>
             </ul>
         </div>
         <div class="content2">
-            <ul class="options">
-                <li>
-                    <div id="@Html.ClientIdFor(t=>t.PromotionAdsPK)_div">
+            <div class="example">
+                <div class="k-header product-view">
+                    <div class="right">
+                        @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
                     </div>
-                    @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
-                </li>
-            </ul>
+                    <div id="@Html.ClientIdFor(t => t.PromotionAdsPK)_div">
+                    </div>
+                </div>
+            </div>
         </div>
     </fieldset>
 </div>
-<style>
+<style scoped>
+    .hint
+    {
+        margin-left: 53px;
+        margin-top: 5px;
+    }
     .content
     {
         float: left;
@@ -47,15 +60,55 @@
         float: left;
         width: 300px; /* ie5win fudge begins */
     }
+    .example h3
+    {
+        padding: 5px 0;
+        font-weight: normal;
+        border-bottom: 1px solid #999;
+        width: 300px;
+    }
+    .product-view
+    {
+        border-radius: 5px 5px 5px 5px;
+        border-style: solid;
+        border-width: 1px;
+        overflow: hidden;
+        width: 270px;
+        padding: 3px 3px 0 20px;
+        background-position: 0 -255px;
+    }
+    
+    .right
+    {
+        float: right;
+    }
+    
+    .fieldlist
+    {
+        width: 100%;
+        float: left;
+        margin: 0;
+        padding: 10px 0 30px 0;
+    }
+    
+    .fieldlist li
+    {
+        list-style: none;
+        padding: 5px 0;
+    }
+    .fieldlist label
+    {
+        display: inline-block;
+        width: 120px;
+        text-align: right;
+    }
 </style>
 <script type="text/x-kendo-template" id="template">
-    <fieldset>
-    <legend>Ad  Preview </legend>
-    <ul class="options">
+    <h3>Ad  Preview </h3>
+    <ul class="fieldlist">
     <li><a href="#= title #">#= twitter #</a></li>
     <li>#= content #</li>
     <li ><a href="#= title #" style="color:green;">#= title #</a></li>
-    </fieldset>
 </script>
 <script>
     var template = kendo.template($("#template").html());
@@ -64,19 +117,20 @@
         $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
             title: $("#AdModelProp_Url").val(),
             twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
-            content: $("#@Html.ClientIdFor(t => t.AdText)").val()
+            content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val() + $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
         }));
     }
     $(document).ready(function () {
-       
+
         $("#@Html.ClientIdFor(t => t.AdTitle)").attr("data-bind", "events: { change: listener}");
-        $("#@Html.ClientIdFor(t => t.AdText)").attr("data-bind", "events: { change: listener}");
+        $("#@Html.ClientIdFor(t => t.AdTextLine1)").attr("data-bind", "events: { change: listener}");
+        $("#@Html.ClientIdFor(t => t.AdTextLine2)").attr("data-bind", "events: { change: listener}");
         var viewModel = kendo.observable({
             listener: function (e) {
                 preview();
             }
         });
-        kendo.bind($("#@Html.ClientIdFor(t=>t.PromotionAdsPK)_ul"), viewModel);
+        kendo.bind($("#@Html.ClientIdFor(t => t.PromotionAdsPK)_ul"), viewModel);
 
     });
     

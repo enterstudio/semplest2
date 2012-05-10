@@ -13,7 +13,7 @@
                     <span class="k-search k-icon"></span>
                 </button>
             </td>
-            <td rowspan="5">
+            <td rowspan="6">
                 <div id="optionsNarrative">
                 </div>
                 @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
@@ -26,6 +26,7 @@
             </td>
             <td>
                 @Html.TextBoxFor(t => t.City, new { @class = "k-textbox k-textboxAd" })
+                @Html.ValidationMessageFor(t => t.City)
             </td>
         </tr>
         <tr>
@@ -50,12 +51,14 @@
             </td>
             <td>
                 @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "k-textbox k-textboxAd" })
+                @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
             </td>
         </tr>
         <tr>
             <td colspan="2">
+                @Html.ValidationSummary(true)
             </td>
         </tr>
     </table>

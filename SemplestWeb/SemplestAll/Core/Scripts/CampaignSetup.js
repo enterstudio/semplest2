@@ -2,7 +2,7 @@
 $(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val(), value: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val() }).data("kendoNumericTextBox");
+    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val(), value: 0 }).data("kendoNumericTextBox");
     budjet.wrapper
        .find(".k-numeric-wrap")
        .addClass("expand-padding")
@@ -186,10 +186,11 @@ function addNestedForm(container, counter, ticks, content) {
     var pattern = new RegExp(ticks, "gi");
     content = content.replace(pattern, nextIndex);
     if (container == "#addresses") {
-        content = content.replace("doOptions()", "doOptions('AdModelProp.Addresses_" + nextIndex +
-"__City','AdModelProp.Addresses_" + nextIndex + "__StateCodeFK','AdModelProp.Addresses_" + nextIndex +
-"__Zip','AdModelProp.Addresses_" + nextIndex + "__Proximity')");
+        content = content.replace("doOptions()", "doOptions('AdModelProp_Addresses_" + nextIndex +
+"__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
+"__Zip','AdModelProp_Addresses_" + nextIndex + "__Proximity')");
         content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
+        content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
     }
 
     if (container == "#sitelinks") {
@@ -204,23 +205,20 @@ function addNestedForm(container, counter, ticks, content) {
     }
     $(container).append(content);
     if (container == "#ads") {
-
-        $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdTitle"]').attr("data-bind", "events: { change: listener}");
-        $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdText"]').attr("data-bind", "events: { change: listener}");
-        kendo.bind($(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__PromotionAdsPK_ul"]'), kendo.observable({
+        $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").attr("data-bind", "events: { change: listener}");
+        $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").attr("data-bind", "events: { change: listener}");
+        $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").attr("data-bind", "events: { change: listener}");
+        kendo.bind($("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_ul"), kendo.observable({
             listener: function (e) {
-                $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__PromotionAdsPK_div"]').html(template({
-                    title: $("#AdModelProp.Url").val(),
-                    twitter: $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdTitle"]').val(),
-                    content: $(container).find('input[id="#AdModelProp.Ads_' + nextIndex + '__AdText"]').val()
+                $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
+                    title: $("#AdModelProp_Url").val(),
+                    twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
+                    content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val() + $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
                 }));
             }
         }));
-
     }
     if (container == "#addresses") {
-        $(container).find('input[id="#AdModelProp.Addresses_' + nextIndex + '__StateCodeFK"]').kendoDropDownList();
+        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
     }
-
-
 }

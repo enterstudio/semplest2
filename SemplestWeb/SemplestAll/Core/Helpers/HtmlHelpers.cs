@@ -34,8 +34,8 @@ namespace Semplest.Core.Helpers
             long ticks = DateTime.UtcNow.Ticks;
             object nestedObject = Activator.CreateInstance(nestedType);
             string partial = htmlHelper.EditorFor(x => nestedObject).ToHtmlString().JsEncode();
-            partial = partial.Replace("id=\\\"AdModelProp_nestedObject", "id=\\\"" + collectionProperty + "_" + ticks + "_");
-            partial = partial.Replace("name=\\\"AdModelProp.nestedObject", "name=\\\"" + collectionProperty + "[" + ticks + "]");
+            partial = partial.Replace("id=\\\"AdModelProp_nestedObject", "id=\\\"" + collectionProperty.Replace(".", "_") + "_" + ticks + "_");
+            partial = partial.Replace("name=\\\"AdModelProp.nestedObject", "name=\\\"" + collectionProperty.Replace(".", "_") + "[" + ticks + "]");
             string js = string.Format("javascript:addNestedForm('{0}','{1}','{2}','{3}');return false;",
                                       containerElement, counterElement, ticks, partial);
             var tb = new TagBuilder("button");
