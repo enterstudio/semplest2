@@ -30,6 +30,7 @@ import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
+import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -396,16 +397,27 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestString semplstStr = new SemplestString();
 			semplstStr.setSemplestString(promoObj.getAdvertisingEngineAccountPK().toString());
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(),YYYYMMDD.format(cal.getTime()) , YYYYMMDD.format(now));
-			//go through all the report objects and add to DB
-			for (int i = 0; i < getReportData.length; i++)
+			try
 			{
-				//check to see 
-				if (getReportData[i].getCampaignID().equals(promoObj.getAdvertisingEngineCampaignPK()))
+				ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(),YYYYMMDD.format(cal.getTime()) , YYYYMMDD.format(now));
+				AddReportDataSP addReportData = new AddReportDataSP();
+				//go through all the report objects and add to DB
+				for (int i = 0; i < getReportData.length; i++)
 				{
-					//store the report data in AdvertisingEngineReportData
-					//getReportData[i].getKeyword()
+					//check to see 
+					if (getReportData[i].getCampaignID().equals(promoObj.getAdvertisingEngineCampaignPK()))
+					{
+						//store the report data in AdvertisingEngineReportData
+						addReportData.execute(PromotionID, getReportData[i].getKeyword(),adEngine, getReportData[i].getTransactionDate(), 
+								getReportData[i].getMicroBidAmount(), getReportData[i].getNumberImpressions(), getReportData[i].getNumberClick(), getReportData[i].getAveragePosition(), 
+								getReportData[i].getAverageCPC(), getReportData[i].getBidMatchType(), getReportData[i].getQualityScore(), getReportData[i].getApprovalStatus(), 
+								getReportData[i].getFirstPageCPC(), getReportData[i].getMicroCost());
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				logger.error("Unable to download Report for account " + promoObj.getAdvertisingEngineAccountPK().toString());
 			}
 		}
 		
