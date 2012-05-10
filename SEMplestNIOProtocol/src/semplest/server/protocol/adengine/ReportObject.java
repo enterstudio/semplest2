@@ -25,8 +25,8 @@ public class ReportObject
 	private String BidMatchType;
 	private Integer numberImpressions;
 	private Integer numberClick;
-	private Double averagePosition;
-	private Integer averageCPC;
+	private Float averagePosition;
+	private Long averageCPC;
 	private Integer qualityScore;
 	private String approvalStatus;
 	private Integer firstPageCPC;
@@ -100,22 +100,7 @@ public class ReportObject
 	{
 		this.numberClick = numberClick;
 	}
-	public Double getAveragePosition()
-	{
-		return averagePosition;
-	}
-	public void setAveragePosition(Double averagePosition)
-	{
-		this.averagePosition = averagePosition;
-	}
-	public Integer getAverageCPC()
-	{
-		return averageCPC;
-	}
-	public void setAverageCPC(Integer averageCPC)
-	{
-		this.averageCPC = averageCPC;
-	}
+	
 	public Integer getQualityScore()
 	{
 		return qualityScore;
@@ -164,6 +149,22 @@ public class ReportObject
 	public void setMicroCost(Long microCost)
 	{
 		this.microCost = microCost;
+	}
+	public Float getAveragePosition()
+	{
+		return averagePosition;
+	}
+	public void setAveragePosition(Float averagePosition)
+	{
+		this.averagePosition = averagePosition;
+	}
+	public Long getAverageCPC()
+	{
+		return averageCPC;
+	}
+	public void setAverageCPC(Long averageCPC)
+	{
+		this.averageCPC = averageCPC;
 	}
 
 	
