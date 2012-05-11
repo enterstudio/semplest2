@@ -11,6 +11,7 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.protocol.adengine.BudgetObject;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
@@ -96,20 +97,22 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		return gson.fromJson(returnData, HashMap.class);
 	}
 	@Override
-	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", searchEngine);
+		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		runMethod(baseurl, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
 	}
 	@Override
-	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		runMethod(baseurl, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
 	}
