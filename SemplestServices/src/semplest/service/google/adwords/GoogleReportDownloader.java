@@ -205,6 +205,8 @@ public class GoogleReportDownloader
 					rdata.setMicroCost(Long.valueOf(data[7]));
 					//yyyy-mm-dd
 					rdata.setTransactionDate(dateFormatter.parse(data[0]));
+					//google report doesn't have a created date. so the current date is used here.
+					rdata.setCreatedDate(new Date());
 					
 					reportObjectList.add(rdata);
 				}
