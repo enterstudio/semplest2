@@ -86,13 +86,16 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 			String city		= "New York";
 			String state 	= "NY";
 			String zip 		= "10007";
+			Double latitude = 35.707984924316406 ;
+			Double longitude = -80.00623321533203;
+
 			
 			String clientId = "8982168071";
 			long   campaignId = 76709721L;
 			
-			Boolean res1 = client.setGeoTarget( clientId, campaignId, radius, addr, city, state, zip);
-			Boolean res2 = client.setGeoTarget( clientId, campaignId, radius, "", "", "", zip);
-			Boolean res3 = client.setGeoTarget( clientId, campaignId, 0.0, "", "", state, "");
+			Boolean res1 = client.setGeoTarget( clientId, campaignId, latitude, longitude,radius, addr, city, state, zip);
+			Boolean res2 = client.setGeoTarget( clientId, campaignId, latitude, longitude, radius, "", "", "", zip);
+			Boolean res3 = client.setGeoTarget( clientId, campaignId, latitude, longitude, 0.0, "", "", state, "");
 			assert( res1 == true && res2 == true && res3 == true);
 			
 			/*
@@ -641,11 +644,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	
 	@Override 
-	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception {
+	public Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", accountId);
 		jsonHash.put("campaignId",	String.valueOf(campaignId));
 		jsonHash.put("radius", 		String.valueOf(radius));
+		jsonHash.put("latitude", 		String.valueOf(latitude));
+		jsonHash.put("longitude", 		String.valueOf(longitude));
 		jsonHash.put("addr", 		addr);
 		jsonHash.put("city", 		city);
 		jsonHash.put("state", 		state);

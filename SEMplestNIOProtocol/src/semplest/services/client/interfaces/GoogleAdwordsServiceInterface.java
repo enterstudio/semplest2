@@ -84,7 +84,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
 
 	// GeoTargeting
-	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip) throws Exception;
+	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
 	
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

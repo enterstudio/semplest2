@@ -309,7 +309,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 			for (GeoTargetObject geoObj : geoObjList)
 			{
-				google.setGeoTarget(accountID, campaignID, geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
+				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
 						geoObj.getZip());
 			}
 

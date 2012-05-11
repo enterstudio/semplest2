@@ -2091,6 +2091,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			String state, String country, String zip) throws Exception 
 	{	
 		try{
+			
+			
 			if (radius!=null){
 				if(radius>100){
 					throw new MsnCloudException("Maximum radius 100 miles");
@@ -2116,13 +2118,14 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
 			Target[] targetsStored = getTargResp.getTargets();
 			//Consider different cases
-			if(radius==null && state!=null){
+			if(radius==null && state!=null && state.length()>0){
 				if(!state.contains("US-")){
 					state = "US-"+state;
 					logger.info("Setting target: "+ state);
 				}
 				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, state);
-			}else if( addr!=null && city!=null && state!=null && country!=null && zip!=null){
+			}else if( addr!=null && city!=null && state!=null && country!=null && zip!=null && addr.length()>0 && city.length()>0
+					&& state.length()>0 && country.length()>0 && zip.length()>0){
 				country="US";
 				return setBusinessTargetObject( campaignManagement, targetsStored, account, campaignId, radius, addr, city, state, country, zip); 
 			}else if(radius!=null && latitude!=null && longitude!=null){

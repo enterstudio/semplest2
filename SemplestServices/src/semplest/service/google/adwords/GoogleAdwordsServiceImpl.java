@@ -2180,14 +2180,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call CreateOneAccountService(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long campaignId = Long.parseLong(data.get("campaignId"));
+		Double latitude = Double.parseDouble(data.get("latitude"));
+		Double longitude = Double.parseDouble(data.get("longitude"));
 		Double radius = Double.parseDouble(data.get("radius"));
-		Boolean retval = setGeoTarget(data.get("accountId"), campaignId, radius, data.get("addr"), data.get("city"), data.get("state"),
+		Boolean retval = setGeoTarget(data.get("accountId"), campaignId,latitude, longitude, radius, data.get("addr"), data.get("city"), data.get("state"),
 				data.get("zip"));
 		return gson.toJson(retval);
 	}
 
 	@Override
-	public Boolean setGeoTarget(String accountId, Long campaignId, Double radius, String addr, String city, String state, String zip)
+	public Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip)
 			throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
