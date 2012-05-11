@@ -17,8 +17,7 @@ public class AddReportDataSP extends StoredProcedure
 	public AddReportDataSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("AccountID", Types.BIGINT));
-		declareParameter(new SqlParameter("CampaignID", Types.BIGINT));
+		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
 		declareParameter(new SqlParameter("Keyword", Types.VARCHAR));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("TransactionDate", Types.TIMESTAMP));
