@@ -6,14 +6,6 @@
 
 
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
-<script type ="text/javascript">
-    jQuery(function ($) {
-
-        $("#ProductGroup_Budget").mask("99999999");
-
-    });
-    </script>
-
 
 
 
@@ -48,8 +40,8 @@
     *@          <select id="dropDownCreditCard" class="k-select" name="dropDownCreditCard">
                     <option>VISA ending in 8971 Expires8/24/14</option>
                 </select>
-                <a href="#" id="enterNewRecord" style="margin-left:30px;">Enter New Record</a>
-                <a href="#" id="deleteRecord" style="margin-left:20px;">Delete Record</a>
+                <a href="#" id="enterNewRecord" style="margin-left:30px;">Add new card</a>
+                <a href="#" id="deleteRecord" style="margin-left:20px;">Delete card</a>
             </li>
         </ul>       
         <ul>
@@ -129,3 +121,21 @@
 
 </script>
 
+
+<script type ="text/javascript">
+    jQuery(function ($) {
+
+        $("#ProductGroup_Budget").mask("99999999");
+
+    });
+    </script>
+
+
+    
+
+<script type="text/jscript" >
+    $(document).ready(
+         function () {
+             $("#ProductGroup_Budget").mask("99999999");
+         });  
+</script>
