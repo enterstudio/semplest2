@@ -53,8 +53,7 @@
                 type: "GET",
                 url: "/Profile/Verify",
                 data: { userName: $('#UserName').val(), password: $('#Password1').val() },
-                success: function (data) { $('.passwordverify').html(data); },
-                error: function (e) { alert(e); }
+                success: function (data) { $('.passwordverify').html(data); }
             });
         });
     })
