@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
+using System.Threading;
 using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
@@ -21,6 +22,7 @@ namespace Semplest.Core.Controllers
     public class CampaignController : Controller
     {
         private readonly ICampaignRepository _campaignRepository;
+        private Thread _workerThread;
 
         public CampaignController(ICampaignRepository iCampaignRepository)
         {
@@ -151,7 +153,11 @@ namespace Semplest.Core.Controllers
                 WriteLog(msg, model);
 
                 // save the keywords to database
-                ds.SaveKeywords(promoId, model);
+                //ds.SaveKeywords(promoId, model);
+                ThreadData tData = new ThreadData(promoId, model);
+                _workerThread = new Thread(new ParameterizedThreadStart(DoWorkFast));
+                _workerThread.Start(tData);
+                
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
                 WriteLog(msg, model);
@@ -160,6 +166,24 @@ namespace Semplest.Core.Controllers
                 Session.Add("FullModel", model);
             }
             return Json("BillingLaunch");
+        }
+
+        public void DoWorkFast(object data)
+        {
+            ThreadData locData = (ThreadData)data;
+            SemplestDataService ds = new SemplestDataService();
+            ds.SaveKeywords(locData._promoId, locData._model);
+        }
+
+        class ThreadData
+        {
+            public int _promoId;
+            public CampaignSetupModel _model;
+            public ThreadData(int promoId, CampaignSetupModel model)
+            {
+                _promoId = promoId;
+                _model = model;
+            }
         }
 
         [HttpPost]
