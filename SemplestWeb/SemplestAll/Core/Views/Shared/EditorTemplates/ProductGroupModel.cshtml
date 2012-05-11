@@ -30,8 +30,8 @@
                 </label>
                 @Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" })
                 <span style="color: #BFBFBF; margin-left: 5px;">Minimum Order Amount is @Convert.ToInt32(@Model.Configuration.CustomerMinOrderAmount)</span>
-                @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
-            </li>
+@*                @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
+*@            </li>
             <li>
                 <label for="StartDate" class="required">
                     Product Start Date
