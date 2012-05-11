@@ -19,6 +19,7 @@ import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+import semplest.server.protocol.ProtocolEnum.SemplestMatchType.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
@@ -38,6 +39,8 @@ public class BidGeneratorObj {
 	
 	private String google = ProtocolEnum.AdEngine.Google.name();
 	private String msn = ProtocolEnum.AdEngine.MSN.name();
+	
+	private String networkSetting = ProtocolEnum.NetworkSetting.SearchOnly.name();
 	
 	
 	private static Gson gson = new Gson();
@@ -131,7 +134,7 @@ public class BidGeneratorObj {
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
 			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact.name());
 			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
-			adEngineInitialDataObject.setNetworkSetting("SEARCH_ONLY");
+			adEngineInitialDataObject.setNetworkSetting(networkSetting);
 //			adEngineInitialDataObject.setBiddingMethod(biddingMethod)
 			// SemplestDB.storeDefaultBid(promotionID, se, defaultMicroBid);
 			initValues.put(se, adEngineInitialDataObject);
@@ -142,13 +145,14 @@ public class BidGeneratorObj {
 	
 	
 	
-	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		/* ******************************************************************************************* */
 		// declarations
 		int k;
 		TrafficEstimatorObject o = null, o2 = null;
 
+		logger.info("setBidsInitial called for ad engine "+searchEngine);
 		
 		/* ******************************************************************************************* */
 		// 0. Check if Ad engine name is valid
@@ -158,7 +162,7 @@ public class BidGeneratorObj {
 		
 		
 		/* ******************************************************************************************* */
-		// 1. Database call: get campaign specific IDs
+		// 1. Database call: get campaign specific IDs		
 		AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
 		if (searchEngine.equalsIgnoreCase(google)){
 			googleAccountID = adEngineInfo.getAccountID().toString();
@@ -170,11 +174,16 @@ public class BidGeneratorObj {
 		campaignID = adEngineInfo.getCampaignID();
 		adGroupID = adEngineInfo.getAdGroupID();
 		
+		logger.info("Got campaign related IDs from the database");
+
+		
+		
 		
 		
 		/* ******************************************************************************************* */
 		// 2. Database call: get remaining days and budget
-		BudgetObject budgetData = SemplestDB.getBudget(promotionID);
+		// now get it as function argument
+		//BudgetObject budgetData = SemplestDB.getBudget(promotionID);
 		Double remBudget = budgetData.getRemainingBudgetInCycle();
 		Integer remDays = budgetData.getRemainingDays();
 		double targetDailyBudget = (remBudget/remDays)*7; // use weekly budget as target daily budget
@@ -201,11 +210,15 @@ public class BidGeneratorObj {
 					}
 				} // try-catch
 			} // while(true)
+			
+			for(KeywordDataObject b: keywordDataObjs){
+				wordIDMap.put(b.getKeyword(),b.getBidID());
+			}
+			
+			logger.info("Got biddable adgroup criterion from Google.");
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
-		for(KeywordDataObject b: keywordDataObjs){
-			wordIDMap.put(b.getKeyword(),b.getBidID());
-		}
+
 		
 		
 		
@@ -229,6 +242,8 @@ public class BidGeneratorObj {
 					} 
 				} // if(keywordDataObj.getFirstPageCpc()==null)
 			} // for(int i=0; i<keywordDataObjs.length; i++)
+			
+			logger.info("Decided competitive keywords");
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		
@@ -251,6 +266,8 @@ public class BidGeneratorObj {
 		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
+		
+		logger.info("Got traffic estimator data.");
 
 		
 		
@@ -267,31 +284,35 @@ public class BidGeneratorObj {
 		}
 		compKeywords.clear();
 		
+		logger.info("Computed bids for competitive keywords.");
+		
 		
 		
 		/* ******************************************************************************************* */
-		// 7. [google] Compute bids for competitive keywords which optimizer didn’t select
+		// 7. [google] Compute bids for competitive keywords which optimizer didn't select
 		//    a. Bid $0.5 above firstPage CPC if below $3.00		
 		for(String s : notSelectedKeywords){
 			wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
 		}
+		logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
 				
 		
 		/* ******************************************************************************************* */
-		// 8. For the rest of keywords without firstPage CPC leave out for bidding with default bid
+		// 8. Compute bits for all other keywords with firstPage CPC
 		for(String s : nonCompKeywords){
 			wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
 		}
-		
+		logger.info("Computed bids for rest of the keywords with first page cpc.");
 		
 		/* ******************************************************************************************* */
-		// 9. Compute bits for all other keywords with firstPage CPC
-		//    b. Else leave it out for bidding with default bid
+		// 9. For the rest of keywords without firstPage CPC leave out for bidding with default bid 
 		
 		
 		for(String s : noInfoKeywords){
 			wordBidMap.put(s,null); // bid using default bid
 		}
+		
+		logger.info("Left the remaining keywords for default bidding");
 		
 		
 		
@@ -328,6 +349,8 @@ public class BidGeneratorObj {
 			
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
+		logger.info("Computed expected cpc and set default bid at that value");
+		
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
 		if(searchEngine.equalsIgnoreCase(google)){
@@ -335,6 +358,7 @@ public class BidGeneratorObj {
 					new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
+		logger.info("Stored adgroup criterion data to database for Google");
 		
 		
 		/* ******************************************************************************************* */
@@ -346,7 +370,8 @@ public class BidGeneratorObj {
 		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
-		
+		logger.info("Stored traffic estimator data to database");
+
 		
 		
 		
@@ -354,12 +379,13 @@ public class BidGeneratorObj {
 		// 13. Database call: write default bid for campaign
 		// remember to update the bids for the words with default bid with database
 		
-		// TODO: waiting for Mitch
 		
 		if(defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine)) {
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 		}
+		
+		logger.info("Stroed default bid to databse and requested for updating all bids for keywords with default bid.");
 		
 		
 		
@@ -369,22 +395,23 @@ public class BidGeneratorObj {
 		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
 		
 		String competitiveType="";
-		String matchType = "EXACT";  // TODO
+		String matchType = SemplestMatchType.Exact.name(); 
 		Boolean isActive = true;
 		Boolean isNegative = false;
 		
 		Iterator<String> keyIT = wordBidMap.keySet().iterator();
 		while(keyIT.hasNext())
 		{
+			// TODO: Add Enum
 			String word = keyIT.next();
 			if (compKeywords.contains(word)){
-				competitiveType = "COMP";
+				competitiveType = SemplestCompetitionType.Comp.name();
 			} else if (notSelectedKeywords.contains(word)){
-				competitiveType = "NOT_SELECTED";
+				competitiveType = SemplestCompetitionType.NotSelected.name();
 			} else if (nonCompKeywords.contains(word)){
-				competitiveType = "NON_COMP";
+				competitiveType = SemplestCompetitionType.NonComp.name();
 			} else if(noInfoKeywords.contains(word)){
-				competitiveType = "NO_INFO";
+				competitiveType = SemplestCompetitionType.NoInfo.name();
 			} else {
 				throw new Exception("Unknown competition type. Internal error in bidding service!");
 			}
@@ -394,7 +421,7 @@ public class BidGeneratorObj {
 		}
 		
 		SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
-		
+		logger.info("Stroed bid data to the databse");
 		
 		
 		
@@ -403,7 +430,8 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
 		SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
-		
+		logger.info("Stroed targeted daily budget data to the databse");
+
 		
 
 		
@@ -422,6 +450,9 @@ public class BidGeneratorObj {
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
+		logger.info("Updated bids and match type for keywords via the search engine API.");
+
+		
 		
 		
 		
@@ -430,6 +461,7 @@ public class BidGeneratorObj {
 		if(searchEngine.equalsIgnoreCase(google)){
 			clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
 		}
+		logger.info("Updated the default bid via search engine API.");
 		
 	} // setBidsInitial()
 	
@@ -438,8 +470,10 @@ public class BidGeneratorObj {
 
 
 
-	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
-		throw new Exception("setBidsUpdate not yet implemented!!");	
+	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+		
+		logger.info("setBidsUpdate called. presently not doing anything!!");
+		// throw new Exception("setBidsUpdate not yet implemented!!");	
 	} // setBidsUpdate()
 
 	

@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.service.SemplestConfiguration;
 //import semplest.server.protocol.ProtocolEnum.NetworkSetting;
 //import semplest.server.protocol.ProtocolEnum.MatchType;
@@ -91,16 +92,17 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		String searchEngine = data.get("searchEngine");
-		setBidsInitial( promotionID, searchEngine);
+		BudgetObject budgetData = gson.fromJson(data.get("budgetData"),BudgetObject.class);
+		setBidsInitial( promotionID, searchEngine, budgetData);
 	}
 	@Override
-	public void setBidsInitial(Integer promotionID, String searchEngine) throws Exception {
+	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		bidGeneratorObj.setBidsInitial(promotionID, searchEngine);
+		bidGeneratorObj.setBidsInitial(promotionID, searchEngine, budgetData);
 	}
 	
 	
@@ -110,19 +112,18 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		String searchEngine = data.get("searchEngine");
-		setBidsInitial( promotionID, searchEngine);
+		BudgetObject budgetData = gson.fromJson(data.get("budgetData"),BudgetObject.class);
+		setBidsUpdate(promotionID, searchEngine, budgetData);
 	}
 	@Override
-	public void setBidsUpdate(Integer promotionID, String searchEngine) throws Exception {
+	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
-		// TODO
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		// Don't do anything for the time being
-		// bidGeneratorObj.setBidsUpdate(promotionID, searchEngine);
-		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine);
+		bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
+		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine, BudgetObject budgetData);
 		
 	}
 	
