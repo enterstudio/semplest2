@@ -194,7 +194,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						KeywordMatchType.fromString(SemplestMatchType.getSearchEngineMatchType(adEngineInitialData.getSemplestMatchType(),
 								advertisingEngine)), null);
 				// call the initial bidding service
-				bidClient.getBidsInitial(String.valueOf(accountID), campaignID, adGroupData.getAdGroupID(), advertisingEngine);
+				BudgetObject budgetData = new BudgetObject();
+				budgetData.setRemainingBudgetInCycle(budget);
+				budgetData.setRemainingDays(daysLeft);
+				bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
 				// schedule the on-going bidding
 				String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + " _OnGoingBidding";
 				// Schedule for next day at the same time
@@ -477,7 +480,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 		}
 		// **NEED TO CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
-
+		
 		// Call bidding service to split the budget
 		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"));
 		// setup the budget for each ad engine
@@ -485,7 +488,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		//call setBidsUpdate
 		for (String adEngine : adEngineList)
 		{
-			bidClient.setBidsUpdate(PromotionID, adEngine);
+			Double budget = (Double) remainingBudgetDaysMap.get(adEngine).get("RemainingBudgetInCycle");
+			Integer daysLeft = (Integer) remainingBudgetDaysMap.get(adEngine).get("RemainingDays");
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(budget);
+			budgetData.setRemainingDays(daysLeft);
+			bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
 		}
 		return true;
 	}
