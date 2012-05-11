@@ -115,7 +115,7 @@ WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">
 
             
             #line 26 "..\..\Views\Shared\_Password.cshtml"
-           Write(Html.PasswordFor(m => m.SecurityQuestion, new { @class = "k-textbox" }));
+           Write(Html.TextBoxFor(m => m.SecurityQuestion, new { @class = "k-textbox" }));
 
             
             #line default
@@ -145,7 +145,7 @@ WriteLiteral("\r\n            </div>\r\n            <div class=\"editor-field\">
 
             
             #line 34 "..\..\Views\Shared\_Password.cshtml"
-           Write(Html.PasswordFor(m => m.SecurityAnswer, new { @class = "k-textbox" }));
+           Write(Html.TextBoxFor(m => m.SecurityAnswer, new { @class = "k-textbox" }));
 
             
             #line default
