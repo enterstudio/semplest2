@@ -52,14 +52,12 @@
                 </div>
                 @RenderSection("Navbar", false)</div>
             <div class='centerWrap floatWrap widgetOverview' id="mainWrap">
-                <div style = "background-color: #8ebc00;border-color: #8ebc00;color: #fff;height: 42px;margin-left: 190px;">
-                    <p id="exampleTitle">
-                        @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -40px; text-align: right">@RenderSection("Links", false)</div>
-                    </p>
-                </div>
-                <div style = "background-color: #8ebc00;border-color: #8ebc00;color: #fff;height: 42px;margin-left: 190px;">
-                        <div style="margin-right: 15px; margin-top: 0x; text-align: right">@RenderSection("SectionNav", false)</div>
-                </div>
+              <div id="exampleTitleHeader">
+                <p id="exampleTitle">
+                    @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -40px;
+                        text-align: right">@RenderSection("SectionNav", false)</div>
+                </p>
+            </div>
                 <div id="mainWrapInner">
                     <div id="main">
                         <div id="example">@RenderBody()
