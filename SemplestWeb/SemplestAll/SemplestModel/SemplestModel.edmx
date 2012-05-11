@@ -1780,6 +1780,23 @@
           <Parameter Name="FirstPageMicroCpc" Type="int" Mode="In" />
           <Parameter Name="IsEligibleForShowing" Type="bit" Mode="In" />
         </Function>
+        <Function Name="AddReportData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="PromotionID" Type="int" Mode="In" />
+          <Parameter Name="Keyword" Type="nvarchar" Mode="In" />
+          <Parameter Name="AdvertisingEngine" Type="varchar" Mode="In" />
+          <Parameter Name="TransactionDate" Type="datetime2" Mode="In" />
+          <Parameter Name="MicroBidAmount" Type="int" Mode="In" />
+          <Parameter Name="NumberImpressions" Type="int" Mode="In" />
+          <Parameter Name="NumberClick" Type="int" Mode="In" />
+          <Parameter Name="AveragePosition" Type="int" Mode="In" />
+          <Parameter Name="AverageCPC" Type="money" Mode="In" />
+          <Parameter Name="BidType" Type="varchar" Mode="In" />
+          <Parameter Name="QualityScore" Type="int" Mode="In" />
+          <Parameter Name="ApprovalStatus" Type="varchar" Mode="In" />
+          <Parameter Name="FirstPageMicroCpc" Type="int" Mode="In" />
+          <Parameter Name="MicroCost" Type="int" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="InOut" />
+        </Function>
         <Function Name="AddSchedule" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="ScheduleName" Type="varchar" Mode="In" />
           <Parameter Name="StartTime" Type="datetime2" Mode="In" />
@@ -1897,6 +1914,10 @@
           <Parameter Name="new_diagramname" Type="nvarchar" Mode="In" />
         </Function>
         <Function Name="sp_upgraddiagrams" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spBindChart" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <Function Name="spGetProductGroup" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CustomerId" Type="int" Mode="In" />
+        </Function>
         <Function Name="UpdateDefaultBidForKeywords" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PromotionPK" Type="int" Mode="In" />
           <Parameter Name="AdvertisingEngine" Type="varchar" Mode="In" />
@@ -4520,7 +4541,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="36">
+      <Diagram Name="SemplestModel" ZoomLevel="72">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
