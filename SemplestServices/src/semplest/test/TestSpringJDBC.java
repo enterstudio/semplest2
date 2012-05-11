@@ -6,6 +6,7 @@ import java.util.Iterator;
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.service.springjdbc.SemplestDB;
 
 
@@ -28,7 +29,8 @@ public class TestSpringJDBC
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
 			
-			SemplestDB.getAdEngineID(21, "Google");
+			AdEngineID a = SemplestDB.getAdEngineID(62, "Google");
+			a.getAccountID();
 			
 			HashMap<String, Object> configData = SemplestDB.loadConfigurationData();
 			Iterator<String> configIT = configData.keySet().iterator();
