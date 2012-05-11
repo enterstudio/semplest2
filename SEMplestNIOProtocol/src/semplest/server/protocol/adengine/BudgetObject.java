@@ -22,6 +22,7 @@ public class BudgetObject
 	{
 		this.remainingDays = remainingDays;
 	}
+	/*
 	public Double getBudgetSplit()
 	{
 		return budgetSplit;
@@ -30,5 +31,6 @@ public class BudgetObject
 	{
 		this.budgetSplit = budgetSplit;
 	}
+	*/
 
 }
