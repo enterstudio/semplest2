@@ -54,6 +54,9 @@ namespace Semplest.SharedResources.Controllers
                             //    return RedirectToAction("Index", "Home");
                             //else if (cred.User.IsRegistered)
                                 //user is a regular core user
+                            if (cred.User.CustomerFK == null)
+                                return RedirectToAction("Index", "Home");
+                            else
                                 return RedirectToAction("Index2", "Home");
                         }
                         else if (pm.LoggedInSucceeded)
