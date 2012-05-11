@@ -215,6 +215,25 @@ namespace SemplestWebApp.Services
             AddPromotionAdsToPromotion(updatePromotion, model);
         }
 
+        private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model)
+        {
+            using (var dbcontext = new SemplestEntities())
+            {
+                foreach (string aes in model.ProductGroup.AdEnginesList)
+                {
+                    var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEngine1 == aes);
+                    if (proAdEng.Count() > 0)
+                    {
+                        var adEngineSel = new PromotionAdEngineSelected
+                        {
+                            AdvertisingEngine = proAdEng.First()
+                        };
+
+                    }
+                }
+            }
+        }
+
         private void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model)
         {
             if (model.AdModelProp.Addresses != null)
