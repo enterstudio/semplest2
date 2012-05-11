@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public interface SemplestAdengineServiceInterface extends ServiceInitialize
 {
 	public abstract Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList ) throws Exception;
-	public abstract Boolean ExecuteBidProcess(Integer PromotionID, String adEngine ) throws Exception;
+	public abstract Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine ) throws Exception;
 	public abstract Boolean PausePromotion(Integer customerID,Integer promotionID, String adEngine) throws Exception;
 	public abstract Boolean PauseProductGroup(Integer customerID,Integer productGroupID, String adEngine) throws Exception;
 	public abstract Boolean DeleteAd(Integer customerID,Integer promotionID, Integer promotionAdID) throws Exception;

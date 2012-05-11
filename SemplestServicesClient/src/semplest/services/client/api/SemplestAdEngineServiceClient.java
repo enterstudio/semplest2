@@ -79,7 +79,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean ExecuteBidProcess(Integer PromotionID, String adEngine) throws Exception
+	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
