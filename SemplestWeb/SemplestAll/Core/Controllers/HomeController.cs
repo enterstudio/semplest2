@@ -169,6 +169,26 @@ namespace SemplestWebApp.Controllers
             }
         }
 
+        [HttpPost]
+        public ActionResult AddProductGroupName( FormCollection fc)
+        {
+            try
+            {
+                Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+                if (fc["newproductgroupname"].ToString() == null && fc["newproductgroupname"].ToString() =="" ) throw new Exception();
+                SemplestEntities dbContext = new SemplestEntities();
+                dbContext.ProductGroups.Add(new ProductGroup { CustomerFK=c.User.CustomerFK.Value  , ProductGroupName = fc["newproductgroupname"].ToString(), StartDate=DateTime.Now, IsActive = true });
+                dbContext.SaveChanges();
+
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            
+            return RedirectToAction("Index2");
+        }
+
 
         private void CreateDummyModel(SearchKeywordsModel model)
         {
