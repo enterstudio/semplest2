@@ -1,5 +1,7 @@
 ﻿using System.Web;
 using System.Web.Mvc;
+using SemplestModel;
+using System.Linq;
 
 namespace Semplest.SharedResources.Helpers
 {
@@ -10,7 +12,8 @@ namespace Semplest.SharedResources.Helpers
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
 
-            //httpContext.Session[SEMplestConstants.SESSION_USERID] = 1;
+            //SemplestEntities db = new SemplestEntities();
+            //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.Where(x => x.UsersFK == 1).First();
             //return true;
             string userId = string.Empty;
             if (HttpContext.Current.Session["UserId"] != null)
