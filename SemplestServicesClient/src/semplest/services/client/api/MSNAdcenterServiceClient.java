@@ -41,7 +41,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	private static String BASEURLTEST = "http://localhost:9898/semplest";
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "2000000";
 	private static Gson gson = new Gson();
@@ -554,16 +554,16 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			String city, String state, String country, String zip) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountId", Long.toString(accountId.longValue()));
-		jsonHash.put("accountId", Long.toString(campaignId.longValue()));
-		jsonHash.put("latitude", Double.toString(latitude));
-		jsonHash.put("longitude", Double.toString(longitude));
-		jsonHash.put("radius", Double.toString(radius));
-		jsonHash.put("addr", addr);
-		jsonHash.put("city", city);
-		jsonHash.put("state", state);
-		jsonHash.put("country", country);
-		jsonHash.put("zip", zip);
+		jsonHash.put("accountId", (accountId == null)? null:Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", (campaignId == null)? null:Long.toString(campaignId.longValue()));
+		jsonHash.put("latitude", (latitude == null)? null:Double.toString(latitude));
+		jsonHash.put("longitude", (longitude == null)? null: Double.toString(longitude));
+		jsonHash.put("radius",  (radius == null)? null:Double.toString(radius));
+		jsonHash.put("addr",(addr == null)? null: addr);
+		jsonHash.put("city", (city == null)? null:city);
+		jsonHash.put("state", (state == null)? null:state);
+		jsonHash.put("country", (country == null)? null:country);
+		jsonHash.put("zip", (zip == null)? null:zip);
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "setGeoTarget", json, timeoutMS);
