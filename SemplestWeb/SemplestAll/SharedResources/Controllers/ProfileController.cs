@@ -50,9 +50,9 @@ namespace Semplest.SharedResources.Controllers
                         if (cred.User.IsRegistered)
                         {
                             //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
-                            if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
-                                return RedirectToAction("Index", "Home");
-                            else if (cred.User.IsRegistered)
+                            //if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
+                            //    return RedirectToAction("Index", "Home");
+                            //else if (cred.User.IsRegistered)
                                 //user is a regular core user
                                 return RedirectToAction("Index2", "Home");
                         }

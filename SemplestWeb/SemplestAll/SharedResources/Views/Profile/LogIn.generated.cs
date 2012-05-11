@@ -225,12 +225,13 @@ WriteLiteral("            </div>\r\n        </fieldset>\r\n");
 WriteLiteral(@"
 <script type=""text/javascript"">
     $(document).ready(function () {
-        $(""input[id$='btnSubmit1']"").click(function () {
+        $(""input[id$='btnSubmit']"").click(function () {
             $.ajax({
                 type: ""GET"",
                 url: ""/Profile/Verify"",
                 data: { userName: $('#UserName').val(), password: $('#Password1').val() },
-                success: function (data) { $('.passwordverify').html(data); }
+                success: function (data) { $('.passwordverify').html(data); },
+                error: function (e) { alert(e); }
             });
         });
     })
