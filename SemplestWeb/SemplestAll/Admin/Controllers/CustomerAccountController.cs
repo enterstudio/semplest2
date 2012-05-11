@@ -625,7 +625,7 @@ namespace Semplest.Admin.Controllers
             {
                 SelectListItem mylistitem = new SelectListItem();
                 mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
+                mylistitem.Value = s.employeePK.ToString();
                 sl1.Add(mylistitem);
             }
             x.Reps = sl1;
@@ -650,7 +650,7 @@ namespace Semplest.Admin.Controllers
             {
                 SelectListItem mylistitem = new SelectListItem();
                 mylistitem.Text = s.FirstName + " " + s.LastName;
-                mylistitem.Value = s.EmployeeUserPK.ToString();
+                mylistitem.Value = s.employeePK.ToString();
                 sl2.Add(mylistitem);
             }
             x.SalesPersons = sl2;
