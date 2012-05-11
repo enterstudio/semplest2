@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
 using System.Linq;
@@ -81,6 +80,7 @@ namespace Semplest.Core.Models
         public List<string> NegativeKeywords { get; set; }
         public string NegativeKeywordsText { get; set; }
         [Required]
+        [RegularExpression(@"(http://|)(www\.)?([^\.]+)\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$",ErrorMessage = "url should be in this http://www.semplest.com")]
         public string Url { get; set; }
     }
 
