@@ -27,6 +27,9 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
+			SemplestDB.getAdEngineID(21, "Google");
+			
 			HashMap<String, Object> configData = SemplestDB.loadConfigurationData();
 			Iterator<String> configIT = configData.keySet().iterator();
 			while (configIT.hasNext())
