@@ -12,6 +12,7 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class HomeController : Controller
     {
          //public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)

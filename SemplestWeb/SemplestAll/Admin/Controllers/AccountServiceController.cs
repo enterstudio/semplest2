@@ -12,6 +12,7 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRoleAttribute]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class AccountServiceController : Controller
     {
         //

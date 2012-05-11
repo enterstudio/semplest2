@@ -19,6 +19,7 @@ namespace Semplest.Core.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class CampaignController : Controller
     {
         private readonly ICampaignRepository _campaignRepository;

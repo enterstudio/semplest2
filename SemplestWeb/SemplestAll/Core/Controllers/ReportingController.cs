@@ -5,9 +5,13 @@ using System.Web;
 using System.Web.Mvc;
 using SemplestModel;
 using Semplest.Core.Models;
+using Semplest.SharedResources.Helpers;
 
 namespace Semplest.Core.Controllers
 {
+    [ExceptionHelper]
+    [AuthorizeRole]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class ReportingController : Controller
     {
         //

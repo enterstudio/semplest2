@@ -14,6 +14,7 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class RolesController : Controller
     {
         SemplestEntities _dbContext = new SemplestEntities();

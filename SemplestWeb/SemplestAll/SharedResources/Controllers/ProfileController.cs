@@ -9,6 +9,7 @@ using Semplest.SharedResources.Helpers;
 namespace Semplest.SharedResources.Controllers
 {
     [ExceptionHelper]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class ProfileController : Controller
     {
         //

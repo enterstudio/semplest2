@@ -14,6 +14,7 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class CustomerAccountController : Controller
     {
         //
