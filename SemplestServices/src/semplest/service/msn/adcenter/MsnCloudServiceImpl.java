@@ -1723,7 +1723,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return gson.toJson(ret);
 	}
 	
-	public void deleteAllTargetsInCampaign(String json) throws Exception
+	public String deleteAllTargetsInCampaign(String json) throws Exception
 	{
 		logger.debug("call deleteAllTargetsInCampaign(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
@@ -1732,7 +1732,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
-
+		return gson.toJson(0);
 	}
 	
 	
@@ -2070,16 +2070,18 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Boolean ret = null;
 		try {
-			ret = setGeoTarget(new Long(data.get("accountId")), 
-					new Long(data.get("campaignId")), 
-					Double.valueOf(data.get("latitude")),
-					Double.valueOf(data.get("longitude")),
-					Double.valueOf(data.get("radius")),
-					data.get("addr"),
-					data.get("city"),
-					data.get("state"),
-					data.get("country"),
-					data.get("zip"));
+			
+			
+			ret = setGeoTarget((data.get("accountId")==null)? null:new Long(data.get("accountId")), 
+					(data.get("campaignId")==null)? null:new Long(data.get("campaignId")), 
+					(data.get("latitude")==null)? null:Double.valueOf(data.get("latitude")),
+					(data.get("longitude")==null)? null:Double.valueOf(data.get("longitude")),
+					(data.get("radius")==null)? null:Double.valueOf(data.get("radius")),
+					(data.get("addr")==null)? null:data.get("addr"),
+					(data.get("city")==null)? null:data.get("city"),
+					(data.get("state")==null)? null:data.get("state"),
+					(data.get("country")==null)? null:data.get("country"),
+					(data.get("zip")==null)? null:data.get("zip"));
 		} catch (Exception e) {
 			throw new Exception(e);
 		}
