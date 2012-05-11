@@ -520,7 +520,7 @@ namespace Semplest.Admin.Controllers
                           //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                           join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                           join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where (et.EmployeeType1 == "Rep")
+                          where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
                           select new EmployeeCustomerAssociaitionModel
                           {
                               //AccountNumber = eca.CustomerFK,
@@ -544,7 +544,7 @@ namespace Semplest.Admin.Controllers
                                   //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
                                   join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
                                   join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                                  where (et.EmployeeType1 == "Sales")
+                                  where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
                                   select new EmployeeCustomerAssociaitionModel
                                   {
                                       //AccountNumber = eca.CustomerFK,
@@ -619,7 +619,7 @@ namespace Semplest.Admin.Controllers
             //            });
 
             //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.ToList();
+            List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); ;
             List<SelectListItem> sl1 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
             {
@@ -644,7 +644,7 @@ namespace Semplest.Admin.Controllers
             //    Text = r.FirstName.ToString()
             //});
             //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.ToList();
+            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); 
             List<SelectListItem> sl2 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll2)
             {
@@ -817,6 +817,7 @@ namespace Semplest.Admin.Controllers
                     var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK.Equals(customerphoneassociation.PhoneFK));
                     var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
                     var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
+                    var customerhierarchy=dbcontext.CustomerHierarchies.ToList().Find(p=>p.CustomerFK.Equals(m.CustomerAccount.AccountNumber)); 
 
 
                     var productgroup = dbcontext.ProductGroups.ToList().Find(p => p.CustomerFK.Equals(customer.CustomerPK));
@@ -893,6 +894,8 @@ namespace Semplest.Admin.Controllers
                         dbcontext.UserRolesAssociations.Remove(ura);
                     }
 
+                    CustomerHierarchy ch = customerhierarchy;
+                    dbcontext.CustomerHierarchies.Remove(ch);
 
 
 
