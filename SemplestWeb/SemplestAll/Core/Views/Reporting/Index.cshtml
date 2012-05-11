@@ -5,14 +5,7 @@
 @section Title{
     Reporting
 }
-@section Links{
-    <div >
-        <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnMyAccount" />
-        <input type="button" class="k-button rounded" value="Ad Setup" id="btnAdSetup" />
-        <input type="button" class="k-button rounded" value="Reporting" id="btnReporting" />
-        <input type="button" class="k-button rounded" value="Billing" id="btnBilling" />
-    </div>
-}
+
 @section Navbar{
     <div id="panelbar-images">
     </div>
@@ -46,19 +39,3 @@ Please select a search engine for which you would like to view reports.  Selecti
   </table>
 
   <input type="button" id="btnOne" value="Get Report" class="k-button" />
-
-<script type="text/javascript">
-    $('#btnMyAccount').click(function () {
-        window.location.href = '../Home/Index2';
-        return false;
-    });
-
-    $('#btnAdSetup').click(function () {
-        window.location.href = '../Campaign/CampaignSetup';
-        return false;
-    });
-    $('#btnReporting').click(function () {
-        window.location.href = '../Reporting/Index';
-        return false;
-    });
-</script>
