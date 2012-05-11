@@ -116,6 +116,24 @@ public class CreateSchedulerAndTask
 		//
 		return taskObj;
 	}
+	
+	public static SemplestSchedulerTaskObject ExecuteBidProcess(Integer promotionID, ArrayList<String> adEngineList)
+	{
+		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
+		//Client service name to call from scheduler
+		taskObj.setClientServiceName(ProtocolEnum.ClientServiceName.valueOf("ExecuteBidProcess").getClientServiceNameValue());
+		//method
+		taskObj.setMethodName("ExecuteBidProcess");
+		//json parameters
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID",Integer.toString(promotionID));
+		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
+		jsonHash.put("adEngineList",adEngineListStr);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		taskObj.setParameters(json);
+		//
+		return taskObj;
+	}
 	/*
 	 * method creates a new schedule and associated the tasks, add a new job to the database and run it
 	 * THIS NEEDS TO BE IN TRANACTION*******

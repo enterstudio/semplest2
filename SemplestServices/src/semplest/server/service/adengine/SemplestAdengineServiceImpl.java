@@ -17,6 +17,7 @@ import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
@@ -34,6 +35,7 @@ import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
+import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
@@ -50,6 +52,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static final Logger logger = Logger.getLogger(SemplestAdengineServiceImpl.class);
 	private static Gson gson = new Gson();
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+	private static Calendar cal = Calendar.getInstance();
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -190,17 +193,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// call the initial bidding service
 				bidClient.getBidsInitial(String.valueOf(accountID), campaignID, adGroupData.getAdGroupID(), advertisingEngine);
 				// schedule the on-going bidding
-				scheduleOngoingBidding(PromotionID, adEngineList);
+				String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + " _OnGoingBidding";
+				// Schedule for next day at the same time
+				cal.setTime(new Date());
+				cal.add(Calendar.DAY_OF_MONTH, 1);
+				Date startTime = cal.getTime();
+				scheduleOngoingBidding(scheduleName, PromotionID, adEngineList, startTime);
 			}
 		}
 
 		return true;
 	}
 
-	private void scheduleOngoingBidding(int promotionID, ArrayList<String> adEngineList)
+	/*
+	 * schedules the on-going bidding
+	 */
+	private void scheduleOngoingBidding(String scheduleName, int promotionID, ArrayList<String> adEngineList, Date startTime) throws Exception
 	{
 		
-
+		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngineList);
+		listOfTasks.add(executeOngoinBiddingTask);
+		CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
 	}
 
 	/*
@@ -408,6 +422,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	/*
 	 * This executes the bidding process synchronously
 	 */
+	public String ExecuteBidProcess(String json) throws Exception
+	{
+		logger.debug("call  ExecuteBidProcess(String json)" + json);
+		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
+		Boolean res = ExecuteBidProcess(promotionID, adEngineList);
+		return gson.toJson(res);
+	}
 
 	@Override
 	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
@@ -418,8 +441,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		/*
 		 * look back 5 days to get the transactions
 		 */
-		Calendar cal = Calendar.getInstance();
+		
 		Date now = new Date();
+		cal.setTime(now);
 		cal.add(Calendar.DAY_OF_MONTH, -5);
 		for (String adEngine : adEngineList)
 		{

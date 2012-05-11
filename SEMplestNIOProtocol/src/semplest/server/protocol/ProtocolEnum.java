@@ -121,7 +121,8 @@ public class ProtocolEnum {
 		Email("semplest.services.client.api.SemplestMailServiceClient"),
 		GoogleReport("semplest.services.client.api.GoogleAdwordsServiceClient"),
 		MsnReport("semplest.services.client.api.MSNAdcenterServiceClient"),
-		AddPromotionToAdEngine("semplest.services.client.api.SemplestAdEngineServiceClient");
+		AddPromotionToAdEngine("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		ExecuteBidProcess("semplest.services.client.api.SemplestAdEngineServiceClient");;
 		
 		private String val;
 

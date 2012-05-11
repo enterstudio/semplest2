@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
@@ -40,7 +41,7 @@ public class SemplestScheduler extends Thread
 	 */
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
-	private static String url = "http://VMDEVJAVA1:9898/semplest";
+	private static String url = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 	//private static String url = "http://localhost:9898/semplest";
 
 	public static ClassPathXmlApplicationContext appContext = null;

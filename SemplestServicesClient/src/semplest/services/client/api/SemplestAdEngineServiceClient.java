@@ -6,11 +6,13 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.TaskOutput;
+import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
 import com.google.gson.Gson;
 
-public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface
+public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
@@ -25,6 +27,18 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public SemplestAdEngineServiceClient(String baseurl)
+	{
+		if (baseurl == null)
+		{
+			this.baseurl = BASEURLTEST;
+		}
+		else
+		{
+			this.baseurl = baseurl;
+		}
 	}
 
 	@Override
@@ -79,10 +93,27 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception
+	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		
+		jsonHash.put("promotionID",Integer.toString(PromotionID));
+		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
+		jsonHash.put("adEngineList",adEngineListStr);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "ExecuteBidProcess", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
+	}
+
+	@Override
+	public TaskOutput RunTask(String method, String jsonParameters,String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
+	{
+		if (optionalTimeoutMS == null)
+		{
+			optionalTimeoutMS = timeoutMS;
+		}
+		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
 }
