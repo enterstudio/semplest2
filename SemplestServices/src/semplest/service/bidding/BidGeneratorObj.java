@@ -32,7 +32,7 @@ import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
-import com.google.gson.Gson;
+//import com.google.gson.Gson;
 
 public class BidGeneratorObj {
 	
@@ -43,7 +43,7 @@ public class BidGeneratorObj {
 	private String networkSetting = ProtocolEnum.NetworkSetting.SearchOnly.name();
 	
 	
-	private static Gson gson = new Gson();
+	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(BidGeneratorObj.class);
 	
 	
@@ -99,6 +99,7 @@ public class BidGeneratorObj {
 		clientGoogle = new GoogleAdwordsServiceImpl();
 		
 		wordIDMap = new HashMap<String,Long>();
+		wordBidMap = new HashMap<String,Long>();
 
 
 		firstPageCPCMap = new HashMap<String,Long>();
@@ -257,7 +258,9 @@ public class BidGeneratorObj {
 		//           information available is not useful
 		
 		if(searchEngine.equalsIgnoreCase(google)){
-			o = getTrafficEstimatorDataForGoogle();
+			if (compKeywords.size()>0) {
+				o = getTrafficEstimatorDataForGoogle();
+			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		                /* *************************************** */
@@ -278,6 +281,8 @@ public class BidGeneratorObj {
 		
 		// TODO: bidOptimizer to be added
 		// for the time being put all keywords to the category of keywords not selected by optimizer
+		
+		// imp: consider the case that compKeywords is empty
 		
 		for(String s : compKeywords){
 			notSelectedKeywords.add(s);
@@ -330,21 +335,23 @@ public class BidGeneratorObj {
 		if(searchEngine.equalsIgnoreCase(google)){
 			o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
 					KeywordMatchType.EXACT,	wordBidMap);
-			String[] words = o2.getListOfKeywords();
-			for (int i=0; i < words.length; i++)
-			{
-				HashMap<Long, TrafficEstimatorObject.BidData> points = o2.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
-				Iterator<Long> bidIT = points.keySet().iterator();
-				while(bidIT.hasNext())
+			if (o2!=null) {
+				String[] words = o2.getListOfKeywords();
+				for (int i=0; i < words.length; i++)
 				{
-					Long abid= bidIT.next();
-					totalDailyClick += (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2;
-					totalDailyCost += (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/2;
+					HashMap<Long, TrafficEstimatorObject.BidData> points = o2.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
+					Iterator<Long> bidIT = points.keySet().iterator();
+					while(bidIT.hasNext())
+					{
+						Long abid= bidIT.next();
+						totalDailyClick += (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2;
+						totalDailyCost += (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/2;
+					}
 				}
-			}
-			if(totalDailyClick>0.01){
-				defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
-				defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
+				if(totalDailyClick>0.01){
+					defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
+					defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
+				}
 			}
 			
 		} // if(searchEngine.equalsIgnoreCase(google))
@@ -354,8 +361,9 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
 		if(searchEngine.equalsIgnoreCase(google)){
-			SemplestDB.storeKeywordDataObjects(promotionID, google, 
-					new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+			ArrayList<KeywordDataObject> a = new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs));
+			SemplestDB.storeKeywordDataObjects(promotionID, google, a);
+					//new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		logger.info("Stored adgroup criterion data to database for Google");
@@ -692,7 +700,7 @@ public class BidGeneratorObj {
 //			HashMap<String, Long> KeywordWithBid, GoogleAdwordsServiceImpl client) throws Exception {
 //		HashMap<String, Double> KeywordWithBid, GoogleAdwordsServiceClient client) throws Exception {
 		
-		TrafficEstimatorObject o = null, o2;
+		TrafficEstimatorObject o = null, o2 = null;
 		int i=0, k;
 		boolean firstLoop = true;
 		
@@ -705,12 +713,14 @@ public class BidGeneratorObj {
 				newKeywordWithBid.put(s,KeywordWithBid.get(s));
 				i++;
 			}
-			if(i%500==0 || (!it.hasNext())){
+			if((i%500==0 && i>0) || (!it.hasNext())){
 				k=1;
 				while(true) {
-					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 					try {
-						o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+						if(newKeywordWithBid.size()>0){
+							Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+							o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+						}
 						break;
 					} catch (Exception e) {
 						if (k<=maxRetry) {
@@ -724,7 +734,7 @@ public class BidGeneratorObj {
 					}
 				}
 				newKeywordWithBid.clear();
-				if(firstLoop){
+				if(firstLoop || o==null){
 					o=o2;
 					firstLoop=false;
 				} else {
