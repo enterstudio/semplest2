@@ -50,12 +50,33 @@ WriteLiteral("\r\n");
             
             #line default
             #line hidden
-WriteLiteral("\r\n   <table border =1><tr><th>User</th><th>Error Message</th><th>Time Stamp</th><" +
-"/tr>\r\n");
+WriteLiteral("    <script src=\"");
+
+
+            
+            #line 7 "..\..\Views\Error\Index.cshtml"
+            Write(Url.Content("~/Scripts/jquery-1.7.2.min.js"));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\" type=\"text/javascript\"> </script>\r\n        <div class=\"editor-field\">\r\n        " +
+"");
 
 
             
             #line 9 "..\..\Views\Error\Index.cshtml"
+   Write(Html.DropDownList("ddl", ViewData["CreateDate"] as SelectList));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("  \r\n        </div>\r\n        <div class= \"errors\">\r\n   <table border =1><tr><th>Us" +
+"er</th><th>Error Message</th><th>Time Stamp</th></tr>\r\n");
+
+
+            
+            #line 13 "..\..\Views\Error\Index.cshtml"
    foreach (Semplest.SharedResources.Controllers.ErrorModel item in Model)
   {
 
@@ -66,7 +87,7 @@ WriteLiteral("  <tr>\r\n  <td>\r\n    <div class=\"display-field\">\r\n        "
 
 
             
-            #line 14 "..\..\Views\Error\Index.cshtml"
+            #line 18 "..\..\Views\Error\Index.cshtml"
    Write(Html.DisplayFor(model => item.User));
 
             
@@ -76,7 +97,7 @@ WriteLiteral("\r\n    </div>\r\n    </td>\r\n<td>\r\n    <div class=\"display-fi
 
 
             
-            #line 19 "..\..\Views\Error\Index.cshtml"
+            #line 23 "..\..\Views\Error\Index.cshtml"
    Write(Html.DisplayFor(model => item.ErrorMessage));
 
             
@@ -86,7 +107,7 @@ WriteLiteral("\r\n    </div>\r\n    </td>\r\n    <td>\r\n    <div class=\"displa
 
 
             
-            #line 24 "..\..\Views\Error\Index.cshtml"
+            #line 28 "..\..\Views\Error\Index.cshtml"
    Write(Html.DisplayFor(model => item.TimeStamp));
 
             
@@ -96,13 +117,26 @@ WriteLiteral("\r\n    </div>\r\n    </td>\r\n    </tr>\r\n");
 
 
             
-            #line 28 "..\..\Views\Error\Index.cshtml"
+            #line 32 "..\..\Views\Error\Index.cshtml"
   }
 
             
             #line default
             #line hidden
-WriteLiteral("  </table>   \r\n");
+WriteLiteral(@"  </table>   
+
+  </div>
+
+     <script  type=""text/javascript"">
+         $(""select"").change(function () {
+             $.ajax({
+                 type: ""GET"",
+                 url: ""/Error/GetData"",
+                 data: { d: $(this).attr('value') },
+                 success: function (data) { $('.errors').html(data); }
+             });
+         })
+    </script>");
 
 
         }

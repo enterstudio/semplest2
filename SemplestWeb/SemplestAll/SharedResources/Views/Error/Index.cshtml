@@ -4,7 +4,11 @@
     Layout = null;
     ViewBag.Title = "Index";
 }
-
+    <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
+        <div class="editor-field">
+        @Html.DropDownList("ddl", ViewData["CreateDate"] as SelectList)  
+        </div>
+        <div class= "errors">
    <table border =1><tr><th>User</th><th>Error Message</th><th>Time Stamp</th></tr>
   @foreach (Semplest.SharedResources.Controllers.ErrorModel item in Model)
   {
@@ -27,3 +31,16 @@
     </tr>
   }
   </table>   
+
+  </div>
+
+     <script  type="text/javascript">
+         $("select").change(function () {
+             $.ajax({
+                 type: "GET",
+                 url: "/Error/GetData",
+                 data: { d: $(this).attr('value') },
+                 success: function (data) { $('.errors').html(data); }
+             });
+         })
+    </script>
