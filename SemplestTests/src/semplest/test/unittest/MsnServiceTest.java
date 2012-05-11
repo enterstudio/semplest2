@@ -424,6 +424,9 @@ public class MsnServiceTest {
 			catch(RemoteException e){
 				errorHandler(e);
 			}
+			catch(Exception e){
+				errorHandler(e);
+			}
 			
 			/*
 			//===Use this test to get format of City string and MetroArea string. (need to set things up on the website before run this)

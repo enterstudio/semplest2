@@ -17,7 +17,7 @@ public class AdengineServiceTest {
 			ArrayList<String> adEngineList = new ArrayList<String>();
 			adEngineList.add(AdEngine.Google.name());
 			adEngineList.add(AdEngine.MSN.name());
-			adengineService.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
+			//adengineService.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
 		}
 		catch(Exception e){
 			e.printStackTrace();

@@ -34,6 +34,7 @@ public class GoogleServiceTest {
 	private int sleepTime = 100;
 	
 	private String accountID = "7250251887";	
+	private String test_accountId = "2188810777";
 	
 	
 	public static void main(String[] args){
@@ -45,14 +46,15 @@ public class GoogleServiceTest {
 			GoogleServiceTest t = new GoogleServiceTest();
 			//int ret = t.Test_CreateOneAccountService();
 			//t.cleanUp();
+			t.Test_getReportForAccount();
 			
 			//GoogleAdwordsServiceClient service = new GoogleAdwordsServiceClient(null);
 			//service.CreateOneCampaignForAccount("7250251887", "temptest", CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
 			
 			
-			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			boolean ret = test.changeCampaignStatus(test_accountId, test_campaignId, CampaignStatus.PAUSED);
-			
+			//GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			//boolean ret = test.changeCampaignStatus(test_accountId, test_campaignId, CampaignStatus.PAUSED);
+			//test.getReportForAccount(test_accountId, "20120115", "20120220");
 			
 		}
 		catch(Exception e){
@@ -69,7 +71,7 @@ public class GoogleServiceTest {
 		System.out.println("------------------------------------------------------------");
 		System.out.println("getReportForAccount:");		
 		try{
-			ReportObject[] ret = test.getReportForAccount(new SemplestString().toSemplestString(accountID));
+			ReportObject[] ret = test.getReportForAccount("5058200123", "20120115", "20120220");
 			System.out.println("OK");	
 			for(ReportObject r : ret){
 				System.out.println("->");										
@@ -224,7 +226,7 @@ public class GoogleServiceTest {
 			System.out.println("AddAdGroup:");		
 			try{
 				String AdGroupName = "test_" + now;
-				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED);
+				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED, 1000000L);
 				System.out.println("OK");	
 				System.out.println("adGroupId = " + adGroupID);
 			}
@@ -292,7 +294,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("deleteAdGroup:");		
 			try{
-				Long tempAdGroup = test.AddAdGroup(accountID, campaignID, "temp", AdGroupStatus.PAUSED);
+				Long tempAdGroup = test.AddAdGroup(accountID, campaignID, "temp", AdGroupStatus.PAUSED, 1000000L);
 				System.out.println("created a temp adGroup " + tempAdGroup + ", and we'll delete it now.");
 				boolean ret = test.deleteAdGroup(accountID, tempAdGroup);
 				System.out.println("OK");	
@@ -522,7 +524,7 @@ public class GoogleServiceTest {
 			System.out.println("getReportForAccount:");		
 			try{
 				String test_accountId = "2188810777";
-				ReportObject[] ret = test.getReportForAccount(new SemplestString().toSemplestString(test_accountId));
+				ReportObject[] ret = test.getReportForAccount(test_accountId, "20120301", "20120430");
 				System.out.println("OK");	
 				System.out.println("test accountId is " + test_accountId);	
 				if(ret == null){
@@ -701,7 +703,7 @@ public class GoogleServiceTest {
 			System.out.println("AddAdGroup:");		
 			try{
 				String AdGroupName = "test_" + now;
-				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED);
+				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED, 1000000L);
 				System.out.println("OK");	
 				System.out.println("adGroupId = " + adGroupID);
 			}
@@ -769,7 +771,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("deleteAdGroup:");		
 			try{
-				Long tempAdGroup = test.AddAdGroup(accountID, campaignID, "temp", AdGroupStatus.PAUSED);
+				Long tempAdGroup = test.AddAdGroup(accountID, campaignID, "temp", AdGroupStatus.PAUSED, 1000000L);
 				System.out.println("created a temp adGroup " + tempAdGroup + ", and we'll delete it now.");
 				boolean ret = test.deleteAdGroup(accountID, tempAdGroup);
 				System.out.println("OK");	
@@ -998,7 +1000,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getReportForAccount:");		
 			try{
-				ReportObject[] ret = test.getReportForAccount(new SemplestString().toSemplestString(accountID));
+				ReportObject[] ret = test.getReportForAccount(accountID, "20120301", "20120430");
 				System.out.println("OK");	
 				for(ReportObject r : ret){
 					System.out.println("->");										
