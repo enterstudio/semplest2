@@ -548,7 +548,44 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		logger.debug("createCampaign: campaignId = " + campaignId.toString());		
 		return campaignId;
 	}
-
+	
+	@Override
+	public Boolean setGeoTarget(Long accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, 
+			String city, String state, String country, String zip) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("accountId", Long.toString(campaignId.longValue()));
+		jsonHash.put("latitude", Double.toString(latitude));
+		jsonHash.put("longitude", Double.toString(longitude));
+		jsonHash.put("radius", Double.toString(radius));
+		jsonHash.put("addr", addr);
+		jsonHash.put("city", city);
+		jsonHash.put("state", state);
+		jsonHash.put("country", country);
+		jsonHash.put("zip", zip);
+		String json = gson.toJson(jsonHash);
+		
+		String returnData = runMethod(baseurl,SERVICEOFFERED, "setGeoTarget", json, timeoutMS);
+		Boolean res = gson.fromJson(returnData, Boolean.class);		
+		logger.debug("setGeoTarget: res = " + res.toString());		
+		return res;
+	}
+	
+	
+	@Override
+	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception
+	{
+		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("accountId", Long.toString(accountId.longValue()));
+		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
+		String json = gson.toJson(jsonHash);
+		
+		runMethod(baseurl,SERVICEOFFERED, "deleteAllTargetsInCampaign", json, timeoutMS);		
+		logger.debug("deleteAllTargetsInCampaign: done");		
+		
+	}
+	
 	@Override
 	public Campaign getCampaignById(Long accountId, Long campaignId) throws Exception
 	{

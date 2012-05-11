@@ -109,13 +109,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			//Pipper Hall
 			Long accountID = 1633818L;
 			Long campaignID = 130147141L;
-			String addr = "90 John";
-			String city = "New York";
-			String state = "New York";
-			String country = "US";
-			String zip = "10038";
-			Double radius = 100.0;
-			Boolean res = test.setGeoTarget(accountID, campaignID, radius, addr, city, state, country, zip);
+			String addr = null;//"2157 Diamond St";
+			String city = null;//"San Diego";
+			String state = "US";
+			String country = null;//"US";
+			String zip = null;//"92109";
+			Double radius = null;//30.0;
+			Double latitude = null; //35.707984924316406;
+			Double longitude = null; //-80.00623321533203;
+
+			//test.deleteAllTargetsInCampaign(accountID, campaignID);
+			Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
 			//Traffic Estimator
 			//logger.info("Running traffic estimator");
 			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
@@ -879,7 +883,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 	
 	@Override
-	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws RemoteException
+	public void setAdGroupStateTargets(Long accountId, long customerId, Long adGroupId, List<String> states) throws Exception
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerId);
 		Target[] targets = makeStateTargets(states);
@@ -1719,72 +1723,111 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		return gson.toJson(ret);
 	}
 	
-	public Boolean setGeoTarget(Long accountId, Long campaignId, Double radius, String addr, String city, String state, 
-			String country, String zip) throws Exception 
+	public void deleteAllTargetsInCampaign(String json) throws Exception
 	{
-				
-		Account account = getAccountById(accountId);
-		Long customerID = getCustomerID(account.getName());
-		logger.info("accountName: "+ account.getName());
-		if(customerID != null){
-			logger.info("customerID: "+ customerID);
-		}else{
-			throw new Exception("Problems retrieving customerID");
+		logger.debug("call deleteAllTargetsInCampaign(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		try {
+			deleteAllTargetsInCampaign(new Long(data.get("accountId")), new Long(data.get("campaignId")));
+		} catch (Exception e) {
+			throw new Exception(e);
 		}
-		
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerID);
-		
-		//Get ids of installed targets
-		GetTargetsByCampaignIdsRequest getTargReq = new GetTargetsByCampaignIdsRequest();
-		getTargReq.setCampaignIds(new long[]{campaignId});
-		
-		GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
-		Target[] targetsStored = getTargResp.getTargets();
-		
-		//Delete installed targets
-		if(targetsStored[0] != null){
-			DeleteTargetFromCampaignRequest reqDelTarg = new DeleteTargetFromCampaignRequest();
-			reqDelTarg.setCampaignId(campaignId);
-			DeleteTargetFromCampaignResponse respDelTar = campaignManagement.deleteTargetFromCampaign(reqDelTarg);
-		}
-		
-		GetBusinessesInfoRequest busreq = new GetBusinessesInfoRequest();
-		GetBusinessesInfoResponse busres = campaignManagement.getBusinessesInfo(busreq);
-		BusinessInfo[] busInf = busres.getBusinessesInfo();
-		long[] storedBusIDs = new long[busInf.length];
-		
-		DeleteBusinessesRequest delBusReq; 
-		if(busInf.length>0 && busInf[0].getId()>0){
-			for(int i=0; i<busInf.length; i++){
-				delBusReq = new DeleteBusinessesRequest();
-				delBusReq.setBusinessIds(new long[]{busInf[i].getId()});
-				campaignManagement.deleteBusinesses(delBusReq);
+
+	}
+	
+	
+	@Override
+	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception{
+		try{
+			Account account = getAccountById(accountId);
+			Long customerID = getCustomerID(account.getName());
+			logger.info("accountName: "+ account.getName());
+			if(customerID != null){
+				logger.info("customerID: "+ customerID);
+			}else{
+				throw new MsnCloudException("Problems retrieving customerID");
+			}
+			
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerID);
+			
+			//Get targets already isntalled
+			GetTargetsByCampaignIdsRequest getTargReq = new GetTargetsByCampaignIdsRequest();
+			getTargReq.setCampaignIds(new long[]{campaignId});
+			
+			GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
+			Target[] targetsStored = getTargResp.getTargets();
+			
+			//Delete installed targets
+			if(targetsStored[0] != null){
+				DeleteTargetFromCampaignRequest reqDelTarg = new DeleteTargetFromCampaignRequest();
+				reqDelTarg.setCampaignId(campaignId);
+				DeleteTargetFromCampaignResponse respDelTar = campaignManagement.deleteTargetFromCampaign(reqDelTarg);
+			}
+			
+			//Get businesses already installed
+			GetBusinessesInfoRequest busreq = new GetBusinessesInfoRequest();
+			GetBusinessesInfoResponse busres = campaignManagement.getBusinessesInfo(busreq);
+			BusinessInfo[] busInf = busres.getBusinessesInfo();
+			long[] storedBusIDs = new long[busInf.length];
+			
+			//Delete businesses installed
+			DeleteBusinessesRequest delBusReq; 
+			if(busInf!=null && busInf.length>0 && busInf[0].getId()>0){
+				for(int i=0; i<busInf.length; i++){
+					delBusReq = new DeleteBusinessesRequest();
+					delBusReq.setBusinessIds(new long[]{busInf[i].getId()});
+					campaignManagement.deleteBusinesses(delBusReq);
+				}
 			}
 		}
-		long[] busIDs = new long[0];
-		Target target = new Target();
-		AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
-		for(int j=0; j<3 ; j++){
+		catch(RemoteException e1){
+			throw new MsnCloudException(e1);			
+		}
+
+	}
+	
+	private Boolean setBusinessTargetObject( ICampaignManagementService campaignManagement, Target[] targetsStored, Account account,
+			Long campaignId, Double radius, String addr, String city, String state, String country, String zip) throws MsnCloudException{
+		try{
+			//Generate new name for business based on businesses installed in campaign
+			GetBusinessesInfoRequest busreq = new GetBusinessesInfoRequest();
+			GetBusinessesInfoResponse busres = campaignManagement.getBusinessesInfo(busreq);
+			BusinessInfo[] busInf = busres.getBusinessesInfo();
+			int[] busNamesInt = new int[0];
+			String name = "0";
+			
+			if(busInf!=null && busInf.length>0 && busInf[0].getId()>0){
+				busNamesInt = new int[busInf.length];
+				for(int j=0; j<busInf.length; j++){
+					String numbers= busInf[j].getName().replaceAll("\\D", "");
+					if(numbers.length()>0){
+						busNamesInt[j]=Integer.parseInt(numbers);
+					}else{
+						busNamesInt[j]=j;
+					}
+				}
+				Arrays.sort(busNamesInt);
+				name = ""+(busNamesInt[busInf.length-1]+1);
+			}
+			
 			//Create and add business object that will contain location information
+			long[] busIDs;	
 			logger.info("Creating business object with location...");
 			Business business = new Business();
-			business.setName(account.getName()+Math.round(Math.random()*100));
-			if(addr!=null)
-				business.setAddressLine1(addr);
-			if(city!=null)
-				business.setCity(city);
-			if(country!=null)
-				business.setCountryOrRegion(country);
-			if(state!=null)
-				business.setStateOrProvince(state);
-			if(zip!=null)
-				business.setZipOrPostalCode(zip);
+			business.setName(name);
+			business.setAddressLine1(addr);
+			business.setCity(city);
+			business.setCountryOrRegion(country);
+			business.setStateOrProvince(state);
+			business.setZipOrPostalCode(zip);
+			
 			AddBusinessesRequest requestBus = new AddBusinessesRequest();
 			requestBus.setBusinesses(new Business[]{business});
 			
 			AddBusinessesResponse responseBus =campaignManagement.addBusinesses(requestBus);
 			
 			busIDs = responseBus.getBusinessIds();
+			
 			
 			//Add business object to a target object
 			logger.info("Adding Business to Target...");
@@ -1794,49 +1837,306 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			bid.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
 			bid.setRadius(radius.intValue());
 			
-			BusinessTarget busTarg = new BusinessTarget();
-			busTarg.setBids(new BusinessTargetBid[] {bid});
-			LocationTarget locTarget = new LocationTarget();
-			locTarget.setBusinessTarget(busTarg);
-			target.setLocation(locTarget);
-		}
+			if(targetsStored[0]== null){
+				Target target = new Target();
+				BusinessTarget busTarg = new BusinessTarget();
+				busTarg.setBids(new BusinessTargetBid[] {bid});
+				LocationTarget locTarget = new LocationTarget();
+				locTarget.setBusinessTarget(busTarg);
+				target.setLocation(locTarget);
 		
-		Target[] targets = new Target[]{target};
-
+				
+				Target[] targets = new Target[]{target};
 		
-		requestTar.setTargets(targets);
-		
-		AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
-		
-		
-		
-		long[] targetIDs = responseTar.getTargetIds();
-		
-		//Add target object to campaign
-		logger.info("Adding target to campaign...");
-		SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
-		requestCamp.setTargetId(targetIDs[0]);
-		requestCamp.setCampaignId(campaignId);
-		SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
-		
-		
-		//Determine if coordinates resolved and target active
-		GetBusinessesByIdsRequest requestStatus = new GetBusinessesByIdsRequest();
-		requestStatus.setBusinessIds(busIDs);
-		
-		GetBusinessesByIdsResponse responseStatus = campaignManagement.getBusinessesByIds(requestStatus);
-		Business[] storedBus = responseStatus.getBusinesses();
-		BusinessGeoCodeStatus geoStatus = storedBus[0].getGeoCodeStatus();
-		logger.info("GeoCode Status: "+ geoStatus.getValue());
-		logger.info("Latitude: "+storedBus[0].getLatitudeDegrees());
-		logger.info("Longitude: "+storedBus[0].getLongitudeDegrees());
-		long res = 0;
-		if (radius ==null || radius <= 0){
+				AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+				requestTar.setTargets(targets);
+				AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
+				
+				
+				
+				long[] targetIDs = responseTar.getTargetIds();
+				
+				//Add target object to campaign
+				logger.info("Adding target to campaign...");
+				SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
+				requestCamp.setTargetId(targetIDs[0]);
+				requestCamp.setCampaignId(campaignId);
+				SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
+			
+			} else {
+				//if target already exists add new business to bid array
+				if(targetsStored.length>1){
+					throw new MsnCloudException("Too many targets in this campaign");
+				}
+				Target targetUpdate = targetsStored[0];
+				LocationTarget locUpdate = targetUpdate.getLocation();
+				BusinessTarget busTarUpdate = locUpdate.getBusinessTarget();
+				BusinessTargetBid[] bidsStored;
+				if(busTarUpdate!=null){
+					bidsStored = new BusinessTargetBid[busTarUpdate.getBids().length+1];
+					for(int j=0; j<busTarUpdate.getBids().length; j++){
+						bidsStored[j] = busTarUpdate.getBids()[j];
+					}
+					bidsStored[busTarUpdate.getBids().length] = bid;
+				}else{
+					bidsStored = new BusinessTargetBid[]{bid};
+					busTarUpdate = new BusinessTarget();
+				}
+				busTarUpdate.setBids(bidsStored);
+				//Update location target
+				locUpdate.setBusinessTarget(busTarUpdate);
+				targetUpdate.setLocation(locUpdate);
+				targetUpdate.setIsLibraryTarget(null);
+				//Update target in library
+				UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
+				updateTarRequest.setTargets(new Target[] {targetUpdate});
+				UpdateTargetsInLibraryResponse updateTarResponse =  campaignManagement.updateTargetsInLibrary(updateTarRequest);
+			}
+			
+			//Determine if coordinates resolved and target active
+			GetBusinessesByIdsRequest requestStatus = new GetBusinessesByIdsRequest();
+			requestStatus.setBusinessIds(busIDs);
+			
+			GetBusinessesByIdsResponse responseStatus = campaignManagement.getBusinessesByIds(requestStatus);
+			Business[] storedBus = responseStatus.getBusinesses();
+			BusinessGeoCodeStatus geoStatus = storedBus[0].getGeoCodeStatus();
+			logger.info("GeoCode Status: "+ geoStatus.getValue());
+			logger.info("Latitude: "+storedBus[0].getLatitudeDegrees());
+			logger.info("Longitude: "+storedBus[0].getLongitudeDegrees());
+			long res = 0;
+			return true;
 			
 		}
-	  else 	;
-	  if (res == 0) return false;
-	  return true;                                  
+		catch(RemoteException e1){
+			throw new MsnCloudException(e1);			
+		}
+	}
+	
+	private Boolean setRadiusTargetObject( ICampaignManagementService campaignManagement, Target[] targetsStored, Account account,
+			Long campaignId, Double radius, Double latitude, Double longitude) throws MsnCloudException{
+		try{
+					
+				Boolean res = false;
+				//Create and add radius object that will contain location information
+					
+				logger.info("Creating radius object with location...");
+				RadiusTargetBid radiusTar = new RadiusTargetBid();
+				radiusTar.setLatitudeDegrees(latitude);
+				radiusTar.setLongitudeDegrees(longitude);
+				radiusTar.setRadius(radius.intValue());
+				radiusTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
+				
+
+				if(targetsStored[0]== null){
+					Target target = new Target();
+					RadiusTarget radTarg = new RadiusTarget();
+					radTarg.setBids(new RadiusTargetBid[] {radiusTar});
+					LocationTarget locTarget = new LocationTarget();
+					locTarget.setRadiusTarget(radTarg);
+					target.setLocation(locTarget);
+			
+					
+					Target[] targets = new Target[]{target};
+					AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+					requestTar.setTargets(targets);
+					AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
+					
+					long[] targetIDs = responseTar.getTargetIds();
+					
+					//Add target object to campaign
+					logger.info("Adding target to campaign...");
+					SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
+					requestCamp.setTargetId(targetIDs[0]);
+					requestCamp.setCampaignId(campaignId);
+					SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
+					logger.info("Target loaded");
+					res = true;
+				} else {
+					
+					//if target already exists add new business to bid array
+					if(targetsStored.length>1){
+						throw new MsnCloudException("Too many targets in this campaign");
+					}
+					Target targetUpdate = targetsStored[0];
+					LocationTarget locUpdate = targetUpdate.getLocation();
+					RadiusTarget radiusTarUpdate = locUpdate.getRadiusTarget();
+					RadiusTargetBid[] bidsStored;
+					if(radiusTarUpdate!=null){
+						bidsStored = new RadiusTargetBid[radiusTarUpdate.getBids().length+1];
+						for(int j=0; j<radiusTarUpdate.getBids().length; j++){
+							bidsStored[j] = radiusTarUpdate.getBids()[j];
+						}
+						bidsStored[radiusTarUpdate.getBids().length] = radiusTar;
+					}else{
+						bidsStored = new RadiusTargetBid[]{radiusTar};
+						radiusTarUpdate = new RadiusTarget();
+					}
+					radiusTarUpdate.setBids(bidsStored);
+					//Update location target
+					locUpdate.setRadiusTarget(radiusTarUpdate);
+					targetUpdate.setLocation(locUpdate);
+					targetUpdate.setIsLibraryTarget(null);
+					//Update target in library
+					UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
+					updateTarRequest.setTargets(new Target[] {targetUpdate});
+					UpdateTargetsInLibraryResponse updateTarResponse =  campaignManagement.updateTargetsInLibrary(updateTarRequest);
+					logger.info("Target Updated");
+					res = true;
+				}
+				return res;
+		}
+		catch(RemoteException e1){
+			throw new MsnCloudException(e1);			
+		}
+
+	}
+	private Boolean setStateTargetObject( ICampaignManagementService campaignManagement, Target[] targetsStored, Account account,
+			Long campaignId, String state) throws MsnCloudException{
+			try{	
+				Boolean res = false;
+				//Create and add radius object that will contain location information
+					
+				logger.info("Creating state object with location...");
+				StateTargetBid stateTar = new StateTargetBid();
+				stateTar.setState(state);
+				stateTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
+				
+
+				if(targetsStored[0]== null){
+					Target target = new Target();
+					StateTarget statTarg = new StateTarget();
+					statTarg.setBids(new StateTargetBid[] {stateTar});
+					LocationTarget locTarget = new LocationTarget();
+					locTarget.setStateTarget(statTarg);
+					target.setLocation(locTarget);
+			
+					
+					Target[] targets = new Target[]{target};
+					AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+					requestTar.setTargets(targets);
+					AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
+					
+					long[] targetIDs = responseTar.getTargetIds();
+					
+					//Add target object to campaign
+					logger.info("Adding target to campaign...");
+					SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
+					requestCamp.setTargetId(targetIDs[0]);
+					requestCamp.setCampaignId(campaignId);
+					SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
+					logger.info("Target loaded");
+					res = true;
+				} else {
+					
+					//if target already exists add new business to bid array
+					if(targetsStored.length>1){
+						throw new MsnCloudException("Too many targets in this campaign");
+					}
+					Target targetUpdate = targetsStored[0];
+					LocationTarget locUpdate = targetUpdate.getLocation();
+					StateTarget stateTarUpdate = locUpdate.getStateTarget();
+					StateTargetBid[] bidsStored;
+					if(stateTarUpdate!=null){
+						bidsStored = new StateTargetBid[stateTarUpdate.getBids().length+1];
+						for(int j=0; j<stateTarUpdate.getBids().length; j++){
+							bidsStored[j] = stateTarUpdate.getBids()[j];
+						}
+						bidsStored[stateTarUpdate.getBids().length] = stateTar;
+					}else{
+						bidsStored = new StateTargetBid[]{stateTar};
+						stateTarUpdate = new StateTarget();
+					}
+					stateTarUpdate.setBids(bidsStored);
+					//Update location target
+					locUpdate.setStateTarget(stateTarUpdate);
+					targetUpdate.setLocation(locUpdate);
+					targetUpdate.setIsLibraryTarget(null);
+					//Update target in library
+					UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
+					updateTarRequest.setTargets(new Target[] {targetUpdate});
+					UpdateTargetsInLibraryResponse updateTarResponse =  campaignManagement.updateTargetsInLibrary(updateTarRequest);
+					logger.info("Target Updated");
+					res = true;
+				}
+				return res;
+			}
+			catch(RemoteException e1){
+				throw new MsnCloudException(e1);			
+			}
+	}
+	public String setGeoTarget(String json) throws Exception
+	{	
+		logger.debug("call setGeoTarget(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Boolean ret = null;
+		try {
+			ret = setGeoTarget(new Long(data.get("accountId")), 
+					new Long(data.get("campaignId")), 
+					Double.valueOf(data.get("latitude")),
+					Double.valueOf(data.get("longitude")),
+					Double.valueOf(data.get("radius")),
+					data.get("addr"),
+					data.get("city"),
+					data.get("state"),
+					data.get("country"),
+					data.get("zip"));
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
+	@Override
+	public Boolean setGeoTarget(Long accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, 
+			String state, String country, String zip) throws Exception 
+	{	
+		try{
+			if (radius!=null){
+				if(radius>100){
+					throw new MsnCloudException("Maximum radius 100 miles");
+				}else{
+					radius = new Long(Math.round(radius/10.0)).doubleValue()*10;
+				}
+			}
+			Account account = getAccountById(accountId);
+			Long customerID = getCustomerID(account.getName());
+			logger.info("accountName: "+ account.getName());
+			if(customerID != null){
+				logger.info("customerID: "+ customerID);
+			}else{
+				throw new MsnCloudException("Problems retrieving customerID");
+			}
+			
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerID);
+			
+			//Get targets already isntalled
+			GetTargetsByCampaignIdsRequest getTargReq = new GetTargetsByCampaignIdsRequest();
+			getTargReq.setCampaignIds(new long[]{campaignId});
+			
+			GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
+			Target[] targetsStored = getTargResp.getTargets();
+			//Consider different cases
+			if(radius==null && state!=null){
+				if(!state.contains("US-")){
+					state = "US-"+state;
+					logger.info("Setting target: "+ state);
+				}
+				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, state);
+			}else if( addr!=null && city!=null && state!=null && country!=null && zip!=null){
+				country="US";
+				return setBusinessTargetObject( campaignManagement, targetsStored, account, campaignId, radius, addr, city, state, country, zip); 
+			}else if(radius!=null && latitude!=null && longitude!=null){
+				return setRadiusTargetObject( campaignManagement, targetsStored, account, campaignId, radius, latitude, longitude);
+			}else {
+				country="US";
+				logger.info("Setting default: "+ country);
+				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, country);
+			}
+		}
+		catch(RemoteException e1){
+			throw new MsnCloudException(e1);			
+		}
+       
 	}
 	
 	@Override

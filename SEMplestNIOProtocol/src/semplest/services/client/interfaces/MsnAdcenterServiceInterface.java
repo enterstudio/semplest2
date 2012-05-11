@@ -14,6 +14,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
+
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
@@ -54,6 +55,15 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	public abstract Account getAccountById(Long accountId) throws Exception;
 	
 	public abstract HashMap<String,Double> getAccountIDs() throws Exception;
+	
+	// ==================================
+	// GeoTargeting Methods
+	// ==================================
+	
+	public Boolean setGeoTarget(Long accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, 
+			String country, String zip) throws Exception; 
+	
+	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception;
 	
 	// ==================================
 	// Campaign Methods
