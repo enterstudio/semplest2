@@ -58,14 +58,14 @@ BEGIN TRY
 	--ADD ONLY IF THE TRANSACTION DOES NOT EXIST
 	if not exists (select * from AdvertisingEngineReportData aerd where aerd.KeywordBidFK = @keywordBidPK and aerd.TransactionDate = @TransactionDate)
 	BEGIN
-		insert into AdvertisingEngineReportData(TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
+		insert into AdvertisingEngineReportData(KeywordBidFK, TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
 			AveragePosition, AverageCPC, BidTypeFK, QualityScore,ApprovalStatus, FirstPageMicroCPC, MicroCost, CreatedDate)
-			VALUES (@TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
+			VALUES (@keywordBidPK, @TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
 			@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)
 		set @ID = @@IDENTITY		
 	END		
 	
-	RETURN @ID	  
+		  
 	
 	
 END TRY
