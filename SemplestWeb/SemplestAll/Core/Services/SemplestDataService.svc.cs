@@ -242,7 +242,7 @@ namespace SemplestWebApp.Services
         {
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
-                var cad = new PromotionAd { AdText = pad.AdText, AdTitle = pad.AdTitle };
+                var cad = new PromotionAd { AdTextLine1 = pad.AdTextLine1, AdTextLine2 = pad.AdTextLine2, AdTitle = pad.AdTitle };
 
                 if (pad.SiteLinks != null)
                 {
@@ -341,9 +341,6 @@ namespace SemplestWebApp.Services
                     }
                     else  // keyword already there in the Keywords table, setup an association with promotion if its not there
                     {
-                        // todo find out more
-                        return true;
-
                         int keywordId = queryKeyword.First().KeywordPK;
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
                         if (queryPka.Count() == 0)
