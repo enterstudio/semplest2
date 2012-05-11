@@ -18,8 +18,8 @@ import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
-import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
+//import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+//import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
@@ -132,7 +132,7 @@ public class BidGeneratorObj {
 			}
 			// Long defaultMicroBid = 1000000L; // $1.00
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
-			adEngineInitialDataObject.setSemplestMatchType(SemplestMatchType.Exact.name());
+			adEngineInitialDataObject.setSemplestMatchType(ProtocolEnum.SemplestMatchType.Exact.name());
 			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
 			adEngineInitialDataObject.setNetworkSetting(networkSetting);
 //			adEngineInitialDataObject.setBiddingMethod(biddingMethod)
@@ -395,7 +395,7 @@ public class BidGeneratorObj {
 		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
 		
 		String competitiveType="";
-		String matchType = SemplestMatchType.Exact.name(); 
+		String matchType = ProtocolEnum.SemplestMatchType.Exact.name(); 
 		Boolean isActive = true;
 		Boolean isNegative = false;
 		
