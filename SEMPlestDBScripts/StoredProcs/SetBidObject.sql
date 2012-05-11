@@ -39,6 +39,11 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Bid Type was not found.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
+	if not exists (select * from Keyword k where k.Keyword = @Keyword)
+	BEGIN
+		SELECT @ErrMsg = 'The Selected keyword does not exist'; 
+		RAISERROR (@ErrMsg, 16, 1);
+	END;
 	--check to see if keyword is active and not deleted for the promo
 	if EXISTS (select * from PromotionKeywordAssociation pka
 				inner join Keyword k on k.KeywordPK = pka.KeywordFK
@@ -62,7 +67,7 @@ BEGIN TRY
 				inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
 				inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
 				where pka.PromotionFK = @PromotionPK and a.AdvertisingEnginePK = @AdEngineID 
-					 and kb.KeywordBidPK = @BidTypeID
+					 and kb.BidTypeFK = @BidTypeID
 					 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID))
 	BEGIN
 		
@@ -72,7 +77,7 @@ BEGIN TRY
 					inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
 					inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
 					where pka.PromotionFK = @PromotionPK and pka.IsActive = 1 and a.AdvertisingEnginePK = @AdEngineID
-						 and kb.KeywordBidPK = @BidTypeID
+						 and kb.BidTypeFK = @BidTypeID
 						 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID)
 		
 			if (@MicroBidAmount != @currentMicroBidAmt)
@@ -92,6 +97,7 @@ BEGIN TRY
 	ELSE --New Bid on Keyword
 	  BEGIN
 			--create the keyword bid
+			select @keywordPK = k.KeywordPK from Keyword k where k.Keyword = @Keyword
 			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
 				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID)
 			SET @keywordBidPK = @@IDENTITY	
