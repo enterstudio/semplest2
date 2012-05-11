@@ -25,7 +25,8 @@ CREATE PROCEDURE dbo.AddReportData
 	@QualityScore           INT = null,
 	@ApprovalStatus			VARCHAR(30) = null,
 	@FirstPageMicroCpc      INT = null,
-	@MicroCost	int
+	@MicroCost				int,
+	@ID int output
 
 )
 AS
@@ -40,7 +41,7 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Selected keyword does not exist for the Promotion'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;	
-	
+	set @ID = 0
 	select @BidTypeID = bt.BidTypePK from BidType bt where bt.BidType = @BidType 
 	select @AdEngineID = ae.AdvertisingEnginePK from AdvertisingEngine ae where ae.AdvertisingEngine = @AdvertisingEngine		
 	--check to see if the KeywordBid Exists for the MatchType
@@ -60,9 +61,11 @@ BEGIN TRY
 		insert into AdvertisingEngineReportData(TransactionDate, MicroBidAmount, NumberImpressions, NumberClick, 
 			AveragePosition, AverageCPC, BidTypeFK, QualityScore,ApprovalStatus, FirstPageMicroCPC, MicroCost, CreatedDate)
 			VALUES (@TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
-			@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)	
+			@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)
+		set @ID = @@IDENTITY		
 	END		
-		  
+	
+	RETURN @ID	  
 	
 	
 END TRY
