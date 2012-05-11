@@ -108,6 +108,7 @@
     <ul class="fieldlist">
     <li><a href="#= title #">#= twitter #</a></li>
     <li>#= content #</li>
+    <li>#= content1 #</li>
     <li ><a href="#= title #" style="color:green;">#= title #</a></li>
 </script>
 <script>
@@ -117,7 +118,8 @@
         $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
             title: $("#AdModelProp_Url").val(),
             twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
-            content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val() + $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
+            content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val() ,
+            content1: $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
         }));
     }
     $(document).ready(function () {

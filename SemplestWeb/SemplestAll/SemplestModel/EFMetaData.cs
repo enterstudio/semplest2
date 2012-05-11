@@ -71,7 +71,6 @@ namespace SemplestModel
         internal sealed class GeoTargetingMetaData
         {
             public string Address { get; set; }
-            [Compare("Address")]
             public string City { get; set; }
             [TwoFieldRequiredAttribute("City", "StateCodeFK", ErrorMessage = "State Is Required..")]
             public int? StateCodeFK { get; set; }
