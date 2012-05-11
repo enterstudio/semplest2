@@ -60,15 +60,24 @@ public class MSNAdcenterServiceClientTest {
 	//Parameters to create campaign and adds
 	String accountName = "_PiperHall";
 	String url = "www.piperhall.com";
-	String productSubcategory = "Event and portrait photos";
+	String productSubcategory = "Corporate Event Planning";
 	double msnMonthlyBudget = 150.0; //In dolars
 			
 	//Add1
 	String adTitle1 =  "Corporate Event Space";
 	String adText1 = "Event space rental located in Fort Worth's W. 7th Street district.";
 	//Add2
-	String adTitle2 =  "Company Events Fort Worth";
+	String adTitle2 = "Company Events Fort Worth";
 	String adText2 = "Piper Hall is the perfect place for your company party or event.";
+	
+	String addr = "3008 Bledsoe St.";//"2157 Diamond St";
+	String city = "Fort Worth";//"San Diego";
+	String state = "TX";
+	String country = "US";//"US";
+	String zip = "76107";//"92109";
+	Double radius = 25.0;//30.0;
+	Double latitude = null; 
+	Double longitude = null; 
 	
 	//Accounts and campaigns
 	Long accountID = 1632282L;
@@ -90,11 +99,13 @@ public class MSNAdcenterServiceClientTest {
 			logger.info(msn.accountID);
 			msn.getIds();
 			
+			msn.setGeoTarget();
+			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
 			//msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
-			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
-			//msn.plotdata(bidMap);
-			//logger.info(bidMap);
+			HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
+			msn.plotdata(bidMap);
+			logger.info(bidMap);
 		}
 		catch (Exception e)
 		{
@@ -102,6 +113,13 @@ public class MSNAdcenterServiceClientTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	public void setGeoTarget() throws Exception{
+
+		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
+		test.deleteAllTargetsInCampaign(accountID, campaignID);
+		Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
 	}
 	
 	public void getAccountID() throws Exception{
@@ -220,7 +238,7 @@ public class MSNAdcenterServiceClientTest {
 		    	long bidL = (long) (bids.get(f)*1000000);
 		    	bidsMoney[f] = new Long(bidL);
 		    }
-		    logger.info("Adding Keywords...");
+		    logger.info("Estimating Keywords...");
 		    while(j<numKw && strLine!=null){
 		    	keywords = new String[100];
 		    	int i=0;
