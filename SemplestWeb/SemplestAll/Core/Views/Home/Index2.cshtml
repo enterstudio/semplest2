@@ -20,6 +20,9 @@
     }
 <br />
 <br />
+
+@Html.ActionLink("Add New Product Group Name", "AddProductGroupName",null, new { @class = "addnewproductgroupname" })
+
 <p>@Html.ActionLink("Create New Product Group", "CampaignSetup", "Campaign")</p>
 <p>Create Duplicate Product Group</p>
 
@@ -53,5 +56,34 @@ Agents
     $('#btnReporting').click(function () {
         window.location.href = '../Reporting/Index';
         return false;
+    });
+</script>
+
+
+<div style="display:none;">
+<form name="hiddenButton" id="hiddenButton" action="AddProductGroupName" method="post">
+
+Add a new product group?
+
+@Html.TextBox("newproductgroupname")
+
+<br /><input type="button" id="btnAdd"  value="Add" class="k-button"/><input type="button" id="btnCancel"  value="Cancel" class="k-button"/></form>
+</div>
+
+<script language="javascript" >    $(document).ready(function () {
+
+        $(".addnewproductgroupname").click(function (event) {
+            $.blockUI(({ message: $('#hiddenButton') }));
+            event.preventDefault();
+        });
+
+        $("#btnAdd").click(function (event) {
+            $("#hiddenButton").submit();
+        });
+
+        $("#btnCancel").click(function (event) {
+            $.unblockUI();
+        });
+
     });
 </script>
