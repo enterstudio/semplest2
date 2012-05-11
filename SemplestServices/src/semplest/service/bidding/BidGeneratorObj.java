@@ -19,7 +19,7 @@ import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
-import semplest.server.protocol.ProtocolEnum.SemplestMatchType.SemplestCompetitionType;
+import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
@@ -405,13 +405,13 @@ public class BidGeneratorObj {
 			// TODO: Add Enum
 			String word = keyIT.next();
 			if (compKeywords.contains(word)){
-				competitiveType = SemplestCompetitionType.Comp.name();
+				competitiveType = ProtocolEnum.SemplestCompetitionType.Comp.name();
 			} else if (notSelectedKeywords.contains(word)){
-				competitiveType = SemplestCompetitionType.NotSelected.name();
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NotSelected.name();
 			} else if (nonCompKeywords.contains(word)){
-				competitiveType = SemplestCompetitionType.NonComp.name();
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NonComp.name();
 			} else if(noInfoKeywords.contains(word)){
-				competitiveType = SemplestCompetitionType.NoInfo.name();
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo.name();
 			} else {
 				throw new Exception("Unknown competition type. Internal error in bidding service!");
 			}
