@@ -129,7 +129,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static String password = "ic0system";
 	private static String userAgent = "Icosystem";
 	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = false; // true; // // true; //
+	private static boolean useSandbox = true; // true; // // true; //
 
 
 	public static void main(String[] args)

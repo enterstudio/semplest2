@@ -64,6 +64,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
 			/*
 			 * GetKeywordForAdEngineSP getKeywords = new
 			 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
@@ -77,12 +78,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+			adEng.initializeService(null);
+			Thread.sleep(1000);
 			// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
 			// Double(25.0), 30);
 			// String u = adEng.getURL("www.xyz.com");
 			// Tovah Photography 2 47 Photography 58 38 Event and portrait
 			// photos
-			adEng.AddPromotionToAdEngine(47, 58, 38, adEngList);
+			adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
 
 		}
 		catch (Exception e)
@@ -254,8 +257,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// int PromotionPK, Long KeywordAdEngineID, String Keyword,
 				// Integer MicroBidAmount, String BidType, String
 				// AdvertisingEngine, Boolean IsNegative
-				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount()
-						.intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
+				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), 
+						keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				Thread.sleep(500); // Wait for google
 			}
 		}
@@ -367,7 +370,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			// get the promotion name/ campaign name, Budget period,
 			Long microbudgetAmount = calculateDailyMicroBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
-			Campaign campaign = google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(),
+			Campaign campaign = google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName() + System.currentTimeMillis(),
 					CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, microbudgetAmount);
 			return campaign.getId();
 		}

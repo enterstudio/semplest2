@@ -17,7 +17,7 @@ public class AddKeywordBidDataSP extends StoredProcedure
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
-		declareParameter(new SqlParameter("Keyword", Types.NVARCHAR));
+		declareParameter(new SqlParameter("Keyword", Types.VARCHAR));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("BidType", Types.VARCHAR));
 		
