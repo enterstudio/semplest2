@@ -50,7 +50,7 @@ namespace SemplestWebApp.Services
                         if (updatePromotion == null)
                         {
                             // create new promotion
-                            updatePromotion = CreatePromotionFromModel(model);
+                            updatePromotion = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
                             updatePromotion.ProductGroupFK = updateProdGrp.ProductGroupPK;
                                 
                             // add geotargeting to promotion
@@ -92,7 +92,7 @@ namespace SemplestWebApp.Services
                         };
 
                         // create promotion
-                        var promo = CreatePromotionFromModel(model);
+                        var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
 
                         // add geotargeting to promotion
                         AddGeoTargetingToPromotion(promo, model);
@@ -167,19 +167,26 @@ namespace SemplestWebApp.Services
                 return -1;
         }
 
-        private Promotion CreatePromotionFromModel(CampaignSetupModel model)
+        private Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal CustomerDefaultPerCampaignFlatFeeAmount)
         {
             var promo = new Promotion
             {
+
+
                 PromotionName = model.ProductGroup.ProductPromotionName,
                 LandingPageURL = model.AdModelProp.Url,
                 PromotionDescription = model.ProductGroup.Words,
                 PromotionBudgetAmount = model.ProductGroup.Budget,
                 BudgetCycleFK = GetBudgetCycleId("Monthly"),
+                CycleStartDate =Convert.ToDateTime(model.ProductGroup.StartDate),
+                CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate),
+                StartBudgetInCycle=model.ProductGroup.Budget-CustomerDefaultPerCampaignFlatFeeAmount,
+                RemainingBudgetInCycle=model.ProductGroup.Budget-CustomerDefaultPerCampaignFlatFeeAmount,
                 PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
                 IsPaused = false,
                 IsCompleted = false,
-                IsLaunched = false
+                IsLaunched = false,
+                CreatedDate = DateTime.Now
             };
 
             return promo;
@@ -192,6 +199,10 @@ namespace SemplestWebApp.Services
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
             updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+            updatePromotion.CycleStartDate =Convert.ToDateTime(model.ProductGroup.StartDate);
+            updatePromotion.CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate);
+            updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
+            updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.EditedDate = DateTime.Now;
 
             // update Geotargeting
