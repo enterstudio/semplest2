@@ -85,26 +85,7 @@ public class ProtocolEnum {
 			return false;
 		}
 		
-		public static enum SemplestCompetitionType
-		{
-			Comp,NonComp,NotSelected,NoInfo;
-			public static boolean existsCompetitionType(String competitionType)
-			{
-				if (competitionType != null)
-				{
-					for (SemplestCompetitionType val : SemplestCompetitionType.values())
-					{
-						if (val.name().equalsIgnoreCase(competitionType))
-						{
-							return true;
 
-						}
-					}
-
-				}
-				return false;
-			}
-		}
 		public static String getSearchEngineMatchType(String matchType, String adEngine) throws Exception {
 			if(!SemplestMatchType.existsMatchType(matchType)) {
 				throw new Exception("Invalid matchtype "+matchType+"!!");
@@ -114,6 +95,27 @@ public class ProtocolEnum {
 			}
 			return matchTypeMap.get(adEngine.toLowerCase()).get(matchType.toLowerCase());
 		}	
+	}
+	
+	public static enum SemplestCompetitionType
+	{
+		Comp,NonComp,NotSelected,NoInfo;
+		public static boolean existsCompetitionType(String competitionType)
+		{
+			if (competitionType != null)
+			{
+				for (SemplestCompetitionType val : SemplestCompetitionType.values())
+				{
+					if (val.name().equalsIgnoreCase(competitionType))
+					{
+						return true;
+
+					}
+				}
+
+			}
+			return false;
+		}
 	}
 	
 	public static enum NetworkSetting
