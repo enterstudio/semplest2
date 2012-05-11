@@ -26,7 +26,7 @@ namespace Semplest.Core.Models.Repositories
             List<string> adtitletextList = new List<string>();
             foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
             {
-                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2);
             }
 
             // get categories or classifications
@@ -70,7 +70,7 @@ namespace Semplest.Core.Models.Repositories
             List<string> adtitletextList = new List<string>();
             foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
             {
-                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2);
             }
 
 
@@ -166,7 +166,7 @@ namespace Semplest.Core.Models.Repositories
             List<string> adtitletextList = new List<string>();
             foreach (SemplestModel.PromotionAd pad in model.AdModelProp.Ads)
             {
-                adtitletextList.Add(pad.AdTitle + " " + pad.AdText);
+                adtitletextList.Add(pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2);
             }
 
             // get keywords from the web service
