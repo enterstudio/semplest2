@@ -720,17 +720,17 @@ public class SemplestDB extends BaseDB
 	 */
 	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper(AdEngineID.class);
 
-	public static AdEngineID getAdEngineID(Integer customerID, String adEngine) throws Exception
+	public static AdEngineID getAdEngineID(Integer promotionID, String adEngine) throws Exception
 	{
 		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], aep.AdvertisingEngineAdGroupID [AdGroupID] from Customer c "
 				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK "
 				+ "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
-				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK " + "where c.CustomerPK = ? and ae.AdvertisingEngine = ?";
+				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK where p.PromotionPK = ? and ae.AdvertisingEngine = ?";
 		try
 		{
 			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ customerID, adEngine }, adEngineObjMapper);
+			{ promotionID, adEngine }, adEngineObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
