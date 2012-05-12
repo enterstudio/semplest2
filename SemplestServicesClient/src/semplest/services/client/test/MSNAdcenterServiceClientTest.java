@@ -58,24 +58,24 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_PiperHall";
-	String url = "www.piperhall.com";
-	String productSubcategory = "Corporate Event Planning";
+	String accountName = "_BethsFlowers2";
+	String url = "www.bethsflowersonline.com";
+	String productSubcategory = "Wedding Flowers";
 	double msnMonthlyBudget = 150.0; //In dolars
 			
 	//Add1
-	String adTitle1 =  "Corporate Event Space";
-	String adText1 = "Event space rental located in Fort Worth's W. 7th Street district.";
+	String adTitle1 =  "Wedding Planning";
+	String adText1 = "This months special. 595.00 wedding planning.";
 	//Add2
-	String adTitle2 = "Company Events Fort Worth";
-	String adText2 = "Piper Hall is the perfect place for your company party or event.";
+	String adTitle2 = "Free Bridal Bouquet";
+	String adText2 = "75.00 off wedding bouquet.With a flower booking. 504-455-2353";
 	
-	String addr = "3008 Bledsoe St.";//"2157 Diamond St";
-	String city = "Fort Worth";//"San Diego";
-	String state = "TX";
+	String addr = "4130 Washington Avenue";//"2157 Diamond St";
+	String city = "New Orleans";//"San Diego";
+	String state = "LA";
 	String country = "US";//"US";
-	String zip = "76107";//"92109";
-	Double radius = 25.0;//30.0;
+	String zip = "70125";//"92109";
+	Double radius = 100.0;//30.0;
 	Double latitude = null; 
 	Double longitude = null; 
 	
@@ -99,13 +99,13 @@ public class MSNAdcenterServiceClientTest {
 			logger.info(msn.accountID);
 			msn.getIds();
 			
-			msn.setGeoTarget();
+			//msn.setGeoTarget();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			//msn.insertKeywords2("/semplest/data/biddingTest/PiperHall/keywords.txt");
-			HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
-			msn.plotdata(bidMap);
-			logger.info(bidMap);
+			msn.insertKeywords2("/semplest/data/biddingTest/BethsFlowers/keywords.txt");
+			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/BethsFlowers/keywords.txt", 1500);
+			//msn.plotdata(bidMap);
+			//logger.info(bidMap);
 		}
 		catch (Exception e)
 		{
@@ -161,13 +161,13 @@ public class MSNAdcenterServiceClientTest {
 		      keywords[i] = new Keyword();
 		      keywords[i].setText(strLine);
 		      Bid exactMatchBid1 = new Bid();
-		      exactMatchBid1.setAmount(1.00);
+		      exactMatchBid1.setAmount(2.00);
 		      Bid defaultBid1 = new Bid();
 		      defaultBid1.setAmount(0.00);
-		      keywords[i].setExactMatchBid(exactMatchBid1);
+		      keywords[i].setExactMatchBid(defaultBid1);
 		      keywords[i].setBroadMatchBid(defaultBid1);
 		      keywords[i].setContentMatchBid(defaultBid1);
-		      keywords[i].setPhraseMatchBid(defaultBid1);
+		      keywords[i].setPhraseMatchBid(exactMatchBid1);
 	    	i++;
 	    }
 	    //Close the input stream
