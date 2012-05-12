@@ -2,49 +2,47 @@
 @{
     ViewBag.Title = "LogOn";
 }
-
 @using (Html.BeginForm())
 {
-<div id="tickets">
-    <h3>
-        Log In</h3>
-    <ul>
-        <li>
-            <label for="fullname" class="required">
-                User Name</label>
+    <div id="tickets">
+        <h3>
+            Log In</h3>
+        <ul>
+            <li>
+                @Html.LabelFor(t => t.UserName, new { @class = "required" })
                 @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(m => m.UserName)
-        </li>
-        <li>
-            <label for="search" class="required">
-                Password</label>
-             @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
-                @Html.ValidationMessageFor(m => m.Password1) </li>
-        <li class="accept">
+            </li>
+            <li>
+                @Html.LabelFor(t => t.Password1, new { @class = "required" })
+                @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(m => m.Password1) 
+            </li>
+            <li class="accept">
                 @Html.HiddenFor(m => m.IsRegistered)
                 @if (Model != null)
                 {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}</li>
-        <li class="accept">
-            <button class="k-button" type="submit" id="btnSubmit">
-                Log On</button>
-        </li>
-        <li class="status">
+            <li class="accept">
+                <button class="k-button" type="submit" id="btnSubmit">
+                    Log On</button>
+            </li>
+              
             @if (Model != null)
             {
                 if (!Model.LoggedInSucceeded)
-                {            
-                <div class="editor-label">@Model.LoginFailedMessage</div>
+                {          
+                <li class="status">
+                    @Model.LoginFailedMessage
+                </li>
                 }
                 else if (!Model.IsRegistered)
                 {
-                <div class="passwordverify">@Html.Partial("_Password", Model)</div>
+                    @Html.Partial("_Password", Model)
                 }
             }
-        </li>
-    </ul>
-</div>
+        </ul>
+    </div>
 }
-
 <style scoped>
     .k-textbox
     {
@@ -79,7 +77,7 @@
     label
     {
         display: inline-block;
-        width: 90px;
+        width: 140px;
         text-align: right;
     }
     

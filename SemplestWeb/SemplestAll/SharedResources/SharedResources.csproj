@@ -96,6 +96,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\ExceptionHelper.cs" />
+    <Compile Include="Helpers\LabelHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Models\ProfileModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
