@@ -381,7 +381,7 @@ public class BidGeneratorObj {
 						new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 			} catch (Exception e) {
 				e.printStackTrace();
-				//throw new Exception("Failed to store Google adGroupCriterion data to database.");
+				throw new Exception("Failed to store Google adGroupCriterion data to database.");
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
