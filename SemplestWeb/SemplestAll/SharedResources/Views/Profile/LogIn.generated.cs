@@ -258,7 +258,7 @@ WriteLiteral(@"<style scoped>
     
     .accept, .status
     {
-        padding-left: 90px;
+        padding-left: 140px;
     }
     
     .valid
