@@ -2559,3 +2559,34 @@ div.old-browser
     background: #8ebc00;
     color: #fff;
 }
+
+.container
+{
+    width: 800px;
+    margin: 0 auto;
+}
+.column
+{
+    float: left;
+    margin-right: 10px;
+}
+.span-9
+{
+    width: 280px;
+}
+.span-5
+{
+    width: 150px;
+}
+.span-7
+{
+    width: 280px;
+}
+.span-3
+{
+    width: 60px;
+}
+.last
+{
+    margin-right: 0;
+}

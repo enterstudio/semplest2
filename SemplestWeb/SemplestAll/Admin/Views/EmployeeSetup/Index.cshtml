@@ -1,6 +1,5 @@
 ﻿@using System.Globalization
 @model IEnumerable<Semplest.Admin.Models.EmployeeSetup>
-           
 @{
     ViewBag.Title = "Index";
 }
@@ -11,9 +10,9 @@ Employee Setup
     <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
 }
 @section Headscript{
- <script type="text/jscript">
-     $(document).ready(function () {
-         $("#grid").kendoGrid(
+    <script type="text/jscript">
+        $(document).ready(function () {
+            $("#grid").kendoGrid(
       {
           groupable: false,
           scrollable: false,
@@ -21,43 +20,41 @@ Employee Setup
           pageable: false
       }
       );
-     });
-</script>
+        });
+    </script>
 }
 @section Links{
     @Html.Partial("TopMenu")
 }
 @using (Html.BeginForm("Index"))
 {
-  <div class="configuration1">
-        <ul class="options">
-            <li>Search
-                <input type="text" id="Search" name="search" class="k-textbox"
-                    required validationmessage="Please enter {0}" />
-                     <input type="submit" value="Search" class="k-button" />
-            </li>
-
-        </ul>
+    <div class='container'>
+        <h3>
+            Employee Setup</h3>
+    </div> 
+    <div class='container'>
+        <div class='column span-9'>
+            <div style="margin-left: 20px;margin-bottom: 10px;">
+                Search
+                <input type="text" id="Search" name="search" class="k-textbox" required validationmessage="Please enter {0}" />
+                <input type="submit" value="Search" class="k-button" />
+            </div>
+        </div>
     </div>
-
 }
-
-
 @if (TempData["message"] != null)
 {
-    <div style="color:red;">
-    @TempData["message"]
+    <div style="color: red;">
+        @TempData["message"]
     </div>
 }
-    
 @if (!Model.Any())
-    {
-        // table is empty
-    }
+{
+    // table is empty
+}
 else
-    { 
-    <div class="tableresults" id="grid">
-    <table>
+{ 
+    <table id="gradient-style">
         <tr>
             <th>
                 First Name
@@ -77,34 +74,30 @@ else
         </tr>
         @foreach (var item in Model)
         {
-             <tr>
+            <tr>
                 <td>
-                @Html.RouteLink(item.FirstName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK  })
+                    @Html.RouteLink(item.FirstName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
                     @Html.RouteLink(item.LastName.ToString(), new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
-                    @Html.RouteLink( item.isActive?"Active":"InActive" , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    @Html.RouteLink(item.isActive ? "Active" : "InActive", new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
-                    @Html.RouteLink(item.RoleName , new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
+                    @Html.RouteLink(item.RoleName, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
                 </td>
                 <td>
                     @Html.RouteLink(item.Email, new { Controller = "EmployeeSetup", action = "Edit", id = item.UserPK })
-                </td>        
+                </td>
             </tr>
         }
     </table>
-    </div>
-    }
-
-
- <ul style="display: block" class="kendo-nav">
-    <li> @Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add" }) </li>
+}
+<ul style="display: block" class="kendo-nav">
+    <li>@Html.RouteLink("Add New Employee", new { Controller = "EmployeeSetup", action = "Add" })
+    </li>
 </ul>
-
-
 @*<h3>
     Search:</h3>
 <input type="text" />
