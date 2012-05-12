@@ -163,17 +163,22 @@ public class BidGeneratorObj {
 		
 		
 		/* ******************************************************************************************* */
-		// 1. Database call: get campaign specific IDs		
-		AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
-		if (searchEngine.equalsIgnoreCase(google)){
-			googleAccountID = adEngineInfo.getAccountID().toString();
-		} else if(searchEngine.equalsIgnoreCase(msn)){
-			msnAccountID = adEngineInfo.getAccountID();
-		} else {
-			throw new Exception("Ad engine type "+searchEngine+" is not yet implemented!!");
+		// 1. Database call: get campaign specific IDs	
+		try{ 
+			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
+			if (searchEngine.equalsIgnoreCase(google)){
+				googleAccountID = adEngineInfo.getAccountID().toString();
+			} else if(searchEngine.equalsIgnoreCase(msn)){
+				msnAccountID = adEngineInfo.getAccountID();
+			} else {
+				throw new Exception("Ad engine type "+searchEngine+" is not yet implemented!!");
+			}
+			campaignID = adEngineInfo.getCampaignID();
+			adGroupID = adEngineInfo.getAdGroupID();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Failed to get AdEngineID from the database.");
 		}
-		campaignID = adEngineInfo.getCampaignID();
-		adGroupID = adEngineInfo.getAdGroupID();
 		
 		logger.info("Got campaign related IDs from the database");
 
@@ -259,7 +264,12 @@ public class BidGeneratorObj {
 		
 		if(searchEngine.equalsIgnoreCase(google)){
 			if (compKeywords.size()>0) {
-				o = getTrafficEstimatorDataForGoogle();
+				try {
+					o = getTrafficEstimatorDataForGoogle();
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new Exception("Failed to get Google traffic estimator data.");
+				}
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
@@ -333,8 +343,13 @@ public class BidGeneratorObj {
 		Float totalDailyClick = 0F;
 		
 		if(searchEngine.equalsIgnoreCase(google)){
-			o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
-					KeywordMatchType.EXACT,	wordBidMap);
+			try{
+				o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
+						KeywordMatchType.EXACT,	wordBidMap);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new Exception("Failed to get Google traffic estimator data.");
+			}
 			if (o2!=null) {
 				String[] words = o2.getListOfKeywords();
 				for (int i=0; i < words.length; i++)
@@ -361,9 +376,13 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
 		if(searchEngine.equalsIgnoreCase(google)){
-			ArrayList<KeywordDataObject> a = new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs));
-			SemplestDB.storeKeywordDataObjects(promotionID, google, a);
-					//new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+			try {
+				SemplestDB.storeKeywordDataObjects(promotionID, google,
+						new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+			} catch (Exception e) {
+				e.printStackTrace();
+				//throw new Exception("Failed to store Google adGroupCriterion data to database.");
+			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		logger.info("Stored adgroup criterion data to database for Google");
@@ -372,7 +391,9 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
 		if(searchEngine.equalsIgnoreCase(google)){
-			SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+			if(o!=null) {
+				SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		if(searchEngine.equalsIgnoreCase(msn)){
@@ -428,8 +449,15 @@ public class BidGeneratorObj {
 					matchType, competitiveType, wordBidMap.get(word)==null, isActive, isNegative)); 
 		}
 		
-		SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
-		logger.info("Stroed bid data to the databse");
+		
+		try{
+			SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
+			logger.info("Stroed bid data to the databse");
+		} catch (Exception e) {
+			logger.info("ERROR: Unable to store bid data to the database.");
+			e.printStackTrace();
+			throw new Exception("Failed to store bid data to the database.");
+		}
 		
 		
 		
@@ -437,8 +465,14 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
-		SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
-		logger.info("Stroed targeted daily budget data to the databse");
+		try{
+			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
+			logger.info("Stroed targeted daily budget data to the databse");
+		} catch (Exception e) {
+			logger.info("ERROR: Unable to store targeted daily budget data to the database.");
+			e.printStackTrace();
+			throw new Exception("Failed to store targeted daily budget data to the database.");
+		}
 
 		
 
@@ -450,7 +484,23 @@ public class BidGeneratorObj {
 			while(keyIT.hasNext())
 			{
 				String word = keyIT.next();
-				clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
+				k=1;
+				while(true) {
+					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+					try {
+						clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
+						break;
+					} catch (Exception e) {
+						if (k<=maxRetry) {
+							e.printStackTrace();
+							logger.info("Received exception : will retry..., k="+k);
+							k++;				
+						} else {
+							e.printStackTrace();
+							throw new Exception("Failed to update bids for keyword "+word);
+						}
+					} // try-catch
+				} // while(true) 
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
@@ -467,7 +517,23 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
 		if(searchEngine.equalsIgnoreCase(google)){
-			clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+			k=1;
+			while(true) {
+				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+				try {
+					clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+					break;
+				} catch (Exception e) {
+					if (k<=maxRetry) {
+						e.printStackTrace();
+						logger.info("Received exception : will retry..., k="+k);
+						k++;				
+					} else {
+						e.printStackTrace();
+						throw new Exception("Failed to update default microBid via Google API.");
+					}
+				} // try-catch
+			} // while(true) 
 		}
 		logger.info("Updated the default bid via search engine API.");
 		
