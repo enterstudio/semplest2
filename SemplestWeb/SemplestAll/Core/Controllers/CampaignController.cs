@@ -357,7 +357,8 @@ namespace Semplest.Core.Controllers
                                                      new NavBar {Name = "My Account", Url = "../Home/Index2"},
                                                      new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
                                                      new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
-                                                     new NavBar {Name = "Billing"}
+                                                     new NavBar {Name = "Billing"},
+                                                     new NavBar {Name = "My Profile", Url= "../Account/ChildProfile"},
                                                  }
             };
             navBars.Add(homeBar);
