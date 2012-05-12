@@ -152,7 +152,17 @@ WriteLiteral("\r\n");
             #line hidden
 WriteLiteral("</li>\r\n            <li class=\"accept\">\r\n                <button class=\"k-button\" " +
 "type=\"submit\" id=\"btnSubmit\">\r\n                    Log On</button>\r\n            " +
-"</li>\r\n              \r\n");
+"</li>\r\n              ");
+
+
+            
+            #line 29 "..\..\Views\Profile\LogIn.cshtml"
+         Write(Html.Partial("_Password", Model));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n");
 
 
             
@@ -184,19 +194,6 @@ WriteLiteral("\r\n                </li>\r\n");
                 else if (!Model.IsRegistered)
                 {
                     
-            
-            #line default
-            #line hidden
-            
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Html.Partial("_Password", Model));
-
-            
-            #line default
-            #line hidden
-            
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
-                                                     
                 }
             }
 
@@ -221,9 +218,6 @@ WriteLiteral(@"<style scoped>
     
     #tickets
     {
-        width: 510px;
-        height: 323px;
-        padding: 10px 20px 20px 170px;
     }
     
     #tickets h3
@@ -231,6 +225,7 @@ WriteLiteral(@"<style scoped>
         font-weight: normal;
         font-size: 1.4em;
         border-bottom: 1px solid #ccc;
+        text-align: center;
     }
     
     #tickets ul
@@ -242,6 +237,7 @@ WriteLiteral(@"<style scoped>
     #tickets li
     {
         margin: 10px 0 0 0;
+          text-align: center;
     }
     
     label
