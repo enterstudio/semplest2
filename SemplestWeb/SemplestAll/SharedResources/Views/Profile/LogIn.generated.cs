@@ -152,17 +152,7 @@ WriteLiteral("\r\n");
             #line hidden
 WriteLiteral("</li>\r\n            <li class=\"accept\">\r\n                <button class=\"k-button\" " +
 "type=\"submit\" id=\"btnSubmit\">\r\n                    Log On</button>\r\n            " +
-"</li>\r\n              ");
-
-
-            
-            #line 29 "..\..\Views\Profile\LogIn.cshtml"
-         Write(Html.Partial("_Password", Model));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n");
+"</li>\r\n              \r\n");
 
 
             
@@ -194,6 +184,19 @@ WriteLiteral("\r\n                </li>\r\n");
                 else if (!Model.IsRegistered)
                 {
                     
+            
+            #line default
+            #line hidden
+            
+            #line 40 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.Partial("_Password", Model));
+
+            
+            #line default
+            #line hidden
+            
+            #line 40 "..\..\Views\Profile\LogIn.cshtml"
+                                                     
                 }
             }
 
