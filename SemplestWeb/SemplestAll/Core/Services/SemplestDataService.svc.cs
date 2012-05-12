@@ -94,6 +94,9 @@ namespace SemplestWebApp.Services
                         // create promotion
                         var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
 
+                        // add advertising engines that are selected
+                        SavePromotionAdEngineSelected(promo, model);
+
                         // add geotargeting to promotion
                         AddGeoTargetingToPromotion(promo, model);
 
@@ -125,6 +128,54 @@ namespace SemplestWebApp.Services
         {
             var promo = prodGroup.Promotions.Where(m => m.PromotionName == promotionName).FirstOrDefault();
             return promo;
+        }
+
+        public List<ProductGroup> GetProductGroupsForUser(int userid)
+        {
+            using (var dbcontext = new SemplestEntities())
+            {
+                // get the customerfk from userid
+                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
+                int custfk = (int)queryCustFk.First();
+
+                // get ProductGroup
+                var queryProdGrp = from c in dbcontext.ProductGroups
+                                   where c.CustomerFK == custfk 
+                                   select c;
+                // get Promotion
+                if (queryProdGrp.Count() > 0)
+                {
+                    return queryProdGrp.ToList();
+                }
+            }
+            return null;
+
+        }
+
+        public List<Promotion> GetPromotionsForUser(int userid, string prodGroupName)
+        {
+            using (var dbcontext = new SemplestEntities())
+            {
+                // get the customerfk from userid
+                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
+                int custfk = (int)queryCustFk.First();
+
+                // get ProductGroup
+                var queryProdGrp = from c in dbcontext.ProductGroups
+                                   where c.CustomerFK == custfk && c.ProductGroupName == prodGroupName
+                                   select c;
+                // get Promotions
+                if (queryProdGrp.Count() > 0)
+                {
+                    var prodGrp = queryProdGrp.First();
+                    var queryPromo = prodGrp.Promotions;
+                    if (queryPromo.Count() > 0)
+                    {
+                        return queryPromo.ToList();
+                    }
+                }
+            }
+            return null;
         }
 
         public int GetPromotionId(int userid, string prodGroupName, string promotionName)
@@ -221,6 +272,7 @@ namespace SemplestWebApp.Services
                 dbcontext.PromotionAds.Remove(pad);
             }
 
+            SavePromotionAdEngineSelected(updatePromotion, model);
             AddGeoTargetingToPromotion(updatePromotion, model);
             SaveNegativeKeywords(updatePromotion, model);
             AddPromotionAdsToPromotion(updatePromotion, model);
@@ -235,10 +287,18 @@ namespace SemplestWebApp.Services
                     var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEngine1 == aes);
                     if (proAdEng.Count() > 0)
                     {
-                        var adEngineSel = new PromotionAdEngineSelected
+                        var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
+                        if (adEngSelQuery.Count() == 0)
                         {
-                            AdvertisingEngine = proAdEng.First()
-                        };
+                            var adEngineSel = new PromotionAdEngineSelected
+                            {
+                                AdvertisingEngine = proAdEng.First()
+                            };
+                        }
+                        else
+                        {
+                            adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
+                        }
 
                     }
                 }
