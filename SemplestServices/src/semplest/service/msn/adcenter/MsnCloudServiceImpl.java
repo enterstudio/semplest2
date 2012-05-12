@@ -119,12 +119,13 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			Double longitude = null; //-80.00623321533203;
 
 			//test.deleteAllTargetsInCampaign(accountID, campaignID);
-			Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
+			//Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
 			//Traffic Estimator
 			//logger.info("Running traffic estimator");
 			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
 			
-			//HashMap<String,Double> map =test.getAccountIDs();
+			HashMap<String,Double> map =test.getAccountIDs();
+			System.out.println(map.get("_ParkWinters"));
 			//System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
@@ -363,6 +364,8 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	// ==================================
 	// Campaign Methods
 	// ==================================
+	
+	
 	
 	public String createCampaign(String json) throws Exception
 	{	
