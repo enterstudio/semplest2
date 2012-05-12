@@ -354,12 +354,10 @@ namespace Semplest.Core.Controllers
                 Name = "Home",
                 SubItems = new List<NavBar>
                                                  {
-                                                     new NavBar {Name = "Quick Start Guide"},
-                                                     new NavBar {Name = "FAQs"},
-                                                     new NavBar {Name = "Contact Us"},
-                                                     new NavBar {Name = "Create User"},
-                                                     new NavBar {Name = "Campaign" , Url = "../Campaign/CampaignSetup"},
-                                                     new NavBar {Name = "Search Keywords"}
+                                                     new NavBar {Name = "My Account", Url = "../Home/Index2"},
+                                                     new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
+                                                     new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
+                                                     new NavBar {Name = "Billing"}
                                                  }
             };
             navBars.Add(homeBar);
