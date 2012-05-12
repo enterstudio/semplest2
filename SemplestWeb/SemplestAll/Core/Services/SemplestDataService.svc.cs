@@ -124,6 +124,13 @@ namespace SemplestWebApp.Services
             return retFlag;
         }
 
+        public User GetUserWithProductGroupAndPromotions(int userid)
+        {
+            var semplestEntities = new SemplestEntities();
+            var user = semplestEntities.Users.Include("Customer.ProductGroups").Include("Customer.ProductGroups.Promotions").FirstOrDefault(t => t.UserPK == userid);
+            return user;
+        }
+
         private Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
             var promo = prodGroup.Promotions.Where(m => m.PromotionName == promotionName).FirstOrDefault();

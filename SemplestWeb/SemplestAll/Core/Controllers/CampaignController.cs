@@ -158,7 +158,7 @@ namespace Semplest.Core.Controllers
                 ThreadData tData = new ThreadData(promoId, model);
                 _workerThread = new Thread(new ParameterizedThreadStart(DoWorkFast));
                 _workerThread.Start(tData);
-                
+
 
                 msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
                 WriteLog(msg, model);
@@ -315,8 +315,9 @@ namespace Semplest.Core.Controllers
 
         public ActionResult GetSideBar()
         {
-            var semplestEntities = new SemplestEntities();
-            var promotions = semplestEntities.ProductGroups.Include("Promotions");
+            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var sds = new SemplestDataService();
+            var user = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
             var homeBar = new NavBar
             {
@@ -333,7 +334,7 @@ namespace Semplest.Core.Controllers
             };
             navBars.Add(homeBar);
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
-            foreach (var promotion in promotions)
+            foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
             {
                 var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
                 foreach (var problem in promotionBar.SubItems)
