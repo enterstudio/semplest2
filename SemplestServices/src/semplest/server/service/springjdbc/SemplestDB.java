@@ -283,8 +283,14 @@ public class SemplestDB extends BaseDB
 			for (int i = 0; i < keywordDataObjectList.size(); i++)
 			{
 				KeywordDataObject kdObj = keywordDataObjectList.get(i);
+				Integer firstpgcpc = null;
+				if (kdObj.getFirstPageCpc() != null)
+				{
+					firstpgcpc = kdObj.getFirstPageCpc().intValue();
+				}
+				
 				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
-						kdObj.getApprovalStatus(), kdObj.getFirstPageCpc().intValue(), kdObj.isIsEligibleForShowing());
+						kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
 			}
 		}
 	}
