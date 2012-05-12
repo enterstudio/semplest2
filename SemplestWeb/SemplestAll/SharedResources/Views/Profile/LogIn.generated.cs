@@ -56,73 +56,75 @@ namespace SharedResources.Views.Profile
             
             #line default
             #line hidden
-WriteLiteral("    <div id=\"tickets\">\r\n        <h3>\r\n            Log In</h3>\r\n        <ul>\r\n    " +
-"        <li>\r\n                ");
-
-
-            
-            #line 12 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.LabelFor(t => t.UserName, new { @class = "required" }));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                ");
-
-
-            
-            #line 13 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                ");
+WriteLiteral("    <div id=\"tickets\">\r\n        <h3>\r\n            Log In</h3>\r\n        <fieldset>" +
+"\r\n            <legend>Account Information</legend>\r\n            <ul>\r\n          " +
+"      <li>\r\n                    ");
 
 
             
             #line 14 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.ValidationMessageFor(m => m.UserName));
+               Write(Html.LabelFor(t => t.UserName, new { @class = "required" }));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n            </li>\r\n            <li>\r\n                ");
+WriteLiteral("\r\n                    ");
 
 
             
-            #line 17 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.LabelFor(t => t.Password1, new { @class = "required" }));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                ");
-
-
-            
-            #line 18 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
+            #line 15 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n                ");
+WriteLiteral("\r\n                    ");
+
+
+            
+            #line 16 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.ValidationMessageFor(m => m.UserName));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n                </li>\r\n                <li>\r\n                    ");
 
 
             
             #line 19 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.ValidationMessageFor(m => m.Password1));
+               Write(Html.LabelFor(t => t.Password1, new { @class = "required" }));
 
             
             #line default
             #line hidden
-WriteLiteral(" \r\n            </li>\r\n            <li class=\"accept\">\r\n                ");
+WriteLiteral("\r\n                    ");
 
 
             
-            #line 22 "..\..\Views\Profile\LogIn.cshtml"
-           Write(Html.HiddenFor(m => m.IsRegistered));
+            #line 20 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n                    ");
+
+
+            
+            #line 21 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.ValidationMessageFor(m => m.Password1));
+
+            
+            #line default
+            #line hidden
+WriteLiteral(" \r\n                </li>\r\n                <li class=\"accept\">\r\n                  " +
+"  ");
+
+
+            
+            #line 24 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.HiddenFor(m => m.IsRegistered));
 
             
             #line default
@@ -131,83 +133,83 @@ WriteLiteral("\r\n");
 
 
             
-            #line 23 "..\..\Views\Profile\LogIn.cshtml"
+            #line 25 "..\..\Views\Profile\LogIn.cshtml"
+                     if (Model != null)
+                    {
+            
+            #line default
+            #line hidden
+            
+            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+                Write(Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded));
+
+            
+            #line default
+            #line hidden
+            
+            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+                                                                               }
+            
+            #line default
+            #line hidden
+WriteLiteral("</li>\r\n                <li class=\"accept\">\r\n                    <button class=\"k-" +
+"button\" type=\"submit\" id=\"btnSubmit\">\r\n                        Log On</button>\r\n" +
+"                </li>\r\n              \r\n");
+
+
+            
+            #line 32 "..\..\Views\Profile\LogIn.cshtml"
                  if (Model != null)
                 {
-            
-            #line default
-            #line hidden
-            
-            #line 24 "..\..\Views\Profile\LogIn.cshtml"
-            Write(Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded));
+                    if (!Model.LoggedInSucceeded)
+                    {          
 
             
             #line default
             #line hidden
-            
-            #line 24 "..\..\Views\Profile\LogIn.cshtml"
-                                                                           }
-            
-            #line default
-            #line hidden
-WriteLiteral("</li>\r\n            <li class=\"accept\">\r\n                <button class=\"k-button\" " +
-"type=\"submit\" id=\"btnSubmit\">\r\n                    Log On</button>\r\n            " +
-"</li>\r\n              \r\n");
-
-
-            
-            #line 30 "..\..\Views\Profile\LogIn.cshtml"
-             if (Model != null)
-            {
-                if (!Model.LoggedInSucceeded)
-                {          
-
-            
-            #line default
-            #line hidden
-WriteLiteral("                <li class=\"status\">\r\n                    ");
-
-
-            
-            #line 35 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Model.LoginFailedMessage);
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                </li>\r\n");
+WriteLiteral("                        <li class=\"status\">\r\n                            ");
 
 
             
             #line 37 "..\..\Views\Profile\LogIn.cshtml"
+                       Write(Model.LoginFailedMessage);
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n                        </li>\r\n");
+
+
+            
+            #line 39 "..\..\Views\Profile\LogIn.cshtml"
+                    }
+                    else if (!Model.IsRegistered)
+                    {
+                        
+            
+            #line default
+            #line hidden
+            
+            #line 42 "..\..\Views\Profile\LogIn.cshtml"
+                   Write(Html.Partial("_Password", Model));
+
+            
+            #line default
+            #line hidden
+            
+            #line 42 "..\..\Views\Profile\LogIn.cshtml"
+                                                         
+                    }
                 }
-                else if (!Model.IsRegistered)
-                {
-                    
-            
-            #line default
-            #line hidden
-            
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Html.Partial("_Password", Model));
 
             
             #line default
             #line hidden
-            
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
-                                                     
-                }
-            }
-
-            
-            #line default
-            #line hidden
-WriteLiteral("        </ul>\r\n    </div>\r\n");
+WriteLiteral("            </ul>\r\n        </fieldset>\r\n    </div>\r\n");
 
 
             
-            #line 45 "..\..\Views\Profile\LogIn.cshtml"
+            #line 48 "..\..\Views\Profile\LogIn.cshtml"
 }
 
             
@@ -227,7 +229,6 @@ WriteLiteral(@"<style scoped>
     {
         font-weight: normal;
         font-size: 1.4em;
-        border-bottom: 1px solid #ccc;
     }
     
     #tickets ul

@@ -7,40 +7,43 @@
     <div id="tickets">
         <h3>
             Log In</h3>
-        <ul>
-            <li>
-                @Html.LabelFor(t => t.UserName, new { @class = "required" })
-                @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
-                @Html.ValidationMessageFor(m => m.UserName)
-            </li>
-            <li>
-                @Html.LabelFor(t => t.Password1, new { @class = "required" })
-                @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
-                @Html.ValidationMessageFor(m => m.Password1) 
-            </li>
-            <li class="accept">
-                @Html.HiddenFor(m => m.IsRegistered)
-                @if (Model != null)
-                {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}</li>
-            <li class="accept">
-                <button class="k-button" type="submit" id="btnSubmit">
-                    Log On</button>
-            </li>
-              
-            @if (Model != null)
-            {
-                if (!Model.LoggedInSucceeded)
-                {          
-                <li class="status">
-                    @Model.LoginFailedMessage
+        <fieldset>
+            <legend>Account Information</legend>
+            <ul>
+                <li>
+                    @Html.LabelFor(t => t.UserName, new { @class = "required" })
+                    @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
+                    @Html.ValidationMessageFor(m => m.UserName)
                 </li>
-                }
-                else if (!Model.IsRegistered)
+                <li>
+                    @Html.LabelFor(t => t.Password1, new { @class = "required" })
+                    @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
+                    @Html.ValidationMessageFor(m => m.Password1) 
+                </li>
+                <li class="accept">
+                    @Html.HiddenFor(m => m.IsRegistered)
+                    @if (Model != null)
+                    {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}</li>
+                <li class="accept">
+                    <button class="k-button" type="submit" id="btnSubmit">
+                        Log On</button>
+                </li>
+              
+                @if (Model != null)
                 {
-                    @Html.Partial("_Password", Model)
+                    if (!Model.LoggedInSucceeded)
+                    {          
+                        <li class="status">
+                            @Model.LoginFailedMessage
+                        </li>
+                    }
+                    else if (!Model.IsRegistered)
+                    {
+                        @Html.Partial("_Password", Model)
+                    }
                 }
-            }
-        </ul>
+            </ul>
+        </fieldset>
     </div>
 }
 <style scoped>
@@ -57,7 +60,6 @@
     {
         font-weight: normal;
         font-size: 1.4em;
-        border-bottom: 1px solid #ccc;
     }
     
     #tickets ul
