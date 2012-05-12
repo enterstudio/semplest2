@@ -68,7 +68,8 @@ namespace Semplest.Core.Controllers
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            var campaignSetupModel = new CampaignSetupModel();
+            SemplestDataService ds = new SemplestDataService();
+            var campaignSetupModel = ds.GetCampaignSetupModelForPromotionId(promotionId);
             return View(campaignSetupModel);
         }
 
