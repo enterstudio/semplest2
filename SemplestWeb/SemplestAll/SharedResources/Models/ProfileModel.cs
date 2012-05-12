@@ -17,8 +17,11 @@ namespace Semplest.SharedResources.Models
         [Display(Name = "Password")]
         public string Password1 { get; set; }
 
+        [DataType(DataType.Password)]
         [Display(Name = "New Password")]
         public string Password2 { get; set; }
+        
+        [DataType(DataType.Password)]
         [Display(Name = "Verify Password")]
         public string Password3 { get; set; }
         
