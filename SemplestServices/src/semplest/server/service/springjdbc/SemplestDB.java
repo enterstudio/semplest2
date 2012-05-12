@@ -227,7 +227,7 @@ public class SemplestDB extends BaseDB
 			throws Exception
 	{
 		jdbcTemplate.update(
-				"insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyBudgetPK,TargetedDailyClicks,CreatedDate) "
+				"insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyMicroBudget,TargetedDailyClicks,CreatedDate) "
 						+ "select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[]
 				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, AdEngine });
 
