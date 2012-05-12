@@ -124,6 +124,48 @@ namespace SemplestWebApp.Services
             return retFlag;
         }
 
+        public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
+        {
+            CampaignSetupModel model = new CampaignSetupModel();
+            using(var dbcontext = new SemplestEntities())
+            {
+                var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
+
+                // populate model from promotions
+                model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
+                model.ProductGroup.ProductPromotionName = promo.PromotionName;
+                model.ProductGroup.Budget = promo.PromotionBudgetAmount;
+                model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString();
+                model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue ? promo.ProductGroup.EndDate.ToString() : String.Empty;
+
+                // set words
+                model.ProductGroup.Words = promo.PromotionDescription;
+
+                // set advertising engines
+                foreach(PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
+                {
+                    AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                    model.ProductGroup.AdvertisingEngines.Add(aesm);
+                }
+
+                // set URL
+                model.AdModelProp.Url = promo.LandingPageURL;
+
+                // set geotargetings
+                model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
+
+                // set promotionads
+                model.AdModelProp.Ads = promo.PromotionAds.ToList();
+
+                // set negative keywords
+                model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative == true).Select(m => m.Keyword.Keyword1).ToList();
+
+                return model;
+
+            }
+            return null;
+        }
+
         public User GetUserWithProductGroupAndPromotions(int userid)
         {
             var semplestEntities = new SemplestEntities();
