@@ -228,7 +228,6 @@ WriteLiteral(@"<style scoped>
         font-weight: normal;
         font-size: 1.4em;
         border-bottom: 1px solid #ccc;
-        text-align: center;
     }
     
     #tickets ul
@@ -240,7 +239,7 @@ WriteLiteral(@"<style scoped>
     #tickets li
     {
         margin: 10px 0 0 0;
-          text-align: center;
+        text-align: center;
     }
     
     label
@@ -258,6 +257,7 @@ WriteLiteral(@"<style scoped>
     .accept, .status
     {
         padding-left: 140px;
+        text-align: center;
     }
     
     .valid
