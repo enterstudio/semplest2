@@ -17,6 +17,20 @@ using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Controllers
 {
+
+    public class RequireRequestValueAttribute : ActionMethodSelectorAttribute
+    {
+        public RequireRequestValueAttribute(string valueName)
+        {
+            ValueName = valueName;
+        }
+        public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo)
+        {
+            return (controllerContext.HttpContext.Request[ValueName] != null);
+        }
+        public string ValueName { get; private set; }
+    }
+
     [ExceptionHelper]
     [AuthorizeRole]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
@@ -42,6 +56,22 @@ namespace Semplest.Core.Controllers
             var campaignSetupModel = new CampaignSetupModel();
             return View(campaignSetupModel);
         }
+
+        //[HttpPost]
+        [RequireRequestValue("promotionId")]
+        public ActionResult CampaignSetup(int promotionId)
+        {
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
+            Logger.Write(logEnty);
+            //var logService = new LogService();
+            //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
+            //var scw = new ServiceClientWrapper();
+            //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
+
+            var campaignSetupModel = new CampaignSetupModel();
+            return View(campaignSetupModel);
+        }
+
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "GetCategories")]
@@ -337,8 +367,10 @@ namespace Semplest.Core.Controllers
             foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
             {
                 var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
-                foreach (var problem in promotionBar.SubItems)
-                    promotionBar.SubItems.Add(new NavBar { Name = problem.Name, Id = problem.Id, Url = "../Campaign/CampaignSetup" });
+
+                foreach (var prom in promotion.Promotions)
+                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
+
                 productGroupsBar.SubItems.Add(promotionBar);
             }
             navBars.Add(productGroupsBar);
