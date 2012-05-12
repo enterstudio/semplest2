@@ -3,49 +3,110 @@
     ViewBag.Title = "LogOn";
 }
 
-<h2>Log In</h2>
-
 @using (Html.BeginForm())
 {
-         <fieldset>
-             <legend>Account Information</legend>
-            <div id="options" align="center" >
-            <div class="editor-label">
-                @Html.LabelFor(m => m.UserName)
-                @Html.HiddenFor(m => m.IsRegistered)
-                @if (Model != null)
-                {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}
-            </div>
-            <div class="editor-field">
+<div id="tickets">
+    <h3>
+        Log In</h3>
+    <ul>
+        <li>
+            <label for="fullname" class="required">
+                User Name</label>
                 @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(m => m.UserName)
-            </div>
-            <div class="editor-label">
-                @Html.LabelFor(m => m.Password1)
-            </div>
-            <div class="editor-field">
-                @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
-                @Html.ValidationMessageFor(m => m.Password1)
-            </div>
-            <p>
-                <input type="submit" value="Log On" class ="k-button" id="btnSubmit" />
-            </p>
+        </li>
+        <li>
+            <label for="search" class="required">
+                Password</label>
+             @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(m => m.Password1) </li>
+        <li class="accept">
+                @Html.HiddenFor(m => m.IsRegistered)
+                @if (Model != null)
+                {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}</li>
+        <li class="accept">
+            <button class="k-button" type="submit" id="btnSubmit">
+                Log On</button>
+        </li>
+        <li class="status">
             @if (Model != null)
             {
                 if (!Model.LoggedInSucceeded)
                 {            
-                    <div class="editor-label">@Model.LoginFailedMessage</div>
+                <div class="editor-label">@Model.LoginFailedMessage</div>
                 }
                 else if (!Model.IsRegistered)
                 {
-                    <div class="passwordverify">@Html.Partial("_Password", Model)</div>
+                <div class="passwordverify">@Html.Partial("_Password", Model)</div>
                 }
             }
-            </div>
-        </fieldset>
-        
+        </li>
+    </ul>
+</div>
 }
 
+<style scoped>
+    .k-textbox
+    {
+        width: 11.8em;
+    }
+    
+    #tickets
+    {
+        width: 510px;
+        height: 323px;
+        padding: 10px 20px 20px 170px;
+    }
+    
+    #tickets h3
+    {
+        font-weight: normal;
+        font-size: 1.4em;
+        border-bottom: 1px solid #ccc;
+    }
+    
+    #tickets ul
+    {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+    #tickets li
+    {
+        margin: 10px 0 0 0;
+    }
+    
+    label
+    {
+        display: inline-block;
+        width: 90px;
+        text-align: right;
+    }
+    
+    .required
+    {
+        font-weight: bold;
+    }
+    
+    .accept, .status
+    {
+        padding-left: 90px;
+    }
+    
+    .valid
+    {
+        color: green;
+    }
+    
+    .invalid
+    {
+        color: red;
+    }
+    span.k-tooltip
+    {
+        margin-left: 6px;
+    }
+</style>
 <script type="text/javascript">
     $(document).ready(function () {
         $("input[id$='btnSubmit']").click(function () {
