@@ -306,7 +306,7 @@ namespace SemplestWebApp.Services
                         {
                             adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
                         }
-
+                        dbcontext.SaveChanges();
                     }
                 }
             }
