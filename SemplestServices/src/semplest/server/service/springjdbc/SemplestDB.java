@@ -288,9 +288,14 @@ public class SemplestDB extends BaseDB
 				{
 					firstpgcpc = kdObj.getFirstPageCpc().intValue();
 				}
-				
-				addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
+				//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing
+				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
 						kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
+				if (res == null || res == 0)
+				{
+					logger.warn("KeywordBidData not stored for " + kdObj.getKeyword() + ":" + kdObj.getMatchType());
+				}
+					
 			}
 		}
 	}
