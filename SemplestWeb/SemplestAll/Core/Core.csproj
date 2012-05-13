@@ -178,6 +178,7 @@
     <Content Include="Content\Metro\slider-v.gif" />
     <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\MyStylesProfile.css" />
+    <Content Include="Content\report.png" />
     <Content Include="Content\themes\base\images\logo.png" />
     <Content Include="Dynamic Expressions.html" />
     <Content Include="Global.asax" />

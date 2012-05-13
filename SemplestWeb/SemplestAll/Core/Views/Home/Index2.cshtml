@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SemplestModel.ProductGroup>
+﻿@model Semplest.Core.Models.HomeModelChild
 @{
     ViewBag.Title = "My Account";
 }
@@ -13,24 +13,48 @@
 <br />
 <br />
 
-@Html.ActionLink("Add New Product Group Name", "AddProductGroupName",null, new { @class = "addnewproductgroupname" })
-
-<p>@Html.ActionLink("Create New Product Group", "CampaignSetup", "Campaign")</p>
+<p>@Html.ActionLink("Create New Product Group", "AddProductGroupName", null, new { @class = "addnewproductgroupname" })</p>
 <p>Create Duplicate Product Group</p>
+<p>@Html.ActionLink("Create Advertising", "CampaignSetup", "Campaign")</p>
 
-<p><b>Live Product Groups</b></p>
-@foreach (SemplestModel.ProductGroup p in Model)
+
+<p><b>Live Advertising: scroll over to see summary, click to edit</b></p>
+<table>
+@foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
 {
-    @Html.ActionLink(p.ProductGroupName, "", "")<br />
+    foreach (SemplestModel.Promotion p in pg.Promotions)
+    {
+        if (p.IsLaunched && !p.IsCompleted)
+        {
+                        <tr><td>@Html.ActionLink(p.PromotionName, "../Campaign/CampaignSetup", new { promotionid = p.PromotionPK })</td>
+            @if (p.IsPaused)
+            {<td>@Html.ActionLink("Restart", "")</td>}
+            else
+            {<td>@Html.ActionLink("Pause", "")</td>}
+            </tr>    
+            
+
+        }
+    }
 }
-
-<p><b>Unfinished Product Groups</b></p>
-Safety Tips
-
-<p><b>Paused Product Groups</b></p>
-Agents
-
+</table>
+<p><b>Unfinished Advertising</b></p>
+<table>
+@foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+{
+    foreach (SemplestModel.Promotion p in pg.Promotions)
+    {
+        if (!p.IsLaunched)
+        {
+            <tr><td>@Html.ActionLink(p.PromotionName, "../Campaign/CampaignSetup", new { promotionid = p.PromotionPK })</td>
+            <td>@Html.ActionLink("Delete", "")</td></tr>
+        }
+    }
+}
+</table>
 <p>Reporting Snap Shot </p>
+<img src="../Content/report.png", alt="report" width="683" height="87" />
+
 <p>@Html.ActionLink("Account Information", "ChildProfile", "Account") </p>
  
 

@@ -42,8 +42,12 @@ namespace SemplestWebApp.Controllers
         {
             SemplestEntities dbContext = new SemplestEntities();
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            HomeModelChild child = new HomeModelChild();
+            //dbContext.Credentials.Where(x =>x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups
 
-            return View(dbContext.Credentials.Where(x =>x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups);
+                IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+                child.ProductGroups = cCred.First().User.Customer.ProductGroups;
+            return View(child);
         }
 
 
