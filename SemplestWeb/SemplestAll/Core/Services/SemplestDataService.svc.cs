@@ -455,7 +455,7 @@ namespace SemplestWebApp.Services
                     if (queryKeyword.Count() == 0)
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
-                        var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword });
+                        var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword, CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
                         int keywordId = newKeyword.KeywordPK;
@@ -464,6 +464,7 @@ namespace SemplestWebApp.Services
                             {
                                 PromotionFK = promotionId,
                                 //KeywordFK = keywordId,
+                                CreatedDate = DateTime.Now,
                                 IsActive = true,
                                 IsDeleted = false,
                                 IsNegative = false,
@@ -478,6 +479,7 @@ namespace SemplestWebApp.Services
                     else  // keyword already there in the Keywords table, setup an association with promotion if its not there
                     {
                         int keywordId = queryKeyword.First().KeywordPK;
+                        queryKeyword.First().EditedDate = DateTime.Now;
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
                         if (queryPka.Count() == 0)
                         {
@@ -486,6 +488,7 @@ namespace SemplestWebApp.Services
                                 {
                                     PromotionFK = promotionId,
                                     KeywordFK = keywordId,
+                                    CreatedDate = DateTime.Now,
                                     IsActive = true,
                                     IsDeleted = false,
                                     IsNegative = false,
@@ -549,6 +552,7 @@ namespace SemplestWebApp.Services
                         if (queryKeyword.Count() > 0)
                         {
                             int keywordId = queryKeyword.First().KeywordPK;
+                            queryKeyword.First().EditedDate = DateTime.Now;
                             var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
                             if (queryPka.Count() == 0)
                             {
@@ -557,6 +561,7 @@ namespace SemplestWebApp.Services
                                     {
                                         PromotionFK = promo.PromotionPK,
                                         KeywordFK = keywordId,
+                                        CreatedDate = DateTime.Now,
                                         IsActive = true,
                                         IsDeleted = false,
                                         IsNegative = false,
@@ -579,7 +584,7 @@ namespace SemplestWebApp.Services
                         }
                         else
                         {
-                            var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword });
+                            var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
                             dbcontext.SaveChanges();
 
                             int keywordId = newNegKeyword.KeywordPK;
@@ -588,6 +593,7 @@ namespace SemplestWebApp.Services
                                 {
                                     PromotionFK = promo.PromotionPK,
                                     KeywordFK = keywordId,
+                                    CreatedDate = DateTime.Now,
                                     IsActive = true,
                                     IsDeleted = false,
                                     IsNegative = true,
@@ -596,6 +602,7 @@ namespace SemplestWebApp.Services
                                     IsTargetGoogle = false
                                 });
 
+                            dbcontext.SaveChanges();
                         }
 
 
