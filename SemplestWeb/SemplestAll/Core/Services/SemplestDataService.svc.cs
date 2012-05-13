@@ -333,7 +333,8 @@ namespace SemplestWebApp.Services
             {
                 foreach (string aes in model.ProductGroup.AdEnginesList)
                 {
-                    var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEngine1 == aes);
+                    int adengineid = Convert.ToInt32(aes);
+                    var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEnginePK == adengineid);
                     if (proAdEng.Count() > 0)
                     {
                         var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
@@ -343,12 +344,13 @@ namespace SemplestWebApp.Services
                             {
                                 AdvertisingEngine = proAdEng.First()
                             };
+                            dbcontext.PromotionAdEngineSelecteds.Add(adEngineSel);
                         }
                         else
                         {
                             adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
                         }
-                        dbcontext.SaveChanges();
+                        //dbcontext.SaveChanges();
                     }
                 }
             }
