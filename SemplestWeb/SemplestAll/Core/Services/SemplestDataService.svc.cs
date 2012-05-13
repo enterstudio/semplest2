@@ -95,7 +95,7 @@ namespace SemplestWebApp.Services
                         var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
 
                         // add advertising engines that are selected
-                        SavePromotionAdEngineSelected(promo, model);
+                        SavePromotionAdEngineSelected(promo, model, dbcontext);
 
                         // add geotargeting to promotion
                         AddGeoTargetingToPromotion(promo, model);
@@ -127,43 +127,40 @@ namespace SemplestWebApp.Services
         public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
         {
             CampaignSetupModel model = new CampaignSetupModel();
-            using(var dbcontext = new SemplestEntities())
+            var dbcontext = new SemplestEntities();
+            var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
+
+            // populate model from promotions
+            model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
+            model.ProductGroup.ProductPromotionName = promo.PromotionName;
+            model.ProductGroup.Budget = promo.PromotionBudgetAmount;
+            model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString();
+            model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue ? promo.ProductGroup.EndDate.ToString() : String.Empty;
+
+            // set words
+            model.ProductGroup.Words = promo.PromotionDescription;
+
+            // set advertising engines
+            foreach(PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
             {
-                var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-
-                // populate model from promotions
-                model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
-                model.ProductGroup.ProductPromotionName = promo.PromotionName;
-                model.ProductGroup.Budget = promo.PromotionBudgetAmount;
-                model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString();
-                model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue ? promo.ProductGroup.EndDate.ToString() : String.Empty;
-
-                // set words
-                model.ProductGroup.Words = promo.PromotionDescription;
-
-                // set advertising engines
-                foreach(PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
-                {
-                    AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
-                    model.ProductGroup.AdvertisingEngines.Add(aesm);
-                }
-
-                // set URL
-                model.AdModelProp.Url = promo.LandingPageURL;
-
-                // set geotargetings
-                model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
-
-                // set promotionads
-                model.AdModelProp.Ads = promo.PromotionAds.ToList();
-
-                // set negative keywords
-                model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative == true).Select(m => m.Keyword.Keyword1).ToList();
-
-                return model;
-
+                //AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEngine1);
             }
-            return null;
+
+            // set URL
+            model.AdModelProp.Url = promo.LandingPageURL;
+
+            // set geotargetings
+            model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
+
+            // set promotionads
+            model.AdModelProp.Ads = promo.PromotionAds.ToList();
+
+            // set negative keywords
+            model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative == true).Select(m => m.Keyword.Keyword1).ToList();
+
+            return model;
+
         }
 
         public User GetUserWithProductGroupAndPromotions(int userid)
@@ -321,37 +318,35 @@ namespace SemplestWebApp.Services
                 dbcontext.PromotionAds.Remove(pad);
             }
 
-            SavePromotionAdEngineSelected(updatePromotion, model);
+            SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
             AddGeoTargetingToPromotion(updatePromotion, model);
             SaveNegativeKeywords(updatePromotion, model);
             AddPromotionAdsToPromotion(updatePromotion, model);
         }
 
-        private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model)
+        private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {
-            using (var dbcontext = new SemplestEntities())
+            foreach (string aes in model.ProductGroup.AdEnginesList)
             {
-                foreach (string aes in model.ProductGroup.AdEnginesList)
+                int adengineid = Convert.ToInt32(aes);
+                var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEnginePK == adengineid);
+                if (proAdEng.Count() > 0)
                 {
-                    int adengineid = Convert.ToInt32(aes);
-                    var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEnginePK == adengineid);
-                    if (proAdEng.Count() > 0)
+                    var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
+                    if (adEngSelQuery.Count() == 0)
                     {
-                        var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
-                        if (adEngSelQuery.Count() == 0)
+                        var adEngineSel = new PromotionAdEngineSelected
                         {
-                            var adEngineSel = new PromotionAdEngineSelected
-                            {
-                                AdvertisingEngine = proAdEng.First()
-                            };
-                            dbcontext.PromotionAdEngineSelecteds.Add(adEngineSel);
-                        }
-                        else
-                        {
-                            adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
-                        }
-                        //dbcontext.SaveChanges();
+                            AdvertisingEngineFK = proAdEng.First().AdvertisingEnginePK,
+                            PromotionFK = promo.PromotionPK
+                        };
+                        dbcontext.PromotionAdEngineSelecteds.Add(adEngineSel);
                     }
+                    else
+                    {
+                        adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
+                    }
+                    //dbcontext.SaveChanges();
                 }
             }
         }
