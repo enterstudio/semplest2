@@ -70,6 +70,13 @@ namespace Semplest.Core.Controllers
 
             SemplestDataService ds = new SemplestDataService();
             var campaignSetupModel = ds.GetCampaignSetupModelForPromotionId(promotionId);
+            // set sitelinks in session
+            Session.Add("AddsStoreModel", new AddsStoreModel { Ads = campaignSetupModel.AdModelProp.Ads.ToList() });
+            // set negative keywords in session
+            Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
+            //Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
+
+
             return View(campaignSetupModel);
         }
 
