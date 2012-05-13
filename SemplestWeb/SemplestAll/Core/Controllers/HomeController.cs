@@ -179,10 +179,17 @@ namespace SemplestWebApp.Controllers
         {
             try
             {
+                string productgroupname=fc["newproductgroupname"].ToString().Trim();
                 Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-                if (fc["newproductgroupname"].ToString() == null && fc["newproductgroupname"].ToString() =="" ) throw new Exception();
+                if (productgroupname == null || productgroupname  =="" ) throw new Exception("Blank");
                 SemplestEntities dbContext = new SemplestEntities();
-                dbContext.ProductGroups.Add(new ProductGroup { CustomerFK=c.User.CustomerFK.Value  , ProductGroupName = fc["newproductgroupname"].ToString(), StartDate=DateTime.Now, IsActive = true });
+                var productgroupexists = from pg in dbContext.ProductGroups
+                                    where pg.CustomerFK.Equals(c.User.CustomerFK.Value) && pg.ProductGroupName.Equals(productgroupname )
+                                    select pg;
+
+                if (productgroupexists.Count()>0) throw new Exception("Duplicate");
+
+                dbContext.ProductGroups.Add(new ProductGroup { CustomerFK=c.User.CustomerFK.Value  , ProductGroupName = productgroupname , StartDate=DateTime.Now, IsActive = true });
                 dbContext.SaveChanges();
 
             }
