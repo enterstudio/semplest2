@@ -106,10 +106,10 @@ function renderOptions(response) {
         //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
         html += '<img src="' + location.mapUrl + '" style="height: 160px; width:160px;"/>';
         if (index != 0) {
-            $('#optionsNarrative_' + index.split('.')[1]).html(html);
-            this.$.find("input[id='AdModelProp.Addresses_" + index.split('.')[1] + "__Latitude']")[0].value =
+            $('#optionsNarrative_' + index.split('_')[1]).html(html);
+            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Latitude']")[0].value =
 location.latLng.lat;
-            this.$.find("input[id='AdModelProp.Addresses_" + index.split('.')[1] + "__Longitude']")[0].value =
+            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Longitude']")[0].value =
 location.latLng.lng;
             //$('#AdModelProp_Addresses_' + index + '__Latitude').val(location.latLng.lat);
             //$('#AdModelProp_Addresses_' + index + '__Longitude').val(location.latLng.lng);
