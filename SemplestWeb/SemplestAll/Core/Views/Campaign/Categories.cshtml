@@ -8,7 +8,7 @@
             
             @*@Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
-            <div style = "height:145px;width:700px;overflow-x:auto">
+            <div style = "height:145px;width:1000px;overflow-x:auto">
             @Html.CheckBoxListFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds))
             </div>
         }
