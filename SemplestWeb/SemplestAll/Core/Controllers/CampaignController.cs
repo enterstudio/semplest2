@@ -258,9 +258,19 @@ namespace Semplest.Core.Controllers
                 Session.Add("AdTitle", model);
             else
                 Session["AdTitle"] = model;
-            //if (Session["SiteLinks"] != null)
-            //    model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-            return PartialView(new PromotionAd { AdTitle = model });
+            var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+            PromotionAd promotionAd;
+            if(addsStoreModel != null)
+            {
+                promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
+                if (promotionAd != null)
+                    promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
+            }
+            else
+            {
+                promotionAd = new PromotionAd { AdTitle = model };
+            }
+            return PartialView(promotionAd);
             //return PartialView(model);
         }
         [HttpPost]
