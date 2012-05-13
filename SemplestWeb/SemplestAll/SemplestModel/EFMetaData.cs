@@ -99,7 +99,6 @@ namespace SemplestModel
             public string AdTitle { get; set; }
             [Required]
             public string AdTextLine1 { get; set; }
-            [Required]
             public string AdTextLine2 { get; set; }
 
         }
