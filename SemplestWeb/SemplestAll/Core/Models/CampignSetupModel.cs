@@ -123,6 +123,7 @@ namespace Semplest.Core.Models
             //}
 
             AdEnginesSelectedList = new List<AdEngineSelectModel>();
+            AdEnginesList = new List<string>();
         }
         public Configuration Configuration { get; set; }
         public string ProductGroupName { get; set; }
