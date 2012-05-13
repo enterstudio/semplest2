@@ -2,7 +2,7 @@
 $(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val(), value: 0 }).data("kendoNumericTextBox");
+    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val() }).data("kendoNumericTextBox");
     budjet.wrapper
        .find(".k-numeric-wrap")
        .addClass("expand-padding")
