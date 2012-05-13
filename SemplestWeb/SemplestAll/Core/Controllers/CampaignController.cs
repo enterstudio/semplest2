@@ -369,7 +369,7 @@ namespace Semplest.Core.Controllers
                 var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
 
                 foreach (var prom in promotion.Promotions)
-                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup" + prom.PromotionPK.ToString() });
+                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionid=" + prom.PromotionPK.ToString() });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
                 productGroupsBar.SubItems.Add(promotionBar);
