@@ -122,15 +122,18 @@ namespace Semplest.Core.Models.Repositories
             List<GeoTargetObject> geoList = new List<GeoTargetObject>();
             foreach (SemplestModel.GeoTargeting geo in model.AdModelProp.Addresses)
             {
-                GeoTargetObject geoTObj = new GeoTargetObject();
-                geoTObj.setAddress(geo.Address);
-                geoTObj.setCity(geo.City);
-                geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
-                geoTObj.setZip(geo.Zip);
-                geoTObj.setRadius((double)(geo.ProximityRadius == null ? 0 : geo.ProximityRadius ));
-                geoTObj.setLatitude((double)(geo.Latitude == null ? 0 : geo.Latitude));
-                geoTObj.setLongitude((double)(geo.Longitude == null ? 0 : geo.Longitude));
-                geoList.Add(geoTObj);
+                if (geo.PromotionFK > 0)
+                {
+                    GeoTargetObject geoTObj = new GeoTargetObject();
+                    geoTObj.setAddress(geo.Address);
+                    geoTObj.setCity(geo.City);
+                    geoTObj.setState(GetStateNameFromDb((int)geo.StateCodeFK));
+                    geoTObj.setZip(geo.Zip);
+                    geoTObj.setRadius((double)(geo.ProximityRadius == null ? 0 : geo.ProximityRadius));
+                    geoTObj.setLatitude((double)(geo.Latitude == null ? 0 : geo.Latitude));
+                    geoTObj.setLongitude((double)(geo.Longitude == null ? 0 : geo.Longitude));
+                    geoList.Add(geoTObj);
+                }
             }
             return geoList;   
         }
