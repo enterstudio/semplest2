@@ -263,6 +263,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// AdvertisingEngine, Boolean IsNegative
 				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), 
 						keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
+				logger.info("Add Keyword " + keywordDataObj.getKeyword() + " to " + promotionID.toString());
 				Thread.sleep(500); // Wait for google
 				TEST++;
 				if (TEST > 15) return;

@@ -96,7 +96,15 @@ public class BidGeneratorObj {
 	private HashMap<String,EstimatorData> costDataMap = new HashMap<String,EstimatorData>();
 	
 	public BidGeneratorObj(){ // constructor
-		clientGoogle = new GoogleAdwordsServiceImpl();
+		try
+		{
+			clientGoogle = new GoogleAdwordsServiceImpl();
+		}
+		catch (Exception e)
+		{
+			logger.error("Unable to create Google Client " + e.getMessage());
+			e.printStackTrace();
+		}
 		
 		wordIDMap = new HashMap<String,Long>();
 		wordBidMap = new HashMap<String,Long>();
@@ -208,7 +216,7 @@ public class BidGeneratorObj {
 				} catch (Exception e) {
 					if (k<=maxRetry) {
 						e.printStackTrace();
-						logger.info("Received exception : will retry..., k="+k);
+						logger.info("Received exception getAllBiddableAdGroupCriteria: will retry..., k="+k);
 						k++;				
 					} else {
 						e.printStackTrace();

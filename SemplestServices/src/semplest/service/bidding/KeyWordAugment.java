@@ -18,12 +18,13 @@ public class KeyWordAugment {
 	
 
 	public static HashMap<String,Integer> getHighVolumeBroadMatchWords(String accountID){
-		GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+		
 		ReportObject[] ret = null;
 		HashMap<String,Integer> termImpressionMap = new HashMap<String,Integer>();
 		HashMap<String,Integer> termDaysMap = new HashMap<String,Integer>();
 
 		try{
+			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 			ret = client.getSearchQueryReportForAccount(new SemplestString().toSemplestString(accountID));
 		} catch(Exception e){
 			e.printStackTrace();

@@ -5,15 +5,18 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
@@ -22,6 +25,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 
 import com.google.api.adwords.lib.AdWordsService;
@@ -132,10 +136,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private final boolean useSandbox; // = false; // true; // // true; //
 
 	
-	public GoogleAdwordsServiceImpl()
+	public GoogleAdwordsServiceImpl() throws Exception
 	{
+		String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+		AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
 		email = (String) SemplestConfiguration.configData.get("AdwordsEmail");
-		password = (String) SemplestConfiguration.configData.get("AdwordsPassword");
+		password = aes.decrypt((String) SemplestConfiguration.configData.get("AdwordsPassword"));
 		userAgent = (String) SemplestConfiguration.configData.get("AdwordsUserAgent");
 		developerToken = (String) SemplestConfiguration.configData.get("AdwordsDeveloperToken");
 		useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
@@ -147,6 +153,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Log SOAP XML request and response.
 		try
 		{
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			SemplestConfiguration config = new SemplestConfiguration();
+			Thread t = new Thread(config);
+			t.start();
+			Thread.sleep(1000);
+			
+			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			KeywordDataObject[] keyData = g.getAllBiddableAdGroupCriteria("54100",3066028785L, true);
+			for (int i = 0; i < keyData.length; i++)
+			{
+				System.out.println(keyData[i].getKeyword());
+			}
 			/*
 			 * AdWordsServiceLogger.log(); String accountID = "6048920973"; //
 			 * Get AdWordsUser from "~/adwords.properties". //AdWordsUser user =
