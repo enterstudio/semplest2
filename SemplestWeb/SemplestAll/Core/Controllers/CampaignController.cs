@@ -9,6 +9,7 @@ using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
+using Semplest.Core.Services;
 using SemplestModel;
 using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
@@ -77,7 +78,7 @@ namespace Semplest.Core.Controllers
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
-
+            campaignSetupModel.ProductGroup.IsEdit = true;
             return View(campaignSetupModel);
         }
 
