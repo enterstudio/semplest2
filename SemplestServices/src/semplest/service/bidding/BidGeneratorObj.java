@@ -278,6 +278,9 @@ public class BidGeneratorObj {
 					e.printStackTrace();
 					throw new Exception("Failed to get Google traffic estimator data.");
 				}
+				logger.info("Got traffic estimator data.");
+			} else {
+				logger.info("No traffic estimator data to be fetched.");
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
@@ -288,7 +291,7 @@ public class BidGeneratorObj {
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
-		logger.info("Got traffic estimator data.");
+		
 
 		
 		
@@ -307,35 +310,40 @@ public class BidGeneratorObj {
 		}
 		compKeywords.clear();
 		
-		logger.info("Computed bids for competitive keywords.");
+		// logger.info("Computed bids for competitive keywords.");
+		logger.info("No competitive keywords.");
 		
 		
 		
 		/* ******************************************************************************************* */
 		// 7. [google] Compute bids for competitive keywords which optimizer didn't select
-		//    a. Bid $0.5 above firstPage CPC if below $3.00		
-		for(String s : notSelectedKeywords){
-			wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+		//    a. Bid $0.5 above firstPage CPC if below $3.00	
+		if (notSelectedKeywords.size()>0) {
+			for(String s : notSelectedKeywords){
+				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+			}
+			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
 		}
-		logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
 				
 		
 		/* ******************************************************************************************* */
 		// 8. Compute bits for all other keywords with firstPage CPC
-		for(String s : nonCompKeywords){
-			wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+		if (nonCompKeywords.size()>0) {
+			for(String s : nonCompKeywords){
+				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+			}
+			logger.info("Computed bids for rest of the keywords with first page cpc.");
 		}
-		logger.info("Computed bids for rest of the keywords with first page cpc.");
 		
 		/* ******************************************************************************************* */
 		// 9. For the rest of keywords without firstPage CPC leave out for bidding with default bid 
 		
-		
-		for(String s : noInfoKeywords){
-			wordBidMap.put(s,null); // bid using default bid
+		if(noInfoKeywords.size()>0) {
+			for(String s : noInfoKeywords){
+				wordBidMap.put(s,null); // bid using default bid
+			}
+			logger.info("Left the remaining keywords for default bidding");
 		}
-		
-		logger.info("Left the remaining keywords for default bidding");
 		
 		
 		
@@ -383,31 +391,41 @@ public class BidGeneratorObj {
 		
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
-		if(searchEngine.equalsIgnoreCase(google)){
-			try {
-				SemplestDB.storeKeywordDataObjects(promotionID, google,
-						new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
-			} catch (Exception e) {
-				e.printStackTrace();
-				throw new Exception("Failed to store Google adGroupCriterion data to database.");
-			}
-		} // if(searchEngine.equalsIgnoreCase(google))
-		
-		logger.info("Stored adgroup criterion data to database for Google");
+		if(keywordDataObjs!=null && keywordDataObjs.length>0) {
+			if(searchEngine.equalsIgnoreCase(google)){
+				try {
+					SemplestDB.storeKeywordDataObjects(promotionID, google,
+							new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+				} catch (Exception e) {
+					e.printStackTrace();
+					throw new Exception("Failed to store Google adGroupCriterion data to database.");
+				}
+			} // if(searchEngine.equalsIgnoreCase(google))
+
+			logger.info("Stored adgroup criterion data to database for Google");
+		}
 		
 		
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
 		if(searchEngine.equalsIgnoreCase(google)){
 			if(o!=null) {
+				try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+				} catch (Exception e) {
+					e.printStackTrace();
+					logger.info("Failed to write traffic estimator data");
+				}
+				logger.info("Stored traffic estimator data to database");
+			} else {
+				logger.info("No traffic estimator data to write to the database");
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
 		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
-		logger.info("Stored traffic estimator data to database");
+		
 
 		
 		
@@ -422,7 +440,7 @@ public class BidGeneratorObj {
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 		}
 		
-		logger.info("Stroed default bid to databse and requested for updating all bids for keywords with default bid.");
+		logger.info("Stroed default bid "+ defaultMicroBid +" to databse and requested for updating all bids for keywords with default bid.");
 		
 		
 		
@@ -459,8 +477,12 @@ public class BidGeneratorObj {
 		
 		
 		try{
+			if (bidsMatchType.size()>0) {
 			SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
 			logger.info("Stroed bid data to the databse");
+			} else {
+				logger.info("No bid data to write to the databse");
+			}
 		} catch (Exception e) {
 			logger.info("ERROR: Unable to store bid data to the database.");
 			e.printStackTrace();
