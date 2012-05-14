@@ -186,6 +186,9 @@ namespace Semplest.Admin.Models
         public string CustomerNote { get; set; }
         public bool isActive { get; set; }
 
+
+        
+        //[Remote("doesUserNameExist", "CustomerAccount", HttpMethod = "POST", ErrorMessage = "User name already exists. Please enter a different user name.")]
         [Required]
         [DisplayName("User ID")]
         public string UserID { get; set; }
