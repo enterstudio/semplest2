@@ -11,8 +11,8 @@ public interface SemplestBiddingInterface extends ServiceInitialize {
 	
 	HashMap<String, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine) throws Exception;
 	HashMap<String, AdEngineInitialData> getInitialValues(Integer promotionID, ArrayList<String> searchEngine) throws Exception;
-	void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception;
-	void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception;
+	Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception;
+	Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception;
 
 	
 	HashMap<String,Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception ;
