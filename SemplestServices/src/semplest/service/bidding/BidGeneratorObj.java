@@ -122,8 +122,6 @@ public class BidGeneratorObj {
 		defaultMicroBid = (Long) SemplestConfiguration.configData.get("SemplestBiddingDefaultMicroBid"); 
 		maxDefaultMicroBid = (Long) SemplestConfiguration.configData.get("SemplestBiddingMaxDefaultMicroBid"); 
 
-		
-		// traffic estimator bid steps
 		stepFirst = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepFirst");
 		stepSecond = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepSecond");
 		stepRest = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepRest");
@@ -411,7 +409,7 @@ public class BidGeneratorObj {
 			
 		} // if(searchEngine.equalsIgnoreCase(google))
 		
-		logger.info("Computed expected cpc and set default bid at that value");
+		logger.info("Computed expected cpc and set default bid at "+defaultMicroBid);
 		
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
@@ -503,7 +501,7 @@ public class BidGeneratorObj {
 		try{
 			if (bidsMatchType.size()>0) {
 			SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
-			logger.info("Stroed bid data to the databse");
+			logger.info("Stroed bid data to the databse for "+bidsMatchType.size()+" keywords.");
 			} else {
 				logger.info("No bid data to write to the databse");
 			}
@@ -543,6 +541,7 @@ public class BidGeneratorObj {
 					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 					try {
 						clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
+						logger.info("Updated bid for keyword "+word+" via Google API with bid value "+wordBidMap.get(word));
 						break;
 					} catch (Exception e) {
 						if (k<=maxRetry) {
