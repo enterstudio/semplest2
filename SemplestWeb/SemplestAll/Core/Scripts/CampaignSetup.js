@@ -213,7 +213,8 @@ function addNestedForm(container, counter, ticks, content) {
                 $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
                     title: $("#AdModelProp_Url").val(),
                     twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
-                    content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val() + $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
+                    content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val() ,
+                    content1: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
                 }));
             }
         }));
