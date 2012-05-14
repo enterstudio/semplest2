@@ -383,14 +383,156 @@ namespace Semplest.Admin.Controllers
         }
 
 
+        //[HttpPost]
+        //public JsonResult doesUserNameExist(string UserID)
+        //{
+
+        //    SemplestEntities dbcontext = new SemplestEntities();
+
+        //    var users = from c in dbcontext.Credentials
+        //                where c.Username.Equals(UserID)
+        //                select c;
+        //    return Json(users == null);
+        //}
+
+
+
+
+
         [HttpPost]
         public ActionResult Edit(CustomerAccountWithEmployeeModel m)
         {
 
-            if (!ModelState.IsValid)
-                return View(m);
+            
+            
 
             SemplestEntities dbcontext = new SemplestEntities();
+
+            
+
+
+            //check if userid has been taken by other users
+
+                  var userIDSs = from c in dbcontext.Credentials
+                        where c.Username.Equals(m.CustomerAccount.UserID) && !c.UsersFK.Equals(m.CustomerAccount.UserPK)
+                        select c;
+                  if (userIDSs.Count() > 0)
+                      ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
+
+
+
+            if (!ModelState.IsValid)
+            {
+                //repopulate 
+
+                /////////////////////////////////////////////////////////////////////////////////
+                //for reps dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var allreps = from e in dbcontext.Employees
+                              //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                              join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                              join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                              where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
+                              select new EmployeeCustomerAssociaitionModel
+                              {
+                                  //AccountNumber = eca.CustomerFK,
+                                  employeePK = e.EmployeePK,
+                                  EmployeeType = et.EmployeeType1,
+                                  EmployeeUserPK = u.UserPK,
+                                  FirstName = u.FirstName,
+                                  LastName = u.LastName,
+                                  MiddleInitial = u.MiddleInitial
+                              };
+
+                /////////////////////////////////////////////////////////////////////////////////
+                //for sales dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var allsalespersons = from e in dbcontext.Employees
+                                      //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                      join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                                      join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                      where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
+                                      select new EmployeeCustomerAssociaitionModel
+                                      {
+                                          //AccountNumber = eca.CustomerFK,
+                                          employeePK = e.EmployeePK,
+                                          EmployeeType = et.EmployeeType1,
+                                          EmployeeUserPK = u.UserPK,
+                                          FirstName = u.FirstName,
+                                          LastName = u.LastName,
+                                          MiddleInitial = u.MiddleInitial
+                                      };
+
+                var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
+
+                m.States = allstates.Select(r => new SelectListItem
+                {
+                    Value = r.StateAbbrPK.ToString(),
+                    Text = r.StateAbbr.ToString()
+                });
+
+
+
+                List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+                List<SelectListItem> sl1 = new List<SelectListItem>();
+                foreach (EmployeeCustomerAssociaitionModel s in ll1)
+                {
+                    SelectListItem mylistitem = new SelectListItem();
+                    mylistitem.Text = s.FirstName + " " + s.LastName;
+                    mylistitem.Value = s.employeePK.ToString();
+                    sl1.Add(mylistitem);
+                }
+                m.Reps= sl1;
+
+
+
+                List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+                List<SelectListItem> sl2 = new List<SelectListItem>();
+                foreach (EmployeeCustomerAssociaitionModel s in ll2)
+                {
+                    SelectListItem mylistitem = new SelectListItem();
+                    mylistitem.Text = s.FirstName + " " + s.LastName;
+                    mylistitem.Value = s.employeePK.ToString();
+                    sl2.Add(mylistitem);
+                }
+                m.SalesPersons = sl2;
+
+
+
+
+                var allparents =
+                                from c in dbcontext.Customers
+                                select c;
+
+
+
+
+                List<SelectListItem> sli = new List<SelectListItem>();
+                sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
+                sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User »»" });
+                m.Parents = allparents.ToList().Select(r => new SelectListItem
+                {
+                    Value = r.CustomerPK.ToString(),
+                    Text = r.Name.ToString()
+                }).Union(sli);
+
+
+
+                var allbilltypes =
+                    from bt in dbcontext.BillTypes
+                    select bt;
+				
+
+
+
+                m.BillTypes = allbilltypes.ToList().Select(r => new SelectListItem
+                {
+                    Value = r.BillTypePK.ToString(),
+                    Text = r.BillType1.ToString()
+                });
+
+                return View(m);
+            }
 
 
             var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.CustomerAccount.UserPK);
@@ -645,7 +787,7 @@ namespace Semplest.Admin.Controllers
             //    Text = r.FirstName.ToString()
             //});
             //workaround below (same as for state dropdown but with lists, in order to get over the error) ; need to refactor later!!
-            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); 
+            List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl2 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll2)
             {
@@ -665,13 +807,139 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Add(CustomerAccountWithEmployeeModel m)
         {
-            if (!ModelState.IsValid)
-                return View(m);
+
+            
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            
+
+
+            //check if userid has been taken by other users
+
+                  var userIDSs = from c in dbcontext.Credentials
+                        where c.Username.Equals(m.CustomerAccount.UserID) 
+                        select c;
+                  if (userIDSs.Count() > 0)
+                      ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
+
+
+                  if (!ModelState.IsValid)
+                  {
+                      //repopualte
+
+                      var allreps = from e in dbcontext.Employees
+                                    //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                    join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                                    join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                    where (et.EmployeeType1 == "Rep" && u.IsActive.Equals(true))
+                                    select new EmployeeCustomerAssociaitionModel
+                                    {
+                                        //AccountNumber = eca.CustomerFK,
+                                        employeePK = e.EmployeePK,
+                                        EmployeeType = et.EmployeeType1,
+                                        EmployeeUserPK = u.UserPK,
+                                        FirstName = u.FirstName,
+                                        MiddleInitial = u.MiddleInitial,
+                                        LastName = u.LastName
+                                    };
+
+
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      //for sales dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var allsalespersons = from e in dbcontext.Employees
+                                            //join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
+                                            join et in dbcontext.EmployeeTypes on e.EmployeeTypeFK equals et.EmployeeTypeID
+                                            join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                                            where (et.EmployeeType1 == "Sales" && u.IsActive.Equals(true))
+                                            select new EmployeeCustomerAssociaitionModel
+                                            {
+                                                //AccountNumber = eca.CustomerFK,
+                                                employeePK = e.EmployeePK,
+                                                EmployeeType = et.EmployeeType1,
+                                                EmployeeUserPK = u.UserPK,
+                                                FirstName = u.FirstName,
+                                                MiddleInitial = u.MiddleInitial,
+                                                LastName = u.LastName
+                                            };
+
+
+                      var allparents = (from a in dbcontext.Customers select a).ToList();
+
+                      List<SelectListItem> sli = new List<SelectListItem>();
+
+
+                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
+                      sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
+
+                      //x.SelectedParentID = -1;
+                     
+                      m.Parents = allparents.Select(r => new SelectListItem
+                      {
+                          Value = r.CustomerPK.ToString(),
+                          Text = r.Name.ToString()
+                      }).Union(sli);
+
+
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      //for billtype dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var allbilltypes = (from a in dbcontext.BillTypes select a).ToList();
+
+                      
+                      m.BillTypes = allbilltypes.Select(r => new SelectListItem
+                      {
+                          Value = r.BillTypePK.ToString(),
+                          Text = r.BillType1.ToString()
+                      });
+
+
+
+
+                      //for state dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var allstates = (from sc in dbcontext.StateCodes select sc).ToList();
+                      
+                      m.States = allstates.Select(r => new SelectListItem
+                      {
+                          Value = r.StateAbbrPK.ToString(),
+                          Text = r.StateAbbr.ToString()
+                      });
+
+
+
+                      List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); ;
+                      List<SelectListItem> sl1 = new List<SelectListItem>();
+                      foreach (EmployeeCustomerAssociaitionModel s in ll1)
+                      {
+                          SelectListItem mylistitem = new SelectListItem();
+                          mylistitem.Text = s.FirstName + " " + s.LastName;
+                          mylistitem.Value = s.employeePK.ToString();
+                          sl1.Add(mylistitem);
+                      }
+                      m.Reps = sl1;
+
+
+                      List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
+                      List<SelectListItem> sl2 = new List<SelectListItem>();
+                      foreach (EmployeeCustomerAssociaitionModel s in ll2)
+                      {
+                          SelectListItem mylistitem = new SelectListItem();
+                          mylistitem.Text = s.FirstName + " " + s.LastName;
+                          mylistitem.Value = s.employeePK.ToString();
+                          sl2.Add(mylistitem);
+                      }
+                      m.SalesPersons = sl2;
+                      return View(m);
+                  }
+
 
 
             try
             {
-                SemplestEntities dbcontext = new SemplestEntities();
+                
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
@@ -818,7 +1086,7 @@ namespace Semplest.Admin.Controllers
                     var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK.Equals(customerphoneassociation.PhoneFK));
                     var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
                     var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK.Equals(m.CustomerAccount.UserPK));
-                    var customerhierarchy=dbcontext.CustomerHierarchies.ToList().Find(p=>p.CustomerFK.Equals(m.CustomerAccount.AccountNumber)); 
+                    var customerhierarchy = dbcontext.CustomerHierarchies.ToList().Find(p => p.CustomerFK.Equals(m.CustomerAccount.AccountNumber));
 
 
                     var productgroup = dbcontext.ProductGroups.ToList().Find(p => p.CustomerFK.Equals(customer.CustomerPK));
