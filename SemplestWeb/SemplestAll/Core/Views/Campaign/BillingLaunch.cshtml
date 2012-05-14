@@ -9,10 +9,10 @@
 
 
 @{ 
-   var budget = Model.ProductGroup.Budget; 
-   var semplestcharge= Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount; 
-   var mediaspend = budget-semplestcharge;
-   var creditcardcharge = budget;
+   var budget = Model.ProductGroup.Budget;
+   var semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2"); 
+   var mediaspend = (budget-semplestcharge).ToString("n2");
+   var creditcardcharge = budget.ToString("n2");
 } 
 
 
