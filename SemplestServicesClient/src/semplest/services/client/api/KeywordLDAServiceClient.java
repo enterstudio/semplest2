@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -51,7 +51,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 						"coffee machine", null, null, "http://www.wholelattelove.com/", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds");
-				Thread.sleep(1800000);
+				Thread.sleep(3000);
 				
 				
 					String kaux=kw[0].getKeyword();

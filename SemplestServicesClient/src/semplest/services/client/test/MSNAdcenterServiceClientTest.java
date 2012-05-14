@@ -58,7 +58,7 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_BethsFlowers2";
+	String accountName = "_SummitFloristNJ";
 	String url = "www.bethsflowersonline.com";
 	String productSubcategory = "Wedding Flowers";
 	double msnMonthlyBudget = 150.0; //In dolars
@@ -102,7 +102,7 @@ public class MSNAdcenterServiceClientTest {
 			//msn.setGeoTarget();
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			msn.insertKeywords2("/semplest/data/biddingTest/BethsFlowers/keywords.txt");
+			//msn.insertKeywords2("/semplest/data/biddingTest/BethsFlowers/keywords.txt");
 			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/BethsFlowers/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			//logger.info(bidMap);
