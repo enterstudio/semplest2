@@ -13,7 +13,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 
-public class KeyWordAugment {
+public class KeywordIdeaFromBroadMatchData {
 	
 	
 
