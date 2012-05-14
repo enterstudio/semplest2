@@ -145,7 +145,7 @@ namespace Semplest.Core.Controllers
                 return View(model);
             }
             catch (Exception ex)
-            { return Json(ex.Message); }
+            { return Json(ex.ToString()); }
         }
 
         private void WriteLog(string msg, CampaignSetupModel model)
@@ -217,7 +217,7 @@ namespace Semplest.Core.Controllers
             }
             catch (Exception ex)
             {
-                return Content(ex.Message);
+                return Content(ex.ToString());
             }
         }
 
