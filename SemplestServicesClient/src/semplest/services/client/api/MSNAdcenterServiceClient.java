@@ -1,5 +1,6 @@
 package semplest.services.client.api;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +26,11 @@ import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 import com.google.gson.Gson;
+import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.ApiFaultDetail;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
@@ -456,7 +459,10 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 			}
 			*/
 			
-			
+			Long accountID = 1613923L;
+			Long campaignID = 120123568L;
+			Long adGroupID = 728133376L;
+			test.updateAdGroupDefaultBids(accountID, campaignID, adGroupID, 2.0, 2.0, 2.0);
 			
 			
 		}
@@ -572,6 +578,25 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return res;
 	}
 	
+	@Override
+	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, 
+			Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws Exception{
+		{
+			HashMap<String, String> jsonHash = new HashMap<String, String>();
+			jsonHash.put("accountId", (accountId == null)? null:Long.toString(accountId.longValue()));
+			jsonHash.put("campaignId", (campaignId == null)? null:Long.toString(campaignId.longValue()));
+			jsonHash.put("exactMatchBid", (exactMatchBid == null)? null:Double.toString(exactMatchBid));
+			jsonHash.put("phraseMatchBid", (phraseMatchBid == null)? null: Double.toString(phraseMatchBid));
+			jsonHash.put("broadMatchBid",  (broadMatchBid == null)? null:Double.toString(broadMatchBid));
+			String json = gson.toJson(jsonHash);
+			
+			String returnData = runMethod(baseurl,SERVICEOFFERED, "updateAdGroupDefaultBids", json, timeoutMS);
+			Boolean res = gson.fromJson(returnData, Boolean.class);		
+			logger.debug("updateAdGroupDefaultBids: res = " + res.toString());		
+			return res;
+		}
+	}
+		
 	
 	@Override
 	public void deleteAllTargetsInCampaign(Long accountId, Long campaignId) throws Exception
