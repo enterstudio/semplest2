@@ -74,7 +74,7 @@ namespace Semplest.Core.Controllers
             Session.Add("AddsStoreModel", new AddsStoreModel { Ads = campaignSetupModel.AdModelProp.Ads.ToList() });
             // set negative keywords in session
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
-            //Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
+            Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
 
             return View(campaignSetupModel);

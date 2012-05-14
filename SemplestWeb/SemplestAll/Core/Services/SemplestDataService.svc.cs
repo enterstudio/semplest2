@@ -158,9 +158,17 @@ namespace SemplestWebApp.Services
 
             // set negative keywords
             model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative == true).Select(m => m.Keyword.Keyword1).ToList();
+            int cnt = model.AdModelProp.NegativeKeywords.Count();
+            for (int i = 0; i < cnt; i++)
+            {
+                model.AdModelProp.NegativeKeywordsText += model.AdModelProp.NegativeKeywords[i];
+                if (i < cnt - 1)
+                {
+                    model.AdModelProp.NegativeKeywordsText += ", ";
+                }
+            }
 
             return model;
-
         }
 
         public User GetUserWithProductGroupAndPromotions(int userid)
