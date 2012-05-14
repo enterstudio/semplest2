@@ -8,6 +8,14 @@
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
 
 
+@{ 
+   var budget = Model.ProductGroup.Budget; 
+   var semplestcharge= Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount; 
+   var mediaspend = budget-semplestcharge;
+   var creditcardcharge = budget;
+} 
+
+
 
 
 <div class="configuration1">
@@ -46,21 +54,26 @@
         </ul>       
         <ul>
             <li>
-                <label id="lblsemplestCharge" class="k-label" style="margin-left:150px;">SEMplest Charge</label><input type="text" class="k-input" id="Semplestcharge";" value="$400.00"/>
+                <label id="lblsemplestCharge" class="k-label" style="margin-left:150px;">SEMplest Charge</label>
+                
+                <input type="text" class="k-input" id="Semplestcharge";" value="$@semplestcharge" readonly="readonly"/>
+            
+
                 <label id="lblOutput1" class="k-label">"Output Field Which is a Conditional note"</label>
             </li>
         </ul>
         <ul>
             <li>
             <label id="lblbudget">Budget</label>
-                    <label id="lbltotalMediaSpend" class="k-label"style="margin-left:100px;">Total Media Spend</label><input type="text" class="k-input" id="txttotalMedia" value="$400.00"/>
+                    <label id="lbltotalMediaSpend" class="k-label"style="margin-left:100px;">Total Media Spend</label>
+                    <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend"  readonly="readonly" />
                     <label id="Label1" class="k-label">"Output Field Which is a Conditional note"</label>
             </li>        
             </ul>
             <ul>
-            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @style="width:100px" })
-         
-            <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left:10px;">Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$400.00"/>
+            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @readonly = true,@style="width:100px" })
+            
+            <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left:10px;">Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge" readonly="readonly"/>
             <label id="Label2" class="k-label">"Output Field Which is a Conditional note"</label>
             </li>
         </ul>
@@ -69,7 +82,7 @@
     </div>
 @*        <ul class="options">
             <li>Budget:</li>
-            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @style="width:100px" })</li>
+            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input",@readonly = true, @style="width:100px" })</li>
         </ul>
 *@    
     <div class="options">
@@ -121,21 +134,3 @@
 
 </script>
 
-
-<script type ="text/javascript">
-    jQuery(function ($) {
-
-        $("#ProductGroup_Budget").mask("99999999");
-
-    });
-    </script>
-
-
-    
-
-<script type="text/jscript" >
-    $(document).ready(
-         function () {
-             $("#ProductGroup_Budget").mask("99999999");
-         });  
-</script>
