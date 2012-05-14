@@ -5,14 +5,14 @@
         <ul class="options">
             <li>
                 <label for="productGroupName" class="required">
-                    @Html.LabelFor(t => t.Configuration.DefaultProductGroupName)
+                    @Model.Configuration.DefaultProductGroupName
                 </label>
                 <br />
                 @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Product Group Name" })
             </li>
             <li>
                 <label for="productPromotionName" class="required">
-                    @Html.LabelFor(t => t.Configuration.DefaultProductPromotionName)
+                    @Model.Configuration.DefaultProductPromotionName
                 </label>
                 <br />
                 @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Promotion Name" })
