@@ -13,7 +13,7 @@ namespace Semplest.SharedResources.Services
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
         private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
         private static String _baseURLTest = "http://VMJAVA1:9898/semplest";
-        private static String timeoutMS = "40000";
+        private static String timeoutMS = "3200000";
 
         public ServiceClientWrapper()
         {
@@ -24,36 +24,44 @@ namespace Semplest.SharedResources.Services
         public List<string> GetCategories(string companyName, string searchTerm, string description, string[] adds,
                                           string url)
         {
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("companyName", companyName);
-            jsonHash.Add("searchTerm", searchTerm);
-            string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
-            jsonHash.Add("adds", jsonAdds);
-            jsonHash.Add("description", description);
-            jsonHash.Add("url", url);
-            string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
             string returnData = string.Empty;
             try
             {
-                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("companyName", companyName);
+                jsonHash.Add("searchTerm", searchTerm);
+                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+                jsonHash.Add("adds", jsonAdds);
+                jsonHash.Add("description", description);
+                jsonHash.Add("url", url);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+                returnData = string.Empty;
+                try
+                {
+                    returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
+                }
+                catch (Exception ex)
+                {
+                    string errmsg = ex.Message;
+                    throw;
+                }
+                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                if (jsonstrlist == "Service Timeout")
+                {
+
+                    throw new Exception("Service Timeout for GetCategories");
+                }
+                return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
             }
             catch (Exception ex)
             {
-                string errmsg = ex.Message;
-                throw;
+                throw new Exception(returnData);
             }
-            //return JsonConvert.DeserializeObject<List<string>>(returnData);
-
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            if (jsonstrlist == "Service Timeout")
-            {
-
-                throw new Exception("Service Timeout for GetCategories");
-            }
-            return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
         }
 
 
