@@ -13,7 +13,7 @@
             
             @*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
-            <div style = "height:145px;width:1000px;overflow-x:auto">
+            <div style = "height:345px;width:700px;overflow-x:auto">
             @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds));
             </div>
         }
