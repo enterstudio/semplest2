@@ -101,7 +101,7 @@ namespace SemplestWebApp.Services
                         AddGeoTargetingToPromotion(promo, model);
 
                         // save negative keywords
-                        SaveNegativeKeywords(promo, model);
+                        SaveNegativeKeywords(promo, model, dbcontext);
 
                         // promotion ads
                         AddPromotionAdsToPromotion(promo, model);
@@ -141,9 +141,11 @@ namespace SemplestWebApp.Services
             model.ProductGroup.Words = promo.PromotionDescription;
 
             // set advertising engines
+            model.ProductGroup.AdEnginesSelectedList = new List<AdEngineSelectModel>();
             foreach(PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
             {
-                //AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                model.ProductGroup.AdEnginesSelectedList.Add(aesm);
                 model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEngine1);
             }
 
@@ -328,7 +330,7 @@ namespace SemplestWebApp.Services
 
             SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
             AddGeoTargetingToPromotion(updatePromotion, model);
-            SaveNegativeKeywords(updatePromotion, model);
+            SaveNegativeKeywords(updatePromotion, model, dbcontext);
             AddPromotionAdsToPromotion(updatePromotion, model);
         }
 
@@ -375,6 +377,8 @@ namespace SemplestWebApp.Services
                             StateCodeFK = geo.StateCodeFK,
                             Zip = geo.Zip,
                             ProximityRadius = geo.ProximityRadius,
+                            Latitude = geo.Latitude,
+                            Longitude = geo.Longitude
                         };
                         promo.GeoTargetings.Add(geotarget);
                     }
@@ -547,55 +551,21 @@ namespace SemplestWebApp.Services
         }
 
 
-        public bool SaveNegativeKeywords(Promotion promo, CampaignSetupModel model)
+        public bool SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {
             bool retFlag = false;
-            using (SemplestEntities dbcontext = new SemplestEntities())
+            if (model.AdModelProp.NegativeKeywords != null)
             {
-                if (model.AdModelProp.NegativeKeywords != null)
+                foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
                 {
-                    foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
+                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
+                    if (queryKeyword.Count() > 0)
                     {
-                        var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
-                        if (queryKeyword.Count() > 0)
+                        int keywordId = queryKeyword.First().KeywordPK;
+                        queryKeyword.First().EditedDate = DateTime.Now;
+                        var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
+                        if (queryPka.Count() == 0)
                         {
-                            int keywordId = queryKeyword.First().KeywordPK;
-                            queryKeyword.First().EditedDate = DateTime.Now;
-                            var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
-                            if (queryPka.Count() == 0)
-                            {
-                                dbcontext.PromotionKeywordAssociations.Add(
-                                    new PromotionKeywordAssociation
-                                    {
-                                        PromotionFK = promo.PromotionPK,
-                                        KeywordFK = keywordId,
-                                        CreatedDate = DateTime.Now,
-                                        IsActive = true,
-                                        IsDeleted = false,
-                                        IsNegative = false,
-                                        SemplestProbability = 0,
-                                        IsTargetMSN = false,
-                                        IsTargetGoogle = false
-                                    });
-
-                                dbcontext.SaveChanges();
-
-                            }
-                            else
-                            {
-                                var pka = queryPka.First();
-                                pka.IsNegative = true;
-
-                                dbcontext.SaveChanges();
-                            }
-
-                        }
-                        else
-                        {
-                            var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
-                            dbcontext.SaveChanges();
-
-                            int keywordId = newNegKeyword.KeywordPK;
                             dbcontext.PromotionKeywordAssociations.Add(
                                 new PromotionKeywordAssociation
                                 {
@@ -604,24 +574,52 @@ namespace SemplestWebApp.Services
                                     CreatedDate = DateTime.Now,
                                     IsActive = true,
                                     IsDeleted = false,
-                                    IsNegative = true,
+                                    IsNegative = false,
                                     SemplestProbability = 0,
                                     IsTargetMSN = false,
                                     IsTargetGoogle = false
                                 });
 
-                            dbcontext.SaveChanges();
+                            //dbcontext.SaveChanges();
+
+                        }
+                        else
+                        {
+                            var pka = queryPka.First();
+                            pka.IsNegative = true;
+
+                            //dbcontext.SaveChanges();
                         }
 
-
                     }
+                    else
+                    {
+                        var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
+                        //dbcontext.SaveChanges();
 
+                        int keywordId = newNegKeyword.KeywordPK;
+                        dbcontext.PromotionKeywordAssociations.Add(
+                            new PromotionKeywordAssociation
+                            {
+                                PromotionFK = promo.PromotionPK,
+                                //KeywordFK = keywordId,
+                                CreatedDate = DateTime.Now,
+                                IsActive = true,
+                                IsDeleted = false,
+                                IsNegative = true,
+                                SemplestProbability = 0,
+                                IsTargetMSN = false,
+                                IsTargetGoogle = false
+                            });
+
+                        //dbcontext.SaveChanges();
+                    }
                 }
             }
-
             return retFlag;
         }
 
+        // this one is not used
         public bool SaveNegativeKeywords(int userid, CampaignSetupModel model)
         {
             bool retFlag = false;
@@ -665,14 +663,14 @@ namespace SemplestWebApp.Services
                     else
                     {
                         var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword });
-                        dbcontext.SaveChanges();
+                        //dbcontext.SaveChanges();
 
                         int keywordId = newNegKeyword.KeywordPK;
                         dbcontext.PromotionKeywordAssociations.Add(
                             new PromotionKeywordAssociation
                             {
                                 PromotionFK = promoId,
-                                KeywordFK = keywordId,
+                                //KeywordFK = keywordId,
                                 IsActive = true,
                                 IsDeleted = false,
                                 IsNegative = true,
