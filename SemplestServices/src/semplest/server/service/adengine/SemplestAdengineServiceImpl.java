@@ -105,7 +105,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		SemplestConfiguration configDB = new SemplestConfiguration();
 		Thread configThread = new Thread(configDB);
 		configThread.start();
-		Thread.sleep(0);
 		//
 
 	}
