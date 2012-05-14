@@ -27,6 +27,7 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		SemplestConfiguration configDB = new SemplestConfiguration();
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		Thread.sleep(2000);
 		/*
 		 * 
 		 */

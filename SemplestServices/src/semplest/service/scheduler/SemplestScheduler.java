@@ -436,13 +436,18 @@ public class SemplestScheduler extends Thread
 						TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 						taskRunner = null;
 					}
-					//Update results to the DB and add next Job if necessary
-					getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
+					
 				}
 				catch (Exception e)
 				{
+					TaskOutput errorOutput = new TaskOutput();
+					errorOutput.setIsSuccessful(false);
+					errorOutput.setErrorMessage(e.getMessage());
+					previousTaskOutput = errorOutput;
 					logger.error(e.getMessage());				
 				}
+				//Update results to the DB and add next Job if necessary
+				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
 			}
 			else
 			{
