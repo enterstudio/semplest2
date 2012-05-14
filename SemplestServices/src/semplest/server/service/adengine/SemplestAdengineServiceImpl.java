@@ -218,7 +218,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Object timeout =  SemplestConfiguration.configData.get("SemplestClientBiddingTimeoutMS");
 		if (timeout != null)
 		{
-			bidTimeoutMS = (String) timeout;
+			bidTimeoutMS = String.valueOf((Integer) timeout);
 		}
 		return  bidTimeoutMS;
 	}
