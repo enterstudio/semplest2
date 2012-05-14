@@ -28,6 +28,7 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 
@@ -48,20 +49,20 @@ public class BidGeneratorObj {
 	
 	
 
-	private int maxRetry = 10; // maximum number of times we will
-	private int sleepPeriod = 500; // in millisecond
-	private int sleepBackOffTime = 1000; // after k-th failure wait for sleepPeriod + k*sleepBackOffTime ms
+	private int maxRetry;// = 10; // maximum number of times we will
+	private int sleepPeriod;// = 500; // in millisecond
+	private int sleepBackOffTime;// = 1000; // after k-th failure wait for sleepPeriod + k*sleepBackOffTime ms
 	
-	private Long maxMicroBid = 3000000L; 
-	private Long stepAboveFpCPC = 500000L;
-	private Long defaultMicroBid = 1000000L;
-	private Long maxDefaultMicroBid = 1500000L; 
+	private Long maxMicroBid;// = 3000000L; 
+	private Long stepAboveFpCPC;// = 500000L;
+	private Long defaultMicroBid;// = 1000000L;
+	private Long maxDefaultMicroBid;// = 1500000L; 
 
 	
 	// traffic estimator bid steps
-	private Long stepFirst = 100000L; 
-	private Long stepSecond = 600000L;
-	private Long stepRest = 800000L;
+	private Long stepFirst;// = 100000L; 
+	private Long stepSecond;// = 600000L;
+	private Long stepRest;// = 800000L;
 
 	
 	private String googleAccountID = null;
@@ -105,6 +106,29 @@ public class BidGeneratorObj {
 			logger.error("Unable to create Google Client " + e.getMessage());
 			e.printStackTrace();
 		}
+		
+		try{
+			Thread.sleep(1000);
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.info("Unable to sleep! May have error in default config values!");
+		}
+		maxRetry = (Integer) SemplestConfiguration.configData.get("SemplestBiddingMaxRetry");
+		sleepPeriod = (Integer) SemplestConfiguration.configData.get("SemplestBiddingSleepPeriod");
+		sleepBackOffTime = (Integer) SemplestConfiguration.configData.get("SemplestBiddingSleepBackOffTime");
+		
+		maxMicroBid = (Long) SemplestConfiguration.configData.get("SemplestBiddingMaxMicroBid"); 
+		stepAboveFpCPC = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepAboveFpCPC"); 
+		defaultMicroBid = (Long) SemplestConfiguration.configData.get("SemplestBiddingDefaultMicroBid"); 
+		maxDefaultMicroBid = (Long) SemplestConfiguration.configData.get("SemplestBiddingMaxDefaultMicroBid"); 
+
+		
+		// traffic estimator bid steps
+		stepFirst = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepFirst");
+		stepSecond = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepSecond");
+		stepRest = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepRest");
+		
+
 		
 		wordIDMap = new HashMap<String,Long>();
 		wordBidMap = new HashMap<String,Long>();
@@ -207,7 +231,7 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 3. [google] API call: get adgroup criterion for all keywords
 		if(searchEngine.equalsIgnoreCase(google)){
-			k=1;
+			k=0;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
@@ -514,7 +538,7 @@ public class BidGeneratorObj {
 			while(keyIT.hasNext())
 			{
 				String word = keyIT.next();
-				k=1;
+				k=0;
 				while(true) {
 					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 					try {
@@ -547,7 +571,7 @@ public class BidGeneratorObj {
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
 		if(searchEngine.equalsIgnoreCase(google)){
-			k=1;
+			k=0;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
@@ -604,7 +628,7 @@ public class BidGeneratorObj {
 		System.out.println("Number of initial competitive keywords: "+bids.size());
 
 		
-		k=1;
+		k=0;
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
@@ -660,7 +684,7 @@ public class BidGeneratorObj {
 		for (String s : compKeywords){
 			bids.put(s, firstPageCPCMap.get(s)+stepSecond);
 		}
-		k=1;
+		k=0;
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
@@ -728,7 +752,7 @@ public class BidGeneratorObj {
 				bids.put(s, firstPageCPCMap.get(s)+j*stepRest);
 			}
 			System.out.println("j="+j);
-			k=1;
+			k=0;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
@@ -816,7 +840,7 @@ public class BidGeneratorObj {
 				i++;
 			}
 			if((i%500==0 && i>0) || (!it.hasNext())){
-				k=1;
+				k=0;
 				while(true) {
 					try {
 						if(newKeywordWithBid.size()>0){
@@ -943,7 +967,7 @@ public class BidGeneratorObj {
 		System.out.println("Number of initial competitive keywords: "+bids.size());
 
 		
-		k=1;
+		k=0;
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
@@ -999,7 +1023,7 @@ public class BidGeneratorObj {
 		for (String s : compKeywords){
 			bids.put(s, firstPageCPCMap.get(s)+600000L);
 		}
-		k=1;
+		k=0;
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
@@ -1067,7 +1091,7 @@ public class BidGeneratorObj {
 				bids.put(s, firstPageCPCMap.get(s)+j*800000L);
 			}
 			System.out.println("j="+j);
-			k=1;
+			k=0;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {

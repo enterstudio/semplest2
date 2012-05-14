@@ -15,6 +15,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineInitialData;
@@ -43,6 +44,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	private static final Logger logger = Logger.getLogger(BidGeneratorServiceImpl.class);
 	
 
+	
 
 	@Override
 	public void initializeService(String input) throws Exception {
