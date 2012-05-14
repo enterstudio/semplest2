@@ -22,11 +22,13 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
-	private static String timeoutMS = "40000";
+	private static String DEFAULTBIDTIMEOUT = "40000";
+	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(SemplestBiddingServiceClient.class);
 	private String baseurl = null;
+	private String timeoutMS = null;
 
 	public static void main(String[] args)
 	{
@@ -38,7 +40,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 			ArrayList<String> keywords = new  ArrayList<String>();
 			keywords.add("peanut butter"); 
 			keywords.add("ice"); 
-			SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(null);
+			SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(null, null);
 			HashMap<String, Double> res = client.getBid(cust, camp, ad, keywords);
 			System.out.println(String.valueOf(res.get("ice")));
 		}
@@ -49,7 +51,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		}
 		
 	}
-	public SemplestBiddingServiceClient(String baseurl)
+	public SemplestBiddingServiceClient(String baseurl, String timeoutMS)
 	{
 		if (baseurl == null)
 		{
@@ -58,6 +60,14 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		else
 		{
 			this.baseurl = baseurl;
+		}
+		if (timeoutMS == null)
+		{
+			this.timeoutMS =DEFAULTBIDTIMEOUT;
+		}
+		else
+		{
+			this.timeoutMS = timeoutMS;
 		}
 	}
 	@Override
