@@ -18,6 +18,7 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -138,13 +139,23 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
-		String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
-		AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
-		email = (String) SemplestConfiguration.configData.get("AdwordsEmail");
-		password = aes.decrypt((String) SemplestConfiguration.configData.get("AdwordsPassword"));
-		userAgent = (String) SemplestConfiguration.configData.get("AdwordsUserAgent");
-		developerToken = (String) SemplestConfiguration.configData.get("AdwordsDeveloperToken");
-		useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
+		try
+		{
+			String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
+			email = (String) SemplestConfiguration.configData.get("AdwordsEmail");
+			password = aes.decrypt((String) SemplestConfiguration.configData.get("AdwordsPassword"));
+			userAgent = (String) SemplestConfiguration.configData.get("AdwordsUserAgent");
+			developerToken = (String) SemplestConfiguration.configData.get("AdwordsDeveloperToken");
+			useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
+			logger.info("Initialized Google API sandbox=" + useSandbox);
+		}
+		catch (Exception e)
+		{
+			logger.error("Unable to initialize Google API");
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	public static void main(String[] args)
@@ -159,8 +170,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			t.start();
 			Thread.sleep(1000);
 			
+			
+			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(62, "Google"); 
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-			KeywordDataObject[] keyData = g.getAllBiddableAdGroupCriteria("54100",3066028785L, true);
+			KeywordDataObject[] keyData = g.getAllBiddableAdGroupCriteria(String.valueOf(adEngineInfo.getAccountID()), adEngineInfo.getAdGroupID(), true); //"54100",3066028785L, true);
 			for (int i = 0; i < keyData.length; i++)
 			{
 				System.out.println(keyData[i].getKeyword());
