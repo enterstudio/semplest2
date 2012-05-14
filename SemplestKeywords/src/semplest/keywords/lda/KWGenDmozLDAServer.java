@@ -700,16 +700,16 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 			
 			
-			
+			Double startTime = new Long(System.currentTimeMillis()).doubleValue();
 			Integer[] nGrams = {50,50};
 			KeywordProbabilityObject[] kw = kwGen.getKeywords(categories,null, new String[] {"Google", "MSN"}, searchTerm[0], uInf, adds, url, null ,nGrams);
-			
+			Double endTime =  new Long(System.currentTimeMillis()).doubleValue();
+			System.out.println("Time for keywords: "+(endTime-startTime));
 			for(KeywordProbabilityObject k: kw){
 				String kaux=k.getKeyword().replaceAll("wed", "wedding");
 				System.out.print(kaux+" "+k.getSemplestProbability()+", ");
 			}
-			
-			
+		
 			PrintStream stdout = System.out;
 			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
 
