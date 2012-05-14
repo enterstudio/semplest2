@@ -19,7 +19,8 @@ CREATE PROCEDURE dbo.AddKeywordBidData
 	@QualityScore           INT = null,
 	@ApprovalStatus			VARCHAR(30) = null,
 	@FirstPageMicroCpc      INT = null,
-	@IsEligibleForShowing	BIT = 1
+	@IsEligibleForShowing	BIT = 1,
+	@ID int output
 )
 AS
 BEGIN TRY
@@ -33,7 +34,8 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Selected keyword does not exist for the Promotion'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;	
-	set @currentTime = CURRENT_TIMESTAMP	
+	set @currentTime = CURRENT_TIMESTAMP
+	SET @ID = 0	
 	BEGIN TRANSACTION		
 	--check to see if the KeywordBid Exists for the MatchType
 	if NOT EXISTS (select * from KeywordBid kb 
@@ -52,6 +54,7 @@ BEGIN TRY
 		SET @keywordBidPK = @@IDENTITY
 		insert into KeywordBidData(KeywordBidFK,QualityScore,ApprovalStatus,FirstPageMicroCPC,IsEligibleForShowing,CreatedDate)
 			VALUES (@keywordBidPK, @QualityScore, @ApprovalStatus, @FirstPageMicroCpc, @IsEligibleForShowing, @currentTime)
+		SET @ID = @@IDENTITY	
 	END	
 	ELSE --keywordBid already exists for match type				 
 	BEGIN
@@ -62,9 +65,11 @@ BEGIN TRY
 					where kb.PromotionFK = @PromotionID and k.Keyword = @Keyword and ae.AdvertisingEngine = @AdvertisingEngine and bt.BidType = @BidType
 		insert into KeywordBidData(KeywordBidFK,QualityScore,ApprovalStatus,FirstPageMicroCPC,IsEligibleForShowing,CreatedDate)
 			VALUES (@keywordBidPK, @QualityScore, @ApprovalStatus, @FirstPageMicroCpc, @IsEligibleForShowing, @currentTime)
+		SET @ID = @@IDENTITY	
 	END
 	
 	COMMIT TRANSACTION	
+	return @ID
 	
 END TRY
 BEGIN CATCH
