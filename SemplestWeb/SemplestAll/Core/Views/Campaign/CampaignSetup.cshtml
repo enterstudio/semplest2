@@ -1,7 +1,8 @@
 ﻿@model Semplest.Core.Models.CampaignSetupModel
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
+<script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
+
 @Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Campaign";
@@ -18,13 +19,9 @@
 @section Title{
 Ad Setup
 }
-
 @section headscript{
-
     <script src="@Url.Content("~/Scripts/jquery.maskedinput-1.3.js")" type="text/javascript"></script>
-    
 }
-
 @section SectionNav{
     <div id="examplesThemeChooser">
         Step 1 of 3
@@ -52,7 +49,7 @@ Ad Setup
                     @Html.EditorFor(t => t.ProductGroup)
                 </div>
                 <div>
-                    @Html.EditorFor(t=>t.AdModelProp)
+                    @Html.EditorFor(t => t.AdModelProp)
                 </div>
             </div>
             <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
@@ -162,6 +159,3 @@ Ad Setup
 </script>
 <script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>
-
-
-
