@@ -28,7 +28,7 @@ import com.google.api.adwords.v201109.mcm.Account;
 
 public class GoogleServiceTest {
 	
-	GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+	//GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
 	
 	private int errorCounter = 0;
 	private int sleepTime = 100;
@@ -103,6 +103,7 @@ public class GoogleServiceTest {
 		System.out.println("------------------------------------------------------------");
 		System.out.println("getAccountById:");		
 		try{
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
 			Account acc = test.CreateOneAccountService(null, null, "semplest_unit_test", "semplest_unit_test");
 			System.out.println("OK");	
 			System.out.println("accountId = " + acc.getCustomerId()
@@ -115,12 +116,13 @@ public class GoogleServiceTest {
 		return 0;
 	}
 	
-	public int Test_GoogleService_Standalone(){		
+	public int Test_GoogleService_Standalone(){				
 		
-		GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
 		errorCounter = 0;
 		
 		try{
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			
 			String now = String.valueOf(System.currentTimeMillis());
 			Long campaignID = 0L;
 			Long adGroupID = 0L;
@@ -1080,6 +1082,8 @@ public class GoogleServiceTest {
 	
 	public void cleanUp(){
 		try{
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			
 			System.out.println(" ");
 			System.out.println("------------------------------------------------------------");
 			System.out.println("clean up and finish the test...");

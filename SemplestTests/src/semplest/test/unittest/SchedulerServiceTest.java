@@ -21,10 +21,9 @@ public class SchedulerServiceTest {
 		try{
 			SchedulerServiceTest test = new SchedulerServiceTest();		
 			
-			for(int i = 0; i < 15; i++){
-				test.TestCase3("[ #" + i +" ]");
-				//Thread.sleep(2000);
-			}
+			test.TestCase3("bad task example");
+			Thread.sleep(5000);
+			test.TestCase5();
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -92,14 +91,12 @@ public class SchedulerServiceTest {
 	public void TestCase3(String index){
 		try{						
 			BasicConfigurator.configure();
-			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			Calendar cal = Calendar.getInstance();
-			Date now = cal.getTime();
+			appContext = new ClassPathXmlApplicationContext("Service.xml");			
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			
-			SemplestSchedulerTaskObject case3task = CreateSchedulerAndTask.getTestTask(index + now.toString());	
+			SemplestSchedulerTaskObject case3task = CreateSchedulerAndTask.getTestTask(index);	
 			listOfTasks.add(case3task);			
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "Test#"+index, now, null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, null, null, null, null);			
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "Test#"+index, new Date(), null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);			
 			
 		}
 		catch(Exception e){
@@ -125,6 +122,50 @@ public class SchedulerServiceTest {
 			listOfTasks.add(case4task1);
 			
 			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "TestServiceTest", now, null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+		}
+		catch(Exception e){
+			errorHandler(e);
+		}
+	}
+	
+	public void TestCase5(){
+		try{			
+			System.out.println("============================================================");
+			System.out.println("Test Case #5:");
+			System.out.println("Description: Daily email task");
+			System.out.println("Expected Output: Get email every day at morning, afternoon and evening.");
+			System.out.println("------------------------------------------------------------");
+			
+			BasicConfigurator.configure();
+			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Calendar cal = Calendar.getInstance();		
+			
+			//morning
+			cal.set(2012, 4, 14, 8, 30, 0);
+			Date morning = cal.getTime();
+			ArrayList<SemplestSchedulerTaskObject> morningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject morningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Morning!", "nan@semplest.com", "nan@semplest.com", "Good Morning! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			morningTask.add(morningMail);				
+			CreateSchedulerAndTask.createScheduleAndRun(morningTask, "SchedulerDailyMorning", morning, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			Thread.sleep(5000);
+			
+			//afternoon
+			cal.set(2012, 4, 14, 13, 00, 0);
+			Date afternoon = cal.getTime();
+			ArrayList<SemplestSchedulerTaskObject> afternoonTask = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject afternoonMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Afternoon!", "nan@semplest.com", "nan@semplest.com", "Good Afternoon! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			afternoonTask.add(afternoonMail);				
+			CreateSchedulerAndTask.createScheduleAndRun(afternoonTask, "SchedulerDailyAfternoon", afternoon, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			Thread.sleep(5000);
+			
+			//evening
+			cal.set(2012, 4, 14, 17, 30, 0);
+			Date evening = cal.getTime();
+			ArrayList<SemplestSchedulerTaskObject> eveningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject eveningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Evening!", "nan@semplest.com", "nan@semplest.com", "Good Evening! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			eveningTask.add(eveningMail);				
+			CreateSchedulerAndTask.createScheduleAndRun(eveningTask, "SchedulerDailyEvening", evening, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			
 		}
 		catch(Exception e){
 			errorHandler(e);
