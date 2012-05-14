@@ -1,5 +1,6 @@
 package semplest.services.client.interfaces;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,9 +16,11 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
 
+import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.ApiFaultDetail;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
@@ -110,6 +113,8 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	public abstract void deleteAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws Exception;
 	
 	public abstract Target getAdGroupTargets(Long accountId, long customerId, Long adGroupId) throws Exception;
+	
+	public abstract Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws Exception;
 	
 	// ==================================
 	// Ad Methods
