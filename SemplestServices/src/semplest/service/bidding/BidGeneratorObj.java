@@ -64,8 +64,8 @@ public class BidGeneratorObj {
 	private Long stepRest = 800000L;
 
 	
-	private String googleAccountID;
-	private Long msnAccountID;
+	private String googleAccountID = null;
+	private Long msnAccountID = null;
 	private Long campaignID;
 	private Long adGroupID;
 	
@@ -175,7 +175,7 @@ public class BidGeneratorObj {
 		try{ 
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
 			if (searchEngine.equalsIgnoreCase(google)){
-				googleAccountID = adEngineInfo.getAccountID().toString();
+				googleAccountID = String.valueOf(adEngineInfo.getAccountID());
 			} else if(searchEngine.equalsIgnoreCase(msn)){
 				msnAccountID = adEngineInfo.getAccountID();
 			} else {
@@ -188,7 +188,7 @@ public class BidGeneratorObj {
 			throw new Exception("Failed to get AdEngineID from the database.");
 		}
 		
-		logger.info("Got campaign related IDs from the database");
+		logger.info("Got campaign related IDs from the database" + " Google Account" + googleAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
 
 		
 		
@@ -216,7 +216,7 @@ public class BidGeneratorObj {
 				} catch (Exception e) {
 					if (k<=maxRetry) {
 						e.printStackTrace();
-						logger.info("Received exception getAllBiddableAdGroupCriteria: will retry..., k="+k);
+						logger.info("Received exception getAllBiddableAdGroupCriteria AccountID = " + googleAccountID + " AdGroupID = " + String.valueOf(adGroupID) + ": will retry..., k="+k);
 						k++;				
 					} else {
 						e.printStackTrace();
