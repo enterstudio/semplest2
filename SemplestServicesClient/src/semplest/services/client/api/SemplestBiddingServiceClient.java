@@ -97,24 +97,26 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		return gson.fromJson(returnData, HashMap.class);
 	}
 	@Override
-	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", searchEngine);
 		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(baseurl, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	@Override
-	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(baseurl, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
