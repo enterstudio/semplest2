@@ -23,7 +23,7 @@ public class ServiceShutdown implements Runnable
 		this.serviceName = serviceName;
 		this.serviceOffered = serviceOffered;
 		json = new ProtocolJSON();
-		logger.info("STARTING Shutting down service....");
+		//logger.info("STARTING Shutting down service....");
 	}
 	@Override
 	public void run()
