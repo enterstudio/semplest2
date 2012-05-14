@@ -239,7 +239,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine,
 			List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
 	{
-		//int TEST = 0;
+		int TEST = 0;
 		AddBidSP addKeywordBidSP = new AddBidSP();
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
@@ -264,8 +264,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), 
 						keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				Thread.sleep(500); // Wait for google
-				//TEST++;
-				//if (TEST > 15) return;
+				TEST++;
+				if (TEST > 15) return;
 			}
 		}
 

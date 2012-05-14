@@ -125,12 +125,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
 	private static Gson gson = new Gson();
 	// THis needs to be read from the Database
-	private static String email = "adwords@semplest.com";
-	private static String password = "ic0system";
-	private static String userAgent = "Icosystem";
-	private static String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
-	private static boolean useSandbox = true; // true; // // true; //
+	private final String email; // = "adwords@semplest.com";
+	private final String password; // = "ic0system";
+	private final String userAgent; // = "Icosystem";
+	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
+	private final boolean useSandbox; // = false; // true; // // true; //
 
+	
+	public GoogleAdwordsServiceImpl()
+	{
+		email = (String) SemplestConfiguration.configData.get("AdwordsEmail");
+		password = (String) SemplestConfiguration.configData.get("AdwordsPassword");
+		userAgent = (String) SemplestConfiguration.configData.get("AdwordsUserAgent");
+		developerToken = (String) SemplestConfiguration.configData.get("AdwordsDeveloperToken");
+		useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
+	}
 
 	public static void main(String[] args)
 	{
