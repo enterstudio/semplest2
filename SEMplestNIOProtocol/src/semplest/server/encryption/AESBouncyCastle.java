@@ -23,7 +23,6 @@ public class AESBouncyCastle
 {
 	private static final Logger logger = Logger.getLogger(AESBouncyCastle.class);
 
-	private static final String symmetricKey = "12345678901234567890123456789044";
 	public static AESBouncyCastle instance = null;
 	private final String AES = "AES";
 	private final String AESString = AES + "/" + Mode.CBC.name() + "/" + Padding.PKCS5PADDING.name();
@@ -42,7 +41,7 @@ public class AESBouncyCastle
 
 		try
 		{
-			AESBouncyCastle aes = AESBouncyCastle.getInstance(AESBouncyCastle.symmetricKey);
+			AESBouncyCastle aes = AESBouncyCastle.getInstance("12345678901234567890123456789044");
 			//6AwyALVRh4I= OLD EMAIL PASSWORD
 			
 			String encrypt = aes.encrypt("password2");
