@@ -104,7 +104,7 @@
     }
 </style>
 <script type="text/x-kendo-template" id="template">
-    <h3>Ad  Preview </h3>
+    <h3>Ad \\##= id # Preview </h3>
     <ul class="fieldlist">
     <li><a href="#= title #"  target="__blank">#= twitter #</a></li>
     <li>#= content #</li>
@@ -115,6 +115,7 @@
     var template = kendo.template($("#template").html());
 
     $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
+        id : "1",
         title: $("#AdModelProp_Url").val(),
         twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
         content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
@@ -126,6 +127,7 @@
     var viewModel = kendo.observable({
         listener: function (e) {
             $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
+                id: "1",
                 title: $("#AdModelProp_Url").val(),
                 twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
                 content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Semplest.Core.Services;
 using Semplest.SharedResources.Services;
 using SemplestWebApp.Services;
 

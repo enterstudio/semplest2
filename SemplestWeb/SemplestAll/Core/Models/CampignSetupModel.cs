@@ -79,7 +79,7 @@ namespace Semplest.Core.Models
         public List<PromotionAd> Ads { get; set; }
         public List<string> NegativeKeywords { get; set; }
         public string NegativeKeywordsText { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Url is Required...")]
         [RegularExpression(@"(http://|)(www\.)?([^\.]+)\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$",ErrorMessage = "url should be in this format http://www.semplest.com")]
         public string Url { get; set; }
     }
@@ -107,6 +107,7 @@ namespace Semplest.Core.Models
         public string ProductPromotionName { get; set; }
         public string Words { get; set; }
         public decimal Budget { get; set; }
+        public bool IsEdit { get; set; }
         //public DateTime StartDate { get; set; }
         //public DateTime EndDate { get; set; }
         public string StartDate { get; set; }
