@@ -42,7 +42,7 @@ Edit Customer Account:
         Super Parent Name:<input type="text" /></label> <br />*@
 
     <label>
-        Parent Name: @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents )
+        Parent Name: @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents  )
         </label> <br />
     <label>
         Company Name:<br />
@@ -197,7 +197,8 @@ Edit Customer Account:
     </div>
     <div class="editor-field">
         @Html.TextBoxFor(model => model.CustomerAccount.UserID, new { @class = "k-textbox" })
-        @Html.ValidationMessageFor(model => model.CustomerAccount.UserID)
+       @Html.ValidationMessageFor(model => model.CustomerAccount.UserID)
+
     </div>
    
     
