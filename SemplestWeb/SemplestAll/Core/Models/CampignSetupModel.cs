@@ -98,31 +98,8 @@ namespace Semplest.Core.Models
             {
                 Configuration = entities.Configurations.FirstOrDefault();
                 AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1 }).ToList();
-                AdEnginesSelectedList = new List<AdEngineSelectModel>();
+                AdEnginesSelectedList = AdvertisingEngines;
             }
-            //using (SemplestEntities dbcontext = new SemplestEntities())
-            //{
-            //    try
-            //    {
-            //        var query = from c in dbcontext.AdvertisingEngines select c.AdvertisingEngine1;
-            //        if (query.Count() > 0)
-            //        {
-            //            AdEnginesList = query.ToList();
-            //        }
-            //        else
-            //        {
-            //            AdEnginesList = new List<string>();
-            //        }
-
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        string msg = ex.Message;
-            //        throw;
-            //    }
-            //}
-
-            AdEnginesSelectedList = new List<AdEngineSelectModel>();
             AdEnginesList = new List<string>();
         }
         public Configuration Configuration { get; set; }
