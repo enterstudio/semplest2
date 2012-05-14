@@ -71,7 +71,7 @@ namespace SemplestWebApp.Services
                     }
                     catch (Exception ex)
                     {
-                        string msg = ex.Message;
+                        string msg = ex.ToString();
                         throw;
                     }
 
