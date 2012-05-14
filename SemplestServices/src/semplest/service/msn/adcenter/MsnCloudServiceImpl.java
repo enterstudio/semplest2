@@ -107,8 +107,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try{		
 			//Pipper Hall
-			Long accountID = 1633818L;
-			Long campaignID = 130147141L;
+			Long accountID = 1613923L;
+			Long campaignID = 120123568L;
+			Long adGroupID = 728133376L;
 			String addr = null;//"2157 Diamond St";
 			String city = null;//"San Diego";
 			String state = "US";
@@ -117,15 +118,22 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			Double radius = null;//30.0;
 			Double latitude = null; //35.707984924316406;
 			Double longitude = null; //-80.00623321533203;
-
+			
+			Keyword[] keywords = test.getKeywordByAdGroupId(accountID, adGroupID);
+			
+			System.out.print(keywords[0].getEditorialStatus().getValue());
+			System.out.print(keywords[0].getStatus().getValue());
+			
+			test.updateAdGroupDefaultBids(accountID, campaignID, adGroupID, 2.0, 2.0, 2.0);
+			
 			//test.deleteAllTargetsInCampaign(accountID, campaignID);
 			//Boolean res = test.setGeoTarget(accountID, campaignID, latitude, longitude, radius, addr, city, state, country, zip);
 			//Traffic Estimator
 			//logger.info("Running traffic estimator");
 			//TrafficEstimatorObject obj =  test.getKeywordEstimateByBids(1633818L, new String[] {"wedding art portrait photo event"}, new Long[]{100000L} , MatchType.Exact);
 			
-			HashMap<String,Double> map =test.getAccountIDs();
-			System.out.println(map.get("_ParkWinters"));
+			//HashMap<String,Double> map =test.getAccountIDs();
+			//System.out.println(map.get("_ParkWinters"));
 			//System.out.println(map.get("_StudioBloom"));
 			//String ret1 = test.requestKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Weekly);
 			//test.printReportToConsole(ret1, 1595249L);
@@ -773,13 +781,67 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		AdGroup build = aNew().adGroup().withName(nextAdGroupName).build();
 		AddAdGroupsResponse addAdGroups = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[]
 		{ build }));
+		
 		final Long adGroupId = addAdGroups.getAdGroupIds()[0];
 		SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
 		submitAdGroupRequest.setAdGroupId(adGroupId);
 		campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
 		return adGroupId;
 	}
-
+	
+	@Override
+	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, 
+			Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws AdApiFaultDetail, ApiFaultDetail, RemoteException{
+		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		GetAdGroupsByCampaignIdRequest adGroupReq = new GetAdGroupsByCampaignIdRequest();
+		adGroupReq.setCampaignId(campaignId);
+		GetAdGroupsByCampaignIdResponse adGroupResp= campaignManagement.getAdGroupsByCampaignId(adGroupReq);
+		AdGroup[] adGroups = adGroupResp.getAdGroups();
+		Bid broadMBid = new Bid(broadMatchBid);
+		Bid exactMBid = new Bid(exactMatchBid);
+		Bid phraseMBid = new Bid(phraseMatchBid);
+		
+		for(int i=0; i<adGroups.length; i++){
+			adGroups[i].setBroadMatchBid(broadMBid);
+			adGroups[i].setExactMatchBid(exactMBid);
+			adGroups[i].setPhraseMatchBid(phraseMBid);
+			adGroups[i].setStatus(null);
+			adGroups[i].setBiddingModel(null);
+			adGroups[i].setLanguage(null);
+			adGroups[i].setPricingModel(null);
+			adGroups[i].setPublisherCountries(null);
+			adGroups[i].setStartDate(null);
+		}
+			
+		UpdateAdGroupsRequest updateReq = new UpdateAdGroupsRequest();
+		updateReq.setAdGroups(adGroups);
+		updateReq.setCampaignId(campaignId);
+		UpdateAdGroupsResponse updateResp = campaignManagement.updateAdGroups(updateReq);
+		
+		return true;
+		
+	}
+	
+	public String updateAdGroupDefaultBids(String json) throws Exception
+	{	
+		logger.debug("call updateAdGroupDefaultBids(String json)" + json);
+		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
+		Boolean ret = null;
+		try {
+			
+			ret = updateAdGroupDefaultBids((data.get("accountId")==null)? null:new Long(data.get("accountId")), 
+					(data.get("campaignId")==null)? null:new Long(data.get("campaignId")), 
+					(data.get("adGroupId")==null)? null:new Long(data.get("adGroupId")), 
+					(data.get("exactMatchBid")==null)? null:Double.valueOf(data.get("exactMatchBid")),
+					(data.get("phraseMatchBid")==null)? null:Double.valueOf(data.get("phraseMatchBid")),
+					(data.get("broadMatchBid")==null)? null:Double.valueOf(data.get("broadMatchBid")));
+		} catch (Exception e) {
+			throw new Exception(e);
+		}
+		return gson.toJson(ret);
+	}
+	
+	
 	public String getAdGroupsByCampaignId(String json) throws Exception
 	{
 		logger.debug("call getAdGroupsByCampaignId(String json)" + json);
@@ -2906,6 +2968,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			
 		//requestKeywordReport
 		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, aggregation);		
+		AdGroup[] adGroups = this.getAdGroupsByCampaignId(accountId,campaignId);
+		if(adGroups.length>1){throw new Exception("More than one adgroup in this campaign");}
+		Long adGroupId = adGroups[0].getId();
+		Keyword[] keywords = this.getKeywordByAdGroupId(accountId, adGroupId);
 		
 		//getReportData
 		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
@@ -2932,7 +2998,11 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setFirstPageCPC(-1);
 				String[] t = ret2.get("gregoriandate")[i].split("/");
 				data.setTransactionDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0).toDate());
-				
+				for(int j=0; j<keywords.length; j++){
+					if(keywords[j].equals(ret2.get("keyword")[i])){
+						data.setApprovalStatus(keywords[j].getEditorialStatus().getValue());
+					}
+				}
 				reportObjectList.add(data);			
 			}
 		}
