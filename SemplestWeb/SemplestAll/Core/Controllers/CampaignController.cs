@@ -14,6 +14,7 @@ using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
 using Semplest.SharedResources.Services;
+using System.Configuration;
 
 namespace Semplest.Core.Controllers
 {
@@ -267,7 +268,7 @@ namespace Semplest.Core.Controllers
                 Session["AdTitle"] = model;
             var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
             PromotionAd promotionAd;
-            if(addsStoreModel != null)
+            if (addsStoreModel != null)
             {
                 promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
                 if (promotionAd != null)
@@ -386,7 +387,7 @@ namespace Semplest.Core.Controllers
                 var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
 
                 foreach (var prom in promotion.Promotions)
-                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionid=" + prom.PromotionPK.ToString() });
+                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = ConfigurationManager.AppSettings["CampaignUrl"] + prom.PromotionPK.ToString() });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
                 productGroupsBar.SubItems.Add(promotionBar);

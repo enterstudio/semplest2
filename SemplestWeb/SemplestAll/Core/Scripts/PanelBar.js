@@ -1,5 +1,5 @@
 ﻿$(document).ready(function () {
-    $.getJSON('/Campaign/GetSideBar', {}, function (data) {
+    $.getJSON($('#SideBarUrl').val(), {}, function (data) {
         for (var mainGroup in data) {
             panelBar.append({ encoded: false, text: data[mainGroup].Name }, panelBar.select(data[mainGroup].Name));
             for (var subitem in data[mainGroup].SubItems) {

@@ -146,7 +146,7 @@ $(document).ready(function () {
         if (!isnegativeKeyWordsAdded) {
             tabStrip.append({
                 text: "Negative Keywords",
-                contentUrl: '/Campaign/NegativeKeyWords'
+                contentUrl: $('#NegativeKeyWordsUrl').val()
             });
         }
         tab = tabStrip.tabGroup.children('li:contains("Negative Keywords")');
@@ -166,7 +166,7 @@ $(document).ready(function () {
         if (!isSelectedKeywordsAdded)
             tabStrip.append({
                 text: "View Keywords",
-                contentUrl: '/Campaign/KeyWords'
+                contentUrl: $('$ViewSelectedKeywordsUrl').val()
             });
     });
     tab = tabStrip.tabGroup.children('li:contains("View Keywords")');

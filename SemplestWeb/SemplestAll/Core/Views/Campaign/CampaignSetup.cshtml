@@ -55,6 +55,10 @@ Ad Setup
                     @Html.EditorFor(t=>t.AdModelProp)
                 </div>
             </div>
+            <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
+            <input type="hidden" id="NegativeKeyWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeKeyWordsUrl"]'/>
+            <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
+            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         }
     </div>
 </div>
