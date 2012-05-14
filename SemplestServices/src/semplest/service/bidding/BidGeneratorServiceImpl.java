@@ -7,7 +7,9 @@ import java.util.HashSet;
 
 
 //import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 
@@ -86,44 +88,48 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		return bidGeneratorObj.getInitialValues(promotionID, searchEngine);
 	}
 	
-	public void setBidsInitial(String json) throws Exception
+	public String setBidsInitial(String json) throws Exception
 	{
 		logger.debug("call  setBidsInitial(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		String searchEngine = data.get("searchEngine");
 		BudgetObject budgetData = gson.fromJson(data.get("budgetData"),BudgetObject.class);
-		setBidsInitial( promotionID, searchEngine, budgetData);
+		Boolean res = setBidsInitial( promotionID, searchEngine, budgetData);
+		return gson.toJson(res);
 	}
 	@Override
-	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		bidGeneratorObj.setBidsInitial(promotionID, searchEngine, budgetData);
+		Boolean res = bidGeneratorObj.setBidsInitial(promotionID, searchEngine, budgetData);
+		return res;
 	}
 	
 	
-	public void setBidsUpdate(String json) throws Exception
+	public String setBidsUpdate(String json) throws Exception
 	{
 		logger.debug("call  setBidsUpdate(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		String searchEngine = data.get("searchEngine");
 		BudgetObject budgetData = gson.fromJson(data.get("budgetData"),BudgetObject.class);
-		setBidsUpdate(promotionID, searchEngine, budgetData);
+		Boolean res = setBidsUpdate(promotionID, searchEngine, budgetData);
+		return gson.toJson(res);
 	}
 	@Override
-	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		if (!AdEngine.existsAdEngine(searchEngine))
 		{
 			throw new Exception(searchEngine + " Not Found");
 		}
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
+		Boolean res = bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
 		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine, BudgetObject budgetData);
+		return res;
 		
 	}
 	
@@ -304,6 +310,40 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	}
 	
 	//------------- End Naive bidder
+	
+	
+	
+	
+	
+	
+//	public static ClassPathXmlApplicationContext appContext = null;
+//
+//	public static void main(String [] args){
+//		// test 
+//		
+//		BasicConfigurator.configure();
+//		/*Properties properties = new Properties();
+//		FileInputStream is = new FileInputStream(PROPSFILE);
+//		properties.load(is);
+//		is.close();
+//		*/	
+//
+//		appContext = new ClassPathXmlApplicationContext("Service.xml");
+//		
+//		BidGeneratorServiceImpl client = new BidGeneratorServiceImpl ();
+//		Integer promotionID = new Integer(62);
+//		String searchEngine = "Google";
+//		BudgetObject budgetData = new BudgetObject();
+//		budgetData.setRemainingBudgetInCycle(100.0);
+//		budgetData.setRemainingDays(20);
+//		try {
+//			client.setBidsInitial(promotionID, searchEngine, budgetData);
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+
 	
 
 

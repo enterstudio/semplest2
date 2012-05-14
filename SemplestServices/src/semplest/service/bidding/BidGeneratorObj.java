@@ -154,7 +154,7 @@ public class BidGeneratorObj {
 	
 	
 	
-	public void setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		/* ******************************************************************************************* */
 		// declarations
@@ -545,6 +545,10 @@ public class BidGeneratorObj {
 		}
 		logger.info("Updated the default bid via search engine API.");
 		
+		
+		
+		return new Boolean(true);
+		
 	} // setBidsInitial()
 	
 	
@@ -552,10 +556,12 @@ public class BidGeneratorObj {
 
 
 
-	public void setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
 		
 		logger.info("setBidsUpdate called. presently not doing anything!!");
 		// throw new Exception("setBidsUpdate not yet implemented!!");	
+		
+		return new Boolean(true);
 	} // setBidsUpdate()
 
 	
