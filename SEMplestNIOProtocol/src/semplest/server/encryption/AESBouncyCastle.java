@@ -68,6 +68,7 @@ public class AESBouncyCastle
 				instance = new AESBouncyCastle();
 				instance.keyStr = Keystr;
 				instance.inititialize();
+				logger.info("Initialized AES");
 
 			}
 			catch (InvalidKeyException e)
