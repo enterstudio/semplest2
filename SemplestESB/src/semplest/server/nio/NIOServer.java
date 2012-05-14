@@ -50,7 +50,7 @@ public class NIOServer implements Runnable
 	private ProtocolJSON json = new ProtocolJSON();
 	private ServicePingHandler pingHandler = null;
 	static final Logger logger = Logger.getLogger(NIOServer.class);
-	private ProtocolSocketDataObject returndata = null;
+	
 
 	public NIOServer(InetAddress hostAddress, int port, ProcessRequestWorker worker, ESBServer esbServer) throws IOException
 	{
@@ -208,7 +208,7 @@ public class NIOServer implements Runnable
 		}
 	}
 
-	public synchronized void  ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
+	public void  ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
 	{
 
 		try
@@ -224,13 +224,12 @@ public class NIOServer implements Runnable
 			else
 			{
 				regData.getPingHandler().handleResponse(socketDataObject.getclientServiceName());
-				returndata = new ProtocolSocketDataObject();
+				ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
 				returndata.setHeader(ProtocolJSON.SEMplest_PING);
 				String jsonStr = json.createJSONFromSocketDataObj(returndata);
 				byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
 				logger.debug("Send response back to Client: " + socketDataObject.getclientServiceName());
 				send(socket, returnData);
-				returndata = null;
 			}
 		}
 		catch (Exception e)
