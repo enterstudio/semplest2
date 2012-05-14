@@ -252,10 +252,75 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(EmployeeSetupWithRolesModel m)
         {
 
-            if (!ModelState.IsValid)
-                return  View(m);
+          SemplestEntities dbcontext = new SemplestEntities();
 
-            SemplestEntities dbcontext = new SemplestEntities();
+
+            //check if userid has been taken by other users
+
+                  var userIDSs = from c in dbcontext.Credentials
+                        where c.Username.Equals(m.EmployeeSetup.UserID) && !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
+                        select c;
+                  if (userIDSs.Count() > 0)
+                      ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
+
+
+                  if (!ModelState.IsValid)
+                  {
+                      //repopulate 
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      //for roles dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+
+                      m.Roles = roles.Select(r => new SelectListItem
+                      {
+                          Value = r.RolePK.ToString(),
+                          Text = r.RoleName.ToString()
+                      });
+
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      //for Reportingto dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var reportingto = (
+                          from e in dbcontext.Employees
+                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                          where u.IsActive.Equals(true)
+                          select new ReportingToModel
+                          {
+                              EmployeePK = e.EmployeePK,
+                              FirstName = u.FirstName,
+                              LastName = u.LastName
+                          }
+                          ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
+
+
+
+                      //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
+                      List<SelectListItem> sli = new List<SelectListItem>();
+                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Not Assigned" });
+
+
+                      m.ReportingTo = reportingto.Select(r => new SelectListItem
+                      {
+                          Value = r.EmployeePK.ToString(),
+                          Text = r.FirstName.ToString() + " " + r.LastName.ToString()
+                      }).Union(sli);
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      // for employeetype dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+
+                      m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
+                      {
+                          Value = r.EmployeeTypeID.ToString(),
+                          Text = r.EmployeeType1.ToString()
+                      });
+
+                      return View(m);
+                  }
             
             var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
             user.FirstName = m.EmployeeSetup.FirstName;
@@ -361,13 +426,83 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Add(EmployeeSetupWithRolesModel m)
         {
-            if (!ModelState.IsValid)
-                return View(m);
+           
+            SemplestEntities dbcontext = new SemplestEntities();
+
+
+            //check if userid has been taken by other users
+
+                  var userIDSs = from c in dbcontext.Credentials
+                        where c.Username.Equals(m.EmployeeSetup.UserID) //&& !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
+                        select c;
+                  if (userIDSs.Count() > 0)
+                      ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
+
+
+                  if (!ModelState.IsValid)
+                  {
+                      //repopulate 
+
+
+                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+                      
+                      m.Roles = roles.Select(r => new SelectListItem
+                      {
+                          Value = r.RolePK.ToString(),
+                          Text = r.RoleName.ToString()
+                      });
+
+
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      //for Reportingto dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var reportingto = (
+                          from e in dbcontext.Employees
+                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                          where u.IsActive.Equals(true)
+                          select new ReportingToModel
+                          {
+                              EmployeePK = e.EmployeePK,
+                              FirstName = u.FirstName,
+                              LastName = u.LastName
+                          }
+                          ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
+                      
+
+
+
+                      //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
+                      List<SelectListItem> sli = new List<SelectListItem>();
+                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
+                      m.ReportingTo = reportingto.Select(r => new SelectListItem
+                      {
+                          Value = r.EmployeePK.ToString(),
+                          Text = r.FirstName.ToString() + " " + r.LastName.ToString()
+                      }).Union(sli);
+
+
+
+                      /////////////////////////////////////////////////////////////////////////////////
+                      // for employeetype dropdown
+                      /////////////////////////////////////////////////////////////////////////////////
+                      var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+                      m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
+                      {
+                          Value = r.EmployeeTypeID.ToString(),
+                          Text = r.EmployeeType1.ToString()
+                      });
+
+
+                      return View(m);
+                  }
 
 
             try
             {
-                SemplestEntities dbcontext = new SemplestEntities();
+                
 
                 User u = dbcontext.Users.Add(new User
                 {
