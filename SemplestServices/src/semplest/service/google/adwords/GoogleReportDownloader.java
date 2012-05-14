@@ -187,6 +187,7 @@ public class GoogleReportDownloader
 					ReportObject rdata = new ReportObject();
 					
 					//parse the data to ReportObject	
+					//THE COLUMN POSITION OF DATA HEAVILY DEPENDS ON THE FIELDS CHOSEN FOR THE REPORT IN THE XML
 					rdata.setAccountID(accountID);
 					rdata.setCampaignID(Long.valueOf(data[11]));
 					rdata.setKeyword(data[3]);
