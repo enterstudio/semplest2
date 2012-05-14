@@ -2150,7 +2150,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			+ "<fields>AverageCpc</fields><fields>AveragePosition</fields><fields>CampaignId</fields><fields>Ctr</fields><fields>FirstPageCpc</fields><fields>MaxCpc</fields>"
 			+ "<fields>ApprovalStatus</fields><fields>CampaignId</fields>" 
 			+ "</selector><reportName>KEYWORDS_PERFORMANCE_REPORT</reportName>"
-			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>CUSTOM_DATE</dateRangeType><downloadFormat>CSV</downloadFormat>"
+			+ "<reportType>KEYWORDS_PERFORMANCE_REPORT</reportType>" + "<dateRangeType>LAST_7_DAYS</dateRangeType><downloadFormat>CSV</downloadFormat>"
 			+ "</reportDefinition>";
 
 	private static final String SEARCH_QUERY_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
@@ -2162,6 +2162,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	public ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception
 	{
+		//DON'T CHANGE THE SELECOTR FIELDS! OR THE FORMAT OF REPORT WILL BE DIFFERENT. AND THE DOWNLOADER WON'T TRANSLATE IT CORRECTLY!
 		String REPORT_DEFINITION = "<reportDefinition><selector><fields>Date</fields>"
 				+ "<fields>AdGroupId</fields><fields>Id</fields><fields>KeywordText</fields><fields>KeywordMatchType</fields>"
 				+ "<fields>Impressions</fields><fields>Clicks</fields><fields>Cost</fields><fields>QualityScore</fields>"
