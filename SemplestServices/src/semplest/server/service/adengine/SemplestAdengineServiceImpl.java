@@ -125,7 +125,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
-		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"));
+		
+		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
 		// get the AdEngine Initial Data
 		HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
 		//
@@ -209,6 +210,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 
 		return true;
+	}
+	
+	private String getTimeoutMS()
+	{
+		String bidTimeoutMS = null;
+		Object timeout =  SemplestConfiguration.configData.get("SemplestClientBiddingTimeoutMS");
+		if (timeout != null)
+		{
+			bidTimeoutMS = (String) timeout;
+		}
+		return  bidTimeoutMS;
 	}
 
 	/*
@@ -486,7 +498,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// **NEED TO CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
 		
 		// Call bidding service to split the budget
-		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"));
+		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"),getTimeoutMS());
 		// setup the budget for each ad engine
 		HashMap<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
 		//call setBidsUpdate
