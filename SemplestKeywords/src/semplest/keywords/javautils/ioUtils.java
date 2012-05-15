@@ -7,11 +7,15 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.HashMap;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.nio.charset.Charset;
 
 public class ioUtils {
@@ -496,14 +500,80 @@ public class ioUtils {
       docv[ dictUtils.dicti.get( tokens[i] )]++;
     return docv;
   }
+  
+  public static void reStemmingFile(String inputPath, String outputPath) throws IOException{
+	  BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
+      String line;
+      PrintStream stdout = System.out;
+      System.setOut(new PrintStream(new File(outputPath)));
+      String newWord;
+      while ((line = br.readLine()) != null){ 
+        String[] words = line.split("\\s+");
+        for(String word : words){
+        	newWord = dictUtils.getStemWord(dictUtils.getRoot(word));
+        	if(newWord != null)
+        		System.out.print(newWord+" ");
+        	else
+        		System.out.print(word+" ");
+        }
+        System.out.print("\n");
+      }
+      System.setOut(stdout);
+  }
+  
+  public static void reStemmingFileMultiWord(String inputPath, String outputPath) throws IOException{
+	  BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
+      String line;
+      PrintStream stdout = System.out;
+      System.setOut(new PrintStream(new File(outputPath)));
+      String newWord;
+      dictUtils dict = new  dictUtils();
+      while ((line = br.readLine()) != null){ 
+        String[] words = line.split("\\s+");
+        for(String word : words){
+        	String[] multiword = word.split(":");
+        	String[] split = multiword[0].split("\\+");
+        	int i=0;
+        	for(i=0; i<split.length-1; i++){
+        		newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
+            	if(newWord != null)
+            		System.out.print(newWord+"+");
+            	else
+            		System.out.print(split[i]+"+");
+        	}
+        	newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
+        	if(newWord != null)
+        		System.out.print(newWord);
+        	else
+        		System.out.print(split[i]);
+        	System.out.print(":"+multiword[1]+" ");
+        }
+        System.out.print("\n");
+      }
+      System.setOut(stdout);
+  }
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-
+	 /*
     String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
     String h = "top/sports/equestrian/breeds/spanish_horses";
     HashMap<String,String> wcs = readWcounts(f);
     System.out.println( wcs.get( h ));
-
+    */
+	  try{
+		  //ioUtils.reStemmingFile("/semplest/data/dmoz/all.descs","/semplest/data/dmoz/all.v2.descs");
+		  String[] nGramsSubC = {"arts","business","computers","games","health","home","news","recreation","reference","science","shopping","society","sports"};
+		  String baseMultiWPath = "/semplest/data/dmoz/multiwords/";
+		  for (int i=0; i< nGramsSubC.length; i++){
+				String biPathout = baseMultiWPath+nGramsSubC[i]+".v2.txt.3";
+				String biPathin = baseMultiWPath+nGramsSubC[i]+".txt.3";
+				 System.out.println("Generating "+biPathout);
+				 ioUtils.reStemmingFileMultiWord(biPathin, biPathout);
+		  }
+		  
+	  }catch ( Exception e){
+		  System.out.println(e);
+	  }
   }
 }

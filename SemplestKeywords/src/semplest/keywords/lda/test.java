@@ -19,9 +19,9 @@ public class test {
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
 		//TextUtils.changeKeywordMatchtoExact("/semplest/data/biddingTest/PiperHall/keywords.txt");
-		Date date  = new java.util.Date();
-		SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd");
-		System.out.println(form.format(date));
+		String word = "word1+word2";
+		String[] split = word.split("\\+");
+		System.out.println(dictUtils.getRoot("flowers"));
 	}
 
 

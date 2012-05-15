@@ -61,6 +61,10 @@ public class dictUtils
     return dict.containsKey( getRoot( word ) ) && 
       !cw.contains( word );
   }
+  public static boolean commonWord(String word){
+	  boolean aux = cw.contains(word);
+	  return cw.contains(word);
+  }
   // is the stem in the dictionary ?
   public static boolean validStem(String stem ){
     return dicti.containsKey( stem );
@@ -91,9 +95,9 @@ public class dictUtils
 
   //-----------------
   public static Set<String> CommonWordSet (){
-    String commonWordString = "a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
+    String commonWordString = ",a,able,about,across,after,all,almost,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,de,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,la,least,let,like,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,pdf,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,";
 
-    String localWordString = "class,div,escap,document,fals,file,function,floor,http,html,javascript,math,pdf,plugin,protocol,true,tv,var,width,window,write,www,org";
+    String localWordString = ",class,div,escap,document,fals,file,function,floor,http,html,javascript,math,pdf,plugin,protocol,true,tv,var,width,window,write,www,org";
 
     // the new, north, west etc are included but they are general stopwords 
     String stateWordString = ",north,south,east,west,alabama,alaska,arizona,arkansas,california,canada,colorado,connecticut,delaware,florida,georgia,hawaii,idaho,illinois,indiana,iowa,kansas,kentucky,louisiana,maine,maryland,massachusetts,mexico,michigan,minnesota,mississippi,missouri,montana,nebraska,nevada,hampshire,jersey,mexico,york,carolina,dakota,ohio,oklahoma,oregon,pennsylvania,rhode,carolina,dakota,tennessee,texas,utah,vermont,virginia,washington,wisconsin,wyoming";

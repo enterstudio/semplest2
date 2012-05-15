@@ -47,7 +47,7 @@ public class TextUtils
 	//Returns a fully formed url
 	 public static String formURL (String url){
 	   String newurl;
-	   if(url.contains("http://")) newurl = url;
+	   if(url.contains("http://") || url.contains("https://")) newurl = url;
 	   else newurl = "http://"+url;
 	   return newurl;
 	 }
