@@ -388,7 +388,7 @@ public class SemplestDB extends BaseDB
 				+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
 				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join  "
 				+ "(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd "
-				+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = kb.CreatedDate "
+				+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = ki.CreatedDate "
 				+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ?";
 		try
 		{
