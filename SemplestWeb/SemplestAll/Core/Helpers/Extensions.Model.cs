@@ -65,6 +65,8 @@ public static class MvcCheckBoxList_Extensions_Model
 
         StringBuilder sb = new StringBuilder();
 
+        sb.Append("<ul id='list'>");
+
         foreach (var option in selectList)
         {
 
@@ -102,6 +104,8 @@ public static class MvcCheckBoxList_Extensions_Model
 
             builder.InnerHtml = option.Text;
 
+            sb.Append("<li>");
+
             sb.Append(builder.ToString(TagRenderMode.Normal));
 
             if (columnCount == numberOfColumns)
@@ -112,9 +116,10 @@ public static class MvcCheckBoxList_Extensions_Model
                 sb.Append("<br />");
 
             }
+            sb.Append("</li>");
 
         }
-
+        sb.Append("</ul>");
         return MvcHtmlString.Create(sb.ToString());
 
     }
