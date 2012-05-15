@@ -21,6 +21,7 @@ import org.springframework.jdbc.core.RowMapper;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
+import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.service.springjdbc.BaseDB;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -163,7 +164,7 @@ public class DatabaseTest extends BaseDB{
 		//store_TrafficEstimatorData();
 		
 		//test get traffic estimator data from the database
-		
+		get_TrafficEstimatorData();
 	}
 	
 	public void store_TrafficEstimatorData(){
@@ -189,7 +190,27 @@ public class DatabaseTest extends BaseDB{
 	}
 	
 	public void get_TrafficEstimatorData(){
-		
+		try {
+			String keyword;
+			
+			keyword = "civil wedding ceremony venues";
+			List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionPK, keyword, AdEngine.Google.name());
+			System.out.println(keyword + " ==============================================");
+			int c = 0;
+			for(TrafficEstimatorDataObject t : ret){
+				System.out.println("#"+c+" ---------------------------------------");
+				System.out.println("MicroBid = " + t.getMicroBid());
+				System.out.println("AveMicroCost = " + t.getAveMicroCost());
+				System.out.println("AveNumberClicks = " + t.getAveNumberClicks());
+				System.out.println("AvePosition = " + t.getAvePosition());				
+				System.out.println("AveCPC = " + t.getAveCPC());				
+				System.out.println("CreatedDate = " + t.getCreatedDate());				
+				c++;
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void prepDataInDatabase_reportData(){	
