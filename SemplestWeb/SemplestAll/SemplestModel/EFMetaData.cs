@@ -96,9 +96,12 @@ namespace SemplestModel
         internal sealed class PromotionAdMetaData
         {
             [Required]
+            [StringLength(25,ErrorMessage = "25 characters max")]
             public string AdTitle { get; set; }
             [Required]
+            [StringLength(35, ErrorMessage = "35 characters max")]
             public string AdTextLine1 { get; set; }
+            [StringLength(35, ErrorMessage = "35 characters max")]
             public string AdTextLine2 { get; set; }
 
         }

@@ -1,27 +1,6 @@
 ﻿@using Semplest.Core.Helpers
 @using Semplest.SharedResources.Helpers
 @model SemplestModel.PromotionAd
-<script>
-    $(function () { $('input.alpha').keyup(function () { if (this.value.match(/[^a-zA-Z0-9 ]/g)) { this.value = this.value.replace(/[^a-zA-Z0-9 ]/g, ''); } }); });
-    $(document).ready(function () {
-        $('#@Html.ClientIdFor(t=>t.AdTitle)').keyup(function () {
-            var $this = $(this);
-            if ($this.val().length > 25)
-                $this.val($this.val().substr(0, 25));
-        });
-        $('#@Html.ClientIdFor(t=>t.AdTextLine1)').keyup(function () {
-            var $this = $(this);
-            if ($this.val().length > 35)
-                $this.val($this.val().substr(0, 35));
-        });
-        $('#@Html.ClientIdFor(t=>t.AdTextLine2)').keyup(function () {
-            var $this = $(this);
-            if ($this.val().length > 35)
-                $this.val($this.val().substr(0, 35));
-        });    
-    });
-    
-</script>
 <div class="ads">
     <fieldset>
         <legend>Ad #</legend>
@@ -32,6 +11,7 @@
                         Title</label>
                     
                     @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Title" })
+                    @Html.ValidationMessageFor(t => t.AdTitle, "", new { @class = "k-widget k-tooltip k-tooltip-validation" })
                     <label class="hint">
                         25 characters max.</label>
                 </li>

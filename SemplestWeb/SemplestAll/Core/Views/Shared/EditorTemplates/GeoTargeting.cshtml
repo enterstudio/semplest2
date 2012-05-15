@@ -34,7 +34,7 @@
                 State
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr"), new { @class = "k-dropdownlist" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr",@Model.StateCodeFK), new { @class = "k-dropdownlist" })
             </td>
         </tr>
         <tr>
