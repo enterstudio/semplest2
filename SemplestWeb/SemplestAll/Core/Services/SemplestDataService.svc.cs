@@ -354,7 +354,7 @@ namespace SemplestWebApp.Services
                     }
                     else
                     {
-                        adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
+                        adEngSelQuery.First().AdvertisingEngineFK = proAdEng.First().AdvertisingEnginePK;
                     }
                     //dbcontext.SaveChanges();
                 }
