@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Collections.Generic;
 using System.Data.Services;
@@ -24,7 +25,6 @@ namespace SemplestWebApp.Services
 
         public bool SaveProductGroupAndCampaign(int userid, CampaignSetupModel model)
         {
-            bool retFlag = false;
             using (var dbcontext = new SemplestEntities())
             {
                 // get the customerfk from userid
@@ -32,16 +32,17 @@ namespace SemplestWebApp.Services
                 int custfk = (int)queryCustFk.FirstOrDefault();
 
                 // check if the ProductGroupName already exists
-                var queryProdGrp = from c in dbcontext.ProductGroups 
-                                       where c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName select c;
-                if (queryProdGrp.Count() > 0)
+                var queryProdGrp = from c in dbcontext.ProductGroups
+                                   where c.CustomerFK == custfk && c.ProductGroupName == model.ProductGroup.ProductGroupName
+                                   select c;
+                if (queryProdGrp.Any())
                 {
-                    try
+                    // product grp already exists so update the product group 
+                    var updateProdGrp = queryProdGrp.FirstOrDefault();
+                    if (updateProdGrp != null)
                     {
-                        // product grp already exists so update the product group 
-                        var updateProdGrp = queryProdGrp.FirstOrDefault();
                         updateProdGrp.ProductGroupName = model.ProductGroup.ProductGroupName;
-                        updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
+                        updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us"));
                         updateProdGrp.EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate);
 
                         // get promotion and update it
@@ -52,7 +53,7 @@ namespace SemplestWebApp.Services
                             // create new promotion
                             updatePromotion = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
                             updatePromotion.ProductGroupFK = updateProdGrp.ProductGroupPK;
-                                
+
                             // add geotargeting to promotion
                             AddGeoTargetingToPromotion(updatePromotion, model);
                             // promotion ads
@@ -65,86 +66,71 @@ namespace SemplestWebApp.Services
                             // update promotion
                             UpdatePromotionFromModel(updatePromotion, model, dbcontext);
                         }
-
-                        dbcontext.SaveChanges();
-
-                    }
-                    catch (Exception ex)
-                    {
-                        string msg = ex.ToString();
-                        throw;
                     }
 
-                    retFlag = true;
+                    dbcontext.SaveChanges();
                 }
                 else
                 {
-                    try
-                    {
-                        // create product group
-                        var prodgroup = new ProductGroup
-                        {
-                            ProductGroupName = model.ProductGroup.ProductGroupName,
-                            IsActive = true,
-                            CustomerFK = custfk,
-                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
-                            EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
-                        };
+                    // create product group
+                    var prodgroup = new ProductGroup
+                                        {
+                                            ProductGroupName = model.ProductGroup.ProductGroupName,
+                                            IsActive = true,
+                                            CustomerFK = custfk,
+                                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us")),
+                                            EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
+                                        };
 
-                        // create promotion
-                        var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
+                    // create promotion
+                    var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
 
-                        // add advertising engines that are selected
-                        SavePromotionAdEngineSelected(promo, model, dbcontext);
+                    // add advertising engines that are selected
+                    SavePromotionAdEngineSelected(promo, model, dbcontext);
 
-                        // add geotargeting to promotion
-                        AddGeoTargetingToPromotion(promo, model);
+                    // add geotargeting to promotion
+                    AddGeoTargetingToPromotion(promo, model);
 
-                        // save negative keywords
-                        SaveNegativeKeywords(promo, model, dbcontext);
+                    // save negative keywords
+                    SaveNegativeKeywords(promo, model, dbcontext);
 
-                        // promotion ads
-                        AddPromotionAdsToPromotion(promo, model);
+                    // promotion ads
+                    AddPromotionAdsToPromotion(promo, model);
 
-                        // add product group
-                        dbcontext.ProductGroups.Add(prodgroup);
-                        // add promotion
-                        dbcontext.Promotions.Add(promo);
-                        dbcontext.SaveChanges();
-                        retFlag = true;
-
-                    }
-                    catch (Exception ex)
-                    {
-                        string msg = ex.Message;
-                        throw;
-                    }
+                    // add product group
+                    dbcontext.ProductGroups.Add(prodgroup);
+                    // add promotion
+                    dbcontext.Promotions.Add(promo);
+                    dbcontext.SaveChanges();
                 }
             }
-            return retFlag;
+            return true;
         }
 
         public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
         {
-            CampaignSetupModel model = new CampaignSetupModel();
+            var model = new CampaignSetupModel();
             var dbcontext = new SemplestEntities();
             var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
 
             // populate model from promotions
-            model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
-            model.ProductGroup.ProductPromotionName = promo.PromotionName;
-            model.ProductGroup.Budget = promo.PromotionBudgetAmount;
-            model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString();
-            model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue ? promo.ProductGroup.EndDate.ToString() : String.Empty;
+            if (promo != null)
+            {
+                model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
+                model.ProductGroup.ProductPromotionName = promo.PromotionName;
+                model.ProductGroup.Budget = promo.PromotionBudgetAmount;
+                model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString(new CultureInfo("en-Us"));
+                model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue ? promo.ProductGroup.EndDate.ToString() : String.Empty;
 
-            // set words
-            model.ProductGroup.Words = promo.PromotionDescription;
+                // set words
+                model.ProductGroup.Words = promo.PromotionDescription;
+            }
 
             // set advertising engines
             model.ProductGroup.AdEnginesSelectedList = new List<AdEngineSelectModel>();
-            foreach(PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
+            foreach (PromotionAdEngineSelected paes in promo.PromotionAdEngineSelecteds)
             {
-                AdEngineSelectModel aesm = new AdEngineSelectModel{ Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                AdEngineSelectModel aesm = new AdEngineSelectModel { Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
                 model.ProductGroup.AdEnginesSelectedList.Add(aesm);
                 model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEngine1);
             }
@@ -192,16 +178,20 @@ namespace SemplestWebApp.Services
             {
                 // get the customerfk from userid
                 var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
-                int custfk = (int)queryCustFk.First();
-
-                // get ProductGroup
-                var queryProdGrp = from c in dbcontext.ProductGroups
-                                   where c.CustomerFK == custfk 
-                                   select c;
-                // get Promotion
-                if (queryProdGrp.Count() > 0)
+                var customerIdFk = queryCustFk.FirstOrDefault();
+                if (customerIdFk != null)
                 {
-                    return queryProdGrp.ToList();
+                    int custfk = (int)customerIdFk;
+
+                    // get ProductGroup
+                    var queryProdGrp = from c in dbcontext.ProductGroups
+                                       where c.CustomerFK == custfk
+                                       select c;
+                    // get Promotion
+                    if (queryProdGrp.Any())
+                    {
+                        return queryProdGrp.ToList();
+                    }
                 }
             }
             return null;
@@ -271,7 +261,7 @@ namespace SemplestWebApp.Services
                     return queryBudgetCycle.FirstOrDefault().BudgetCyclePK;
                 }
             }
-                return -1;
+            return -1;
         }
 
         private Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal CustomerDefaultPerCampaignFlatFeeAmount)
@@ -285,11 +275,11 @@ namespace SemplestWebApp.Services
                 PromotionDescription = model.ProductGroup.Words,
                 PromotionBudgetAmount = model.ProductGroup.Budget,
                 BudgetCycleFK = GetBudgetCycleId("Monthly"),
-                CycleStartDate =Convert.ToDateTime(model.ProductGroup.StartDate),
-                CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate),
-                StartBudgetInCycle=model.ProductGroup.Budget-CustomerDefaultPerCampaignFlatFeeAmount,
-                RemainingBudgetInCycle=model.ProductGroup.Budget-CustomerDefaultPerCampaignFlatFeeAmount,
-                PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate),
+                CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us")),
+                CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us")).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate,new CultureInfo("en-Us")),
+                StartBudgetInCycle = model.ProductGroup.Budget - CustomerDefaultPerCampaignFlatFeeAmount,
+                RemainingBudgetInCycle = model.ProductGroup.Budget - CustomerDefaultPerCampaignFlatFeeAmount,
+                PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us")),
                 IsPaused = false,
                 IsCompleted = false,
                 IsLaunched = false,
@@ -305,9 +295,9 @@ namespace SemplestWebApp.Services
             updatePromotion.LandingPageURL = model.AdModelProp.Url;
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
             updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
-            updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate);
-            updatePromotion.CycleStartDate =Convert.ToDateTime(model.ProductGroup.StartDate);
-            updatePromotion.CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate);
+            updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us"));
+            updatePromotion.CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us"));
+            updatePromotion.CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate,new CultureInfo("en-Us")).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate,new CultureInfo("en-Us"));
             updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.EditedDate = DateTime.Now;
@@ -340,10 +330,10 @@ namespace SemplestWebApp.Services
             {
                 int adengineid = Convert.ToInt32(aes);
                 var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEnginePK == adengineid);
-                if (proAdEng.Count() > 0)
+                if (proAdEng.Any())
                 {
                     var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
-                    if (adEngSelQuery.Count() == 0)
+                    if (!adEngSelQuery.Any())
                     {
                         var adEngineSel = new PromotionAdEngineSelected
                         {
@@ -354,6 +344,7 @@ namespace SemplestWebApp.Services
                     }
                     else
                     {
+                        //adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
                         adEngSelQuery.First().AdvertisingEngineFK = proAdEng.First().AdvertisingEnginePK;
                     }
                     //dbcontext.SaveChanges();
@@ -388,7 +379,7 @@ namespace SemplestWebApp.Services
 
         private void AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model)
         {
-            foreach (PromotionAd pad in model.AdModelProp.Ads)
+            foreach (PromotionAd pad in model.AdModelProp.Ads.Where(t => !t.Delete))
             {
                 var cad = new PromotionAd { AdTextLine1 = pad.AdTextLine1, AdTextLine2 = pad.AdTextLine2, AdTitle = pad.AdTitle };
 
@@ -412,18 +403,14 @@ namespace SemplestWebApp.Services
 
         public bool SaveSelectedCategories(int promotionId, List<string> selectedCategories)
         {
-            bool retFlag = false;
-
             using (var dbcontext = new SemplestEntities())
             {
                 var query = dbcontext.KeywordCategories.Where(c => c.PromotionFK == promotionId);
-                if (query.Count() == 0)
+                if (!query.Any())
                 {
-                    foreach (string category in selectedCategories)
+                    foreach (var category in selectedCategories)
                     {
-                        KeywordCategory keyCategory = new KeywordCategory();
-                        keyCategory.PromotionFK = promotionId;
-                        keyCategory.KeywordCategory1 = category;
+                        var keyCategory = new KeywordCategory {PromotionFK = promotionId, KeywordCategory1 = category};
                         dbcontext.KeywordCategories.Add(keyCategory);
                     }
                     dbcontext.SaveChanges();
@@ -437,25 +424,20 @@ namespace SemplestWebApp.Services
                     }
                     dbcontext.SaveChanges();
                     // add them
-                    foreach (string category in selectedCategories)
+                    foreach (var category in selectedCategories)
                     {
-                        KeywordCategory keyCategory = new KeywordCategory();
-                        keyCategory.PromotionFK = promotionId;
-                        keyCategory.KeywordCategory1 = category;
+                        var keyCategory = new KeywordCategory {PromotionFK = promotionId, KeywordCategory1 = category};
                         dbcontext.KeywordCategories.Add(keyCategory);
                     }
                     dbcontext.SaveChanges();
                 }
-                retFlag = true;
             }
 
-            return retFlag;
+            return true;
         }
 
         public bool SaveKeywords(int promotionId, CampaignSetupModel model)
         {
-            bool retFlag = false;
-
             using (var dbcontext = new SemplestEntities())
             {
                 // todo need to fix this
@@ -464,13 +446,12 @@ namespace SemplestWebApp.Services
                 foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
                 {
                     var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.keyword);
-                    if (queryKeyword.Count() == 0)
+                    if (!queryKeyword.Any())
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
                         var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword, CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
-                        int keywordId = newKeyword.KeywordPK;
                         dbcontext.PromotionKeywordAssociations.Add(
                             new PromotionKeywordAssociation
                             {
@@ -483,7 +464,7 @@ namespace SemplestWebApp.Services
                                 SemplestProbability = kpo.semplestProbability,
                                 IsTargetMSN = kpo.isTargetMSN,
                                 IsTargetGoogle = kpo.isTargetGoogle
-                          });
+                            });
 
                         dbcontext.SaveChanges();
 
@@ -493,7 +474,7 @@ namespace SemplestWebApp.Services
                         int keywordId = queryKeyword.First().KeywordPK;
                         queryKeyword.First().EditedDate = DateTime.Now;
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
-                        if (queryPka.Count() == 0)
+                        if (!queryPka.Any())
                         {
                             dbcontext.PromotionKeywordAssociations.Add(
                                 new PromotionKeywordAssociation
@@ -523,10 +504,9 @@ namespace SemplestWebApp.Services
                         }
                     }
                 }
-                retFlag = true;
             }
 
-            return retFlag;
+            return true;
         }
 
         public bool SaveSiteLinks(int userid, CampaignSetupModel model)
@@ -534,14 +514,14 @@ namespace SemplestWebApp.Services
             bool retFlag = false;
 
             int promoId = GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-            using (SemplestEntities dbcontext = new SemplestEntities())
+            using (var dbcontext = new SemplestEntities())
             {
                 var query = dbcontext.PromotionAds.Where(c => c.PromotionFK == promoId);
                 if (query.Count() > 0)
                 {
                     foreach (PromotionAd pad in query)
                     {
-                        
+
                     }
                 }
 
@@ -559,12 +539,12 @@ namespace SemplestWebApp.Services
                 foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
                 {
                     var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
-                    if (queryKeyword.Count() > 0)
+                    if (queryKeyword.Any())
                     {
                         int keywordId = queryKeyword.First().KeywordPK;
                         queryKeyword.First().EditedDate = DateTime.Now;
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
-                        if (queryPka.Count() == 0)
+                        if (!queryPka.Any())
                         {
                             dbcontext.PromotionKeywordAssociations.Add(
                                 new PromotionKeywordAssociation
@@ -597,7 +577,6 @@ namespace SemplestWebApp.Services
                         var newNegKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
-                        int keywordId = newNegKeyword.KeywordPK;
                         dbcontext.PromotionKeywordAssociations.Add(
                             new PromotionKeywordAssociation
                             {
@@ -622,18 +601,19 @@ namespace SemplestWebApp.Services
         // this one is not used
         public bool SaveNegativeKeywords(int userid, CampaignSetupModel model)
         {
-            bool retFlag = false;
+            const bool retFlag = false;
             int promoId = GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-            using (SemplestEntities dbcontext = new SemplestEntities())
+            using (var dbcontext = new SemplestEntities())
             {
                 foreach (string negKeyword in model.AdModelProp.NegativeKeywords)
                 {
-                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == negKeyword);
-                    if (queryKeyword.Count() > 0)
+                    string keyword = negKeyword;
+                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == keyword);
+                    if (queryKeyword.Any())
                     {
                         int keywordId = queryKeyword.First().KeywordPK;
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promoId && c.KeywordFK == keywordId);
-                        if (queryPka.Count() == 0)
+                        if (!queryPka.Any())
                         {
                             dbcontext.PromotionKeywordAssociations.Add(
                                 new PromotionKeywordAssociation
@@ -691,10 +671,10 @@ namespace SemplestWebApp.Services
 
         public string GetStateNameFromCode(int stateCode)
         {
-            string stateName = String.Empty;
+            string stateName;
             using (var db = new SemplestEntities())
             {
-                stateName = db.StateCodes.Where(m => m.StateAbbrPK == stateCode).First().StateAbbr;
+                stateName = db.StateCodes.First(m => m.StateAbbrPK == stateCode).StateAbbr;
             }
             return stateName;
         }
