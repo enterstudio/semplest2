@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
@@ -19,6 +21,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.BidElement;
+import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
@@ -37,27 +41,34 @@ public class DatabaseTest extends BaseDB{
 	private ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	private SemplestDB db = new SemplestDB();
 	
-	private Integer promotionPK = 71;
+	private Integer promotionID = 71;
 	private Long google_accountId = 5058200123L;
 	private Long google_campaignId = 116193337L;
 		
 	public static void main(String[] args){
 		DatabaseTest test = new DatabaseTest();
 		
-		//test.Test_ReportData();		
+		//test.Test_ReportData();				
+		//test.Test_TrafficEstimatorData();						
+		//test.Test_DefaultBid();		
+		//test.Test_KeywordDataObject();
 		
-		test.Test_TrafficEstimatorData();						
+		//test.Test_BidDataObject();
 		
-		System.out.println("DONE");
+		
+		System.out.println("*** DONE ***");
 	}	
 	
 	public void Test_ReportData(){		
 		try{			
-			//store report data to the database
-			store_ReportData(1);
+			/* ******************************************************************************************* */
+			//*** store report data to the AdvertisingEngineReportData table			
+			//store_ReportData(1);
 			
-			//get report data from the database
+			/* ******************************************************************************************* */
+			//*** get report data from the database			
 			get_ReportData();
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -72,7 +83,7 @@ public class DatabaseTest extends BaseDB{
 				case 1: {//real data
 					//get report (of ALL_TIME) from google
 					report = getReportFromGoogle();	
-					db.storeAdvertisingEngineReportData(promotionPK, AdEngine.Google.name(), report);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), report);
 					break;
 				}
 				case 2:{//duplicated both keywords and transaction date
@@ -114,8 +125,8 @@ public class DatabaseTest extends BaseDB{
 					dup[0].setQualityScore(6);
 					dup[0].setTransactionDate(transactionDate);
 					
-					db.storeAdvertisingEngineReportData(promotionPK, AdEngine.Google.name(), report);
-					db.storeAdvertisingEngineReportData(promotionPK, AdEngine.Google.name(), dup);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), report);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), dup);
 					break;
 				}
 				default: report = null;
@@ -132,7 +143,7 @@ public class DatabaseTest extends BaseDB{
 			//get report data from database
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, -365);
-			List<ReportObject> ret = db.getReportData(promotionPK, AdEngine.Google.name(), cal.getTime(), null);
+			List<ReportObject> ret = db.getReportData(promotionID, AdEngine.Google.name(), cal.getTime(), null);
 			int c = 0;
 			for(ReportObject r: ret){
 				System.out.println("#"+c+" ---------------------------------------");										
@@ -160,11 +171,15 @@ public class DatabaseTest extends BaseDB{
 	}
 	
 	public void Test_TrafficEstimatorData(){
-		//test store proc of traffic estimator data
+		
+		/* ******************************************************************************************* */
+		//*** test store proc of traffic estimator data to the TrafficEstimator table		
 		//store_TrafficEstimatorData();
 		
-		//test get traffic estimator data from the database
+		/* ******************************************************************************************* */
+		//*** test get traffic estimator data from the database		
 		get_TrafficEstimatorData();
+		
 	}
 	
 	public void store_TrafficEstimatorData(){
@@ -182,7 +197,7 @@ public class DatabaseTest extends BaseDB{
 			TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(test_accountId,test_campaignId, KeywordMatchType.EXACT, KeywordWithBid);
 			
 			//store data to the database
-			db.storeTrafficEstimatorData(promotionPK, AdEngine.Google.name(), ret);
+			db.storeTrafficEstimatorData(promotionID, AdEngine.Google.name(), ret);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -194,7 +209,7 @@ public class DatabaseTest extends BaseDB{
 			String keyword;
 			
 			keyword = "civil wedding ceremony venues";
-			List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionPK, keyword, AdEngine.Google.name());
+			List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionID, keyword, AdEngine.Google.name());
 			System.out.println(keyword + " ==============================================");
 			int c = 0;
 			for(TrafficEstimatorDataObject t : ret){
@@ -212,6 +227,140 @@ public class DatabaseTest extends BaseDB{
 			e.printStackTrace();
 		}
 	}
+	
+	public void Test_DefaultBid(){
+		
+		try {
+			/* ******************************************************************************************* */
+			//*** store default bid to the AdvertisingEnginePromotion table
+			//db.storeDefaultBid(promotionPK, AdEngine.Google.name(), 2000000L);
+			
+			/* ******************************************************************************************* */
+			//*** update defalt bid amount to the keywords that are set to accept default bid value to the KeywordBid table
+			//db.UpdateDefaultBidForKeywords(promotionPK, AdEngine.Google.name());
+			
+			/* ******************************************************************************************* */
+			//*** get default bid amount from the AdvertisingEnginePromotion table
+			Long ret = db.getDefaultBid(promotionID, AdEngine.Google.name());
+			System.out.println("DefaultBid = " + ret);
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
+	
+	public void Test_KeywordDataObject(){
+		try{
+			/* ******************************************************************************************* */
+			//*** store KeywordDataObject to the KeywordBid table
+			//store_KeywordDataObject();
+			
+			
+			/* ******************************************************************************************* */
+			//*** get Latest Biddable AdGroup Criteria from the database
+			get_KeywordDataObject(1);
+			get_KeywordDataObject(2);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void store_KeywordDataObject(){
+		try{
+			//*** test for Existed KeywordBid			
+			ArrayList<KeywordDataObject> kdo1 = genKeywordDataObj(MatchType.Exact.getValue());
+			db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo1);			
+			
+			//*** test for New Bid on Keyword			
+			ArrayList<KeywordDataObject> kdo2 = genKeywordDataObj(MatchType.Broad.getValue());
+			db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo2);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void get_KeywordDataObject(int caseNum){
+		try{			
+			switch(caseNum){
+				case 1:{
+					//*** get Latest Biddable AdGroup Criteria from the database
+					List<KeywordDataObject> ret = db.getLatestBiddableAdGroupCriteria(promotionID, AdEngine.Google.name());
+					int i = 0;
+					for(KeywordDataObject kd : ret){
+						System.out.println("#"+i+"----------------------------");
+						System.out.println("keyword = " + kd.getKeyword());
+						System.out.println("keywordId = " + kd.getBidID());
+						System.out.println("matchType = " + kd.getMatchType());
+						System.out.println("microBidAmount = " + kd.getMicroBidAmount());
+						System.out.println("approvalStatus = " + kd.getApprovalStatus());
+						System.out.println("qualityScore = " + kd.getQualityScore());
+						System.out.println("firstPageCpc = " + kd.getFirstPageCpc());
+						System.out.println("createdDate = " + kd.getCreatedDate());
+						i++;
+					}
+					break;
+				}
+				case 2:{
+					//*** get ALL Biddable AdGroup Criteria from the database
+					HashMap<String, ArrayList<KeywordDataObject>> rets = db.getAllBiddableAdGroupCriteria(promotionID, AdEngine.Google.name(), new Date(2011, 1, 1), null);
+					Set<String> ks = rets.keySet();
+					int i = 0;
+					for(String k : ks){
+						System.out.println("#"+i+" = "+k+" ----------------------------");
+						ArrayList<KeywordDataObject> kds = rets.get(k);
+						int j = 0;
+						for(KeywordDataObject kd : kds){
+							System.out.println("->"+j);
+							System.out.println("keyword = " + kd.getKeyword());
+							System.out.println("keywordId = " + kd.getBidID());
+							System.out.println("matchType = " + kd.getMatchType());
+							System.out.println("microBidAmount = " + kd.getMicroBidAmount());
+							System.out.println("approvalStatus = " + kd.getApprovalStatus());
+							System.out.println("qualityScore = " + kd.getQualityScore());
+							System.out.println("firstPageCpc = " + kd.getFirstPageCpc());
+							System.out.println("createdDate = " + kd.getCreatedDate());
+							j++;
+						}
+						i++;
+					}
+				}
+			}			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void Test_BidDataObject(){
+		try{
+			
+			
+			
+			/* ******************************************************************************************* */
+			//*** get Latest Bids from the database
+			List<BidElement> bids = db.getLatestBids(promotionID, AdEngine.Google.name());
+			int i = 0;
+			for(BidElement be : bids){
+				System.out.println("#"+i+"----------------------------");
+				System.out.println("keyword = " + be.getKeyword());
+				System.out.println("matchType = " + be.getMatchType());
+				System.out.println("microBidAmount = " + be.getMicroBidAmount());				
+				i++;
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
+
+	
+	
+	// Helper methods
 	
 	public void prepDataInDatabase_reportData(){	
 		
@@ -281,7 +430,7 @@ public class DatabaseTest extends BaseDB{
 					+ "VALUES (?,?,?,?,?,?,?,?,?)";
 	
 			jdbcTemplate.update(strSQL, new Object[]
-			{ keywordPK, 2, promotionPK, new Date(), 0, 1, 100000, 0, new Date() });
+			{ keywordPK, 2, promotionID, new Date(), 0, 1, 100000, 0, new Date() });
 			
 			System.out.println();
 		}
@@ -304,7 +453,7 @@ public class DatabaseTest extends BaseDB{
 					+ "VALUES (?,?,?,?,?,?,?,?)";
 	
 			jdbcTemplate.update(strSQL, new Object[]
-			{ keywordPK, promotionPK, new Date(), 0, 0, 0, 0, 1 });
+			{ keywordPK, promotionID, new Date(), 0, 0, 0, 0, 1 });
 			
 			System.out.println();
 		}
@@ -371,6 +520,38 @@ public class DatabaseTest extends BaseDB{
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private ArrayList<KeywordDataObject> genKeywordDataObj(String matchType){
+		ArrayList<KeywordDataObject> ret  = new ArrayList<KeywordDataObject>();		
+		
+		//get keyword list for the promotion
+		ArrayList<String> kws  = new ArrayList<String>();
+		String sql = "select k.Keyword from Keyword k inner join PromotionKeywordAssociation pka on k.KeywordPK = pka.KeywordFK where PromotionFK = 71";
+		List<Map<String, Object>> item = jdbcTemplate.queryForList(sql);
+		for(Map<String, Object> k : item){
+			kws.add((String) k.get("Keyword"));
+		}
+				
+		//generate fake transactions
+		int c = 0;
+		for(String k : kws){
+			KeywordDataObject kd = new KeywordDataObject();
+			kd.setApprovalStatus("approved");
+			kd.setBidID(Long.valueOf(10000+c));
+			kd.setCreatedDate(new Date());
+			kd.setFirstPageCpc(Long.valueOf(200+new Date().getHours()));
+			kd.setIsEligibleForShowing(true);
+			kd.setKeyword(k);
+			kd.setMatchType(matchType);
+			kd.setMicroBidAmount(300000L);
+			kd.setNegative(false);
+			kd.setQualityScore(77);
+			ret.add(kd);
+			c++;
+		}		
+		
+		return ret;
 	}
 	
 	public void init(){
