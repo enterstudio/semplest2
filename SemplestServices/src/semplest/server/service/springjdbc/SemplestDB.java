@@ -304,10 +304,12 @@ public class SemplestDB extends BaseDB
 
 	public static List<BidElement> getLatestBids(int promotionID, String searchEngine) throws Exception
 	{
-		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType,kb.CompetitionType, kb.StartDate from Promotion p  "
+		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, " 
+				+ " kb.isActive, kb.isDefaultValue from Promotion p  "
 				+ "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " 
+				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
 				+ "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
 		try
 		{
