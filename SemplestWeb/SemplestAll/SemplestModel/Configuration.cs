@@ -91,5 +91,7 @@ namespace SemplestModel
         public Nullable<int> ServiceNumberServiceThreads { get; set; }
         public string ServiceSMTP { get; set; }
         public string ESBWebServerURL { get; set; }
+        public bool AdwordsUseSandbox { get; set; }
+        public string SemplestEncryptionkey { get; set; }
     }
 }

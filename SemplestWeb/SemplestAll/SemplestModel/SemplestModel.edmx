@@ -508,6 +508,8 @@
           <Property Name="ServiceNumberServiceThreads" Type="int" />
           <Property Name="ServiceSMTP" Type="varchar" MaxLength="50" />
           <Property Name="ESBWebServerURL" Type="varchar" MaxLength="100" />
+          <Property Name="AdwordsUseSandbox" Type="bit" Nullable="false" />
+          <Property Name="SemplestEncryptionkey" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -765,7 +767,7 @@
           <Property Name="PromotionDescription" Type="nvarchar" Nullable="false" MaxLength="2000" />
           <Property Name="PromotionStartDate" Type="datetime2" Nullable="false" />
           <Property Name="PromotionEndDate" Type="datetime2" />
-          <Property Name="LandingPageURL" Type="nvarchar" Nullable="false" MaxLength="35" />
+          <Property Name="LandingPageURL" Type="nvarchar" Nullable="false" MaxLength="1024" />
           <Property Name="PromotionBudgetAmount" Type="money" Nullable="false" />
           <Property Name="BudgetCycleFK" Type="int" Nullable="false" />
           <Property Name="CycleStartDate" Type="datetime2" />
@@ -1779,6 +1781,7 @@
           <Parameter Name="ApprovalStatus" Type="varchar" Mode="In" />
           <Parameter Name="FirstPageMicroCpc" Type="int" Mode="In" />
           <Parameter Name="IsEligibleForShowing" Type="bit" Mode="In" />
+          <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
         <Function Name="AddReportData" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="PromotionID" Type="int" Mode="In" />
@@ -2427,6 +2430,8 @@
           <Property Type="Int32" Name="ServiceNumberServiceThreads" />
           <Property Type="String" Name="ServiceSMTP" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Type="String" Name="ESBWebServerURL" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="AdwordsUseSandbox" Nullable="false" />
+          <Property Type="String" Name="SemplestEncryptionkey" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2731,7 +2736,7 @@
           <Property Type="String" Name="PromotionDescription" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="PromotionStartDate" Nullable="false" />
           <Property Type="DateTime" Name="PromotionEndDate" />
-          <Property Type="String" Name="LandingPageURL" Nullable="false" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="LandingPageURL" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
           <Property Type="Decimal" Name="PromotionBudgetAmount" Nullable="false" Precision="19" Scale="4" />
           <Property Type="Int32" Name="BudgetCycleFK" Nullable="false" />
           <Property Type="DateTime" Name="CycleStartDate" />
@@ -3899,6 +3904,8 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="SemplestEncryptionkey" ColumnName="SemplestEncryptionkey" />
+                <ScalarProperty Name="AdwordsUseSandbox" ColumnName="AdwordsUseSandbox" />
                 <ScalarProperty Name="ESBWebServerURL" ColumnName="ESBWebServerURL" />
                 <ScalarProperty Name="ServiceSMTP" ColumnName="ServiceSMTP" />
                 <ScalarProperty Name="ServiceNumberServiceThreads" ColumnName="ServiceNumberServiceThreads" />
@@ -4541,7 +4548,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="72">
+      <Diagram Name="SemplestModel" ZoomLevel="31">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
