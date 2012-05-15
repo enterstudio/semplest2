@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import semplest.keywords.properties.ProjectProperties;
 
@@ -56,6 +58,7 @@ public class catUtils
     return toCat( java.util.Arrays.copyOfRange( nodes, 0, index ));
   }
   public static int nodes( String cat ){ return cat.split("/" ).length; }
+  public static int size( String cat ){ return cat.split("/" ).length; }
   public static String parent( String cat ){ return init( cat );}
   
   //----------------------------------------
@@ -143,6 +146,30 @@ public class catUtils
     return longest;
   }
 
+  //- Descendants --------------------------------------------------
+  public static HashMap<String,String> catId( String file ){
+    return ioUtils.readPair( file );   
+  }
+  public static String[] descendants(HashMap<String,String> cids, String c){
+    ArrayList<String> res = new ArrayList<String>();
+    for( Map.Entry<String,String> e: cids.entrySet())
+      if( e.getKey().indexOf( c ) == 0 ) res.add( e.getKey() );
+    return res.toArray( new String[]{});
+  }
+  public static String[] descendants (HashMap<String,String> cids, String c, 
+      int level){
+    int cl = size( c ) + level;
+    String[] d = descendants( cids, c );
+    ArrayList<String> res = new ArrayList<String>();
+    for( String e: d)
+      if( size( e ) == cl ) res.add( e );
+    return res.toArray( new String[]{});
+  }
+  public static String[] children(HashMap<String,String> cids, String c){
+    return descendants( cids, c, 1 ); 
+  }
+
+
   //---------------------------------------------------------------
   // combine nodes into a category
   private static String toCat( String[] nodes ){
@@ -193,8 +220,8 @@ public class catUtils
     }
     return false;
   }
-  //-------------------------------------------------------------
-  public static void main (String[] args){
+  // ------------
+  public static void ctest (){
 
     String[] cats = { 
       "a/b/c/d/e/f", 
@@ -203,12 +230,27 @@ public class catUtils
       "a/b/c", 
       "a/b" };
 
-
     String a   = ancestor( cats );   
     String la  = longestAncestor( cats );   
     String la3 = longestAncestor3( cats );   
 
     System.out.println( a + " : " + la + " : " + la3 );
+  }
+
+  //-------------------------------------------------------------
+  public static void main (String[] args){
+    
+    String File = "/semplest/data/dmoz/all.cids";
+    HashMap<String,String> cid =  catId( File );
+
+    long start = System.currentTimeMillis();
+    String[] ch     = children( cid, args[0] ); 
+    String[] des2   = descendants( cid, args[0], 2 ); 
+    long end = System.currentTimeMillis();
+
+    for( String r: ch) System.out.println( r );
+    for( String r: des2) System.out.println( r );
+    System.out.println("Duration: " + (end - start) + " ms");
 
   }
 }
