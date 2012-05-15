@@ -58,9 +58,12 @@ namespace Semplest.SharedResources.Services
                 }
                 return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
             }
-            catch (Exception ex)
+            catch
             {
-                throw new Exception(returnData);
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
             }
         }
 
@@ -69,81 +72,102 @@ namespace Semplest.SharedResources.Services
                                 string searchTerm, string description, string[] adds, string url,
                                 GeoTargetObject[] gt, Int32[] nGrams)
         {
-            var jsonHash = new Dictionary<string, string>();
-            String jsonCategories = JsonConvert.SerializeObject(categories);
-            jsonHash.Add("categories", jsonCategories);
-            jsonHash.Add("companyName", companyName);
-            jsonHash.Add("searchTerm", searchTerm);
-            string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
-            jsonHash.Add("adds", jsonAdds);
-            string jsonSEngines = JsonConvert.SerializeObject(searchEngines);
-            jsonHash.Add("searchEngines", jsonSEngines);
-            string jsonGt = JsonConvert.SerializeObject(gt);
-            jsonHash.Add("gt", jsonGt);
-            jsonHash.Add("description", description);
-            jsonHash.Add("url", url);
-            nGrams = new[] { 50, 50 };
-            //nGrams = new Int32[] { 1,2,3 };
-            string jsonNgrams = JsonConvert.SerializeObject(nGrams);
-            jsonHash.Add("nGrams", jsonNgrams);
-            string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-            //string returnData = string.Empty;
-            string returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            if (jsonstrlist == "Service Timeout")
+            string returnData = string.Empty;
+            try
             {
-                throw new Exception("Service Timeout for GetKeywords");
+                var jsonHash = new Dictionary<string, string>();
+                String jsonCategories = JsonConvert.SerializeObject(categories);
+                jsonHash.Add("categories", jsonCategories);
+                jsonHash.Add("companyName", companyName);
+                jsonHash.Add("searchTerm", searchTerm);
+                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+                jsonHash.Add("adds", jsonAdds);
+                string jsonSEngines = JsonConvert.SerializeObject(searchEngines);
+                jsonHash.Add("searchEngines", jsonSEngines);
+                string jsonGt = JsonConvert.SerializeObject(gt);
+                jsonHash.Add("gt", jsonGt);
+                jsonHash.Add("description", description);
+                jsonHash.Add("url", url);
+                nGrams = new[] { 50, 50 };
+                //nGrams = new Int32[] { 1,2,3 };
+                string jsonNgrams = JsonConvert.SerializeObject(nGrams);
+                jsonHash.Add("nGrams", jsonNgrams);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+                //string returnData = string.Empty;
+                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                if (jsonstrlist == "Service Timeout")
+                {
+                    throw new Exception("Service Timeout for GetKeywords");
+                }
+
+                //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+                //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
+                var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
+                var newKPOlist = new List<KeywordProbabilityObject>();
+
+                foreach (var kpolis in listoflist)
+                {
+                    newKPOlist.Add(kpolis);
+                }
+
+                return newKPOlist;
             }
-
-            //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-            //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
-            var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
-            var newKPOlist = new List<KeywordProbabilityObject>();
-
-            foreach (var kpolis in listoflist)
+            catch 
             {
-                newKPOlist.Add(kpolis);
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
             }
-
-            return newKPOlist;
         }
 
         public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm,
                                         string description, string[] adds, string url, Int32[] nGrams)
         {
-            var jsonHash = new Dictionary<string, string>();
-            String jsonCategories = JsonConvert.SerializeObject(categories);
-            jsonHash.Add("categories", jsonCategories);
-            jsonHash.Add("companyName", companyName);
-            jsonHash.Add("searchTerm", searchTerm);
-            string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
-            jsonHash.Add("adds", jsonAdds);
-            jsonHash.Add("description", description);
-            jsonHash.Add("url", url);
-            nGrams = new[] {50, 50};
-            //nGrams = new Int32[] { 1,2,3 };
-            string jsonNgrams = JsonConvert.SerializeObject(nGrams);
-            jsonHash.Add("nGrams", jsonNgrams);
-            string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-            //string returnData = string.Empty;
-            string returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-
-            var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-            var newstrlist = new List<string>();
-
-            foreach (var strlis in listoflist)
+            string returnData = string.Empty;
+            try
             {
-                newstrlist.AddRange(strlis);
-            }
+                var jsonHash = new Dictionary<string, string>();
+                String jsonCategories = JsonConvert.SerializeObject(categories);
+                jsonHash.Add("categories", jsonCategories);
+                jsonHash.Add("companyName", companyName);
+                jsonHash.Add("searchTerm", searchTerm);
+                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+                jsonHash.Add("adds", jsonAdds);
+                jsonHash.Add("description", description);
+                jsonHash.Add("url", url);
+                nGrams = new[] { 50, 50 };
+                //nGrams = new Int32[] { 1,2,3 };
+                string jsonNgrams = JsonConvert.SerializeObject(nGrams);
+                jsonHash.Add("nGrams", jsonNgrams);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
-            return newstrlist;
+                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+
+                var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
+                var newstrlist = new List<string>();
+
+                foreach (var strlis in listoflist)
+                {
+                    newstrlist.AddRange(strlis);
+                }
+
+                return newstrlist;
+            }
+            catch 
+            {
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
+            }
         }
 
         public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
