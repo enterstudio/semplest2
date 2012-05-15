@@ -112,7 +112,7 @@
         if (!isSelectedKeywordsAdded)
             tabStrip.append({
                 text: "View Keywords",
-                contentUrl: '/Campaign/KeyWords'
+                contentUrl: '@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'
             });
             var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
             tabStrip.select(tab);
