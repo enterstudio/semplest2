@@ -9,12 +9,9 @@ using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
-using Semplest.Core.Services;
 using SemplestModel;
-using SemplestWebApp.Helpers;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
-using Semplest.SharedResources.Services;
 using System.Configuration;
 
 namespace Semplest.Core.Controllers
