@@ -2,7 +2,6 @@
 <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
-
 @Html.AntiForgeryToken()
 @{
     ViewBag.Title = "Campaign";
@@ -14,7 +13,11 @@
         display: none;
         visibility: hidden;
     }
-</style>
+    .expand-padding
+    {
+        padding-right: 2px;
+    }
+    ​</style>
 <link href="@Url.Content("~/Content/formStyle.css")"  rel="Stylesheet" />
 @section Title{
 Ad Setup
@@ -147,7 +150,7 @@ Ad Setup
                 tabStrip.select(tab);
             }
         }
-        else {alert(id);}
+        else { alert(id); }
 
     }
     function OnFailure(ajaxContext) {
