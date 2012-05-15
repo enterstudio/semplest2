@@ -150,6 +150,10 @@ public class catUtils
   public static HashMap<String,String> catId( String file ){
     return ioUtils.readPair( file );   
   }
+  // O(n) time
+  // [Note:] Would be faster to sort O(n log n), 
+  // find first and last indices O(log n), if repeated often. 
+  // O(n) seems fast enougn (about 100 ms for 0.3 Million cats)
   public static String[] descendants(HashMap<String,String> cids, String c){
     ArrayList<String> res = new ArrayList<String>();
     for( Map.Entry<String,String> e: cids.entrySet())
