@@ -11,11 +11,14 @@
         <link href="@Url.Content("~/Content/example.css")" rel="stylesheet" type="text/css" />
         <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="Stylesheet" />
         <link href="@Url.Content("~/Content/kendo.metro.min.css")"  rel="Stylesheet" />
+        
+        
         <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
         <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"> </script>
         <script src="@Url.Content("~/Scripts/kendo.web.min.js")" type="text/javascript"> </script>
         <script src="@Url.Content("~/Scripts/jquery.UiBlock.js")" type="text/javascript"> </script>
         <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"> </script>
+
         <script type="text/jscript">
 @{
     Debug.Assert(Context.Request.ApplicationPath != null, "Context.Request.ApplicationPath != null");
@@ -32,6 +35,27 @@
        
        @*this will inject individual script in the head tags (added by:tudor)*@
     @RenderSection("headscript", required: false)
+
+    <style type="text/css">
+ 
+ 
+    #headerF{position:relative;line-height:1em;}
+    .filterform {
+      width:220px;
+      font-size:12px;
+      display:block;
+    }
+    .filterform input {
+      -moz-border-radius:5px;
+      border-radius:5px;
+      -webkit-border-radius:5px;
+    }
+    
+   </style>
+   
+
+
+
 
     </head>
     <body class="centerWrap">
