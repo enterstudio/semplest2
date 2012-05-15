@@ -33,6 +33,7 @@ import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
+import semplest.server.service.springjdbc.storedproc.UpdateRemainingBudgetInCycleSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
@@ -79,13 +80,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adEngList.add("Google");
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			Thread.sleep(1000);
+			//Thread.sleep(1000);
 			// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
 			// Double(25.0), 30);
 			// String u = adEng.getURL("www.xyz.com");
 			// Tovah Photography 2 47 Photography 58 38 Event and portrait
 			// photos
-			//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+			adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
 
 		}
 		catch (Exception e)
@@ -283,6 +284,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				logger.info("Add Keyword " + keywordDataObj.getKeyword() + " to " + promotionID.toString());
 				Thread.sleep(500); // Wait for google
+				//*****TEST
 				TEST++;
 				if (TEST > 15) return;
 			}
@@ -501,8 +503,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.error("NO SUPPORT FOR ADENGINE " + adEngine);
 			}
 		}
-		// **NEED TO CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
-		
+		// CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
+		UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
+		Integer res = updateBudgetSP.execute(PromotionID,  promoObj.getPromotionStartDate(), new Date());
 		// Call bidding service to split the budget
 		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"),getTimeoutMS());
 		// setup the budget for each ad engine

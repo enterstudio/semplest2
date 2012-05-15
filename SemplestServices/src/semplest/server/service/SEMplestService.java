@@ -198,7 +198,7 @@ public class SEMplestService
 				logger.error("ERROR - The Data Header rec from ESB was not SEMplest REGISTER");
 				return false;
 			}
-			logger.debug("Done wit Reg to ESB");
+			logger.debug("Done with Reg to ESB");
 			return true;
 		}
 		catch (Exception e)
