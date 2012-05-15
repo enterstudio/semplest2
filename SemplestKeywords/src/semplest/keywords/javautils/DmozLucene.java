@@ -40,7 +40,7 @@ public class DmozLucene {
     // Specify the analyzer for tokenizing text.
     // (The same analyzer should be used for indexing and searching)
     try {
-    	logger.info("DmozLucene()");
+      logger.info("DmozLucene()");
       analyzer = new StandardAnalyzer(Version.LUCENE_35);
 
       // 1. create the index
@@ -50,9 +50,9 @@ public class DmozLucene {
           Version.LUCENE_35, analyzer);
       w = new IndexWriter(index, config);
     } catch (Exception e ){
-    	
-    	logger.error(e.getMessage());
-        e.printStackTrace();
+
+      logger.error(e.getMessage());
+      e.printStackTrace();
     }
   }
 
@@ -76,12 +76,9 @@ public class DmozLucene {
       e.printStackTrace();
     }
   }
-  
+
   // ---------
   public String[] search(String qs ){
-
-    // the "desc" arg specifies the default field to use
-    // when no field is explicitly specified in the query.
     String[] res = new String[0];
     try {
       res = search(qs, 10);
@@ -96,6 +93,7 @@ public class DmozLucene {
 
     String[] res = new String[0];
     try {
+      // "desc" is the default field to search
       Query qp = new QueryParser(Version.LUCENE_35,"desc",analyzer).parse(qs); 
 
       // Search
@@ -128,7 +126,7 @@ public class DmozLucene {
   public static void interactiveTest(){
     final String dfile = ProjectProperties.lucenedfile;
     // final String dfile = "dmoz/all/hCounts.new";
-    
+
     DmozLucene dl = new DmozLucene();
     loadDesc( dl, dfile);
     Console c = System.console();
@@ -147,7 +145,7 @@ public class DmozLucene {
   // [Important Note:] Make sure that text and the query are *both* either
   // o stemmed
   // o or unstemmed
-  // Search will not work if one is stemmed and the other is not.
+  // Search will not work if one is stemmed and the other not.
 
   //-------------------------------
   public static void main(String[] args) throws IOException, ParseException {
