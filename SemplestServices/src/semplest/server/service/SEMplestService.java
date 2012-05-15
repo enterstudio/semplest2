@@ -57,6 +57,7 @@ public class SEMplestService
 			if (service.readProperties(serviceNameOverride))
 			{
 				service.initializeService(service);
+				service.setUpConfigurationParameters();
 				logger.info("called Init Service");
 				executor = Executors.newFixedThreadPool(service.connectionData.getNumberServiceThreads());
 				if (service.registerServiceWithESB())
@@ -99,11 +100,7 @@ public class SEMplestService
 			is.close();
 
 			connectionData = new ESBConnectionData();
-			connectionData.setServerURI((String) SemplestConfiguration.configData.get("ServiceESBServerIP")); // properties.getProperty("ESBServerIP"));
-			connectionData.setServerport(String.valueOf((Integer) SemplestConfiguration.configData.get("ServiceESBServerPort"))); //properties.getProperty("ESBServerPort"));
-			connectionData.setPingFrequencyMS((Integer) SemplestConfiguration.configData.get("ServicePingFrequencyMS")); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 			connectionData.setServiceOffered(properties.getProperty("semplest.service"));
-			connectionData.setNumberServiceThreads((Integer) SemplestConfiguration.configData.get("ServiceNumberServiceThreads")); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
 			if (ServiceNameOveride != null)
 			{
 				connectionData.setServiceName(ServiceNameOveride);
@@ -122,6 +119,15 @@ public class SEMplestService
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	private void setUpConfigurationParameters()
+	{
+		connectionData.setServerURI((String) SemplestConfiguration.configData.get("ServiceESBServerIP")); // properties.getProperty("ESBServerIP"));
+		connectionData.setServerport(String.valueOf((Integer) SemplestConfiguration.configData.get("ServiceESBServerPort"))); //properties.getProperty("ESBServerPort"));
+		connectionData.setPingFrequencyMS((Integer) SemplestConfiguration.configData.get("ServicePingFrequencyMS")); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
+		connectionData.setNumberServiceThreads((Integer) SemplestConfiguration.configData.get("ServiceNumberServiceThreads")); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
+		logger.info("Setup Config Parameters");
 	}
 
 	public void configureLogging()
