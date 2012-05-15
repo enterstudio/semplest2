@@ -3,33 +3,16 @@ package semplest.service.bidding;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
-
-//import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-
-
-
-import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.service.SemplestConfiguration;
-//import semplest.server.protocol.ProtocolEnum.NetworkSetting;
-//import semplest.server.protocol.ProtocolEnum.MatchType;
-
-//import semplest.server.protocol.adengine.TrafficEstimatorObject;
-
-
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
-
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.gson.Gson;
@@ -51,9 +34,14 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 		
 	}
 	

@@ -1,5 +1,6 @@
 package semplest.test;
 
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.TestServiceInterface;
 
@@ -30,9 +31,14 @@ public class TestServiceImpl implements TestServiceInterface
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 		
 	}
 

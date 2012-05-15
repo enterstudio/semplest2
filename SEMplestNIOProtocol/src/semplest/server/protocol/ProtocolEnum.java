@@ -3,7 +3,8 @@ package semplest.server.protocol;
 import java.util.HashMap;
 
 
-public class ProtocolEnum {
+public class ProtocolEnum 
+{
 	
 	private static HashMap<String,HashMap<String, String>> matchTypeMap = new HashMap<String,HashMap<String, String>>();
 	static {

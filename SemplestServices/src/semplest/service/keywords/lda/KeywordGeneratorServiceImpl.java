@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import semplest.keywords.lda.KWGenDmozLDAServer;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.SemplestConfiguration;
@@ -53,9 +54,14 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 		/*
 		 * Init Keyword Data
 		 */

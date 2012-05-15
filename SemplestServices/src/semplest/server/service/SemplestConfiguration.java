@@ -9,9 +9,15 @@ import semplest.server.service.springjdbc.SemplestDB;
 
 public class SemplestConfiguration implements Runnable
 {
+	private final Object obj;
 	private static final Logger logger = Logger.getLogger(SemplestConfiguration.class);
 
 	public static HashMap<String, Object> configData = null;
+	
+	public SemplestConfiguration (Object obj)
+	{
+		this.obj = obj;
+	}
 	@Override
 	public void run()
 	{
@@ -31,13 +37,17 @@ public class SemplestConfiguration implements Runnable
 					logger.info(key + "= null");
 				}
 			}
-			Thread.sleep(0);
+			
 		}
 		catch (Exception e)
 		{
 			logger.error("FAILED TO LOAD CONFIGUATION");
 			configData = null;
 			e.printStackTrace();
+		}
+		synchronized(obj)
+		{
+			obj.notify();
 		}
 		
 	}

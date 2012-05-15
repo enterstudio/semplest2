@@ -6,7 +6,7 @@ import javax.mail.Session;
 
 import org.apache.log4j.Logger;
 
-import semplest.server.service.SEMplestService;
+import semplest.server.service.SemplestConfiguration;
 
 public class MailSessionObject implements Runnable
 {
@@ -18,7 +18,7 @@ public class MailSessionObject implements Runnable
 	{
 		logger.info("initialize SMTP server ");
 		Properties props = new Properties();
-		props.put("mail.smtp.host", SEMplestService.properties.getProperty("SMTP"));
+		props.put("mail.smtp.host", (String) SemplestConfiguration.configData.get("ServiceSMTP")); //SEMplestService.properties.getProperty("SMTP"));
 		session = Session.getInstance(props, null);
 		try
 		{

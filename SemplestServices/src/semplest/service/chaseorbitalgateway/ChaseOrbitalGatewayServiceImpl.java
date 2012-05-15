@@ -25,9 +25,14 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 		/*
 		 * Initialize gateway
 		 */

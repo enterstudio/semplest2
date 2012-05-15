@@ -17,6 +17,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidSimulatorObject;
@@ -165,10 +166,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		try
 		{
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
-			SemplestConfiguration config = new SemplestConfiguration();
-			Thread t = new Thread(config);
-			t.start();
-			Thread.sleep(1000);
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
 			
 			
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(62, "Google"); 
@@ -2303,9 +2308,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		 * Read in the Config Data from DB into HashMap<key, Object>
 		 * SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
 
 	}
 

@@ -99,11 +99,11 @@ public class SEMplestService
 			is.close();
 
 			connectionData = new ESBConnectionData();
-			connectionData.setServerURI(properties.getProperty("ESBServerIP"));
-			connectionData.setServerport(properties.getProperty("ESBServerPort"));
-			connectionData.setPingFrequencyMS(Integer.parseInt(properties.getProperty("PingFrequencyMS")));
+			connectionData.setServerURI((String) SemplestConfiguration.configData.get("ServiceESBServerIP")); // properties.getProperty("ESBServerIP"));
+			connectionData.setServerport(String.valueOf((Integer) SemplestConfiguration.configData.get("ServiceESBServerPort"))); //properties.getProperty("ESBServerPort"));
+			connectionData.setPingFrequencyMS((Integer) SemplestConfiguration.configData.get("ServicePingFrequencyMS")); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 			connectionData.setServiceOffered(properties.getProperty("semplest.service"));
-			connectionData.setNumberServiceThreads(Integer.parseInt(properties.getProperty("NumberServiceThreads")));
+			connectionData.setNumberServiceThreads((Integer) SemplestConfiguration.configData.get("ServiceNumberServiceThreads")); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
 			if (ServiceNameOveride != null)
 			{
 				connectionData.setServiceName(ServiceNameOveride);
@@ -113,7 +113,7 @@ public class SEMplestService
 			{
 				connectionData.setServiceName(properties.getProperty("ServiceName"));
 			}
-			logger.info("Read in Properites for service " + connectionData.getServiceName() + ":" + connectionData.getServiceOffered());
+			logger.info("Configuration for service " + connectionData.getServiceName() + ":" + connectionData.getServiceOffered());
 			return true;
 		}
 		catch (Exception e)

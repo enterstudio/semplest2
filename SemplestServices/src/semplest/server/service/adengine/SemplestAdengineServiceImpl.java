@@ -85,7 +85,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// String u = adEng.getURL("www.xyz.com");
 			// Tovah Photography 2 47 Photography 58 38 Event and portrait
 			// photos
-			adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+			//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
 
 		}
 		catch (Exception e)
@@ -102,10 +102,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		 * Read in the Config Data from DB into HashMap<key, Object>
 		 * SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
-		//
+		synchronized (object)
+		{
+			object.wait();
+		}
 
 	}
 

@@ -17,7 +17,7 @@ public class SemplestAdengineService implements ServiceInterface
 		try
 		{
 			logger.debug("Running  SemplestAdengineService Service " + methodName + ":" + jsonStr);
-			SemplestSchedulerServiceImpl service = new SemplestSchedulerServiceImpl();
+			SemplestAdengineServiceImpl service = new SemplestAdengineServiceImpl();
 			Class[] parameterTypes = new Class[]
 			{ String.class };
 			Method method = service.getClass().getMethod(methodName, parameterTypes);

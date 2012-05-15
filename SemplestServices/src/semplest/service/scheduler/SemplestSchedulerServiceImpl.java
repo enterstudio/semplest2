@@ -24,10 +24,14 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
-		SemplestConfiguration configDB = new SemplestConfiguration();
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
 		configThread.start();
-		Thread.sleep(2000);
+		synchronized (object)
+		{
+			object.wait();
+		}
 		/*
 		 * 
 		 */

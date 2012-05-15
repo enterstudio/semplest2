@@ -15,6 +15,8 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.ProtocolEnum;
+import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
 import com.google.gson.Gson;
@@ -84,6 +86,19 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	@Override
 	public void initializeService(String input) throws Exception
 	{
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object>
+		 * SemplestConfiguation.configData
+		 */
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
+		//
 		sessionObj = new MailSessionObject();
 		Thread t = new Thread(sessionObj);
 		t.start();
