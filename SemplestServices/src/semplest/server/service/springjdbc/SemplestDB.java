@@ -33,6 +33,7 @@ import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.GetLatestBiddableAdGroupCriteriaSP;
+import semplest.server.service.springjdbc.storedproc.GetLatestTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 
 public class SemplestDB extends BaseDB
@@ -436,7 +437,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<TrafficEstimatorDataObject> trafficEstDataObjMapper = new BeanPropertyRowMapper(TrafficEstimatorDataObject.class);
+	
 
 	/*
 	 * This get the last created Traffic Estimator Data for one keyword
@@ -449,30 +450,19 @@ public class SemplestDB extends BaseDB
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
-		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC,b.BidType,p.IsNegative, te.CreatedDate "
-				+ "from KeywordBid kb "
-				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
-				+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
-				+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  "
-				+ "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK "
-				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-				+ "inner join  "
-				+ "(select te.KeywordBidFK,MAX(te.CreatedDate) [lastDate]  from TrafficEstimator te "
-				+ "group by te.KeywordBidFK) mte on te.KeywordBidFK = kb.KeywordBidPK and mte.lastDate = te.CreatedDate "
-				+ "where pka.PromotionFK = ? and k.Keyword = ? and a.AdvertisingEngine = ?";
-		try
+		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
+		return trafficEst.execute(promotionID, keyword, advertisingEngine);
+	}
+	
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimator(Integer promotionID, String advertisingEngine)
+			throws Exception
+	{
+		if (!AdEngine.existsAdEngine(advertisingEngine))
 		{
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, keyword, advertisingEngine }, trafficEstDataObjMapper);
+			throw new Exception(advertisingEngine + " Not Found");
 		}
-		catch (EmptyResultDataAccessException e)
-		{
-			return null;
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
+		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
+		return trafficEst.execute(promotionID, null, advertisingEngine);
 	}
 
 	/*
