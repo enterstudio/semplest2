@@ -50,6 +50,7 @@ $(document).ready(function () {
         if (event.keyCode == 13)
         { event.preventDefault(); }
     });
+
     // event handler for select
     var onSelect = function (e) {
         // access the selected item via e.item (jQuery object)
