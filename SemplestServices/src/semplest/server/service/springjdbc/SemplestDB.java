@@ -652,7 +652,7 @@ public class SemplestDB extends BaseDB
 		}
 		String strSQL = "select top 1 tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
-				+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? " + "order by tdb.CreatedDate";
+				+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? order by tdb.CreatedDate DESC";
 
 		try
 		{
