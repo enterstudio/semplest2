@@ -1,9 +1,7 @@
 ﻿@model Semplest.Core.Models.HomeModelChild
-@{
-    ViewBag.Title = "My Account";
-}
+
 @section Title{
-    My Account
+@ViewBag.Title
 }
 @section Navbar{
     <div id="panelbar-images">
@@ -20,6 +18,7 @@
 <table>
 @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
 {
+    
     foreach (SemplestModel.Promotion p in pg.Promotions)
     {
         if (p.IsLaunched && !p.IsCompleted)

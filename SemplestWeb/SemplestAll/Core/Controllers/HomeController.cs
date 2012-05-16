@@ -42,10 +42,12 @@ namespace SemplestWebApp.Controllers
         {
             SemplestEntities dbContext = new SemplestEntities();
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            
             HomeModelChild child = new HomeModelChild();
             //dbContext.Credentials.Where(x =>x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups
 
                 IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+                ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
                 child.ProductGroups = cCred.First().User.Customer.ProductGroups;
             return View(child);
         }
