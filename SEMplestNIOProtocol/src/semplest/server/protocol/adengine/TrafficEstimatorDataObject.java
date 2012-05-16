@@ -1,20 +1,22 @@
 package semplest.server.protocol.adengine;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class TrafficEstimatorDataObject
 {
-	private Long microBid;
+	private String keyword;
+	private Integer microBid;
 	private Float aveMicroCost;
 	private Float aveNumberClicks;
 	private Float avePosition;
 	private Float aveCPC;
 	private Date createdDate;
-	public Long getMicroBid()
+	
+	public Integer getMicroBid()
 	{
 		return microBid;
 	}
-	public void setMicroBid(Long microBid)
+	public void setMicroBid(Integer microBid)
 	{
 		this.microBid = microBid;
 	}
@@ -57,6 +59,12 @@ public class TrafficEstimatorDataObject
 	public void setCreatedDate(Date createdDate)
 	{
 		this.createdDate = createdDate;
+	}
+	public String getKeyword() {
+		return keyword;
+	}
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 	
 }
