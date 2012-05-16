@@ -8,7 +8,7 @@ $(document).ready(function () {
         .addClass("k-state-disabled").unbind("keydown");
     budjet.wrapper.find(".k-link")
         .addClass("k-state-disabled").unbind("mousedown");
-    //$('.k-dropdownlist').kendoDropDownList();
+    $('.k-dropdownlist').kendoDropDownList({ optionLabel: "--" });
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".st    atus");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
@@ -235,6 +235,6 @@ function addNestedForm(container, counter, ticks, content) {
         }));
     }
     if (container == "#addresses") {
-        //$("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList();
+        $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList({ optionLabel: "--" });
     }
 }
