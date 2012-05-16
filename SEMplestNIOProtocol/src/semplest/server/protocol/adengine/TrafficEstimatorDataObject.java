@@ -11,8 +11,12 @@ public class TrafficEstimatorDataObject
 	private Float avePosition;
 	private Float aveCPC;
 	private Date createdDate;
+
+	private Boolean isActive;
+
 	
 	public Integer getMicroBid()
+
 	{
 		return microBid;
 	}
@@ -60,6 +64,16 @@ public class TrafficEstimatorDataObject
 	{
 		this.createdDate = createdDate;
 	}
+
+	public Boolean getIsActive()
+	{
+		return isActive;
+	}
+	public void setIsActive(Boolean isActive)
+	{
+		this.isActive = isActive;
+	}
+
 	public String getKeyword() {
 		return keyword;
 	}
