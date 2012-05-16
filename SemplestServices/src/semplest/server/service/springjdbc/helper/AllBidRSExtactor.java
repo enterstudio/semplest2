@@ -3,6 +3,7 @@ package semplest.server.service.springjdbc.helper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.springframework.dao.DataAccessException;
@@ -18,18 +19,18 @@ public class AllBidRSExtactor implements ResultSetExtractor<HashMap<String,Array
 		HashMap<String,ArrayList<BidElement>> result = new HashMap<String,ArrayList<BidElement>>();
 
 		while (rs.next())
-		{
+		{				
 			String keyword = rs.getString("Keyword");
 			BidElement bidEle = new BidElement();
 			bidEle.setCompetitiveType(rs.getString("CompetitionType"));
-			bidEle.setEndDate(rs.getDate("EndDate"));
+			bidEle.setEndDate(rs.getTimestamp("EndDate"));
 			bidEle.setIsActive(rs.getBoolean("IsActive"));
 			bidEle.setIsDefaultValue(rs.getBoolean("IsDefaultValue"));
 			bidEle.setKeyword(keyword);
 			bidEle.setKeywordAdEngineID(rs.getLong("KeywordAdEngineID"));
 			bidEle.setMatchType(rs.getString("BidType"));
 			bidEle.setMicroBidAmount(rs.getLong("MicroBidAmount"));
-			bidEle.setStartDate(rs.getDate("StartDate"));
+			bidEle.setStartDate(rs.getTimestamp("StartDate"));
 			//
 			if (result.containsKey(keyword))
 			{
