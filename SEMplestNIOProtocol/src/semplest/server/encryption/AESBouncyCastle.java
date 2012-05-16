@@ -44,7 +44,7 @@ public class AESBouncyCastle
 			AESBouncyCastle aes = AESBouncyCastle.getInstance("12345678901234567890123456789044");
 			//6AwyALVRh4I= OLD EMAIL PASSWORD
 			
-			String encrypt = aes.encrypt("password2");
+			String encrypt = aes.encrypt("01tsemplest");
 			System.out.println("encrypted = " + encrypt);
 			String decrypt = aes.decrypt(encrypt);
 			System.out.println("Decrypted = " + decrypt);

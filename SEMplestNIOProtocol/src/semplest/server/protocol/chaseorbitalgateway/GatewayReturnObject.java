@@ -16,6 +16,12 @@ public class GatewayReturnObject
 	private String Message;
 	private String AVSCode;
 	private String CVV2ResponseCode;
+	
+	//New Order
+	private String OrderID = null;
+	private String amountRequestedNoDecimal = null;
+	private String amountRedeemedNoDecimal = null;
+	private String remainingBalanceNoDecimal = null;
 	//Profile
 	private String CustomerRefNum = null;
 	
@@ -131,5 +137,38 @@ public class GatewayReturnObject
 	{
 		CustomerRefNum = customerRefNum;
 	}
+	public String getOrderID()
+	{
+		return OrderID;
+	}
+	public void setOrderID(String orderID)
+	{
+		OrderID = orderID;
+	}
+	public String getAmountRequestedNoDecimal()
+	{
+		return amountRequestedNoDecimal;
+	}
+	public void setAmountRequestedNoDecimal(String amountRequestedNoDecimal)
+	{
+		this.amountRequestedNoDecimal = amountRequestedNoDecimal;
+	}
+	public String getAmountRedeemedNoDecimal()
+	{
+		return amountRedeemedNoDecimal;
+	}
+	public void setAmountRedeemedNoDecimal(String amountRedeemedNoDecimal)
+	{
+		this.amountRedeemedNoDecimal = amountRedeemedNoDecimal;
+	}
+	public String getRemainingBalanceNoDecimal()
+	{
+		return remainingBalanceNoDecimal;
+	}
+	public void setRemainingBalanceNoDecimal(String remainingBalanceNoDecimal)
+	{
+		this.remainingBalanceNoDecimal = remainingBalanceNoDecimal;
+	}
+	
 
 }

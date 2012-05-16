@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,6 +32,7 @@ import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
 import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
+import semplest.server.service.springjdbc.storedproc.GetLatestBiddableAdGroupCriteriaSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 
 public class SemplestDB extends BaseDB
@@ -369,7 +369,7 @@ public class SemplestDB extends BaseDB
 
 	}
 
-	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
+	
 
 	/*
 	 * This get the last created KeywordBid Data for all keywords associated
@@ -381,28 +381,11 @@ public class SemplestDB extends BaseDB
 		{
 			throw new Exception(advertisingEngine + " Not Found");
 		}
-		String strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,ki.ApprovalStatus,b.BidType, ki.FirstPageMicroCPC, "
-				+ "ki.QualityScore,ki.IsEligibleForShowing,p.IsNegative, ki.CreatedDate from KeywordBid kb  "
-				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
-				+ "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
-				+ "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join KeywordBidData ki on ki.KeywordBidFK = kb.KeywordBidPK "
-				+ "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join  "
-				+ "(select kbd.KeywordBidFK,MAX(kbd.CreatedDate) [lastDate]  from KeywordBidData kbd "
-				+ "group by kbd.KeywordBidFK) mkbd on mkbd.KeywordBidFK = kb.KeywordBidPK and mkbd.lastDate = ki.CreatedDate "
-				+ "where pka.PromotionFK = ? and a.AdvertisingEngine = ?";
-		try
-		{
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, advertisingEngine }, bidObjMapper);
-		}
-		catch (EmptyResultDataAccessException e)
-		{
-			return null;
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
+		
+	
+		GetLatestBiddableAdGroupCriteriaSP getLatestBiddableAdGroupCriteria = new GetLatestBiddableAdGroupCriteriaSP();
+		return getLatestBiddableAdGroupCriteria.execute(promotionID, advertisingEngine);
+		
 	}
 
 	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate,
