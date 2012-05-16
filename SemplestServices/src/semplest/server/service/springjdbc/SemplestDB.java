@@ -395,7 +395,7 @@ public class SemplestDB extends BaseDB
 		String strSQL= null;
 		if (endDate == null)
 		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType [MatchType],mkbd.FirstPageMicroCPC, " +
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " +
 					"mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK " +
 					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " +
 					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK " +
@@ -411,7 +411,7 @@ public class SemplestDB extends BaseDB
 			try
 			{
 				return jdbcTemplate.query(strSQL, new Object[]
-					{ promotionID, adEngine, startDate,  promotionID, adEngine }, new AllBiddableRSExtractor());
+					{ promotionID, adEngine,startDate,  promotionID, adEngine }, new AllBiddableRSExtractor());
 			}
 			catch (EmptyResultDataAccessException e)
 			{
@@ -424,7 +424,7 @@ public class SemplestDB extends BaseDB
 		}
 		else
 		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType [MatchType],mkbd.FirstPageMicroCPC, " +
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " +
 					"mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK " +
 					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " +
 					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK " +
