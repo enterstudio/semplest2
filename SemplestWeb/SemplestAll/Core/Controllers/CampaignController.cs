@@ -211,8 +211,10 @@ namespace Semplest.Core.Controllers
 
                     model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
                     Session.Add("FullModel", model);
+
+                    return Json("BillingLaunch");
                 }
-                return Json("BillingLaunch");
+                return Json("ModelState Invalid required data is missing");
             }
             catch (Exception ex)
             {
