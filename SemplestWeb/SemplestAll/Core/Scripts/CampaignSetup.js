@@ -44,7 +44,12 @@ $(document).ready(function () {
 
     // Dropdownlist Range in BillingLaunch
     $("#dropDownRange").kendoDropDownList();
-
+    //default the map to be displayed
+    doOptions();
+    $(":input").keypress(function (event) {
+        if (event.keyCode == 13)
+        { event.preventDefault(); }
+    });
     // event handler for select
     var onSelect = function (e) {
         // access the selected item via e.item (jQuery object)
@@ -58,6 +63,7 @@ $(document).ready(function () {
             $("#ProductGroup_EndDate").addClass("enddate");
             disposeDatePicker();
         }
+
     };
 
     function disposeDatePicker() {
