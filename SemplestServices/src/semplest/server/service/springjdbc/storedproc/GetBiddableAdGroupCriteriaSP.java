@@ -14,12 +14,12 @@ import org.springframework.jdbc.object.StoredProcedure;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.service.springjdbc.BaseDB;
 
-public class GetLatestBiddableAdGroupCriteriaSP extends StoredProcedure
+public class GetBiddableAdGroupCriteriaSP extends StoredProcedure
 {
-	private static final String SPROC_NAME = "GetLatestBiddableAdGroupCriteria";
+	private static final String SPROC_NAME = "GetBiddableAdGroupCriteria";
 	private static final RowMapper<KeywordDataObject> bidObjMapper = new BeanPropertyRowMapper(KeywordDataObject.class);
 	
-	public GetLatestBiddableAdGroupCriteriaSP()
+	public GetBiddableAdGroupCriteriaSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
