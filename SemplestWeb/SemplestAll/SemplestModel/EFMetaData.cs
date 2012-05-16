@@ -65,7 +65,12 @@ namespace SemplestModel
     {
         public List<StateCode> StateCodes
         {
-            get { return new SemplestEntities().StateCodes.OrderBy(t => t.StateAbbr).ToList(); }
+            get
+            {
+                var stateCodes = new SemplestEntities().StateCodes.OrderBy(t => t.StateAbbr).ToList();
+                stateCodes.Insert(0, new StateCode(){ StateAbbrPK = -2, StateAbbr="--"});
+                return stateCodes;
+            }
         }
         public bool Delete { get; set; }
         internal sealed class GeoTargetingMetaData
@@ -96,7 +101,7 @@ namespace SemplestModel
         internal sealed class PromotionAdMetaData
         {
             [Required]
-            [StringLength(25,ErrorMessage = "25 characters max")]
+            [StringLength(25, ErrorMessage = "25 characters max")]
             public string AdTitle { get; set; }
             [Required]
             [StringLength(35, ErrorMessage = "35 characters max")]

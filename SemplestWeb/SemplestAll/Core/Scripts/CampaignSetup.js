@@ -8,7 +8,7 @@ $(document).ready(function () {
         .addClass("k-state-disabled").unbind("keydown");
     budjet.wrapper.find(".k-link")
         .addClass("k-state-disabled").unbind("mousedown");
-    $('.k-dropdownlist').kendoDropDownList({ optionLabel: "--" });
+    $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
     var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".st    atus");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
