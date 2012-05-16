@@ -326,26 +326,30 @@ namespace SemplestWebApp.Services
 
         private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {
+            var existingAdenginesSeleccted = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
+            List<int> templist = new List<int>();
+            model.ProductGroup.AdEnginesList.ForEach(t=> templist.Add(Convert.ToInt32(t)));
+            var dn = existingAdenginesSeleccted.Where(t => !templist.Contains(t.AdvertisingEngineFK));
+            foreach (var adsel in dn)
+            {
+                dbcontext.PromotionAdEngineSelecteds.Remove(adsel);
+            }
+
             foreach (string aes in model.ProductGroup.AdEnginesList)
             {
                 int adengineid = Convert.ToInt32(aes);
-                var proAdEng = dbcontext.AdvertisingEngines.Where(m => m.AdvertisingEnginePK == adengineid);
-                if (proAdEng.Any())
+                var proAdEng = dbcontext.AdvertisingEngines.FirstOrDefault(m => m.AdvertisingEnginePK == adengineid);
+                if (proAdEng!= null)
                 {
-                    var adEngSelQuery = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
-                    if (!adEngSelQuery.Any())
+                    var adEngSelQuery = existingAdenginesSeleccted.FirstOrDefault(m => m.AdvertisingEngineFK == proAdEng.AdvertisingEnginePK);
+                    if (adEngSelQuery == null)
                     {
                         var adEngineSel = new PromotionAdEngineSelected
                         {
-                            AdvertisingEngineFK = proAdEng.First().AdvertisingEnginePK,
+                            AdvertisingEngineFK = proAdEng.AdvertisingEnginePK,
                             PromotionFK = promo.PromotionPK
                         };
                         dbcontext.PromotionAdEngineSelecteds.Add(adEngineSel);
-                    }
-                    else
-                    {
-                        //adEngSelQuery.First().AdvertisingEngine = proAdEng.First();
-                        //adEngSelQuery.First().AdvertisingEngineFK = proAdEng.First().AdvertisingEnginePK;
                     }
                     //dbcontext.SaveChanges();
                 }
