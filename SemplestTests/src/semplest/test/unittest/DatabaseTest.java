@@ -29,6 +29,7 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.BaseDB;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TransactionManager;
@@ -55,11 +56,11 @@ public class DatabaseTest extends BaseDB{
 		//test.Test_ReportData();				
 		//test.Test_TrafficEstimatorData();						
 		//test.Test_DefaultBid();		
-		//test.Test_KeywordDataObject();		
+		test.Test_KeywordDataObject();		
 		//test.Test_BidObject();	
 		//test.Test_TargetedDailyBudget();
 		
-		test.Test_PromotionData();
+		//test.Test_PromotionData();
 		
 		System.out.println("*** DONE ***");
 	}	
@@ -183,7 +184,8 @@ public class DatabaseTest extends BaseDB{
 		
 		/* ******************************************************************************************* */
 		//*** test get traffic estimator data from the database		
-		get_TrafficEstimatorData();
+		//get_TrafficEstimatorData(1);
+		//get_TrafficEstimatorData(2);
 		
 	}
 	
@@ -209,23 +211,42 @@ public class DatabaseTest extends BaseDB{
 		}
 	}
 	
-	public void get_TrafficEstimatorData(){
+	public void get_TrafficEstimatorData(int caseNum){
 		try {
-			String keyword;
-			
-			keyword = "civil wedding ceremony venues";
-			List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionID, keyword, AdEngine.Google.name());
-			System.out.println(keyword + " ==============================================");
-			int c = 0;
-			for(TrafficEstimatorDataObject t : ret){
-				System.out.println("#"+c+" ---------------------------------------");
-				System.out.println("MicroBid = " + t.getMicroBid());
-				System.out.println("AveMicroCost = " + t.getAveMicroCost());
-				System.out.println("AveNumberClicks = " + t.getAveNumberClicks());
-				System.out.println("AvePosition = " + t.getAvePosition());				
-				System.out.println("AveCPC = " + t.getAveCPC());				
-				System.out.println("CreatedDate = " + t.getCreatedDate());				
-				c++;
+			switch(caseNum){
+				case 1:{//getLatestTrafficEstimatorForKeyword()				
+					String keyword = "civil wedding ceremony venues";
+					List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionID, keyword, AdEngine.Google.name());
+					System.out.println("keyword = " + keyword);
+					int c = 0;
+					for(TrafficEstimatorDataObject t : ret){
+						System.out.println("#"+c+" ---------------------------------------");
+						System.out.println("MicroBid = " + t.getMicroBid());
+						System.out.println("AveMicroCost = " + t.getAveMicroCost());
+						System.out.println("AveNumberClicks = " + t.getAveNumberClicks());
+						System.out.println("AvePosition = " + t.getAvePosition());				
+						System.out.println("AveCPC = " + t.getAveCPC());				
+						System.out.println("CreatedDate = " + t.getCreatedDate());				
+						c++;
+					}
+					break;
+				}
+				case 2:{//getLatestTrafficEstimator()
+					List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimator(promotionID, adEngine);					
+					int c = 0;
+					for(TrafficEstimatorDataObject t : ret){
+						System.out.println("#"+c+" ---------------------------------------");
+						//System.out.println("MicroBid = " + t.get);
+						System.out.println("MicroBid = " + t.getMicroBid());
+						System.out.println("AveMicroCost = " + t.getAveMicroCost());
+						System.out.println("AveNumberClicks = " + t.getAveNumberClicks());
+						System.out.println("AvePosition = " + t.getAvePosition());				
+						System.out.println("AveCPC = " + t.getAveCPC());				
+						System.out.println("CreatedDate = " + t.getCreatedDate());				
+						c++;
+					}
+					break;
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -264,8 +285,8 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** get Latest Biddable AdGroup Criteria from the database
-			get_KeywordDataObject(1);
-			//get_KeywordDataObject(2);
+			//get_KeywordDataObject(1);
+			get_KeywordDataObject(2);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -497,8 +518,52 @@ public class DatabaseTest extends BaseDB{
 			//System.out.println("AccountID = " + adEngineId.getAccountID()); System.out.println("CampaignID = " + adEngineId.getCampaignID()); System.out.println("AdGroupID = " + adEngineId.getAdGroupID());
 			
 			/* ******************************************************************************************* */
-			//*** get AdEngine ID from the database
+			//*** get AdEngine Promotions from the database
+			/*
+			List<AdvertisingEnginePromotionObj> promotions = db.getAdvertisingEnginePromotion(google_accountId);
+			for(AdvertisingEnginePromotionObj a : promotions){
+				System.out.println("->");
+				System.out.println("AdEngineAccountID = " + a.getAdvertisingEngineAccountID());
+				System.out.println("PromotionID = " + a.getPromotionID());
+				System.out.println("AdEngineCampaignID = " + a.getAdvertisingEngineCampaignID());
+				System.out.println("AdEngineAdgroupID = " + a.getAdvertisingEngineAdGroupID());
+			}
+			*/
 			
+			/* ******************************************************************************************* */
+			//*** get AdEngine campaign from the database
+			/*
+			AdvertisingEnginePromotionObj campaign = db.getAdvertisingEngineCampaign(google_accountId, promotionID);
+			System.out.println("AdEngineAccountID = " + campaign.getAdvertisingEngineAccountID());
+			System.out.println("PromotionID = " + campaign.getPromotionID());
+			System.out.println("AdEngineCampaignID = " + campaign.getAdvertisingEngineCampaignID());
+			System.out.println("AdEngineAdgroupID = " + campaign.getAdvertisingEngineAdGroupID());
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** get AdEngine campaign from the database
+			/*
+			List<HashMap<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine);
+			int i = 0;
+			for(HashMap<String, Object> m : accs){
+				System.out.println("#"+i+" ---------------------------------------");
+				System.out.println("AccountID = " + m.get("AccountID"));
+				System.out.println("CustomerName = " + m.get("CustomerName"));
+				i++;
+			}
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** set AdEngine AdGroupID and get CampaignID at AdvertisingEnginePromotion table
+			//db.setAdvertisingEngineAdGroupID(google_campaignId, 54321L);
+
+			/* ******************************************************************************************* */
+			//*** set AdID For AdGroup at the AdvertisingEngineAds table
+			//db.setAdIDForAdGroup(12345L, adEngine, 17);
+			
+			/* ******************************************************************************************* */
+			//*** update Promotion To AdEngineAccountID at the AdvertisingEnginePromotion table
+			//db.updatePromotionToAdEngineAccountID(google_campaignId, true, true, 50.00);
 			
 		}
 		catch(Exception e){
