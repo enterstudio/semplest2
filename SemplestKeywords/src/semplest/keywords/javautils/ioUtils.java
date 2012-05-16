@@ -566,8 +566,8 @@ public class ioUtils {
 		  String[] nGramsSubC = {"arts","business","computers","games","health","home","news","recreation","reference","science","shopping","society","sports"};
 		  String baseMultiWPath = "/semplest/data/dmoz/multiwords/";
 		  for (int i=0; i< nGramsSubC.length; i++){
-				String biPathout = baseMultiWPath+nGramsSubC[i]+".v2.txt.3";
-				String biPathin = baseMultiWPath+nGramsSubC[i]+".txt.3";
+				String biPathout = baseMultiWPath+nGramsSubC[i]+".v2.txt.2";
+				String biPathin = baseMultiWPath+nGramsSubC[i]+".txt.2";
 				 System.out.println("Generating "+biPathout);
 				 ioUtils.reStemmingFileMultiWord(biPathin, biPathout);
 		  }

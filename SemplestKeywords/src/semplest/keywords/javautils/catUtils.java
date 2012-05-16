@@ -242,17 +242,18 @@ public class catUtils
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    
+    args = new String[] {"top/business"};
     String File = "/semplest/data/dmoz/all.cids";
     HashMap<String,String> cid =  catId( File );
 
     long start = System.currentTimeMillis();
-    String[] ch     = children( cid, args[0] ); 
-    String[] des2   = descendants( cid, args[0], 2 ); 
+    //String[] ch     = children( cid, args[0] ); 
+    String[] des2   = descendants( cid, args[0]); 
     long end = System.currentTimeMillis();
 
-    for( String r: ch) System.out.println( r );
+    //for( String r: ch) System.out.println( r );
     for( String r: des2) System.out.println( r );
+   System.out.println(des2.length);
     System.out.println("Duration: " + (end - start) + " ms");
 
   }
