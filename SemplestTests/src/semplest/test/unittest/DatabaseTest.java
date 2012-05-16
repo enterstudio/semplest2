@@ -21,6 +21,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -41,7 +43,9 @@ public class DatabaseTest extends BaseDB{
 	private ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	private SemplestDB db = new SemplestDB();
 	
+	private Integer customerID = 48;
 	private Integer promotionID = 71;
+	private String adEngine = AdEngine.Google.name();
 	private Long google_accountId = 5058200123L;
 	private Long google_campaignId = 116193337L;
 		
@@ -51,10 +55,11 @@ public class DatabaseTest extends BaseDB{
 		//test.Test_ReportData();				
 		//test.Test_TrafficEstimatorData();						
 		//test.Test_DefaultBid();		
-		//test.Test_KeywordDataObject();
+		//test.Test_KeywordDataObject();		
+		//test.Test_BidObject();	
+		//test.Test_TargetedDailyBudget();
 		
-		//test.Test_BidDataObject();
-		
+		test.Test_PromotionData();
 		
 		System.out.println("*** DONE ***");
 	}	
@@ -260,7 +265,7 @@ public class DatabaseTest extends BaseDB{
 			/* ******************************************************************************************* */
 			//*** get Latest Biddable AdGroup Criteria from the database
 			get_KeywordDataObject(1);
-			get_KeywordDataObject(2);
+			//get_KeywordDataObject(2);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -326,6 +331,7 @@ public class DatabaseTest extends BaseDB{
 						}
 						i++;
 					}
+					break;
 				}
 			}			
 		}
@@ -334,21 +340,82 @@ public class DatabaseTest extends BaseDB{
 		}
 	}
 	
-	public void Test_BidDataObject(){
+	public void Test_BidObject(){
 		try{
-			
-			
+			/* ******************************************************************************************* */
+			//*** store bid object to KeywordBid table
+			//store_BidObject();
 			
 			/* ******************************************************************************************* */
-			//*** get Latest Bids from the database
-			List<BidElement> bids = db.getLatestBids(promotionID, AdEngine.Google.name());
-			int i = 0;
-			for(BidElement be : bids){
-				System.out.println("#"+i+"----------------------------");
-				System.out.println("keyword = " + be.getKeyword());
-				System.out.println("matchType = " + be.getMatchType());
-				System.out.println("microBidAmount = " + be.getMicroBidAmount());				
-				i++;
+			//*** get bid objects from the database
+			//get_BidObject(1);  //get latest bids
+			get_BidObject(2);  //get all bids
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void store_BidObject(){
+		try{
+			//*** test for Existed KeywordBid			
+			ArrayList<BidElement> bo1 = genBidElements(MatchType.Broad.getValue(), false);
+			db.storeBidObjects(promotionID, adEngine, bo1);
+			
+			//*** test for New Bid on Keyword		
+			ArrayList<BidElement> bo2 = genBidElements(MatchType.Phrase.getValue(), false);
+			db.storeBidObjects(promotionID, adEngine, bo2);
+			
+			//*** test for IsNegative keywords
+			ArrayList<BidElement> bo3 = genBidElements(MatchType.Exact.getValue(), true);
+			db.storeBidObjects(promotionID, adEngine, bo3);
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public void get_BidObject(int caseNum){
+		try{	
+			switch(caseNum){
+				case 1:{
+					//*** get Latest Bids from the database
+					List<BidElement> bids = db.getLatestBids(promotionID, AdEngine.Google.name());
+					int i = 0;
+					for(BidElement be : bids){
+						System.out.println("#"+i+"----------------------------");
+						System.out.println("keyword = " + be.getKeyword());
+						System.out.println("matchType = " + be.getMatchType());
+						System.out.println("microBidAmount = " + be.getMicroBidAmount());	
+						i++;
+					}
+					break;
+				}
+				case 2:{
+					//*** get ALL Bids from the database
+					Calendar cal = Calendar.getInstance();
+					cal.set(2011, 1, 1); Date start = cal.getTime();
+					cal.set(2012, 5, 15); Date end = cal.getTime();
+					HashMap<String, ArrayList<BidElement>> rets = db.getAllBids(promotionID, adEngine, start, end);
+					Set<String> ks = rets.keySet();
+					int i = 0;
+					for(String k : ks){
+						System.out.println("#"+i+" = "+k+" ----------------------------");
+						ArrayList<BidElement> bids = rets.get(k);
+						int j = 0;
+						for(BidElement be : bids){
+							System.out.println("->"+j);
+							System.out.println("keyword = " + be.getKeyword());
+							System.out.println("matchType = " + be.getMatchType());
+							System.out.println("microBidAmount = " + be.getMicroBidAmount());			
+							System.out.println("startDate = " + be.getStartDate());
+							System.out.println("endDate = " + be.getEndDate());
+							j++;
+						}
+						i++;
+					}
+					break;
+				}
 			}
 		}
 		catch(Exception e){
@@ -356,8 +423,90 @@ public class DatabaseTest extends BaseDB{
 		}
 	}
 	
+	public void Test_TargetedDailyBudget(){
+		try {
+			/* ******************************************************************************************* */
+			//*** store Targeted Daily Budget to TargetedDailyBudget table
+			//store_TargetedDailyBudget();
+			
+			/* ******************************************************************************************* */
+			//*** get Targeted Daily Budget from TargetedDailyBudget table
+			//get_TargetedDailyBudget(1);  //get LATEST TargetedDailyBudget
+			//get_TargetedDailyBudget(2);  //get ALL TargetedDailyBudget
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
+	public void store_TargetedDailyBudget(){		
+		try {
+			Long targetedDailyMicroBudget = 70000L;
+			Integer targetedDailyClicks = 300;
+			db.storeTargetedDailyBudget(promotionID, adEngine, targetedDailyMicroBudget, targetedDailyClicks);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void get_TargetedDailyBudget(int caseNum){
+		try{
+			switch(caseNum){
+				case 1:{ //getLatestTargetedDailyBudget
+					TargetedDailyBudget ret = db.getLatestTargetedDailyBudget(promotionID, adEngine);
+					System.out.println("TargetedDailyMicroBudget = " + ret.getTargetedDailyMicroBudget());
+					System.out.println("TargetedDailyClicks = " + ret.getTargetedDailyClicks());
+					break;
+				}
+				case 2:{//getAllTargetedDailyBudget
+					Calendar cal = Calendar.getInstance(); cal.set(2011, 1, 1);					
+					Date startDate = cal.getTime();
+					List<TargetedDailyBudget> ret = db.getAllTargetedDailyBudget(promotionID, adEngine, startDate, null);
+					int i = 0;
+					for(TargetedDailyBudget t : ret){
+						System.out.println("#"+i+"----------------------------");
+						System.out.println("TargetedDailyMicroBudget = " + t.getTargetedDailyMicroBudget());
+						System.out.println("TargetedDailyClicks = " + t.getTargetedDailyClicks());
+						i++;
+					}
+					break;
+				}
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 
+	public void Test_PromotionData(){
+		try{
+			/* ******************************************************************************************* */
+			//*** add AdEngine AccountID to AdvertisingEngineAccount table
+			//db.addAdEngineAccountID(customerID, google_accountId, adEngine);
+			
+			/* ******************************************************************************************* */
+			//*** add Promotion To AdvertisingEnginePromotion table
+			//Long advertisingEngineAdGroupID = 12345L;
+			//db.addPromotionToAdEngineAccountID(promotionID, google_accountId, google_campaignId, advertisingEngineAdGroupID);
+			
+			/* ******************************************************************************************* */
+			//*** get AdEngine ID from the database
+			//AdEngineID adEngineId = db.getAdEngineID(promotionID, adEngine);
+			//System.out.println("AccountID = " + adEngineId.getAccountID()); System.out.println("CampaignID = " + adEngineId.getCampaignID()); System.out.println("AdGroupID = " + adEngineId.getAdGroupID());
+			
+			/* ******************************************************************************************* */
+			//*** get AdEngine ID from the database
+			
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	
 	
 	
 	// Helper methods
@@ -554,8 +703,39 @@ public class DatabaseTest extends BaseDB{
 		return ret;
 	}
 	
+	public ArrayList<BidElement> genBidElements(String matchType, boolean isNegative){
+		ArrayList<BidElement> ret = new ArrayList<BidElement>();
+		
+		//get valid keyword list from the promotion
+		ArrayList<String> kws  = new ArrayList<String>();
+		String sql = "select k.Keyword from Keyword k inner join PromotionKeywordAssociation pka on k.KeywordPK = pka.KeywordFK where PromotionFK = 71 and IsActive = 1";
+		List<Map<String, Object>> item = jdbcTemplate.queryForList(sql);
+		for(Map<String, Object> k : item){
+			kws.add((String) k.get("Keyword"));
+		}
+		
+		//generate fake transactions
+		int i = 0;
+		for(String k : kws){
+			BidElement be = new BidElement();
+			be.setKeyword(k);
+			be.setCompetitiveType(SemplestCompetitionType.NotSelected.name());
+			be.setKeywordAdEngineID(Long.valueOf(2000+i));
+			be.setMatchType(matchType);
+			be.setMicroBidAmount(12300L);
+			be.setIsNegative(isNegative);
+			be.setIsActive(true);
+			be.setIsDefaultValue(true);
+			be.setStartDate(new Date());
+			be.setEndDate(null);
+			ret.add(be);
+			i++;
+		}
+				
+		return ret;
+	}
+	
 	public void init(){
-		//insert test data to the database				
 		
 		
 	}
