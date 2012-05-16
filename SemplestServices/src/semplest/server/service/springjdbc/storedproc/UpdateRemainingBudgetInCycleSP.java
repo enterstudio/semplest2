@@ -36,7 +36,7 @@ public class UpdateRemainingBudgetInCycleSP  extends StoredProcedure
 		}
 		else
 		{
-			return (Integer) results.get("ID");
+			return ((Long)results.get("ID")).intValue();
 		}
 	}
 }
