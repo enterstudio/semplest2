@@ -2244,7 +2244,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 							Long in5 = new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue()));
 							///////////////////////////////////////////////////////////////*/
 							ret.setBidData(keyword, bidAmount, et.getMatchType().toString(), 
-									new Long(0), new Long((new Double(et.getAverageCPC()*1000000)).longValue()), new Double(0), estAdPosition, 
+									new Long((new Double(et.getAverageCPC()*1000000)).longValue()), new Long((new Double(et.getAverageCPC()*1000000)).longValue()), estAdPosition, estAdPosition, 
 									(float)(et.getMinClicksPerWeek()/7.0), (float)(et.getMaxClicksPerWeek()/7.0), 
 									new Long((new Double(et.getMinTotalCostPerWeek()*1000000/7.0).longValue())), new Long((new Double(et.getMaxTotalCostPerWeek()*1000000/7.0).longValue())));
 						}
