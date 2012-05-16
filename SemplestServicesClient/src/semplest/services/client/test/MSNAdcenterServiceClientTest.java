@@ -94,6 +94,7 @@ public class MSNAdcenterServiceClientTest {
 		{	
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
+		
 			//msn.createCampaign();
 			msn.getAccountID();
 			logger.info(msn.accountID);
@@ -270,8 +271,8 @@ public class MSNAdcenterServiceClientTest {
 						Long[] bidarray = ret.getBidList(k, MatchType.Exact.getValue());
 						for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
 			
-							double averDaylyCPC = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList))/14.0;
-							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyCPC = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList));
+							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList));
 							if(!bidMap.containsKey(k))
 								bidDat = new Double[bids.size()][3]; 
 							else
