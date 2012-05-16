@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.log4j.BasicConfigurator;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -23,16 +24,25 @@ import org.springframework.jdbc.core.RowMapper;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
+import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BidElement;
+import semplest.server.protocol.adengine.BudgetObject;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.BaseDB;
+import semplest.server.service.springjdbc.CustomerObj;
+import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TransactionManager;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
+import semplest.server.service.springjdbc.storedproc.UpdateRemainingBudgetInCycleSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.google.adwords.GoogleReportDownloader;
 
@@ -56,11 +66,12 @@ public class DatabaseTest extends BaseDB{
 		//test.Test_ReportData();				
 		//test.Test_TrafficEstimatorData();						
 		//test.Test_DefaultBid();		
-		test.Test_KeywordDataObject();		
+		//test.Test_KeywordDataObject();		
 		//test.Test_BidObject();	
-		//test.Test_TargetedDailyBudget();
-		
+		//test.Test_TargetedDailyBudget();		
 		//test.Test_PromotionData();
+		
+		test.Test_Other();
 		
 		System.out.println("*** DONE ***");
 	}	
@@ -185,7 +196,7 @@ public class DatabaseTest extends BaseDB{
 		/* ******************************************************************************************* */
 		//*** test get traffic estimator data from the database		
 		//get_TrafficEstimatorData(1);
-		//get_TrafficEstimatorData(2);
+		get_TrafficEstimatorData(2);
 		
 	}
 	
@@ -236,7 +247,7 @@ public class DatabaseTest extends BaseDB{
 					int c = 0;
 					for(TrafficEstimatorDataObject t : ret){
 						System.out.println("#"+c+" ---------------------------------------");
-						//System.out.println("MicroBid = " + t.get);
+						System.out.println("Keyword = " + t.getKeyword());
 						System.out.println("MicroBid = " + t.getMicroBid());
 						System.out.println("AveMicroCost = " + t.getAveMicroCost());
 						System.out.println("AveNumberClicks = " + t.getAveNumberClicks());
@@ -286,6 +297,7 @@ public class DatabaseTest extends BaseDB{
 			/* ******************************************************************************************* */
 			//*** get Latest Biddable AdGroup Criteria from the database
 			//get_KeywordDataObject(1);
+			
 			get_KeywordDataObject(2);
 		}
 		catch(Exception e){
@@ -565,6 +577,87 @@ public class DatabaseTest extends BaseDB{
 			//*** update Promotion To AdEngineAccountID at the AdvertisingEnginePromotion table
 			//db.updatePromotionToAdEngineAccountID(google_campaignId, true, true, 50.00);
 			
+			/* ******************************************************************************************* */
+			//*** get all customer data from the Customer table
+			/*
+			List<CustomerObj> ret = db.getAllCustomers();
+			int i = 0;
+			for(CustomerObj c : ret){
+				System.out.println("#"+i+"----------------------------");
+				System.out.println("name = " + c.getName());
+				System.out.println("customerPK = " + c.getCustomerPK());
+				System.out.println("billType = " + c.getBillType());
+				System.out.println("campaignCycleType = " + c.getCampaignCycleType());
+				System.out.println("cycleInDays = " + c.getCycleInDays());
+				System.out.println("totalTargetCycleBudget = " + c.getTotalTargetCycleBudget());
+				System.out.println("createdDate = " + c.getCreatedDate());
+				i++;
+			}
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** get budget from Promotion table
+			/*
+			BudgetObject b = db.getBudget(promotionID);
+			System.out.println("RemainingBudgetInCycle = " + b.getRemainingBudgetInCycle());
+			System.out.println("RemainingDays = " + b.getRemainingDays());
+			*/
+			
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public void Test_Other(){
+		try{
+			/* ******************************************************************************************* */
+			//*** Test GetKeywordForAdEngineSP(). Get keyword list from the database
+			/*
+			GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
+			List<KeywordProbabilityObject> keywordList = getKeywords.execute(promotionID,true,false);
+			int i = 0;
+			for(KeywordProbabilityObject k : keywordList){
+				System.out.println("#"+i+"----------------------------");
+				System.out.println("keyword = " + k.getKeyword());
+				System.out.println("probability = " + k.getSemplestProbability());
+				System.out.println("isActive = " + k.getIsActive());
+				System.out.println("isTargetGoogle = " + k.getIsTargetGoogle());
+				System.out.println("isTargetMsn = " + k.getIsTargetMSN());
+				i++;
+			}
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** Test GetAllPromotionDataSP(). Get promotion data from the database
+			/*
+			GetAllPromotionDataSP retpromo = new GetAllPromotionDataSP();
+			retpromo.execute(promotionID);
+			PromotionObj pd = retpromo.getPromotionData();
+			System.out.println("Promotions: -------------------");
+			System.out.println(ReflectionToStringBuilder.toString(pd));
+			List<AdsObject> ads = retpromo.getAds();
+			System.out.println("Ads: -------------------");
+			for(AdsObject a : ads){
+				System.out.println(ReflectionToStringBuilder.toString(a));
+			}
+			List<GeoTargetObject> gts = retpromo.getGeoTargets();
+			System.out.println("GeoTargets: -------------------");
+			for(GeoTargetObject g : gts){
+				System.out.println(ReflectionToStringBuilder.toString(g));
+			}
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** Test UpdateRemainingBudgetInCycleSP(). Update Remaining Budget In Cycle to the database.
+			///*
+			UpdateRemainingBudgetInCycleSP updbudget = new UpdateRemainingBudgetInCycleSP();
+			Calendar cal = Calendar.getInstance();
+			cal.set(2011, 1, 1); Date start = cal.getTime();
+			cal.set(2012, 06, 01); Date end = cal.getTime();
+			updbudget.execute(promotionID, start, end);
+			//*/
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -572,11 +665,9 @@ public class DatabaseTest extends BaseDB{
 	}
 	
 	
-	
-	
 	// Helper methods
 	
-	public void prepDataInDatabase_reportData(){	
+	private void prepDataInDatabase_reportData(){	
 		
 		//get report from google
 		ReportObject[] report = getReportFromGoogle();
@@ -768,7 +859,7 @@ public class DatabaseTest extends BaseDB{
 		return ret;
 	}
 	
-	public ArrayList<BidElement> genBidElements(String matchType, boolean isNegative){
+	private ArrayList<BidElement> genBidElements(String matchType, boolean isNegative){
 		ArrayList<BidElement> ret = new ArrayList<BidElement>();
 		
 		//get valid keyword list from the promotion
