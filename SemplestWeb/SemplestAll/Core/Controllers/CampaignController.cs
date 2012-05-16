@@ -251,6 +251,11 @@ namespace Semplest.Core.Controllers
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
+            SemplestEntities dbContext = new SemplestEntities();
+            //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
+            Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
+            pm.IsLaunched = true;
+            dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
             Logger.Write(logEnty);
