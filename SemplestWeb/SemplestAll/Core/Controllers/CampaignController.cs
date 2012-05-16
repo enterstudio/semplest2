@@ -139,7 +139,9 @@ namespace Semplest.Core.Controllers
                     //Session.Add("ProductGroup", model.ProductGroup);
                     return Json("Categories");
                 }
-                return View(model);
+                return Json("ModelState Invalid required data is missing");
+
+                //return View(model);
             }
             catch (Exception ex)
             { return Json(ex.ToString()); }
