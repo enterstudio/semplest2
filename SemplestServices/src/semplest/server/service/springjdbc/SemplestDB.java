@@ -392,9 +392,7 @@ public class SemplestDB extends BaseDB
 	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate,
 			Date endDate) throws Exception
 	{
-		
-		String strSQL = null;
-		java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
+		String strSQL= null;
 		if (endDate == null)
 		{
 			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType [MatchType],mkbd.FirstPageMicroCPC, " +
@@ -405,7 +403,7 @@ public class SemplestDB extends BaseDB
 					"left join  (select kbd.KeywordBidFK,kbd.ApprovalStatus ,kbd.FirstPageMicroCPC,kbd.QualityScore,kbd.IsEligibleForShowing,kbd.CreatedDate from KeywordBidData kbd " +
 					"inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK " +
 					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ? and kbd.CreatedDate <= ?) mkbd " +
+					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ?) mkbd " +
 					"on mkbd.KeywordBidFK = kb.KeywordBidPK " +
 					"where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
 			
