@@ -1,5 +1,7 @@
 package semplest.service.chaseorbitalgateway;
 
+import java.text.SimpleDateFormat;
+
 import org.apache.log4j.Logger;
 
 import semplest.server.encryption.AESBouncyCastle;
@@ -22,6 +24,7 @@ public class ChaseOrbitalGatewayObject extends Thread
 	public static String MerchantName = "SEMplest";
 	public static final String ORDERIDSTRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 	public static final int ORDERIDLENGTH = 22;
+	public static SimpleDateFormat MMDDYYYY = new SimpleDateFormat("MMddyyyy");
 	
 	
 	private static final Logger logger = Logger.getLogger(ChaseOrbitalGatewayObject.class);
