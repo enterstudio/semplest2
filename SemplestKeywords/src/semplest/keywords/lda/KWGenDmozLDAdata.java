@@ -19,17 +19,18 @@ public class KWGenDmozLDAdata implements Runnable{
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
-	private static String dfile = ProjectProperties.dfile;
-	private static String baseMultiWPath = ProjectProperties.baseMultiWPath;
+	private static String dfile; 
+	private static String baseMultiWPath ;
 	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
 	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
-	private static String[] nGramsSubC = ProjectProperties.nGramsSubC;
-	public int numTopics = ProjectProperties.numTopics;
-	public double userInfoWeight = ProjectProperties.userInfoWeight;
-	public int numKeywords = ProjectProperties.numKeywords;
+	private static String[] nGramsSubC; 
+	public int numTopics; 
+	public double userInfoWeight; 
+	public int numKeywordsGoogle; 
+	public int numKeywordsMSN; 
 	public static ProjectProperties pr; 
 	
-	public KWGenDmozLDAdata() throws IOException {
+	public KWGenDmozLDAdata(HashMap<String,Object> configData) throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){
 			String PROPSFILE = "../SemplestServices/bin/system.properties";
@@ -42,7 +43,16 @@ public class KWGenDmozLDAdata implements Runnable{
 		dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc"); */
 		try
 		{
-			pr=new ProjectProperties();
+			pr=new ProjectProperties(configData);
+			dfile = pr.dfile;
+			baseMultiWPath = pr.baseMultiWPath;
+			nGramsSubC = pr.nGramsSubC;
+			numTopics = pr.numTopics;
+			userInfoWeight = pr.userInfoWeight;
+			numKeywordsGoogle = pr.numKeywordsGoogle;
+			numKeywordsMSN = pr.numKeywordsMSN;
+ 
+		
 			logger.info("create DmozLucene()");
 			dl = new DmozLucene();
 			logger.info("Indexing dmoz description data...");
