@@ -260,7 +260,10 @@ namespace Semplest.Core.Controllers
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
             Logger.Write(logEnty);
 
-            return View();
+            //return View();
+            return Json("Your Product is Successfully Launched");
+            //return Json("LaunchAdProduct");
+
         }
 
 
