@@ -10,7 +10,7 @@
                     <label style="min-width: 45px">
                         Title</label>
                     
-                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Title" })
+                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
                     @Html.ValidationMessageFor(t => t.AdTitle, "", new { @class = "k-widget k-tooltip k-tooltip-validation" })
                     <label class="hint">
                         25 characters max.</label>
@@ -18,10 +18,10 @@
                 <li>
                     <label style="vertical-align: top">
                         Ad Copy</label>
-                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Ad Text" })
+                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
                     <label class="hint">
                         35 characters max.</label>
-                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAd hint alpha" })
+                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAd hint alpha", @maxlength = 35 })
                     <label class="hint">
                         35 characters max.</label>
                 </li>
