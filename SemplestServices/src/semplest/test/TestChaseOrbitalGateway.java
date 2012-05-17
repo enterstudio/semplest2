@@ -1,5 +1,7 @@
 package semplest.test;
 
+import java.util.Calendar;
+
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -42,6 +44,10 @@ public class TestChaseOrbitalGateway
 				System.out.println(a.getMessage());
 			}
 			System.out.println(" ORDERID + " +  a.getOrderID() + " Amount redeemed=" + a.getAmountRedeemedNoDecimal() + " Amount requested =" + a.getAmountRequestedNoDecimal() + " Remaining bal =" + a.getRemainingBalanceNoDecimal() );
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			GatewayReturnObject update = gatew.UpdateProfileRecurringBilling(r.getCustomerRefNum(), 100.99, cal.getTime());
+			System.out.println(update.getOrderID() + ":" + update.getIsGood());
 
 		}
 		catch (Exception iex)

@@ -289,8 +289,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 
 			//Managed Billing
 			request.setFieldValue("MBType", "R"); //Recurring
-			request.setFieldValue("MBOrderIDGenerationMethod", "DI"); //Dynamically generate orderID
-			request.setFieldValue("MBOrderRecurringStartDate", startingDate);
+			request.setFieldValue("MBOrderIdGenerationMethod", "DI"); //Dynamically generate orderID
+			request.setFieldValue("MBRecurringStartDate", startingDate);
 			request.setFieldValue("MBRecurringFrequency", dayOfMonth + " * ?");  //Bill Monthly
 			// Display the request
 			logger.debug("\nProfile Request:\n" + request.getXML());
@@ -357,7 +357,6 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	private String recurringDayOfMonth(java.util.Date startDate)
 	{
 		int day = startDate.getDay();
-
 		return String.valueOf(day);
 		
 	}
