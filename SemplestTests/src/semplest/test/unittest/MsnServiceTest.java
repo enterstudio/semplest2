@@ -50,6 +50,11 @@ public class MsnServiceTest {
 	
 	public static String eol = System.getProperty("line.separator");
 	
+	public static void main(String args[]){
+		MsnServiceTest t = new MsnServiceTest();
+		t.Test_MsnServices_Standalone();
+	}
+	
 	public int Test_MsnReport(){
 		
 		try{			
@@ -735,6 +740,7 @@ public class MsnServiceTest {
 				Bid[] bids = new Bid[size];
 				for(int i = 0; i<size; i++){
 					kwid[i] = kws1[i].getId();
+					bids[i] = new Bid();
 					bids[i].setAmount(i+0.05);
 				}			
 				test.updateKeywordBidsByIds(1595249L, 754813047L, kwid, bids, bids, bids, bids);

@@ -70,8 +70,7 @@ public class DatabaseTest extends BaseDB{
 		//test.Test_BidObject();	
 		//test.Test_TargetedDailyBudget();		
 		//test.Test_PromotionData();
-		
-		test.Test_Other();
+		//test.Test_Other();
 		
 		System.out.println("*** DONE ***");
 	}	
