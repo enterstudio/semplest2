@@ -253,7 +253,9 @@ namespace Semplest.Core.Controllers
             }
             SemplestEntities dbContext = new SemplestEntities();
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
-            Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
+            //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
+            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            Promotion pm = dbContext.Users.Where(x => x.UserPK == userid).First().Customer.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
             pm.IsLaunched = true;
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
