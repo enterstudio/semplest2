@@ -261,7 +261,7 @@ namespace Semplest.Core.Controllers
             Logger.Write(logEnty);
 
             //return View();
-            return Json("Your Product is Successfully Launched");
+            return Json("Congratulations, Your Product has Launched!!!");
             //return Json("LaunchAdProduct");
 
         }
