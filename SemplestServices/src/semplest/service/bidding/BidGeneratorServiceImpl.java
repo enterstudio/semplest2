@@ -261,7 +261,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			Long campaignID, Long adGroupID, ArrayList<String> keywords)
 			throws Exception {
 		
-		throw new Exception("getBid(...) method is no longer in use! Use either getBidsInitial(...) or getBidsUpdate(...) instead.");
+		throw new Exception("getBid(...) method is no longer in use! Use either setBidsInitial(...) or setBidsUpdate(...) instead.");
 		
 	}
 	
@@ -310,18 +310,19 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 //
 //	public static void main(String [] args){
 //		// test 
-//		
+//
 //		BasicConfigurator.configure();
 //		/*Properties properties = new Properties();
 //		FileInputStream is = new FileInputStream(PROPSFILE);
 //		properties.load(is);
 //		is.close();
-//		*/	
+//		 */	
 //
 //		appContext = new ClassPathXmlApplicationContext("Service.xml");
-//		
+//
 //		BidGeneratorServiceImpl client = new BidGeneratorServiceImpl ();
-//		Integer promotionID = new Integer(62);
+//		Integer promotionID = new Integer(62); 
+//		//Integer promotionID = new Integer(71); 
 //		String searchEngine = "Google";
 //		BudgetObject budgetData = new BudgetObject();
 //		budgetData.setRemainingBudgetInCycle(100.0);
