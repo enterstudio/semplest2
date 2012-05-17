@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";  //VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -34,7 +34,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				System.out.println("**************DEV MACHINE 1*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
 				long start = System.currentTimeMillis();
-				ArrayList<String> res = client.getCategories(null, "coffee machine", null, null, null);
+				ArrayList<String> res = client.getCategories(null, "rugby sale", "rugby sale", null, null);
 				double sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("categories took " + sec + " seconds");
 				for (int i = 0; i < res.size(); i++)
@@ -44,11 +44,11 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				
 				start = System.currentTimeMillis();
 				ArrayList<String> selectCateg = new ArrayList<String>();
-				selectCateg.add(res.get(1));
+				selectCateg.add(res.get(0));
 				System.out.println("Selected:"+res.get(1));
 				
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-						"coffee machine", null, null, "http://www.wholelattelove.com/", null ,new Integer[]{50,50});
+						"rugby sale", "rugby sale", null, "http://www.planetrugby.com", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds");
 				Thread.sleep(3000);
@@ -63,7 +63,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				System.out.println("**************DEV MACHINE 2*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
 				long start = System.currentTimeMillis();
-				ArrayList<String> res = client.getCategories(null, "peanut butter", null, null, null);
+				ArrayList<String> res = client.getCategories(null, "peanut butter", "peanut butter", null, null);
 				double sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("categories took " + sec + " seconds");
 				for (int i = 0; i < res.size(); i++)
@@ -77,7 +77,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				System.out.println("Selected:"+res.get(5));
 				
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-						"peanut butter", null, null, "http://peanutbutterlovers.com/", null ,new Integer[]{50,50});
+						"peanut butter", "peanut butter", null, "http://peanutbutterlovers.com/", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds");
 				Thread.sleep(1800000);
