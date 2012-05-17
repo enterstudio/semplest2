@@ -10,7 +10,7 @@ $(document).ready(function () {
         .addClass("k-state-disabled").unbind("mousedown");
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
-    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".st    atus");
+    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
@@ -22,12 +22,12 @@ $(document).ready(function () {
             status.text("Oops! There is invalid data in the form.").addClass("invalid");
         }
     });
-    $('#getCategories').click(function () {
-        if (validator1.validate()) {
-        } else {
-            status.text("Oops! There is invalid data in the form.").addClass("invalid");
-        }
-    });
+//    $('#getCategories').click(function () {
+//        if (validator1.validate()) {
+//        } else {
+//            status.text("Oops! There is invalid data in the form.").addClass("invalid");
+//        }
+//    });
     // Previous and Save And Continue Button tab changed Logic
     $("#save2").click(function () {
         tabStrip.select(2);
