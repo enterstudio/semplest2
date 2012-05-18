@@ -130,7 +130,7 @@
 	<!-- Build the Excutable Jar -->
 	<target name="jar" depends="init, compile">  	
 		<path id="build.classpath">
-		        <fileset dir="${basedir}/" />
+		        <fileset dir="${basedir}/lib" />
 		</path>
 		
 		<pathconvert property="mf.classpath" pathsep=" ">
