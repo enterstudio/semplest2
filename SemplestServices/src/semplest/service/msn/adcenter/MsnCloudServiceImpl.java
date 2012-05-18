@@ -11,6 +11,7 @@ import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,8 +24,13 @@ import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.AdPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.HistoricalSearchCount;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordAndConfidence;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordSearchCount;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordSuggestion;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 import org.joda.time.DateTime;
 
 import semplest.other.AdCenterCredentials;
@@ -2272,6 +2278,170 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		return ret;
 	}
+	
+	/* Takes an account ID, a String array of keywords, MonthAndYear object
+	 * giving the desired month and year to begin collecting data.
+	 * Uses the MSN API to get search volume data by keyword, by month from 
+	 * the start month to the most recent month available
+	 * Returns a HashMap mapping search terms (keywords) to int[][]
+	 * element i of the int[][] holds a 3-element int[] giving month, year, and
+	 * search volume for keyword i
+	 */
+	public HashMap<String, int[][]> getKeywordVolumes(Long accountId,
+			                                          String[] keywords,
+			                                          MonthAndYear startMonth) 
+			                                          throws MsnCloudException {
+		HashMap<String, int[][]> ret = new HashMap<String, int[][]>();
+		try {
+			// get an adIntelligence service
+			IAdIntelligenceService aiSvc = getAdInteligenceService(accountId);
+			
+			// start forming the search count request
+			GetHistoricalSearchCountRequest req =
+				new GetHistoricalSearchCountRequest();
+			// we will retrieve search volume starting from startMonth and
+			// ending in the last complete month
+			MonthAndYear endMonthAndYear = new MonthAndYear();
+			Calendar cal = Calendar.getInstance();
+			// have to find the most recent complete month
+			int currentMonth = cal.get(Calendar.MONTH) + 1;
+			int currentYear = cal.get(Calendar.YEAR);
+			int endMonth = currentMonth - 1;
+			int endYear = currentYear;
+			// special case if we're currently in January
+			if (currentMonth == 1) {
+				endMonth = 12;
+				endYear = endYear - 1;
+			}
+			endMonthAndYear.setMonth(endMonth);
+			endMonthAndYear.setYear(endYear);
+			LOG.info("Start month and year: " +
+					    startMonth.getMonth() + "-" + startMonth.getYear());
+			LOG.info("End month and year: " + endMonth + "-" + endYear);
+			
+			// set the fields in the search request
+			req.setKeywords(keywords);
+			req.setLanguage("English");
+			req.setPublisherCountries(new String[] { "US" });
+			req.setStartMonthAndYear(startMonth);
+			req.setEndMonthAndYear(endMonthAndYear);
+			
+			// pass the request and get a response
+			LOG.info("Passing request for search counts.");
+			GetHistoricalSearchCountResponse res =
+				aiSvc.getHistoricalSearchCount(req);
+			KeywordSearchCount[] searchCounts = res.getKeywordSearchCounts();
+			
+			// now get the data we need for each keyword
+			for (int j = 0; j< searchCounts.length; j++) {
+				//for each keyword
+				KeywordSearchCount c = searchCounts[j];
+				String keyword = c.getKeyword();
+				HistoricalSearchCount[] hscs = c.getHistoricalSearchCounts();
+				
+				// if no count data is available for this keyword, skip to the
+				// next one
+				if (hscs == null) {
+					continue;
+				}
+				
+				// create array of arrays holding each month, year, and count
+				int nMonths = hscs.length;
+				if (nMonths == 0) {
+					continue;
+				}
+				int[][] countArray = new int[nMonths][3];
+				for (int i = 0; i < nMonths; i++) {
+					HistoricalSearchCount hsc = hscs[i];
+					MonthAndYear monthYear = hsc.getMonthAndYear();
+					countArray[i][0] = monthYear.getMonth();
+					countArray[i][1] = monthYear.getYear();
+					countArray[i][2] = hsc.getSearchCount();
+				}
+				ret.put(keyword, countArray);
+			}			
+		}	catch (AdApiFaultDetail e) {
+			throw new MsnCloudException(e);
+		}	catch (ApiFaultDetail e) {
+			throw new MsnCloudException(e);
+		}	catch (RemoteException e) {
+			throw new MsnCloudException(e);
+		}	catch(Exception e){
+			throw new MsnCloudException(e);
+		}
+		
+		return ret;
+	}
+	
+	/* Get MSN-suggested keywords for a given set of input words. Takes an
+	 * account id, a String[] of keywords to get suggestions for, and an int
+	 * giving the maximum number of suggestions per input word.
+	 * Returns a HashMap mapping input keywords to String[]'s holding the
+	 * suggested keywords
+	 */	
+	public HashMap<String, String[]> getKeywordSuggestions(Long accountId,
+                                                           String[] keywords,
+                                                           int maxRecs)
+                                                  throws MsnCloudException {
+		
+		HashMap<String, String[]> ret = new HashMap<String, String[]>();
+		try {
+			// get an adIntelligence service
+			IAdIntelligenceService aiSvc = getAdInteligenceService(accountId);
+			
+			// start forming the search count request
+			SuggestKeywordsFromExistingKeywordsRequest req =
+			new SuggestKeywordsFromExistingKeywordsRequest();
+			
+			// set the fields in the search request
+			req.setKeywords(keywords);
+			req.setLanguage("English");
+			req.setPublisherCountries(new String[] { "US" });
+			req.setMaxSuggestionsPerKeyword(maxRecs);
+			
+			// pass the request and get a response
+			LOG.info("Passing request for keyword suggestions");
+			SuggestKeywordsFromExistingKeywordsResponse res =
+				aiSvc.suggestKeywordsFromExistingKeywords(req);
+			KeywordSuggestion[] kwRecs = res.getKeywordSuggestions();
+			
+			// now get the data we need for each keyword
+			for (int j = 0; j< kwRecs.length; j++) {
+				//for each keyword
+				KeywordSuggestion kwRec = kwRecs[j];
+				String keyword = kwRec.getKeyword();
+				KeywordAndConfidence[] kwAndConfs =
+					kwRec.getSuggestionsAndConfidence();
+				if (kwAndConfs == null) {
+					continue;
+				}
+	            int nSuggestions = kwAndConfs.length;
+	            LOG.info("Got " + nSuggestions + " suggestions for " + keyword);
+	            if (nSuggestions == 0) {
+	            	continue;
+	            }
+	            String[] wordRecs = new String[nSuggestions];
+	            for (int i = 0; i < nSuggestions; i++) {
+	            	KeywordAndConfidence kwAndConf = kwAndConfs[i];
+	            	wordRecs[i] = kwAndConf.getSuggestedKeyword();
+	            }
+
+			  ret.put(keyword, wordRecs);
+			}		
+	    } catch (AdApiFaultDetail e) {
+			throw new MsnCloudException(e);
+		} catch (ApiFaultDetail e) {
+			throw new MsnCloudException(e);
+		} catch (RemoteException e) {
+			throw new MsnCloudException(e);
+		} catch(Exception e){
+			throw new MsnCloudException(e);
+		}
+
+	return ret;
+}
+	
+	
 
 	//
 	// private KeywordEstimate[] getKeywordEstimateByBidsMsn(Long accountId,

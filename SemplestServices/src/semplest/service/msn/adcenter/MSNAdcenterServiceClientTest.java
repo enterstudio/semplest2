@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +21,10 @@ import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordAndConfidence;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 import org.joda.time.DateTime;
 
 import semplest.other.KeywordEstimate;
@@ -97,11 +100,25 @@ public class MSNAdcenterServiceClientTest {
 			msn.getIds();
 			
 			//msn.setGeoTarget();
+			Calendar cal = Calendar.getInstance();
+			MonthAndYear startMonth = new MonthAndYear();
+			startMonth.setMonth(cal.get(Calendar.MONTH) + 1);
+			startMonth.setYear(cal.get(Calendar.YEAR) - 1);
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			//msn.insertKeywords2("/semplest/data/biddingTest/BethsFlowers/keywords.txt");
-			//HashMap<String,Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/BethsFlowers/keywords.txt", 1500);
+			//msn.insertKeywords2("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
+			//HashMap<String, Double[][]> bidMap=msn.getKeywordEstimates("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt", 1500);
 			//msn.plotdata(bidMap);
+			
+			
+			HashMap<String, int[][]> volMap = msn.getKeywordVolumes("\\\\fs3\\semplest\\data\\biddingTest\\PiperHall\\keywords.txt", startMonth);
+            String outfile = "\\\\fs3\\semplest\\data\\msnData\\PiperHall_volume.dat";
+			msn.writeVolumeDataToFile(volMap, outfile);
+			/*
+			HashMap<String, String[]> wordMap = msn.getSuggestedKeywords("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
+            outfile = "\\\\fs3\\semplest\\data\\msnData\\SummitFlowersNJ_suggestions.dat";
+			msn.writeSuggestionsToFile(wordMap, outfile);
+			*/
 			//logger.info(bidMap);
 		}
 		catch (Exception e)
@@ -238,7 +255,7 @@ public class MSNAdcenterServiceClientTest {
 		    }
 		    logger.info("Estimating Keywords...");
 		    while(j<numKw && strLine!=null){
-		    	keywords = new String[100];
+		    	keywords = new String[1000];
 		    	int i=0;
 			    while ((strLine = br.readLine()) != null)   {
 			    	if(i>=keywords.length) break ;
@@ -268,8 +285,8 @@ public class MSNAdcenterServiceClientTest {
 						Long[] bidarray = ret.getBidList(k, MatchType.Exact.getValue());
 						for(Long bidList:ret.getBidList(k, MatchType.Exact.getValue())){
 			
-							double averDaylyCPC = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList))/14.0;
-							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList))/14.0;
+							double averDaylyCPC = (ret.getAveCPC(k, MatchType.Exact.getValue(), bidList));
+							double averDaylyClicks = (ret.getAveClickPerDay(k, MatchType.Exact.getValue(), bidList));
 							if(!bidMap.containsKey(k))
 								bidDat = new Double[bids.size()][3]; 
 							else
@@ -289,6 +306,131 @@ public class MSNAdcenterServiceClientTest {
 		    }
 			return bidMap;
 		}
+	
+	// Method to retrieve volume data (search counts) for a set of keywords
+	// given in a text file, starting from a specified month and ending
+	// in the most recent month possible
+	public HashMap<String, int[][]> getKeywordVolumes(String filename,
+			                                          MonthAndYear startMonth)
+			                                          throws Exception{
+
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		String[] keywords;
+		HashMap<String, int[][]> volMap = new HashMap<String, int[][]>();
+		
+		// Prepare to read in the file of keywords
+		FileInputStream fstream = new FileInputStream(filename);
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String strLine = "";
+	    
+	    //Read keyword file line By line
+	    int j = 0;
+	    logger.info("Retrieving bid volumes.");
+	    //while (j < numKw && strLine != null){
+		while (strLine != null){
+	    	keywords = new String[1000];
+	    	int i=0;
+		    while ((strLine = br.readLine()) != null)   {
+		    	if(i>=keywords.length) break;
+		        // Print the content on the console
+		        strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+		      
+		        keywords[i] = strLine;
+		        //j++;
+		        i++;
+		    }
+		    
+		    // place the keywords into a shortened list
+		    // first find how many non-null keywords there are left
+		    int v;
+		    for(v = 0; v < keywords.length; v++){
+		    	if(keywords[v] == null) break;
+		    }
+		    // place all of the non-null keywords into their own array
+		    String[] kwTrim = new String[v];
+		    for(v=0; v < kwTrim.length; v++){
+		    	kwTrim[v] = keywords[v];
+		    }
+
+		    // get the keyword volume info for this batch
+		    HashMap<String, int[][]> ret =
+		    	test.getKeywordVolumes(accountID, kwTrim, startMonth);
+
+		    // add the results for this batch of keywords
+		    for (String keyword : ret.keySet()) {
+		    	volMap.put(keyword, ret.get(keyword));
+		    }
+	    }
+		
+		return volMap;
+	}
+	
+	// Method to retrieve volume data (search counts) for a set of keywords
+	// given in a text file
+	// maxRecs is the maximum number of suggestions per keyword.
+	public HashMap<String, String[]> getSuggestedKeywords(String filename,
+			                                              int maxRecs)
+			                                              throws Exception {
+
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		String[] keywords;
+		HashMap<String, String[]> wordMap = new HashMap<String, String[]>();
+		
+		// Prepare to read in the file of keywords
+		FileInputStream fstream = new FileInputStream(filename);
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    String strLine = "";
+	    
+	    //Read keyword file line By line
+	    int j = 0;
+	    logger.info("Retrieving suggested keywords.");
+	    while (strLine != null){
+	    	keywords = new String[1000];
+	    	int i=0;
+		    while ((strLine = br.readLine()) != null)   {
+		    	if(i >= keywords.length) break;
+		        // Print the content on the console
+		        strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
+		      
+		        keywords[i] = strLine;
+		        i++;
+		    }
+		    
+		    // place the keywords into a shortened list
+		    // first find how many non-null keywords there are left
+		    int v;
+		    for(v = 0; v < keywords.length; v++){
+		    	if(keywords[v] == null) break;
+		    }
+		    // place all of the non-null keywords into their own array
+		    String[] kwTrim = new String[v];
+		    for(v=0; v < kwTrim.length; v++){
+		    	kwTrim[v] = keywords[v];
+		    }
+
+		    // get the keyword volume info for this batch
+		    HashMap<String, String[]> ret =
+		    	test.getKeywordSuggestions(accountID, kwTrim, maxRecs);
+
+		    // add the results for this batch of keywords
+		    for (String keyword : ret.keySet()) {
+		    	wordMap.put(keyword, ret.get(keyword));
+		    }
+	    }
+		
+		return wordMap;
+	}
+	
+	// Method to retrieve volume data (search counts) for a set of keywords
+	// given in a text file
+	// this is an overloading which does not take the maximum number of
+	// recommendations - defaults to 10
+	public HashMap<String, String[]> getSuggestedKeywords(String filename)
+														  throws Exception {
+		return getSuggestedKeywords(filename, 10);
+	}
 		    
 	
 	public void createCampaign() throws Exception{
@@ -322,7 +464,7 @@ public class MSNAdcenterServiceClientTest {
 	}
 	
 	public void plotdata(HashMap<String,Double[][]> bidMap) throws IOException{
-		PrintStream fileoutput = new PrintStream(new FileOutputStream("/semplest/data/msnData/"+accountName));
+		PrintStream fileoutput = new PrintStream(new FileOutputStream("\\\\fs3\\semplest\\data\\msnData\\"+accountName));
 		Set<String> keySet = bidMap.keySet();
 		for ( String key : keySet ){
 			boolean plot=false;
@@ -377,8 +519,51 @@ public class MSNAdcenterServiceClientTest {
 		    	}
 			}
 		}
+	}
+	
+	// take search volume data and write it to a specified file
+	// data is provided as a hash map, taking strings (keywords) to an array
+	// of arrays. each top-level array holds three integers: month, year, and
+	// search volume for that month
+	public void writeVolumeDataToFile(HashMap<String, int[][]> volMap,
+			                          String outfile) 
+	                                  throws IOException {
+		logger.info("Writing to: " + outfile);
+		PrintStream fileoutput = new PrintStream(new FileOutputStream(outfile));
+		String s = "";
 		
+		for (String key : volMap.keySet()) {
+			int[][] volData = volMap.get(key);
+			if(volData != null) {
+		    	fileoutput.println("Keyword: " + key);
+		    	fileoutput.println("Month, Year, Volume");
+		    	for(int v = 0; v < volData.length; v++){
+		    		s = volData[v][0]+"\t"+volData[v][1]+"\t"+volData[v][2];
+		    		fileoutput.println(s);
+		    	}
+			}
+		}
+	}
+	
+	// take keyword suggestion data and write it to a specified file
+	// data is provided as a hash map, taking strings (keywords) to a
+	// String array of suggested keywords
+	public void writeSuggestionsToFile(HashMap<String, String[]> wordMap,
+			                           String outfile) 
+	                                   throws IOException {
+		logger.info("Writing to: " + outfile);
+		PrintStream fileoutput = new PrintStream(new FileOutputStream(outfile));
 		
+		for (String key : wordMap.keySet()) {
+			String[] recs = wordMap.get(key);
+			if(recs != null) {
+		    	fileoutput.println("Keyword: " + key);
+		    	fileoutput.println("Suggestions");
+		    	for(int v = 0; v < recs.length; v++) {
+		    		fileoutput.println(recs[v]);
+		    	}
+			}
+		}
 	}
 	
 }
