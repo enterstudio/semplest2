@@ -300,7 +300,7 @@
     <Content Include="Views\Account\ParentProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Account\ChildProfile.cshtml" />
+    <Content Include="Views\Account\MyProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_AdvertisingEngine.cshtml" />
