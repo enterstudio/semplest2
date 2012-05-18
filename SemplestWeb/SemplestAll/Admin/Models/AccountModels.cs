@@ -144,8 +144,6 @@ namespace Semplest.Admin.Models
     public class CustomerAccount
     {
         public int AccountNumber { get; set; }
-        
-      
         public string Customer { get; set; }
         
         [Required]
@@ -161,9 +159,12 @@ namespace Semplest.Admin.Models
 
         [Required]
         public string Address1 { get; set; }
+        
         public string Address2 { get; set; }
+        
         [Required]
         public string City { get; set; }
+        
         public string State { get; set; }
         public int StateID { get; set; }
 
@@ -173,15 +174,15 @@ namespace Semplest.Admin.Models
         [Required]
         public string Phone { get; set; }
         
-        
         [Required]
         [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
         [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
-
-
+        
         public string BillType { get; set; }
+        
         public int  UserPK { get; set; }
+        
         [DisplayName("SEMplest Internal Note:")] 
         public string CustomerNote { get; set; }
         public bool isActive { get; set; }
