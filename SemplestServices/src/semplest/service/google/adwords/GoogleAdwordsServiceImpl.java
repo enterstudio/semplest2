@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
+import semplest.server.protocol.google.KWIdeaObj;
+import semplest.server.protocol.google.KeywordMatchtypePair;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
@@ -79,6 +82,7 @@ import com.google.api.adwords.v201109.cm.DateRange;
 import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.cm.Language;
+import com.google.api.adwords.v201109.cm.Location;
 import com.google.api.adwords.v201109.cm.ManualCPC;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupBids;
 import com.google.api.adwords.v201109.cm.ManualCPCAdGroupCriterionBids;
@@ -105,12 +109,15 @@ import com.google.api.adwords.v201109.o.AdGroupEstimateRequest;
 import com.google.api.adwords.v201109.o.Attribute;
 import com.google.api.adwords.v201109.o.AttributeType;
 import com.google.api.adwords.v201109.o.CampaignEstimateRequest;
+import com.google.api.adwords.v201109.o.CategoryProductsAndServicesSearchParameter;
 import com.google.api.adwords.v201109.o.CriterionAttribute;
 import com.google.api.adwords.v201109.o.DoubleAttribute;
+import com.google.api.adwords.v201109.o.ExcludedKeywordSearchParameter;
 import com.google.api.adwords.v201109.o.IdeaType;
 import com.google.api.adwords.v201109.o.KeywordEstimate;
 import com.google.api.adwords.v201109.o.KeywordEstimateRequest;
 import com.google.api.adwords.v201109.o.KeywordMatchTypeSearchParameter;
+import com.google.api.adwords.v201109.o.LocationSearchParameter;
 import com.google.api.adwords.v201109.o.LongAttribute;
 import com.google.api.adwords.v201109.o.RelatedToKeywordSearchParameter;
 import com.google.api.adwords.v201109.o.RelatedToUrlSearchParameter;
@@ -176,6 +183,28 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			
 			
+			
+			
+			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			
+			String url = "www.summithillsfloristnj.com";
+			String [] keywords = new String[] {"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement"};
+			int numberResults = 100;
+			int categoryId = 11476; // Wedding Flowers
+			String accountID = null;
+			String [] exclude_keywords = null;
+			HashMap<KeywordMatchtypePair, KWIdeaObj> keyWordIdeaMap;
+			try{ 
+				keyWordIdeaMap = g.getGoogleKeywordIdeas(accountID, url, keywords, exclude_keywords, categoryId, numberResults);
+			} catch (Exception e){
+				e.printStackTrace();
+			}
+			
+			
+			
+			
+			
+			/*
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(62, "Google"); 
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 			KeywordDataObject[] keyData = g.getAllBiddableAdGroupCriteria(String.valueOf(adEngineInfo.getAccountID()), adEngineInfo.getAdGroupID(), true); //"54100",3066028785L, true);
@@ -183,6 +212,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				System.out.println(keyData[i].getKeyword());
 			}
+			*/
+			
 			/*
 			 * AdWordsServiceLogger.log(); String accountID = "6048920973"; //
 			 * Get AdWordsUser from "~/adwords.properties". //AdWordsUser user =
@@ -1098,6 +1129,181 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			throw new Exception(e);
 		}
+	}
+	
+	
+	
+	
+	
+	public HashMap<KeywordMatchtypePair, KWIdeaObj> getGoogleKeywordIdeas(String accountID, String url, 
+			String [] keywords, String [] exclude_keywords, Integer categoryId, int numberResults) throws Exception	{
+
+		HashMap<KeywordMatchtypePair,KWIdeaObj> returnData = new HashMap<KeywordMatchtypePair,KWIdeaObj>();
+		TargetingIdeaPage page;
+		TargetingIdeaServiceInterface targetingIdeaService;
+
+
+		if(numberResults >100){
+			throw new Exception("numberResults must be <= 100. Google doesn't return more than that!! The feature" +
+					" is given so that you may use a smaller number to save API cost in case a small number of keywords needed.");
+		}
+		HashSet<Keyword> stopWordSet = new HashSet<Keyword>();
+
+		for (String word : keywords){
+			Keyword kw = new Keyword();
+			kw.setText(word);
+			kw.setMatchType(KeywordMatchType.EXACT);
+			stopWordSet.add(kw);
+		}
+
+		if(exclude_keywords!=null){
+			if(exclude_keywords.length + keywords.length>200){
+				throw new Exception("Total number of keywords and exclude keywords must be less than equal to 200. It's a Google policy");
+			}
+			for (String word : exclude_keywords){
+				Keyword kw = new Keyword();
+				kw.setText(word);
+				kw.setMatchType(KeywordMatchType.EXACT);
+				stopWordSet.add(kw);
+			}
+		}
+
+		try{
+			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+			//AdWordsUser user = new AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
+			// Get the TargetingIdeaService
+			targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
+		} catch (ServiceException e) {
+			throw new Exception(e);
+		}
+
+
+		//for (String word : keywords){
+
+
+		// Create selector.
+		TargetingIdeaSelector selector = new TargetingIdeaSelector();
+		selector.setRequestType(RequestType.IDEAS);
+		selector.setIdeaType(IdeaType.KEYWORD);
+		selector.setRequestedAttributeTypes(new AttributeType[]
+				{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, 
+				AttributeType.COMPETITION }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,// });
+
+
+		// Set selector paging (required for targeting idea service).
+		Paging paging = new Paging();
+		paging.setStartIndex(0);
+		paging.setNumberResults(numberResults);
+		selector.setPaging(paging);
+
+		ArrayList<SearchParameter> searchParamList = new ArrayList<SearchParameter>();
+
+		// Keyword
+
+		ArrayList<Keyword> kwList = new ArrayList<Keyword>();
+		for (String s : keywords){
+			Keyword keywrd = new Keyword();
+			keywrd.setText(s);
+			keywrd.setMatchType(KeywordMatchType.EXACT);
+			kwList.add(keywrd);
+		} 
+		/*
+			Keyword keywrd = new Keyword();
+			keywrd.setText(word);
+			keywrd.setMatchType(KeywordMatchType.EXACT);
+		 */
+		// Create related to keyword search parameter.
+		RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
+		relatedToKeywordSearchParameter.setKeywords(kwList.toArray(new Keyword[kwList.size()]));
+		//relatedToKeywordSearchParameter.setKeywords(new Keyword[] {keywrd});
+		searchParamList.add(relatedToKeywordSearchParameter);
+
+
+		// Exclude search parameter
+		ExcludedKeywordSearchParameter excludeKeywordSearchParameter = new ExcludedKeywordSearchParameter();
+		excludeKeywordSearchParameter.setKeywords(stopWordSet.toArray(new Keyword[stopWordSet.size()]));
+		searchParamList.add(excludeKeywordSearchParameter);
+
+
+		// Create related to URL search parameter.
+		RelatedToUrlSearchParameter relatedToUrlSearchParameter = new RelatedToUrlSearchParameter();
+		relatedToUrlSearchParameter.setUrls(new String[] { url });
+		//relatedToUrlSearchParameter.setIncludeSubUrls(true);
+		searchParamList.add(relatedToUrlSearchParameter);
+
+
+		// matchType parameter
+		KeywordMatchTypeSearchParameter matchTypeParameter = new KeywordMatchTypeSearchParameter();
+		matchTypeParameter.setKeywordMatchTypes(new KeywordMatchType [] { KeywordMatchType.EXACT }); 
+		searchParamList.add(matchTypeParameter);
+
+
+		// Category ID parameter
+		CategoryProductsAndServicesSearchParameter categoryProductServiceSearchParameter = new CategoryProductsAndServicesSearchParameter ();
+		if(categoryId != null){
+			categoryProductServiceSearchParameter.setCategoryId(categoryId);
+			searchParamList.add(categoryProductServiceSearchParameter);
+		}
+
+
+		// Location search parameter		
+		Location loc = new Location();
+		loc.setId(new Long(2840)); // United States
+		LocationSearchParameter locationSearchParameter = new LocationSearchParameter();
+		locationSearchParameter.setLocations(new Location[] {loc});
+		searchParamList.add(locationSearchParameter);
+
+
+		// set the selector
+		selector.setSearchParameters(searchParamList.toArray(new SearchParameter[searchParamList.size()]));
+
+
+		try{
+			// Get related placements.
+			page = targetingIdeaService.get(selector);
+		}
+		catch (ApiException e)
+		{
+			throw new Exception(e.dumpToString());
+		}
+		catch (RemoteException e)
+		{
+			throw new Exception(e);
+		}
+
+
+		if (page != null && page.getEntries() != null)
+		{
+
+			for (TargetingIdea targetingIdea : page.getEntries())
+			{
+				Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
+				Keyword kw = (Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();
+				Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue();
+				Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
+				//logger.info(kw.getText()+" "+ kw.getMatchType().getValue()+" "+ averageMonthlySearches+" "+ comp);
+				//logger.info(kw.getText()+": "+averageMonthlySearches);
+				//logger.info(kw.getText());
+				returnData.put(new KeywordMatchtypePair(kw.getText(),kw.getMatchType()), 
+						new KWIdeaObj(kw,averageMonthlySearches,comp));
+				if (stopWordSet.contains(kw)){
+					logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
+				} else {
+					if(stopWordSet.size()<200){
+						stopWordSet.add(kw);
+					}
+				}
+			}
+
+		}
+
+		//logger.info("Keyword "+word+" is done.");
+		//} //for (String word : keywords)
+
+
+		logger.info("Total number of words received from Google: "+returnData.size());
+		return returnData;
+
 	}
 
 	public String setBidForKeyWord(String json) throws Exception
