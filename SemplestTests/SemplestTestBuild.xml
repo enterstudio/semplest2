@@ -132,6 +132,7 @@
 	    <jar destfile="UnitTests.jar"
 	         basedir="${classes}"
 	         includes="**/*.class">
+			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
 	      <manifest>
 	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
 	      </manifest>
