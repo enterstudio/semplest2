@@ -85,6 +85,21 @@
 	<!-- compile the classes all together with the test code -->
 	<target name="compile">
 		<javac srcdir="." />
+		<path id="test.path">
+			<pathelement location="${classes}"/>
+			<fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<javac srcdir="." classpathref="test.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
 	</target>
 	
 	<!-- Build the Excutable Jar -->
