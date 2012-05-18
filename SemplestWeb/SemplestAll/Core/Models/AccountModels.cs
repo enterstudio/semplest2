@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Web.Mvc;
 using System.Web.Security;
+using System.ComponentModel;
 
 namespace Semplest.Core.Models
 {
@@ -70,45 +71,112 @@ namespace Semplest.Core.Models
 
     public class ParentModel
     {
-        public int Account { get; set; }
-        public string ParentName { get; set; }
-        public string SuperParent { get; set; }
-        public string LastName { get; set; }
+        public int AccountNumber { get; set; }
+        //public string ParentName { get; set; }
+        //public string SuperParent { get; set; }
+
+        [DisplayName("First Name")]
         public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public int Phone { get; set; }
+        
+        [DisplayName("First Initial")]
+        public string MiddleInitial { get; set; }
+
+        [DisplayName("Last Name")]
+        public string LastName { get; set; }
+        
+        [Required]
+        public String  Phone { get; set; }
+
+        [Required]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
+        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
         public string Email { get; set; }
-        public string BillingAddress { get; set; }
+         
+        
+        [Required]
+        public string Address1 { get; set; }
+        
+        public string Address2 { get; set; }
+        
+        [Required]
         public string City { get; set; }
+        
         public string State { get; set; }
-        public int Zip { get; set; }
-        public string UserId { get; set; }
-        public string Password { get; set; }
-        public string ConfPassword { get; set; }
+        public int StateID { get; set; }
+
+        [Required]
+        public string Zip { get; set; }
+
+
+        [Required]
+        [DisplayName("User ID")]
+        public string UserID { get; set; }
+
+        [Required]
+        [DisplayName("Password")]
+        public string UserPassword { get; set; }
+
         public string SecurityQuestion { get; set; }
         public string SecurityAnswer { get; set; }
+        public int UserPK { get; set; }
     }
+
+
     public class ChildModel
     {
-        public int Account { get; set; }
-        public string ParentName { get; set; }
-        public string Companyname { get; set; }
-        public string FirstName { get; set; }
-        public string MiddleName { get; set; }
-        public string LastName { get; set; }
-        public int Phone { get; set; }
-        public string Email { get; set; }
-        public string BillingAddress { get; set; }
-        public string City { get; set; }
-        public string State { get; set; }
-        public int Zip { get; set; }
-        public string NickName { get; set; }
         public int AccountNumber { get; set; }
-        public string UserId { get; set; }
-        public string Password { get; set; }
-        public string ConfPassword { get; set; }
+
+        public string Customer { get; set; }
+
+        //public string ParentName { get; set; }
+        //public string SuperParent { get; set; }
+
+        [DisplayName("First Name")]
+        public string FirstName { get; set; }
+
+        [DisplayName("First Initial")]
+        public string MiddleInitial { get; set; }
+
+        [DisplayName("Last Name")]
+        public string LastName { get; set; }
+
+        [Required]
+        public String Phone { get; set; }
+
+        [Required]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Invalid Email Address")]
+        [RegularExpression("^[a-z0-9_\\+-]+(\\.[a-z0-9_\\+-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*\\.([a-z]{2,4})$", ErrorMessage = "Invalid Email Address")]
+        public string Email { get; set; }
+
+
+        [Required]
+        public string Address1 { get; set; }
+
+        public string Address2 { get; set; }
+
+        [Required]
+        public string City { get; set; }
+
+        public string State { get; set; }
+        public int StateID { get; set; }
+
+        [Required]
+        public string Zip { get; set; }
+
+
+        [Required]
+        [DisplayName("User ID")]
+        public string UserID { get; set; }
+
+        [Required]
+        [DisplayName("Password")]
+        public string UserPassword { get; set; }
+
         public string SecurityQuestion { get; set; }
         public string SecurityAnswer { get; set; }
+
+
+        public int UserPK { get; set; }
     }
     #endregion
 
