@@ -11,7 +11,7 @@
 	<target name="init"> 		
 		
 		<mkdir dir="${classes}"/>
-		<copy todir="${classes}" filtering="off">
+		<copy todir="${basedir}/lib" filtering="off">
   	      <flattenmapper />
   	      <fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar" />
 			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar" />
@@ -119,8 +119,7 @@
 			<pathelement location="${classes}"/>
 				<fileset dir="${basedir}/lib" includes="**/*.jar"/>
 		</path>
-		<mkdir dir="${basedir}/compile"/>
-		<javac srcdir="${basedir}" destdir="${basedir}/compile" classpathref="test.path"
+		<javac srcdir="${basedir}" destdir="${classes}" classpathref="test.path"
 				target="1.6"
 				source="1.6"
 				debug="${java.debug}"   	
@@ -132,7 +131,7 @@
 	<!-- Build the Excutable Jar -->
 	<target name="jar" depends="init, compile">  	
 	    <jar destfile="UnitTests.jar"
-	         basedir="${basedir}/compile"
+	         basedir="${classes}"
 	         includes="**/*.class">
 	      <manifest>
 	        <attribute name="Main-Class" value="UnitTests" />
