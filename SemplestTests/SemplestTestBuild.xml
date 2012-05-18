@@ -114,7 +114,6 @@
 		
 	<!-- compile the classes all together with the test code -->
 	<target name="compile" depends="init">
-		<javac srcdir="." />
 		<path id="test.path">
 			<pathelement location="${classes}"/>
 				<fileset dir="${basedir}/lib" includes="**/*.jar"/>
