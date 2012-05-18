@@ -99,7 +99,8 @@
 		<!-- compile services -->
 		<path id="services.path">
 			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
+			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
 		</path>
 		<javac srcdir="${semplest.services.dir}" destdir="${classes}" classpathref="services.path"
 	      target="1.6"
