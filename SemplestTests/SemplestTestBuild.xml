@@ -76,11 +76,11 @@
 		<echo message="Creating Jar for SemplestServicesClient..."/>
 		<copy todir="${basedir}/lib" filtering="off">
 			<flattenmapper />
-			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar" />
+			<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar" />
 		</copy>
 		<path id="api.path">
 			<pathelement location="${classes}"/>
-			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
+			<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar"/>
 		</path>
 		<mkdir dir="${semplest.clientapi.dir}/temp"/>
 		<javac srcdir="${semplest.clientapi.dir}" destdir="${semplest.clientapi.dir}/temp" classpathref="api.path"
