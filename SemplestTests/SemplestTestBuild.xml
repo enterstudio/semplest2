@@ -17,8 +17,8 @@
 			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar" />
   	    </copy>
 		
-		<copyfile src="${semplest.services.dir}/src/Service.xml" dest="${classes}"/>
-		<copyfile src="${semplest.services.dir}/src/system.properties" dest="${classes}"/>
+		<copyfile src="${semplest.services.dir}/src/Service.xml" dest="${basedir}/lib"/>
+		<copyfile src="${semplest.services.dir}/src/system.properties" dest="${basedir}/lib"/>
 		
 		<!-- compile protocol -->
 		<path id="protocol.path">
