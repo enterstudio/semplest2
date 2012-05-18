@@ -2,6 +2,7 @@ package semplest.keywords.lda;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -51,8 +52,8 @@ public class KWGenDmozLDAdata implements Runnable{
 			userInfoWeight = pr.userInfoWeight;
 			numKeywordsGoogle = pr.numKeywordsGoogle;
 			numKeywordsMSN = pr.numKeywordsMSN;
-			//logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.nGramsSubC+"\n"+pr.numTopics);
- 
+			logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
+			
 		
 			logger.info("create DmozLucene()");
 			dl = new DmozLucene();
@@ -61,7 +62,12 @@ public class KWGenDmozLDAdata implements Runnable{
 			logger.info("Data indexed!");
 			
 			logger.info("Loading training data...");
+			logger.info("dfile:"+ dfile);
 			TrainingData = ioUtils.file2Hash(dfile);
+			Set<String> keys = TrainingData.keySet();
+			for(String key: keys){
+				logger.info(key+"\n");
+			}
 			logger.info("Data loaded");
 			
 			logger.info("Loading stem dictionary...");
