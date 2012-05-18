@@ -17,8 +17,10 @@
 			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar" />
   	    </copy>
 		
-		<copy file="${semplest.services.dir}/src/Service.xml" todire="${basedir}/lib"/>
+		<echo message="copy service and properties files..."/>
+		<copy file="${semplest.services.dir}/src/Service.xml" todir="${basedir}/lib"/>
 		<copy file="${semplest.services.dir}/src/system.properties" todir="${basedir}/lib"/>
+		<echo message="copy done."/>
 		
 		<!-- compile protocol -->
 		<path id="protocol.path">
