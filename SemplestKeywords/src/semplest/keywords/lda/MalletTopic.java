@@ -286,6 +286,7 @@ public class MalletTopic {
 		    	 wordProb = topicProb*(idCountPair.getWeight()/sum);
 		    	 //logger.debug(wordProb);
 		    	 word =(String) dataAlphabet.lookupObject(idCountPair.getID());
+		    	 logger.info("Word in mallet topic: "+ word);
 		    	 if(specdataAlphabet.contains(word)){
 			    	 if(wordMap.containsKey(word)){
 			    		 wordMap.put(word, new Double((Double)wordMap.get(word)+wordProb));
@@ -314,7 +315,7 @@ public class MalletTopic {
 		//inferInst InstanceList.
 		// A sorted TreeMap with all the words and the infered probabilities is returned
 		Alphabet dataAlphabet = instances.getDataAlphabet();
-		//logger.debug("Alphabet size "+dataAlphabet.size());
+		logger.info("Alphabet size "+dataAlphabet.size());
         HashMap<String,Double> map;
         map = this.inferWordprob(inferInst, instIndex, dataAlphabet,true);
         

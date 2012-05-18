@@ -174,6 +174,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    //and obtain word probability
 	    
 	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
+	    logger.info("previous wordmap size: "+ wordMap.size());
 	    //Rank monograms by probability
 	    ValueComparator bvc =  new ValueComparator(wordMap);
 		TreeMap<String,Double> wordM = new TreeMap(bvc);
@@ -256,6 +257,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
+	    logger.info("insider word map size:"+wordMap.size());
 	    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
 	    if(searchTerm!=null){
 	    	String[] terms = qsStem.split("\\s+");
