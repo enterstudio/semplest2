@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
@@ -392,10 +393,6 @@ namespace Semplest.Core.Controllers
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
         }
-        public ActionResult AdEngines(IEnumerable<AdEngineSelectModel> models)
-        {
-            return PartialView(models);
-        }
         public ActionResult SaveDefineProduct(CampaignSetupModel data)
         {
             if (data == null)
@@ -404,38 +401,39 @@ namespace Semplest.Core.Controllers
             // return Json(campaignRepository.Save(data),JsonRequestBehavior.AllowGet);
         }
 
+
         public ActionResult GetSideBar()
         {
-            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            int userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var sds = new SemplestDataService();
             var user = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
-            var homeBar = new NavBar
-            {
-                Name = "Home",
-                SubItems = new List<NavBar>
-                                                 {
-                                                     new NavBar {Name = "My Account", Url = "../Home/Index2"},
-                                                     new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
-                                                     new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
-                                                     new NavBar {Name = "Billing"},
-                                                     new NavBar {Name = "My Profile", Url= "../Account/ChildProfile"},
-                                                 }
-            };
-            navBars.Add(homeBar);
+            //var homeBar = new NavBar
+            //{
+            //    Name = "Home",
+            //    SubItems = new List<NavBar>
+            //                                     {
+            //                                         new NavBar {Name = "My Account", Url = "../Home/Index2"},
+            //                                         new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
+            //                                         new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
+            //                                         new NavBar {Name = "Billing"},
+            //                                         new NavBar {Name = "My Profile", Url= "../Account/ChildProfile"},
+            //                                     }
+            //};
+            //navBars.Add(homeBar);
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
             {
                 var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
 
                 foreach (var prom in promotion.Promotions)
-                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = ConfigurationManager.AppSettings["CampaignUrl"] + prom.PromotionPK.ToString() });
+                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = ConfigurationManager.AppSettings["CampaignUrl"] + prom.PromotionPK.ToString(CultureInfo.InvariantCulture) });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
                 productGroupsBar.SubItems.Add(promotionBar);
             }
             navBars.Add(productGroupsBar);
             return Json(navBars, JsonRequestBehavior.AllowGet);
-        }
+        }​
     }
 }
