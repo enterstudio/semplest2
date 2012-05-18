@@ -99,8 +99,7 @@
 		<target name="compile" depends="init">
 			<javac srcdir="." />
 			<path id="test.path">
-				<pathelement location="${classes}"/>
-					<fileset dir="${basedir}/lib" includes="**/*.jar"/>
+				<fileset dir="${basedir}/lib" includes="**/*.jar"/>
 			</path>
 			<mkdir dir="${basedir}/compile"/>
 			<javac srcdir="${basedir}" destdir="${basedir}/compile" classpathref="test.path"
