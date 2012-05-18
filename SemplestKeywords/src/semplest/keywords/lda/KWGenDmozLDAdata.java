@@ -71,6 +71,7 @@ public class KWGenDmozLDAdata implements Runnable{
 			logger.info("Data loaded");
 			
 			logger.info("Loading stem dictionary...");
+			logger.info(ProjectProperties.dictfile);
 			dict = new dictUtils();
 			logger.info("Dictionary loaded");
 			
