@@ -28,7 +28,8 @@
 	<mkdir dir="${classes}"/>
 	<!-- compile protocol -->
 	<path id="protocol.path">
-		<fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar"/>
+		<pathelement location="${classes}"/>
+			<fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar"/>
 	</path>
 	<javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="protocol.path"
       target="1.6"
