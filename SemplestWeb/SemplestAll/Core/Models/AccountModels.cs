@@ -71,7 +71,13 @@ namespace Semplest.Core.Models
 
     public class ParentModel
     {
+        [DisplayName("Account #")]
         public int AccountNumber { get; set; }
+
+        [DisplayName("Company Name")]
+        public string Customer { get; set; }
+
+
         //public string ParentName { get; set; }
         //public string SuperParent { get; set; }
 
@@ -103,6 +109,8 @@ namespace Semplest.Core.Models
 
         //for state dropdown
         public int SelectedStateID { get; set; }
+
+        [DisplayName("State")]
         public IEnumerable<SelectListItem> States { get; set; }
 
         [Required]
@@ -117,16 +125,24 @@ namespace Semplest.Core.Models
         [DisplayName("Password")]
         public string UserPassword { get; set; }
 
+        [DisplayName("Security Question")]
         public string SecurityQuestion { get; set; }
+
+        [DisplayName("Security Answer")]
         public string SecurityAnswer { get; set; }
+
         public int UserPK { get; set; }
     }
 
 
     public class ChildModel
     {
+
+         [DisplayName("Account #")]
         public int AccountNumber { get; set; }
 
+
+         [DisplayName("Company Name")]
         public string Customer { get; set; }
 
         //public string ParentName { get; set; }
@@ -160,6 +176,7 @@ namespace Semplest.Core.Models
 
         //for state dropdown
         public int SelectedStateID { get; set; }
+        [DisplayName("State")]
         public IEnumerable<SelectListItem> States { get; set; }
 
         [Required]
@@ -174,7 +191,11 @@ namespace Semplest.Core.Models
         [DisplayName("Password")]
         public string UserPassword { get; set; }
 
+
+        [DisplayName("Security Question")]
         public string SecurityQuestion { get; set; }
+
+        [DisplayName("Security Answer")]
         public string SecurityAnswer { get; set; }
 
 
