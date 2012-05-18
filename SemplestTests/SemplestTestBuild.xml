@@ -4,7 +4,7 @@
 	<property name="semplest.services.dir" value="${basedir}/../SemplestServices" />
 	<property name="semplest.keywords.dir" value="${basedir}/../SemplestKeywords" />
 	<property name="semplest.bidding.dir" value="${basedir}/../SEMplestBidding" />
-	<property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />
+	<property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />	
 	
 	<!-- copy all the necessary codes to the test folder -->
 	<echo message="Copy SemplestProtocol classes..."/>	 	  	 	
@@ -23,6 +23,15 @@
  	    includes="**/*.*"
 	/>
 	
+	<!-- compile protocol -->
+	<javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="class.path"
+      target="1.6"
+      source="1.6"
+      debug="${java.debug}"   	
+      includes="**/*.java"
+      excludes="**/*.svn"
+    />
+
 	<!-- For Bidding and Keyword, update Jars in the lib -->
 	<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
 	<echo message="Creating Jar for SemplestBidding..."/>
@@ -30,12 +39,12 @@
 		<flattenmapper />
 		<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
 	</copy>
-	<path id="api.path">
-		<pathelement location="${classes}"/>
+	<path id="bid.path">
+		<pathelement location="${semplest.protocol.dir}/lib"/>
 			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
 	</path>
 	<mkdir dir="${semplest.bidding.dir}/temp"/>
-	<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="api.path"
+	<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
 			target="1.6"
 			source="1.6"
 			debug="${java.debug}"   	
@@ -52,7 +61,7 @@
  		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
  	</copy>
 	<path id="keywords.path">
-		<pathelement location="${classes}"/>
+		<pathelement location="${semplest.protocol.dir}/lib"/>
 			<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
 	</path>
 	<mkdir dir="${semplest.keywords.dir}/temp"/>
