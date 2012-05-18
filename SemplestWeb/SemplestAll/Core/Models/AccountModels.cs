@@ -100,9 +100,10 @@ namespace Semplest.Core.Models
         
         [Required]
         public string City { get; set; }
-        
-        public string State { get; set; }
-        public int StateID { get; set; }
+
+        //for state dropdown
+        public int SelectedStateID { get; set; }
+        public IEnumerable<SelectListItem> States { get; set; }
 
         [Required]
         public string Zip { get; set; }
@@ -157,8 +158,9 @@ namespace Semplest.Core.Models
         [Required]
         public string City { get; set; }
 
-        public string State { get; set; }
-        public int StateID { get; set; }
+        //for state dropdown
+        public int SelectedStateID { get; set; }
+        public IEnumerable<SelectListItem> States { get; set; }
 
         [Required]
         public string Zip { get; set; }
