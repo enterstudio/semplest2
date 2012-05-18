@@ -8,6 +8,17 @@
 	
 	<property name="classes" value="${basedir}/classes"/>
 	
+	<!-- copy all the necessary libs -->
+	<echo message="Copy libraries..."/>
+	<copy todir="${basedir}/lib" filtering="off">
+      <flattenmapper />      
+		<fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
+		<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
+    </copy>
+	
 	<!-- copy all the necessary codes to the test folder -->
 	<echo message="Copy SemplestProtocol classes..."/>	 	  	 	
  	<copydir src="${semplest.protocol.dir}/src"
