@@ -14,12 +14,14 @@ import org.joda.time.DateTime;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.AdStatus;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
 import com.microsoft.adcenter.v8.CampaignStatus;
 import com.microsoft.adcenter.v8.CityTargetBid;
 import com.microsoft.adcenter.v8.Keyword;
+import com.microsoft.adcenter.v8.KeywordStatus;
 import com.microsoft.adcenter.v8.MetroAreaTargetBid;
 import com.microsoft.adcenter.v8.MobileAd;
 import com.microsoft.adcenter.v8.ReportAggregation;
@@ -50,6 +52,8 @@ public class MsnServiceTest {
 	
 	public static String eol = System.getProperty("line.separator");
 	
+	private String vMsg = "Verification FAILED! ";
+	
 	public static void main(String args[]){
 		MsnServiceTest t = new MsnServiceTest();
 		t.Test_MsnServices_Standalone();
@@ -58,13 +62,36 @@ public class MsnServiceTest {
 	public int Test_MsnReport(){
 		
 		try{			
+			System.out.println("####################################################################################");
+			System.out.println("#                                                                                  #");
+			System.out.println("#                            MsnAdcenter Report Test                               #");
+			System.out.println("#                                                                                  #");
+			System.out.println("####################################################################################");	
+			
+			//getKeywordReport
+			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
+			
+			System.out.println("------------------------------------------------------------");
+			System.out.println("getKeywordReport:");
+			
 			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 			DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
+			Long test_accountId = 1617055L;
+			Long test_campaignId = 130140291L;
+			ReportObject[] ret = test.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay, ReportAggregation.Daily);			
+			System.out.println("OK");
+			System.out.println("test accountId is " + test_accountId);
+			System.out.println("test campaignId is " + test_campaignId);
 			
-			ReportObject[] ret = test.getKeywordReport(1617082L, 110138069L, firstDay, lastDay, ReportAggregation.Daily);
-			
-			for(ReportObject t: ret){
-				System.out.println("->");
+			if(ret == null){
+				errorHandler(new Exception(vMsg + "Empty report data returned."));
+			}
+			else{
+				//print out only the first and last transactions
+				System.out.println("Num of Transactions in the report = " + ret.length);				
+				System.out.println(" ");
+				System.out.println("*** Print out the first transaction ***");
+				ReportObject t = ret[0];
 				System.out.println("Keyword = " + t.getKeyword());
 				System.out.println("BidAmount = " + t.getMicroBidAmount());
 				System.out.println("BidMatchType = " + t.getBidMatchType());
@@ -74,8 +101,35 @@ public class MsnServiceTest {
 				System.out.println("QualityScore = " + t.getQualityScore());
 				System.out.println("AverageCPC = " + t.getAverageCPC());
 				System.out.println("CreatedDate = " + t.getTransactionDate());
-				System.out.println("MicroCost = " + t.getMicroCost());
-			}
+				System.out.println(" ");
+				System.out.println("*** Print out the first transaction ***");
+				t = ret[ret.length-1];
+				System.out.println("Keyword = " + t.getKeyword());
+				System.out.println("BidAmount = " + t.getMicroBidAmount());
+				System.out.println("BidMatchType = " + t.getBidMatchType());
+				System.out.println("NumberImpressions = " + t.getNumberImpressions());
+				System.out.println("NumberClick = " + t.getNumberClick());
+				System.out.println("AveragePosition = " + t.getAveragePosition());
+				System.out.println("QualityScore = " + t.getQualityScore());
+				System.out.println("AverageCPC = " + t.getAverageCPC());
+				System.out.println("CreatedDate = " + t.getTransactionDate());
+				
+				
+				/*
+				for(ReportObject t: kwreport){
+					System.out.println("->");
+					System.out.println("Keyword = " + t.getKeyword());
+					System.out.println("BidAmount = " + t.getMicroBidAmount());
+					System.out.println("BidMatchType = " + t.getBidMatchType());
+					System.out.println("NumberImpressions = " + t.getNumberImpressions());
+					System.out.println("NumberClick = " + t.getNumberClick());
+					System.out.println("AveragePosition = " + t.getAveragePosition());
+					System.out.println("QualityScore = " + t.getQualityScore());
+					System.out.println("AverageCPC = " + t.getAverageCPC());
+					System.out.println("CreatedDate = " + t.getTransactionDate());						
+				}
+				*/
+			}			
 			
 			/*
 			//print out original report data -- if you need to look at the original report data that msn gives back
@@ -96,8 +150,20 @@ public class MsnServiceTest {
 		catch(Exception e){
 			e.printStackTrace();
 			errorHandler(e);
+			
+			System.out.println(" ");
+			System.out.println("####################################################################################");
+			System.out.println("#                          MsnAdcenter Report Test FAILED!                         #");
+			System.out.println("####################################################################################");
+			
 			return 1;
 		}
+		
+		System.out.println(" ");
+		System.out.println("####################################################################################");
+		System.out.println("#                          MsnAdcenter Report Test PASSED!                         #");
+		System.out.println("####################################################################################");
+		
 		return 0;
 	}
 	
@@ -140,7 +206,7 @@ public class MsnServiceTest {
 		try{
 			System.out.println("####################################################################################");
 			System.out.println("#                                                                                  #");
-			System.out.println("#                        MSN Service Test (Standalone)                             #");
+			System.out.println("#                           MsnAdcenter Test (Impl)                                #");
 			System.out.println("#                                                                                  #");
 			System.out.println("####################################################################################");	
 			
@@ -153,21 +219,31 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				System.out.println("account name = " + acc.getName());
 				System.out.println("account Id = " + acc.getId());
+				
+				//verify result
+				if((acc == null) || (acc.getName() == null) || (acc.getId() == null))
+					errorHandler(new Exception(vMsg + "No account data returned."));
+				
 			}
 			catch(MsnCloudException e){
 				errorHandler(e);
-			}
-				
+			}			
+						
 			//createCampaign
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createCampaign:");
 			try{
-				CampaignStatus cpst = null;
-				String campaignName = "unit_test_campaign1" + now;
-				System.out.println("campaign name = " + campaignName);
-				campaignId = test.createCampaign(accountId, campaignName, BudgetLimitType.DailyBudgetStandard,1.00, 5.00, cpst.Paused);
+				Double dailyBudget1 = 1.00;
+				Double monthlyBudget1 = 5.00;
+				String campaignName1 = "unit_test_campaign1" + now;
+				System.out.println("campaign name = " + campaignName1);
+				campaignId = test.createCampaign(accountId, campaignName1, BudgetLimitType.DailyBudgetStandard, dailyBudget1, monthlyBudget1, CampaignStatus.Paused);
 				System.out.println("OK");
 				System.out.println("campaignId = " + campaignId);
+				
+				//verify result
+				if(campaignId == 0L)
+					errorHandler(new Exception(vMsg + "No campaign ID returned."));
 			}
 			catch(MsnCloudException e){
 				errorHandler(e);
@@ -184,7 +260,10 @@ public class MsnServiceTest {
 				System.out.println("budget type = " + cp.getBudgetType());
 				System.out.println("daily budget = " + cp.getDailyBudget());
 				System.out.println("monthly budget = " + cp.getMonthlyBudget());
-				verify(campaignId, cp.getId());
+				
+				//verify result
+				if((cp == null) || (cp.getName() == null) || (cp.getId() == null))
+					errorHandler(new Exception(vMsg + "No campaign data returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -202,6 +281,10 @@ public class MsnServiceTest {
 				for(Campaign c:cps){
 					System.out.println("campaign Id = " + c.getId());
 				}
+				
+				//verify result
+				if(cps.length == 0)
+					errorHandler(new Exception(vMsg + "No campaign returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -215,7 +298,10 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				Campaign cp1 = test.getCampaignById(accountId, campaignId);  //check it
 				System.out.println("status = " + cp1.getStatus());
-				verify("Active", cp1.getStatus().getValue());
+				
+				//verify result
+				if(!cp1.getStatus().getValue().equalsIgnoreCase(CampaignStatus.Active.getValue()))
+					errorHandler(new Exception(vMsg + "Campaign is not Actived."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -232,7 +318,10 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				Campaign cp1 = test.getCampaignById(accountId, campaignId);  //check it
 				System.out.println("status = " + cp1.getStatus());
-				verify("Paused", cp1.getStatus().getValue());
+				
+				//verify result
+				if(!cp1.getStatus().getValue().equalsIgnoreCase(CampaignStatus.Paused.getValue()))
+					errorHandler(new Exception(vMsg + "Campaign is not Paused."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -252,8 +341,12 @@ public class MsnServiceTest {
 				System.out.println("created temp campaign " + tmpId + "and now delete it.");
 				test.deleteCampaignById(accountId, tmpId);
 				System.out.println("OK");
-				Campaign cp = test.getCampaignById(accountId, campaignId);
-				verify(null, cp);
+				
+				
+				//verify result
+				Campaign cp = test.getCampaignById(accountId, tmpId);
+				if(cp != null)
+					errorHandler(new Exception(vMsg + "Campaign is not deleted."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -277,7 +370,15 @@ public class MsnServiceTest {
 				Campaign ret1 = test.getCampaignById(accountId, campaignId);	
 				System.out.println(ret1.getBudgetType());
 				System.out.println(ret1.getDailyBudget());
-				verify(dailyBudget, ret1.getDailyBudget());
+
+				//verify result
+				Campaign[] cps1 = test.getCampaignsByAccountId(accountId);
+				for(Campaign c:cps1){
+					if(c.getId() == campaignId)
+						if(c.getDailyBudget() != dailyBudget)
+							errorHandler(new Exception(vMsg + "DailyBudget isn't updated correctly. " + c.getDailyBudget() + " != " + dailyBudget));
+				}
+				
 				//update monthly budget
 				System.out.println("Update Monthly Budget.");
 				double monthlyBudget = 10.00;
@@ -286,7 +387,14 @@ public class MsnServiceTest {
 				Campaign ret2 = test.getCampaignById(accountId, campaignId);	
 				System.out.println(ret2.getBudgetType());
 				System.out.println(ret1.getMonthlyBudget());
-				verify(monthlyBudget, ret2.getMonthlyBudget());
+				
+				//verify result
+				Campaign[] cps2 = test.getCampaignsByAccountId(accountId);
+				for(Campaign c:cps2){
+					if(c.getId() == campaignId)
+						if(c.getMonthlyBudget() != monthlyBudget)
+							errorHandler(new Exception(vMsg + "MonthlyBudget isn't updated correctly. " + c.getMonthlyBudget() + " != " + monthlyBudget));
+				}
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -306,23 +414,54 @@ public class MsnServiceTest {
 					test.deleteCampaignTargets(accountId, customerId, campaignId);
 				}
 				String[] list = {"US-NY", "US-MA", "US-CA", "US-FL"};
+				System.out.println("Set State Targets: " + list.toString());
 				List<String> states = Arrays.asList(list);
 				test.setCampaignStateTargets(accountId, customerId, campaignId, states);
 				System.out.println("OK");
 				
-				//getCampaignTargets
-				System.out.println("------------------------------------------------------------");
-				System.out.println("getCampaignTargets:");
+				//verify results
+				Target tgt2 = test.getCampaignTargets(accountId, customerId, campaignId);
+				StateTargetBid[] bids = tgt2.getLocation().getStateTarget().getBids();
+				int c = 0;
+				for(StateTargetBid b:bids){
+					if(b.getState().equals("US-NY")) c++;
+					if(b.getState().equals("US-MA")) c++;
+					if(b.getState().equals("US-CA")) c++;
+					if(b.getState().equals("US-FL")) c++;
+				}
+				if(c!=4)
+					errorHandler(new Exception(vMsg + "State Targets are not set correctly."));
+			}
+			catch(RemoteException e){
+				errorHandler(e);
+			}
+			
+			//getCampaignTargets
+			System.out.println("------------------------------------------------------------");
+			System.out.println("getCampaignTargets:");
+			try{				
 				Target tgt2 = test.getCampaignTargets(accountId, customerId, campaignId);
 				System.out.println("OK");
 				StateTargetBid[] bids = tgt2.getLocation().getStateTarget().getBids();
 				for(StateTargetBid b:bids){
 					System.out.println("state = " + b.getState());
 				}
+				
+				//verify results
+				int c = 0;
+				for(StateTargetBid b:bids){
+					if(b.getState().equals("US-NY")) c++;
+					if(b.getState().equals("US-MA")) c++;
+					if(b.getState().equals("US-CA")) c++;
+					if(b.getState().equals("US-FL")) c++;
+				}
+				if(c!=4)
+					errorHandler(new Exception(vMsg + "State Targets are not got correctly."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
 			}
+			
 			
 			//deleteCampaignTargets
 			System.out.println("------------------------------------------------------------");
@@ -334,7 +473,10 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				tgt3 = test.getCampaignTargets(accountId, customerId, campaignId);  //check after change
 				if(tgt3==null) System.out.println("Target is null");
-				verify(null, tgt3);
+				
+				//verify result
+				if(tgt3 != null)
+					errorHandler(new Exception(vMsg + "State Targets aren't deleted."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -350,6 +492,10 @@ public class MsnServiceTest {
 				adGroupId = test.createAdGroup(accountId, campaignId);
 				System.out.println("OK");
 				System.out.println("adGroupId = " + adGroupId);
+				
+				//verify result
+				if(adGroupId == 0L)
+					errorHandler(new Exception(vMsg + "No AdGroup ID returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -364,6 +510,10 @@ public class MsnServiceTest {
 				for(AdGroup a: adgrps){
 					System.out.println("adId = " + a.getId());
 				}
+				
+				//verify result
+				if(adgrps.length == 0)
+					errorHandler(new Exception(vMsg + "No AdGroup returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -376,7 +526,10 @@ public class MsnServiceTest {
 				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adGroupId);
 				System.out.println("OK");
 				System.out.println("adId = " + adgrp.getId());
-				verify(adGroupId, adgrp.getId());
+				
+				//verify result
+				if(!adgrp.getId().equals(adGroupId))
+					errorHandler(new Exception(vMsg + "AdGroup data returned doesn't match. " + adgrp.getId() + " != " + adGroupId));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -393,38 +546,11 @@ public class MsnServiceTest {
 				System.out.println("created a temp ad group id=" + adgrpid + ", and now we'll delete it.");
 				test.deleteAdGroupById(1595249L, 130129414L, adgrpid);  //delete the group
 				System.out.println("OK");
-				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adGroupId);
-				verify(null, adgrp);
-			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
-			catch(Exception e){
-				errorHandler(e);
-			}
-			
-			//setAdGroupStateTargets, deleteAdGroupTargets and getAdGroupTargets
-			System.out.println("------------------------------------------------------------");
-			System.out.println("setAdGroupStateTargets, deleteAdGroupTargets, getAdGroupTargets:");
-			try{
-				Target tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check before change
-				if(tgt4 != null){
-					//delete target if there's already one associated to the entity
-					test.deleteAdGroupTargets(accountId, customerId, adGroupId);
-					System.out.println("deleteAdGroupTargets OK");
-				}
-				String[] list1 = {"US-NY", "US-MA", "US-CA", "US-FL"};
-				List<String> states1 = Arrays.asList(list1);
-				test.setAdGroupStateTargets(accountId, customerId, adGroupId, states1);			
-				System.out.println("setAdGroupStateTargets OK");
-				tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check after change
-				System.out.println("getAdGroupTargets OK");
-				StateTargetBid[] bids1 = tgt4.getLocation().getStateTarget().getBids();
-				for(StateTargetBid b:bids1){
-					System.out.println("state = " + b.getState());
-				}
-				test.deleteAdGroupTargets(accountId, customerId, adGroupId);
-				System.out.println("deleteAdGroupTargets OK");
+				
+				//verify result
+				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adgrpid);
+				if(adgrp != null)
+					errorHandler(new Exception(vMsg + "AdGroup is not deleted"));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -450,6 +576,89 @@ public class MsnServiceTest {
 			}
 			*/
 			
+			//setAdGroupStateTargets
+			System.out.println("------------------------------------------------------------");
+			System.out.println("setAdGroupStateTargets:");
+			try{
+				Target tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check before change
+				if(tgt4 != null){
+					//delete target if there's already one associated to the entity
+					test.deleteAdGroupTargets(accountId, customerId, adGroupId);
+					System.out.println("deleteAdGroupTargets OK");
+				}
+				String[] list1 = {"US-NY", "US-MA", "US-CA", "US-FL"};
+				List<String> states1 = Arrays.asList(list1);
+				test.setAdGroupStateTargets(accountId, customerId, adGroupId, states1);			
+				System.out.println("setAdGroupStateTargets OK");
+				
+				//verify results
+				tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);
+				StateTargetBid[] bids1 = tgt4.getLocation().getStateTarget().getBids();
+				int c = 0;
+				for(StateTargetBid b:bids1){
+					if(b.getState().equals("US-NY")) c++;
+					if(b.getState().equals("US-MA")) c++;
+					if(b.getState().equals("US-CA")) c++;
+					if(b.getState().equals("US-FL")) c++;
+				}
+				if(c!=4)
+					errorHandler(new Exception(vMsg + "State Targets aren't set correctly."));				
+			}
+			catch(RemoteException e){
+				errorHandler(e);
+			}
+			catch(Exception e){
+				errorHandler(e);
+			}
+			
+			//getAdGroupTargets
+			System.out.println("------------------------------------------------------------");
+			System.out.println("getAdGroupTargets:");
+			try{
+				Target tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check after change
+				System.out.println("getAdGroupTargets OK");
+				StateTargetBid[] bids1 = tgt4.getLocation().getStateTarget().getBids();
+				for(StateTargetBid b:bids1){
+					System.out.println("state = " + b.getState());
+				}
+				
+				//verify results
+				int c = 0;
+				for(StateTargetBid b:bids1){
+					if(b.getState().equals("US-NY")) c++;
+					if(b.getState().equals("US-MA")) c++;
+					if(b.getState().equals("US-CA")) c++;
+					if(b.getState().equals("US-FL")) c++;
+				}
+				if(c!=4)
+					errorHandler(new Exception(vMsg + "State Targets aren't got correctly."));				
+			}
+			catch(RemoteException e){
+				errorHandler(e);
+			}
+			catch(Exception e){
+				errorHandler(e);
+			}
+			
+			//deleteAdGroupTargets
+			System.out.println("------------------------------------------------------------");
+			System.out.println("deleteAdGroupTargets:");
+			try{				
+				test.deleteAdGroupTargets(accountId, customerId, adGroupId);
+				System.out.println("deleteAdGroupTargets OK");
+				
+				//verify result
+				Target tgt4 = test.getAdGroupTargets(accountId, customerId, adGroupId);
+				if(tgt4 != null)
+					errorHandler(new Exception(vMsg + "Targets are not deleted."));
+			}
+			catch(RemoteException e){
+				errorHandler(e);
+			}
+			catch(Exception e){
+				errorHandler(e);
+			}			
+			
 			//setAdGroupCityTargets
 			System.out.println("------------------------------------------------------------");
 			System.out.println("setAdGroupCityTargets:");
@@ -463,11 +672,22 @@ public class MsnServiceTest {
 				List<String> cities = Arrays.asList(list2);
 				test.setAdGroupCityTargets(accountId, customerId, adGroupId, cities);			
 				System.out.println("OK");
+				
+				//verify results
 				tat5 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check after change
 				CityTargetBid[] bids2 = tat5.getLocation().getCityTarget().getBids();
 				for(CityTargetBid b:bids2){
 					System.out.println("city = " + b.getCity());
 				}			
+				int c = 0;
+				for(CityTargetBid t:bids2){
+					if(t.getCity().equals("Brookline, Boston MA US")) c++;
+					if(t.getCity().equals("Newton, Boston MA US")) c++;
+					if(t.getCity().equals("Wellesley, Boston MA US")) c++;
+				}
+				if(c!=3)
+					errorHandler(new Exception(vMsg + "City Targets are not set correctly."));
+				
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -486,11 +706,20 @@ public class MsnServiceTest {
 				List<String> metros = Arrays.asList(list3);
 				test.setAdGroupMetroAreaTargets(accountId, customerId, adGroupId, metros);			
 				System.out.println("OK");
+				
+				//verify results
 				tgt6 = test.getAdGroupTargets(accountId, customerId, adGroupId);  //check after change
 				MetroAreaTargetBid[] bids3 = tgt6.getLocation().getMetroAreaTarget().getBids();
 				for(MetroAreaTargetBid b:bids3){
 					System.out.println("city = " + b.getMetroArea());
 				}	
+				int c = 0;
+				for(MetroAreaTargetBid m:bids3){
+					if(m.getMetroArea().equals("Brooklyn, NY US")) c++;
+					if(m.getMetroArea().equals("New York, NY US")) c++;
+				}
+				if(c!=2)
+					errorHandler(new Exception(vMsg + "Metro Area Targets are not set correctly."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -504,6 +733,10 @@ public class MsnServiceTest {
 				adId = test.createAd(accountId, adGroupId, adName, "test content", "https://www.semplest.com/", "https://www.semplest.com/");
 				System.out.println("OK");
 				System.out.println("adId = " + adId);
+				
+				//verify result
+				if(adId == 0L)
+					errorHandler(new Exception(vMsg + "No Ad ID returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -524,7 +757,10 @@ public class MsnServiceTest {
 						+ "; Text = " + ad2.getText()
 						+ "; DisplayUrl = " + ad2.getDisplayUrl()
 						+ "; DestinationUrl = " + ad2.getDestinationUrl());
-				verify(adId, ad1.getId());
+				
+				//verify result
+				if(!ad1.getId().equals(adId))
+					errorHandler(new Exception(vMsg + "Ad Data returned incorrectly."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -549,6 +785,10 @@ public class MsnServiceTest {
 							+ "; DisplayUrl = " + a.getDisplayUrl()
 							+ "; DestinationUrl = " + a.getDestinationUrl());
 				} 		
+				
+				//verify result
+				if(ad3.length == 0)
+					errorHandler(new Exception(vMsg + "No Ad returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -562,8 +802,10 @@ public class MsnServiceTest {
 				test.updateAdById(accountId, adGroupId, adId, adTitle, "update content", "https://adcenter.microsoft.com/", "https://adcenter.microsoft.com/");
 				System.out.println("OK");
 				
-				TextAd ad = (TextAd)test.getAdById(accountId, adGroupId, adId);
-				verify(adTitle, ad.getTitle());
+				//verify result
+				TextAd ad1 = (TextAd)test.getAdById(accountId, adGroupId, adId);				
+				if(!ad1.getTitle().equalsIgnoreCase(adTitle))
+					errorHandler(new Exception(vMsg + "Ad is not updated correctly. " + ad1.getTitle() + " != " + adTitle));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -579,8 +821,10 @@ public class MsnServiceTest {
 				test.pauseAdById(accountId, adGroupId, adId);
 				System.out.println("OK");
 				
+				//verify result
 				Ad ad = test.getAdById(accountId, adGroupId, adId);
-				verify("Paused", ad.getStatus().getValue());
+				if(!ad.getStatus().getValue().equalsIgnoreCase(AdStatus.Paused.getValue()))
+					errorHandler(new Exception(vMsg + "Ad is not Paused."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -596,8 +840,10 @@ public class MsnServiceTest {
 				test.resumeAdById(accountId, adGroupId, adId);  //resume the Ad
 				System.out.println("OK");
 				
+				//verify result
 				Ad ad = test.getAdById(accountId, adGroupId, adId);
-				verify("Active", ad.getStatus().getValue());
+				if(!ad.getStatus().getValue().equalsIgnoreCase(AdStatus.Active.getValue()))
+					errorHandler(new Exception(vMsg + "Ad is not Actived."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -613,8 +859,10 @@ public class MsnServiceTest {
 				test.deleteAdById(accountId, adGroupId, adId);
 				System.out.println("OK");
 				
+				//verify result
 				Ad ad = test.getAdById(accountId, adGroupId, adId);				
-				verify(null, ad);
+				if(ad != null)
+					errorHandler(new Exception(vMsg + "Ad is not deleted."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -637,6 +885,9 @@ public class MsnServiceTest {
 				phraseMatchBid.setAmount(2.03);
 				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);			
 				System.out.println("OK");
+				
+				if(keywordId == 0L)
+					errorHandler(new Exception(vMsg + "No keyword Id returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -653,7 +904,9 @@ public class MsnServiceTest {
 							+ "; text = " + kw1.getText());
 				}
 				
-				verify(keywordId, kw1.getId());
+				//verify result
+				if((kw1==null) || (kw1.getId() == null) || (kw1.getText() == null))
+					errorHandler(new Exception(vMsg + "No keyword data returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -682,6 +935,10 @@ public class MsnServiceTest {
 				for(long k: kwids){
 					System.out.println("keyword Id = " + k);
 				}
+				
+				//verify result
+				if(kwids.length != 2)
+					errorHandler(new Exception(vMsg + "No keyword IDs returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -697,6 +954,10 @@ public class MsnServiceTest {
 				for(Keyword k: kws1){
 					System.out.println("keyword Id = " + k.getId());
 				}
+				
+				//verify result
+				if(kws1.length == 0)
+					errorHandler(new Exception(vMsg + "No keywords returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -717,11 +978,6 @@ public class MsnServiceTest {
 				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
 				System.out.println("OK");
 				
-				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);				
-				verify(broadMatchBid.getAmount(), kw1.getBroadMatchBid().getAmount());
-				verify(contentMatchBid.getAmount(), kw1.getContentMatchBid().getAmount());
-				verify(exactMatchBid.getAmount(), kw1.getExactMatchBid().getAmount());
-				verify(phraseMatchBid.getAmount(), kw1.getPhraseMatchBid().getAmount());
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -743,8 +999,16 @@ public class MsnServiceTest {
 					bids[i] = new Bid();
 					bids[i].setAmount(i+0.05);
 				}			
-				test.updateKeywordBidsByIds(1595249L, 754813047L, kwid, bids, bids, bids, bids);
-				System.out.println("OK");				
+				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, bids, bids, bids, bids);
+				System.out.println("OK");	
+				
+				//verify result
+				Keyword[] kws2 = test.getKeywordByAdGroupId(accountId, adGroupId);
+				for(int i = 0; i<kws2.length; i++){
+					if(kws2[i].getBroadMatchBid().getAmount() != (i+0.05))
+						errorHandler(new Exception(vMsg + "Bid amount not updated correctly."));
+					break;
+				}	
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -761,8 +1025,10 @@ public class MsnServiceTest {
 				test.pauseKeywordById(accountId, adGroupId, keywordId);
 				System.out.println("OK");
 				
+				//verify result
 				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);
-				verify("Paused", kw1.getStatus().getValue());
+				if(!kw1.getStatus().getValue().equalsIgnoreCase(KeywordStatus.Paused.getValue()))
+					errorHandler(new Exception(vMsg + "Keyword is not Paused."));				
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -777,8 +1043,11 @@ public class MsnServiceTest {
 			try{
 				test.deleteKeywordById(accountId, adGroupId, keywordId);
 				System.out.println("OK");
+				
+				//verify result
 				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);
-				verify(null, kw1);
+				if(kw1 != null)
+					errorHandler(new Exception(vMsg + "Keyword is not deleted."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -799,6 +1068,13 @@ public class MsnServiceTest {
 				}				
 				test.deleteKeywordsById(accountId, adGroupId, kwid);
 				System.out.println("OK");
+				
+				//verify result
+				for(long id : kwid){
+					if(test.getKeywordById(accountId, adGroupId, id) != null)
+						errorHandler(new Exception(vMsg + "Keyword is not deleted."));
+					break;
+				}
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -819,6 +1095,8 @@ public class MsnServiceTest {
 				Long test_accountId = 1617055L;
 				TrafficEstimatorObject kep = test.getKeywordEstimateByBids(test_accountId, kws2, bid, MatchType.Exact);
 				System.out.println("OK");
+				
+				//verify result
 				System.out.println("test accountId is " + test_accountId);				
 				for(String s:kep.getListOfKeywords()){
 					System.out.println("keyword = " + s);
@@ -836,6 +1114,9 @@ public class MsnServiceTest {
 						}
 					}
 				}
+				
+				if(kep.getListOfKeywords().length == 0)
+					errorHandler(new Exception(vMsg + "No TrafficEstimator data returned."));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -866,6 +1147,7 @@ public class MsnServiceTest {
 			logger.info(values.toString());
 			*/
 			
+			/*
 			//getKeywordReport
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getKeywordReport:");
@@ -903,6 +1185,7 @@ public class MsnServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			*/
 		
 		}
 		finally{
@@ -912,13 +1195,13 @@ public class MsnServiceTest {
 		if(errorCounter > 0){
 			System.out.println(" ");
 			System.out.println("####################################################################################");
-			System.out.println("#                       Msn Service Test (Standalone) FAILED!                      #");
+			System.out.println("#                          MsnAdcenter Test (Impl) FAILED!                         #");
 			System.out.println("####################################################################################");
 		}
 		else{
 			System.out.println(" ");
 			System.out.println("####################################################################################");
-			System.out.println("#                       Msn Service Test (Standalone) PASSED!                      #");
+			System.out.println("#                          MsnAdcenter Test (Impl) PASSED!                         #");
 			System.out.println("####################################################################################");
 		}
 		
@@ -984,7 +1267,6 @@ public class MsnServiceTest {
 				System.out.println("budget type = " + cp.getBudgetType());
 				System.out.println("daily budget = " + cp.getDailyBudget());
 				System.out.println("monthly budget = " + cp.getMonthlyBudget());
-				verify(campaignId, cp.getId());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1012,7 +1294,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				Campaign cp1 = test.getCampaignById(accountId, campaignId);  //check it
 				System.out.println("status = " + cp1.getStatus());
-				verify("Active", cp1.getStatus().getValue());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1026,7 +1307,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				Campaign cp1 = test.getCampaignById(accountId, campaignId);  //check it
 				System.out.println("status = " + cp1.getStatus());
-				verify("Paused", cp1.getStatus().getValue());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1044,7 +1324,6 @@ public class MsnServiceTest {
 				test.deleteCampaignById(accountId, tmpId);
 				System.out.println("OK");
 				Campaign cp = test.getCampaignById(accountId, campaignId);
-				verify(null, cp);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1062,7 +1341,6 @@ public class MsnServiceTest {
 				Campaign ret1 = test.getCampaignById(accountId, campaignId);	
 				System.out.println(ret1.getBudgetType());
 				System.out.println(ret1.getDailyBudget());
-				verify(dailyBudget, ret1.getDailyBudget());
 				//update monthly budget
 				System.out.println("Update Monthly Budget.");
 				double monthlyBudget = 10.00;
@@ -1071,7 +1349,6 @@ public class MsnServiceTest {
 				Campaign ret2 = test.getCampaignById(accountId, campaignId);	
 				System.out.println(ret2.getBudgetType());
 				System.out.println(ret1.getMonthlyBudget());
-				verify(monthlyBudget, ret2.getMonthlyBudget());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1116,7 +1393,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				tgt3 = test.getCampaignTargets(accountId, customerId, campaignId);  //check after change
 				if(tgt3==null) System.out.println("Target is null");
-				verify(null, tgt3);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1155,7 +1431,6 @@ public class MsnServiceTest {
 				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adGroupId);
 				System.out.println("OK");
 				System.out.println("adId = " + adgrp.getId());
-				verify(adGroupId, adgrp.getId());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1170,7 +1445,6 @@ public class MsnServiceTest {
 				test.deleteAdGroupById(1595249L, 130129414L, adgrpid);  //delete the group
 				System.out.println("OK");
 				AdGroup adgrp = test.getAdGroupById(accountId, campaignId, adGroupId);
-				verify(null, adgrp);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1294,7 +1568,6 @@ public class MsnServiceTest {
 						+ "; Text = " + ad2.getText()
 						+ "; DisplayUrl = " + ad2.getDisplayUrl()
 						+ "; DestinationUrl = " + ad2.getDestinationUrl());
-				verify(adId, ad1.getId());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1330,7 +1603,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				
 				TextAd ad = (TextAd)test.getAdById(accountId, adGroupId, adId);
-				verify(adTitle, ad.getTitle());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1344,7 +1616,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				
 				Ad ad = test.getAdById(accountId, adGroupId, adId);
-				verify("Paused", ad.getStatus().getValue());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1358,7 +1629,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				
 				Ad ad = test.getAdById(accountId, adGroupId, adId);
-				verify("Active", ad.getStatus().getValue());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1372,7 +1642,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				
 				Ad ad = test.getAdById(accountId, adGroupId, adId);				
-				verify(null, ad);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1408,7 +1677,6 @@ public class MsnServiceTest {
 							+ "; text = " + kw1.getText());
 				}
 				
-				verify(keywordId, kw1.getId());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1469,11 +1737,6 @@ public class MsnServiceTest {
 				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
 				System.out.println("OK");
 				
-				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);				
-				verify(broadMatchBid.getAmount(), kw1.getBroadMatchBid().getAmount());
-				verify(contentMatchBid.getAmount(), kw1.getContentMatchBid().getAmount());
-				verify(exactMatchBid.getAmount(), kw1.getExactMatchBid().getAmount());
-				verify(phraseMatchBid.getAmount(), kw1.getPhraseMatchBid().getAmount());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1507,7 +1770,6 @@ public class MsnServiceTest {
 				System.out.println("OK");
 				
 				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);
-				verify("Paused", kw1.getStatus().getValue());
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1520,7 +1782,6 @@ public class MsnServiceTest {
 				test.deleteKeywordById(accountId, adGroupId, keywordId);
 				System.out.println("OK");
 				Keyword kw1 = test.getKeywordById(accountId, adGroupId, keywordId);
-				verify(null, kw1);
 			}
 			catch(Exception e){
 				errorHandler(e);
@@ -1596,6 +1857,7 @@ public class MsnServiceTest {
 			logger.info(values.toString());
 			*/
 			
+			/*
 			//getKeywordReport
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getKeywordReport:");
@@ -1630,6 +1892,7 @@ public class MsnServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
+			*/
 		
 		}
 		finally{
@@ -1652,43 +1915,7 @@ public class MsnServiceTest {
 		return errorCounter;
 	}
 		
-	private void verify(Object expect, Object actual) throws Exception{		
-		/*
-		if(expect instanceof String){
-			if(!expect.equals(actual)){
-				throw new Exception("Verification FAILED! " + eol + expect + " != " + actual);
-			}
-		}
-		if(expect instanceof Long){
-			if((Long)expect != (Long)actual){
-				throw new Exception("Verification FAILED! " + eol + expect + " != " + actual);
-			}
-		}
-		if(expect instanceof Double){
-			if((Double)expect != (Double)actual){
-				throw new Exception("Verification FAILED! " + eol + expect + " != " + actual);
-			}
-		}
-		if(expect instanceof Integer){
-			if((Integer)expect != (Integer)actual){
-				throw new Exception("Verification FAILED! " + eol + expect + " != " + actual);
-			}
-		}
-		if(expect == null){
-			if(actual == null){				
-			}
-			else{
-				throw new Exception("Verification FAILED! " + eol + "return is not empty");
-			}
-		}
-		else{
-			if(expect != actual){
-				throw new Exception("Verification FAILED! " + eol + expect + " != " + actual);
-			}
-		}				
-		*/
-	}
-	
+
 	private void errorHandler(Exception e){
 		e.printStackTrace();
 		System.out.println("////////////////////////////////////////////////////");	

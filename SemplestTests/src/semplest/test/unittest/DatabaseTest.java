@@ -54,6 +54,8 @@ public class DatabaseTest extends BaseDB{
 	private ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	private SemplestDB db = new SemplestDB();
 	
+	private int errorCounter = 0;
+	
 	private Integer customerID = 48;
 	private Integer promotionID = 71;
 	private String adEngine = AdEngine.Google.name();
@@ -75,20 +77,31 @@ public class DatabaseTest extends BaseDB{
 		System.out.println("*** DONE ***");
 	}	
 	
+	public int Test_ALL(){
+		errorCounter = 0;
+		
+		Test_ReportData();				
+		Test_TrafficEstimatorData();						
+		Test_DefaultBid();		
+		Test_KeywordDataObject();		
+		Test_BidObject();	
+		Test_TargetedDailyBudget();		
+		Test_PromotionData();
+		Test_Other();
+		
+		return errorCounter;
+	}
+	
 	public void Test_ReportData(){		
-		try{			
-			/* ******************************************************************************************* */
-			//*** store report data to the AdvertisingEngineReportData table			
-			//store_ReportData(1);
 			
-			/* ******************************************************************************************* */
-			//*** get report data from the database			
-			get_ReportData();
-			
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
+		/* ******************************************************************************************* */
+		//*** store report data to the AdvertisingEngineReportData table			
+		//store_ReportData(1);
+		
+		/* ******************************************************************************************* */
+		//*** get report data from the database			
+		get_ReportData();		
+		
 	}
 	
 	public void store_ReportData(int caseNum){
@@ -151,6 +164,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -183,6 +197,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -218,6 +233,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -259,8 +275,8 @@ public class DatabaseTest extends BaseDB{
 				}
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -281,8 +297,8 @@ public class DatabaseTest extends BaseDB{
 			System.out.println("DefaultBid = " + ret);
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(e);
 		}		
 	}
 	
@@ -295,12 +311,12 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** get Latest Biddable AdGroup Criteria from the database
-			//get_KeywordDataObject(1);
-			
+			//get_KeywordDataObject(1);			
 			get_KeywordDataObject(2);
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -316,6 +332,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 
@@ -369,6 +386,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -385,6 +403,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -404,6 +423,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -452,6 +472,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -467,8 +488,8 @@ public class DatabaseTest extends BaseDB{
 			//get_TargetedDailyBudget(2);  //get ALL TargetedDailyBudget
 			
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -478,8 +499,8 @@ public class DatabaseTest extends BaseDB{
 			Integer targetedDailyClicks = 300;
 			db.storeTargetedDailyBudget(promotionID, adEngine, targetedDailyMicroBudget, targetedDailyClicks);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -509,6 +530,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 
@@ -605,6 +627,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 
@@ -660,6 +683,7 @@ public class DatabaseTest extends BaseDB{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			errorHandler(e);
 		}
 	}
 	
@@ -900,5 +924,20 @@ public class DatabaseTest extends BaseDB{
 		
 	}
 	
+	private void errorHandler(Exception e){
+		e.printStackTrace();
+		System.out.println("////////////////////////////////////////////////////");	
+		System.out.println("ERROR:");
+		System.out.println(e.getMessage());
+		StackTraceElement[] ste = e.getStackTrace();
+		for(StackTraceElement s : ste){
+			System.out.println(s.getClassName() + ": " + s.getMethodName() + ": " + s.getLineNumber());
+		}
+		System.out.println();
+		System.out.println("");
+		System.out.println("////////////////////////////////////////////////////");			
+		
+		errorCounter++;
+	}
 	
 }
