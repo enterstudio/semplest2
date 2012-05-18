@@ -172,6 +172,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	    logger.info("Number of categories to add " + trainLines.size());
 		//Train LDA for categories selected and return sorted keywords
 	    //and obtain word probability
+	    
 	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
 	    //Rank monograms by probability
 	    ValueComparator bvc =  new ValueComparator(wordMap);
@@ -241,6 +242,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		double beta=0.01;
 		int numiter=100;
 		logger.info("Number of categories" + trainLines.size());
+		for(String trainLine : trainLines){
+			logger.info(trainLine);
+		}
 		lda.CreateInstances(trainLines);
 		int numTopics = data.numTopics;
 		if(trainLines.size()<numTopics)

@@ -52,7 +52,7 @@ public class KWGenDmozLDAdata implements Runnable{
 			userInfoWeight = pr.userInfoWeight;
 			numKeywordsGoogle = pr.numKeywordsGoogle;
 			numKeywordsMSN = pr.numKeywordsMSN;
-			logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
+			//logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
 			
 		
 			logger.info("create DmozLucene()");
@@ -65,9 +65,7 @@ public class KWGenDmozLDAdata implements Runnable{
 			logger.info("dfile:"+ dfile);
 			TrainingData = ioUtils.file2Hash(dfile);
 			Set<String> keys = TrainingData.keySet();
-			for(String key: keys){
-				logger.info(key+"\n");
-			}
+		
 			logger.info("Data loaded");
 			
 			logger.info("Loading stem dictionary...");
