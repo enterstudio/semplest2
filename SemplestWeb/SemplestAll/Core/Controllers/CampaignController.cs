@@ -44,8 +44,11 @@ namespace Semplest.Core.Controllers
             _campaignRepository = iCampaignRepository;
         }
 
-        public ActionResult CampaignSetup()
+        public ActionResult CampaignSetup(CampaignSetupModel cs, string command)
         {
+
+            if (command == "") command="";
+
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
             Logger.Write(logEnty);
             //var logService = new LogService();
@@ -53,8 +56,8 @@ namespace Semplest.Core.Controllers
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            var campaignSetupModel = new CampaignSetupModel();
-            return View(campaignSetupModel);
+            //var campaignSetupModel = new CampaignSetupModel();
+            return View(cs);
         }
 
         [HttpGet]
@@ -384,6 +387,14 @@ namespace Semplest.Core.Controllers
             model = (CampaignSetupModel)Session["FullModel"];
             return PartialView(model);
         }
+
+        [HttpPost]
+        public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
+        {
+            model = (CampaignSetupModel)Session["FullModel"];
+            return PartialView(model);
+        }
+
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
             model = (CampaignSetupModel)Session["FullModel"];
@@ -408,19 +419,21 @@ namespace Semplest.Core.Controllers
             var sds = new SemplestDataService();
             var user = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
-            //var homeBar = new NavBar
-            //{
-            //    Name = "Home",
-            //    SubItems = new List<NavBar>
-            //                                     {
-            //                                         new NavBar {Name = "My Account", Url = "../Home/Index2"},
-            //                                         new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
-            //                                         new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
-            //                                         new NavBar {Name = "Billing"},
-            //                                         new NavBar {Name = "My Profile", Url= "../Account/ChildProfile"},
-            //                                     }
-            //};
-            //navBars.Add(homeBar);
+
+            var homeBar = new NavBar
+            {
+                Name = "Home",
+                SubItems = new List<NavBar>
+                                                 {
+                                                     new NavBar {Name = "My Account", Url = "../Home/Index2"},
+                                                     new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
+                                                     new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
+                                                     new NavBar {Name = "Billing"},
+                                                     new NavBar {Name = "My Profile", Url= "../Account/ChildProfile"},
+                                                 }
+            };
+            navBars.Add(homeBar);
+
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
             {
