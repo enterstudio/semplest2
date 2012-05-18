@@ -65,7 +65,7 @@ public static class MvcCheckBoxList_Extensions_Model
 
         StringBuilder sb = new StringBuilder();
 
-        sb.Append("<ul id='list'>");
+        sb.Append("<ul id=\"list\">");
 
         foreach (var option in selectList)
         {
