@@ -66,7 +66,8 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		 * Init Keyword Data
 		 */
 		logger.info("Initialized Keyword generator...");
-		kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
+		//kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
+		kwGen =  new KWGenDmozLDAServer(null);
 		kwGen.initializeService(null);
 	}
 	
