@@ -90,7 +90,7 @@ namespace Semplest.Core.Models
         [DisplayName("Last Name")]
         public string LastName { get; set; }
         
-        [Required]
+        //[Required]
         public String  Phone { get; set; }
 
         [Required]
@@ -157,7 +157,7 @@ namespace Semplest.Core.Models
         [DisplayName("Last Name")]
         public string LastName { get; set; }
 
-        [Required]
+        //[Required]
         public String Phone { get; set; }
 
         [Required]
