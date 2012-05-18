@@ -360,6 +360,24 @@ namespace Semplest.Core.Controllers
             model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
             return PartialView(model);
         }
+
+
+        // this should be called when Save and Continue button clicked on Keywords page
+
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "GetBillingLaunch")]
+        public ActionResult GetBillingLaunch(AdModel model)
+        {
+
+            //SemplestDataService ds = new SemplestDataService();
+            //int userid = 1;
+            //CampaignSetupModel fullmodel = 
+            //ds.SaveNegativeKeywords(userid, model);
+
+            return Json("BillingLaunch");
+        }
+
         public ActionResult KeyWords(CampaignSetupModel model)
         {
             model = (CampaignSetupModel)Session["FullModel"];
