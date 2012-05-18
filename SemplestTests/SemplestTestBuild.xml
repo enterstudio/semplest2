@@ -6,6 +6,8 @@
 	<property name="semplest.bidding.dir" value="${basedir}/../SEMplestBidding" />
 	<property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />	
 	
+	<property name="classes" value="${basedir}/classes"/>
+	
 	<!-- copy all the necessary codes to the test folder -->
 	<echo message="Copy SemplestProtocol classes..."/>	 	  	 	
  	<copydir src="${semplest.protocol.dir}/src"
@@ -21,10 +23,11 @@
  	<copydir src="${semplest.clientapi.dir}/src"
  		dest="${basedir}/src"
  	    includes="**/*.*"
-	/>
+	/>	
 	
+	<mkdir dir="${classes}"/>
 	<!-- compile protocol -->
-	<javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="class.path"
+	<javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="${semplest.protocol.dir}/lib"
       target="1.6"
       source="1.6"
       debug="${java.debug}"   	
@@ -40,7 +43,7 @@
 		<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
 	</copy>
 	<path id="bid.path">
-		<pathelement location="${semplest.protocol.dir}/lib"/>
+		<pathelement location="${classes}"/>
 			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
 	</path>
 	<mkdir dir="${semplest.bidding.dir}/temp"/>
@@ -61,7 +64,7 @@
  		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
  	</copy>
 	<path id="keywords.path">
-		<pathelement location="${semplest.protocol.dir}/lib"/>
+		<pathelement location="${classes}"/>
 			<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
 	</path>
 	<mkdir dir="${semplest.keywords.dir}/temp"/>
