@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+
 import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
@@ -23,6 +24,7 @@ import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
+
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
@@ -243,9 +245,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		double beta=0.01;
 		int numiter=100;
 		logger.info("Number of categories" + trainLines.size());
-		for(String trainLine : trainLines){
-			logger.info(trainLine);
-		}
+		
 		lda.CreateInstances(trainLines);
 		int numTopics = data.numTopics;
 		if(trainLines.size()<numTopics)
@@ -254,11 +254,11 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		lda.LDAcreateModel(alpha, beta, numiter);
 		InstanceList inferInst;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
-	    logger.info("inferInst alphabet size: "+ inferInst.getAlphabet().size());
+	    //logger.info("inferInst alphabet size: "+ inferInst.getAlphabet().size());
 			    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);
-	    logger.info("insider word map size:"+wordMap.size());
+	    //logger.info("insider word map size:"+wordMap.size());
 	    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
 	    if(searchTerm!=null){
 	    	String[] terms = qsStem.split("\\s+");
@@ -735,6 +735,25 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	
 	public static void main(String[] args) throws Exception {
+		
+		/*
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
+		 *
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		Object object = new Object();
+		SemplestConfiguration configDB = new SemplestConfiguration(object);
+		Thread configThread = new Thread(configDB);
+		configThread.start();
+		synchronized (object)
+		{
+			object.wait();
+		}
+		/*
+		 * Init Keyword Data
+		 */
+		logger.info("Initialized Keyword generator...");
+		
+		//KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
 		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(null);
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
