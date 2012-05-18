@@ -5,6 +5,7 @@
 }
 @using (Html.BeginForm())
 {
+    <div id="url"></div>
     <div id="tickets">
         <h3>
             Log In</h3>
@@ -108,15 +109,4 @@
         margin-left: 6px;
     }
 </style>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("input[id$='btnSubmit']").click(function () {
-            $.ajax({
-                type: "GET",
-                url: "/Profile/Verify",
-                data: { userName: $('#UserName').val(), password: $('#Password1').val() },
-                success: function (data) { $('.passwordverify').html(data); }
-            });
-        });
-    })
-</script>
+

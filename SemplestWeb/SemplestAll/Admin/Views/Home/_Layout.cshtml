@@ -58,6 +58,7 @@
 
     </head>
     <body class="centerWrap">
+
         <div id="header">
             <div class="centerWrap floatWrap">
                 <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
@@ -97,3 +98,11 @@
         </div>
     </body>
 </html>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnSubmit").click(function (event) {
+            $('#url').html($('#url').html() + "<input type='hidden' id='isAdmin' name='isAdmin' value='true' />");
+        });
+    })
+</script>

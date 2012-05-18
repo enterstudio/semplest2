@@ -57,13 +57,17 @@ namespace SharedResources.Views.Profile
             
             #line default
             #line hidden
+WriteLiteral("    <div id=\"url\"></div>\r\n");
+
+
+
 WriteLiteral("    <div id=\"tickets\">\r\n        <h3>\r\n            Log In</h3>\r\n        <fieldset>" +
 "\r\n            <legend>Account Information</legend>\r\n            <ul>\r\n          " +
 "      <li>\r\n                    ");
 
 
             
-            #line 15 "..\..\Views\Profile\LogIn.cshtml"
+            #line 16 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.LabelFor(t => t.UserName, new { @class = "required" }));
 
             
@@ -73,7 +77,7 @@ WriteLiteral("\r\n                    ");
 
 
             
-            #line 16 "..\..\Views\Profile\LogIn.cshtml"
+            #line 17 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
 
             
@@ -83,7 +87,7 @@ WriteLiteral("\r\n                    ");
 
 
             
-            #line 17 "..\..\Views\Profile\LogIn.cshtml"
+            #line 18 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.ValidationMessageFor(m => m.UserName));
 
             
@@ -93,7 +97,7 @@ WriteLiteral("\r\n                </li>\r\n                <li>\r\n             
 
 
             
-            #line 20 "..\..\Views\Profile\LogIn.cshtml"
+            #line 21 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.LabelFor(t => t.Password1, new { @class = "required" }));
 
             
@@ -103,7 +107,7 @@ WriteLiteral("\r\n                    ");
 
 
             
-            #line 21 "..\..\Views\Profile\LogIn.cshtml"
+            #line 22 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
 
             
@@ -113,7 +117,7 @@ WriteLiteral("\r\n                    ");
 
 
             
-            #line 22 "..\..\Views\Profile\LogIn.cshtml"
+            #line 23 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.ValidationMessageFor(m => m.Password1));
 
             
@@ -124,7 +128,7 @@ WriteLiteral(" \r\n                </li>\r\n                <li class=\"accept\"
 
 
             
-            #line 25 "..\..\Views\Profile\LogIn.cshtml"
+            #line 26 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.HiddenFor(m => m.IsRegistered));
 
             
@@ -134,21 +138,21 @@ WriteLiteral("\r\n");
 
 
             
-            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+            #line 27 "..\..\Views\Profile\LogIn.cshtml"
                      if (Model != null)
                     {
             
             #line default
             #line hidden
             
-            #line 27 "..\..\Views\Profile\LogIn.cshtml"
+            #line 28 "..\..\Views\Profile\LogIn.cshtml"
                 Write(Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded));
 
             
             #line default
             #line hidden
             
-            #line 27 "..\..\Views\Profile\LogIn.cshtml"
+            #line 28 "..\..\Views\Profile\LogIn.cshtml"
                                                                                }
             
             #line default
@@ -159,7 +163,7 @@ WriteLiteral("</li>\r\n                <li class=\"accept\">\r\n                
 
 
             
-            #line 33 "..\..\Views\Profile\LogIn.cshtml"
+            #line 34 "..\..\Views\Profile\LogIn.cshtml"
                  if (Model != null)
                 {
                     if (!Model.LoggedInSucceeded)
@@ -172,7 +176,7 @@ WriteLiteral("                        <li class=\"status\">\r\n                 
 
 
             
-            #line 38 "..\..\Views\Profile\LogIn.cshtml"
+            #line 39 "..\..\Views\Profile\LogIn.cshtml"
                        Write(Model.LoginFailedMessage);
 
             
@@ -182,7 +186,7 @@ WriteLiteral("\r\n                        </li>\r\n");
 
 
             
-            #line 40 "..\..\Views\Profile\LogIn.cshtml"
+            #line 41 "..\..\Views\Profile\LogIn.cshtml"
                     }
                     else if (!Model.IsRegistered)
                     {
@@ -191,14 +195,14 @@ WriteLiteral("\r\n                        </li>\r\n");
             #line default
             #line hidden
             
-            #line 43 "..\..\Views\Profile\LogIn.cshtml"
+            #line 44 "..\..\Views\Profile\LogIn.cshtml"
                   Write(Html.Partial("_Password", Model));
 
             
             #line default
             #line hidden
             
-            #line 43 "..\..\Views\Profile\LogIn.cshtml"
+            #line 44 "..\..\Views\Profile\LogIn.cshtml"
                                                         
                     }
                 }
@@ -210,7 +214,7 @@ WriteLiteral("            </ul>\r\n        </fieldset>\r\n    </div>\r\n");
 
 
             
-            #line 49 "..\..\Views\Profile\LogIn.cshtml"
+            #line 50 "..\..\Views\Profile\LogIn.cshtml"
 }
 
             
@@ -277,18 +281,7 @@ WriteLiteral(@"<style scoped>
         margin-left: 6px;
     }
 </style>
-<script type=""text/javascript"">
-    $(document).ready(function () {
-        $(""input[id$='btnSubmit']"").click(function () {
-            $.ajax({
-                type: ""GET"",
-                url: ""/Profile/Verify"",
-                data: { userName: $('#UserName').val(), password: $('#Password1').val() },
-                success: function (data) { $('.passwordverify').html(data); }
-            });
-        });
-    })
-</script>
+
 ");
 
 

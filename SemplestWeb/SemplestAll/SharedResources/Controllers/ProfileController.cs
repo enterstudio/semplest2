@@ -23,8 +23,9 @@ namespace Semplest.SharedResources.Controllers
         }
 
         [HttpPost]
-        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl)
+        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, string isAdmin)
         {
+            bool isAdminLogin = isAdmin == null ? false : true;
             using (SemplestEntities dbContext = new SemplestEntities())
             {
                 Credential cred = null;
@@ -35,9 +36,11 @@ namespace Semplest.SharedResources.Controllers
                 else
                 {
                     var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+
                     if (creds.Count() == 1)
                     {
-                        cred = creds.First();
+                        if ((isAdminLogin && creds.First().IsAdmin()) || (!isAdminLogin && !creds.First().IsAdmin()))
+                            cred = creds.First();
                     }
 
                 }
