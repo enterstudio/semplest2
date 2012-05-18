@@ -149,7 +149,7 @@
 	    <jar destfile="UnitTests.jar"
 	         basedir="${classes}"
 	         includes="**/*.class">
-			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
+			<fileset dir="${basedir}/lib" includes="**/*.*"/>
 	      <manifest>
 	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
 	      	<attribute name="Class-Path" value="${mf.classpath}"/>
