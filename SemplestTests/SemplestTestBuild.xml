@@ -129,12 +129,27 @@
 	
 	<!-- Build the Excutable Jar -->
 	<target name="jar" depends="init, compile">  	
+		<path id="build.classpath">
+		        <fileset dir="${basedir}/" />
+		</path>
+		
+		<pathconvert property="mf.classpath" pathsep=" ">
+		        <path refid="build.classpath"/>
+		        <mapper>
+		                <chainedmapper>
+		                        <flattenmapper/>
+		                        <globmapper from="*.jar" to="lib/*.jar"/>
+		                </chainedmapper>
+		        </mapper>
+		</pathconvert>
+		
 	    <jar destfile="UnitTests.jar"
 	         basedir="${classes}"
 	         includes="**/*.class">
-			<zipgroupfileset dir="${basedir}" includes="**/*.jar"/>
+			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
 	      <manifest>
 	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
+	      	<attribute name="Class-Path" value="${mf.classpath}"/>
 	      </manifest>
 	    </jar>
 	</target>
