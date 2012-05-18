@@ -133,7 +133,7 @@
 	         basedir="${classes}"
 	         includes="**/*.class">
 	      <manifest>
-	        <attribute name="Main-Class" value="UnitTests" />
+	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
 	      </manifest>
 	    </jar>
 	</target>
