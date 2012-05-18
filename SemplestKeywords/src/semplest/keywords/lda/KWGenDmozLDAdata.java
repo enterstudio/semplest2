@@ -51,6 +51,7 @@ public class KWGenDmozLDAdata implements Runnable{
 			userInfoWeight = pr.userInfoWeight;
 			numKeywordsGoogle = pr.numKeywordsGoogle;
 			numKeywordsMSN = pr.numKeywordsMSN;
+			//logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.nGramsSubC+"\n"+pr.numTopics);
  
 		
 			logger.info("create DmozLucene()");

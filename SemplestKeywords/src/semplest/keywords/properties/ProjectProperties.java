@@ -39,14 +39,39 @@ public class ProjectProperties {
 	
 	
 	//load properties
-	static{
-		
-		try {
+	public ProjectProperties() throws IOException{
+		this(null);
+	}
+	
+	public ProjectProperties( HashMap<String,Object> configDataIn) throws IOException{
+		if(configDataIn!=null){
+			logger.info("Read in properties file...");
+			configData = configDataIn;
+			dictfile = (String) configData.get("SemplestKeywordsdictfile");
+			docfile = (String) configData.get("SemplestKeywordsdocfile"); 
+			twfile = (String) configData.get("SemplestKeywordstwfile"); 
+			dfile = (String) configData.get("SemplestKeywordsdfile"); 
+			baseMultiWPath = (String) configData.get("SemplestKeywordsbaseMultiWPath");
+			nGramsSubC = loadStringArray("SemplestKeywordsnGramsSubC");
+			nGramsC = (String) configData.get("SemplestKeywordsnGramsC");; 
+			validCat = loadStringArray("SemplestKeywordsvalidcat");
+			lucenedfile = (String) configData.get("SemplestKeywordslucenedfile");
+			smallhCounts = (String) configData.get("SemplestKeywordssmallhCounts");
+			stoplist = (String) configData.get("SemplestKeywordsstoplist");
+			numTopics = (Integer) configData.get("SemplestKeywordsnumTopics");
+			userInfoWeight = (Double) configData.get("SemplestKeywordsuserInfoWeight");
+			numKeywordsGoogle = (Integer) configData.get("SemplestKeywordsnumKeywordsGoogle");
+			numKeywordsMSN = (Integer) configData.get("SemplestKeywordsnumKeywordsMSN");
+			numThreads= (Integer) configData.get("SemplestKeywordsnumThreads");
+			logger.info("Set all property data...");
+		}else{
 			File directory = new File (".");
 			String PROPSFILE =  "data/SemplestKeywords.properties";
 			properties = new Properties();
 			logger.info("PROPSFILE=" + PROPSFILE);
+
 			FileInputStream is = new FileInputStream(PROPSFILE);
+		
 			properties.load(is);
 			is.close();
 			logger.info("Read in properties file...");
@@ -67,40 +92,6 @@ public class ProjectProperties {
 			numKeywordsGoogle = Integer.parseInt(properties.getProperty("numKeywordsGoogle"));
 			numKeywordsMSN = Integer.parseInt(properties.getProperty("numKeywordsMSN"));
 			numThreads= Integer.parseInt(properties.getProperty("numThreads"));
-			logger.info("Set all property data...");
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-		}
-		
-		
-		
-	}
-	
-	public ProjectProperties(){
-		
-	}
-	
-	public ProjectProperties( HashMap<String,Object> configDataIn){
-		if(configDataIn!=null){
-			logger.info("Read in properties file...");
-			configData = configDataIn;
-			dictfile = (String) configData.get("SemplestKeywordsdictfile");
-			docfile = (String) configData.get("SemplestKeywordsdocfile"); 
-			twfile = (String) configData.get("SemplestKeywordstwfile"); 
-			dfile = (String) configData.get("SemplestKeywordsdfile"); 
-			baseMultiWPath = (String) configData.get("SemplestKeywordsbaseMultiWPath");
-			nGramsSubC = loadStringArray("SemplestKeywordsnGramsSubC");
-			nGramsC = (String) configData.get("SemplestKeywordsnGramsC");; 
-			validCat = loadStringArray("SemplestKeywordsvalidcat");
-			lucenedfile = (String) configData.get("SemplestKeywordslucenedfile");
-			smallhCounts = (String) configData.get("SemplestKeywordssmallhCounts");
-			stoplist = (String) configData.get("SemplestKeywordsstoplist");
-			numTopics = (Integer) configData.get("SemplestKeywordsnumTopics");
-			userInfoWeight = (Double) configData.get("SemplestKeywordsuserInfoWeight");
-			numKeywordsGoogle = (Integer) configData.get("SemplestKeywordsnumKeywordsGoogle");
-			numKeywordsMSN = (Integer) configData.get("SemplestKeywordsnumKeywordsMSN");
-			numThreads= (Integer) configData.get("SemplestKeywordsnumThreads");
 			logger.info("Set all property data...");
 		}
 		
