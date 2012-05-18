@@ -254,6 +254,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		lda.LDAcreateModel(alpha, beta, numiter);
 		InstanceList inferInst;
 	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
+	    logger.info("inferInst alphabet size: "+ inferInst.getAlphabet().size());
 			    
 	    //Infer word probability based on input data
 	    wordMap = lda.inferWordprob(inferInst, 0,true);

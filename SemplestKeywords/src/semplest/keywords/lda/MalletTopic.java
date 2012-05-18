@@ -463,10 +463,12 @@ public class MalletTopic {
 		        logger.debug("Number of lines: "+lines.size());
 		        for( String line : lines ){
 		        	logger.debug("Adding Category " + i);
+		        	logger.info("instance line size "+ line.length());
 		        	String[] elem = line.split(":");
 		        	instances.addThruPipe(new Instance(elem[1],""+i,elem[0],null));
 		        	i++;
 		        }
+		        logger.info("instances alphabet size: "+ instances.getAlphabet().size());
 			}
 	
 	/*
@@ -575,9 +577,12 @@ public class MalletTopic {
         //  the second is the parameter for a single dimension of the Dirichlet prior.
 		initalpha = alpha_t;
 		initbeta = beta_w;
+		
 		int numThreads=ProjectProperties.numThreads;
+		logger.info("num Threads: " + numThreads);
 		model = new ParallelTopicModel(numTopics, 1.0, 0.01);
 		logger.info("Loading Instances into Model");
+		logger.info("training model instances alphabet size "+ instances.getAlphabet().size());
         model.addInstances(instances);
 
         // Use two parallel samplers, which each look at one half the corpus and combine
