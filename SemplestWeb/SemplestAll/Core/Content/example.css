@@ -1752,10 +1752,10 @@ div.old-browser {
 }
 
 #navWrap {
-    float: left;
     margin-top: 14px;
     overflow: hidden;
     width: 178px;
+    float: left;
 }
 
 .configuration1 {
