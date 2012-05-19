@@ -32,6 +32,7 @@ public class NIOClient implements Runnable
 	private List<ChangeRequest> pendingChanges = new LinkedList<ChangeRequest>();
 	// Maps a SocketChannel to a list of ByteBuffer instances
 	private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
+	private SocketChannel socket = null;
 
 	// Maps a SocketChannel to a RspHandler
 	private Map<SocketChannel, NIOResponseHandler> rspHandlers = Collections.synchronizedMap(new HashMap<SocketChannel, NIOResponseHandler>());
@@ -42,6 +43,7 @@ public class NIOClient implements Runnable
 		this.hostAddress = InetAddress.getByName(uri);
 		this.port = Integer.parseInt(port);
 		this.selector = this.initSelector();
+		socket = this.initiateConnection();
 	}
 
 	public NIOClient(InetAddress hostAddress, int port) throws IOException
@@ -49,13 +51,12 @@ public class NIOClient implements Runnable
 		this.hostAddress = hostAddress;
 		this.port = port;
 		this.selector = this.initSelector();
+		// Start a new connection
+		socket = this.initiateConnection();
 	}
 
 	public void send(byte[] data, NIOResponseHandler handler) throws IOException
 	{
-		// Start a new connection
-		SocketChannel socket = this.initiateConnection();
-
 		// Register the response handler
 		if (handler != null)
 		{	
