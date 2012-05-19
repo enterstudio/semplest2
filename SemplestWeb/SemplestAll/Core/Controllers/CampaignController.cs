@@ -420,19 +420,19 @@ namespace Semplest.Core.Controllers
             var user = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
 
-            var homeBar = new NavBar
-            {
-                Name = "Home",
-                SubItems = new List<NavBar>
-                                                 {
-                                                     new NavBar {Name = "My Account", Url = "../Home/Index2"},
-                                                     new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
-                                                     new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
-                                                     new NavBar {Name = "Billing"},
-                                                     new NavBar {Name = "My Profile", Url= "../Account/MyProfile"},
-                                                 }
-            };
-            navBars.Add(homeBar);
+            //var homeBar = new NavBar
+            //{
+            //    Name = "Home",
+            //    SubItems = new List<NavBar>
+            //                                     {
+            //                                         new NavBar {Name = "My Account", Url = "../Home/Index2"},
+            //                                         new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
+            //                                         new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
+            //                                         new NavBar {Name = "Billing"},
+            //                                         new NavBar {Name = "My Profile", Url= "../Account/MyProfile"},
+            //                                     }
+            //};
+            //navBars.Add(homeBar);
 
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
