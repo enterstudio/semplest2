@@ -14,8 +14,8 @@
          
             @*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
-            <div style = "height:345px;width:700px;overflow-x:auto">
-            @*<h1 id="headerF">Filter</h1>   *@
+@*            <div style = "height:345px;width:700px;overflow-x:auto">
+*@            @*<h1 id="headerF">Filter</h1>   *@
             @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds));
             @*</div>*@
         }
@@ -33,7 +33,8 @@
         tabChange();
     });
     $('#getBillingLaunch').click(function () {
-        tabChange();
+        alert('billinglaunch clicked');
+        //tabChange();
     });
     function tabChange(parameters) {
         var tab = tabStrip.select(),
