@@ -185,25 +185,27 @@ Ad Setup
                 tabStrip.select(tab);
             }
         }
-        else if (id == "AdditionalLinks" || id == "NegativeKeywords") {
+        else if (id == "AdditionalLinks" || id == "NegativeKeywords" || "Keywords") {
+        //alert('addlinks_negkeywords');
             tab = tabStrip.select();
             var otherTab = tab.prev();
             tabStrip.remove(tab);
             tabStrip.select(otherTab);
         }
-        else if (id == "Keywords" || id == "KeyWords" || id == "viewSelectedKeywords") {
-            if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
-                tabStrip.append({
-                    text: "View Keywords",
-                    contentUrl: '@Url.Action("KeyWords")'
-                }, tabStrip.tabGroup.children("li:last")).select();
-                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-                tabStrip.select(tab);
-            } else {
-                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-                tabStrip.select(tab);
-            }
-        }
+//        else if (id == "Keywords" || id == "KeyWords" || id == "viewSelectedKeywords" || id == "View Keywords") {
+//        alert('in campaignsetup.cshtml keywords');
+//            if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+//                tabStrip.append({
+//                    text: "View Keywords",
+//                    contentUrl: '@Url.Action("KeyWords")'
+//                }, tabStrip.tabGroup.children("li:last")).select();
+//                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+//                tabStrip.select(tab);
+//            } else {
+//                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+//                tabStrip.select(tab);
+//            }
+//        }
         else { alert(id); }
 
     }

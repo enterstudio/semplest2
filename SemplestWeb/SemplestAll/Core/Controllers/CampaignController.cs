@@ -365,34 +365,21 @@ namespace Semplest.Core.Controllers
             return PartialView(model);
         }
 
-
-        // this should be called when Save and Continue button clicked on Keywords page
-
-        [HttpPost]
-        [ActionName("CampaignSetup")]
-        [AcceptSubmitType(Name = "Command", Type = "GetBillingLaunch")]
-        public ActionResult GetBillingLaunch(AdModel model)
-        {
-
-            //SemplestDataService ds = new SemplestDataService();
-            //int userid = 1;
-            //CampaignSetupModel fullmodel = 
-            //ds.SaveNegativeKeywords(userid, model);
-
-            return Json("BillingLaunch");
-        }
-
         public ActionResult KeyWords(CampaignSetupModel model)
         {
             model = (CampaignSetupModel)Session["FullModel"];
             return PartialView(model);
         }
 
+        // this should be called when Save and Continue button clicked on Keywords page
+
         [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "KeyWords")]
         public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
         {
             model = (CampaignSetupModel)Session["FullModel"];
-            return PartialView(model);
+            return Json("Keywords");
         }
 
         public ActionResult BillingLaunch(CampaignSetupModel model)
