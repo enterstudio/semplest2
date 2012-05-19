@@ -169,6 +169,10 @@ namespace Semplest.Core.Controllers
                 {
                     model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
 
+                    if (model.CategoryIds.Count() == 0)
+                        return Json("Atleast one Category needs to be selected");
+
+
                     // get selected categories
                     var catList = new List<string>();
                     foreach (var cat in model.AllCategories)
