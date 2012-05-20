@@ -56,7 +56,7 @@ function renderOptions(response) {
                 }
             }
             if (index != '')
-                document.getElementById('optionsNarrative_' + index).innerHTML = text;
+                document.getElementById('optionsNarrative_' + index.split('_')[1]).innerHTML = text;
             else
                 document.getElementById('optionsNarrative').innerHTML = text;
             return;
