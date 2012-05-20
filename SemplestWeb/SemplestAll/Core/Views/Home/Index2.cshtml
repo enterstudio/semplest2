@@ -42,7 +42,7 @@
             if (!p.IsLaunched)
             {
         <tr>
-            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })
+            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK },new {})
             </td>
             <td>@Html.ActionLink("Delete", "")
             </td>
