@@ -22,12 +22,12 @@ $(document).ready(function () {
             status.text("Oops! There is invalid data in the form.").addClass("invalid");
         }
     });
-//    $('#getCategories').click(function () {
-//        if (validator1.validate()) {
-//        } else {
-//            status.text("Oops! There is invalid data in the form.").addClass("invalid");
-//        }
-//    });
+    //    $('#getCategories').click(function () {
+    //        if (validator1.validate()) {
+    //        } else {
+    //            status.text("Oops! There is invalid data in the form.").addClass("invalid");
+    //        }
+    //    });
     // Previous and Save And Continue Button tab changed Logic
     $("#save2").click(function () {
         tabStrip.select(2);
@@ -203,6 +203,7 @@ function addNestedForm(container, counter, ticks, content) {
         content = content.replace("doOptions()", "doOptions('AdModelProp_Addresses_" + nextIndex +
 "__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
 "__Zip','AdModelProp_Addresses_" + nextIndex + "__Proximity')");
+       
         content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
     }
@@ -243,5 +244,20 @@ function addNestedForm(container, counter, ticks, content) {
     }
     if (container == "#addresses") {
         $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList({ optionLabel: "--" });
+        $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
+            doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
+        });
+        $('#AdModelProp_Addresses_' + nextIndex + '__City').change(function (e) {
+            doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
+        });
+        $('#AdModelProp_Addresses_' + nextIndex + '__StateCodeFK').change(function (e) {
+            doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
+        });
+        $('#AdModelProp_Addresses_' + nextIndex + '__Zip').change(function (e) {
+            doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
+        });
+        $('#AdModelProp_Addresses_' + nextIndex + '__Proximity').change(function (e) {
+            doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
+        });
     }
 }
