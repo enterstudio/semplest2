@@ -57,10 +57,9 @@ Ad Setup
             </div>
         </li>
     </ul>
-    
 }
-<div id="exampleWrap">
-    <div id="example" class="k-content">
+<div>
+    <div id="example">
         @using (Ajax.BeginForm("CampaignSetup", "Campaign", new AjaxOptions { HttpMethod = "Post", OnSuccess = "OnSuccess", OnBegin = "OnBegin", OnFailure = "OnFailure" }))
         {
             @Html.ValidationSummary(true)
