@@ -318,9 +318,6 @@
     <Folder Include="App_Start\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Campaign\AdModel.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\Campaign\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>

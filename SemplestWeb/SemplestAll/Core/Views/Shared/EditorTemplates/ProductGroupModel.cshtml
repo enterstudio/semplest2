@@ -1,7 +1,7 @@
 ﻿@model Semplest.Core.Models.ProductGroupModel
 <div class="k-header" id="productGroupModel">
     <!--end user-details-->
-    <div class="configuration1">
+    <div class="configuration">
         <ul class="options">
             <li>
                 <label for="productGroupName" class="required">
@@ -18,10 +18,10 @@
                 @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductPromotionName })
             </li>
             <li>
-                <h4 class="required">
+                <label class="required" for="ProductGroupModel_Words">
                     Please type in several words or phrases that describe your business or what you
                     sell or are promoting (separated by commas) to help us build your search campaign:
-                </h4>
+                </label>
                 @Html.TextBoxFor(t => t.Words, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Some Words", @style = "min-width:400px" })
             </li>
             <li>
