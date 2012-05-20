@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
+using SemplestModel;
 
 namespace Semplest.SharedResources.Models
 {
-    public class ProfileModel
+    public class ProfileModel : ModelBase
     {
+        public ProfileModel()
+        {
+            using (var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
+        }
+
         [Required]
         [Display(Name = "User name")]
         public string UserName { get; set; }

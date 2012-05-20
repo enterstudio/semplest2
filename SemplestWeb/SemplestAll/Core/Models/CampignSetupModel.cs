@@ -6,10 +6,7 @@ using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Models
 {
-    public abstract class ModelBase
-    {
-        public Configuration Configuration { get; set; }
-    }
+   
     public class CampaignSetupModel : ModelBase
     {
         public CampaignSetupModel()

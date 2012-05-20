@@ -19,7 +19,7 @@ namespace Semplest.SharedResources.Controllers
         public ActionResult LogIn()
         {
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = null;
-            return View();
+            return View(new ProfileModel());
         }
 
         [HttpPost]
