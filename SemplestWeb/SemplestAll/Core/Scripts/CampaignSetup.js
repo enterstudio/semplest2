@@ -244,6 +244,7 @@ function addNestedForm(container, counter, ticks, content) {
     }
     if (container == "#addresses") {
         $("#AdModelProp_Addresses_" + nextIndex + "__StateCodeFK").kendoDropDownList({ optionLabel: "--" });
+        doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
         $('#AdModelProp_Addresses_' + nextIndex + '__Address').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
         });
