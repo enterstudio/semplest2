@@ -17,7 +17,7 @@
             if (p.IsLaunched && !p.IsCompleted)
             {
             <tr>
-            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })
+            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK },new{})
             </td>
             @if (p.IsPaused)
             {<td>@Html.ActionLink("Restart", "", new { @class = "k-button" })
