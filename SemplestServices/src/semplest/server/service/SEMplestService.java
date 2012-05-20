@@ -177,7 +177,7 @@ public class SEMplestService
 				if (connectionData.getPingFrequencyMS() > 0)
 				{
 					logger.debug("Start Pinging....with Frequency=" + connectionData.getPingFrequencyMS());
-					PingService ping = new PingService(nioClient, new NIOResponseHandler(), connectionData.getServiceName(),
+					PingService ping = new PingService(connectionData.getServerURI(), Integer.parseInt(connectionData.getServerport()), connectionData.getServiceName(),
 							connectionData.getPingFrequencyMS());
 					Thread pingThread = new Thread(ping);
 					pingThread.setPriority(Thread.MAX_PRIORITY);
