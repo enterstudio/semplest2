@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.ComponentModel;
+using SemplestModel;
 
 namespace Semplest.Core.Models
 {
@@ -135,8 +137,13 @@ namespace Semplest.Core.Models
     }
 
 
-    public class ChildModel
+    public class ChildModel : ModelBase
     {
+        public ChildModel()
+        {
+            using (var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
+        }
 
          [DisplayName("Account #")]
         public int AccountNumber { get; set; }
