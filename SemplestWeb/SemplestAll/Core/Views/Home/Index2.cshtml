@@ -1,117 +1,73 @@
 ﻿@model Semplest.Core.Models.HomeModelChild
-
 @section Title{
-My Account (@ViewBag.Title)
+    My Account (@ViewBag.Title)
 }
-@section Navbar{
-    <ul id="panelbar-images">
-        <li><span>Home</span>
-            <ul>
-                <li>@Html.ActionLink("My Account", "Index2", "Home")</li>
-                <li>@Html.ActionLink("Ad Setup", "CampaignSetup")</li>
-                <li>@Html.ActionLink("Reporting", "Index", "Reporting")</li>
-                <li>@Html.ActionLink("Billing", "CampaignSetup")</li>
-                <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
-            </ul>
-        </li>
-        <li><span>
-           Product Groups
-        </span>
-            <div style="height: 476px;" class="k-treeview">
-                <ul id="treeview">
-                </ul>
-            </div>
-        </li>
-    </ul>
-    }
-<br />
-<br />
-<fieldset style = "padding:0; border-width:1px; width:400px">
-<legend><b>Account Actions</b></legend>
-<p>@Html.ActionLink("Create Advertising", "CampaignSetup", "Campaign")</p>
+<fieldset style="padding: 0; border-width: 1px; width: 400px">
+    <legend><b>Account Actions</b></legend>
+    <button class="k-button" id="btnCreatAd"><span class="k-icon k-add"></span> Create Advertising</button>
 </fieldset>
-<p></p>
- <fieldset style = "padding:0; border-width:1px; width:400px">
-            <legend><b>Live Advertising: scroll over to see summary, click to edit</b></legend>
-<table>
-@foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-{
-    
-    foreach (SemplestModel.Promotion p in pg.Promotions)
+<h3>
+    Live Advertising: scroll over to see summary, click to edit</h3>
+<table class="gradient-style">
+    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
     {
-        if (p.IsLaunched && !p.IsCompleted)
+
+        foreach (SemplestModel.Promotion p in pg.Promotions)
         {
-                        <tr><td>@Html.ActionLink(p.PromotionName, "../Campaign/CampaignSetup", new { promotionid = p.PromotionPK })</td>
+            if (p.IsLaunched && !p.IsCompleted)
+            {
+            <tr>
+            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })
+            </td>
             @if (p.IsPaused)
-            {<td>@Html.ActionLink("Restart", "")</td>}
+            {<td>@Html.ActionLink("Restart", "", new { @class = "k-button" })
+            </td>}
             else
-            {<td>@Html.ActionLink("Pause", "")</td>}
-            </tr>    
+            {<td>@Html.ActionLink("Pause", "")
+            </td>}
+        </tr>    
             
 
-        }
-    }
-}
-</table>
-</fieldset>
-<p></p>
-<fieldset style = "padding:0; border-width:1px; width:400px">
-<legend><b>Unfinished Advertising</b></legend>
-<table>
-@foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-{
-    foreach (SemplestModel.Promotion p in pg.Promotions)
-    {
-        if (!p.IsLaunched)
-        {
-            <tr><td>@Html.ActionLink(p.PromotionName, "../Campaign/CampaignSetup", new { promotionid = p.PromotionPK })</td>
-            <td>@Html.ActionLink("Delete", "")</td></tr>
-        }
-    }
-}
-</table>
-</fieldset>
-
-
- 
-
-
-<div style="display:none;">
-<form name="hiddenButton" id="hiddenButton" action="AddProductGroupName" method="post">
-
-Add a new product group name:
-
-@Html.TextBox("newproductgroupname")
-
-<br /><input type="button" id="btnAdd"  value="Add" class="k-button"/><input type="button" id="btnCancel"  value="Cancel" class="k-button"/></form>
- <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
-</div>
-<script language="javascript" >
-    $.getJSON($('#SideBarUrl').val(), {}, function (data) {
-        for (var mainGroup in data) {
-            for (var subitem in data[mainGroup].SubItems) {
-                var items = [];
-                for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
-                    items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
-                }
-                treeview.append({ text: data[mainGroup].SubItems[subitem].Name, url: data[mainGroup].SubItems[subitem].Url, items: items });
             }
         }
-    });
-    var panelBar = $("#panelbar-images").kendoPanelBar({
-        expandMode: "single"
-    }).data("kendoPanelBar");
-    var treeview = $("#treeview").kendoTreeView().data("kendoTreeView");
-    $("#panelbar-images").on("click", ".k-in", function (e) {
-        treeview.toggle($(e.target).closest(".k-item"));
-    });
- $(document).ready(function () {
-
+    }
+</table>
+<h3>
+    Unfinished Advertising</h3>
+<table class="gradient-style">
+    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+    {
+        foreach (SemplestModel.Promotion p in pg.Promotions)
+        {
+            if (!p.IsLaunched)
+            {
+        <tr>
+            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })
+            </td>
+            <td>@Html.ActionLink("Delete", "")
+            </td>
+        </tr>
+            }
+        }
+    }
+</table>
+<div style="display: none;">
+    <form name="hiddenButton" id="hiddenButton" action="AddProductGroupName" method="post">
+    Add a new product group name:
+    @Html.TextBox("newproductgroupname", "", new { @class = "k-textbox" })
+    <br />
+    <input type="button" id="btnAdd" value="Add" class="k-button" /><input type="button"
+        id="btnCancel" value="Cancel" class="k-button" /></form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
         $(".addnewproductgroupname").click(function (event) {
             $.blockUI(({ message: $('#hiddenButton') }));
             event.preventDefault();
         });
-
+        $('#btnCreatAd').click(function () {
+            location.href = '../Campaign/CampaignSetup';
+        });
         $("#btnAdd").click(function (event) {
             $("#hiddenButton").submit();
         });

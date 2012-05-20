@@ -1,25 +1,25 @@
+@{
+    Layout = null;
+}
 @using System.Diagnostics
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    <link href="@Url.Content("~/Content/example.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="Stylesheet" />
-    <link href="@Url.Content("~/Content/kendo.metro.min.css")"  rel="Stylesheet" />
+    <link href="@Url.Content("~/Content/leafleft.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/kendo.web.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.UiBlock.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/conditional-validation.js")" type="text/javascript"></script>
     <script type="text/jscript">
-        @{
-            Debug.Assert(Context.Request.ApplicationPath != null, "Context.Request.ApplicationPath != null");
-            var appUrl = Context.Request.ApplicationPath.Length == 1 ? "" : Context.Request.ApplicationPath;
-         }
+    @{
+        Debug.Assert(Context.Request.ApplicationPath != null, "Context.Request.ApplicationPath != null");
+        var appUrl = Context.Request.ApplicationPath.Length == 1 ? "" : Context.Request.ApplicationPath;
+     }
             $(document).ready(function () {
                 var inputs = $(':input');
                 inputs.each(function () {
@@ -29,34 +29,76 @@
     </script>
     @*this will inject individual script in the head tags (added by:tudor)*@
     @RenderSection("headscript", required: false)
+    <style type="text/css">
+        #headerF
+        {
+            position: relative;
+            line-height: 1em;
+        }
+        .filterform
+        {
+            width: 220px;
+            font-size: 12px;
+            display: block;
+        }
+        .filterform input
+        {
+            -moz-border-radius: 5px;
+            border-radius: 5px;
+            -webkit-border-radius: 5px;
+        }
+    </style>
+    
 </head>
-<body class="centerWrap">
-    <div id="header">
-        <div class="centerWrap floatWrap">
-            <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
-            <ul class="kendo-nav">
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">FAQs</a></li>
-                <li><a href="#">Contact Us</a></li>
-                <li>@Html.ActionLink("Log Off", "LogIn", "Profile")</li>
+<body>
+    <div id="wrapper">
+        <div id="header">
+            <div class="floatWrap">
+                <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
+                <ul class="kendo-nav">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li>@Html.ActionLink("Log Off", "LogIn", "Profile")</li>
+                </ul>
+            </div>
+        </div>
+        <div id="sidebar">
+            <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
+             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+            <ul id="panelbar-images">
+                <li><span>Home</span>
+                    <ul>
+                        <li>@Html.ActionLink("My Account", "Index2", "Home")</li>
+                        <li>@Html.ActionLink("Ad Setup", "CampaignSetup","Campaign")</li>
+                        <li>@Html.ActionLink("Reporting", "Index", "Reporting")</li>
+                        <li>@Html.ActionLink("Billing", "CampaignSetup","Campaign")</li>
+                        <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
+                    </ul>
+                </li>
+                <li><span>
+                        @Model.Configuration.DefaultProductGroupName
+                    </span>
+                    <div style="height: 476px;" class="k-treeview">
+                        <ul id="treeview">
+                        </ul>
+                    </div>
+                </li>
             </ul>
         </div>
-    </div>
-    <div style="background-color: #eaeaea">
-        <div id="navWrap">
-            <div id="panelbar-admin">
-            </div>
-            @RenderSection("Navbar", false)</div>
-        <div class='centerWrap floatWrap widgetOverview' id="mainWrap">
-            <div id="exampleTitleHeader">
-                <p id="exampleTitle">
-                    @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -40px;
-                        text-align: right"></div>
-                </p>
-            </div>
-            <div id="mainWrapInner">
-                <div id="main">
-                    <div id="example">@RenderBody()
+        <div id="content">
+            <div class='centerWrap floatWrap widgetOverview' id="mainWrap">
+                <div id="exampleTitleHeader">
+                    <p id="exampleTitle">
+                        @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -26px;
+                                           text-align: right">
+                                                          @RenderSection("SectionNav", false)</div>
+                    </p>
+                </div>
+                <div id="mainWrapInner">
+                    <div id="main">
+                        <div id="example">@RenderBody()
+                        </div>
                     </div>
                 </div>
             </div>
@@ -68,5 +110,40 @@
             </div>
         </div>
     </div>
+    <script>
+        $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+            for (var mainGroup in data) {
+                for (var subitem in data[mainGroup].SubItems) {
+                    var items = [];
+                    for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
+                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
+                    }
+                    treeview.append({ text: data[mainGroup].SubItems[subitem].Name, url: data[mainGroup].SubItems[subitem].Url, items: items });
+                }
+            }
+        });
+        var panelBar = $("#panelbar-images").kendoPanelBar({
+            expandMode: "single"
+        }).data("kendoPanelBar");
+        var treeview = $("#treeview").kendoTreeView().data("kendoTreeView");
+        $("#panelbar-images").on("click", ".k-in", function (e) {
+            treeview.toggle($(e.target).closest(".k-item"));
+        });
+        $("#panelbar-profile").kendoPanelBar({
+            dataSource: [
+            {
+                text: "Home",
+                items: [
+                    { text: "Reporting" },
+                    { text: "Billing" },
+                    { text: "Quick Start Guide" },
+                    { text: "FAQs" },
+                    { text: "Contact Us" }
+                ]
+            }
+        ],
+            expandMode: "single"
+        });
+    </script>
 </body>
 </html>

@@ -6,7 +6,11 @@ using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Models
 {
-    public class CampaignSetupModel
+    public abstract class ModelBase
+    {
+        public Configuration Configuration { get; set; }
+    }
+    public class CampaignSetupModel : ModelBase
     {
         public CampaignSetupModel()
         {
@@ -30,7 +34,7 @@ namespace Semplest.Core.Models
         public AdModel AdModelProp { get; set; }
         public BillingLaunchModel BillingLaunch { get; set; }
 
-        public Configuration Configuration { get; set; }
+        
 
         #region Nested type: CategoriesModel
 

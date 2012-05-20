@@ -19,7 +19,7 @@ namespace SemplestWebApp.Controllers
         
         public ActionResult Index()
         {
-            return RedirectToAction("Index2", "Home");
+            return RedirectToAction("Index2", "Home",new HomeModelChild());
             HomeModelParent hm = new HomeModelParent();
             SemplestEntities dbContext = new SemplestEntities();
             int userId = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;

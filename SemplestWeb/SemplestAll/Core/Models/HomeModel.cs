@@ -1,5 +1,7 @@
-﻿using System.Data.Entity;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
+using SemplestModel;
+
 namespace Semplest.Core.Models
 {
     public class HomeModelParent
@@ -7,13 +9,19 @@ namespace Semplest.Core.Models
         public int LaunchedCampaigns;
         public int StartedCampaignsNotLaunched;
         public int ClientsNotLoggedIn;
-        public IEnumerable<SemplestModel.AdvertisingEngine> AdvertisingEngines ;
+        public IEnumerable<AdvertisingEngine> AdvertisingEngines ;
     }
 
-    public class HomeModelChild
+    public class HomeModelChild : ModelBase
     {
-        public ICollection<SemplestModel.Promotion> LiveAdvertising;
-        public ICollection<SemplestModel.Promotion> UnfinishedAdvertising;
-        public ICollection<SemplestModel.ProductGroup> ProductGroups;
+        public HomeModelChild()
+        {
+            using (var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
+        }
+    
+        public ICollection<Promotion> LiveAdvertising;
+        public ICollection<Promotion> UnfinishedAdvertising;
+        public ICollection<ProductGroup> ProductGroups;
     }
 }
