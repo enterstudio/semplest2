@@ -23,7 +23,7 @@
             $(document).ready(function () {
                 var inputs = $(':input');
                 inputs.each(function () {
-                    $.ajax({ type: "GET", url: "@appUrl/Profile/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} });
+                    $.ajax({ type: "GET", url: "@appUrl/Profile/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} ,error:function(e){debugger; alert(e.responseText);}});
                 });
             });
     </script>
