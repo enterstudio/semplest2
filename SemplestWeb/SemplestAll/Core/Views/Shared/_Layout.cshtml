@@ -20,12 +20,12 @@
         Debug.Assert(Context.Request.ApplicationPath != null, "Context.Request.ApplicationPath != null");
         var appUrl = Context.Request.ApplicationPath.Length == 1 ? "" : Context.Request.ApplicationPath;
      }
-            $(document).ready(function () {
-                var inputs = $(':input');
-                inputs.each(function () {
-                    $.ajax({ type: "GET", url: "@appUrl/Profile/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} ,error:function(e){debugger; alert(e.responseText);}});
-                });
-            });
+//            $(document).ready(function () {
+//                var inputs = $(':input');
+//                inputs.each(function () {
+//                    $.ajax({ type: "GET", url: "@appUrl/Profile/AddRightToDatabase", data: { label: this.name, controllerName: '@ViewContext.RouteData.Values["controller"].ToString()', vAction: '@ViewContext.RouteData.Values["action"].ToString()'} ,error:function(e){debugger; alert(e.responseText);}});
+//                });
+//            });
     </script>
     @*this will inject individual script in the head tags (added by:tudor)*@
     @RenderSection("headscript", required: false)
