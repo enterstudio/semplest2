@@ -14,10 +14,12 @@
          
             @*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
-@*            <div style = "height:345px;width:700px;overflow-x:auto">
-*@            @*<h1 id="headerF">Filter</h1>   *@
-            @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds));
-            @*</div>*@
+
+            <div style = "height:345px;width:700px;overflow-x:auto" id="wrap">
+           @* <h1 id="headerF">Filter</h1>  *@   @* <<<----- uncomment h1  to get the filter*@
+            @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds))
+            </div>
+
         }
     </div>
     <div class="options">
@@ -25,22 +27,27 @@
         <button class="k-button" id="backKey" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="KeyWords">
+       
             <span class="k-update k-icon"></span>Save And Continue</button>
+             <input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>
     </div>
 </div>
 <script type="text/javascript">
     $('#backKey').click(function () {
         tabChange();
     });
+
     $('#getBillingLaunch').click(function () {
         //alert('billinglaunch clicked');
         //tabChange();
     });
+
     function tabChange(parameters) {
         var tab = tabStrip.select(),
         otherTab = tab.prev();
         tabStrip.remove(tab);
         tabStrip.select(otherTab);
+        
     }
 
 
@@ -61,12 +68,12 @@
 
         function listFilter(header, list) { // header is any element, list is an unordered list
             // create and add the filter form to the header
-            
+
             var form = $("<form>").attr({ "class": "filterform", "action": "#" }),
         input = $("<input>").attr({ "class": "filterinput", "type": "text" });
             $(form).append(input).appendTo(header);
 
-          
+
 
             $(input)
       .change(function () {
@@ -74,9 +81,9 @@
           if (filter) {
               // this finds all links in a list that contain the input,
               // and hide the ones not containing the input while showing the ones that do
-              
-              $(list).find("not(:Contains(" + filter + "))").parent().slideUp();
-              $(list).find("Contains(" + filter + ")").parent().slideDown();
+              //alert(1);
+              $(list).find("li:not(:Contains(" + filter + "))").parent().slideUp();
+              $(list).find("li:Contains(" + filter + ")").parent().slideDown();
           } else {
               $(list).find("li").slideDown();
           }
