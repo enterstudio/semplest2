@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
+using SemplestModel.Validations;
 using System.Linq;
 using Semplest.SharedResources.Services;
 
@@ -113,6 +114,8 @@ namespace Semplest.Core.Models
         //public DateTime EndDate { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+        [Required(ErrorMessage = "Pleaes select at least one Search Engine")]
+        [CheckBoxAtleaseOneChecked]
         public List<string> AdEnginesList { get; set; }
         public List<AdEngineSelectModel> AdEnginesSelectedList { get; set; }
         public List<AdEngineSelectModel> AdvertisingEngines { get; set; }
