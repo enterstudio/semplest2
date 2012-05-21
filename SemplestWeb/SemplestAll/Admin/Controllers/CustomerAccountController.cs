@@ -26,8 +26,6 @@ namespace Semplest.Admin.Controllers
             //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
             SemplestEntities dbcontext = new SemplestEntities();
 
-
-
             var viewModel =
                 from u in dbcontext.Users
                 join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
@@ -1057,7 +1055,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Delete(CustomerAccountWithEmployeeModel m, string command)
         {
             SemplestEntities dbcontext = new SemplestEntities();
-            SemplestEntities context = new SemplestEntities();
+            //SemplestEntities context = new SemplestEntities();
 
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
