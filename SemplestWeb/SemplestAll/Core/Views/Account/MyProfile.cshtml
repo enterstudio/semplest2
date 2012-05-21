@@ -193,6 +193,25 @@ My Profile
          text-align:left;
     }
     
+
+
+       
+    @*////////////////////*@
+    
+    
+         .editor-label [for=Phone]
+    {
+         margin-left: 10px;
+          text-align:left;
+    }
+    
+
+    .editor-field #Phone
+    {
+         margin-left: 0px;
+         text-align:left;
+    }
+    
     
     @*////////////////////*@
     
@@ -351,6 +370,15 @@ My Profile
                 @Html.TextBoxFor(model => model.LastName, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.LastName)
             </div>
+            
+            <div class="editor-label">
+                @Html.LabelFor(model => model.Phone, new { @class = "k-label" })
+            </div>
+            <div class="editor-field">
+                @Html.TextBoxFor(model => model.Phone, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.Phone)
+            </div>
+            
             <div class="editor-label">
                 @Html.LabelFor(model => model.Email, new { @class = "k-label" })
             </div>
