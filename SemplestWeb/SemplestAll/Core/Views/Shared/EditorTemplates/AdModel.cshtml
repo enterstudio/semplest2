@@ -40,7 +40,7 @@
                 @Html.EditorFor(t => t.Ads)
             </div>
         </li>
-        <li><button class="k-button" id="negativeKeyWords"><span class="k-add k-icon"></span>Negative Keywords</button> identify keywords to avoid in association
+        <li><button class="k-button" id="negativeKeyWords" type="button"><span class="k-add k-icon"></span>Negative Keywords</button> identify keywords to avoid in association
             with your business</li>
         <li>
             @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>
