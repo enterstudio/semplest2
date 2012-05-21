@@ -305,14 +305,11 @@ namespace Semplest.Core.Controllers
 
 
 
-            //var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber);
-            //var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK == customerphoneassociation.PhoneFK);
-            //phone.Phone1 = m.Phone;
+            var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK == m.AccountNumber);
+            var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK == customerphoneassociation.PhoneFK);
+            phone.Phone1 = m.Phone;
 
-
-           
-
-           
+            UpdateModel(phone);
 
             var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.UserPK);
             credentials.Username = m.UserID;
