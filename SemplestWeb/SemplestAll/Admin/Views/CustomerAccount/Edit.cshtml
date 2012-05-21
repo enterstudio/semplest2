@@ -19,8 +19,6 @@ Edit Customer Account:
          $("#CustomerAccount_MiddleInitial").mask("a");
      });
 
-     
-
 </script>
 
 }
@@ -89,9 +87,6 @@ Edit Customer Account:
             @Html.ValidationMessageFor(model => model.CustomerAccount.Email)
         </div>
     </label> <br />
-    
-    
-    
      
      <div class="editor-label">
         <label>Status:</label>
@@ -101,8 +96,6 @@ Edit Customer Account:
      InActive
      @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "False")
      </div>
-    
-    
     
     <label>
         Rep: 
