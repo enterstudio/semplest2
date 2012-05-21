@@ -14,13 +14,18 @@ $(document).ready(function () {
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
-        if (validator.validate()) {
-            //status.text("Hooray! Your Product has been defined!").addClass("valid");
-            tabStrip.select(1);
-            tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-        } else {
-            status.text("Oops! There is invalid data in the form.").addClass("invalid");
+        var searchengines = $('input[name="ProductGroup.AdEnginesList"]');
+        var prodgrpbudget = $('input[name="ProductGroup.Budget"]');
+        if (searchengines[0].checked == true || searchengines[1].checked == true) {
+            if (validator.validate()) {
+                status.text("").addClass("valid");
+                tabStrip.select(1);
+                tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
+            } else {
+                status.text("Oops! There is invalid data in the form.").addClass("invalid");
+            }
         }
+        else status.text("Please select at least one Search Engine").addClass("invalid");
     });
     //    $('#getCategories').click(function () {
     //        if (validator1.validate()) {
