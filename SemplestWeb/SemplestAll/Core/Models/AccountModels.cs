@@ -149,22 +149,25 @@ namespace Semplest.Core.Models
         public int AccountNumber { get; set; }
 
 
+         [Required]
          [DisplayName("Company Name")]
         public string Customer { get; set; }
 
         //public string ParentName { get; set; }
         //public string SuperParent { get; set; }
 
+        [Required]
         [DisplayName("First Name")]
         public string FirstName { get; set; }
 
         [DisplayName("First Initial")]
         public string MiddleInitial { get; set; }
 
+        [Required]
         [DisplayName("Last Name")]
         public string LastName { get; set; }
 
-        //[Required]
+        [Required]
         public String Phone { get; set; }
 
         [Required]
