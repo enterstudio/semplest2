@@ -4,10 +4,23 @@
 }
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
 @{ 
-    var budget = Model.ProductGroup.Budget;
-    var semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
-    var mediaspend = (budget - Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
-    var creditcardcharge = budget.ToString("n2");
+    decimal budget, semplestcharge, mediaspend, creditcardcharge;
+    
+    if (Model.Configuration.SemplestDefaultBudgetMarkUpOrDown == "1")
+    {
+        budget = Model.ProductGroup.Budget;
+        semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+        mediaspend = (budget - semplestcharge);
+        creditcardcharge = budget;
+    }
+    else
+
+    {
+        budget = Model.ProductGroup.Budget;
+        semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+        mediaspend = (budget);
+        creditcardcharge = semplestcharge+budget;
+    }
 }
 <div class="configuration">
     <h3>
@@ -54,7 +67,7 @@
             <li>
                 <label id="lblsemplestCharge" class="k-label" style="margin-left: 150px;">
                     SEMplest Charge</label>
-                <input type="text" class="k-input" id="Semplestcharge";" value="$@semplestcharge" readonly="readonly"/>
+                <input type="text" class="k-input" id="Semplestcharge";" value="$@semplestcharge.ToString("n2")" readonly="readonly"/>
                 <label id="lblOutput1" class="k-label">
                     "Output Field Which is a Conditional note"</label>
             </li>
@@ -65,7 +78,7 @@
                     Budget</label>
                 <label id="lbltotalMediaSpend" class="k-label" style="margin-left: 100px;">
                     Total Media Spend</label>
-                <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend"  readonly="readonly" />
+                <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly" />
                 <label id="Label1" class="k-label">
                     "Output Field Which is a Conditional note"</label>
             </li>
@@ -73,7 +86,7 @@
         <ul>
             <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class = "k-input", @readonly = true, @style = "width:100px" })
                 <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left: 10px;">
-                    Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge" readonly="readonly"/>
+                    Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly"/>
                 <label id="Label2" class="k-label">
                     "Output Field Which is a Conditional note"</label>
             </li>
