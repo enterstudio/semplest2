@@ -19,7 +19,7 @@ namespace Semplest.SharedResources.Controllers
         public ActionResult LogIn()
         {
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = null;
-            return View(new ProfileModel());
+            return View();
         }
 
         [HttpPost]
@@ -122,7 +122,7 @@ namespace Semplest.SharedResources.Controllers
 
         public void AddRightToDatabase(string label, string controllerName, string vAction)
         {
-
+            return;
             bool found = false;
             string myController = ControllerContext.RouteData.Values["Controller"].ToString();
             if (controllerName != "Roles")

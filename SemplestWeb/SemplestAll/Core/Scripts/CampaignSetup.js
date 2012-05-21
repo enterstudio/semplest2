@@ -60,7 +60,7 @@ $(document).ready(function () {
     var onSelect = function (e) {
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
-        if (dataItem.text == 'Specific Month') {
+        if (dataItem.text == 'Specific Period') {
             $("#ProductGroup_EndDate").removeClass("enddate");
             $("#ProductGroup_EndDate").kendoDatePicker({
                 change: endChange

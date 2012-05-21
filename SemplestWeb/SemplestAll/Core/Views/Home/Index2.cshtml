@@ -21,7 +21,7 @@
             if (p.IsLaunched && !p.IsCompleted)
             {
                 <tr>
-                    <td style="width: 600px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+                    <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
                     </td>
                     @if (p.IsPaused)
                     {
@@ -51,7 +51,7 @@
             if (!p.IsLaunched)
             {
         <tr>
-            <td style="width: 600px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+            <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
             </td>
             <td>@Html.ActionLink("Delete", "")
             </td>
