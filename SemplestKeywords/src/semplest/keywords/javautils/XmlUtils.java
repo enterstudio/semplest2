@@ -14,6 +14,7 @@ import org.w3c.dom.Element;
 import java.util.HashMap;
 import java.util.Map;
 import java.net.URL;
+import java.util.Comparator;
 
 // Uses Google's autocomplete service to get keyword suggestions and volume
 
@@ -59,7 +60,19 @@ public class XmlUtils {
     } catch (Exception e) { e.printStackTrace(); }
     return res;
   }
- 
+  // -----
+  public static int getVolume( String query ){
+    Map<String,Integer> r = autoCompletes( query );
+    if( r.containsKey( query)) return r.get( query );
+    String k = java.util.Collections.min( r.keySet(),
+      new Comparator<String>(){ 
+        public int compare( String a, String b ){
+          return a.length() - b.length();}
+      }
+    );
+    return r.get( k );
+  }
+
   // - Helpers -------------------
   // The url
   private static String acUrl(String query){
@@ -70,9 +83,11 @@ public class XmlUtils {
   //-------------------------------------------------------------
   public static void main (String[] args){
     if( args.length  < 1 ) return;
-    //  HashMap<String,Integer> res = getSuggestions( args[0] );
+    // HashMap<String,Integer> res = getSuggestions( args[0] );
     HashMap<String,Integer> res = autoCompletes( args[0] );
     for( Map.Entry<String,Integer> e : res.entrySet())
       System.out.println( e.getKey() + " : " + e.getValue() );
+
+    System.out.println("Volume for " + args[0] + " : " + getVolume( args[0] ));
   }
 }
