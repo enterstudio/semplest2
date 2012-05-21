@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Web.Mvc;
-
+using System.Linq;
 namespace SemplestModel.Validations
 {
     public abstract class MultiFieldRequiredAttribute : ValidationAttribute
@@ -16,6 +16,16 @@ namespace SemplestModel.Validations
         public string[] Field1
         {
             get { return fields; }
+        }
+    }
+    public class CheckBoxAtleaseOneCheckedAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            var list = value as IEnumerable<string>;
+            if (list == null)
+                return true;
+            return list.Count() > 0;
         }
     }
     [AttributeUsage(AttributeTargets.Property)]
