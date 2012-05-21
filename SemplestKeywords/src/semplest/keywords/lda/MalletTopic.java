@@ -286,7 +286,7 @@ public class MalletTopic {
 		    	 wordProb = topicProb*(idCountPair.getWeight()/sum);
 		    	 //logger.debug(wordProb);
 		    	 word =(String) dataAlphabet.lookupObject(idCountPair.getID());
-		    	 logger.info("Word in mallet topic: "+ word);
+		    	 //logger.info("Word in mallet topic: "+ word);
 		    	 if(specdataAlphabet.contains(word)){
 			    	 if(wordMap.containsKey(word)){
 			    		 wordMap.put(word, new Double((Double)wordMap.get(word)+wordProb));
