@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -57,7 +58,7 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_SummitFloristNJ";
+	String accountName = "_TovahPhoto";
 	String url = "www.bethsflowersonline.com";
 	String productSubcategory = "Wedding Flowers";
 	double msnMonthlyBudget = 150.0; //In dolars
@@ -106,15 +107,17 @@ public class MSNAdcenterServiceClientTest {
 			startMonth.setYear(cal.get(Calendar.YEAR) - 1);
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
+			msn.updateBidAllKeywords();
+			
 			//msn.insertKeywords2("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
-			//HashMap<String, Double[][]> bidMap=msn.getKeywordEstimates("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt", 1500);
+			//HashMap<String, Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			
-			
+			/*
 			HashMap<String, int[][]> volMap = msn.getKeywordVolumes("\\\\fs3\\semplest\\data\\biddingTest\\PiperHall\\keywords.txt", startMonth);
             String outfile = "\\\\fs3\\semplest\\data\\msnData\\PiperHall_volume.dat";
 			msn.writeVolumeDataToFile(volMap, outfile);
-			/*
+			
 			HashMap<String, String[]> wordMap = msn.getSuggestedKeywords("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
             outfile = "\\\\fs3\\semplest\\data\\msnData\\SummitFlowersNJ_suggestions.dat";
 			msn.writeSuggestionsToFile(wordMap, outfile);
@@ -127,6 +130,48 @@ public class MSNAdcenterServiceClientTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	
+	public void deletaAllKeywords() throws RemoteException{
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
+		long[] kwIds = new long[kw.length];
+		for(int i = 0 ; i<kw.length; i++){
+			kwIds[i] = kw[i].getId();
+		}
+		keywordIDs = kwIds;
+		test.deleteKeywordsById(accountID, adGroupID, keywordIDs);
+	}
+	
+	public void updateBidAllKeywords() throws RemoteException{
+		int kwLimit = 1000;
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
+		
+		int j=0;
+		while (j<kw.length){
+			int remain = kw.length-j;
+			long[] kwIds; 
+			Bid[] zeroBid; 
+			Bid[] defaultBid; 
+			if(remain>=kwLimit){
+				remain = kwLimit;
+			}
+			kwIds = new long[remain];
+			zeroBid = new Bid[remain];
+			defaultBid = new Bid[remain];
+			
+			for(int i = 0 ; i<remain && j<kw.length ; i++){
+				kwIds[i] = kw[j].getId();
+				zeroBid[i] = new Bid(0.0);
+				defaultBid[i] = new Bid(2.0);
+				j++;
+			}
+		
+			test.updateKeywordBidsByIds(accountID, adGroupID, kwIds, zeroBid, zeroBid, defaultBid, zeroBid);
+		}
+		
 	}
 	
 	public void setGeoTarget() throws Exception{
@@ -464,7 +509,7 @@ public class MSNAdcenterServiceClientTest {
 	}
 	
 	public void plotdata(HashMap<String,Double[][]> bidMap) throws IOException{
-		PrintStream fileoutput = new PrintStream(new FileOutputStream("\\\\fs3\\semplest\\data\\msnData\\"+accountName));
+		PrintStream fileoutput = new PrintStream(new FileOutputStream("/semplest/data/msnData/comp/"+accountName));
 		Set<String> keySet = bidMap.keySet();
 		for ( String key : keySet ){
 			boolean plot=false;
