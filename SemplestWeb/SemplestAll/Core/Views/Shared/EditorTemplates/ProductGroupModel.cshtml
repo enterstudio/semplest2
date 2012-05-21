@@ -53,6 +53,8 @@
                 </label>
                 <br/>
                 @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.AdEnginesSelectedList)
+                @Html.ValidationMessageFor(t => t.AdEnginesList)
+
             </li>
             <li>
                 <button class="k-button" id="save1" type="button">
