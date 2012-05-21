@@ -177,6 +177,7 @@ namespace Semplest.Core.Models
 
 
         [Required]
+        [DisplayName("Address")]
         public string Address1 { get; set; }
 
         public string Address2 { get; set; }
