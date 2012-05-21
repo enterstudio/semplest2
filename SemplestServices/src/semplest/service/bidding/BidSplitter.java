@@ -21,7 +21,7 @@ public class BidSplitter {
 			//logger.info("Unable to sleep! May have error in default config values!");
 		}
 		
-		Double googlePercent = (Double) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");
+		Double googlePercent =  ((Integer) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent")).doubleValue();
 
 		
 		// Right now always split 70-30 or 100 -- to be changed later
