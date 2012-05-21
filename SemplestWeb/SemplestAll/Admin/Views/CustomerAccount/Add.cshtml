@@ -17,8 +17,17 @@ Add Customer Account:
      jQuery(function ($) {
          $("#CustomerAccount_Phone").mask("(999) 999-9999");
          $("#CustomerAccount_MiddleInitial").mask("a");
-         
+
      });
+
+
+     $(document).ready(function () {
+         $('#CustomerAccount_Email').keyup(function () {
+            var content = $('#CustomerAccount_Email').val();
+             $('#CustomerAccount_UserID').val(content);
+        });
+     });
+
 </script>
 
  
