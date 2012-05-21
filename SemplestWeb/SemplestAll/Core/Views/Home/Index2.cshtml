@@ -4,8 +4,12 @@
 }
 <fieldset style="padding: 0; border-width: 1px; width: 400px">
     <legend><b>Account Actions</b></legend>
-    <button class="k-button" id="btnCreatAd"><span class="k-icon k-add"></span> Create Advertising</button>
+    <br/>
+    <button class="k-button" id="btnCreatAd">
+        <span class="k-icon k-add"></span>Create Advertising</button>
+       
 </fieldset>
+ <br/>
 <h3>
     Live Advertising: scroll over to see summary, click to edit</h3>
 <table class="gradient-style">
@@ -16,22 +20,27 @@
         {
             if (p.IsLaunched && !p.IsCompleted)
             {
-            <tr>
-            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK },new{})
-            </td>
-            @if (p.IsPaused)
-            {<td>@Html.ActionLink("Restart", "", new { @class = "k-button" })
-            </td>}
-            else
-            {<td>@Html.ActionLink("Pause", "")
-            </td>}
-        </tr>    
+                <tr>
+                    <td style="width: 600px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+                    </td>
+                    @if (p.IsPaused)
+                    {
+                        <td>@Html.ActionLink("Restart", "", new { @class = "k-button" })
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@Html.ActionLink("Pause", "")
+                        </td>
+                    }
+                </tr>    
             
 
             }
         }
     }
 </table>
+ <br/>
 <h3>
     Unfinished Advertising</h3>
 <table class="gradient-style">
@@ -42,7 +51,7 @@
             if (!p.IsLaunched)
             {
         <tr>
-            <td>@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK },new {})
+            <td style="width: 600px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
             </td>
             <td>@Html.ActionLink("Delete", "")
             </td>

@@ -2,103 +2,107 @@
 @{
     ViewBag.Title = "Campaign";
 }
-
-
-
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
-
-
 @{ 
-   var budget = Model.ProductGroup.Budget;
-   var semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
-   var mediaspend = (budget - Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
-   var creditcardcharge = budget.ToString("n2");
-} 
-
-
-
-
-<div class="configuration1">
-    <span class="infoHead">Billing and Launch</span>
+    var budget = Model.ProductGroup.Budget;
+    var semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
+    var mediaspend = (budget - Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount).ToString("n2");
+    var creditcardcharge = budget.ToString("n2");
+}
+<div class="configuration">
+    <h3>
+        Billing and Launch</h3>
     <div class="table">
-    
         <ul>
-            <li>We have selected @Html.TextBoxFor(m => m.BillingLaunch.KeywordsCount, new { @class = "k-input",@readonly = true  } ) keywords to bid on! <a href="#" id="viewSelectedKeywords" style="margin-left:50px;">View selected keywords</a></li>
+            <li>We have selected @Html.TextBoxFor(m => m.BillingLaunch.KeywordsCount, new { @class = "k-input", @readonly = true })
+                keywords to bid on! <a href="#" id="viewSelectedKeywords" style="margin-left: 50px;">
+                    View selected keywords</a></li>
         </ul>
     </div>
     <div class="table">
         <ul>
             <li>
-               <p>SEMplest can work with any budget to provide traficc to your site. To help us better serve your sales goals, please indicate your comfort level when paying Google, Bing and Yahoo! For Each customer that reaches your site.</p>
+                <p>
+                    SEMplest can work with any budget to provide traficc to your site. To help us better
+                    serve your sales goals, please indicate your comfort level when paying Google, Bing
+                    and Yahoo! For Each customer that reaches your site.</p>
             </li>
             <li>
-                <select id="dropDownRange" class="k-select" name="dropDownRange" style="width:240px;margin-left:260px;">
+                <select id="dropDownRange" class="k-select" name="dropDownRange" style="width: 240px;
+                    margin-left: 260px;">
                     <option value="NotSpecified">Not specified</option>
                     <option value="UptoOne">$0.01 - $1.00</option>
                     <option value="OnetoThree">$1.01 - $3.00</option>
                     <option value="ThreetoFive">$3.01 - $5.00</option>
                     <option value="FivePlus">$5.01 +</option>
                 </select>
-                <label id="lblOptional" class="k-label">(optional)</label>
-                @*@Html.DropDownListFor(t =>t.BillingLaunch.Range)*@
-            </li>
+                <label id="lblOptional" class="k-label">
+                    (optional)</label>
+                @*@Html.DropDownListFor(t =>t.BillingLaunch.Range)*@ </li>
             <li>
-                <label id="lblYourCreditInvoice">Your Credit Cards on file(OR Paying by Invoice)</label>
-    @*          @Html.DropDownListFor(t => t.Invocie)
-    *@          <select id="dropDownCreditCard" class="k-select" name="dropDownCreditCard">
+                <label id="lblYourCreditInvoice">
+                    Your Credit Cards on file(OR Paying by Invoice)</label>
+                @*          @Html.DropDownListFor(t => t.Invocie)
+    *@
+                <select id="dropDownCreditCard" class="k-select" name="dropDownCreditCard">
                     <option>VISA ending in 8971 Expires8/24/14</option>
                 </select>
-                <a href="#" id="enterNewRecord" style="margin-left:30px;">Add new card</a>
-                <a href="#" id="deleteRecord" style="margin-left:20px;">Delete card</a>
-            </li>
-        </ul>       
+                <a href="#" id="enterNewRecord" style="margin-left: 30px;">Add new card</a> <a href="#"
+                    id="deleteRecord" style="margin-left: 20px;">Delete card</a> </li>
+        </ul>
         <ul>
             <li>
-                <label id="lblsemplestCharge" class="k-label" style="margin-left:150px;">SEMplest Charge</label>
-                
+                <label id="lblsemplestCharge" class="k-label" style="margin-left: 150px;">
+                    SEMplest Charge</label>
                 <input type="text" class="k-input" id="Semplestcharge";" value="$@semplestcharge" readonly="readonly"/>
-            
-
-                <label id="lblOutput1" class="k-label">"Output Field Which is a Conditional note"</label>
+                <label id="lblOutput1" class="k-label">
+                    "Output Field Which is a Conditional note"</label>
             </li>
         </ul>
         <ul>
             <li>
-            <label id="lblbudget">Budget</label>
-                    <label id="lbltotalMediaSpend" class="k-label"style="margin-left:100px;">Total Media Spend</label>
-                    <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend"  readonly="readonly" />
-                    <label id="Label1" class="k-label">"Output Field Which is a Conditional note"</label>
-            </li>        
-            </ul>
-            <ul>
-            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input", @readonly = true,@style="width:100px" })
-            
-            <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left:10px;">Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge" readonly="readonly"/>
-            <label id="Label2" class="k-label">"Output Field Which is a Conditional note"</label>
+                <label id="lblbudget">
+                    Budget</label>
+                <label id="lbltotalMediaSpend" class="k-label" style="margin-left: 100px;">
+                    Total Media Spend</label>
+                <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend"  readonly="readonly" />
+                <label id="Label1" class="k-label">
+                    "Output Field Which is a Conditional note"</label>
+            </li>
+        </ul>
+        <ul>
+            <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class = "k-input", @readonly = true, @style = "width:100px" })
+                <label id="lbltotalcreditCardCharge" class="k-label" style="margin-left: 10px;">
+                    Total Credit Card Charge</label><input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge" readonly="readonly"/>
+                <label id="Label2" class="k-label">
+                    "Output Field Which is a Conditional note"</label>
             </li>
         </ul>
     </div>
     <div class="configuration1">
     </div>
-@*        <ul class="options">
+    @*        <ul class="options">
             <li>Budget:</li>
             <li>@Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class="k-input",@readonly = true, @style="width:100px" })</li>
         </ul>
-*@    
+*@
     <div class="options">
-    <label id="lblAddProductSummary" class="k-label">Ad Product Summary:</label>
+        <label id="lblAddProductSummary" class="k-label">
+            Ad Product Summary:</label>
         <button class="k-button" id="editadproduct" type="button">
             <span class="k-back k-icon"></span>EDIT AD PRODUCT</button>
-
     </div>
     <div class="options">
         <br />
-        <button class="k-button" id="getLaunchAdProduct" type="submit" style="margin-left:450px" name="Command" value="LaunchAdProduct">
+        <button class="k-button" id="getLaunchAdProduct" type="submit" style="margin-left: 450px"
+            name="Command" value="LaunchAdProduct">
             <span class="k-update k-icon"></span>LAUNCH AD PRODUCT</button>
     </div>
 </div>
-
 <script type="text/javascript">
+    $('#dropDownRange').kendoDropDownList();
+    $('#dropDownCreditCard').kendoDropDownList();
+    
     $("#viewSelectedKeywords").click(function () {
         //alert('in viewSelectedKeywords');
         var length = tabStrip.items().length;
@@ -114,23 +118,22 @@
                 text: "View Keywords",
                 contentUrl: '@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'
             });
-            var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
-            tabStrip.select(tab);
-        });
+        var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
+        tabStrip.select(tab);
+    });
 
-        $("#editadproduct").click(function () {
-            tabChange1();
-        });
+    $("#editadproduct").click(function () {
+        tabChange1();
+    });
 
-        $("#getLaunchAdProduct").click(function () {
-        });
+    $("#getLaunchAdProduct").click(function () {
+    });
 
-        function tabChange1(parameters) {
-            var tab = tabStrip.select();
-            tabStrip.remove(tab);
-            var reqtab = tabStrip.tabGroup.children('li:contains("DEFINE PRODUCT")');
-            tabStrip.select(reqtab);
-        }
+    function tabChange1(parameters) {
+        var tab = tabStrip.select();
+        tabStrip.remove(tab);
+        var reqtab = tabStrip.tabGroup.children('li:contains("DEFINE PRODUCT")');
+        tabStrip.select(reqtab);
+    }
 
 </script>
-

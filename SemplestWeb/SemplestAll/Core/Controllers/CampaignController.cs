@@ -439,5 +439,9 @@ namespace Semplest.Core.Controllers
             navBars.Add(productGroupsBar);
             return Json(navBars, JsonRequestBehavior.AllowGet);
         }​
+        public ActionResult Preview()
+        {
+            return View(new CampaignSetupModel());
+        }
     }
 }
