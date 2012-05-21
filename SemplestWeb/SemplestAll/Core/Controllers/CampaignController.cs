@@ -64,6 +64,7 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult CampaignSetup(int promotionId)
         {
+            
             var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
             Logger.Write(logEnty);
             //var logService = new LogService();
@@ -80,6 +81,8 @@ namespace Semplest.Core.Controllers
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
             campaignSetupModel.ProductGroup.IsEdit = true;
+            ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " + campaignSetupModel.ProductGroup.ProductPromotionName;
+            
             return View(campaignSetupModel);
         }
 
