@@ -97,6 +97,7 @@
     </Compile>
     <Compile Include="Helpers\ExceptionHelper.cs" />
     <Compile Include="Helpers\Extensions.cs" />
+    <Compile Include="Helpers\GeneratePassword.cs" />
     <Compile Include="Helpers\LabelHelper.cs" />
     <Compile Include="Helpers\RoleHelper.cs" />
     <Compile Include="Helpers\ValidationHelper.cs" />
