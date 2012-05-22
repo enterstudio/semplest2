@@ -1,6 +1,7 @@
 package semplest.services.client.api;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -114,6 +115,42 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 			optionalTimeoutMS = timeoutMS;
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
+	}
+
+	@Override
+	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean DeleteKeyword(Integer promotionID, String Keyword) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
