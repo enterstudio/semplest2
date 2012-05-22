@@ -1,10 +1,5 @@
 package semplest.keywords.javautils;
 
-import org.htmlparser.lexer.Lexer;
-import org.htmlparser.Node;
-import org.htmlparser.nodes.TagNode;
-import org.htmlparser.util.ParserException;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -21,7 +16,7 @@ import java.util.Comparator;
 public class XmlUtils {
 
   // - The interface ----------
-  // Uses builtin Dom parser (same as getSuggestions)
+  // Uses Dom parser 
   public static HashMap<String,Integer> autoCompletes (String query) {
     HashMap<String,Integer> res = new HashMap<String,Integer>();
     try {
@@ -39,29 +34,9 @@ public class XmlUtils {
     return res;
   }
 
-  // Uses HtmlLexer (needs to be compiled with htmllexer.jar)
-  public static HashMap<String,Integer> getSuggestions (String query) {
-    HashMap<String,Integer> res = new HashMap<String,Integer>();
-
-    // parse the xml using the lexer
-    String sug = null;
-    Integer count = 0;
-    try {
-      Lexer l = new Lexer( ( new URL( acUrl( query ) ) ).openConnection() );
-      TagNode tn = null;
-      while (( tn = (TagNode) l.nextNode() ) != null ){
-        sug   = tn.getAttribute("data") != null ? 
-                tn.getAttribute("data") : sug;
-        count = tn.getAttribute("int") != null ? 
-          Integer.decode( tn.getAttribute("int")) : 0;
-        if( count != 0)
-          res.put( sug, count );
-      }
-    } catch (Exception e) { e.printStackTrace(); }
-    return res;
-  }
   // -----
-  public static int getVolume( String query ){
+  // Number of search results for term
+  public static int getPopularity( String query ){
     Map<String,Integer> r = autoCompletes( query );
     if( r.containsKey( query)) return r.get( query );
     String k = java.util.Collections.min( r.keySet(),
@@ -88,6 +63,7 @@ public class XmlUtils {
     for( Map.Entry<String,Integer> e : res.entrySet())
       System.out.println( e.getKey() + " : " + e.getValue() );
 
-    System.out.println("Volume for " + args[0] + " : " + getVolume( args[0] ));
+    System.out.println("Num Results for " + args[0] + " : " + 
+        getPopularity( args[0] ));
   }
 }
