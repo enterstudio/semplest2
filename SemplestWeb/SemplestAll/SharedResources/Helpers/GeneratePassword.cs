@@ -17,8 +17,8 @@ namespace Semplest.SharedResources.Helpers
         // You can add (or remove) characters to (from) these groups.
         private static string PASSWORD_CHARS_LCASE = "abcdefgijkmnopqrstwxyz";
         private static string PASSWORD_CHARS_UCASE = "ABCDEFGHJKLMNPQRSTWXYZ";
-        private static string PASSWORD_CHARS_NUMERIC = "123456789";
-        private static string PASSWORD_CHARS_SPECIAL = "@";
+        private static string PASSWORD_CHARS_NUMERIC = "23456789";
+        private static string PASSWORD_CHARS_SPECIAL = "1";
 
         /// <summary>
         /// Generates a random password.
