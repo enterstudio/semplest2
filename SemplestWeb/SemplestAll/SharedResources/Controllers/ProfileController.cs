@@ -18,6 +18,8 @@ namespace Semplest.SharedResources.Controllers
 
         public ActionResult LogIn()
         {
+            Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = null;
+            Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = new Dictionary<string, int>();
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = null;
             return View();
         }
@@ -25,6 +27,18 @@ namespace Semplest.SharedResources.Controllers
         [HttpPost]
         public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, string isAdmin)
         {
+            Dictionary<string, int> loginHash = (Dictionary<string, int>)Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS];
+            if (loginHash == null)
+            {
+                loginHash = new Dictionary<string, int>();
+                loginHash.Add(pm.UserName, 1);
+            }
+            else if (loginHash.ContainsKey(pm.UserName))
+                loginHash[pm.UserName] += 1;
+            else
+                loginHash.Add(pm.UserName, 1);
+
+            Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = loginHash;
             bool isAdminLogin = isAdmin == null ? false : true;
             using (SemplestEntities dbContext = new SemplestEntities())
             {
@@ -46,50 +60,60 @@ namespace Semplest.SharedResources.Controllers
                 }
                 if (cred == null)
                 {
-                        pm.LoggedInSucceeded = false;
-                        pm.LoginFailedMessage = "Your userid or password is invalid please try again.";
-                }
-                else if (cred.User.IsActive)
+                    pm.LoggedInSucceeded = false;
+                    if (loginHash[pm.UserName] > 3)
                     {
-                        Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = cred;
-                        if (cred.User.IsRegistered)
+                        var userCreds = dbContext.Credentials.Where(c => c.Username == pm.UserName);
+                        if (userCreds.Count() > 0 && userCreds.First().User.IsActive)
                         {
-                            //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
-                            //if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
-                            //    return RedirectToAction("Index", "Home");
-                            //else if (cred.User.IsRegistered)
-                                //user is a regular core user
-                            if (cred.User.CustomerFK == null)
-                                return RedirectToAction("Index", "Home");
-                            else
-                                return RedirectToAction("Index2", "Home");
+                            userCreds.First().User.IsActive = false;
+                            dbContext.SaveChanges();
                         }
-                        else if (pm.LoggedInSucceeded)
-                        {
-                            Credential saveCred = dbContext.Credentials.Where(x => x.Username == cred.Username && x.Password == cred.Password).First();
-                            //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
-                            saveCred.SecurityAnswer = pm.SecurityAnswer;
-                            saveCred.SecurityQuestion = pm.SecurityQuestion;
-                            saveCred.User.IsRegistered = true;
-                            int i = dbContext.SaveChanges();
+                        pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
+                    }   
+                    else
+                        pm.LoginFailedMessage = "The user name or password entered is incorrect. Please try again.";
+                }
+                else if (!cred.User.IsActive)
+                {
+                    pm.LoggedInSucceeded = false;
+                    pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
+                }
+                else
+                {
+                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = cred;
+                    if (cred.User.IsRegistered)
+                    {
+                        //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
+                        //if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
+                        //    return RedirectToAction("Index", "Home");
+                        //else if (cred.User.IsRegistered)
+                        //user is a regular core user
+                        if (cred.User.CustomerFK == null)
                             return RedirectToAction("Index", "Home");
-                        }
                         else
-                        {
-                            //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
-                            pm.IsRegistered = false;
-                            pm.LoggedInSucceeded = true;
-                        }
+                            return RedirectToAction("Index2", "Home");
+                    }
+                    else if (pm.LoggedInSucceeded)
+                    {
+                        Credential saveCred = dbContext.Credentials.Where(x => x.Username == cred.Username && x.Password == cred.Password).First();
+                        //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
+                        saveCred.SecurityAnswer = pm.SecurityAnswer;
+                        saveCred.SecurityQuestion = pm.SecurityQuestion;
+                        saveCred.User.IsRegistered = true;
+                        int i = dbContext.SaveChanges();
+                        return RedirectToAction("Index", "Home");
                     }
                     else
                     {
-                        pm.LoggedInSucceeded = false;
-                        pm.LoginFailedMessage = "Sorry, your account is currently disabled, please contact SEMplest Customer Service for assistance.";
+                        //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
+                        pm.IsRegistered = false;
+                        pm.LoggedInSucceeded = true;
                     }
                 }
-
-                return View(pm);
             }
+            return View(pm);
+        }
 
         public ActionResult Verify(string userName, string password)
         {
