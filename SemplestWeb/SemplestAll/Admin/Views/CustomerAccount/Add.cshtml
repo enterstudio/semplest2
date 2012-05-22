@@ -204,7 +204,8 @@ Add Customer Account:
             @Html.LabelFor(model => model.CustomerAccount.UserPassword)
     </div>
     <div class="editor-field">
-        @Html.PasswordFor(model => model.CustomerAccount.UserPassword, new { @class = "k-textbox" })
+        @*@Html.PasswordFor(model => model.CustomerAccount.UserPassword, new { @class = "k-textbox" })*@
+        @Html.TextBoxFor(model => model.CustomerAccount.UserPassword, new { @class = "k-textbox" })
         @Html.ValidationMessageFor(model => model.CustomerAccount.UserPassword)
     </div>
    
