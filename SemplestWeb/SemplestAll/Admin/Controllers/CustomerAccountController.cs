@@ -8,6 +8,7 @@ using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
 using System.Data.Objects;
+//using System.Web.Security;
 
 
 namespace Semplest.Admin.Controllers
@@ -607,7 +608,6 @@ namespace Semplest.Admin.Controllers
             UpdateModel(employeesales);
             //var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK  == customer.CustomerPK && p.EmployeeFK==1);
 
-
             //employeecustomerassociation.
             //employeecustomerassociation.EmployeeCustomerAssociationPK
 
@@ -634,11 +634,6 @@ namespace Semplest.Admin.Controllers
             }
 
             dbcontext.SaveChanges();
-
-
-
-
-
 
             return RedirectToAction("Index");
             //return View("index");
@@ -795,7 +790,9 @@ namespace Semplest.Admin.Controllers
                 sl2.Add(mylistitem);
             }
             x.SalesPersons = sl2;
-
+            
+            x.CustomerAccount = new CustomerAccount();
+            x.CustomerAccount.UserPassword = Semplest.SharedResources.Helpers.RandomPassword.Generate(8,10);
 
             return View(x);
         }
