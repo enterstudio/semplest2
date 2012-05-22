@@ -736,6 +736,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	public static void main(String[] args) throws Exception {
 		
+		BasicConfigurator.configure();
+		
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 *
