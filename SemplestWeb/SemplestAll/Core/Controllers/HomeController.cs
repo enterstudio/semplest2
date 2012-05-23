@@ -185,6 +185,24 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
+        [HttpPost]
+        public ActionResult PausePromotion(int promotionIdP)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Promotions.Where(x => x.PromotionPK == promotionIdP).First().IsPaused = true;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index2");
+        }
+
+        [HttpPost]
+        public ActionResult ResumePromotion(int promotionIdR)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Promotions.Where(x => x.PromotionPK == promotionIdR).First().IsPaused = false;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index2");
+        }
+
 
         private void CreateDummyModel(SearchKeywordsModel model)
         {

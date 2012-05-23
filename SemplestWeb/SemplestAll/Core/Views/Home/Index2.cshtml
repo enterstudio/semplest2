@@ -25,12 +25,12 @@
                     </td>
                     @if (p.IsPaused)
                     {
-                        <td>@Html.ActionLink("Restart", "", new { @class = "k-button" })
+                        <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
                         </td>
                     }
                     else
                     {
-                        <td>@Html.ActionLink("Pause", "")
+                        <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
                         </td>
                     }
                 </tr>    
@@ -68,6 +68,25 @@
     <input type="hidden" id="promotionId" name="promotionId" />
     </form>
 </div>
+
+<div style="display: none;">
+    <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
+    <div class="questionP" ></div>
+    <input type="button" id="btnOkP" value="OK" class="k-button" />
+    <input type="button" id="btnCancelP" value="Cancel" class="k-button" />
+    <input type="hidden" id="promotionIdP" name="promotionIdP" />
+    </form>
+</div>
+
+<div style="display: none;">
+    <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
+    <div class="questionR" ></div>
+    <input type="button" id="btnOkR" value="OK" class="k-button" />
+    <input type="button" id="btnCancelR" value="Cancel" class="k-button" />
+    <input type="hidden" id="promotionIdR" name="promotionIdR" />
+    </form>
+</div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         $(".deletead").click(function (event) {
@@ -76,11 +95,44 @@
             $.blockUI(({ message: $('#hiddenButton') }));
             event.preventDefault();
         });
+        
         $("#btnAdd").click(function (event) {
             $("#hiddenButton").submit();
         });
 
         $("#btnCancel").click(function (event) {
+            $.unblockUI();
+        });
+        
+        $(".pausead").click(function (event) {
+            $('#promotionIdP').val(event.target.id);
+            $('.questionP').html("Are you sure you want to pause " + event.target.name + "?");
+            $.blockUI(({ message: $('#hiddenPause') }));
+            event.preventDefault();
+        });
+
+        $("#btnOkP").click(function (event) {
+            $("#hiddenPause").submit();
+        });
+
+        $("#btnCancelP").click(function (event) {
+            $.unblockUI();
+        });
+        
+
+
+        $(".resumead").click(function (event) {
+            $('#promotionIdR').val(event.target.id);
+            $('.questionR').html("Are you sure you want to resume " + event.target.name + "?");
+            $.blockUI(({ message: $('#hiddenResume') }));
+            event.preventDefault();
+        });
+
+        $("#btnOkR").click(function (event) {
+            $("#hiddenResume").submit();
+        });
+
+        $("#btnCancelR").click(function (event) {
             $.unblockUI();
         });
 
