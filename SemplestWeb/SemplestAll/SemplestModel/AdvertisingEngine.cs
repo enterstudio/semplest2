@@ -25,6 +25,7 @@ namespace SemplestModel
     
         public int AdvertisingEnginePK { get; set; }
         public string AdvertisingEngine1 { get; set; }
+        public string LogoURL { get; set; }
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }

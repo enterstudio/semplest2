@@ -46,6 +46,8 @@ namespace SemplestModel
         public bool IsLaunched { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
+        public bool IsDeleted { get; set; }
+        public string TargetCPCLevel { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual BudgetCycle BudgetCycle { get; set; }

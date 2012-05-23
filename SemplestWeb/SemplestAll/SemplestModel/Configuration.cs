@@ -93,5 +93,21 @@ namespace SemplestModel
         public string ESBWebServerURL { get; set; }
         public bool AdwordsUseSandbox { get; set; }
         public string SemplestEncryptionkey { get; set; }
+        public string SemplestKeywordsdictfile { get; set; }
+        public string SemplestKeywordsdocfile { get; set; }
+        public string SemplestKeywordstwfile { get; set; }
+        public string SemplestKeywordsdfile { get; set; }
+        public string SemplestKeywordsbaseMultiWPath { get; set; }
+        public string SemplestKeywordsnGramsSubC { get; set; }
+        public string SemplestKeywordsnGramsC { get; set; }
+        public string SemplestKeywordsvalidCat { get; set; }
+        public string SemplestKeywordslucenedfile { get; set; }
+        public string SemplestKeywordssmallhCounts { get; set; }
+        public string SemplestKeywordsstoplist { get; set; }
+        public Nullable<int> SemplestKeywordsnumTopics { get; set; }
+        public Nullable<double> SemplestKeywordsuserInfoWeight { get; set; }
+        public Nullable<int> SemplestKeywordsnumKeywordsGoogle { get; set; }
+        public Nullable<int> SemplestKeywordsnumKeywordsMSN { get; set; }
+        public Nullable<int> SemplestKeywordsnumThreads { get; set; }
     }
 }

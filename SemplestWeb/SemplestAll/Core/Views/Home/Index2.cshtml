@@ -18,7 +18,7 @@
 
         foreach (SemplestModel.Promotion p in pg.Promotions)
         {
-            if (p.IsLaunched && !p.IsCompleted)
+            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
             {
                 <tr>
                     <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
@@ -48,12 +48,12 @@
     {
         foreach (SemplestModel.Promotion p in pg.Promotions)
         {
-            if (!p.IsLaunched)
+            if (!p.IsLaunched  && !p.IsDeleted)
             {
         <tr>
             <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
             </td>
-            <td>@Html.ActionLink("Delete", "")
+            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
             </td>
         </tr>
             }
@@ -61,21 +61,20 @@
     }
 </table>
 <div style="display: none;">
-    <form name="hiddenButton" id="hiddenButton" action="AddProductGroupName" method="post">
-    Add a new product group name:
-    @Html.TextBox("newproductgroupname", "", new { @class = "k-textbox" })
-    <br />
-    <input type="button" id="btnAdd" value="Add" class="k-button" /><input type="button"
-        id="btnCancel" value="Cancel" class="k-button" /></form>
+    <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
+    <div class="question" ></div>
+    <input type="button" id="btnAdd" value="OK" class="k-button" />
+    <input type="button" id="btnCancel" value="Cancel" class="k-button" />
+    <input type="hidden" id="promotionId" name="promotionId" />
+    </form>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        $(".addnewproductgroupname").click(function (event) {
+        $(".deletead").click(function (event) {
+            $('#promotionId').val(event.target.id);
+            $('.question').html("Are you sure you want to delete " + event.target.name + "?");
             $.blockUI(({ message: $('#hiddenButton') }));
             event.preventDefault();
-        });
-        $('#btnCreatAd').click(function () {
-            location.href = '../Campaign/CampaignSetup';
         });
         $("#btnAdd").click(function (event) {
             $("#hiddenButton").submit();

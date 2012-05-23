@@ -177,29 +177,11 @@ namespace SemplestWebApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddProductGroupName( FormCollection fc)
+        public ActionResult RemovePromotion(int promotionId)
         {
-            try
-            {
-                string productgroupname=fc["newproductgroupname"].ToString().Trim();
-                Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-                if (productgroupname == null || productgroupname  =="" ) throw new Exception("Blank");
-                SemplestEntities dbContext = new SemplestEntities();
-                var productgroupexists = from pg in dbContext.ProductGroups
-                                    where pg.CustomerFK.Equals(c.User.CustomerFK.Value) && pg.ProductGroupName.Equals(productgroupname )
-                                    select pg;
-
-                if (productgroupexists.Count()>0) throw new Exception("Duplicate");
-
-                dbContext.ProductGroups.Add(new ProductGroup { CustomerFK=c.User.CustomerFK.Value  , ProductGroupName = productgroupname , StartDate=DateTime.Now, IsActive = true });
-                dbContext.SaveChanges();
-
-            }
-            catch (Exception ex)
-            {
-                
-            }
-            
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Promotions.Where(x => x.PromotionPK == promotionId).First().IsDeleted = true;
+            dbContext.SaveChanges();
             return RedirectToAction("Index2");
         }
 

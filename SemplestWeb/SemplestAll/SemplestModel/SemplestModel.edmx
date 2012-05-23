@@ -357,6 +357,7 @@
           </Key>
           <Property Name="AdvertisingEnginePK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
           <Property Name="AdvertisingEngine" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="LogoURL" Type="varchar" MaxLength="300" />
         </EntityType>
         <EntityType Name="AdvertisingEngineAccount">
           <Key>
@@ -510,6 +511,22 @@
           <Property Name="ESBWebServerURL" Type="varchar" MaxLength="100" />
           <Property Name="AdwordsUseSandbox" Type="bit" Nullable="false" />
           <Property Name="SemplestEncryptionkey" Type="varchar" MaxLength="50" />
+          <Property Name="SemplestKeywordsdictfile" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsdocfile" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordstwfile" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsdfile" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsbaseMultiWPath" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsnGramsSubC" Type="varchar" MaxLength="300" />
+          <Property Name="SemplestKeywordsnGramsC" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsvalidCat" Type="varchar" MaxLength="300" />
+          <Property Name="SemplestKeywordslucenedfile" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordssmallhCounts" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsstoplist" Type="varchar" MaxLength="100" />
+          <Property Name="SemplestKeywordsnumTopics" Type="int" />
+          <Property Name="SemplestKeywordsuserInfoWeight" Type="float" />
+          <Property Name="SemplestKeywordsnumKeywordsGoogle" Type="int" />
+          <Property Name="SemplestKeywordsnumKeywordsMSN" Type="int" />
+          <Property Name="SemplestKeywordsnumThreads" Type="int" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -781,6 +798,8 @@
           <Property Name="IsLaunched" Type="bit" Nullable="false" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="EditedDate" Type="datetime2" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="TargetCPCLevel" Type="varchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -2276,6 +2295,7 @@
           <NavigationProperty Name="PromotionAdEngineSelecteds" Relationship="SemplestModel.REL_AdvertisingEngine_PromotionAdEngineSelected_2" FromRole="AdvertisingEngine" ToRole="PromotionAdEngineSelected" />
           <NavigationProperty Name="TargetedDailyBudgets" Relationship="SemplestModel.REL_AdvertisingEngine_TargetedDailyBudget_2" FromRole="AdvertisingEngine" ToRole="TargetedDailyBudget" />
           <NavigationProperty Name="AdvertisingEngineAds" Relationship="SemplestModel.REL_AdvertisingEngine_AdvertisingEngineAds_2" FromRole="AdvertisingEngine" ToRole="AdvertisingEngineAd" />
+          <Property Type="String" Name="LogoURL" MaxLength="300" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="AdvertisingEngineAccount">
           <Key>
@@ -2432,6 +2452,22 @@
           <Property Type="String" Name="ESBWebServerURL" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Type="Boolean" Name="AdwordsUseSandbox" Nullable="false" />
           <Property Type="String" Name="SemplestEncryptionkey" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdictfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdocfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordstwfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsbaseMultiWPath" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsnGramsSubC" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsnGramsC" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsvalidCat" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordslucenedfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordssmallhCounts" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsstoplist" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="SemplestKeywordsnumTopics" />
+          <Property Type="Double" Name="SemplestKeywordsuserInfoWeight" />
+          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsGoogle" />
+          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsMSN" />
+          <Property Type="Int32" Name="SemplestKeywordsnumThreads" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2760,6 +2796,8 @@
           <NavigationProperty Name="PromotionKeywordAssociations" Relationship="SemplestModel.REL_Promotion_PromotionKeywordAssociation_3" FromRole="Promotion" ToRole="PromotionKeywordAssociation" />
           <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Promotion_Schedule_2" FromRole="Promotion" ToRole="Schedule" />
           <NavigationProperty Name="TargetedDailyBudgets" Relationship="SemplestModel.REL_Promotion_TargetedDailyBudget_1" FromRole="Promotion" ToRole="TargetedDailyBudget" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <Property Type="String" Name="TargetCPCLevel" MaxLength="50" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="PromotionAdEngineSelected">
           <Key>
@@ -3829,6 +3867,7 @@
           <EntitySetMapping Name="AdvertisingEngines">
             <EntityTypeMapping TypeName="SemplestModel.AdvertisingEngine">
               <MappingFragment StoreEntitySet="AdvertisingEngine">
+                <ScalarProperty Name="LogoURL" ColumnName="LogoURL" />
                 <ScalarProperty Name="AdvertisingEngine1" ColumnName="AdvertisingEngine" />
                 <ScalarProperty Name="AdvertisingEnginePK" ColumnName="AdvertisingEnginePK" />
               </MappingFragment>
@@ -3904,6 +3943,22 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="SemplestKeywordsnumThreads" ColumnName="SemplestKeywordsnumThreads" />
+                <ScalarProperty Name="SemplestKeywordsnumKeywordsMSN" ColumnName="SemplestKeywordsnumKeywordsMSN" />
+                <ScalarProperty Name="SemplestKeywordsnumKeywordsGoogle" ColumnName="SemplestKeywordsnumKeywordsGoogle" />
+                <ScalarProperty Name="SemplestKeywordsuserInfoWeight" ColumnName="SemplestKeywordsuserInfoWeight" />
+                <ScalarProperty Name="SemplestKeywordsnumTopics" ColumnName="SemplestKeywordsnumTopics" />
+                <ScalarProperty Name="SemplestKeywordsstoplist" ColumnName="SemplestKeywordsstoplist" />
+                <ScalarProperty Name="SemplestKeywordssmallhCounts" ColumnName="SemplestKeywordssmallhCounts" />
+                <ScalarProperty Name="SemplestKeywordslucenedfile" ColumnName="SemplestKeywordslucenedfile" />
+                <ScalarProperty Name="SemplestKeywordsvalidCat" ColumnName="SemplestKeywordsvalidCat" />
+                <ScalarProperty Name="SemplestKeywordsnGramsC" ColumnName="SemplestKeywordsnGramsC" />
+                <ScalarProperty Name="SemplestKeywordsnGramsSubC" ColumnName="SemplestKeywordsnGramsSubC" />
+                <ScalarProperty Name="SemplestKeywordsbaseMultiWPath" ColumnName="SemplestKeywordsbaseMultiWPath" />
+                <ScalarProperty Name="SemplestKeywordsdfile" ColumnName="SemplestKeywordsdfile" />
+                <ScalarProperty Name="SemplestKeywordstwfile" ColumnName="SemplestKeywordstwfile" />
+                <ScalarProperty Name="SemplestKeywordsdocfile" ColumnName="SemplestKeywordsdocfile" />
+                <ScalarProperty Name="SemplestKeywordsdictfile" ColumnName="SemplestKeywordsdictfile" />
                 <ScalarProperty Name="SemplestEncryptionkey" ColumnName="SemplestEncryptionkey" />
                 <ScalarProperty Name="AdwordsUseSandbox" ColumnName="AdwordsUseSandbox" />
                 <ScalarProperty Name="ESBWebServerURL" ColumnName="ESBWebServerURL" />
@@ -4247,6 +4302,8 @@
           <EntitySetMapping Name="Promotions">
             <EntityTypeMapping TypeName="SemplestModel.Promotion">
               <MappingFragment StoreEntitySet="Promotion">
+                <ScalarProperty Name="TargetCPCLevel" ColumnName="TargetCPCLevel" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
                 <ScalarProperty Name="EditedDate" ColumnName="EditedDate" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
