@@ -1209,6 +1209,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				kw.setMatchType(KeywordMatchType.BROAD);
 				wordList.add(kw);
 			}
+		} else {
+			for (String word : keywords){
+
+				Keyword kw = new Keyword();
+				kw.setText(word);
+				kw.setMatchType(matchType);
+				wordList.add(kw);
+
+			}
 		}
 		
 
