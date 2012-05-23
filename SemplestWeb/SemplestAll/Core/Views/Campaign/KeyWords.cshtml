@@ -16,7 +16,7 @@
             
 
             <div style = "height:345px;width:700px;overflow-x:auto" id="wrap">
-            <h1 id="headerF">Filter</h1>     @* <<<----- uncomment h1  to get the filter*@
+           @* <h1 id="headerF">Filter</h1>  *@   @* <<<----- uncomment h1  to get the filter*@
             @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds))
             </div>
 
