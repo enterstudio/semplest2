@@ -1151,8 +1151,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		
 		
 		try{
-			//AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
-			AdWordsUser user = new AdWordsUser("adwords@semplest.com","ic0system",null,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
+			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the TargetingIdeaService
 			targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
 		} catch (ServiceException e) {
