@@ -50,5 +50,6 @@
 	<classpathentry kind="lib" path="lib/xbean-spring-3.9.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
+	<classpathentry kind="lib" path="lib/rt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

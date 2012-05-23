@@ -48,7 +48,7 @@ public class EsbTestThread implements Runnable{
 				while(true){
 					Random r = new Random();
 					int randomService = r.nextInt(num_service) + 1;
-					System.out.println("Sending request to " + SERVICE_INDEX.values()[randomService].toString());
+					System.out.println("ESB TEST: Sending request to " + SERVICE_INDEX.values()[randomService].toString());
 					Run_Service(SERVICE_INDEX.values()[randomService]);
 					Thread.sleep(sleep_time);
 				}
@@ -61,20 +61,32 @@ public class EsbTestThread implements Runnable{
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();
-		}
-		finally{
+			e.printStackTrace();		
+			/*
 			try{
-				DateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm:ss");			
 				FileWriter fstream = new FileWriter(report_path);
 				BufferedWriter out = new BufferedWriter(fstream);
-				out.write("Stop running ESB test thread (frequency " + (60000/sleep_time) + "/min) at time " + new Date());
+				out.append("ERROR!!! - ESB TEST - " + e.getMessage());
+				out.close();
+			}
+			catch(Exception e1){
+				e1.printStackTrace();
+			}
+			*/
+		}
+		/*
+		finally{
+			try{
+				FileWriter fstream = new FileWriter(report_path);
+				BufferedWriter out = new BufferedWriter(fstream);
+				out.append("Stop running ESB Test thread (frequency " + (60000/sleep_time) + "/min) at >>> " + new Date());
 				out.close();
 			}
 			catch(Exception e){
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 		
 	private void Run_Service(ScalabilityTests.SERVICE_INDEX service_index){
@@ -106,16 +118,24 @@ public class EsbTestThread implements Runnable{
 				break;
 			}
 			case service_keyword:{
-				KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);
-				ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
-				
+				try{
+					KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);
+					ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 				break;
 			}
 			case service_bidding:{
-				SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(testUrl, null);
-				BudgetObject budgetData =  new BudgetObject();
-				client.setBidsUpdate(71, "google", budgetData);
-				
+				try{
+					SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(testUrl, null);
+					BudgetObject budgetData =  new BudgetObject();
+					client.setBidsUpdate(71, "google", budgetData);
+				}
+				catch(Exception e){
+					e.printStackTrace();
+				}
 				break;
 			}
 			case service_mail:{

@@ -56,7 +56,7 @@ public class MsnServiceTest {
 	
 	public static void main(String args[]){
 		MsnServiceTest t = new MsnServiceTest();
-		t.Test_MsnServices_Standalone();
+		t.Test_MsnReport();
 	}
 	
 	public int Test_MsnReport(){

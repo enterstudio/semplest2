@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -36,29 +37,36 @@ import semplest.test.unittest.GoogleServiceTest;
 import semplest.test.unittest.MsnServiceTest;
 import semplest.test.unittest.UnitTests;
 
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
+
 public class ScalabilityTests {
 	
 	public enum SERVICE_INDEX {all, service_google, service_msn, service_keyword, service_bidding, service_mail, service_adengine};
 	
 	public static String eol = System.getProperty("line.separator");
+	
+	//private static String reportPath;
+	//private static ExecutorService executor;
+	//private static BufferedWriter out;
 
 	public static void main(String args[]){
 		DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
 		Date date = new Date();
 		String now = dateFormat.format(date);
 		String reportName = "ScalabilityTestReport" + now + ".txt";
-		String reportPath = "Z:\\TestReports\\ScalabilityTest\\" + reportName;
+		String reportPath = "Z:\\TestReports\\ScalabilityTest\\" + reportName;		
+		//reportPath = "/semplest/TestReports/ScalabilityTest/" + reportName;
 		
-		try{
+		try{		
 			//Create Report Header						
 			//PrintStream out = new PrintStream(new FileOutputStream(reportPath));
 			//System.setOut(out);
 			
-			DateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm:ss");		
 			File file = new File(reportPath);
 			FileWriter fstream = new FileWriter(file);
 			BufferedWriter out = new BufferedWriter(fstream);
-			out.write("Start SEMplest Scalability Test at >>> " + date + eol);				
+			out.append("Start Semplest Scalability Test at >>> " + date + eol);				
 			
 			
 			System.out.println("************************************************************************************");
@@ -66,35 +74,70 @@ public class ScalabilityTests {
 			System.out.println("*                            SEMplest Scalability Test                             *");
 			System.out.println("*                                                                                  *");
 			System.out.println("************************************************************************************");
-			System.out.println("Report Time: " + now);
+			System.out.println("Report Time: " + date);
 			System.out.println(" ");
 			
 			//Start to Test
+			ExecutorService executor = Executors.newCachedThreadPool();
+			//executor = Executors.newCachedThreadPool();
+			int freq1 = 10; 
+			int freq2 = 20; 
+			int freq3 = 30;		
+			int freq4 = 40;
+			int freq5 = 50;
+			int freq6 = 60;
 			
 			//Test ESB
 			System.out.println("Start to test ESB...");		
-			out.write(eol + "********** ESB TEST **********" + eol);
-			int freq1 = 20; 
-			int freq2 = 30; 
-			int freq3 = 60;
-			
-			ExecutorService executor = Executors.newCachedThreadPool();
-			
-			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq1 + "/min...");
-			out.write("Start a test thread that sends random request to ESB server with frequency of " + freq1 + "/min." + eol);
-			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq1, reportPath));
+			out.append(eol + "********** ESB TEST **********" + eol);						
 			
 			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min...");
-			out.write("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min." + eol);
+			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min." + eol);
 			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq2, reportPath));
 			
 			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min...");
-			out.write("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min." + eol);
+			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min." + eol);
 			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq3, reportPath));
 			
+			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min...");
+			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min." + eol);
+			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq6, reportPath));
 			
+			
+			//Test Services
+			/*
+			//Test Keyword service
+			System.out.println("Start to test Keyword Service...");		
+			out.append(eol + "********** KEYWORD SERVICE TEST **********" + eol);
+			
+			System.out.println("Start a test thread that sends random request to Keyword Service with frequency of " + freq1 + "/min...");
+			out.append("Start a test thread that sends random request to Keyword Service with frequency of " + freq1 + "/min." + eol);
+			executor.execute(new KeywordTestThread(freq1, reportPath));
+			
+			System.out.println("Start a test thread that sends random request to Keyword Service with frequency of " + freq2 + "/min...");
+			out.append("Start a test thread that sends random request to Keyword Service with frequency of " + freq2 + "/min." + eol);
+			executor.execute(new KeywordTestThread(freq2, reportPath));
+			
+			*/
 						
 			out.close();
+			
+			/*
+			Signal.handle(new Signal("INT"), new SignalHandler() {
+			      public void handle(Signal sig) {
+			    	  try{
+							FileWriter fstream = new FileWriter(reportPath);
+							BufferedWriter out = new BufferedWriter(fstream);
+							out.append("Stop Semplest Scalability Test at >>> " + new Date());
+							out.close();
+							//executor.shutdown();
+						}
+						catch(Exception e){
+							e.printStackTrace();
+						}
+			      }
+			    });
+			*/
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -103,6 +146,14 @@ public class ScalabilityTests {
 			System.out.println(e.getMessage());
 			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println(" ");
+			
+			//try {
+				//out.write(eol + "Error running the test: " + e.getMessage() + eol);
+			//} catch (IOException e1) {
+			//	e1.printStackTrace();
+			//}	
+			
+			//executor.shutdown();
 		}
 		
 	}
@@ -143,5 +194,6 @@ public class ScalabilityTests {
 			}
 	    }   
 		
-	}
+	}	
+	
 }
