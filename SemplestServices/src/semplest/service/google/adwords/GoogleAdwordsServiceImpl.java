@@ -30,7 +30,7 @@ import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
-import semplest.server.protocol.google.KWIdeaObj;
+import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.protocol.google.KeywordMatchtypePair;
 
 import com.google.api.adwords.lib.AdWordsService;
@@ -193,11 +193,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			int categoryId = 11476; // Wedding Flowers
 			String accountID = null;
 			String [] exclude_keywords = null;
-			HashMap<KeywordMatchtypePair, KWIdeaObj> keyWordIdeaMap;
+			/*
+			HashMap<KeywordMatchtypePair, KeywordToolStats> keyWordIdeaMap;
 			try{ 
 				keyWordIdeaMap = g.getGoogleKeywordIdeas(accountID, url, keywords, exclude_keywords, categoryId, numberResults);
 			} catch (Exception e){
 				e.printStackTrace();
+			}
+			*/
+			ArrayList<KeywordToolStats> stats = g.getGoogleVolumeCompetition(keywords, null);
+			for (KeywordToolStats k : stats){
+				System.out.println(k.getKw().getText()+ ","+k.getKw().getMatchType()+","+k.getAverageMonthlySearches()+","+k.getCompetition());
 			}
 			
 			
@@ -1133,12 +1139,146 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	
 	
 	
+	public ArrayList<KeywordToolStats> getGoogleVolumeCompetition(String [] keywords, KeywordMatchType matchType) throws Exception	{
+		
+		ArrayList<KeywordToolStats> returnData = new ArrayList<KeywordToolStats>();
+		TargetingIdeaPage page;
+		TargetingIdeaServiceInterface targetingIdeaService;
+		
+		if(keywords==null) {
+			throw new Exception("Empty keyword list!");
+		}
+		
+		
+		try{
+			//AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+			AdWordsUser user = new AdWordsUser("adwords@semplest.com","ic0system",null,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
+			// Get the TargetingIdeaService
+			targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
+		} catch (ServiceException e) {
+			throw new Exception(e);
+		}
+
+
+		// Create selector.
+		TargetingIdeaSelector selector = new TargetingIdeaSelector();
+		selector.setRequestType(RequestType.STATS);
+		selector.setIdeaType(IdeaType.KEYWORD);
+		selector.setRequestedAttributeTypes(new AttributeType[]
+				{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, 
+				AttributeType.COMPETITION }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,// });
+
+		selector.setLocaleCode("US");
+		selector.setCurrencyCode("USD");
+
+
+		// Set selector paging (required for targeting idea service).
+		Paging paging = new Paging();
+		paging.setStartIndex(0);
+		if(matchType==null){
+			paging.setNumberResults(3*keywords.length);
+		} else {
+			paging.setNumberResults(keywords.length);
+		}
+		selector.setPaging(paging);
+
+
+		ArrayList<SearchParameter> searchParamList = new ArrayList<SearchParameter>();
+
+
+		
+		
+		ArrayList<Keyword> wordList = new ArrayList<Keyword>();
+		
+		
+		if(matchType==null){
+			for (String word : keywords){
+				
+				Keyword kw = new Keyword();
+				kw.setText(word);
+				kw.setMatchType(KeywordMatchType.EXACT);
+				wordList.add(kw);
+				
+				kw = new Keyword();
+				kw.setText(word);
+				kw.setMatchType(KeywordMatchType.PHRASE);
+				wordList.add(kw);
+				
+				kw = new Keyword();
+				kw.setText(word);
+				kw.setMatchType(KeywordMatchType.BROAD);
+				wordList.add(kw);
+			}
+		}
+		
+
+		// Create related to keyword search parameter.
+		RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
+		relatedToKeywordSearchParameter.setKeywords(wordList.toArray(new Keyword[wordList.size()]));
+		//relatedToKeywordSearchParameter.setKeywords(new Keyword[] {keywrd});
+		searchParamList.add(relatedToKeywordSearchParameter);
+
+
+
+
+		// Location search parameter		
+		Location loc = new Location();
+		loc.setId(new Long(2840)); // United States
+		LocationSearchParameter locationSearchParameter = new LocationSearchParameter();
+		locationSearchParameter.setLocations(new Location[] {loc});
+		searchParamList.add(locationSearchParameter);
+
+
+		// set the selector
+		selector.setSearchParameters(searchParamList.toArray(new SearchParameter[searchParamList.size()]));
+
+
+		try{
+			// Get related placements.
+			page = targetingIdeaService.get(selector);
+			//page = targetingIdeaService.getBulkKeywordIdeas(selector);
+		}
+		catch (ApiException e)
+		{
+			throw new Exception(e.dumpToString());
+		}
+		catch (RemoteException e)
+		{
+			throw new Exception(e);
+		}
+
+
+		//System.out.println(page.getTotalNumEntries());
+
+		if (page != null && page.getEntries() != null)
+		{
+
+			for (TargetingIdea targetingIdea : page.getEntries())
+			{
+				Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
+				Keyword kw = (Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();
+				Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue();
+				Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
+				//logger.info(kw.getText()+","+ kw.getMatchType().getValue()+","+ averageMonthlySearches+","+ comp);
+				//System.out.println(kw.getText()+": "+averageMonthlySearches);
+				//System.out.println(kw.getText());
+				returnData.add(new KeywordToolStats(kw,averageMonthlySearches,comp));
+			}
+
+		}
+
+
+		logger.info("Total number of words received from Google: "+returnData.size());
+		return returnData;
+
+	}
 	
 	
-	public HashMap<KeywordMatchtypePair, KWIdeaObj> getGoogleKeywordIdeas(String accountID, String url, 
+	
+	public HashMap<KeywordMatchtypePair, KeywordToolStats> getGoogleKeywordIdeas(String accountID, String url, 
 			String [] keywords, String [] exclude_keywords, Integer categoryId, int numberResults) throws Exception	{
 
-		HashMap<KeywordMatchtypePair,KWIdeaObj> returnData = new HashMap<KeywordMatchtypePair,KWIdeaObj>();
+		HashMap<KeywordMatchtypePair,KeywordToolStats> returnData = new HashMap<KeywordMatchtypePair,KeywordToolStats>();
 		TargetingIdeaPage page;
 		TargetingIdeaServiceInterface targetingIdeaService;
 
@@ -1285,7 +1425,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				//logger.info(kw.getText()+": "+averageMonthlySearches);
 				//logger.info(kw.getText());
 				returnData.put(new KeywordMatchtypePair(kw.getText(),kw.getMatchType()), 
-						new KWIdeaObj(kw,averageMonthlySearches,comp));
+						new KeywordToolStats(kw,averageMonthlySearches,comp));
 				if (stopWordSet.contains(kw)){
 					logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
 				} else {
