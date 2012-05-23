@@ -109,5 +109,6 @@ namespace SemplestModel
         public Nullable<int> SemplestKeywordsnumKeywordsGoogle { get; set; }
         public Nullable<int> SemplestKeywordsnumKeywordsMSN { get; set; }
         public Nullable<int> SemplestKeywordsnumThreads { get; set; }
+        public bool DisplayTargetCPCLevel { get; set; }
     }
 }

@@ -51,6 +51,7 @@ namespace Semplest.Admin.Controllers
             c.BillingDaysOffset = c2.BillingDaysOffset;
             c.OnErrorEmail = c2.OnErrorEmail;
             c.ESBWebServerURL = c2.ESBWebServerURL;
+            c.DisplayTargetCPCLevel = c2.DisplayTargetCPCLevel;
             _dbContext.SaveChanges();
             return View(c);
         }

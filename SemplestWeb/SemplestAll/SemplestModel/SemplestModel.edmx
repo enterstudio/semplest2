@@ -527,6 +527,7 @@
           <Property Name="SemplestKeywordsnumKeywordsGoogle" Type="int" />
           <Property Name="SemplestKeywordsnumKeywordsMSN" Type="int" />
           <Property Name="SemplestKeywordsnumThreads" Type="int" />
+          <Property Name="DisplayTargetCPCLevel" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2468,6 +2469,7 @@
           <Property Type="Int32" Name="SemplestKeywordsnumKeywordsGoogle" />
           <Property Type="Int32" Name="SemplestKeywordsnumKeywordsMSN" />
           <Property Type="Int32" Name="SemplestKeywordsnumThreads" />
+          <Property Type="Boolean" Name="DisplayTargetCPCLevel" Nullable="false" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -3943,6 +3945,7 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="DisplayTargetCPCLevel" ColumnName="DisplayTargetCPCLevel" />
                 <ScalarProperty Name="SemplestKeywordsnumThreads" ColumnName="SemplestKeywordsnumThreads" />
                 <ScalarProperty Name="SemplestKeywordsnumKeywordsMSN" ColumnName="SemplestKeywordsnumKeywordsMSN" />
                 <ScalarProperty Name="SemplestKeywordsnumKeywordsGoogle" ColumnName="SemplestKeywordsnumKeywordsGoogle" />

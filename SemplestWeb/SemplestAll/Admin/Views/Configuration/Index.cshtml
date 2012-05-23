@@ -115,13 +115,18 @@ System Defaults
             </li>
             <li >
                 @Html.LabelFor(model => model.OnErrorEmail)
-                @Html.TextBoxFor(model => model.OnErrorEmail, new { @class = "k-textbox" }))
+                @Html.TextBoxFor(model => model.OnErrorEmail, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.OnErrorEmail)
             </li>
             <li >
                 @Html.LabelFor(model => model.ESBWebServerURL)
-                @Html.TextBoxFor(model => model.ESBWebServerURL, new { @class = "k-textbox" }))
+                @Html.TextBoxFor(model => model.ESBWebServerURL, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.ESBWebServerURL)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DisplayTargetCPCLevel)
+                @Html.CheckBoxFor(model => model.DisplayTargetCPCLevel)
+                @Html.ValidationMessageFor(model => model.DisplayTargetCPCLevel)
             </li>
             <li>
                 <input type="submit" value="Save" class="k-button" />
