@@ -3,14 +3,14 @@ package semplest.server.protocol.google;
 import com.google.api.adwords.v201109.cm.Keyword;
 
 
-public class KWIdeaObj {
+public class KeywordToolStats {
 	
 	Keyword kw;
 	Long averageMonthlySearches;
 	Double competition;
 	
 	
-	public KWIdeaObj(Keyword kw, Long averageMonthlySearches, Double competition) {
+	public KeywordToolStats(Keyword kw, Long averageMonthlySearches, Double competition) {
 		this.kw = kw;
 		this.averageMonthlySearches = averageMonthlySearches;
 		this.competition = competition;
