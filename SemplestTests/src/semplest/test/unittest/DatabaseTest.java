@@ -50,6 +50,7 @@ import com.google.api.adwords.lib.AuthToken;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 
 public class DatabaseTest extends BaseDB{	
+	public static String eol = System.getProperty("line.separator");
 	
 	private ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	private SemplestDB db = new SemplestDB();
@@ -57,14 +58,22 @@ public class DatabaseTest extends BaseDB{
 	private int errorCounter = 0;
 	
 	private Integer customerID = 48;
-	private Integer promotionID = 71;
+	//private Integer promotionID = 71;
+	private int promotionID;
+	private Long test_accountId;
+	private Long test_campaignId;
+	
 	private String adEngine = AdEngine.Google.name();
 	private Long google_accountId = 5058200123L;
 	private Long google_campaignId = 116193337L;
+	private int adEnginePK = 2;
+	
+	private String vmsg = "Verification FAILED! ";
 		
 	public static void main(String[] args){
 		DatabaseTest test = new DatabaseTest();
 		
+		test.Test_ALL();
 		//test.Test_ReportData();				
 		//test.Test_TrafficEstimatorData();						
 		//test.Test_DefaultBid();		
@@ -78,18 +87,54 @@ public class DatabaseTest extends BaseDB{
 	}	
 	
 	public int Test_ALL(){
-		errorCounter = 0;
-		
-		Test_ReportData();				
-		Test_TrafficEstimatorData();						
-		Test_DefaultBid();		
-		Test_KeywordDataObject();		
-		Test_BidObject();	
-		Test_TargetedDailyBudget();		
-		Test_PromotionData();
-		Test_Other();
-		
-		return errorCounter;
+		try{
+			errorCounter = 0;		
+			test_accountId = System.currentTimeMillis();
+			test_campaignId = test_accountId + 1;
+			
+			try{
+				int ProductGroupFK = 81;
+				String PromotionName = "Database Test";
+				String PromotionDescription = "should be deleted after the test";
+				Date PromotionStartDate = new Date();
+				String LandingPageURL = "www.semplest.com";
+				Double PromotionBudgetAmount = 700.00;
+				int BudgetCycleFK = 3;
+				Double StartBudgetInCycle = 500.00;
+				Date CreatedDate = new Date();
+				String sql = "INSERT Promotion(ProductGroupFK, PromotionName, PromotionDescription, PromotionStartDate, LandingPageURL, " +
+						"PromotionBudgetAmount, BudgetCycleFK, StartBudgetInCycle, CreatedDate) " +
+						"VALUES(?,?,?,?,?,?,?,?,?)";
+				jdbcTemplate.update(sql, new Object[]
+						{ProductGroupFK, PromotionName, PromotionDescription, PromotionStartDate, 
+						LandingPageURL, PromotionBudgetAmount, BudgetCycleFK, StartBudgetInCycle, CreatedDate});
+				sql = "SELECT p.PromotionPK from Promotion p WHERE p.PromotionName = ? and p.CreatedDate = ?";
+				int vret = jdbcTemplate.queryForInt(sql, PromotionName, CreatedDate);
+				promotionID = vret;
+				System.out.println("Created test promotion. PromotionPK = " + vret);
+				System.out.println(" ");
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(new Exception("Failed to create a test promotion. Exit the test now." + eol + e.getMessage()));
+				return 1;
+			}
+			
+			/*
+			Test_PromotionData();		
+			Test_DefaultBid();
+			Test_KeywordDataObject();		
+			Test_BidObject();	
+			Test_TargetedDailyBudget();
+			Test_TrafficEstimatorData();	
+			Test_ReportData();	
+			Test_Other();
+			*/
+			return errorCounter;
+		}
+		finally{
+			
+		}
 	}
 	
 	public void Test_ReportData(){		
@@ -536,67 +581,202 @@ public class DatabaseTest extends BaseDB{
 
 	public void Test_PromotionData(){
 		try{
-			/* ******************************************************************************************* */
-			//*** add AdEngine AccountID to AdvertisingEngineAccount table
-			//db.addAdEngineAccountID(customerID, google_accountId, adEngine);
 			
-			/* ******************************************************************************************* */
-			//*** add Promotion To AdvertisingEnginePromotion table
-			//Long advertisingEngineAdGroupID = 12345L;
-			//db.addPromotionToAdEngineAccountID(promotionID, google_accountId, google_campaignId, advertisingEngineAdGroupID);
-			
-			/* ******************************************************************************************* */
-			//*** get AdEngine ID from the database
-			//AdEngineID adEngineId = db.getAdEngineID(promotionID, adEngine);
-			//System.out.println("AccountID = " + adEngineId.getAccountID()); System.out.println("CampaignID = " + adEngineId.getCampaignID()); System.out.println("AdGroupID = " + adEngineId.getAdGroupID());
-			
-			/* ******************************************************************************************* */
-			//*** get AdEngine Promotions from the database
-			/*
-			List<AdvertisingEnginePromotionObj> promotions = db.getAdvertisingEnginePromotion(google_accountId);
-			for(AdvertisingEnginePromotionObj a : promotions){
-				System.out.println("->");
-				System.out.println("AdEngineAccountID = " + a.getAdvertisingEngineAccountID());
-				System.out.println("PromotionID = " + a.getPromotionID());
-				System.out.println("AdEngineCampaignID = " + a.getAdvertisingEngineCampaignID());
-				System.out.println("AdEngineAdgroupID = " + a.getAdvertisingEngineAdGroupID());
+			try{
+				//*** add AdEngine AccountID to AdvertisingEngineAccount table
+				System.out.println("------------------------------------------------------------");
+				System.out.println("addAdEngineAccountID:");
+				
+				//db.addAdEngineAccountID(customerID, google_accountId, adEngine);
+				db.addAdEngineAccountID(customerID, test_accountId, adEngine);
+				System.out.println("OK");
+				
+				//--- verification
+				String sql = "select aea.AdvertisingEngineAccountPK from AdvertisingEngineAccount aea where aea.CustomerFK = ? and aea.AdvertisingEngineAccountPK = ? and aea.AdvertisingEngineFK = ?";
+				int vret = jdbcTemplate.queryForInt(sql, customerID, test_accountId, adEnginePK);
+				if(vret != test_accountId.intValue())
+					errorHandler(new Exception(vmsg + "AccountID is not added to the AdvertisingEngineAccount table."));
 			}
-			*/
-			
-			/* ******************************************************************************************* */
-			//*** get AdEngine campaign from the database
-			/*
-			AdvertisingEnginePromotionObj campaign = db.getAdvertisingEngineCampaign(google_accountId, promotionID);
-			System.out.println("AdEngineAccountID = " + campaign.getAdvertisingEngineAccountID());
-			System.out.println("PromotionID = " + campaign.getPromotionID());
-			System.out.println("AdEngineCampaignID = " + campaign.getAdvertisingEngineCampaignID());
-			System.out.println("AdEngineAdgroupID = " + campaign.getAdvertisingEngineAdGroupID());
-			*/
-			
-			/* ******************************************************************************************* */
-			//*** get AdEngine campaign from the database
-			/*
-			List<HashMap<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine);
-			int i = 0;
-			for(HashMap<String, Object> m : accs){
-				System.out.println("#"+i+" ---------------------------------------");
-				System.out.println("AccountID = " + m.get("AccountID"));
-				System.out.println("CustomerName = " + m.get("CustomerName"));
-				i++;
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
 			}
-			*/
 			
-			/* ******************************************************************************************* */
-			//*** set AdEngine AdGroupID and get CampaignID at AdvertisingEnginePromotion table
-			//db.setAdvertisingEngineAdGroupID(google_campaignId, 54321L);
+			try{
+				//*** add Promotion To AdvertisingEnginePromotion table
+				System.out.println("------------------------------------------------------------");
+				System.out.println("addPromotionToAdEngineAccountID:");
+				
+				Long advertisingEngineAdGroupID = 1234567L;
+				db.addPromotionToAdEngineAccountID(promotionID, test_accountId, test_campaignId, advertisingEngineAdGroupID);
+				System.out.println("OK");
+				
+				//--- verification
+				String sql = "SELECT aep.AdvertisingEngineCampaignPK FROM AdvertisingEnginePromotion aep WHERE aep.PromotionFK = ? and aep.AdvertisingEngineAccountFK = ?";
+				int vret = jdbcTemplate.queryForInt(sql, promotionID, test_accountId);
+				if(vret != test_campaignId.intValue()){
+					errorHandler(new Exception(vmsg + "Promotion is not added to the AdvertisingEnginePromotion table."));
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
+			try{
+				//*** get AdEngine ID from the database
+				System.out.println("------------------------------------------------------------");
+				System.out.println("getAdEngineID:");
+				
+				AdEngineID adEngineId = db.getAdEngineID(promotionID, adEngine);
+				System.out.println("OK");
+				
+				//--- verification
+				System.out.println("AccountID = " + adEngineId.getAccountID()); System.out.println("CampaignID = " + adEngineId.getCampaignID()); System.out.println("AdGroupID = " + adEngineId.getAdGroupID());
+				if(adEngineId.getAccountID() == null)
+					errorHandler(new Exception(vmsg + "AdEngine ID not returned."));
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
+			try{
+				//*** get AdEngine Promotions from the database
+				System.out.println("------------------------------------------------------------");
+				System.out.println("getAdvertisingEnginePromotion:");
+				
+				List<AdvertisingEnginePromotionObj> promotions = db.getAdvertisingEnginePromotion(test_accountId);				
+				System.out.println("OK");
+				
+				//--- verification
+				for(AdvertisingEnginePromotionObj a : promotions){
+					System.out.println("->");
+					System.out.println("AdEngineAccountID = " + a.getAdvertisingEngineAccountID());
+					System.out.println("PromotionID = " + a.getPromotionID());
+					System.out.println("AdEngineCampaignID = " + a.getAdvertisingEngineCampaignID());
+					System.out.println("AdEngineAdgroupID = " + a.getAdvertisingEngineAdGroupID());
+				}
+				if(promotions.size() == 0)
+					errorHandler(new Exception(vmsg + "No AdEnginge promotion returned."));
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
+			try{
+				//*** get AdEngine campaign from the database
+				System.out.println("------------------------------------------------------------");
+				System.out.println("getAdvertisingEngineCampaign:");
+				
+				AdvertisingEnginePromotionObj campaign = db.getAdvertisingEngineCampaign(test_accountId, promotionID);
+				System.out.println("OK");
+				
+				//--- verification
+				System.out.println("AdEngineAccountID = " + campaign.getAdvertisingEngineAccountID());
+				System.out.println("PromotionID = " + campaign.getPromotionID());
+				System.out.println("AdEngineCampaignID = " + campaign.getAdvertisingEngineCampaignID());
+				System.out.println("AdEngineAdgroupID = " + campaign.getAdvertisingEngineAdGroupID());
+				if(campaign.getAdvertisingEngineAccountID() == null)
+					errorHandler(new Exception(vmsg + "No campaign data returned."));
+				if(campaign.getAdvertisingEngineAccountID() != test_accountId.intValue())
+					errorHandler(new Exception(vmsg + "Campaign data returned incorrectly."));
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
+			try{
+				//*** get AdEngine campaign from the database
+				System.out.println("------------------------------------------------------------");
+				System.out.println("getAdEngineAccount:");
+				
+				List<HashMap<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine);
+				System.out.println("OK");
+				
+				//--- verification
+				int i = 0;
+				for(HashMap<String, Object> m : accs){
+					System.out.println("#"+i+" ---------------------------------------");
+					System.out.println("AccountID = " + m.get("AccountID"));
+					System.out.println("CustomerName = " + m.get("CustomerName"));
+					i++;
+				}
+				if(accs.size() == 0){
+					errorHandler(new Exception(vmsg + "No campaign returned."));
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
+			try{
+				//*** set AdEngine AdGroupID and get CampaignID at AdvertisingEnginePromotion table
+				System.out.println("------------------------------------------------------------");
+				System.out.println("setAdvertisingEngineAdGroupID:");
+				
+				Long adGroupId = 54321L;
+				db.setAdvertisingEngineAdGroupID(test_campaignId, adGroupId);
+				System.out.println("OK");
 
-			/* ******************************************************************************************* */
-			//*** set AdID For AdGroup at the AdvertisingEngineAds table
-			//db.setAdIDForAdGroup(12345L, adEngine, 17);
+				//--- verification
+				String sql = "SELECT aep.AdvertisingEngineAdGroupID from AdvertisingEnginePromotion aep where aep.AdvertisingEngineCampaignPK = ?";
+				int vret = jdbcTemplate.queryForInt(sql, test_campaignId);
+				if(vret != adGroupId.intValue()){
+					errorHandler(new Exception(vmsg + "AdGroupID is not added to the AdvertisingEnginePromotion table."));
+				}
+
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
+
+			try{
+				//*** set AdID For AdGroup at the AdvertisingEngineAds table
+				System.out.println("------------------------------------------------------------");
+				System.out.println("setAdIDForAdGroup:");
+				
+				Long advertisingEngineAdPK = 13579L;
+				int PromotionAdsFK = 17;
+				db.setAdIDForAdGroup(advertisingEngineAdPK, adEngine, PromotionAdsFK);
+				System.out.println("OK");
+				
+				//--- verification
+				String sql = "select aea.PromotionAdsFK from AdvertisingEngineAds aea where aea.AdvertisingEngineAdPK = ?";
+				int vret = jdbcTemplate.queryForInt(sql, advertisingEngineAdPK);
+				if(vret != PromotionAdsFK){
+					errorHandler(new Exception(vmsg + "AdID is not set to the AdvertisingEngineAds table."));
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
 			
-			/* ******************************************************************************************* */
-			//*** update Promotion To AdEngineAccountID at the AdvertisingEnginePromotion table
-			//db.updatePromotionToAdEngineAccountID(google_campaignId, true, true, 50.00);
+			try{
+				//*** update Promotion To AdEngineAccountID at the AdvertisingEnginePromotion table
+				System.out.println("------------------------------------------------------------");
+				System.out.println("updatePromotionToAdEngineAccountID:");
+				
+				Double AdvertisingEngineBudget = 50.00;
+				db.updatePromotionToAdEngineAccountID(test_campaignId, true, true, AdvertisingEngineBudget);
+				System.out.println("OK");
+				
+				//--- verification
+				String sql = "select aep.AdvertisingEngineBudget from AdvertisingEnginePromotion aep where aep.AdvertisingEngineCampaignPK = ?";
+				Double vret = jdbcTemplate.queryForObject(sql, new Object[]{test_campaignId}, Double.class);
+				if(vret != AdvertisingEngineBudget){
+					errorHandler(new Exception(vmsg + "Promotion data is not updated properly to the AdvertisingEnginePromotion table."));
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}
 			
 			/* ******************************************************************************************* */
 			//*** get all customer data from the Customer table
@@ -921,6 +1101,7 @@ public class DatabaseTest extends BaseDB{
 	
 	public void cleanUp(){
 		//remove test data from the database
+		
 		
 	}
 	

@@ -125,16 +125,10 @@ public class UnitTests {
 		catch(Exception e){
 			e.printStackTrace();
 			System.out.println("////////////////////////////////////////////////////");	
-			System.out.println("ERROR:");
+			System.out.println("UNIT TEST ERROR:");
 			System.out.println(e.getMessage());
 			System.out.println("////////////////////////////////////////////////////");	
 			System.out.println(" ");
-			System.out.println("************************************************************************************");
-			System.out.println("*                                                                                  *");
-			System.out.println("*                             SEMplest Unit Test FAILED                            *");
-			System.out.println("*                                                                                  *");
-			System.out.println("************************************************************************************");
-
 		}
 		
 		//Generate Report and Email the Report
