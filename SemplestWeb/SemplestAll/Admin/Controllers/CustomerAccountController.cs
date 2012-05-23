@@ -793,6 +793,7 @@ namespace Semplest.Admin.Controllers
             
             x.CustomerAccount = new CustomerAccount();
             x.CustomerAccount.UserPassword = Semplest.SharedResources.Helpers.RandomPassword.Generate(8,10);
+            x.CustomerAccount.isActive = true;
 
             return View(x);
         }
