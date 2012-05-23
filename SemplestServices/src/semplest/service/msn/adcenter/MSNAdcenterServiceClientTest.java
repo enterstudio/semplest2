@@ -2,6 +2,7 @@ package semplest.service.msn.adcenter;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -119,9 +120,12 @@ public class MSNAdcenterServiceClientTest {
 			msn.writeVolumeDataToFile(volMap, outfile);
 			
 			HashMap<String, String[]> wordMap = msn.getSuggestedKeywords("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
-            outfile = "\\\\fs3\\semplest\\data\\msnData\\SummitFlowersNJ_suggestions.dat";
-			msn.writeSuggestionsToFile(wordMap, outfile);
-			*/
+            String outfile = "\\\\fs3\\semplest\\data\\msnData\\SummitFlowersNJ_suggestions.dat";
+            */
+			
+			HashMap<String,String[]> wordMap = msn.getSuggestedKeywordsfromarray(new String[]{"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement"});
+			String outfile = "/semplest/data/msnData/suggestedKw/WeddingFlowersUnique.txt";
+			msn.writeSuggestionsToFile2(wordMap, outfile);
 			//logger.info(bidMap);
 		}
 		catch (Exception e)
@@ -132,7 +136,19 @@ public class MSNAdcenterServiceClientTest {
 
 	}
 	
-	
+	public HashMap<String,String[]> getSuggestedKeywordsfromarray(String[] kw) throws MsnCloudException{
+		
+		HashMap<String,String[]> wordMap = new HashMap<String,String[]>();
+		// get the keyword volume info for this batch
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+	    HashMap<String, String[]> ret = test.getKeywordSuggestions(accountID, kw, 100);
+
+	    // add the results for this batch of keywords
+	    for (String keyword : ret.keySet()) {
+	    	wordMap.put(keyword, ret.get(keyword));
+	    }
+	    return wordMap;
+	}
 	public void deletaAllKeywords() throws RemoteException{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
@@ -589,7 +605,26 @@ public class MSNAdcenterServiceClientTest {
 			}
 		}
 	}
+	//Write a file with unique keywords
+	public void writeSuggestionsToFile2(HashMap<String, String[]> wordMap, String outfile) throws IOException {
+		logger.info("Writing to: " + outfile);
+		PrintStream fileoutput = new PrintStream(new FileOutputStream(new File(outfile)));
+		ArrayList<String> keywords = new ArrayList<String>();
+		
+		for (String key : wordMap.keySet()) {
+			String[] recs = wordMap.get(key);
+			if(recs != null) {
+		    	for(String kw : recs) {
+		    		if(!keywords.contains(kw)){
+		    			keywords.add(kw);
+		    			fileoutput.println(kw);
+		    		}
+		    	}
+			}
+		}
 	
+	}
+		
 	// take keyword suggestion data and write it to a specified file
 	// data is provided as a hash map, taking strings (keywords) to a
 	// String array of suggested keywords
@@ -597,7 +632,7 @@ public class MSNAdcenterServiceClientTest {
 			                           String outfile) 
 	                                   throws IOException {
 		logger.info("Writing to: " + outfile);
-		PrintStream fileoutput = new PrintStream(new FileOutputStream(outfile));
+		PrintStream fileoutput = new PrintStream(new FileOutputStream(new File(outfile)));
 		
 		for (String key : wordMap.keySet()) {
 			String[] recs = wordMap.get(key);
@@ -610,5 +645,9 @@ public class MSNAdcenterServiceClientTest {
 			}
 		}
 	}
+	
+	
+	
+	
 	
 }
