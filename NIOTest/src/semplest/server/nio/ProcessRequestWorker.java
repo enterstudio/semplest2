@@ -5,11 +5,7 @@ import java.nio.channels.SocketChannel;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.jms.JMSException;
-
 import org.apache.log4j.Logger;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
@@ -83,22 +79,8 @@ public class ProcessRequestWorker implements Runnable
 						dataEvent.server.send(dataEvent.socket, dataEvent.data);
 					}
 				}
-				catch (JsonParseException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (JsonMappingException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (JMSException e)
+				
+				catch (Exception e)
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();

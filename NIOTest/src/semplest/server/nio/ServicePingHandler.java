@@ -4,7 +4,6 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
-import org.eclipse.jetty.util.log.Log;
 
 import semplest.server.ESB.ESBServer;
 import semplest.server.ESB.ServiceRegistrationData;

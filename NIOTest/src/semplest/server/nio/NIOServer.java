@@ -25,13 +25,13 @@ import javax.jms.JMSException;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 
 import semplest.server.ESB.ESBServer;
 import semplest.server.ESB.ServiceRegistrationData;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
+
+import com.google.gson.JsonParseException;
 
 public class NIOServer implements Runnable
 {
@@ -72,7 +72,7 @@ public class NIOServer implements Runnable
 		{
 			try
 			{
-				logger.debug("Loop " + ++numLoops);
+				logger.info("Loop " + ++numLoops);
 				// Process any pending changes
 				synchronized (this.pendingChanges)
 				{
@@ -129,7 +129,7 @@ public class NIOServer implements Runnable
 		}
 	}
 	
-	public void RegisterClient(SocketChannel socket, ProtocolSocketDataObject response) throws JsonParseException, JsonMappingException, IOException,
+	public void RegisterClient(SocketChannel socket, ProtocolSocketDataObject response) throws Exception,
 			JMSException
 	{
 
@@ -138,7 +138,7 @@ public class NIOServer implements Runnable
 		String clientServiceName = response.getclientServiceName();
 		String serviceOffered = response.getServiceOffered();
 		int pingFreqMS = response.getPingFrequency();
-		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered);
+		logger.info("Registered Client " + clientServiceName + " service offered=" + serviceOffered);
 
 		
 		ESBServer.esb = new ESBServer(); 
@@ -203,22 +203,22 @@ public class NIOServer implements Runnable
 	public void ShutdownFromClient(ProtocolSocketDataObject socketDataObject)
 	{
 		String client = socketDataObject.getclientServiceName();
-		logger.debug("Received Shutdown request from " + client);
+		logger.info("Received Shutdown request from " + client);
 		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
 		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
 		if (serviceRegistrationMap.containsKey(client))
 		{
 			serviceRegistrationMap.remove(client);
-			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
+			logger.info(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
 			if (servicesList.contains(client))
 			{
 				servicesList.remove(client);
 			}
-			logger.debug("Removed: " + client);
+			logger.info("Removed: " + client);
 		}
 		else
 		{
-			logger.debug(client + "not in registrationMap");
+			logger.info(client + "not in registrationMap");
 		}
 	}
 
@@ -242,7 +242,7 @@ public class NIOServer implements Runnable
 				returndata.setHeader(ProtocolJSON.SEMplest_PING);
 				String jsonStr = json.createJSONFromSocketDataObj(returndata);
 				byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
-				logger.debug("Send response back to Client: " + socketDataObject.getclientServiceName());
+				logger.info("Send response back to Client: " + socketDataObject.getclientServiceName());
 				send(socket, returnData);
 			}
 		}
@@ -416,10 +416,10 @@ public class NIOServer implements Runnable
 		try
 		{
 			BasicConfigurator.configure();
-			configureLogging();
+			//configureLogging();
 			ProcessRequestWorker worker = new ProcessRequestWorker();
 			new Thread(worker).start();
-			logger.debug("ProcessRequestWorker thread started");
+			logger.info("ProcessRequestWorker thread started");
 			new Thread(new NIOServer(null, 9090, worker, null)).start();
 			/*
 			 * InetAddress hostAddress = null
@@ -427,7 +427,7 @@ public class NIOServer implements Runnable
 			 * ProcessRequestWorker worker = 
 			 * ESBServer esbServer = null
 			 */
-			logger.debug("NIOServer thread started");
+			logger.info("NIOServer thread started");
 		}
 		catch (IOException e)
 		{

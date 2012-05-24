@@ -10,7 +10,6 @@ import java.util.concurrent.Executors;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.client.nio.NIOClient;
 import semplest.client.nio.NIOResponseHandler;
@@ -33,7 +32,7 @@ public class SEMplestServiceNioDebug implements Runnable
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
 
-	public static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+	//public static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 	public static ExecutorService executor = null;
 	private static String INITMETHODNAME = "initializeService";
 
@@ -46,7 +45,15 @@ public class SEMplestServiceNioDebug implements Runnable
 			// startup the service by registering the instance with the semplest ESB
 			String serviceNameOverride = "SemplestTestServiceJulian";
 			SEMplestServiceNioDebug service = new SEMplestServiceNioDebug();
-			service.configureLogging();
+			service.setUpConfigurationParameters();
+			if (service.registerServiceWithESB())
+			{
+				logger.info("Registered Service");
+				
+				
+			}
+			/*service.configureLogging();
+			
 			if (service.readProperties(serviceNameOverride))
 			{
 				service.initializeService(service);
@@ -60,6 +67,7 @@ public class SEMplestServiceNioDebug implements Runnable
 					
 				}
 			}
+			*/
 		}
 		catch (Exception e)
 		{
@@ -135,7 +143,11 @@ public class SEMplestServiceNioDebug implements Runnable
 		connectionData.setPingFrequencyMS((Integer) SemplestConfiguration.configData.get("ServicePingFrequencyMS")); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 		connectionData.setNumberServiceThreads((Integer) SemplestConfiguration.configData.get("ServiceNumberServiceThreads")); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
 		*/
-		connectionData.setServerURI(null); // properties.getProperty("ESBServerIP"));
+		connectionData = new ESBConnectionData();
+		connectionData.setServiceOffered("semplest.service");
+		
+		connectionData.setServiceName("TESTINGNIO");
+		connectionData.setServerURI("localhost"); // properties.getProperty("ESBServerIP"));
 		connectionData.setServerport("" + 9090); //properties.getProperty("ESBServerPort"));
 		connectionData.setPingFrequencyMS(100); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 		connectionData.setNumberServiceThreads(100); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
