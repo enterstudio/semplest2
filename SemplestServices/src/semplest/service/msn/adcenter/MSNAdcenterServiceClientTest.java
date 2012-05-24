@@ -59,24 +59,24 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_TovahPhoto";
-	String url = "www.bethsflowersonline.com";
-	String productSubcategory = "Wedding Flowers";
-	double msnMonthlyBudget = 150.0; //In dolars
+	String accountName = "_PiperHall";
+	String url = "www.piperhall.com";
+	String productSubcategory = "Piper Hall Test";
+	double msnMonthlyBudget = 300.0; //In dolars
 			
 	//Add1
-	String adTitle1 =  "Wedding Planning";
-	String adText1 = "This months special. 595.00 wedding planning.";
+	String adTitle1 =  "Corporate Event Space";
+	String adText1 = "Event space rental located in Fort Worth's W. 7th Street district.";
 	//Add2
-	String adTitle2 = "Free Bridal Bouquet";
-	String adText2 = "75.00 off wedding bouquet.With a flower booking. 504-455-2353";
+	String adTitle2 = "Company Events Fort Worth";
+	String adText2 = "Piper Hall is the perfect place for your company party or event.";
 	
-	String addr = "4130 Washington Avenue";//"2157 Diamond St";
-	String city = "New Orleans";//"San Diego";
-	String state = "LA";
+	String addr = "3008 Bledsoe St.";//"2157 Diamond St";
+	String city = "Fort Worth";//"San Diego";
+	String state = "TX";
 	String country = "US";//"US";
-	String zip = "70125";//"92109";
-	Double radius = 100.0;//30.0;
+	String zip = "76107";//"92109";
+	Double radius = 30.0;//30.0;
 	Double latitude = null; 
 	Double longitude = null; 
 	
@@ -96,8 +96,9 @@ public class MSNAdcenterServiceClientTest {
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
 			
-			//msn.createCampaign();
 			msn.getAccountID();
+			//msn.createCampaign();
+			
 			logger.info(msn.accountID);
 			msn.getIds();
 			
@@ -108,9 +109,9 @@ public class MSNAdcenterServiceClientTest {
 			startMonth.setYear(cal.get(Calendar.YEAR) - 1);
 			
 			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
-			msn.updateBidAllKeywords();
+			//msn.updateBidAllKeywords();
 			
-			//msn.insertKeywords2("\\\\fs3\\semplest\\data\\biddingTest\\SummitFlowersNJ\\keywords.txt");
+			msn.insertKeywords2("/semplest/lluis/PiperHallTest/total.txt");
 			//HashMap<String, Double[][]> bidMap=msn.getKeywordEstimates("/semplest/data/biddingTest/PiperHall/keywords.txt", 1500);
 			//msn.plotdata(bidMap);
 			
@@ -123,9 +124,10 @@ public class MSNAdcenterServiceClientTest {
             String outfile = "\\\\fs3\\semplest\\data\\msnData\\SummitFlowersNJ_suggestions.dat";
             */
 			
-			HashMap<String,String[]> wordMap = msn.getSuggestedKeywordsfromarray(new String[]{"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement"});
-			String outfile = "/semplest/data/msnData/suggestedKw/WeddingFlowersUnique.txt";
-			msn.writeSuggestionsToFile2(wordMap, outfile);
+			//HashMap<String,String[]> wordMap = msn.getSuggestedKeywordsfromarray(new String[]{"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement"});
+			//HashMap<String, String[]> wordMap = msn.getSuggestedKeywords("/semplest/lluis/PiperHallTest/top30kw.txt", 100);
+			//String outfile = "/semplest/lluis/PiperHallTest/msnSuggestedKw.txt";
+			//msn.writeSuggestionsToFile2(wordMap, outfile);
 			//logger.info(bidMap);
 		}
 		catch (Exception e)
@@ -205,7 +207,7 @@ public class MSNAdcenterServiceClientTest {
 	public void getIds() throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		Campaign[] ret = test.getCampaignsByAccountId(accountID);
-		campaignID = ret[0].getId();
+		campaignID = ret[1].getId();
 		logger.info("campaignID: "+campaignID);
 		AdGroup[] retad = test.getAdGroupsByCampaignId(accountID, campaignID);
 		adGroupID = retad[0].getId();
@@ -227,7 +229,7 @@ public class MSNAdcenterServiceClientTest {
 	    while ((strLine = br.readLine()) != null)   {
 	    	if(i>=1000){
 	    		keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
-	    		keywords = new Keyword[500];
+	    		keywords = new Keyword[1000];
 	    		i=0;
 	    	}
 	    		if(i>=keywords.length) break ;
@@ -240,14 +242,23 @@ public class MSNAdcenterServiceClientTest {
 		      exactMatchBid1.setAmount(2.00);
 		      Bid defaultBid1 = new Bid();
 		      defaultBid1.setAmount(0.00);
-		      keywords[i].setExactMatchBid(defaultBid1);
-		      keywords[i].setBroadMatchBid(defaultBid1);
+		      keywords[i].setExactMatchBid(null);
+		      keywords[i].setBroadMatchBid(null);
 		      keywords[i].setContentMatchBid(defaultBid1);
-		      keywords[i].setPhraseMatchBid(exactMatchBid1);
+		      keywords[i].setPhraseMatchBid(defaultBid1);
 	    	i++;
 	    }
 	    //Close the input stream
 	    in.close();
+	    ArrayList<Keyword> kw = new ArrayList<Keyword>();
+	    for(int v=0; v<keywords.length; v++){
+	    	if(keywords[v]==null) {
+	    		break;
+	    	}else{
+	    		kw.add(keywords[v]);
+	    	}
+	    }
+	    keywords = kw.toArray(new Keyword[]{}); 
 	    keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
 	}
 	
@@ -500,13 +511,14 @@ public class MSNAdcenterServiceClientTest {
 		//MSN service instance
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 						
-		
+		/*
 		//createAccount
 		SemplestString in = new SemplestString();
 		in.setSemplestString(accountName);
 		MsnManagementIds account = test.createAccount(in);
 		logger.info("AccountID: "+account.getAccountId());	
 		accountID = account.getAccountId();
+		*/
 		
 		
 		//createCampaign
@@ -615,7 +627,8 @@ public class MSNAdcenterServiceClientTest {
 			String[] recs = wordMap.get(key);
 			if(recs != null) {
 		    	for(String kw : recs) {
-		    		if(!keywords.contains(kw)){
+		    		String[] split = kw.split("\\s+");
+		    		if(!keywords.contains(kw) && split.length>1){
 		    			keywords.add(kw);
 		    			fileoutput.println(kw);
 		    		}
