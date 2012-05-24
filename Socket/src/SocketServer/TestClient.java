@@ -12,7 +12,7 @@ import semplest.server.protocol.ProtocolSocketDataObject;
 public class TestClient
 {
 	private static ProtocolJSON json = new ProtocolJSON();
-	private static String host = "localhost";
+	private static String host = "semplest-dev1";
 	private static int port = 8888;
 	public static void main(String[] args)
 	{
@@ -30,7 +30,7 @@ public class TestClient
 			String jsonStr = json.createJSONFromSocketDataObj(regdata);
 			byte[] regPacket = ProtocolJSON.createBytePacketFromString(jsonStr);
 			System.out.println("Send regPacket " + jsonStr);
-			Socket s = new Socket("localhost", port);
+			Socket s = new Socket(host, port);
 			
 			s.getOutputStream().write(regPacket);
 			byte[] response = new byte[8192];
@@ -42,8 +42,8 @@ public class TestClient
 				// create a Pi thread
 				
 					System.out.println("Start Pinging....with Frequency=" + 1000);
-					PingService ping = new PingService(s,"localhost", port, "Test",
-							1000);
+					PingService ping = new PingService(s,host, port, "Test",
+							100);
 					Thread pingThread = new Thread(ping);
 					pingThread.setPriority(Thread.MAX_PRIORITY);
 					pingThread.start();
