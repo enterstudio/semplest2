@@ -1,12 +1,17 @@
 package semplest.service.chaseorbitalgateway;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.ChaseOrbitalGatewayInterface;
 
+import com.google.gson.Gson;
 import com.paymentech.orbital.sdk.interfaces.RequestIF;
 import com.paymentech.orbital.sdk.interfaces.ResponseIF;
 import com.paymentech.orbital.sdk.request.FieldNotFoundException;
@@ -29,6 +34,7 @@ import com.paymentech.orbital.sdk.util.exceptions.InitializationException;
 public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterface
 {
 	public static ChaseOrbitalGatewayObject gatewayObj = null;
+	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(ChaseOrbitalGatewayServiceImpl.class);
 
 	public static void main(String[] args)
@@ -62,6 +68,17 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			object2.wait();
 		}
 		logger.info("Initialized Chase Orbital Gateway");
+	}
+	
+	public String CreateProfile(String json) throws Exception
+	{
+		logger.debug("call CreateProfile(String json)" + json);
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);		
+		final CustomerObject customerObject = gson.fromJson(data.get("customerObject"), CustomerObject.class);		
+		final String creditCardNumber = data.get("creditCardNumber");
+		final String ExpireDateMMYY = data.get("ExpireDateMMYY");		
+		final GatewayReturnObject response = CreateProfile(customerObject, creditCardNumber, ExpireDateMMYY);
+		return gson.toJson(response);
 	}
 
 	@Override
@@ -104,26 +121,25 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
 
 			// Display the request
-			logger.debug("\nProfile Request:\n" + request.getXML());
+			//logger.debug("\nProfile Request:\n" + request.getXML());
 		}
 		catch (InitializationException ie)
 		{
-			logger.error("Unable to initialize request object " + ie.getMessage());
-			ie.printStackTrace();
-			throw new Exception("Unable to initialize request object" + ":" + ie.getMessage());
+			final String errMsg = "Unable to initialize request object";
+			logger.error(errMsg, ie);
+			throw new Exception(errMsg, ie);
 		}
 		catch (FieldNotFoundException fnfe)
 		{
-			logger.error("Unable to find XML field in template " + fnfe.getMessage());
-			fnfe.printStackTrace();
-			throw new Exception("Unable to find XML field in template" + ":" + fnfe.getMessage());
-
+			final String errMsg = "Unable to find XML field in template";
+			logger.error(errMsg, fnfe);
+			throw new Exception(errMsg, fnfe);
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
-			throw ex;
-
+			final String errMsg = "Problem creating profile";
+			logger.error(errMsg, ex);
+			throw new Exception(errMsg, ex);
 		}
 
 		// run request
@@ -161,6 +177,16 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		ret.setCustomerRefNum(response.getValue("CustomerRefNum"));
 		return ret;
 	}
+	
+	public String AuthorizeAndCapture(String json) throws Exception
+	{
+		logger.debug("call AuthorizeAndCapture(String json)" + json);
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final Double Amount = Double.parseDouble(data.get("Amount"));		
+		final GatewayReturnObject response = AuthorizeAndCapture(customerProfileRefNumber, Amount);
+		return gson.toJson(response);
+	}
 
 	@Override
 	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception
@@ -191,19 +217,17 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("Amount", String.valueOf(amountImpliedDecimal));
 
 			// Display the request
-			logger.info("Request profile=" + customerProfileRefNumber+ " orderID=" + orderID + " : Amount (No decimal)=" + amountImpliedDecimal);
-			logger.info("\nAuth with Capture Request:\n" + request.getXML());
+			logger.info("AuthorizeAndCapture Request profile=" + customerProfileRefNumber+ " orderID=" + orderID + " : Amount (No decimal)=" + amountImpliedDecimal);
+			//logger.info("\nAuth with Capture Request:\n" + request.getXML());
 		}
 		catch (InitializationException ie)
 		{
-
 			logger.error(ie.getMessage());
 			ie.printStackTrace();
 			throw new Exception("Unable to initialize request object: " + ie.getMessage());
 		}
 		catch (FieldNotFoundException fnfe)
 		{
-
 			logger.error(fnfe.getMessage());
 			fnfe.printStackTrace();
 			throw new Exception("Unable to find XML field in template " + fnfe.getMessage());
@@ -221,7 +245,6 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (TransactionException tex)
 		{
-
 			logger.error(tex.getMessage());
 			tex.printStackTrace();
 			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage());
@@ -243,14 +266,15 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		ret.setAVSCode(response.getAVSResponseCode());
 		ret.setCVV2ResponseCode(response.getCVV2RespCode());
 		//New Order Specific fields
-		ret.setOrderID(response.getValue("OrderID"));
-		ret.setAmountRequestedNoDecimal(response.getValue("RequestedAmount"));
-		ret.setAmountRedeemedNoDecimal(response.getValue("RedeemedAmount"));
-		ret.setRemainingBalanceNoDecimal(response.getValue("RemainingBalance"));
-
+		ret.setOrderID(response.getValue("OrderID"));		
+		if (!response.isError())
+		{
+			ret.setAmountRequestedNoDecimal(String.valueOf(Amount));
+			ret.setAmountRedeemedNoDecimal(String.valueOf(Amount));
+		}
 		return ret;
 	}
-	
+		
 	/*
 	 * return a random string of length returnLength
 	 */
@@ -264,6 +288,18 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		return random;
 	}
 
+	public String UpdateProfileRecurringBilling(String json) throws Exception
+	{
+		logger.debug("call UpdateProfileRecurringBilling(String json)" + json);
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final Double recurringAmount = Double.parseDouble(data.get("recurringAmount"));
+		final String startDateString = data.get("startDate");
+		final java.util.Date startDate = ChaseOrbitalGatewayObject.MMDDYYYY.parse(startDateString);
+		final GatewayReturnObject response = UpdateProfileRecurringBilling(customerProfileRefNumber, recurringAmount, startDate);
+		return gson.toJson(response);
+	}
+	
 	@Override
 	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate) throws Exception
 	{
@@ -293,7 +329,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("MBRecurringStartDate", startingDate);
 			request.setFieldValue("MBRecurringFrequency", dayOfMonth + " * ?");  //Bill Monthly
 			// Display the request
-			logger.debug("\nProfile Request:\n" + request.getXML());
+			//logger.debug("\nProfile Request:\n" + request.getXML());
 		}
 		catch (InitializationException ie)
 		{
@@ -358,21 +394,176 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	{
 		int day = startDate.getDay();
 		return String.valueOf(day);
-		
 	}
-
-	@Override
-	public GatewayReturnObject terminatePayment(String customerProfileRefNumber) throws Exception
+	
+	public String terminateRecurringPayments(String json) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("call UpdateProfileRecurringBilling(String json)" + json);
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final GatewayReturnObject response = terminateRecurringPayments(new SemplestString(customerProfileRefNumber));
+		return gson.toJson(response);
 	}
+	
+	@Override
+	public GatewayReturnObject terminateRecurringPayments(SemplestString customerProfileRefNumber) throws Exception
+	{
+		logger.info("Got request to terminate recurring payments for Customer Profile Ref Number [" + customerProfileRefNumber + "]");
+		RequestIF request = null;
+		try
+		{
+			request = new Request(RequestIF.PROFILE_TRANSACTION);
+			request.setFieldValue("OrbitalConnectionUsername", ChaseOrbitalGatewayObject.ORBITAL_USERNAME);
+			request.setFieldValue("OrbitalConnectionPassword", gatewayObj.getAes().decrypt(ChaseOrbitalGatewayObject.ORBITAL_PASSWORD));
+			request.setFieldValue("CustomerBin", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
+			request.setFieldValue("CustomerMerchantID", ChaseOrbitalGatewayObject.MERCHANTID);			
+			request.setFieldValue("CustomerProfileAction", "D");
+			request.setFieldValue("CustomerProfileFromOrderInd", "S"); // tells Orbital to use the provided customer profile ref num
+			request.setFieldValue("CustomerRefNum", customerProfileRefNumber.getSemplestString());
+		}
+		catch (InitializationException ie)
+		{
+			final String errMsg = "Unable to initialize request object";
+			logger.error(errMsg, ie);
+			throw new Exception(errMsg, ie);
+		}
+		catch (FieldNotFoundException fnfe)
+		{
+			final String errMsg = "Unable to find XML field in template";
+			logger.error(errMsg, fnfe);
+			throw new Exception(errMsg, fnfe);
+		}
+		catch (Exception ex)
+		{
+			final String errMsg = "Problem creating profile";
+			logger.error(errMsg, ex);
+			throw new Exception(errMsg, ex);
+		}
 
+		// run request
+		ResponseIF response = null;
+		try
+		{
+			response = gatewayObj.getTransactionProcessor().process(request);
+		}
+		catch (TransactionException tex)
+		{
+			final String errMsg = "Transaction failed, including retries and failover";
+			logger.error(errMsg, tex);
+			throw new Exception(errMsg, tex);
+		}
+		final GatewayReturnObject ret = new GatewayReturnObject();
+		ret.setXmlReturn(response.toXmlString());
+		ret.setIsGood(response.isGood());
+		ret.setIsError(response.isError());
+		ret.setIsQuickResponse(response.isQuickResponse());
+		ret.setIsApproved(response.isApproved());
+		ret.setIsDeclined(response.isDeclined());
+		ret.setAuthCode(response.getAuthCode());
+		ret.setTxRefNum(response.getTxRefNum());
+		ret.setResponseCode(response.getResponseCode());
+		ret.setStatus(response.getStatus());
+		ret.setMessage(response.getMessage());
+		ret.setAVSCode(response.getAVSResponseCode());
+		ret.setCVV2ResponseCode(response.getCVV2RespCode());
+		// profile specific
+		ret.setCustomerRefNum(response.getValue("CustomerRefNum"));
+		return ret;
+	}
+	
+	public String refundPayment(String json) throws Exception
+	{
+		logger.debug("call refundPayment(String json)" + json);
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final Double Amount = Double.parseDouble(data.get("Amount"));
+		final GatewayReturnObject response = refundPayment(customerProfileRefNumber, Amount);
+		return gson.toJson(response);
+	}
+	
 	@Override
 	public GatewayReturnObject refundPayment(String customerProfileRefNumber, Double Amount) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		RequestIF request = null;
+		try
+		{
+			// Tell the request object which template to use (see
+			// RequestIF.java)
+			request = new Request(RequestIF.NEW_ORDER_TRANSACTION);
+			// Basic Information
+			request.setFieldValue("OrbitalConnectionUsername", ChaseOrbitalGatewayObject.ORBITAL_USERNAME);
+			request.setFieldValue("OrbitalConnectionPassword", gatewayObj.getAes().decrypt(ChaseOrbitalGatewayObject.ORBITAL_PASSWORD));
+			request.setFieldValue("IndustryType", "EC"); // eCommerce transaction
+			request.setFieldValue("MessageType", "R"); // Refund
+			request.setFieldValue("BIN", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
+			request.setFieldValue("MerchantID", ChaseOrbitalGatewayObject.MERCHANTID);
+			
+			//Use Profile Data
+			request.setFieldValue("CustomerRefNum", customerProfileRefNumber);
+			//Generate random orderID
+			String orderID = generateRandomOrderID(ChaseOrbitalGatewayObject.ORDERIDSTRING, ChaseOrbitalGatewayObject.ORDERIDLENGTH);
+			request.setFieldValue("OrderID", orderID);
+			Integer amountImpliedDecimal = (new Double(Amount*100.0)).intValue();
+			request.setFieldValue("Amount", String.valueOf(amountImpliedDecimal));
+
+			// Display the request
+			logger.info("Refund Request profile=" + customerProfileRefNumber+ " orderID=" + orderID + " : Amount (No decimal)=" + amountImpliedDecimal);
+			//logger.info("\nRefund Request:\n" + request.getXML());
+		}
+		catch (InitializationException ie)
+		{
+			logger.error(ie.getMessage());
+			ie.printStackTrace();
+			throw new Exception("Unable to initialize request object: " + ie.getMessage());
+		}
+		catch (FieldNotFoundException fnfe)
+		{
+			logger.error(fnfe.getMessage());
+			fnfe.printStackTrace();
+			throw new Exception("Unable to find XML field in template " + fnfe.getMessage());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			throw e;
+		}
+		//Process Transaction
+		ResponseIF response = null;
+		try
+		{
+			response = gatewayObj.getTransactionProcessor().process(request);
+			logger.info("Response from Orbital: " + response);
+		}
+		catch (TransactionException tex)
+		{
+			logger.error(tex.getMessage());
+			tex.printStackTrace();
+			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage());
+		}
+		GatewayReturnObject ret = new GatewayReturnObject();
+		// This line displays the entire xml response on the java system
+		// console.
+		ret.setXmlReturn(response.toXmlString());
+		ret.setIsGood(response.isGood());
+		ret.setIsError(response.isError());
+		ret.setIsQuickResponse(response.isQuickResponse());
+		ret.setIsApproved(response.isApproved());
+		ret.setIsDeclined(response.isDeclined());
+		ret.setAuthCode(response.getAuthCode());
+		ret.setTxRefNum(response.getTxRefNum());
+		ret.setResponseCode(response.getResponseCode());
+		ret.setStatus(response.getStatus());
+		ret.setMessage(response.getMessage());
+		ret.setAVSCode(response.getAVSResponseCode());
+		ret.setCVV2ResponseCode(response.getCVV2RespCode());
+		//New Order Specific fields
+		ret.setOrderID(response.getValue("OrderID"));
+		if (!response.isError())
+		{
+			ret.setAmountRequestedNoDecimal(String.valueOf(Amount));
+			ret.setAmountRedeemedNoDecimal(String.valueOf(Amount));
+		}
+		return ret;
 	}
 
 }

@@ -39,7 +39,7 @@ public class ServiceThread implements Runnable
 		String result = null;
 		try
 		{
-			logger.debug("Run Service" +  methodName + ":" + uniqueID);
+			logger.debug("Run Service [" +  methodName + "], Unique ID [" + uniqueID + "], JSON [" + jsonStr + "]");
 			result = myService.getService().ServiceGet(methodName, jsonStr);
 			
 			if (result == null)

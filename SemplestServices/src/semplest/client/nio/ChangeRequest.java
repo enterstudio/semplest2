@@ -17,4 +17,12 @@ public class ChangeRequest
 		this.type = type;
 		this.ops = ops;
 	}
+
+	@Override
+	public String toString() {
+		return "ChangeRequest [socket=" + socket + ", type=" + type + ", ops="
+				+ ops + "]";
+	}
+	
+	
 }
