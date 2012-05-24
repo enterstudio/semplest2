@@ -85,4 +85,14 @@ public class CustomerObject
 		LastName = lastName;
 	}
 
+	@Override
+	public String toString() 
+	{
+		return "CustomerObject [FirstName=" + FirstName + ", LastName="
+				+ LastName + ", Address1=" + Address1 + ", Address2="
+				+ Address2 + ", City=" + City + ", StateAbbr=" + StateAbbr
+				+ ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone="
+				+ Phone + "]";
+	}
+
 }

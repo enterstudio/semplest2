@@ -1,5 +1,15 @@
 package semplest.server.protocol.chaseorbitalgateway;
 
+import java.io.StringReader;
+import java.io.StringWriter;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+
 public class GatewayReturnObject
 {
 	//Quick return parameters
@@ -170,5 +180,45 @@ public class GatewayReturnObject
 		this.remainingBalanceNoDecimal = remainingBalanceNoDecimal;
 	}
 	
-
+	@Override
+	public String toString() {
+		return "GatewayReturnObject [xmlReturn=" + xmlReturn + ", isGood="
+				+ isGood + ", isError=" + isError + ", isQuickResponse="
+				+ isQuickResponse + ", isApproved=" + isApproved
+				+ ", isDeclined=" + isDeclined + ", AuthCode=" + AuthCode
+				+ ", TxRefNum=" + TxRefNum + ", ResponseCode=" + ResponseCode
+				+ ", Status=" + Status + ", Message=" + Message + ", AVSCode="
+				+ AVSCode + ", CVV2ResponseCode=" + CVV2ResponseCode
+				+ ", OrderID=" + OrderID + ", amountRequestedNoDecimal="
+				+ amountRequestedNoDecimal + ", amountRedeemedNoDecimal="
+				+ amountRedeemedNoDecimal + ", remainingBalanceNoDecimal="
+				+ remainingBalanceNoDecimal + ", CustomerRefNum="
+				+ CustomerRefNum + "]";
+	}
+	
+	public String toStringPretty() throws TransformerException 
+	{		
+		final TransformerFactory tf = TransformerFactory.newInstance();
+		tf.setAttribute("indent-number", 2);
+		final Transformer t = tf.newTransformer();
+		t.setOutputProperty(OutputKeys.INDENT, "yes");
+		final StringWriter writer = new StringWriter();
+		final StreamResult result = new StreamResult(writer);
+		final StreamSource source = new StreamSource(new StringReader(xmlReturn));
+		t.transform(source, result);		
+		final String xmlStringPretty = result.getWriter().toString();
+		return "GatewayReturnObject [xmlReturn\n" + xmlStringPretty + ", isGood="
+				+ isGood + ", isError=" + isError + ", isQuickResponse="
+				+ isQuickResponse + ", isApproved=" + isApproved
+				+ ", isDeclined=" + isDeclined + ", AuthCode=" + AuthCode
+				+ ", TxRefNum=" + TxRefNum + ", ResponseCode=" + ResponseCode
+				+ ", Status=" + Status + ", Message=" + Message + ", AVSCode="
+				+ AVSCode + ", CVV2ResponseCode=" + CVV2ResponseCode
+				+ ", OrderID=" + OrderID + ", amountRequestedNoDecimal="
+				+ amountRequestedNoDecimal + ", amountRedeemedNoDecimal="
+				+ amountRedeemedNoDecimal + ", remainingBalanceNoDecimal="
+				+ remainingBalanceNoDecimal + ", CustomerRefNum="
+				+ CustomerRefNum + "]";
+	}
+	
 }

@@ -3,6 +3,13 @@ package semplest.server.protocol;
 public class SemplestString {
 	private String semplestString;
 
+	public SemplestString(String s)
+	{
+		this.semplestString = s;
+	}
+	
+	public SemplestString() {}
+	
 	public String getSemplestString() {
 		return semplestString;
 	}
@@ -12,8 +19,7 @@ public class SemplestString {
 	}
 	
 	public SemplestString toSemplestString(String string){
-		SemplestString ret = new SemplestString();
-		ret.setSemplestString(string);
+		SemplestString ret = new SemplestString(string);
 		return ret;
 	}
 
