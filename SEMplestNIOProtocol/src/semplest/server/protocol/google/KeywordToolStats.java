@@ -1,31 +1,40 @@
 package semplest.server.protocol.google;
 
-import com.google.api.adwords.v201109.cm.Keyword;
+import semplest.server.keyword.KeywordMatchingType;
 
 
 public class KeywordToolStats {
 	
-	Keyword kw;
+	//Keyword kw;
+	String keyword;
+	KeywordMatchingType matchType;
 	Long averageMonthlySearches;
 	Double competition;
 	
 	
-	public KeywordToolStats(Keyword kw, Long averageMonthlySearches, Double competition) {
-		this.kw = kw;
+	public KeywordToolStats(String keyword,	KeywordMatchingType matchType, Long averageMonthlySearches, Double competition) {
+		this.keyword = keyword;
+		this.matchType = matchType;
 		this.averageMonthlySearches = averageMonthlySearches;
 		this.competition = competition;
 	}
 
 
-	public Keyword getKw() {
-		return kw;
+	public String getKeyword() {
+		return keyword;
 	}
 
-
-	public void setKw(Keyword kw) {
-		this.kw = kw;
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
 	}
 
+	public KeywordMatchingType getMatchType() {
+		return matchType;
+	}
+
+	public void setMatchType(KeywordMatchingType matchType) {
+		this.matchType = matchType;
+	}
 
 	public Long getAverageMonthlySearches() {
 		return averageMonthlySearches;
