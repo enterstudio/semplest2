@@ -1,5 +1,6 @@
 package semplest.service.google.adwords;
 
+
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -133,6 +134,9 @@ import com.google.api.adwords.v201109.o.TrafficEstimatorSelector;
 import com.google.api.adwords.v201109.o.TrafficEstimatorServiceInterface;
 import com.google.gson.Gson;
 
+import semplest.server.keyword.KeywordMatchingType;
+
+
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
@@ -188,7 +192,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 			
 			String url = "www.summithillsfloristnj.com";
-			String [] keywords = new String[] {"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement"};
+			String [] keywords = new String[] {"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower"};
 			int numberResults = 100;
 			int categoryId = 11476; // Wedding Flowers
 			String accountID = null;
@@ -203,7 +207,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			*/
 			ArrayList<KeywordToolStats> stats = g.getGoogleVolumeCompetition(keywords, null);
 			for (KeywordToolStats k : stats){
-				System.out.println(k.getKw().getText()+ ","+k.getKw().getMatchType()+","+k.getAverageMonthlySearches()+","+k.getCompetition());
+				System.out.println(k.getKeyword()+","+k.getMatchType()+","+k.getAverageMonthlySearches()+","+k.getCompetition());
 			}
 			
 			
@@ -1270,7 +1274,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				//logger.info(kw.getText()+","+ kw.getMatchType().getValue()+","+ averageMonthlySearches+","+ comp);
 				//System.out.println(kw.getText()+": "+averageMonthlySearches);
 				//System.out.println(kw.getText());
-				returnData.add(new KeywordToolStats(kw,averageMonthlySearches,comp));
+				KeywordMatchingType kwMatchType = null;
+				if(kw.getMatchType()==KeywordMatchType.EXACT){
+					kwMatchType = KeywordMatchingType.EXACT;
+				} else if(kw.getMatchType()==KeywordMatchType.PHRASE){
+					kwMatchType = KeywordMatchingType.PHRASE;
+				} else if(kw.getMatchType()==KeywordMatchType.BROAD){
+					kwMatchType = KeywordMatchingType.BROAD;
+				}
+				returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 			}
 
 		}
@@ -1432,8 +1444,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				//logger.info(kw.getText()+" "+ kw.getMatchType().getValue()+" "+ averageMonthlySearches+" "+ comp);
 				//logger.info(kw.getText()+": "+averageMonthlySearches);
 				//logger.info(kw.getText());
+				
+				KeywordMatchingType kwMatchType = null;
+				if(kw.getMatchType()==KeywordMatchType.EXACT){
+					kwMatchType = KeywordMatchingType.EXACT;
+				} else if(kw.getMatchType()==KeywordMatchType.PHRASE){
+					kwMatchType = KeywordMatchingType.PHRASE;
+				} else if(kw.getMatchType()==KeywordMatchType.BROAD){
+					kwMatchType = KeywordMatchingType.BROAD;
+				}
+				
 				returnData.put(new KeywordMatchtypePair(kw.getText(),kw.getMatchType()), 
-						new KeywordToolStats(kw,averageMonthlySearches,comp));
+						new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 				if (stopWordSet.contains(kw)){
 					logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
 				} else {
