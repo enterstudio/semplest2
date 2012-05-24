@@ -3130,8 +3130,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		try {
 			ReportObject[] ret = getKeywordReport(new Long(data.get("accountId")), new Long(data.get("campaignId")), 
-					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")),
-					ReportAggregation.fromString(data.get("aggregation")));
+					new DateTime(data.get("firstDay")), new DateTime(data.get("lastDay")));
 			return gson.toJson(ret);
 		} catch (MsnCloudException e) {
 			throw new Exception(e);
@@ -3139,10 +3138,10 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	}
 
 	@Override
-	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception{
+	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws Exception{
 			
 		//requestKeywordReport
-		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, aggregation);		
+		String ret1 = this.requestKeywordReport(accountId, campaignId, firstDay, lastDay, ReportAggregation.Daily);		
 		AdGroup[] adGroups = this.getAdGroupsByCampaignId(accountId,campaignId);
 		if(adGroups.length>1){throw new Exception("More than one adgroup in this campaign");}
 		Long adGroupId = adGroups[0].getId();

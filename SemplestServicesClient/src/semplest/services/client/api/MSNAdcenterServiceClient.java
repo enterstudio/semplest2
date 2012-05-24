@@ -44,7 +44,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 {
 
 	private static String SERVICEOFFERED = "semplest.service.msn.adcenter.MSNAdcenterService";
-	private static String BASEURLTEST = "http://localhost:9898/semplest";
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
 	//private static String BASEURLTEST = "http://localhost:9898/semplest";
 	private static String timeoutMS = "2000000";
 	private static Gson gson = new Gson();
@@ -1304,14 +1304,13 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return ret;
 	}
 	
-	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay, ReportAggregation aggregation) throws Exception
+	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("campaignId", Long.toString(campaignId.longValue()));
 		jsonHash.put("firstDay", firstDay.toString());
 		jsonHash.put("lastDay", lastDay.toString());
-		jsonHash.put("aggregation", aggregation.getValue());
 		String json = gson.toJson(jsonHash);
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getKeywordReport", json, timeoutMS);
