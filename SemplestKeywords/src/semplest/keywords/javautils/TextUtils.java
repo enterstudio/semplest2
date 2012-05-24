@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.io.DataInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.FileInputStream;
@@ -303,6 +304,32 @@ public class TextUtils
     return data;
   }
   
+  public static void getUniqueKeywords(String[] filepaths, String outputfile) throws IOException{
+	  ArrayList<String> kw = new ArrayList<String>();
+	  PrintStream out = new PrintStream(new FileOutputStream(outputfile));
+	  for(String path : filepaths){	
+		  	FileInputStream fstream = new FileInputStream(path);
+		    DataInputStream in = new DataInputStream(fstream);
+		    // Get the object of DataInputStream
+		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		    String strLine;
+
+		   
+		    //Read File Line By Line
+		    while ((strLine = br.readLine()) != null)   {
+		    	String word = strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "");
+		    	// Print the content on the console
+		    	if(!kw.contains(word)){
+			    	out.println(word);
+			    	kw.add(word);
+		    	}
+		    }		    
+		    //Close the input stream
+		    in.close();
+	  }
+	  	
+  }
+   
   public static void changeKeywordMatchtoExact(String filepath) throws IOException{
 	    FileInputStream fstream = new FileInputStream(filepath);
 	    DataInputStream in = new DataInputStream(fstream);

@@ -18,10 +18,10 @@ public class test {
 	 * @throws ParserException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
-		//TextUtils.changeKeywordMatchtoExact("/semplest/data/biddingTest/PiperHall/keywords.txt");
-		String word = "word1+word2";
-		String[] split = word.split("\\+");
-		System.out.println(dictUtils.getRoot("flowers"));
+		TextUtils.changeKeywordMatchtoExact("/semplest/lluis/PiperHallTest/total.txt");
+		//TextUtils.getUniqueKeywords(new String[]{"/semplest/lluis/PiperHallTest/keywords.txt",
+		//		"/semplest/lluis/PiperHallTest/msnSuggestedKw.txt"},"/semplest/lluis/PiperHallTest/total.txt");
+		
 	}
 
 
