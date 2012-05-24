@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
 import semplest.server.protocol.ProtocolJSON;
@@ -11,6 +12,7 @@ import semplest.server.protocol.ProtocolSocketDataObject;
 
 public class TestClient
 {
+	private static final Logger logger = Logger.getLogger(TestClient.class);
 	private static ProtocolJSON json = new ProtocolJSON();
 	private static String host = "semplest-dev1";
 	private static int port = 8888;
@@ -67,14 +69,12 @@ public class TestClient
 		}
 		catch (UnknownHostException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	
 		// send the Registration pacjket

@@ -58,13 +58,11 @@ public class PingService implements Runnable
 		}
 		catch (InterruptedException e)
 		{
-			logger.info("Ping Service failed for " + this.serviceName);
-			e.printStackTrace();
+			logger.error("Ping Service failed for " + this.serviceName, e);
 		}
 		catch (IOException e)
 		{
-			logger.info("Ping Service failed for " + this.serviceName);
-			e.printStackTrace();
+			logger.error("Ping Service failed for " + this.serviceName, e);
 		}
 		
 	}

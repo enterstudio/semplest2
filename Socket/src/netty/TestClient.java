@@ -7,10 +7,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
 import org.jboss.netty.handler.codec.base64.Base64;
 
 public class TestClient
 {
+	static final Logger logger = Logger.getLogger(TestClient.class);
+	
 	public static void main(String[] args)
 	{
 		int firstMessageSize = 3;
@@ -33,13 +36,11 @@ public class TestClient
 		}
 		catch (UnknownHostException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (IOException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

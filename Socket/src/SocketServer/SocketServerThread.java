@@ -16,8 +16,6 @@ public class SocketServerThread implements Runnable
 	public static void main(String[] args)
 	{
 		PropertyConfigurator.configure("properties/log4j_server.properties");
-
-		
 		SocketServerThread server = new SocketServerThread(8888);
 		Thread serverThread = new Thread(server);
 		serverThread.setDaemon(true);
@@ -28,8 +26,7 @@ public class SocketServerThread implements Runnable
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Got interrupted", e);
 		}
 	}
 
@@ -53,7 +50,7 @@ public class SocketServerThread implements Runnable
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

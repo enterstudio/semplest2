@@ -34,8 +34,7 @@ public class ServerClientSocketThread implements Runnable
 		}
 		catch (IOException e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 
@@ -80,35 +79,15 @@ public class ServerClientSocketThread implements Runnable
 						// dataEvent.data);
 					}
 				}
-				catch (JsonParseException e)
+				catch (Exception e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					break;
-				}
-				catch (JsonMappingException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					break;
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					break;
-				}
-				catch (JMSException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Problem", e);
 					break;
 				}
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 				return;
 			}
 
@@ -243,8 +222,7 @@ public class ServerClientSocketThread implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error("Error ping " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Error ping", e);
 		}
 	}
 
