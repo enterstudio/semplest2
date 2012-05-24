@@ -32,7 +32,6 @@ import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.server.protocol.google.KeywordToolStats;
-import semplest.server.protocol.google.KeywordMatchtypePair;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
@@ -198,7 +197,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			String accountID = null;
 			String [] exclude_keywords = null;
 			/*
-			HashMap<KeywordMatchtypePair, KeywordToolStats> keyWordIdeaMap;
+			ArrayList<KeywordToolStats> keyWordIdeaMap;
 			try{ 
 				keyWordIdeaMap = g.getGoogleKeywordIdeas(accountID, url, keywords, exclude_keywords, categoryId, numberResults);
 			} catch (Exception e){
@@ -1295,10 +1294,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	
 	
 	
-	public HashMap<KeywordMatchtypePair, KeywordToolStats> getGoogleKeywordIdeas(String accountID, String url, 
+	public ArrayList<KeywordToolStats> getGoogleKeywordIdeas(String accountID, String url, 
 			String [] keywords, String [] exclude_keywords, Integer categoryId, int numberResults) throws Exception	{
 
-		HashMap<KeywordMatchtypePair,KeywordToolStats> returnData = new HashMap<KeywordMatchtypePair,KeywordToolStats>();
+		ArrayList<KeywordToolStats> returnData = new ArrayList<KeywordToolStats>();
 		TargetingIdeaPage page;
 		TargetingIdeaServiceInterface targetingIdeaService;
 
@@ -1454,8 +1453,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					kwMatchType = KeywordMatchingType.BROAD;
 				}
 				
-				returnData.put(new KeywordMatchtypePair(kw.getText(),kw.getMatchType()), 
-						new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+				returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 				if (stopWordSet.contains(kw)){
 					logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
 				} else {
