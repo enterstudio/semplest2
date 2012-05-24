@@ -2,7 +2,7 @@ package semplest.client.nio;
 
 import java.nio.channels.SocketChannel;
 
-public class ChangeRequest
+public class ChangeRequest 
 {
 	public static final int REGISTER = 1;
 	public static final int CHANGEOPS = 2;
