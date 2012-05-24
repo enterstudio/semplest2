@@ -8,16 +8,27 @@ namespace SharedResources.Helpers
 {
     public class ComparePassword : ValidationAttribute
     {
-        public string PasswordToCompareWith { get; set; }
-
-        public override bool IsValid(object value)
+        public ComparePassword(string otherPropertyName)
         {
-            if (PasswordToCompareWith == (string)value)
-            {
-                return true;
-            }
-            return false;
+            OtherPropertyName = otherPropertyName;
         }
+        public string OtherPropertyName { get; set; }
+
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            System.Reflection.PropertyInfo propInfo = validationContext.ObjectType.GetProperty(OtherPropertyName);
+            if (propInfo.GetValue(validationContext.ObjectInstance, null) != null)
+            {
+                string otherPassword = propInfo.GetValue(validationContext.ObjectInstance, null).ToString();
+                if (otherPassword != (string)value)
+                {
+                    return new ValidationResult("Both Passwords should be the same");
+                }
+            }
+            return null;
+        }
+
+        
     } 
 
 }

@@ -21,94 +21,99 @@ namespace Semplest.SharedResources.Controllers
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = null;
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = new Dictionary<string, int>();
             Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = null;
-            return View();
+            return View(new ProfileModel());
         }
 
         [HttpPost]
-        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, string isAdmin)
+        public ActionResult LogIn(Semplest.SharedResources.Models.ProfileModel pm, string ReturnUrl, string isAdmin, FormCollection f)
         {
-            Dictionary<string, int> loginHash = (Dictionary<string, int>)Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS];
-            if (loginHash == null)
+            if (ModelState.IsValid)
             {
-                loginHash = new Dictionary<string, int>();
-                loginHash.Add(pm.UserName, 1);
-            }
-            else if (loginHash.ContainsKey(pm.UserName))
-                loginHash[pm.UserName] += 1;
-            else
-                loginHash.Add(pm.UserName, 1);
-
-            Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = loginHash;
-            bool isAdminLogin = isAdmin == null ? false : true;
-            using (SemplestEntities dbContext = new SemplestEntities())
-            {
-                Credential cred = null;
-                if (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] != null)
+                ModelState.Clear();
+                Dictionary<string, int> loginHash = (Dictionary<string, int>)Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS];
+                if (loginHash == null)
                 {
-                    cred = (Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                    loginHash = new Dictionary<string, int>();
+                    loginHash.Add(pm.UserName, 1);
                 }
+                else if (loginHash.ContainsKey(pm.UserName))
+                    loginHash[pm.UserName] += 1;
                 else
-                {
-                    var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+                    loginHash.Add(pm.UserName, 1);
 
-                    if (creds.Count() == 1)
+                Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = loginHash;
+                bool isAdminLogin = isAdmin == null ? false : true;
+                using (SemplestEntities dbContext = new SemplestEntities())
+                {
+                    Credential cred = null;
+                    if (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] != null)
                     {
-                        if ((isAdminLogin && creds.First().IsAdmin()) || (!isAdminLogin && !creds.First().IsAdmin()))
-                            cred = creds.First();
+                        cred = (Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                     }
-
-                }
-                if (cred == null)
-                {
-                    pm.LoggedInSucceeded = false;
-                    if (loginHash[pm.UserName] > 3)
+                    else
                     {
-                        var userCreds = dbContext.Credentials.Where(c => c.Username == pm.UserName);
-                        if (userCreds.Count() > 0 && userCreds.First().User.IsActive)
+                        var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+
+                        if (creds.Count() == 1)
                         {
-                            userCreds.First().User.IsActive = false;
-                            dbContext.SaveChanges();
+                            if ((isAdminLogin && creds.First().IsAdmin()) || (!isAdminLogin && !creds.First().IsAdmin()))
+                                cred = creds.First();
                         }
-                        pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
-                    }   
-                    else
-                        pm.LoginFailedMessage = "The user name or password entered is incorrect. Please try again.";
-                }
-                else if (!cred.User.IsActive)
-                {
-                    pm.LoggedInSucceeded = false;
-                    pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
-                }
-                else
-                {
-                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = cred;
-                    if (cred.User.IsRegistered)
+
+                    }
+                    if (cred == null)
                     {
-                        //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
-                        //if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
-                        //    return RedirectToAction("Index", "Home");
-                        //else if (cred.User.IsRegistered)
-                        //user is a regular core user
-                        if (cred.User.CustomerFK == null)
-                            return RedirectToAction("Index", "Home");
+                        pm.LoggedInSucceeded = false;
+                        if (loginHash[pm.UserName] > 3)
+                        {
+                            var userCreds = dbContext.Credentials.Where(c => c.Username == pm.UserName);
+                            if (userCreds.Count() > 0 && userCreds.First().User.IsActive)
+                            {
+                                userCreds.First().User.IsActive = false;
+                                dbContext.SaveChanges();
+                            }
+                            pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
+                        }
                         else
-                            return RedirectToAction("Index2", "Home");
+                            pm.LoginFailedMessage = "The user name or password entered is incorrect. Please try again.";
                     }
-                    else if (pm.LoggedInSucceeded)
+                    else if (!cred.User.IsActive)
                     {
-                        Credential saveCred = dbContext.Credentials.Where(x => x.Username == cred.Username && x.Password == cred.Password).First();
-                        //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
-                        saveCred.SecurityAnswer = pm.SecurityAnswer;
-                        saveCred.SecurityQuestion = pm.SecurityQuestion;
-                        saveCred.User.IsRegistered = true;
-                        int i = dbContext.SaveChanges();
-                        return RedirectToAction("Index", "Home");
+                        pm.LoggedInSucceeded = false;
+                        pm.LoginFailedMessage = "Sorry, your account is currently locked. To enable your account, please email help@semplest.com for assistance. Thank you!";
                     }
                     else
                     {
-                        //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
-                        pm.IsRegistered = false;
-                        pm.LoggedInSucceeded = true;
+                        Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = cred;
+                        if (cred.User.IsRegistered)
+                        {
+                            //if the user doesn't have a parent in the customerparentfk column then they are a parent else they are a child
+                            //if (cred.User.CustomerFK == null || string.IsNullOrEmpty(cred.User.Customer.CustomerHierarchies.First().CustomerParentFK.ToString()))
+                            //    return RedirectToAction("Index", "Home");
+                            //else if (cred.User.IsRegistered)
+                            //user is a regular core user
+                            if (cred.User.CustomerFK == null)
+                                return RedirectToAction("Index", "Home");
+                            else
+                                return RedirectToAction("Index2", "Home");
+                        }
+                        else if (pm.LoggedInSucceeded)
+                        {
+                            Credential saveCred = dbContext.Credentials.Where(x => x.Username == cred.Username && x.Password == cred.Password).First();
+                            //authenticated properly and submitted secondary form SecurityAnswer/SecurityQuestion
+                            saveCred.SecurityAnswer = pm.SecurityAnswer;
+                            saveCred.SecurityQuestion = pm.SecurityQuestion;
+                            saveCred.Password = pm.Password2;
+                            saveCred.User.IsRegistered = true;
+                            int i = dbContext.SaveChanges();
+                            return RedirectToAction("Index", "Home");
+                        }
+                        else
+                        {
+                            //authenticated properly and HAS NOT submitted secondary form SecurityAnswer/SecurityQuestion to complete registration
+                            pm.IsRegistered = false;
+                            pm.LoggedInSucceeded = true;
+                        }
                     }
                 }
             }

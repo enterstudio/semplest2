@@ -63,31 +63,64 @@ WriteLiteral("    <div id=\"url\"></div>\r\n");
 
 WriteLiteral("    <div id=\"tickets\">\r\n        <h3>\r\n            Log In</h3>\r\n        <fieldset>" +
 "\r\n            <legend>Account Information</legend>\r\n            <ul>\r\n          " +
-"      <li>\r\n                    ");
-
-
-            
-            #line 16 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Html.LabelFor(t => t.UserName, new { @class = "required" }));
-
-            
-            #line default
-            #line hidden
-WriteLiteral("\r\n                    ");
+"      <li>\r\n\r\n                    ");
 
 
             
             #line 17 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" }));
+               Write(Html.LabelFor(t => t.UserName, new { @class = "required"}));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n                    ");
+WriteLiteral("\r\n");
 
 
             
             #line 18 "..\..\Views\Profile\LogIn.cshtml"
+                     if (Model.LoggedInSucceeded)
+                    {
+                        
+            
+            #line default
+            #line hidden
+            
+            #line 20 "..\..\Views\Profile\LogIn.cshtml"
+                   Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox", @readonly = true }));
+
+            
+            #line default
+            #line hidden
+            
+            #line 20 "..\..\Views\Profile\LogIn.cshtml"
+                                                                                                         
+                    }
+                    else
+                    { 
+                        
+            
+            #line default
+            #line hidden
+            
+            #line 24 "..\..\Views\Profile\LogIn.cshtml"
+                   Write(Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox"}));
+
+            
+            #line default
+            #line hidden
+            
+            #line 24 "..\..\Views\Profile\LogIn.cshtml"
+                                                                                      
+                    }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                    ");
+
+
+            
+            #line 26 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.ValidationMessageFor(m => m.UserName));
 
             
@@ -97,27 +130,60 @@ WriteLiteral("\r\n                </li>\r\n                <li>\r\n             
 
 
             
-            #line 21 "..\..\Views\Profile\LogIn.cshtml"
+            #line 29 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.LabelFor(t => t.Password1, new { @class = "required" }));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n                    ");
+WriteLiteral("\r\n");
 
 
             
-            #line 22 "..\..\Views\Profile\LogIn.cshtml"
-               Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
+            #line 30 "..\..\Views\Profile\LogIn.cshtml"
+                     if (Model.LoggedInSucceeded)
+                    {
+                        
+            
+            #line default
+            #line hidden
+            
+            #line 32 "..\..\Views\Profile\LogIn.cshtml"
+                   Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox", @readonly = true, @value = "********"  }));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n                    ");
+            
+            #line 32 "..\..\Views\Profile\LogIn.cshtml"
+                                                                                                                                 
+                    }
+                    else 
+                    {
+                        
+            
+            #line default
+            #line hidden
+            
+            #line 36 "..\..\Views\Profile\LogIn.cshtml"
+                   Write(Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" }));
+
+            
+            #line default
+            #line hidden
+            
+            #line 36 "..\..\Views\Profile\LogIn.cshtml"
+                                                                                         
+                    }
+
+            
+            #line default
+            #line hidden
+WriteLiteral("                    ");
 
 
             
-            #line 23 "..\..\Views\Profile\LogIn.cshtml"
+            #line 38 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.ValidationMessageFor(m => m.Password1));
 
             
@@ -128,32 +194,19 @@ WriteLiteral(" \r\n                </li>\r\n                <li class=\"accept\"
 
 
             
-            #line 26 "..\..\Views\Profile\LogIn.cshtml"
+            #line 41 "..\..\Views\Profile\LogIn.cshtml"
                Write(Html.HiddenFor(m => m.IsRegistered));
 
             
             #line default
             #line hidden
-WriteLiteral("\r\n");
+WriteLiteral("\r\n                    ");
 
 
             
-            #line 27 "..\..\Views\Profile\LogIn.cshtml"
-                     if (Model != null)
-                    {
-            
-            #line default
-            #line hidden
-            
-            #line 28 "..\..\Views\Profile\LogIn.cshtml"
-                Write(Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded));
+            #line 42 "..\..\Views\Profile\LogIn.cshtml"
+               Write(Html.HiddenFor(m => m.LoggedInSucceeded));
 
-            
-            #line default
-            #line hidden
-            
-            #line 28 "..\..\Views\Profile\LogIn.cshtml"
-                                                                               }
             
             #line default
             #line hidden
@@ -163,10 +216,8 @@ WriteLiteral("</li>\r\n                <li class=\"accept\">\r\n                
 
 
             
-            #line 34 "..\..\Views\Profile\LogIn.cshtml"
-                 if (Model != null)
-                {
-                    if (!Model.LoggedInSucceeded)
+            #line 48 "..\..\Views\Profile\LogIn.cshtml"
+                     if (!Model.LoggedInSucceeded)
                     {          
 
             
@@ -176,7 +227,7 @@ WriteLiteral("                        <li class=\"status\">\r\n                 
 
 
             
-            #line 39 "..\..\Views\Profile\LogIn.cshtml"
+            #line 51 "..\..\Views\Profile\LogIn.cshtml"
                        Write(Model.LoginFailedMessage);
 
             
@@ -186,7 +237,7 @@ WriteLiteral("\r\n                        </li>\r\n");
 
 
             
-            #line 41 "..\..\Views\Profile\LogIn.cshtml"
+            #line 53 "..\..\Views\Profile\LogIn.cshtml"
                     }
                     else if (!Model.IsRegistered)
                     {
@@ -195,17 +246,16 @@ WriteLiteral("\r\n                        </li>\r\n");
             #line default
             #line hidden
             
-            #line 44 "..\..\Views\Profile\LogIn.cshtml"
+            #line 56 "..\..\Views\Profile\LogIn.cshtml"
                   Write(Html.Partial("_Password", Model));
 
             
             #line default
             #line hidden
             
-            #line 44 "..\..\Views\Profile\LogIn.cshtml"
+            #line 56 "..\..\Views\Profile\LogIn.cshtml"
                                                         
                     }
-                }
 
             
             #line default
@@ -214,7 +264,7 @@ WriteLiteral("            </ul>\r\n        </fieldset>\r\n    </div>\r\n");
 
 
             
-            #line 50 "..\..\Views\Profile\LogIn.cshtml"
+            #line 61 "..\..\Views\Profile\LogIn.cshtml"
 }
 
             

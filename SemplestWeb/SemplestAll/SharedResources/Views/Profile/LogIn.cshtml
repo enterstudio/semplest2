@@ -13,27 +13,39 @@
             <legend>Account Information</legend>
             <ul>
                 <li>
-                    @Html.LabelFor(t => t.UserName, new { @class = "required" })
-                    @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox" })
+
+                    @Html.LabelFor(t => t.UserName, new { @class = "required"})
+                    @if (Model.LoggedInSucceeded)
+                    {
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox", @readonly = true })
+                    }
+                    else
+                    { 
+                        @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox"})
+                    }
                     @Html.ValidationMessageFor(m => m.UserName)
                 </li>
                 <li>
                     @Html.LabelFor(t => t.Password1, new { @class = "required" })
-                    @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
+                    @if (Model.LoggedInSucceeded)
+                    {
+                        @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox", @readonly = true, @value = "********"  })
+                    }
+                    else 
+                    {
+                        @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
+                    }
                     @Html.ValidationMessageFor(m => m.Password1) 
                 </li>
                 <li class="accept">
                     @Html.HiddenFor(m => m.IsRegistered)
-                    @if (Model != null)
-                    {@Html.Hidden("LoggedInSucceeded", Model.LoggedInSucceeded)}</li>
+                    @Html.HiddenFor(m => m.LoggedInSucceeded)</li>
                 <li class="accept">
                     <button class="k-button" type="submit" id="btnSubmit">
                         Log On</button>
                 </li>
                
-                @if (Model != null)
-                {
-                    if (!Model.LoggedInSucceeded)
+                    @if (!Model.LoggedInSucceeded)
                     {          
                         <li class="status">
                             @Model.LoginFailedMessage
@@ -43,7 +55,6 @@
                     {
                        @Html.Partial("_Password", Model)
                     }
-                }
             </ul>
         </fieldset>
     </div>

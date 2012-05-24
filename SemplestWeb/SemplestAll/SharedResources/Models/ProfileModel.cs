@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
+using SharedResources.Helpers;
 
 namespace Semplest.SharedResources.Models
 {
@@ -24,6 +25,7 @@ namespace Semplest.SharedResources.Models
         [Display(Name = "Password")]
         public string Password1 { get; set; }
 
+        [ComparePassword("Password3")]
         [DataType(DataType.Password)]
         [Display(Name = "New Password")]
         public string Password2 { get; set; }
@@ -38,6 +40,7 @@ namespace Semplest.SharedResources.Models
         public string SecurityAnswer { get; set; }
 
         public bool IsRegistered { get; set; }
+
         [Display(Name = "Loggedinsucceded")]
         public bool LoggedInSucceeded { get; set; }
         public string LoginFailedMessage { get; set; }
