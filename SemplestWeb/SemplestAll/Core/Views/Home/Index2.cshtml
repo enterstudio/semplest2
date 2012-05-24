@@ -21,7 +21,8 @@
             if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
             {
                 <tr>
-                    <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+                    <td style="width: 600px;">
+                    @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
                     </td>
                     @if (p.IsPaused)
                     {
@@ -51,7 +52,8 @@
             if (!p.IsLaunched  && !p.IsDeleted)
             {
         <tr>
-            <td style="width: 200px;">@Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+            <td style="width: 600px;">
+                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = ".preview", @title = "Preview" })
             </td>
             <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
             </td>
@@ -135,7 +137,21 @@
         $("#btnCancelR").click(function (event) {
             $.unblockUI();
         });
-
+        $(".tooltip").bind("mouseenter", function () {
+            $(this).unbind("mouseenter");
+            $(this).load("/Campaign/Preview");
+        });
+         @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+         {
+             foreach (SemplestModel.Promotion p in pg.Promotions)
+             {
+                 if (!p.IsLaunched)
+                 {
+            
+                    @:$("#"+@p.PromotionPK).cluetip({ width:600,height:300,sticky:true, cluetipClass: 'rounded', dropShadow: false, cahce: false, positionBy: 'mouse',closePosition:    'title' });
+                }
+             }
+         }
     });
 </script>
 <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>

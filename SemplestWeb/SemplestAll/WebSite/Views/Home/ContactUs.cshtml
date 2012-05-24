@@ -81,7 +81,7 @@
             <td>
                 @Html.CheckBoxFor(m => m.EmailMe)  E-Mail Me
             </td>
-            <td align="right">
+            <td >
                  @Html.TextBoxFor(model => model.email, new { style = "width: 320px" })
                  @Html.ValidationMessageFor(model => model.email, null, new { @class = "error" })
            </td>
@@ -98,7 +98,7 @@
         </tr>
 
     </table>
-                <p style="vertical-align:bottom">Your contact information will not be used for any purpose other than your request
+                <p style="vertical-align:bottom;text-align: center">Your contact information will not be used for any purpose other than your request
                             for more information from SEMplest</p>
     <p></p>
     <p></p>

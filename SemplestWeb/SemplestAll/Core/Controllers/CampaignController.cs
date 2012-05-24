@@ -47,9 +47,9 @@ namespace Semplest.Core.Controllers
         public ActionResult CampaignSetup(CampaignSetupModel cs, string command)
         {
 
-            if (command == "") command="";
+            if (command == "") command = "";
 
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
             Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
@@ -64,8 +64,8 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult CampaignSetup(int promotionId)
         {
-            
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
+
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
             Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
@@ -75,14 +75,15 @@ namespace Semplest.Core.Controllers
             SemplestDataService ds = new SemplestDataService();
             var campaignSetupModel = ds.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
-            Session.Add("AddsStoreModel", new AddsStoreModel { Ads = campaignSetupModel.AdModelProp.Ads.ToList() });
+            Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
             // set negative keywords in session
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
             campaignSetupModel.ProductGroup.IsEdit = true;
-            ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " + campaignSetupModel.ProductGroup.ProductPromotionName;
-            
+            ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " +
+                            campaignSetupModel.ProductGroup.ProductPromotionName;
+
             return View(campaignSetupModel);
         }
 
@@ -95,7 +96,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+                    var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
                     if (addsStoreModel != null)
                     {
                         foreach (var ad in addsStoreModel.Ads)
@@ -108,35 +109,44 @@ namespace Semplest.Core.Controllers
                         }
                     }
                     //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-                    model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
+                    model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                    int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                    int userid =
+                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
 
                     //int userid = 1; // for testing
-                    string msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-                    var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
+                    string msg =
+                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                        model.ProductGroup.ProductPromotionName);
+                    var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
                     Logger.Write(logEnty);
 
                     SemplestDataService ds = new SemplestDataService();
                     ds.SaveProductGroupAndCampaign(userid, model);
 
-                    msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                    msg =
+                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
+                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                        model.ProductGroup.ProductPromotionName);
                     logEnty.Message = msg;
                     Logger.Write(logEnty);
 
-                    msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                    msg =
+                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
+                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                        model.ProductGroup.ProductPromotionName);
                     logEnty.Message = msg;
                     Logger.Write(logEnty);
 
                     // get the categoris from the web service
                     model = _campaignRepository.GetCategories(model);
 
-                    msg = "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                    msg =
+                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
+                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                        model.ProductGroup.ProductPromotionName);
                     logEnty.Message = msg;
                     Logger.Write(logEnty);
 
@@ -151,13 +161,15 @@ namespace Semplest.Core.Controllers
                 //return View(model);
             }
             catch (Exception ex)
-            { return Json(ex.ToString()); }
+            {
+                return Json(ex.ToString());
+            }
         }
 
         private void WriteLog(string msg, CampaignSetupModel model)
         {
             msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
             Logger.Write(logEnty);
         }
 
@@ -170,7 +182,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
 
                     if (model.CategoryIds.Count() == 0)
                         return Json("Atleast one Category needs to be selected");
@@ -185,29 +197,36 @@ namespace Semplest.Core.Controllers
 
                     // save the selected categories here
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                    int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                    int userid =
+                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
                     //int userid = 1; // for testing
 
-                    String msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                    String msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                     WriteLog(msg, model);
 
                     SemplestDataService ds = new SemplestDataService();
-                    int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                    int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                                    model.ProductGroup.ProductPromotionName);
                     ds.SaveSelectedCategories(promoId, catList);
 
-                    msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
+                    msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                     WriteLog(msg, model);
 
-                    msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting keywords form web service";
+                    msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting keywords form web service";
                     WriteLog(msg, model);
 
                     // get the keywords from web service
                     model = _campaignRepository.GetKeyWords(model);
 
-                    msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After getting keywords form web service";
+                    msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After getting keywords form web service";
                     WriteLog(msg, model);
 
-                    msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before saving keywords to database";
+                    msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before saving keywords to database";
                     WriteLog(msg, model);
 
                     // save the keywords to database
@@ -217,7 +236,8 @@ namespace Semplest.Core.Controllers
                     _workerThread.Start(tData);
 
 
-                    msg = "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
+                    msg =
+                        "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
                     WriteLog(msg, model);
 
                     model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
@@ -235,15 +255,16 @@ namespace Semplest.Core.Controllers
 
         public void DoWorkFast(object data)
         {
-            ThreadData locData = (ThreadData)data;
+            ThreadData locData = (ThreadData) data;
             SemplestDataService ds = new SemplestDataService();
             ds.SaveKeywords(locData._promoId, locData._model);
         }
 
-        class ThreadData
+        private class ThreadData
         {
             public int _promoId;
             public CampaignSetupModel _model;
+
             public ThreadData(int promoId, CampaignSetupModel model)
             {
                 _promoId = promoId;
@@ -258,19 +279,22 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                model = (CampaignSetupModel)Session["FullModel"];
+                model = (CampaignSetupModel) Session["FullModel"];
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
             SemplestEntities dbContext = new SemplestEntities();
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
             //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
-            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            Promotion pm = dbContext.Users.Where(x => x.UserPK == userid).First().Customer.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
+            int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            Promotion pm =
+                dbContext.Users.Where(x => x.UserPK == userid).First().Customer.ProductGroups.Where(
+                    x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(
+                        p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
             pm.IsLaunched = true;
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult"};
             Logger.Write(logEnty);
 
             //return View();
@@ -295,13 +319,14 @@ namespace Semplest.Core.Controllers
         }
 
         #endregion
+
         public ActionResult AdditionalLinks(string model)
         {
             if (Session["AdTitle"] == null)
                 Session.Add("AdTitle", model);
             else
                 Session["AdTitle"] = model;
-            var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+            var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
             PromotionAd promotionAd;
             if (addsStoreModel != null)
             {
@@ -311,24 +336,25 @@ namespace Semplest.Core.Controllers
             }
             else
             {
-                promotionAd = new PromotionAd { AdTitle = model };
+                promotionAd = new PromotionAd {AdTitle = model};
             }
             return PartialView(promotionAd);
             //return PartialView(model);
         }
+
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(PromotionAd model)
         {
-            model.AdTitle = (string)Session["AdTitle"];
+            model.AdTitle = (string) Session["AdTitle"];
             if (Session["AddsStoreModel"] == null)
             {
-                Session.Add("AddsStoreModel", new AddsStoreModel { Ads = new List<PromotionAd> { model } });
+                Session.Add("AddsStoreModel", new AddsStoreModel {Ads = new List<PromotionAd> {model}});
             }
             else
             {
-                var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+                var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
                 var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
                 if (promotionAd != null)
                     promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
@@ -338,6 +364,7 @@ namespace Semplest.Core.Controllers
             }
             return Json("AdditionalLinks");
         }
+
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "SetNegativeKeywords")]
@@ -357,24 +384,26 @@ namespace Semplest.Core.Controllers
 
             return Json("NegativeKeywords");
         }
+
         public ActionResult NegativeKeyWords(AdModel model)
         {
             if (Session["NegativeKeywords"] != null)
             {
-                model.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
-                model.NegativeKeywordsText = (string)Session["NegativeKeywordsText"];
+                model.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
+                model.NegativeKeywordsText = (string) Session["NegativeKeywordsText"];
             }
             return PartialView(model);
         }
+
         public ActionResult Categories(CampaignSetupModel model)
         {
-            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
             return PartialView(model);
         }
 
         public ActionResult KeyWords(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel)Session["FullModel"];
+            model = (CampaignSetupModel) Session["FullModel"];
             return PartialView(model);
         }
 
@@ -385,19 +414,21 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "KeyWords")]
         public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
         {
-            model = (CampaignSetupModel)Session["FullModel"];
+            model = (CampaignSetupModel) Session["FullModel"];
             return Json("Keywords");
         }
 
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel)Session["FullModel"];
+            model = (CampaignSetupModel) Session["FullModel"];
             return PartialView(model);
         }
+
         [HttpPost]
         public void UpdateAdditionalLinks(KendoGridRequest request)
         {
         }
+
         public ActionResult SaveDefineProduct(CampaignSetupModel data)
         {
             if (data == null)
@@ -409,42 +440,57 @@ namespace Semplest.Core.Controllers
 
         public ActionResult GetSideBar()
         {
-            int userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            int userid = ((Credential) (Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var sds = new SemplestDataService();
             var user = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
-
-            //var homeBar = new NavBar
-            //{
-            //    Name = "Home",
-            //    SubItems = new List<NavBar>
-            //                                     {
-            //                                         new NavBar {Name = "My Account", Url = "../Home/Index2"},
-            //                                         new NavBar {Name = "Ad Setup", Url = "../Campaign/CampaignSetup"},
-            //                                         new NavBar {Name = "Reporting", Url= "../Reporting/Index"},
-            //                                         new NavBar {Name = "Billing"},
-            //                                         new NavBar {Name = "My Profile", Url= "../Account/MyProfile"},
-            //                                     }
-            //};
-            //navBars.Add(homeBar);
-
-            var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
+            var productGroupsBar = new NavBar {Name = "Product Groups..", SubItems = new List<NavBar>()};
             foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
             {
-                var promotionBar = new NavBar { Name = promotion.ProductGroupName, Id = promotion.ProductGroupPK, SubItems = new List<NavBar>() };
+                var promotionBar = new NavBar
+                                       {
+                                           Name = promotion.ProductGroupName,
+                                           Id = promotion.ProductGroupPK,
+                                           SubItems = new List<NavBar>()
+                                       };
 
                 foreach (var prom in promotion.Promotions)
-                    promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = ConfigurationManager.AppSettings["CampaignUrl"] + prom.PromotionPK.ToString(CultureInfo.InvariantCulture) });
+                    promotionBar.SubItems.Add(new NavBar
+                                                  {
+                                                      Name = prom.PromotionName,
+                                                      Id = prom.PromotionPK,
+                                                      Url =
+                                                          ConfigurationManager.AppSettings["CampaignUrl"] +
+                                                          prom.PromotionPK.ToString(CultureInfo.InvariantCulture)
+                                                  });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
                 productGroupsBar.SubItems.Add(promotionBar);
             }
             navBars.Add(productGroupsBar);
             return Json(navBars, JsonRequestBehavior.AllowGet);
-        }​
-        public ActionResult Preview()
+        }
+
+        [RequireRequestValue("promotionId")]
+        public ActionResult Preview(int promotionId)
         {
-            return View(new CampaignSetupModel());
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
+            Logger.Write(logEnty);
+            //var logService = new LogService();
+            //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
+            //var scw = new ServiceClientWrapper();
+            //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
+
+            SemplestDataService ds = new SemplestDataService();
+            var campaignSetupModel = ds.GetCampaignSetupModelForPromotionId(promotionId);
+            // set sitelinks in session
+            Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+            // set negative keywords in session
+            Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
+            Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
+
+            campaignSetupModel.ProductGroup.IsEdit = true;
+            return PartialView(campaignSetupModel);
         }
     }
 }
