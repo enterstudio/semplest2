@@ -1,5 +1,6 @@
 package semplest.server.protocol.adengine;
 
+import java.io.Serializable;
 import java.util.Date;
 /*
 
@@ -14,7 +15,7 @@ CREATE TABLE [dbo].[AdvertisingEngineBidData](
 	[CreatedDate] [datetime2](7) NOT NULL,
 
  */
-public class ReportObject
+public class ReportObject implements Serializable
 {
 
 	private Long accountID;
