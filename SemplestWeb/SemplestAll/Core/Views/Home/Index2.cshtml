@@ -21,7 +21,7 @@
             if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
             {
                 <tr>
-                    <td style="width: 600px;">
+                    <td style="width: 200px;">
                     @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
                     </td>
                     @if (p.IsPaused)
@@ -52,7 +52,7 @@
             if (!p.IsLaunched  && !p.IsDeleted)
             {
         <tr>
-            <td style="width: 600px;">
+            <td style="width: 200px;">
                 @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = ".preview", @title = "Preview" })
             </td>
             <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
@@ -97,6 +97,11 @@
             $.blockUI(({ message: $('#hiddenButton') }));
             event.preventDefault();
         });
+
+        $('#btnCreatAd').click(function () {
+            location.href = '../Campaign/CampaignSetup';
+            });
+
         
         $("#btnAdd").click(function (event) {
             $("#hiddenButton").submit();

@@ -726,7 +726,7 @@ span.k-tooltip
 {
     font-family: "Lucida Sans Unicode" , "Lucida Grande" , Sans-Serif;
     font-size: 12px;
-    width: 100%;
+    width: 400PX;
     text-align: left;
     border-collapse: collapse;
 }
@@ -743,7 +743,7 @@ span.k-tooltip
 }
 .gradient-style td
 {
-    padding: 8px;
+    padding: 4px;
     border-bottom: 1px solid #8ebc00;
     color: #669;
     border-top: 1px solid #fff;
