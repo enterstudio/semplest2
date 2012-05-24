@@ -190,12 +190,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 			
-			String url = "www.summithillsfloristnj.com";
+			//String url = "www.summithillsfloristnj.com";
 			String [] keywords = new String[] {"wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower"};
-			int numberResults = 100;
-			int categoryId = 11476; // Wedding Flowers
-			String accountID = null;
-			String [] exclude_keywords = null;
+			//int numberResults = 100;
+			//int categoryId = 11476; // Wedding Flowers
+			//String accountID = null;
+			//String [] exclude_keywords = null;
 			/*
 			ArrayList<KeywordToolStats> keyWordIdeaMap;
 			try{ 
