@@ -576,7 +576,7 @@ public class SemplestDB extends BaseDB
 			//Integer FirstPageMicroCpc, Integer MicroCost
 			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine, rptObj.getTransactionDate(), 
 					rptObj.getMicroBidAmount().intValue(),  rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getBidMatchType(), 
-					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC(),
+					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(),
 					rptObj.getMicroCost().intValue());
 			if (id == 0)
 			{
