@@ -29,7 +29,7 @@ public class ReportObject
 	private Long averageCPC;
 	private Integer qualityScore;
 	private String approvalStatus;
-	private Integer firstPageCPC;
+	private Long firstPageCPC;
 	private Date createdDate;
 	private Long microCost;
 	
@@ -117,11 +117,11 @@ public class ReportObject
 	{
 		this.approvalStatus = approvalStatus;
 	}
-	public Integer getFirstPageCPC()
+	public Long getFirstPageCPC()
 	{
 		return firstPageCPC;
 	}
-	public void setFirstPageCPC(Integer firstPageCPC)
+	public void setFirstPageCPC(Long firstPageCPC)
 	{
 		this.firstPageCPC = firstPageCPC;
 	}
