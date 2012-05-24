@@ -3169,7 +3169,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 				data.setQualityScore((ret2.get("qualityscore")[i].equals(""))? -1 : (Integer.valueOf(ret2.get("qualityscore")[i])));
 				data.setApprovalStatus(null);
 				data.setMicroCost(microCost.longValue());
-				data.setFirstPageCPC(-1);
+				data.setFirstPageCPC(-1L);
 				String[] t = ret2.get("gregoriandate")[i].split("/");
 				data.setTransactionDate(new DateTime(Integer.valueOf(t[2]), Integer.valueOf(t[0]), Integer.valueOf(t[1]), 0, 0, 0, 0).toDate());
 				for(int j=0; j<keywords.length; j++){
