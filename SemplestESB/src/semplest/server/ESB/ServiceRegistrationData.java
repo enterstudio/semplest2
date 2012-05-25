@@ -2,7 +2,7 @@ package semplest.server.ESB;
 
 import javax.jms.MessageProducer;
 
-import semplest.server.nio.ServicePingHandler;
+import semplest.server.nio.ServicePingHandlerNIO;
 
 public class ServiceRegistrationData
 {
@@ -11,7 +11,7 @@ public class ServiceRegistrationData
 	private String ESBRecQueueName = null;
 	private String serviceOffered = null;
 	private MessageProducer messageProducer = null;
-	private ServicePingHandler pingHandler = null;
+	private ServicePingHandlerNIO pingHandler = null;
 	
 	private java.util.Date regTime = null;
 	
@@ -47,11 +47,11 @@ public class ServiceRegistrationData
 	{
 		ESBRecQueueName = eSBRecQueueName;
 	}
-	public ServicePingHandler getPingHandler()
+	public ServicePingHandlerNIO getPingHandler()
 	{
 		return pingHandler;
 	}
-	public void setPingHandler(ServicePingHandler pingHandler)
+	public void setPingHandler(ServicePingHandlerNIO pingHandler)
 	{
 		this.pingHandler = pingHandler;
 	}

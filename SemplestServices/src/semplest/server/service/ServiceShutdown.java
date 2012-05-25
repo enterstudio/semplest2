@@ -1,25 +1,23 @@
 package semplest.server.service;
 
-import java.io.IOException;
+import java.net.Socket;
 
 import org.apache.log4j.Logger;
 
-import semplest.client.nio.NIOClient;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 
 public class ServiceShutdown implements Runnable
 {
-
-	private final NIOClient nio;
+	private final Socket socket;
 	private final String serviceName;
 	private final String serviceOffered;
 	private ProtocolJSON json = null;
 	private static final Logger logger = Logger.getLogger(ServiceShutdown.class);
 	
-	public ServiceShutdown(NIOClient nio, String serviceName, String serviceOffered)
+	public ServiceShutdown(Socket socket, String serviceName, String serviceOffered)
 	{
-		this.nio = nio;
+		this.socket = socket;
 		this.serviceName = serviceName;
 		this.serviceOffered = serviceOffered;
 		json = new ProtocolJSON();
@@ -37,7 +35,7 @@ public class ServiceShutdown implements Runnable
 			regdata.setServiceOffered(serviceOffered);
 			String jsonStr = json.createJSONFromSocketDataObj(regdata);
 			byte[] regPacket = ProtocolJSON.createBytePacketFromString(jsonStr);
-			nio.send(regPacket, null);
+			socket.getOutputStream().write(regPacket);
 			Thread.sleep(500);
 		}
 		catch (Exception e)

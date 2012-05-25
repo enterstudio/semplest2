@@ -59,7 +59,7 @@ public class ProcessRequestWorker implements Runnable
 				}
 				dataEvent = (ServerDataEvent) queue.remove(0);
 				//process the event here
-				//convert incoming bytes 
+				//convert incoming bytes to Protocol Socket data object 
 				ProtocolSocketDataObject socketDataObject = json.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(dataEvent.data));
 				byte typeRequest = socketDataObject.getheader();
 				try
@@ -79,7 +79,8 @@ public class ProcessRequestWorker implements Runnable
 					else
 					{
 						// Return to sender
-						dataEvent.server.send(dataEvent.socket, dataEvent.data);
+						logger.error("Unknown Request Type..." + typeRequest);
+						//dataEvent.server.send(dataEvent.socket, dataEvent.data);
 					}
 				}
 				catch (JsonParseException e)

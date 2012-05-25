@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.jms.JMSException;
 
@@ -48,9 +49,9 @@ public class NIOServer implements Runnable
 	// Maps a SocketChannel to a list of ByteBuffer instances
 	private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
 	private ProtocolJSON json = new ProtocolJSON();
-	private ServicePingHandler pingHandler = null;
+	private ServicePingHandlerNIO pingHandler = null;
+	private ReentrantLock selectorGuard = new ReentrantLock() ;
 	static final Logger logger = Logger.getLogger(NIOServer.class);
-	
 
 	public NIOServer(InetAddress hostAddress, int port, ProcessRequestWorker worker, ESBServer esbServer) throws IOException
 	{
@@ -87,8 +88,10 @@ public class NIOServer implements Runnable
 					this.pendingChanges.clear();
 				}
 
+				selectorGuard.lock();
+				selectorGuard.unlock();
 				// Wait for an event one of the registered channels
-				this.selector.select();
+				int numKeys = this.selector.select();
 
 				// Iterate over the set of keys for which events are available
 				Iterator<SelectionKey> selectedKeys = this.selector.selectedKeys().iterator();
@@ -123,6 +126,161 @@ public class NIOServer implements Runnable
 			}
 		}
 	}
+	
+	public void send(SocketChannel socket, byte[] data)
+	{
+
+		// Lock the selector guard to prevent another select until complete
+		selectorGuard.lock();
+
+		try
+		{
+			synchronized (this.pendingChanges)
+			{
+				// Indicate we want the interest ops set changed
+				this.pendingChanges.add(new ChangeRequest(socket, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
+
+				// And queue the data we want written
+				synchronized (this.pendingData)
+				{
+					// Queue is an ArrayList of ByteBuffer
+					List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socket);
+					if (queue == null)
+					{
+						queue = new ArrayList<ByteBuffer>();
+						this.pendingData.put(socket, queue);
+					}
+					queue.add(ByteBuffer.wrap(data));
+				}
+			}
+			selector.wakeup();
+
+		}
+		finally
+		{
+			selectorGuard.unlock();
+		}
+
+	}
+
+	/*
+	 * on Accept - register the Read operation
+	 */
+	private void accept(SelectionKey key) throws IOException
+	{
+		// For an accept to be pending the channel must be a server socket
+		// channel.
+		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
+
+		// Accept the connection and make it non-blocking
+		SocketChannel socketChannel = serverSocketChannel.accept();
+		// Socket socket = socketChannel.socket();
+		socketChannel.configureBlocking(false);
+
+		// Register the new SocketChannel with our Selector, indicating
+		// we'd like to be notified when there's data waiting to be read
+		socketChannel.register(this.selector, SelectionKey.OP_READ);
+	}
+
+	/*
+	 * reads data off the channel and passes the data to worker thread for
+	 * processing
+	 */
+	private void read(SelectionKey key) throws IOException
+	{
+		SocketChannel socketChannel = (SocketChannel) key.channel();
+
+		// Clear out our read buffer so it's ready for new data
+		this.readBuffer.clear();
+
+		// Attempt to read off the channel
+		int numRead;
+		try
+		{
+			numRead = socketChannel.read(this.readBuffer);
+			if (numRead < 0)
+			{
+				logger.warn("Remote Socket shutdown...closing NIO connection");
+				key.channel().close();
+				return;
+			}
+			else if (numRead == 0)
+			{
+				logger.warn("Remote Socket Read numRead = 0");
+				return;
+			}
+			else
+			{
+				// Hand the data off to our worker thread
+				this.worker.processData(this, socketChannel, this.readBuffer.array(), numRead);
+			}
+		}
+		catch (IOException e)
+		{
+			// The remote forcibly closed the connection, cancel
+			// the selection key and close the channel.
+			logger.error("IOException in NIO Read..Closing Connection " + e.getMessage());
+			key.channel().close();
+			return;
+		}
+
+	}
+
+	private void write(SelectionKey key) throws IOException
+	{
+		SocketChannel socketChannel = (SocketChannel) key.channel();
+
+		synchronized (this.pendingData)
+		{
+			List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socketChannel);
+
+			// Write until there's not more data ...
+			while (!queue.isEmpty())
+			{
+				ByteBuffer buf = (ByteBuffer) queue.get(0);
+				// buf.flip();
+				socketChannel.write(buf);
+				if (buf.remaining() > 0)
+				{
+					// ... or the socket's buffer fills up
+					break;
+				}
+				queue.remove(0);
+			}
+
+			if (queue.isEmpty())
+			{
+				// We wrote away all data, so we're no longer interested
+				// in writing on this socket. Switch back to waiting for
+				// data.
+				key.interestOps(SelectionKey.OP_READ);
+			}
+		}
+	}
+
+	/*
+	 * setup the selector to wait on Socket Accept
+	 */
+	private Selector initSelector() throws IOException
+	{
+		// Create a new selector
+		Selector socketSelector = SelectorProvider.provider().openSelector();
+
+		// Create a new non-blocking server socket channel
+		this.serverChannel = ServerSocketChannel.open();
+		serverChannel.configureBlocking(false);
+
+		// Bind the server socket to the specified address and port
+		InetSocketAddress isa = new InetSocketAddress(this.hostAddress, this.port);
+		serverChannel.socket().bind(isa);
+
+		// Register the server socket channel, indicating an interest in
+		// accepting new connections
+		serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
+
+		return socketSelector;
+	}
+
 
 	public void RegisterClient(SocketChannel socket, ProtocolSocketDataObject response) throws JsonParseException, JsonMappingException, IOException,
 			JMSException
@@ -153,7 +311,7 @@ public class NIOServer implements Runnable
 			regData.setRegTime(new java.util.Date());
 			regData.setServiceOffered(serviceOffered);
 			// create thread for handling ping
-			ServicePingHandler pingHandler = new ServicePingHandler(this, this.esbServer, clientServiceName, serviceOffered, pingFreqMS);
+			ServicePingHandlerNIO pingHandler = new ServicePingHandlerNIO(this, this.esbServer, clientServiceName, serviceOffered, pingFreqMS);
 			regData.setPingHandler(pingHandler);
 			Thread pingThread = new Thread(pingHandler);
 			pingThread.setPriority(Thread.MAX_PRIORITY);
@@ -208,7 +366,7 @@ public class NIOServer implements Runnable
 		}
 	}
 
-	public void  ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
+	public void ClientPing(SocketChannel socket, ProtocolSocketDataObject socketDataObject)
 	{
 
 		try
@@ -239,151 +397,14 @@ public class NIOServer implements Runnable
 		}
 	}
 
-	public void send(SocketChannel socket, byte[] data)
-	{
-		synchronized (this.pendingChanges)
-		{
-			// Indicate we want the interest ops set changed
-			this.pendingChanges.add(new ChangeRequest(socket, ChangeRequest.CHANGEOPS, SelectionKey.OP_WRITE));
-
-			// And queue the data we want written
-			synchronized (this.pendingData)
-			{
-				// Queue is an ArrayList of ByteBuffer
-				List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socket);
-				if (queue == null)
-				{
-					queue = new ArrayList<ByteBuffer>();
-					this.pendingData.put(socket, queue);
-				}
-				queue.add(ByteBuffer.wrap(data));
-			}
-		}
-
-		// Finally, wake up our selecting thread so it can make the required
-		// changes
-		this.selector.wakeup();
-	}
-
-	/*
-	 * on Accept - register the Read operation
-	 */
-	private void accept(SelectionKey key) throws IOException
-	{
-		// For an accept to be pending the channel must be a server socket
-		// channel.
-		ServerSocketChannel serverSocketChannel = (ServerSocketChannel) key.channel();
-
-		// Accept the connection and make it non-blocking
-		SocketChannel socketChannel = serverSocketChannel.accept();
-		// Socket socket = socketChannel.socket();
-		socketChannel.configureBlocking(false);
-
-		// Register the new SocketChannel with our Selector, indicating
-		// we'd like to be notified when there's data waiting to be read
-		socketChannel.register(this.selector, SelectionKey.OP_READ);
-	}
-
-	/*
-	 * reads data off the channel and passes the data to worker thread for
-	 * processing
-	 */
-	private void read(SelectionKey key) throws IOException
-	{
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-
-		// Clear out our read buffer so it's ready for new data
-		this.readBuffer.clear();
-
-		// Attempt to read off the channel
-		int numRead;
-		try
-		{
-			numRead = socketChannel.read(this.readBuffer);
-		}
-		catch (IOException e)
-		{
-			// The remote forcibly closed the connection, cancel
-			// the selection key and close the channel.
-			key.cancel();
-			socketChannel.close();
-			return;
-		}
-
-		if (numRead == -1)
-		{
-			// Remote entity shut the socket down cleanly. Do the
-			// same from our end and cancel the channel.
-			key.channel().close();
-			key.cancel();
-			return;
-		}
-
-		// Hand the data off to our worker thread
-		this.worker.processData(this, socketChannel, this.readBuffer.array(), numRead);
-	}
-
-	private void write(SelectionKey key) throws IOException
-	{
-		SocketChannel socketChannel = (SocketChannel) key.channel();
-
-		synchronized (this.pendingData)
-		{
-			List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socketChannel);
-
-			// Write until there's not more data ...
-			while (!queue.isEmpty())
-			{
-				ByteBuffer buf = (ByteBuffer) queue.get(0);
-				socketChannel.write(buf);
-				if (buf.remaining() > 0)
-				{
-					// ... or the socket's buffer fills up
-					break;
-				}
-				queue.remove(0);
-			}
-
-			if (queue.isEmpty())
-			{
-				// We wrote away all data, so we're no longer interested
-				// in writing on this socket. Switch back to waiting for
-				// data.
-				key.interestOps(SelectionKey.OP_READ);
-			}
-		}
-	}
-
-	/*
-	 * setup the selector to wait on Socket Accept
-	 */
-	private Selector initSelector() throws IOException
-	{
-		// Create a new selector
-		Selector socketSelector = SelectorProvider.provider().openSelector();
-
-		// Create a new non-blocking server socket channel
-		this.serverChannel = ServerSocketChannel.open();
-		serverChannel.configureBlocking(false);
-
-		// Bind the server socket to the specified address and port
-		InetSocketAddress isa = new InetSocketAddress(this.hostAddress, this.port);
-		serverChannel.socket().bind(isa);
-
-		// Register the server socket channel, indicating an interest in
-		// accepting new connections
-		serverChannel.register(socketSelector, SelectionKey.OP_ACCEPT);
-
-		return socketSelector;
-	}
-
+	
 	public static void main(String[] args)
 	{
 		try
 		{
 			ProcessRequestWorker worker = new ProcessRequestWorker();
 			new Thread(worker).start();
-			new Thread(new NIOServer(null, 9090, worker, null)).start();
+			new Thread(new NIOServer(null, 9090, worker, new ESBServer())).start();
 		}
 		catch (IOException e)
 		{

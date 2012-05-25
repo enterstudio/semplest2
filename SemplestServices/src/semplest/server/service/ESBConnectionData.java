@@ -9,6 +9,7 @@ public class ESBConnectionData
 	private String serverURI = null;
 	private String serverport = null;
 	private int PingFrequencyMS;
+	private int ESBPingWaitMS;
 	private int NumberServiceThreads;
 	
 	public String getQueueName()
@@ -67,5 +68,14 @@ public class ESBConnectionData
 	{
 		NumberServiceThreads = numberServiceThreads;
 	}
+	public int getESBPingWaitMS()
+	{
+		return ESBPingWaitMS;
+	}
+	public void setESBPingWaitMS(int eSBPingWaitMS)
+	{
+		ESBPingWaitMS = eSBPingWaitMS;
+	}
+	
 	
 }

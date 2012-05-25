@@ -2,6 +2,7 @@ package semplest.server.service;
 
 import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
+import java.net.Socket;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -22,8 +23,6 @@ public class SEMplestService
 {
 	public static Properties properties = null;
 	private ESBConnectionData connectionData = null;
-	private NIOClient nioClient = null;
-	private NIOResponseHandler handler = null;
 	private ServiceActiveMQConnection mq = null;
 	private ProtocolJSON json = new ProtocolJSON();
 	private static final Logger logger = Logger.getLogger(SEMplestService.class);
@@ -127,6 +126,7 @@ public class SEMplestService
 		connectionData.setServerport(String.valueOf((Integer) SemplestConfiguration.configData.get("ServiceESBServerPort"))); //properties.getProperty("ESBServerPort"));
 		connectionData.setPingFrequencyMS((Integer) SemplestConfiguration.configData.get("ServicePingFrequencyMS")); //Integer.parseInt(properties.getProperty("PingFrequencyMS")));
 		connectionData.setNumberServiceThreads((Integer) SemplestConfiguration.configData.get("ServiceNumberServiceThreads")); //Integer.parseInt(properties.getProperty("NumberServiceThreads"))); //
+		connectionData.setESBPingWaitMS((Integer) SemplestConfiguration.configData.get("ServiceESBPingWaitMS"));
 		logger.info("Setup Config Parameters");
 	}
 
@@ -144,13 +144,10 @@ public class SEMplestService
 		{
 			logger.debug("Reg with ESB " + connectionData.getServerURI() + ":" + connectionData.getServerport());
 			// create a Thread to connect via socket
-			nioClient = new NIOClient(connectionData.getServerURI(), connectionData.getServerport());
-			Thread t = new Thread(nioClient);
-			t.setDaemon(true);
-			t.start();
-			handler = new NIOResponseHandler();
+			Socket socket = new Socket(connectionData.getServerURI(), Integer.parseInt(connectionData.getServerport()));
+			
 			//add shutdown hook
-			ServiceShutdown shutdown = new ServiceShutdown(nioClient, connectionData.getServiceName(), connectionData.getServiceOffered());
+			ServiceShutdown shutdown = new ServiceShutdown(socket, connectionData.getServiceName(), connectionData.getServiceOffered());
 			Thread shutdownHook = new Thread(shutdown);
 			Runtime.getRuntime().addShutdownHook(shutdownHook);
 			// create the register packet
@@ -158,27 +155,28 @@ public class SEMplestService
 			regdata.setHeader(ProtocolJSON.SEMplest_REGISTER);
 			regdata.setclientServiceName(connectionData.getServiceName());
 			regdata.setServiceOffered(connectionData.getServiceOffered());
-			regdata.setPingFrequency(connectionData.getPingFrequencyMS());
+			regdata.setPingFrequency(connectionData.getESBPingWaitMS());
 
 			// convert to JSON
 			String jsonStr = json.createJSONFromSocketDataObj(regdata);
 			byte[] regPacket = ProtocolJSON.createBytePacketFromString(jsonStr);
 			logger.debug("Send regPacket " + jsonStr);
 			// send the Registration pacjket
-			nioClient.send(regPacket, handler);
+			socket.getOutputStream().write(regPacket);
+			socket.getOutputStream().flush();
 			// wait synchronously for response
-			byte[] response = handler.waitForResponse();
+			byte[] response = new byte[1024];
+			int num = socket.getInputStream().read(response);
 			// create ProtocolSocketDataObject from response
 			ProtocolSocketDataObject data = json.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(response));
 			logger.debug("Response REC - " + data.getclientServiceName() + ":" + data.getServiceOffered() + ": ping Freq=" + data.getPingFrequency() + ": Header=" + data.getheader());
 			if (data.getheader() == ProtocolJSON.SEMplest_REGISTER)
 			{
-				// create a Pi thread
+				// create a Ping thread
 				if (connectionData.getPingFrequencyMS() > 0)
 				{
 					logger.debug("Start Pinging....with Frequency=" + connectionData.getPingFrequencyMS());
-					PingService ping = new PingService(connectionData.getServerURI(), Integer.parseInt(connectionData.getServerport()), connectionData.getServiceName(),
-							connectionData.getPingFrequencyMS());
+					PingService ping = new PingService(socket, connectionData.getServiceName(),connectionData.getPingFrequencyMS());
 					Thread pingThread = new Thread(ping);
 					pingThread.setPriority(Thread.MAX_PRIORITY);
 					pingThread.start();

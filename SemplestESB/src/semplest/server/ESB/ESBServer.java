@@ -24,6 +24,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import semplest.server.nio.NIOServer;
 import semplest.server.nio.ProcessRequestWorker;
 import semplest.server.queue.ActiveMQConnection;
+import semplest.server.socket.SocketServerThread;
 
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
@@ -86,8 +87,24 @@ public class ESBServer
 
 	public boolean createRegistrationServer()
 	{
-		try
-		{
+		
+			try
+			{
+				SocketServerThread server = new SocketServerThread(Integer.parseInt(serverData.getRegServicePort()));
+				Thread serverThread = new Thread(server);
+				serverThread.setDaemon(true);
+				serverThread.start();
+				logger.info("Socket Server created ");
+				return true;
+			}
+			catch (Exception e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				logger.error(e.getMessage());
+				return false;
+			}
+			/*
 			logger.debug("Starting NIO reg Server...");
 			// create the NIO server to handle incoming registration
 			ProcessRequestWorker worker = new ProcessRequestWorker();
@@ -95,12 +112,8 @@ public class ESBServer
 			new Thread(new NIOServer(null, Integer.parseInt(serverData.getRegServicePort()), worker, this)).start();
 			logger.debug("NIO Started...");
 			return true;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
-		}
+			*/
+		
 	}
 
 	public void startMQ(String brokerName, String brokerIP, String brokerPort) throws JMSException

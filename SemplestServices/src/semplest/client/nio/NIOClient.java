@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.log4j.Logger;
 
@@ -33,6 +34,7 @@ public class NIOClient implements Runnable
 	// Maps a SocketChannel to a list of ByteBuffer instances
 	private Map<SocketChannel, List<ByteBuffer>> pendingData = new HashMap<SocketChannel, List<ByteBuffer>>();
 	private SocketChannel socket = null;
+	private ReentrantLock selectorGuard = new ReentrantLock() ;
 
 	// Maps a SocketChannel to a RspHandler
 	private Map<SocketChannel, NIOResponseHandler> rspHandlers = Collections.synchronizedMap(new HashMap<SocketChannel, NIOResponseHandler>());
@@ -58,26 +60,35 @@ public class NIOClient implements Runnable
 	public void send(byte[] data, NIOResponseHandler handler) throws IOException
 	{
 		// Register the response handler
-		if (handler != null)
-		{	
-			this.rspHandlers.put(socket, handler);
-		}
-		// And queue the data we want written
-		synchronized (this.pendingData)
+		selectorGuard.lock();
+		try
 		{
-			// Queue is an ArrayList of ByteBuffer
-			List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socket);
-			if (queue == null)
-			{
-				queue = new ArrayList<ByteBuffer>();
-				this.pendingData.put(socket, queue);
+			if (handler != null)
+			{	
+				this.rspHandlers.put(socket, handler);
 			}
-			queue.add(ByteBuffer.wrap(data));
+			// And queue the data we want written
+			synchronized (this.pendingData)
+			{
+				// Queue is an ArrayList of ByteBuffer
+				List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socket);
+				if (queue == null)
+				{
+					queue = new ArrayList<ByteBuffer>();
+					this.pendingData.put(socket, queue);
+				}
+				queue.add(ByteBuffer.wrap(data));
+			}
+			// Finally, wake up our selecting thread so it can make the required
+			// changes
+			this.selector.wakeup();
+		}
+		finally
+		{
+			selectorGuard.unlock();
 		}
 
-		// Finally, wake up our selecting thread so it can make the required
-		// changes
-		this.selector.wakeup();
+		
 	}
 
 	public void run()
@@ -108,6 +119,8 @@ public class NIOClient implements Runnable
 				}
 
 				// Wait for an event one of the registered channels
+				selectorGuard.lock();
+				selectorGuard.unlock();
 				this.selector.select();
 
 				// Iterate over the set of keys for which events are available
@@ -207,9 +220,10 @@ public class NIOClient implements Runnable
 			List<ByteBuffer> queue = (List<ByteBuffer>) this.pendingData.get(socketChannel);
 
 			// Write until there's not more data ...
-			while (!queue.isEmpty())
+			while (queue != null && !queue.isEmpty())
 			{
 				ByteBuffer buf = (ByteBuffer) queue.get(0);
+				//buf.flip();
 				socketChannel.write(buf);
 				if (buf.remaining() > 0)
 				{
@@ -219,7 +233,7 @@ public class NIOClient implements Runnable
 				queue.remove(0);
 			}
 
-			if (queue.isEmpty())
+			if (queue == null || queue.isEmpty())
 			{
 				// We wrote away all data, so we're no longer interested
 				// in writing on this socket. Switch back to waiting for
@@ -284,7 +298,7 @@ public class NIOClient implements Runnable
 		{
 			// NIOClient client = new
 			// NIOClient(InetAddress.getByName("www.google.com"), 80);
-			NIOClient client = new NIOClient(InetAddress.getByName("172.18.9.34"), 9999);
+			NIOClient client = new NIOClient(InetAddress.getByName("localhost"), 8888); //"172.18.9.34"), 9999);
 			Thread t = new Thread(client);
 			t.setDaemon(true);
 			t.start();
