@@ -162,6 +162,7 @@
     <Compile Include="Helpers\ServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\cardslogo.jpg" />
     <Content Include="Content\example.css" />
     <Content Include="Content\formStyle.css" />
     <Content Include="Content\kendo.common.min.css" />
