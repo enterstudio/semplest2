@@ -1,0 +1,53 @@
+<userInput>
+  <!-- Install -->
+    <panel order="0">
+        <createForPack name="Complete" />
+        <field type="divider" align="top"/>
+        <field type="staticText" id="user.0.text.1" align="left" txt="The following pages step you through additional information required for the Semplest ESB Server installation. At a minimum, you need:"/>
+        <field type="space"/>
+        
+        <field type="divider" align="bottom"/>
+    </panel> 
+    <panel order="1">
+      <!-- Information for the PostgreSQL Install and database creation -->
+        <createForPack name="Postgres Database Installation" />
+        <field type="title" txt="Database Account Information" bold="true" size="1" />
+        <field type="divider" align="top"/>
+        <field type="combo" variable="db.type">
+          <spec txt="Database Type:" id="install.db.type">
+            <choice txt="PostgreSQL" value="PostgreSQL" set="true"/>
+          </spec>
+        </field>
+        <field type="space"/>
+        <field type="staticText" align="left" txt="The service user must not be an existing operating system user."/>
+        <field type="text" align="left" variable="db.service.name">
+            <spec txt="DB Service User:" size="20" set="postgres"/>
+        </field>
+        <field type="password" align="left" variable="db.service.password">
+          <spec>
+            <pwd txt="DB Service Password:" size="20" set="SCpostgres@123"/>
+            <pwd txt="Retype Password:" size="20" set="SCpostgres@123"/>
+          </spec>
+          <validator class="com.izforge.izpack.util.PasswordEqualityValidator" txt="Both service passwords must match." id="key for the error text"/>
+          <!--
+            Need to make sure the PostgreSQL installer doesn't fail because of password strength
+          -->
+          <validator class="com.izforge.izpack.util.RegularExpressionValidator" txt="Service password must begin with a character and be 8-20 mixed-case characters, numbers, and special characters [#@!$_]." id="key for the error text">
+            <param name="pattern" value="^(?=[a-zA-Z])(?=.*[0-9])(?=.*[#@!$_])(?=.*[A-Z])(?=.*[a-z])(?!.*[^a-zA-Z0-9#@!$_])(?!.*\s).{8,20}$"/>
+          </validator>
+        </field>
+        <field type="space"/>
+        <field type="password" align="left" variable="db.su.password">
+          <spec>
+            <pwd txt="DB Superuser Password:" size="20" set="SCpostgres@123"/>
+            <pwd txt="Retype Password:" size="20" set="SCpostgres@123"/>
+          </spec>
+          <validator class="com.izforge.izpack.util.PasswordEqualityValidator" txt="Both superuser passwords must match." id="key for the error text"/>
+          <validator class="com.izforge.izpack.util.RegularExpressionValidator" txt="Superuser password must begin with a character and be 8-20 mixed-case characters, numbers, and special characters [#@!$_]." id="key for the error text">
+            <param name="pattern" value="^(?=[a-zA-Z])(?=.*[0-9])(?=.*[#@!$_])(?=.*[A-Z])(?=.*[a-z])(?!.*[^a-zA-Z0-9#@!$_])(?!.*\s).{8,20}$"/>
+          </validator>
+        </field>
+        
+       <field type="divider" align="bottom"/>
+    </panel> 
+ </userInput>
