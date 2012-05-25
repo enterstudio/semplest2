@@ -22,7 +22,7 @@
             {
                 <tr>
                     <td style="width: 200px;">
-                    @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { })
+                    @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = ".preview", @title = "Preview" })
                     </td>
                     @if (p.IsPaused)
                     {
@@ -150,7 +150,7 @@
          {
              foreach (SemplestModel.Promotion p in pg.Promotions)
              {
-                 if (!p.IsLaunched)
+                 //if (!p.IsLaunched)
                  {
             
                     @:$("#"+@p.PromotionPK).cluetip({ width:600,height:300,sticky:true, cluetipClass: 'rounded', dropShadow: false, cahce: false, positionBy: 'mouse',closePosition:    'title' });
