@@ -55,7 +55,14 @@ namespace SemplestWebApp.Controllers
 
         public ActionResult About()
         {
-            return View();
+            StaticModel vm = new StaticModel(StaticPages.About);
+            return View("Static", vm);
+        }
+
+        public ActionResult FAQ()
+        {
+            StaticModel vm = new StaticModel(StaticPages.FAQ);
+            return View("Static", vm);
         }
 
         public ActionResult SearchKeywords()
