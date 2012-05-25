@@ -46,9 +46,7 @@ public class PingService implements Runnable
 			while (true)
 			{
 				logger.info("Send Ping");
-				pingSocket.getOutputStream().flush();
 				pingSocket.getOutputStream().write(returnData);
-				//Thread.sleep(500);
 				pingSocket.getOutputStream().flush();
 				//wait for return data
 				int numBytes = pingSocket.getInputStream().read(bytes);
