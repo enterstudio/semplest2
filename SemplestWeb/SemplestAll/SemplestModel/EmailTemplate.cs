@@ -12,19 +12,15 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class CreditCardProfile
+    public partial class EmailTemplate
     {
-        public CreditCardProfile()
-        {
-            this.CreditCardTransactions = new HashSet<CreditCardTransaction>();
-        }
+        public int EmailTemplatePK { get; set; }
+        public Nullable<int> CustomerFK { get; set; }
+        public string EmailSubject { get; set; }
+        public string EmailBody { get; set; }
+        public string EmailFrom { get; set; }
+        public int EmailTypeFK { get; set; }
     
-        public int CreditCardProfilePK { get; set; }
-        public int CustomerFK { get; set; }
-        public string CustomerRefNum { get; set; }
-        public string AuthCode { get; set; }
-        public string TxRefNum { get; set; }
-    
-        public virtual ICollection<CreditCardTransaction> CreditCardTransactions { get; set; }
+        public virtual Customer Customer { get; set; }
     }
 }

@@ -82,6 +82,11 @@ namespace SemplestModel
         public DbSet<UserRolesAssociation> UserRolesAssociations { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
+        public DbSet<CreditCardTransaction> CreditCardTransactions { get; set; }
+        public DbSet<EmailTemplate> EmailTemplates { get; set; }
+        public DbSet<EmailType> EmailTypes { get; set; }
+        public DbSet<PromotionPayment> PromotionPayments { get; set; }
+        public DbSet<WebContent> WebContents { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

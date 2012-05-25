@@ -26,6 +26,8 @@ namespace SemplestModel
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
             this.Schedules = new HashSet<Schedule>();
             this.Users = new HashSet<User>();
+            this.EmailTemplates = new HashSet<EmailTemplate>();
+            this.WebContents = new HashSet<WebContent>();
         }
     
         public int CustomerPK { get; set; }
@@ -49,5 +51,7 @@ namespace SemplestModel
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
+        public virtual ICollection<WebContent> WebContents { get; set; }
     }
 }

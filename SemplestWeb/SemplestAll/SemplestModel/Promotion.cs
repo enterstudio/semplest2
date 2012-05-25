@@ -24,6 +24,7 @@ namespace SemplestModel
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
             this.Schedules = new HashSet<Schedule>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
+            this.PromotionPayments = new HashSet<PromotionPayment>();
         }
     
         public int PromotionPK { get; set; }
@@ -59,5 +60,6 @@ namespace SemplestModel
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
+        public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
     }
 }

@@ -110,5 +110,6 @@ namespace SemplestModel
         public Nullable<int> SemplestKeywordsnumKeywordsMSN { get; set; }
         public Nullable<int> SemplestKeywordsnumThreads { get; set; }
         public bool DisplayTargetCPCLevel { get; set; }
+        public Nullable<int> ServiceESBPingWaitMS { get; set; }
     }
 }
