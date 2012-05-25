@@ -83,40 +83,32 @@ public class ServerClientSocketThread implements Runnable
 					}
 					else
 					{
-						// Return to sender
 						logger.error("Unknown Request Type..." + typeRequest);
-						// dataEvent.server.send(dataEvent.socket,
-						// dataEvent.data);
 					}
 				}
 				catch (JsonParseException e)
 				{
-					// TODO Auto-generated catch block
+					logger.error("JsonParseException in ServerClientSocketThread " + e.getMessage());
 					e.printStackTrace();
 					break;
 				}
 				catch (JsonMappingException e)
 				{
-					// TODO Auto-generated catch block
+					logger.error("JsonMappingException in ServerClientSocketThread " + e.getMessage());
 					e.printStackTrace();
 					break;
 				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					break;
-				}
+				
 				catch (JMSException e)
 				{
-					// TODO Auto-generated catch block
+					logger.error("JMSException in ServerClientSocketThread " + e.getMessage());
 					e.printStackTrace();
 					break;
 				}
 			}
 			catch (IOException e)
 			{
-				// TODO Auto-generated catch block
+				logger.error("IOEXCEPTION in ServerClientSocketThread " + e.getMessage());
 				e.printStackTrace();
 				return;
 			}
