@@ -59,7 +59,7 @@ public class ServerClientSocketThread implements Runnable
 
 			try
 			{
-				logger.info("Wait for data....");
+				//logger.info("Wait for data....");
 
 				int num = in.read(readBuffer.array());
 				if (num > 0)
