@@ -35,7 +35,7 @@ public class ServerClientSocketThread implements Runnable
 		try
 		{
 			in = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-			//preset data returned by ping to client
+			// preset data returned by ping to client
 			ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
 			returndata.setHeader(ProtocolJSON.SEMplest_PING);
 			String jsonStr = json.createJSONFromSocketDataObj(returndata);
@@ -62,48 +62,53 @@ public class ServerClientSocketThread implements Runnable
 				logger.info("Wait for data....");
 
 				int num = in.read(readBuffer.array());
-				logger.info("Read Data..." + num);
-				ProtocolSocketDataObject socketDataObject = json.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(readBuffer.array()));
-				byte typeRequest = socketDataObject.getheader();
-				try
+				if (num > 0)
 				{
-					if (typeRequest == ProtocolJSON.SEMplest_REGISTER)
+					logger.info("Read Data..." + num);
+					ProtocolSocketDataObject socketDataObject = json
+							.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(readBuffer.array()));
+					readBuffer.flip();
+					byte typeRequest = socketDataObject.getheader();
+					try
 					{
-						logger.info("Reg");
-						RegisterClient(socketDataObject);
+						if (typeRequest == ProtocolJSON.SEMplest_REGISTER)
+						{
+							logger.info("Reg");
+							RegisterClient(socketDataObject);
+						}
+						else if (typeRequest == ProtocolJSON.SEMplest_PING)
+						{
+							logger.info("Ping");
+							ClientPing(socketDataObject);
+						}
+						else if (typeRequest == ProtocolJSON.SEMplest_SHUTDOWN)
+						{
+							ShutdownFromClient(socketDataObject);
+						}
+						else
+						{
+							logger.error("Unknown Request Type..." + typeRequest);
+						}
 					}
-					else if (typeRequest == ProtocolJSON.SEMplest_PING)
+					catch (JsonParseException e)
 					{
-						logger.info("Ping");
-						ClientPing(socketDataObject);
+						logger.error("JsonParseException in ServerClientSocketThread " + e.getMessage());
+						e.printStackTrace();
+						break;
 					}
-					else if (typeRequest == ProtocolJSON.SEMplest_SHUTDOWN)
+					catch (JsonMappingException e)
 					{
-						ShutdownFromClient(socketDataObject);
+						logger.error("JsonMappingException in ServerClientSocketThread " + e.getMessage());
+						e.printStackTrace();
+						break;
 					}
-					else
+
+					catch (JMSException e)
 					{
-						logger.error("Unknown Request Type..." + typeRequest);
+						logger.error("JMSException in ServerClientSocketThread " + e.getMessage());
+						e.printStackTrace();
+						break;
 					}
-				}
-				catch (JsonParseException e)
-				{
-					logger.error("JsonParseException in ServerClientSocketThread " + e.getMessage());
-					e.printStackTrace();
-					break;
-				}
-				catch (JsonMappingException e)
-				{
-					logger.error("JsonMappingException in ServerClientSocketThread " + e.getMessage());
-					e.printStackTrace();
-					break;
-				}
-				
-				catch (JMSException e)
-				{
-					logger.error("JMSException in ServerClientSocketThread " + e.getMessage());
-					e.printStackTrace();
-					break;
 				}
 			}
 			catch (IOException e)
