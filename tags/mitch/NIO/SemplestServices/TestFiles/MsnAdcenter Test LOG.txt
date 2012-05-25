@@ -1,0 +1,418 @@
+MSN service testing LOG
+==========================================
+
+Name = acc_nan
+accountId = 1595249
+customerId = 13061731
+userId = 1667566
+
+campaignId = 130129414
+	campaignName = msn_test_nan
+	campaignReportId = 1900786974
+	keywordReportId = 1901813874
+	
+	adGroupId = 754813047
+		Name = A1334181236897 
+		
+		AdId = 937776925
+		AdId = 937778709
+		
+		KeywordId = 8099371830
+		
+	adGroupId = 754813055
+		Name = A1334181636164
+		
+		KeywordId = 8099787314
+		KeywordId = 8099787315
+		
+campaignId = 130129426
+	campaignName = msn_test_nan_2
+
+
+//have to manually select options from DailyBudget and MonthlyBudget on MSN AdCenter page (https://adcenter.microsoft.com/). Once set, API would work on only one of them.
+//same for "campaign level settings for targeting and exclusions" and "group level settings for targeting and exclusions". Note that when use Campaign APIs and AdGroup APIs.
+
+==========================================
+(#: start to code on this method; ##: finished coding on the method; ###: passed testing and done on the method)
+
+>>>>>04/10/2012
+
+createAccount  ###
+------------------------------------------
+* Created account "acc_nan"
+createAccount: accountId = 1595249; customerId = 13061731; userId = 1667566
+
+
+getAccountById  ###
+------------------------------------------
+getAccountById: Name = acc_nan; ParentCustomerId = 13061731; PrimaryUserId = 656014
+
+
+createCampaign ###
+------------------------------------------
+createCampaign: campaignId = 130129414
+createCampaign: campaignId = 130129426
+
+	
+getCampaignById  ###
+------------------------------------------
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+
+	
+getCampaignsByAccountId  ###
+------------------------------------------
+getCampaignsByAccountId: numOfCampaigns = 1
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+//Test for multiple campaigns
+getCampaignsByAccountId: numOfCampaigns = 2
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+
+
+>>>>>04/11/2012
+
+
+pauseCampaignById  ###
+------------------------------------------
+pauseCampaignById: (if successful returns 0) 0
+
+
+pauseCampaignsByAccountId  ###
+------------------------------------------
+pauseCampaignsByAccountId: (if successful returns 0) 0
+
+
+resumeCampaignById  ###
+------------------------------------------
+resumeCampaignById: (if successful returns 0) 0
+//check status - OK
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Active
+//pause it and check status again
+pauseCampaignById: (if successful returns 0) 0
+getCampaignById: DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+
+
+deleteCampaignById  ###
+------------------------------------------
+createCampaign: campaignId = 130129920
+getCampaignsByAccountId: numOfCampaigns = 3
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+2: Name = msn_test_nan_3; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+deleteCampaignById: (if successful returns 0) 0
+getCampaignsByAccountId: numOfCampaigns = 2
+0: Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+1: Name = msn_test_nan_2; DailyBudget = 0.0; MonthlyBudget = 5.1; CampaignStatus = Paused
+
+
+updateCampaignBudget  ###
+------------------------------------------
+getCampaignById: : Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 5.0; CampaignStatus = Paused
+updateCampaignBudget: (if successful returns 0) 0
+getCampaignById: : Name = msn_test_nan; DailyBudget = 0.0; MonthlyBudget = 10.0; CampaignStatus = Paused
+
+
+setCampaignStateTargets  ###
+------------------------------------------
+getCampaignTargets: ok
+deleteCampaignTargets: (if successful returns 0) 0
+setCampaignStateTargets: (if successful returns 0) 0
+getCampaignTargets: ok
+state = US-CA
+state = US-FL
+state = US-MA
+state = US-NY
+
+
+deleteCampaignTargets  ###
+------------------------------------------
+getCampaignTargets: ok
+Target is not null
+deleteCampaignTargets: (if successful returns 0) 0
+getCampaignTargets: ok
+Target is null
+//Also checked on MSN AdCenter page - ok.
+
+
+getCampaignTargets  ###
+------------------------------------------
+getCampaignTargets: ok
+state = US-MA
+state = US-NH
+state = US-NY
+
+
+createAdGroup  ###
+------------------------------------------
+createAdGroup: adGroupId = 754813047
+
+
+getAdGroupsByCampaignId  ###
+------------------------------------------
+getAdGroupsByCampaignId: Name = A1334181236897
+getAdGroupsByCampaignId: Name = A1334181636164
+
+	
+getAdGroupById  ###
+------------------------------------------
+getAdGroupById: Id = 754813047; Name = A1334181236897
+
+	
+deleteAdGroupById  ###
+------------------------------------------
+createAdGroup: adGroupId = 754813107
+getAdGroupsByCampaignId: Name = A1334181236897; adGroupId = 754813047
+getAdGroupsByCampaignId: Name = A1334181636164; adGroupId = 754813055
+getAdGroupsByCampaignId: Name = A1334183361205; adGroupId = 754813107
+deleteAdGroupById: (if successful returns 0) 0
+getAdGroupsByCampaignId: Name = A1334181236897; adGroupId = 754813047
+getAdGroupsByCampaignId: Name = A1334181636164; adGroupId = 754813055
+
+
+>>>>>04/12/2012
+
+
+setAdGroupStateTargets  ###
+------------------------------------------
+getAdGroupTargets: ok
+setAdGroupStateTargets: (if successful returns 0) 0
+getAdGroupTargets: ok
+state = US-CA
+state = US-FL
+state = US-MA
+state = US-NY
+
+
+setAdGroupCityTargets  ###
+------------------------------------------
+getAdGroupTargets: ok
+setAdGroupCityTargets: (if successful returns 0) 0
+getAdGroupTargets: ok
+city = Brookline, Boston MA US
+city = Newton, Boston MA US
+city = Wellesley, Boston MA US
+
+
+setAdGroupMetroAreaTargets  ###
+------------------------------------------
+getAdGroupTargets: ok
+setAdGroupMetroAreaTargets: (if successful returns 0) 0
+getAdGroupTargets: ok
+city = Brooklyn, NY US
+city = New York, NY US
+
+
+deleteAdGroupTargets  ###
+------------------------------------------
+see the tests above
+
+
+getAdGroupTargets  ###
+------------------------------------------
+see the tests above
+
+
+createAd  ###
+------------------------------------------
+createAd: AdId = 937776925
+	
+
+getAdById  ###
+------------------------------------------
+//Create AdObject to resolve json conflict of DisplayUrl and DestinationUrl
+getAdById: ok
+AdId = 937776925; status = Active; EditorialStatus = Active; Type = Text
+Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+
+	
+getAdsByAdGroupId  ###
+------------------------------------------
+getAdsByAdGroupId: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+Id = 937778709; Title = nan ad test 2; Text = semplest test num 2; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+
+	
+updateAdById  ###
+------------------------------------------
+getAdById: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://www.semplest.com/; DestinationUrl = https://www.semplest.com/
+updateAdById: (if successful returns 0) 0
+getAdById: ok
+Id = 937776925; Title = nan ad test 1; Text = semplest test num 1; DisplayUrl = https://adcenter.microsoft.com/; DestinationUrl = https://adcenter.microsoft.com/
+
+
+>>>>>04/16/2012
+
+
+pauseAdById  ###
+------------------------------------------
+pauseAdById: (if successful returns 0) 0
+getAdById: ok
+AdId = 937776925; status = Paused
+
+	
+resumeAdById  ###
+------------------------------------------
+resumeAdById: (if successful returns 0) 0
+getAdById: ok
+AdId = 937776925; status = Active
+pauseAdById: (if successful returns 0) 0
+
+	
+deleteAdById  ###
+------------------------------------------
+createAd: AdId = 937930374
+getAdsByAdGroupId: ok
+Id = 937776925
+Id = 937778709
+Id = 937930374
+deleteAdById: (if successful returns 0) 0
+getAdsByAdGroupId: ok
+Id = 937776925
+Id = 937778709
+
+	
+createKeyword  ###
+------------------------------------------
+createKeyword: KeywordId = 8099371836
+getKeywordById: ok
+Id = 8099371836; text = nan keyword test 2
+
+
+createKeywords  ###
+------------------------------------------
+createKeywords: Id = 8099436288
+createKeywords: Id = 8099436289
+
+	
+getKeywordById  ###
+------------------------------------------
+getKeywordById: ok
+Id = 8099371836; text = nan keyword test 2
+
+	
+getKeywordByAdGroupId  ###
+------------------------------------------
+getKeywordByAdGroupId: num of keywords = 4
+Id = 8099371830; Text = nan keyword test 1
+Id = 8099371836; Text = nan keyword test 2
+Id = 8099436288; Text = nan keyword test 4
+Id = 8099436289; Text = nan keyword test 5
+
+
+>>>>>04/17/2012
+
+
+updateKeywordBidById  ###
+------------------------------------------
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 1.0; contentMatchBid = 1.01; exactMatchBid = 1.02; phraseMatchBid = 1.03
+updateKeywordBidById: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 5.0; contentMatchBid = 5.01; exactMatchBid = 5.02; phraseMatchBid = 5.03
+
+	
+updateKeywordBidsByIds  ###
+------------------------------------------
+updateKeywordBidsByIds: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371836; broadMatchBid = 6.01; contentMatchBid = 6.01; exactMatchBid = 6.01; phraseMatchBid = 6.01
+getKeywordById: ok
+Id = 8099436288; broadMatchBid = 7.01; contentMatchBid = 7.01; exactMatchBid = 7.01; phraseMatchBid = 7.01
+
+	
+pauseKeywordById  ###
+------------------------------------------
+pauseKeywordById: (if successful returns 0) 0
+getKeywordById: ok
+Id = 8099371830; broadMatchBid = 5.0; status = Paused
+
+	
+deleteKeywordById  ###
+------------------------------------------
+deleteKeywordById: (if successful returns 0) 0
+
+	
+deleteKeywordsById  ###
+------------------------------------------
+deleteKeywordsById: (if successful returns 0) 0
+
+
+>>>>04/18/2012
+
+	
+getKeywordEstimateByBids  ###
+------------------------------------------
+getKeywordEstimateByBids: ok
+keyword = flower
+EstimatedPositionAndTraffic: 
+AverageCPC = 4.453714285714286
+CTR = 4.375
+MaxClicksPerWeek = 14
+MaxImpressionsPerWeek = 320
+MaxTotalCostPerWeek = 62.352
+MinClicksPerWeek = 3
+MinImpressionsPerWeek = 80
+MinTotalCostPerWeek = 15.588
+EstimatedPositionAndTraffic: 
+AverageCPC = 3.907777777777778
+CTR = 2.5
+MaxClicksPerWeek = 9
+MaxImpressionsPerWeek = 360
+MaxTotalCostPerWeek = 35.17
+MinClicksPerWeek = 2
+MinImpressionsPerWeek = 90
+MinTotalCostPerWeek = 8.7925
+EstimatedPositionAndTraffic: 
+AverageCPC = 3.7319166666666668
+CTR = 1.6666666666666667
+MaxClicksPerWeek = 6
+MaxImpressionsPerWeek = 360
+MaxTotalCostPerWeek = 22.3915
+MinClicksPerWeek = 1
+MinImpressionsPerWeek = 90
+MinTotalCostPerWeek = 5.5979
+keyword = rose
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 122
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 30
+MinTotalCostPerWeek = 0.0
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 218
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 54
+MinTotalCostPerWeek = 0.0
+EstimatedPositionAndTraffic: 
+AverageCPC = 0.0
+CTR = 0.0
+MaxClicksPerWeek = 0
+MaxImpressionsPerWeek = 8861
+MaxTotalCostPerWeek = 0.0
+MinClicksPerWeek = 0
+MinImpressionsPerWeek = 2215
+MinTotalCostPerWeek = 0.0
+
+
+getReportData  ###
+------------------------------------------
+!!! It takes too long, and causes Time Out on ESB !!!
+
+	
+requestCampaignReport  ###
+------------------------------------------
+requestCampaignReport: reportID = "1900786974"
+
+	
+requestKeywordReport  ###
+------------------------------------------
+requestKeywordReport: reportID = "1901813874"
+

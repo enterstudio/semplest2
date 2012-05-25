@@ -1,0 +1,327 @@
+<project name="SemplestService" default="build-installer" basedir="..">
+
+   <!-- artifactsDir and buildVersion passed in for the build machine-->
+	<property environment="env"/>
+	<property name="product.version" value="${env.BUILD_VERSION}"/>
+   <!--	switch when build locally
+   <property name="product.version" value="1.0.x"/>  -->
+	
+	 <condition property="output.dir" value="${artifactsDir}" 
+	             else="${basedir}">
+	    <isset property="artifactsDir"/>
+	  </condition>
+
+  <property name="build" value="${basedir}/build"/>  
+  <property file="${build}/build.properties"/>       
+  <property name="lib" value="${basedir}/dist/lib"/>
+  <property name="keys" value="${basedir}/keys"/>
+  <property name="properties" value="${basedir}/properties"/>
+  <property name="source" value="${basedir}/src"/>   
+  <property name="dist" value="${basedir}/dist"/>  
+  <property name="classes" value="${basedir}/classes"/>  
+  <property name="docs" value="${basedir}/docs"/>    
+  <property name="javadoc" value="${docs}/api"/>     
+  <property name="test.dir" value="${basedir}/test"/>
+  <property name="java.debug" value="true"/>
+   
+<!-- IZPACK Stuff -->
+  <property file="${basedir}/src/system.properties"/>
+  <property name="product.name" value="SemplestService"/>
+  <property name="product.short.name" value="SemplestService"/>
+  <property name="default.dest.dir" value="C:/workspace/SemplestService"/>
+ 	
+  <property name="install.builder.dir" value="${basedir}/../izpack"/>            
+  <property name="install.ant" value="${install.builder.dir}/ant"/>            
+  <property name="install.lib" value="${install.builder.dir}/lib"/>            
+  <property name="install.res" value="${install.builder.dir}/res"/>            
+  <property name="install.xml" value="install-definition.xml"/>
+  <property name="app.name" value="${product.name}"/>
+  <property name="app.short.name" value="${product.short.name}"/>
+  <property name="app.version" value="${product.version}"/>
+
+  <property name="yajsw.dir" value="${basedir}/autoDeployFiles/YAJSW_11_0" />
+	
+  <property name="semplest.autoDeploy" value="${basedir}/autoDeployFiles" />
+ 
+  <!-- Load semplest.service from system.properties -->
+	<loadproperties srcFile="${basedir}/src/system.properties">
+	      <filterchain>
+	        <linecontains>
+	          <contains value="semplest.service"/>
+	        </linecontains>
+	      </filterchain>
+	    </loadproperties>	
+  
+  <property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
+  <property name="semplest.protocol.lib" value="${basedir}/../SEMplestProtocol/lib" />
+	
+  <property name="semplest.keywords.dir" value="${basedir}/../SemplestKeywords" />
+  <property name="semplest.keywords.lib" value="${basedir}/../SemplestKeywords/lib" />
+	
+  <property name="semplest.bidding.dir" value="${basedir}/../SEMplestBidding" />
+  <property name="semplest.bidding.lib" value="${basedir}/../SEMplestBidding/lib" />	
+	
+  <property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />
+  <property name="semplest.clientapi.lib" value="${basedir}/../SemplestServicesClient/lib" />
+ 	
+  <property name="ant.contrib.dir" value="${basedir}/../ant-contrib" />
+  <property name="install.root.local" value="${basedir}/build/install-root" />
+	  
+  <!-- Allows us to use the IzPack Ant task, standalone-compiler.jar added to Ant lib -->
+  <!-- classpath="${basedir}/lib/standalone-compiler.jar" -->
+  <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar" 
+	  classname="com.izforge.izpack.ant.IzPackTask"/>
+
+  <!-- Load the ant-contrib tasks -->
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+    <classpath>
+      <pathelement location="${ant.contrib.dir}/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
+  
+  <!-- Grab parts of version string -->
+  <propertyregex property="major.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\1" casesensitive="false" />
+  <propertyregex property="minor.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\2" casesensitive="false" />
+  <propertyregex property="build.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\3" casesensitive="false" />
+  <property name="product.base" value="${major.number}.${minor.number}"/>
+  
+  <!-- Adds classes directory and all .jar and .zip files in the lib directory to the CLASSPATH -->
+  <path id="class.path">
+    <pathelement location="${classes}"/>
+    <fileset dir="${lib}">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+ 
+  
+  <!--=======================================================================-->
+  <!--====Initialization target, runs setup tasks before build starts========-->
+  <!--=======================================================================-->
+  <target name="init" depends="clean,cleandist" description="Initialize build properties">
+    <tstamp>
+      <format property="TODAY" pattern="yyyy-MM-dd"/>
+    </tstamp>
+    <mkdir dir="${classes}"/>
+    <echo message="Saving build number to version file."/>
+    <echo file="version" message="${product.version}"/>
+    <mkdir dir="${dist}"/>
+    <copy todir="${dist}">
+        <fileset dir="${basedir}">
+        <include name="version"/>
+        </fileset>
+        <fileset dir="${basedir}/properties/"/>   	
+    </copy>
+  	<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}" />
+  	 <!-- Add libraries to classes dir to include in jar -->
+  	    <mkdir dir="${dist}/lib" />
+  	    <copy todir="${dist}/lib" filtering="off">
+  	      <flattenmapper />
+  	      <fileset dir="${basedir}/lib" includes="**/*.jar" />
+  	    </copy>
+  	    <copy todir="${dist}/lib" filtering="off">
+  	      <flattenmapper />
+  	      <fileset dir="${semplest.protocol.lib}" includes="**/*.jar" />
+  	    </copy>
+</target>
+
+
+  <target name="clean" description="Cleans out the output directory">
+    <delete includeEmptyDirs="true" quiet="true">
+      <fileset dir="${classes}">
+        <include name="**/**"/>
+      </fileset>
+    </delete>
+  </target>
+
+
+   <target name="cleandist" description="Deletes the previous copy of the output file">
+    <delete includeEmptyDirs="true" quiet="true">
+      <!-- delete all files from distribution directory -->
+      <fileset dir="${dist}"/>
+    </delete>
+    <delete dir="${output.dir}/ant" failonerror="false"/>
+    <delete file="${output.dir}/*.jar" failonerror="false"/>
+  </target>
+
+	<target name="compileProtocol" depends="init" description="Compile protocol source files">
+	    <javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="class.path"
+	      target="1.6"
+	      source="1.6"
+	      debug="${java.debug}"   	
+	      includes="**/*.java"
+	      excludes="**/*.svn"
+	    />
+	</target>
+	
+	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
+	  	<!-- Create a Jar for SemplestServicesClient, and put it to SemplestServices/lib -->
+		<echo message="Creating Jar for SemplestServicesClient..."/>
+		<copy todir="${dist}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar" />
+		</copy>
+		<path id="api.path">
+			<pathelement location="${classes}"/>
+			<fileset dir="${semplest.clientapi.lib}" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.clientapi.dir}/temp"/>
+		<javac srcdir="${semplest.clientapi.dir}" destdir="${semplest.clientapi.dir}/temp" classpathref="api.path"
+			target="1.6"
+			source="1.6"
+			debug="${java.debug}"   	
+			includes="**/*.java" >
+			<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${dist}/lib/SemplestServicesClient.jar" basedir="${semplest.clientapi.dir}/temp">
+			 <manifest>
+			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
+			 </manifest>
+		</jar>  	
+		
+		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestServices/lib -->
+		<echo message="Creating Jar for SemplestBidding..."/>
+			<copy todir="${dist}/lib" filtering="off">
+				<flattenmapper />
+				<fileset dir="${semplest.bidding.lib}" includes="**/*.jar" />
+			</copy>
+			<path id="api.path">
+				<pathelement location="${classes}"/>
+					<fileset dir="${semplest.bidding.lib}" includes="**/*.jar"/>
+				</path>
+				<mkdir dir="${semplest.bidding.dir}/temp"/>
+			<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="api.path"
+					target="1.6"
+					source="1.6"
+					debug="${java.debug}"   	
+					includes="**/*.java" >
+					<exclude name="**/*.svn"/>
+			</javac>
+			<jar destfile="${dist}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">
+					 
+			</jar>  
+		
+		<!-- Copy folder for ChaseOrbitalGateway -->
+		<echo message="Copy folders for ChaseOrbitalGateway..."/>
+  	 	<mkdir dir="${dist}/logs"/>
+  	 	<mkdir dir="${dist}/xml"/>
+  	 	<copydir src="${basedir}/xml"
+  	 		dest="${dist}/xml"
+  	 	    includes="**/*.*"
+  	 	/>
+  	 	<mkdir dir="${dist}/config"/>
+		<copydir src="${basedir}/config"
+  	 		dest="${dist}/config"
+  	 	    includes="**/*.*"
+  	 	/>		
+		
+		<!-- Create a Jar for SemplestKeywords, and put it to SemplestServices/lib -->
+  	 	<copy todir="${dist}/lib" filtering="off">
+  	 		<flattenmapper />
+  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
+  	 	</copy>
+			<path id="keywords.path">
+				<pathelement location="${classes}"/>
+					<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
+				</path>
+				<mkdir dir="${semplest.keywords.dir}/temp"/>
+			<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
+					target="1.6"
+					source="1.6"
+					debug="${java.debug}"   	
+					includes="**/*.java" >
+					<exclude name="**/*.svn"/>
+			</javac>
+			<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
+			</jar>
+		
+	  	<!-- If it's a Keyword service, copy data folder -->
+	  	<if>
+	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
+	  	 <then>  	   
+	  	 	<echo message="This is KeywordGeneratorService."/>	 	  	 	
+	  	 	<mkdir dir="${dist}/data"/>
+	  	 	<copydir src="${semplest.keywords.dir}/data"
+	  	 		dest="${dist}/data"
+	  	 	    includes="**/*.*"
+	  	 	/>
+	  	 </then>
+	  	</if>
+	</target>
+   
+  <target name="compile" depends="depJars" description="Compile all source files">
+    <javac srcdir="${source}" destdir="${classes}" classpathref="class.path"
+      target="1.6"
+      source="1.6"
+      debug="${java.debug}"   	
+      includes="**/*.java"
+      excludes="**/*.svn"
+    />
+   </target>
+
+  <target name="deps">
+  	<copy todir="${dist}/YAJSW_11_0" filtering="off">
+  	  	  	  	   <fileset dir="${yajsw.dir}"> </fileset>
+  	  	</copy>
+  	<copy todir="${dist}/YAJSW_11_0/conf" filtering="off">
+  	  	  	  	   <fileset dir="${semplest.autoDeploy}" includes="wrapper.conf" />
+  	</copy>
+  	
+    
+    <!-- Add classes dir to include in jar -->
+    <copy todir="${dist}/bin" filtering="off">
+      
+      <fileset dir="${classes}">
+         <include name="semplest/**" />
+      </fileset>
+      
+     </copy>
+  	 <!-- Add properties files to properties directory -->
+  	 <copy todir="${dist}/properties" filtering="off">
+  	   <fileset dir="${properties}">
+  	      <include name="**/*.properties" />
+  	   </fileset>
+  	 </copy>
+  	<!-- Add system.properies and Service.xml -->
+  	<copy todir="${dist}/bin" filtering="off">
+  	  	  	  	  	   <fileset dir="${source}" includes="system.properties" />
+  	  	</copy>
+  	<copy todir="${dist}/bin" filtering="off">
+  	  	  	  	  	  	   <fileset dir="${source}" includes="Service.xml" />
+  	  	  	</copy>
+  	
+  <!-- Add ant dir to include in jar -->
+    <mkdir dir="${dist}/ant"/>
+    <copy todir="${dist}/ant" filtering="off">
+        <fileset dir="${install.ant}">
+         <include name="**/**" />
+      </fileset>
+     </copy>
+   <!-- Add any files to be copied to the root install directory -->
+    <copy todir="${dist}">
+      <fileset dir="${install.root.local}">
+        <include name="**" />
+      </fileset>
+    </copy>
+	</target>
+
+	<target name="build-installer" depends="compileProtocol,depJars,compile,deps" description="Create distribution executable">
+
+		<propertyregex property="service.name" input="${semplest.service}" 
+			regexp="([^\.]*)$" 
+		    select="\0" 
+		    defaultvalue="Service" 
+		    override="true"/>
+	    <!-- Run installer build with install-definition -->
+	    <echo message="Running IzPack to build the installer(s)..."/>  
+	    <izpack input="${install.xml}"
+	            output="${output.dir}/${product.short.name}-${service.name}-${product.version}-install.jar"
+	            installerType="standard"
+	            inheritAll="true"
+	            basedir="${dist}"
+	            compression="deflate"
+	            compressionlevel="9"/>
+	    <echo message="Done."/>  
+	</target>
+	  
+
+</project>
