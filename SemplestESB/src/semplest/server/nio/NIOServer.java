@@ -312,7 +312,7 @@ public class NIOServer implements Runnable
 			regData.setServiceOffered(serviceOffered);
 			// create thread for handling ping
 			ServicePingHandlerNIO pingHandler = new ServicePingHandlerNIO(this, this.esbServer, clientServiceName, serviceOffered, pingFreqMS);
-			regData.setPingHandler(pingHandler);
+			//regData.setPingHandler(pingHandler);
 			Thread pingThread = new Thread(pingHandler);
 			pingThread.setPriority(Thread.MAX_PRIORITY);
 			pingThread.start();

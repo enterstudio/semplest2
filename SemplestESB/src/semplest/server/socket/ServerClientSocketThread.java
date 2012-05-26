@@ -23,7 +23,7 @@ import semplest.server.protocol.ProtocolSocketDataObject;
 public class ServerClientSocketThread implements Runnable
 {
 	private Socket socket;
-	private ServicePingHandler pingHandler = null;
+	//private ServicePingHandler pingHandler = null;
 	private ProtocolJSON json = new ProtocolJSON();
 	private DataInputStream in = null;
 	private byte[] returnPingData = null;
@@ -59,7 +59,7 @@ public class ServerClientSocketThread implements Runnable
 
 			try
 			{
-				//logger.info("Wait for data....");
+				logger.info("Wait for data....");
 
 				int num = in.read(readBuffer.array());
 				if (num > 0)
@@ -130,7 +130,7 @@ public class ServerClientSocketThread implements Runnable
 		String clientServiceName = response.getclientServiceName();
 		String serviceOffered = response.getServiceOffered();
 		int pingFreqMS = response.getPingFrequency();
-		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered);
+		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered + ":" + pingFreqMS );
 
 		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
 		// Make sure not already registered
@@ -150,7 +150,8 @@ public class ServerClientSocketThread implements Runnable
 			regData.setRegTime(new java.util.Date());
 			regData.setServiceOffered(serviceOffered);
 			// create thread for handling ping
-			pingHandler = new ServicePingHandler(clientServiceName, serviceOffered, pingFreqMS);
+			ServicePingHandler pingHandler = new ServicePingHandler(clientServiceName, serviceOffered, pingFreqMS);
+			regData.setPingHandler(pingHandler);
 			Thread pingThread = new Thread(pingHandler);
 			pingThread.setPriority(Thread.MAX_PRIORITY);
 			pingThread.start();

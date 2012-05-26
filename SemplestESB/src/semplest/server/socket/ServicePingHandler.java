@@ -28,6 +28,7 @@ public class ServicePingHandler implements Runnable
 		this.client = service;
 		this.serviceOffered = serviceOffered;
 		this.pingFrequencyPlusDelayMS = pingFrequencyMS;
+		logger.info("client=" + client + " serviceOffed = " +serviceOffered + " pingMS=" + pingFrequencyMS );
 	}
 	public synchronized boolean handleResponse(String serviceName)
 	{
