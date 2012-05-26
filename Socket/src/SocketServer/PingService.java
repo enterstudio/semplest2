@@ -49,6 +49,7 @@ public class PingService implements Runnable
 				pingSocket.getOutputStream().write(returnData);
 				pingSocket.getOutputStream().flush();
 				//wait for return data
+				logger.info("wait for return");
 				int numBytes = pingSocket.getInputStream().read(bytes);
 				logger.info("Read bytes ServerSocket = " + numBytes + ":" + bytes.toString());
 				Thread.sleep(frequencyMS);

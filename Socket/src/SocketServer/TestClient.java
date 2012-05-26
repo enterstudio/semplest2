@@ -14,8 +14,8 @@ public class TestClient
 {
 	private static final Logger logger = Logger.getLogger(TestClient.class);
 	private static ProtocolJSON json = new ProtocolJSON();
-	private static String host = "semplest-dev1";
-	private static int port = 8888;
+	private static String host = "localhost"; //semplest-dev1";
+	private static int port = 9999;
 	public static void main(String[] args)
 	{
 		
@@ -23,7 +23,7 @@ public class TestClient
 		regdata.setHeader(ProtocolJSON.SEMplest_REGISTER);
 		regdata.setclientServiceName("T");
 		regdata.setServiceOffered("X");
-		regdata.setPingFrequency(1000);
+		regdata.setPingFrequency(10000);
 
 		// convert to JSON
 		try
@@ -44,8 +44,8 @@ public class TestClient
 				// create a Pi thread
 				
 					System.out.println("Start Pinging....with Frequency=" + 1000);
-					PingService ping = new PingService(s,host, port, "Test",
-							100);
+					PingService ping = new PingService(s,host, port, "T",
+							1000);
 					Thread pingThread = new Thread(ping);
 					pingThread.setPriority(Thread.MAX_PRIORITY);
 					pingThread.start();
