@@ -4,6 +4,7 @@
 }
 @section Title{
 Reporting}
+@using(Html.BeginForm()){
 <script type="text/javascript">
     $(document).ready(function () {
         var reportTreeView = $("#reportTreeView").kendoTreeView({
@@ -68,63 +69,7 @@ Reporting}
     $(document).on("click", ".k-in", function (e) {
         treeview.toggle($(e.target).closest(".k-item"));
     });
-    createChart();
-    function createChart() {
-        $("#chart").kendoChart({
-            theme: "metro",
-            dataSource: {
-                transport: {
-                    read: {
-                        url: "http://localhost:61294/spain-electricity.json",
-                        dataType: "json"
-                    }, error: function (e) {
-                        alert(e.xhr.responseText);
-                    }
-                },
-                sort: {
-                    field: "year",
-                    dir: "asc"
-                }
-
-            },
-            title: {
-                text: "Spain electricity production (GWh)"
-            },
-            legend: {
-                position: "top"
-            },
-            seriesDefaults: {
-                type: "line"
-            },
-            series:
-                        [{
-                            field: "nuclear",
-                            name: "Nuclear"
-                        }, {
-                            field: "hydro",
-                            name: "Hydro"
-                        }, {
-                            field: "wind",
-                            name: "Wind"
-                        }],
-            categoryAxis: {
-                field: "year",
-                labels: {
-                    rotation: -90
-                }
-            },
-            valueAxis: {
-                labels: {
-                    format: "{0:N0}"
-                },
-                majorUnit: 10000
-            },
-            tooltip: {
-                visible: true,
-                format: "{0:N0}"
-            }
-        });
-    }
+   
 </script>
 <script id="treeview-template" type="text/kendo-ui-template">
             #= item.text #
@@ -165,10 +110,8 @@ more than one engine will provide you a report with combined data.</h3>
 
             <label for="end" style="margin-left:3em">End date:</label>
             <input id="end" value="10/10/2012"/>
-<input type="button" id="btnOne" value="Get Report" class="k-button" />
- <div class="chart-wrapper" style="margin: auto;">
-                <div id="chart"></div>
-            </div>
+<input type="submit" id="btnOne" value="Get Report" class="k-button" />
+ 
 <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
 <style>
     .delete-link
@@ -187,3 +130,4 @@ more than one engine will provide you a report with combined data.</h3>
         border-radius: 5px;
     }
 </style>
+}

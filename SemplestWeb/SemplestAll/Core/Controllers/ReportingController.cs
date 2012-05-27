@@ -11,7 +11,7 @@ namespace Semplest.Core.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
-    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class ReportingController : Controller
     {
         //
@@ -26,91 +26,39 @@ namespace Semplest.Core.Controllers
             rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
             return View(rim);
         }
-
-        //
-        // GET: /Reporting/Details/5
-
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        //
-        // GET: /Reporting/Create
-
-        public ActionResult Create()
-        {
-            return View();
-        } 
-
-        //
-        // POST: /Reporting/Create
-
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Index(ReportIndexModel model)
         {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            SemplestEntities dbContext = new SemplestEntities();
+            ReportIndexModel rim = new ReportIndexModel();
+            rim.AdvertisingEngines = dbContext.AdvertisingEngines;
+            rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
+            return RedirectToAction("ReportDetails",rim);
         }
-        
-        //
-        // GET: /Reporting/Edit/5
- 
-        public ActionResult Edit(int id)
+        public ActionResult ReportDetails(ReportIndexModel model)
         {
-            return View();
+            model = new ReportIndexModel();
+            return View(model);
         }
-
-        //
-        // POST: /Reporting/Edit/5
-
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult ReportGraph()
         {
-            try
+            SemplestEntities dbContext = new SemplestEntities();
+            var reportDate = dbContext.AdvertisingEngineReportDatas.Where(t => t.KeywordBid.PromotionFK == 71 && t.KeywordBid.AdvertisingEngineFK == 2);
+            List<ReportChartModel> reports = new List<ReportChartModel>();
+            List<ReportChartModel> reports1 = new List<ReportChartModel>();
+            var grp = reportDate.GroupBy(t => t.KeywordBid.StartDate);
+            int count = grp.Count();
+            foreach (var data in grp)
             {
-                // TODO: Add update logic here
- 
-                return RedirectToAction("Index");
+                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick), Impressions = data.Sum(t => t.NumberImpressions), Date = data.Key.ToString("MM/dd/yyyy") });
             }
-            catch
+            var grp1 = reports.GroupBy(t => t.Date);
+            foreach (var data in grp1)
             {
-                return View();
+                reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks), Impressions = data.Sum(t => t.Impressions), Date = data.Key });
             }
-        }
-
-        //
-        // GET: /Reporting/Delete/5
- 
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        //
-        // POST: /Reporting/Delete/5
-
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
- 
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
+            return Json(reports1, JsonRequestBehavior.AllowGet);
         }
     }
 }

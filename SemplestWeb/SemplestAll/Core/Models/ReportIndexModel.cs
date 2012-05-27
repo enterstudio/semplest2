@@ -17,4 +17,12 @@ namespace Semplest.Core.Models
         public IEnumerable<SemplestModel.AdvertisingEngine> AdvertisingEngines;
 
     }
+
+    public class ReportChartModel
+    {
+        public string Date { get; set; }
+        public double Clicks { get; set; }
+        public double Impressions { get; set; }
+    }
+
 }
