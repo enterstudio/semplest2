@@ -29,7 +29,7 @@
 
                 },
                 title: {
-                    text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#StartDate").val() + " - " + $("#EndDate").val() + ""
+                    text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + ""
                 },
                 legend: {
                     position: "top"
@@ -75,3 +75,5 @@
 @Html.HiddenFor(t => t.SearchEngineName)
 @Html.HiddenFor(t => t.StartDate)
 @Html.HiddenFor(t => t.EndDate)
+@Html.HiddenFor(t => t.Start)
+@Html.HiddenFor(t => t.End)

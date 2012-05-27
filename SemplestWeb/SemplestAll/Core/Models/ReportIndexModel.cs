@@ -25,6 +25,23 @@ namespace Semplest.Core.Models
         public string PromotionName { get; set; }
         public string SearchEngineName { get; set; }
 
+        public string Start
+        {
+            get
+            {
+                return StartDate.ToString("MM/dd");
+
+            }
+        }
+        public string End
+        {
+            get
+            {
+                return EndDate.ToString("MM/dd");
+
+            }
+        }
+
     }
 
     public class ReportChartModel
