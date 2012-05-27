@@ -64,7 +64,7 @@ namespace Semplest.Core.Controllers
             int count = grp.Count();
             foreach (var data in grp)
             {
-                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick), Impressions = data.Sum(t => t.NumberImpressions), Date = data.Key.ToString("MM/dd/yyyy") });
+                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick), Impressions = data.Sum(t => t.NumberImpressions), Date = data.Key.ToString("MM/dd") });
             }
             var grp1 = reports.GroupBy(t => t.Date);
             foreach (var data in grp1)
