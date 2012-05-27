@@ -31,23 +31,36 @@ namespace Semplest.Core.Controllers
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
             SemplestEntities dbContext = new SemplestEntities();
-            ReportIndexModel rim = new ReportIndexModel();
-            rim.AdvertisingEngines = dbContext.AdvertisingEngines;
-            rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
-            return RedirectToAction("ReportDetails",rim);
+            model.AdvertisingEngines = dbContext.AdvertisingEngines;
+            model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
+            return RedirectToAction("ReportDetails", model);
         }
         public ActionResult ReportDetails(ReportIndexModel model)
         {
-            model = new ReportIndexModel();
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            SemplestEntities dbContext = new SemplestEntities();
+            model.AdvertisingEngines = dbContext.AdvertisingEngines;
+            model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
+            model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
-        public ActionResult ReportGraph()
+
+        public ActionResult ReportChart(ReportIndexModel model)
+        {
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            SemplestEntities dbContext = new SemplestEntities();
+            model.AdvertisingEngines = dbContext.AdvertisingEngines;
+            model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
+            model.Configuration = dbContext.Configurations.FirstOrDefault();
+            return PartialView(model);
+        }
+        public ActionResult ReportGraph(int promotionFk, int advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            var reportDate = dbContext.AdvertisingEngineReportDatas.Where(t => t.KeywordBid.PromotionFK == 71 && t.KeywordBid.AdvertisingEngineFK == 2);
+            var reportDate = dbContext.PromotionCharts.Where(t => t.PromotionFK == promotionFk && t.AdvertisingEngineFK == advertisingEngineFk);
             List<ReportChartModel> reports = new List<ReportChartModel>();
             List<ReportChartModel> reports1 = new List<ReportChartModel>();
-            var grp = reportDate.GroupBy(t => t.KeywordBid.StartDate);
+            var grp = reportDate.GroupBy(t => t.StartDate);
             int count = grp.Count();
             foreach (var data in grp)
             {

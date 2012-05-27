@@ -4,130 +4,155 @@
 }
 @section Title{
 Reporting}
-@using(Html.BeginForm()){
-<script type="text/javascript">
-    $(document).ready(function () {
-        var reportTreeView = $("#reportTreeView").kendoTreeView({
-            template: kendo.template($("#treeview-template").html()),
-            checkboxTemplate: kendo.template($("#treeview-checkbox-template").html())
-        }).data("kendoTreeView");
-        $.getJSON($('#SideBarUrl').val(), {}, function (data) {
-            for (var mainGroup in data) {
-                for (var subitem in data[mainGroup].SubItems) {
-                    var items = [];
-                    for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
-                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
+@using (Html.BeginForm())
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var reportTreeView = $("#reportTreeView").kendoTreeView({
+                template: kendo.template($("#treeview-template").html()),
+                checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()), select: onSelect
+            }).data("kendoTreeView");
+            $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+                for (var mainGroup in data) {
+                    for (var subitem in data[mainGroup].SubItems) {
+                        var items = [];
+                        for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
+                            items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, Id: data[mainGroup].SubItems[subitem].SubItems[subitem1].Id });
+                        }
+                        reportTreeView.append({ text: data[mainGroup].SubItems[subitem].Name, items: items });
                     }
-                    reportTreeView.append({ text: data[mainGroup].SubItems[subitem].Name, url: data[mainGroup].SubItems[subitem].Url, items: items });
+                }
+            });
+            function startChange() {
+                var startDate = start.value();
+
+                if (startDate) {
+                    startDate = new Date(startDate);
+                    startDate.setDate(startDate.getDate() + 1);
+                    end.min(startDate);
                 }
             }
+            function onSelect(e) {
+                var checkboxes = $(e.node).find(":checkbox");
+                alert($(checkboxes[0]).prop('checked'));
+                if (checkboxes.length > 0) {
+
+                    $(checkboxes[0]).prop('checked', 'checked')
+                }
+
+                //HINT: you can get the node text this way as well
+                var nodeText = e.node.outerText;
+            }
+            function endChange() {
+                var endDate = end.value();
+
+                if (endDate) {
+                    endDate = new Date(endDate);
+                    endDate.setDate(endDate.getDate() - 1);
+                    start.max(endDate);
+                }
+            }
+
+            var start = $("#StartDate").kendoDatePicker({
+                change: startChange
+            }).data("kendoDatePicker");
+
+            var end = $("#EndDate").kendoDatePicker({
+                change: endChange
+            }).data("kendoDatePicker");
+
+            start.max(end.value());
+            end.min(start.value());
         });
-        function startChange() {
-            var startDate = start.value();
-
-            if (startDate) {
-                startDate = new Date(startDate);
-                startDate.setDate(startDate.getDate() + 1);
-                end.min(startDate);
-            }
-        }
-
-        function endChange() {
-            var endDate = end.value();
-
-            if (endDate) {
-                endDate = new Date(endDate);
-                endDate.setDate(endDate.getDate() - 1);
-                start.max(endDate);
-            }
-        }
-
-        var start = $("#start").kendoDatePicker({
-            change: startChange
-        }).data("kendoDatePicker");
-
-        var end = $("#end").kendoDatePicker({
-            change: endChange
-        }).data("kendoDatePicker");
-
-        start.max(end.value());
-        end.min(start.value());
-    });
-    function showSerializedData() {
-        var serializedData = $("#reportTreeView input").serialize()
+        function showSerializedData() {
+            var serializedData = $("#reportTreeView input").serialize()
                         .replace(/%5B/g, "[")
                         .replace(/%5D/g, "]")
                         .replace(/&/g, "&amp;");
 
-        $("#checked-nodes").html(serializedData);
-    }
-    $(document).on("click", ".delete-link", function () {
-        var treeview = $("#treeview").data("kendoTreeView");
-        treeview.remove($(this).closest(".k-item"));
-        showSerializedData();
-    });
-    $(document).on("click", ".k-in", function (e) {
-        treeview.toggle($(e.target).closest(".k-item"));
-    });
-   
-</script>
-<script id="treeview-template" type="text/kendo-ui-template">
+            $("#checked-nodes").html(serializedData);
+        }
+        $(document).on("click", ".delete-link", function () {
+            var treeview = $("#treeview").data("kendoTreeView");
+            treeview.remove($(this).closest(".k-item"));
+            showSerializedData();
+        });
+        $(document).on("click", ".k-in", function (e) {
+            treeview.toggle($(e.target).closest(".k-item"));
+        });
+        $(document).on("click", ".checkbox", function (e) {
+            $('#PromotionFK').val(e.currentTarget.id);
+            $('#PromotionName').val(e.currentTarget.parentElement.parentElement.innerText);
+        });
+        $(document).on("click", ".engnieBox", function (e) {
+            $('#EngineFK').val(e.currentTarget.id);
+            $('#SearchEngineName').val(e.currentTarget.parentElement.parentElement.innerText);
+        });
+    </script>
+    <script id="treeview-template" type="text/kendo-ui-template">
             #= item.text #
             # if (!item.items) { #
                 <a class='delete-link' href='\#'></a>
             # } #
-</script>
-<script id="treeview-checkbox-template" type="text/kendo-ui-template">
-            # var name = "checkedFiles[" + item.id + "]"; #
+    </script>
+    <script id="treeview-checkbox-template" type="text/kendo-ui-template">
+            # var name = "checkedFiles[" + item.Id + "]"; #
+            # var id = item.Id ; #
             <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
             <!-- <input type="hidden" name="#= name #" value="false" /> -->
-            <input type="checkbox" name="#= name #" value="true" />
-</script>
-<h3>
-Please select a product group for which you would like to view reports. Selecting
-more than one product group will provide you a report with combined data.</h3>
-<div style="height: 476px;" class="k-treeview">
-    <ul id="reportTreeView">
-    </ul>
-</div>
-<h3>
-Please select a search engine for which you would like to view reports. Selecting
-more than one engine will provide you a report with combined data.</h3>
-<table>
-    @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
-    {
-        <tr>
-            <td>@Html.CheckBox("ps.PromotionPK")
-            </td>
-            <td>@item.AdvertisingEngine1
-            </td>
-        </tr>
-    }
-</table>
-<h3>Please Select Date Range</h3>
- <label for="start">Start date:</label>
-            <input id="start" value="10/10/2011" />
-
-            <label for="end" style="margin-left:3em">End date:</label>
-            <input id="end" value="10/10/2012"/>
-<input type="submit" id="btnOne" value="Get Report" class="k-button" />
- 
-<input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
-<style>
-    .delete-link
-    {
-        width: 12px;
-        height: 12px;
-        background: transparent url("../../Content/Metro/close.png") no-repeat 50% 50%;
-        overflow: hidden;
-        display: inline-block;
-        font-size: 0;
-        line-height: 0;
-        vertical-align: top;
-        margin: 2px 0 0 3px;
-        -webkit-border-radius: 5px;
-        -mox-border-radius: 5px;
-        border-radius: 5px;
-    }
-</style>
+            <input type="checkbox" id= "#= id #" name="#= name #" class="checkbox" value="true" />
+    </script>
+    <h3>
+        Please select a product group for which you would like to view reports. Selecting
+        more than one product group will provide you a report with combined data.</h3>
+    <div style="height: 476px;" class="k-treeview">
+        <ul id="reportTreeView">
+        </ul>
+    </div>
+    <h3>
+        Please select a search engine for which you would like to view reports. Selecting
+        more than one engine will provide you a report with combined data.</h3>
+    <table>
+        @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+        {
+            <tr>
+                <td>@Html.CheckBox("ps.PromotionPK", new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                </td>
+                <td>@item.AdvertisingEngine1
+                </td>
+            </tr>
+        }
+    </table>
+    <h3>
+        Please Select Date Range</h3>
+    <label for="StartDate">
+        Start date:</label>
+    @Html.TextBoxFor(t => t.StartDate)
+    
+    <label for="EndDate" style="margin-left: 3em">
+        End date:</label>
+    @Html.TextBoxFor(t => t.EndDate)
+    <input type="submit" id="btnOne" value="Get Report" class="k-button" />
+    @Html.HiddenFor(t => t.PromotionFK)
+    @Html.HiddenFor(t => t.EngineFK)
+    @Html.HiddenFor(t => t.PromotionName)
+    @Html.HiddenFor(t => t.SearchEngineName)
+    <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+    <style>
+        .delete-link
+        {
+            width: 12px;
+            height: 12px;
+            background: transparent url("../../Content/Metro/close.png") no-repeat 50% 50%;
+            overflow: hidden;
+            display: inline-block;
+            font-size: 0;
+            line-height: 0;
+            vertical-align: top;
+            margin: 2px 0 0 3px;
+            -webkit-border-radius: 5px;
+            -mox-border-radius: 5px;
+            border-radius: 5px;
+        }
+    </style>
 }

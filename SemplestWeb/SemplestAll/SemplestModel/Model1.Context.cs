@@ -87,6 +87,7 @@ namespace SemplestModel
         public DbSet<EmailType> EmailTypes { get; set; }
         public DbSet<PromotionPayment> PromotionPayments { get; set; }
         public DbSet<WebContent> WebContents { get; set; }
+        public DbSet<PromotionChart> PromotionCharts { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

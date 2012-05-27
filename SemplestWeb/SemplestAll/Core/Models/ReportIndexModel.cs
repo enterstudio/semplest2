@@ -12,9 +12,18 @@ namespace Semplest.Core.Models
         {
             using (var entities = new SemplestEntities())
                 Configuration = entities.Configurations.FirstOrDefault();
+            StartDate = DateTime.Now;
+            EndDate = DateTime.Now.AddDays(2);
         }
         public IEnumerable<SemplestModel.ProductGroup> ProductGroups;
         public IEnumerable<SemplestModel.AdvertisingEngine> AdvertisingEngines;
+
+        public int PromotionFK { get; set; }
+        public int EngineFK { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string PromotionName { get; set; }
+        public string SearchEngineName { get; set; }
 
     }
 

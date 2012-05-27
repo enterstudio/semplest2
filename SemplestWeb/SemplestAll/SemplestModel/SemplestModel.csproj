@@ -185,6 +185,9 @@
     <Compile Include="PromotionAdEngineSelected.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="PromotionChart.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="PromotionKeywordAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

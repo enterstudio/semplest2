@@ -83,6 +83,18 @@
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="PromotionChart" EntityType="SemplestModel.Store.PromotionChart" store:Type="Views" store:Schema="dbo" store:Name="PromotionChart">
+            <DefiningQuery>SELECT 
+      [PromotionChart].[AdvertisingEngineBidDataPK] AS [AdvertisingEngineBidDataPK], 
+      [PromotionChart].[NumberImpressions] AS [NumberImpressions], 
+      [PromotionChart].[NumberClick] AS [NumberClick], 
+      [PromotionChart].[AdvertisingEngineFK] AS [AdvertisingEngineFK], 
+      [PromotionChart].[PromotionFK] AS [PromotionFK], 
+      [PromotionChart].[EndDate] AS [EndDate], 
+      [PromotionChart].[StartDate] AS [StartDate], 
+      [PromotionChart].[IsActive] AS [IsActive]
+      FROM [dbo].[PromotionChart] AS [PromotionChart]</DefiningQuery>
+          </EntitySet>
           <AssociationSet Name="Address_Rel" Association="SemplestModel.Store.Address_Rel">
             <End Role="Address" EntitySet="Address" />
             <End Role="CustomerAddressAssociation" EntitySet="CustomerAddressAssociation" />
@@ -1093,6 +1105,28 @@
           <Property Name="FAQ" Type="nvarchar(max)" />
           <Property Name="AboutUs" Type="nvarchar(max)" />
           <Property Name="ContactUs" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.PromotionChart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="PromotionChart">
+          <Key>
+            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="NumberImpressions" />
+            <PropertyRef Name="NumberClick" />
+            <PropertyRef Name="AdvertisingEngineFK" />
+            <PropertyRef Name="PromotionFK" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="IsActive" />
+          </Key>
+          <Property Name="AdvertisingEngineBidDataPK" Type="int" Nullable="false" />
+          <Property Name="NumberImpressions" Type="int" Nullable="false" />
+          <Property Name="NumberClick" Type="int" Nullable="false" />
+          <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+          <Property Name="PromotionFK" Type="int" Nullable="false" />
+          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="StartDate" Type="datetime2" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="Address_Rel">
           <End Role="Address" Type="SemplestModel.Store.Address" Multiplicity="1" />
@@ -2403,6 +2437,7 @@
             <End Role="Promotion" EntitySet="Promotions" />
             <End Role="PromotionPayment" EntitySet="PromotionPayments" />
           </AssociationSet>
+          <EntitySet Name="PromotionCharts" EntityType="SemplestModel.PromotionChart" />
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -4088,6 +4123,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="PromotionChart">
+          <Key>
+            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="NumberImpressions" />
+            <PropertyRef Name="NumberClick" />
+            <PropertyRef Name="AdvertisingEngineFK" />
+            <PropertyRef Name="PromotionFK" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="IsActive" />
+          </Key>
+          <Property Type="Int32" Name="AdvertisingEngineBidDataPK" Nullable="false" />
+          <Property Type="Int32" Name="NumberImpressions" Nullable="false" />
+          <Property Type="Int32" Name="NumberClick" Nullable="false" />
+          <Property Type="Int32" Name="AdvertisingEngineFK" Nullable="false" />
+          <Property Type="Int32" Name="PromotionFK" Nullable="false" />
+          <Property Type="DateTime" Name="EndDate" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4894,6 +4948,20 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="PromotionCharts">
+            <EntityTypeMapping TypeName="SemplestModel.PromotionChart">
+              <MappingFragment StoreEntitySet="PromotionChart">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
+                <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
+                <ScalarProperty Name="NumberClick" ColumnName="NumberClick" />
+                <ScalarProperty Name="NumberImpressions" ColumnName="NumberImpressions" />
+                <ScalarProperty Name="AdvertisingEngineBidDataPK" ColumnName="AdvertisingEngineBidDataPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -4915,7 +4983,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="29">
+      <Diagram Name="SemplestModel" ZoomLevel="21">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
@@ -5551,6 +5619,7 @@
           <ConnectorPoint PointX="9.0833333333333339" PointY="31.557444661458334" />
           <ConnectorPoint PointX="9.75" PointY="31.557444661458334" />
         </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.PromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="1.5956835937499818" />
       </Diagram>
     </Diagrams>
   </Designer>
