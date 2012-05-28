@@ -59,12 +59,17 @@ public class SEMplestService
 				service.setUpConfigurationParameters();
 				logger.info("called Init Service");
 				executor = Executors.newFixedThreadPool(service.connectionData.getNumberServiceThreads());
+				/*
 				if (service.registerServiceWithESB())
 				{
 					logger.info("Registered Service");
-					
-					
 				}
+				*/
+				//Create a thread to register and ping
+				PingService ping = new PingService(service.connectionData);
+				Thread pingThread = new Thread(ping);
+				pingThread.setPriority(Thread.MAX_PRIORITY);
+				pingThread.start();
 			}
 		}
 		catch (Exception e)
@@ -137,6 +142,7 @@ public class SEMplestService
 		logger.info("Starting log4j....");
 	}
 
+	/*
 	private boolean registerServiceWithESB()
 	{
 
@@ -206,5 +212,6 @@ public class SEMplestService
 			return false;
 		}
 	}
+	*/
 
 }
