@@ -485,8 +485,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 				try
 				{
-					ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(),
-							YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+					ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(), YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
 					SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
 				}
 				catch (Exception e)
