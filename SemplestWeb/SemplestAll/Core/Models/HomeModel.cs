@@ -18,11 +18,15 @@ namespace Semplest.Core.Models
         {
             using (var entities = new SemplestEntities())
                 Configuration = entities.Configurations.FirstOrDefault();
+            CampaignSetup = new CampaignSetupModel();
+            CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
         }
     
         public ICollection<Promotion> LiveAdvertising;
         public ICollection<Promotion> UnfinishedAdvertising;
         public ICollection<ProductGroup> ProductGroups;
+
+        public CampaignSetupModel CampaignSetup { get; set; }
     }
 
     public class StaticModel : ModelBase

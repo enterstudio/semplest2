@@ -1,0 +1,72 @@
+﻿@model Semplest.Core.Models.CampaignSetupModel
+<table style="height: 400px">
+    <tr>
+        <td style="height: 200px; width: 330px; vertical-align: top">
+            <table style="margin-top: -20px;">
+                <tr>
+                    <td>
+                        <h3>
+                            Budget</h3>
+                        <p>
+                            $@Model.ProductGroup.Budget</p>
+                        @if (string.IsNullOrEmpty(@Model.ProductGroup.EndDate))
+                        {
+                            <p>
+                                Advertising continues monthly.</p>
+                        }
+                        else
+                        {
+                            <p>
+                                Advertising is running @Model.ProductGroup.StartDate thru @Model.ProductGroup.EndDate</p>
+                        }
+                        <p>
+                            To end or edit your advertising, return to My Account
+                        </p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br/>
+                        <h3>
+                            Search Engines</h3>
+                        Google MSN/Yahoo
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <br/>
+                        <h3>
+                            Where to Show Your Ad</h3>
+                        @foreach (var address in @Model.AdModelProp.Addresses)
+                        {
+                            <p>@address.Address @address.City @address.StateCodes.FirstOrDefault(t => t.StateAbbrPK == @address.StateCodeFK).StateAbbr
+                                @address.Zip @address.ProximityRadius
+                            </p>
+                        }
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td style="background-color: #fff; height: 200px; width: 300px; vertical-align: top;">
+            <div class="example" style="float: left; margin-top: -20px">
+                <div class="k-header product-view" style="border-radius: 5px 5px 5px 5px; border-style: solid;
+                    border-width: 1px; overflow: hidden; width: 270px; padding: 3px 3px 0 20px; background-position: 0 -255px;">
+                    @{
+                        foreach (var ad in @Model.AdModelProp.Ads)
+                        {   
+                        <h3 style="padding: 5px 0; font-weight: normal; border-bottom: 1px solid #999; width: 300px;">
+                            Ad 1# Preview
+                        </h3>
+                        <ul style="width: 100%; float: left; margin: 0; padding: 10px 0 30px 0;">
+                            <li style="list-style: none; padding: 5px 0;"><a target="__blank">@ad.AdTitle</a></li>
+                            <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine1</li>
+                            <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine2</li>
+                            <li style="list-style: none; padding: 5px 0;"><a style="color: green;" target="__blank">@ad.AdTitle</a></li>
+                        </ul>
+                        }
+                    }
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>

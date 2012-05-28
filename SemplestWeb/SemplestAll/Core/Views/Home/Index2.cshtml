@@ -2,161 +2,166 @@
 @section Title{
     My Account (@ViewBag.Title)
 }
-<fieldset style="padding: 0; border-width: 1px; width: 400px">
-    <legend><b>Account Actions</b></legend>
-    <br/>
-    <button class="k-button" id="btnCreatAd">
-        <span class="k-icon k-add"></span>Create Advertising</button>
-       
-</fieldset>
- <br/>
-<h3>
-    Live Advertising: scroll over to see summary, click to edit</h3>
-<table class="gradient-style">
-    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-    {
+<table style="width: 250px">
+    <tr>
+        <td>
+            <fieldset style="padding: 0; border-width: 1px; width: 250px">
+                <legend><b>Account Actions</b></legend>
+                <br />
+                <button class="k-button" id="btnCreatAd">
+                    <span class="k-icon k-add"></span>Create Advertising</button>
+            </fieldset>
+            <br />
+            <h3>
+                Live Advertising: scroll over to see summary, click to edit</h3>
+            <table class="gradient-style" style="width: 250px">
+                @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+                {
 
-        foreach (SemplestModel.Promotion p in pg.Promotions)
-        {
-            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
-            {
-                <tr>
-                    <td style="width: 200px;">
-                    @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = ".preview", @title = "Preview" })
-                    </td>
-                    @if (p.IsPaused)
+                    foreach (SemplestModel.Promotion p in pg.Promotions)
                     {
-                        <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                        if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
+                        {
+                    <tr>
+                        <td style="width: 150px;">
+                            @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
                         </td>
-                    }
-                    else
-                    {
-                        <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                        </td>
-                    }
-                </tr>    
+                        @if (p.IsPaused)
+                        {
+                            <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                        }
+                        else
+                        {
+                            <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                        }
+                    </tr>    
             
 
-            }
-        }
-    }
-</table>
- <br/>
-<h3>
-    Unfinished Advertising</h3>
-<table class="gradient-style">
-    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-    {
-        foreach (SemplestModel.Promotion p in pg.Promotions)
-        {
-            if (!p.IsLaunched  && !p.IsDeleted)
-            {
-        <tr>
-            <td style="width: 200px;">
-                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = ".preview", @title = "Preview" })
-            </td>
-            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-            </td>
-        </tr>
-            }
-        }
-    }
-</table>
-<div style="display: none;">
-    <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
-    <div class="question" ></div>
-    <input type="button" id="btnAdd" value="OK" class="k-button" />
-    <input type="button" id="btnCancel" value="Cancel" class="k-button" />
-    <input type="hidden" id="promotionId" name="promotionId" />
-    </form>
-</div>
-
-<div style="display: none;">
-    <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
-    <div class="questionP" ></div>
-    <input type="button" id="btnOkP" value="OK" class="k-button" />
-    <input type="button" id="btnCancelP" value="Cancel" class="k-button" />
-    <input type="hidden" id="promotionIdP" name="promotionIdP" />
-    </form>
-</div>
-
-<div style="display: none;">
-    <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
-    <div class="questionR" ></div>
-    <input type="button" id="btnOkR" value="OK" class="k-button" />
-    <input type="button" id="btnCancelR" value="Cancel" class="k-button" />
-    <input type="hidden" id="promotionIdR" name="promotionIdR" />
-    </form>
-</div>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-        $(".deletead").click(function (event) {
-            $('#promotionId').val(event.target.id);
-            $('.question').html("Are you sure you want to delete " + event.target.name + "?");
-            $.blockUI(({ message: $('#hiddenButton') }));
-            event.preventDefault();
-        });
-
-        $('#btnCreatAd').click(function () {
-            location.href = '../Campaign/CampaignSetup';
-            });
-
-        
-        $("#btnAdd").click(function (event) {
-            $("#hiddenButton").submit();
-        });
-
-        $("#btnCancel").click(function (event) {
-            $.unblockUI();
-        });
-        
-        $(".pausead").click(function (event) {
-            $('#promotionIdP').val(event.target.id);
-            $('.questionP').html("Are you sure you want to pause " + event.target.name + "?");
-            $.blockUI(({ message: $('#hiddenPause') }));
-            event.preventDefault();
-        });
-
-        $("#btnOkP").click(function (event) {
-            $("#hiddenPause").submit();
-        });
-
-        $("#btnCancelP").click(function (event) {
-            $.unblockUI();
-        });
-        
-
-
-        $(".resumead").click(function (event) {
-            $('#promotionIdR').val(event.target.id);
-            $('.questionR').html("Are you sure you want to resume " + event.target.name + "?");
-            $.blockUI(({ message: $('#hiddenResume') }));
-            event.preventDefault();
-        });
-
-        $("#btnOkR").click(function (event) {
-            $("#hiddenResume").submit();
-        });
-
-        $("#btnCancelR").click(function (event) {
-            $.unblockUI();
-        });
-        $(".tooltip").bind("mouseenter", function () {
-            $(this).unbind("mouseenter");
-            $(this).load("/Campaign/Preview");
-        });
-         @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-         {
-             foreach (SemplestModel.Promotion p in pg.Promotions)
-             {
-                 //if (!p.IsLaunched)
-                 {
-            
-                    @:$("#"+@p.PromotionPK).cluetip({ width:600,height:300,sticky:true, cluetipClass: 'rounded', dropShadow: false, cahce: false, positionBy: 'mouse',closePosition:    'title' });
+                        }
+                    }
                 }
-             }
-         }
-    });
+            </table>
+            <br />
+            <h3>
+                Unfinished Advertising</h3>
+            <table class="gradient-style" style="width: 250px">
+                @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
+                {
+                    foreach (SemplestModel.Promotion p in pg.Promotions)
+                    {
+                        if (!p.IsLaunched && !p.IsDeleted)
+                        {
+                    <tr>
+                        <td style="width: 150px;">
+                            @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                        </td>
+                        <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                        </td>
+                    </tr>
+                        }
+                    }
+                }
+            </table>
+            <div style="display: none;">
+                <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
+                <div class="question">
+                </div>
+                <input type="button" id="btnAdd" value="OK" class="k-button" />
+                <input type="button" id="btnCancel" value="Cancel" class="k-button" />
+                <input type="hidden" id="promotionId" name="promotionId" />
+                </form>
+            </div>
+            <div style="display: none;">
+                <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
+                <div class="questionP">
+                </div>
+                <input type="button" id="btnOkP" value="OK" class="k-button" />
+                <input type="button" id="btnCancelP" value="Cancel" class="k-button" />
+                <input type="hidden" id="promotionIdP" name="promotionIdP" />
+                </form>
+            </div>
+            <div style="display: none;">
+                <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
+                <div class="questionR">
+                </div>
+                <input type="button" id="btnOkR" value="OK" class="k-button" />
+                <input type="button" id="btnCancelR" value="Cancel" class="k-button" />
+                <input type="hidden" id="promotionIdR" name="promotionIdR" />
+                </form>
+            </div>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    $(".deletead").click(function (event) {
+                        $('#promotionId').val(event.target.id);
+                        $('.question').html("Are you sure you want to delete " + event.target.name + "?");
+                        $.blockUI(({ message: $('#hiddenButton') }));
+                        event.preventDefault();
+                    });
+
+                    $('#btnCreatAd').click(function () {
+                        location.href = '../Campaign/CampaignSetup';
+                    });
+
+
+                    $("#btnAdd").click(function (event) {
+                        $("#hiddenButton").submit();
+                    });
+
+                    $("#btnCancel").click(function (event) {
+                        $.unblockUI();
+                    });
+
+                    $(".pausead").click(function (event) {
+                        $('#promotionIdP').val(event.target.id);
+                        $('.questionP').html("Are you sure you want to pause " + event.target.name + "?");
+                        $.blockUI(({ message: $('#hiddenPause') }));
+                        event.preventDefault();
+                    });
+
+                    $("#btnOkP").click(function (event) {
+                        $("#hiddenPause").submit();
+                    });
+
+                    $("#btnCancelP").click(function (event) {
+                        $.unblockUI();
+                    });
+
+
+
+                    $(".resumead").click(function (event) {
+                        $('#promotionIdR').val(event.target.id);
+                        $('.questionR').html("Are you sure you want to resume " + event.target.name + "?");
+                        $.blockUI(({ message: $('#hiddenResume') }));
+                        event.preventDefault();
+                    });
+
+                    $("#btnOkR").click(function (event) {
+                        $("#hiddenResume").submit();
+                    });
+
+                    $("#btnCancelR").click(function (event) {
+                        $.unblockUI();
+                    });
+                    $('.preview').mouseover(function (e) {
+                        var data = { promotionId: 1 };
+                        $('#preview').load("/Campaign/Preview", { promotionId: e.currentTarget.id }, function (response, status, xhr) {
+                            if (status == "error") {
+                                var msg = "Sorry but there was an error: ";
+                                $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                            }
+                        });
+                    });
+                });
+            </script>
+            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+        </td>
+        <td style="vertical-align: top; width: 450px;">
+            <div id="preview" />
+        </td>
+    </tr>
+</table>
+<script>
+
 </script>
-<input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
