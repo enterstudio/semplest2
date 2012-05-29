@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.joda.time.DateTime;
 //import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -35,8 +36,8 @@ public class GoogleReportTools {
 		
 		BasicConfigurator.configure();
 		GoogleReportTools repT = new GoogleReportTools("SemplestBiddingTestPiperHall", 6870692153L, 1);
-		String lastDay = "2012523";
-		String firstDay = "2012522"; 
+		String firstDay = "20120525"; 
+		String lastDay = "20120525";
 		ReportObject[] reps = repT.getKeywordReportObjects(firstDay, lastDay);
 		ReportUtils.saveSerializedObject(reps, "/semplest/lluis/PiperHallTest/serializedReportGoogle");
 		reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/lluis/PiperHallTest/serializedReportGoogle");
@@ -46,7 +47,7 @@ public class GoogleReportTools {
 	
 	public GoogleReportTools(String accountNameIn, Long accountIdIn, int campaignIndex) throws Exception{
 		
-		//ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
 		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
@@ -58,8 +59,9 @@ public class GoogleReportTools {
 		google = new GoogleAdwordsServiceImpl();
 		accountId = accountIdIn;
 		accountName = accountNameIn;
+		System.out.println(accountId.toString());
 		ArrayList<HashMap<String, String>> campaignsByAccountId = google.getCampaignsByAccountId(accountId.toString(), false);
-		campaignId = new Long(campaignsByAccountId.get(0).get("Id"));
+		campaignId = new Long(campaignsByAccountId.get(campaignIndex).get("Id"));
 
 		
 		
@@ -69,7 +71,7 @@ public class GoogleReportTools {
 		ReportObject[] reps = google.getReportForAccount(accountId.toString(), firstDay, lastDay);
 		ArrayList<ReportObject> repList = new ArrayList<ReportObject>();
 		for(ReportObject rep : reps){
-			if(rep.getCampaignID().longValue() == accountId.longValue()){
+			if(rep.getCampaignID().longValue() == campaignId.longValue()){
 				repList.add(rep);
 			}
 		}

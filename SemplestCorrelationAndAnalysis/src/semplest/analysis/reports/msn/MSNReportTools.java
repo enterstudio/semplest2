@@ -42,9 +42,10 @@ public class MSNReportTools {
 	
 	public static void main(String[] args) throws Exception {
 		BasicConfigurator.configure();
-		MSNReportTools repT = new MSNReportTools("_ParkWinters",0);
-		DateTime lastDay = new DateTime(2012,5,23,0,0,0,0);
-		DateTime firstDay = new DateTime(2012,5,22,0,0,0,0);
+		MSNReportTools repT = new MSNReportTools("_PiperHall",1);
+		String firstDay = "20120526";
+		String lastDay = "20120526";
+		
 		ReportObject[] reps = repT.getKeywordReportObjects(firstDay, lastDay);
 		ReportUtils.saveSerializedObject(reps, "/semplest/lluis/PiperHallTest/serializedReport");
 		reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/lluis/PiperHallTest/serializedReport");
@@ -52,7 +53,7 @@ public class MSNReportTools {
 
 	}
 	
-	MSNReportTools(String acName, int campaignIndex) throws Exception{
+	public MSNReportTools(String acName, int campaignIndex) throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		
 		accountName = acName;
@@ -66,8 +67,12 @@ public class MSNReportTools {
 	}
 	
 	
-	public ReportObject[] getKeywordReportObjects(DateTime firstDay, DateTime lastDay) throws Exception{
+	public ReportObject[] getKeywordReportObjects(String firstDayStr, String lastDayStr) throws Exception{
 		MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+		DateTime lastDay = new DateTime(Integer.valueOf(lastDayStr.substring(0, 4)),Integer.valueOf(lastDayStr.substring(4, 6)),
+				Integer.valueOf(lastDayStr.substring(6, 8)),0,0,0,0);
+		DateTime firstDay = new DateTime(Integer.valueOf(firstDayStr.substring(0, 4)),Integer.valueOf(firstDayStr.substring(4, 6)),
+				Integer.valueOf(firstDayStr.substring(6, 8)),0,0,0,0);
 		ReportObject[] reports =  msn.getKeywordReport(accountId, campaignId, firstDay, lastDay);
 		return this.addFPCPCtoReport(reports);
 	}
@@ -87,48 +92,49 @@ public class MSNReportTools {
 		ArrayList<String> kwExact = new ArrayList<String>();
 		ArrayList<String> kwPhrase = new ArrayList<String>();
 		ArrayList<String> kwBroad = new ArrayList<String>();
-		
-		for(int i=0; i<reps.length ; i++){
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Exact.getValue()))
-				kwExact.add(reps[i].getKeyword());
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Phrase.getValue()))
-				kwPhrase.add(reps[i].getKeyword());
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Broad.getValue()))
-				kwBroad.add(reps[i].getKeyword());
-		}
-		
-		TrafficEstimatorObject teExact = null;
-		TrafficEstimatorObject tePhrase = null;
-		TrafficEstimatorObject teBroad = null;
-		
-		if(kwExact.size()>0){
-			teExact = msn.getKeywordEstimateByBids(accountId, kwExact.toArray(new String[]{}), 
-					bidsMoney, MatchType.Exact);
-		}
-		
-		if(kwPhrase.size()>0){
-			tePhrase = msn.getKeywordEstimateByBids(accountId, kwPhrase.toArray(new String[]{}), 
-					bidsMoney, MatchType.Phrase);
-		}
-		
-		if(kwBroad.size()>0){
-			teBroad = msn.getKeywordEstimateByBids(accountId, kwBroad.toArray(new String[]{}), 
-					bidsMoney, MatchType.Broad);
-		}
+		if(reps!=null){
+			for(int i=0; i<reps.length ; i++){
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Exact.getValue()))
+					kwExact.add(reps[i].getKeyword());
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Phrase.getValue()))
+					kwPhrase.add(reps[i].getKeyword());
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Broad.getValue()))
+					kwBroad.add(reps[i].getKeyword());
+			}
 			
-		for(int i=0; i<reps.length ; i++){
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Exact.getValue())){
-				reps[i]=this.getUpdateFPCPC(reps[i], teExact , MatchType.Exact.getValue());
+			
+			TrafficEstimatorObject teExact = null;
+			TrafficEstimatorObject tePhrase = null;
+			TrafficEstimatorObject teBroad = null;
+			
+			if(kwExact.size()>0){
+				teExact = msn.getKeywordEstimateByBids(accountId, kwExact.toArray(new String[]{}), 
+						bidsMoney, MatchType.Exact);
 			}
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Phrase.getValue())){
-				reps[i]=this.getUpdateFPCPC(reps[i], tePhrase ,MatchType.Phrase.getValue());
+			
+			if(kwPhrase.size()>0){
+				tePhrase = msn.getKeywordEstimateByBids(accountId, kwPhrase.toArray(new String[]{}), 
+						bidsMoney, MatchType.Phrase);
 			}
-			if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Broad.getValue())){
-				reps[i]=this.getUpdateFPCPC(reps[i], teBroad, MatchType.Broad.getValue() );
+			
+			if(kwBroad.size()>0){
+				teBroad = msn.getKeywordEstimateByBids(accountId, kwBroad.toArray(new String[]{}), 
+						bidsMoney, MatchType.Broad);
 			}
 				
+			for(int i=0; i<reps.length ; i++){
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Exact.getValue())){
+					reps[i]=this.getUpdateFPCPC(reps[i], teExact , MatchType.Exact.getValue());
+				}
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Phrase.getValue())){
+					reps[i]=this.getUpdateFPCPC(reps[i], tePhrase ,MatchType.Phrase.getValue());
+				}
+				if(reps[i].getBidMatchType().equalsIgnoreCase(MatchType.Broad.getValue())){
+					reps[i]=this.getUpdateFPCPC(reps[i], teBroad, MatchType.Broad.getValue() );
+				}
+					
+			}
 		}
-
 		return reps;
 		
 	}

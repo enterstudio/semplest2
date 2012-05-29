@@ -46,41 +46,43 @@ public class ReportUtils {
 		PrintStream psCol = new PrintStream(new FileOutputStream(new File(filePath+".col")));
 		psCol.print("AverageCPC\nAveragePosition\nFirstPageCPC\nBidAmount\nCost\nClicks\nImpressions\nQualityScore\n");
 		
-		for(ReportObject rep : reps){
-			if(rep.getAverageCPC()!=null)
-				psData.print(rep.getAverageCPC().doubleValue()/1000000+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getAveragePosition()!=null)
-				psData.print(rep.getAveragePosition()+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getFirstPageCPC()!=null)
-				psData.print(rep.getFirstPageCPC().doubleValue()/1000000+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getMicroBidAmount()!=null)
-				psData.print(rep.getMicroBidAmount().doubleValue()/1000000+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getMicroCost()!=null)
-				psData.print(rep.getMicroCost().doubleValue()/1000000+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getNumberClick()!=null)
-				psData.print(rep.getNumberClick()+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getNumberImpressions()!=null)
-				psData.print(rep.getNumberImpressions()+", ");
-			else
-				psData.print(-1+", ");
-			if(rep.getQualityScore()!=null)
-				psData.print(rep.getQualityScore()+", ");
-			else
-				psData.print(-1+", ");
-			psData.print("\n");
-			psKw.println(rep.getKeyword());
+		if(reps!=null){
+			for(ReportObject rep : reps){
+				if(rep.getAverageCPC()!=null)
+					psData.print(rep.getAverageCPC().doubleValue()/1000000+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getAveragePosition()!=null)
+					psData.print(rep.getAveragePosition()+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getFirstPageCPC()!=null)
+					psData.print(rep.getFirstPageCPC().doubleValue()/1000000+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getMicroBidAmount()!=null)
+					psData.print(rep.getMicroBidAmount().doubleValue()/1000000+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getMicroCost()!=null)
+					psData.print(rep.getMicroCost().doubleValue()/1000000+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getNumberClick()!=null)
+					psData.print(rep.getNumberClick()+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getNumberImpressions()!=null)
+					psData.print(rep.getNumberImpressions()+", ");
+				else
+					psData.print(-1+", ");
+				if(rep.getQualityScore()!=null)
+					psData.print(rep.getQualityScore()+", ");
+				else
+					psData.print(-1+", ");
+				psData.print("\n");
+				psKw.println(rep.getKeyword());
+			}
 		}
 		
 	}
