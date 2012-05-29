@@ -11,7 +11,7 @@
                 dataSource: {
                     transport: {
                         read: {
-                            url: 'http://localhost:61294/Reporting/ReportGraph',
+                            url: '@Url.Action("ReportGraph")',
                             data: {
                                 promotionFk: $("#PromotionFK").val(),
                                 advertisingEngineFk: $("#EngineFK").val(),

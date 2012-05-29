@@ -146,7 +146,7 @@
                     });
                     $('.preview').mouseover(function (e) {
                         var data = { promotionId: 1 };
-                        $('#preview').load("/Campaign/Preview", { promotionId: e.currentTarget.id }, function (response, status, xhr) {
+                        $('#preview').load('@Url.Action("Preview","Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
                             if (status == "error") {
                                 var msg = "Sorry but there was an error: ";
                                 $("#error").html(msg + xhr.status + " " + xhr.statusText);
