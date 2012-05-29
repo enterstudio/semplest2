@@ -185,9 +185,6 @@
     <Compile Include="PromotionAdEngineSelected.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="PromotionChart.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="PromotionKeywordAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
@@ -255,6 +252,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Validations\MultifieldRequired.cs" />
+    <Compile Include="vwPromotionChart.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="WebContent.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

@@ -37,6 +37,9 @@ namespace SemplestModel
         public int BillTypeFK { get; set; }
         public System.DateTime CreatedDate { get; set; }
         public Nullable<System.DateTime> EditedDate { get; set; }
+        public decimal ServiceFee { get; set; }
+        public decimal PercentOfMedia { get; set; }
+        public string InternalCustomerId { get; set; }
     
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public virtual BillType BillType { get; set; }

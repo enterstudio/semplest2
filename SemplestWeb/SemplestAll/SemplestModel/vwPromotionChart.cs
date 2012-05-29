@@ -12,15 +12,16 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class PromotionChart
+    public partial class vwPromotionChart
     {
         public int AdvertisingEngineBidDataPK { get; set; }
         public int NumberImpressions { get; set; }
         public int NumberClick { get; set; }
         public int AdvertisingEngineFK { get; set; }
         public int PromotionFK { get; set; }
-        public Nullable<System.DateTime> EndDate { get; set; }
-        public System.DateTime StartDate { get; set; }
-        public bool IsActive { get; set; }
+        public System.DateTime TransactionDate { get; set; }
+        public int MicroBidAmount { get; set; }
+        public int AveragePosition { get; set; }
+        public decimal AverageCPC { get; set; }
     }
 }
