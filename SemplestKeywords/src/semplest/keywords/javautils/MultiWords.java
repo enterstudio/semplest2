@@ -2,7 +2,13 @@
 package semplest.keywords.javautils;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class MultiWords {
 	
@@ -52,16 +58,33 @@ public class MultiWords {
 				}
 			} // for (String s : words){
 			
-			
-			for (String finalS : indexMap.keySet()){
-				if(indexMap.get(finalS) > minCount){
-					out.append(finalS+":"+indexMap.get(finalS)+"|");
+			List listEntrySet = new LinkedList(indexMap.entrySet());
+			Collections.sort(listEntrySet, new Comparator() {
+				public int compare(Object o1, Object o2) {
+					return ((Comparable) ((Map.Entry) (o2)).getValue()).compareTo(((Map.Entry) (o1)).getValue());
+				}
+			});
+
+			int k=0;
+			//for (String finalS : indexMap.keySet()){
+			Iterator it = listEntrySet.iterator();
+			while(it.hasNext()) {
+				Map.Entry entry = (Map.Entry)it.next();
+				if((Integer) entry.getValue() > minCount){
+					k++;
+					out.append(((String) entry.getKey()).replaceAll(" ", "+")+":"+entry.getValue()+" ");
+					if(k==200) {
+						break;
+					}
 				}
 			}
 			if(out.length()>0) // if there is anything written at all!
 				out.setLength(out.length()-1); // delete the last 
 			
-			list.add(out.toString());
+			
+//			list.add(out.toString()); 
+			list.add(k+" "+out.toString()); // changed for crawl level 2
+
 			
 		} // for(int i=0; i<n.length; i++){
 		
