@@ -46,16 +46,16 @@ public class ScalabilityTests {
 	
 	public static String eol = System.getProperty("line.separator");
 	
-	//private static String reportPath;
-	//private static ExecutorService executor;
-	//private static BufferedWriter out;
+	private static String reportPath;
+	private static ExecutorService executor;
+	private static BufferedWriter out;
 
 	public static void main(String args[]){
 		DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
 		Date date = new Date();
 		String now = dateFormat.format(date);
 		String reportName = "ScalabilityTestReport" + now + ".txt";
-		String reportPath = "Z:\\TestReports\\ScalabilityTest\\" + reportName;		
+		reportPath = "Z:\\TestReports\\ScalabilityTest\\" + reportName;		
 		//reportPath = "/semplest/TestReports/ScalabilityTest/" + reportName;
 		
 		try{		
@@ -78,8 +78,8 @@ public class ScalabilityTests {
 			System.out.println(" ");
 			
 			//Start to Test
-			ExecutorService executor = Executors.newCachedThreadPool();
-			//executor = Executors.newCachedThreadPool();
+			//ExecutorService executor = Executors.newCachedThreadPool();
+			executor = Executors.newCachedThreadPool();
 			int freq1 = 10; 
 			int freq2 = 20; 
 			int freq3 = 30;		
@@ -91,17 +91,21 @@ public class ScalabilityTests {
 			System.out.println("Start to test ESB...");		
 			out.append(eol + "********** ESB TEST **********" + eol);						
 			
-			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min...");
-			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min." + eol);
-			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq2, reportPath));
+			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq1 + "/min...");
+			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq1 + "/min." + eol);
+			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq1, reportPath));
 			
-			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min...");
-			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min." + eol);
-			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq3, reportPath));
+			//System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min...");
+			//out.append("Start a test thread that sends random request to ESB server with frequency of " + freq2 + "/min." + eol);
+			//executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq2, reportPath));
 			
-			System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min...");
-			out.append("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min." + eol);
-			executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq6, reportPath));
+			//System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min...");
+			//out.append("Start a test thread that sends random request to ESB server with frequency of " + freq3 + "/min." + eol);
+			//executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq3, reportPath));
+			
+			//System.out.println("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min...");
+			//out.append("Start a test thread that sends random request to ESB server with frequency of " + freq6 + "/min." + eol);
+			//executor.execute(new EsbTestThread(SERVICE_INDEX.all, freq6, reportPath));
 			
 			
 			//Test Services
@@ -122,7 +126,7 @@ public class ScalabilityTests {
 						
 			out.close();
 			
-			/*
+			
 			Signal.handle(new Signal("INT"), new SignalHandler() {
 			      public void handle(Signal sig) {
 			    	  try{
@@ -137,7 +141,7 @@ public class ScalabilityTests {
 						}
 			      }
 			    });
-			*/
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();

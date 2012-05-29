@@ -26,8 +26,6 @@ public class KeywordTestThread implements Runnable {
 	private int sleep_time;
 	private String report_path;
 	
-	private static int num_service = 4;
-	
 	private static String testUrl = "http://VMDEVJAVA1:9898/semplest";
 	
 	public KeywordTestThread(int test_frequency, String report_path) {

@@ -69,16 +69,17 @@ public class MsnServiceTest {
 			System.out.println("####################################################################################");	
 			
 			//getKeywordReport
-			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
+			//MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
+			MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 			
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getKeywordReport:");
 			
-			DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
-			DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
-			Long test_accountId = 1617055L;
-			Long test_campaignId = 130140291L;
-			ReportObject[] ret = test.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay, ReportAggregation.Daily);			
+			DateTime firstDay = new DateTime(2012,5,1,0,0,0,0);
+			DateTime lastDay = new DateTime(2012,5,17,0,0,0,0);
+			Long test_accountId = 1643878L;//1617055L;
+			Long test_campaignId = 110151829L;//130140291L;
+			ReportObject[] ret = test.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay);			
 			System.out.println("OK");
 			System.out.println("test accountId is " + test_accountId);
 			System.out.println("test campaignId is " + test_campaignId);
@@ -101,6 +102,7 @@ public class MsnServiceTest {
 				System.out.println("QualityScore = " + t.getQualityScore());
 				System.out.println("AverageCPC = " + t.getAverageCPC());
 				System.out.println("CreatedDate = " + t.getTransactionDate());
+				System.out.println("TransactionDate = " + t.getTransactionDate());
 				System.out.println(" ");
 				System.out.println("*** Print out the first transaction ***");
 				t = ret[ret.length-1];
@@ -113,7 +115,7 @@ public class MsnServiceTest {
 				System.out.println("QualityScore = " + t.getQualityScore());
 				System.out.println("AverageCPC = " + t.getAverageCPC());
 				System.out.println("CreatedDate = " + t.getTransactionDate());
-				
+				System.out.println("TransactionDate = " + t.getTransactionDate());
 				
 				/*
 				for(ReportObject t: kwreport){

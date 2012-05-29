@@ -173,7 +173,7 @@ public class DatabaseTest extends BaseDB{
 					report[0].setBidMatchType(MatchType.Exact.toString());
 					report[0].setCampaignID(5058200123L);
 					report[0].setCreatedDate(new Date());
-					report[0].setFirstPageCPC(1000000);
+					report[0].setFirstPageCPC(1000000L);
 					report[0].setKeyword(keyword);
 					report[0].setMicroBidAmount(10000000L);
 					report[0].setMicroCost(1000000L);
@@ -190,7 +190,7 @@ public class DatabaseTest extends BaseDB{
 					dup[0].setBidMatchType(MatchType.Exact.toString());
 					dup[0].setCampaignID(5058200123L);
 					dup[0].setCreatedDate(new Date());
-					dup[0].setFirstPageCPC(2000000);
+					dup[0].setFirstPageCPC(2000000L);
 					dup[0].setKeyword(keyword);
 					dup[0].setMicroBidAmount(20000000L);
 					dup[0].setMicroCost(2000000L);

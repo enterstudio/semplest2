@@ -62,7 +62,7 @@ public class EsbTestThread implements Runnable{
 		}
 		catch(Exception e){
 			e.printStackTrace();		
-			/*
+			
 			try{
 				FileWriter fstream = new FileWriter(report_path);
 				BufferedWriter out = new BufferedWriter(fstream);
@@ -72,9 +72,9 @@ public class EsbTestThread implements Runnable{
 			catch(Exception e1){
 				e1.printStackTrace();
 			}
-			*/
+			
 		}
-		/*
+		
 		finally{
 			try{
 				FileWriter fstream = new FileWriter(report_path);
@@ -86,7 +86,7 @@ public class EsbTestThread implements Runnable{
 				e.printStackTrace();
 			}
 		}
-		*/
+		
 	}
 		
 	private void Run_Service(ScalabilityTests.SERVICE_INDEX service_index){
@@ -110,7 +110,7 @@ public class EsbTestThread implements Runnable{
 					DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 					Long test_accountId = 1617055L;
 					Long test_campaignId = 130140291L;
-					ReportObject[] ret = t.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay, ReportAggregation.Daily);
+					ReportObject[] ret = t.getKeywordReport(test_accountId, test_campaignId, firstDay, lastDay);
 				}
 				catch(Exception e){
 					e.printStackTrace();
