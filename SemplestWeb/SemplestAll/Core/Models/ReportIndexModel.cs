@@ -17,6 +17,7 @@ namespace Semplest.Core.Models
         }
         public IEnumerable<SemplestModel.ProductGroup> ProductGroups;
         public IEnumerable<SemplestModel.AdvertisingEngine> AdvertisingEngines;
+        public IEnumerable<SemplestModel.vwPromotionChart> Detail;
 
         public int PromotionFK { get; set; }
         public int EngineFK { get; set; }

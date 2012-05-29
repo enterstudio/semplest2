@@ -96,7 +96,8 @@
       [vwPromotionChart].[AveragePosition] AS [AveragePosition], 
       [vwPromotionChart].[AverageCPC] AS [AverageCPC], 
       [vwPromotionChart].[AdvertisingEngineBidDataPK] AS [AdvertisingEngineBidDataPK], 
-      [vwPromotionChart].[UserPK] AS [UserPK]
+      [vwPromotionChart].[UserPK] AS [UserPK], 
+      [vwPromotionChart].[IsActive] AS [IsActive]
       FROM [dbo].[vwPromotionChart] AS [vwPromotionChart]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="Address_Rel" Association="SemplestModel.Store.Address_Rel">
@@ -1130,6 +1131,7 @@
             <PropertyRef Name="AverageCPC" />
             <PropertyRef Name="AdvertisingEngineBidDataPK" />
             <PropertyRef Name="UserPK" />
+            <PropertyRef Name="IsActive" />
           </Key>
           <Property Name="Keyword" Type="nvarchar" Nullable="false" MaxLength="250" />
           <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
@@ -1143,6 +1145,7 @@
           <Property Name="AverageCPC" Type="money" Nullable="false" />
           <Property Name="AdvertisingEngineBidDataPK" Type="int" Nullable="false" />
           <Property Name="UserPK" Type="int" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="Address_Rel">
           <End Role="Address" Type="SemplestModel.Store.Address" Multiplicity="1" />
@@ -4156,6 +4159,7 @@
             <PropertyRef Name="AverageCPC" />
             <PropertyRef Name="AdvertisingEngineBidDataPK" />
             <PropertyRef Name="UserPK" />
+            <PropertyRef Name="IsActive" />
           </Key>
           <Property Type="String" Name="Keyword" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
@@ -4169,6 +4173,7 @@
           <Property Type="Decimal" Name="AverageCPC" Nullable="false" Precision="19" Scale="4" />
           <Property Type="Int32" Name="AdvertisingEngineBidDataPK" Nullable="false" />
           <Property Type="Int32" Name="UserPK" Nullable="false" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -4982,6 +4987,7 @@
           <EntitySetMapping Name="vwPromotionCharts">
             <EntityTypeMapping TypeName="SemplestModel.vwPromotionChart">
               <MappingFragment StoreEntitySet="vwPromotionChart">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
                 <ScalarProperty Name="UserPK" ColumnName="UserPK" />
                 <ScalarProperty Name="AdvertisingEngineBidDataPK" ColumnName="AdvertisingEngineBidDataPK" />
                 <ScalarProperty Name="AverageCPC" ColumnName="AverageCPC" />
@@ -5652,7 +5658,7 @@
           <ConnectorPoint PointX="9.0833333333333339" PointY="31.557444661458334" />
           <ConnectorPoint PointX="9.75" PointY="31.557444661458334" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="3.3263964843749818" />
+        <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="3.5186979166666674" />
       </Diagram>
     </Diagrams>
   </Designer>

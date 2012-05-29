@@ -41,6 +41,7 @@ namespace Semplest.Core.Controllers
             SemplestEntities dbContext = new SemplestEntities();
             model.AdvertisingEngines = dbContext.AdvertisingEngines;
             model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
+            model.Detail = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword);
             model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
@@ -57,7 +58,10 @@ namespace Semplest.Core.Controllers
         public ActionResult ReportGraph(int promotionFk, int advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            var reportDate = dbContext.vwPromotionCharts.Where(t => t.PromotionFK == promotionFk && t.AdvertisingEngineFK == advertisingEngineFk);
+            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            promotionFk = 71;
+            userid = 60;
+            var reportDate = dbContext.vwPromotionCharts.Where(t => t.PromotionFK == promotionFk && t.AdvertisingEngineFK == advertisingEngineFk && t.UserPK == userid);
             List<ReportChartModel> reports = new List<ReportChartModel>();
             List<ReportChartModel> reports1 = new List<ReportChartModel>();
             var grp = reportDate.GroupBy(t => t.TransactionDate);

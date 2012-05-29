@@ -26,5 +26,6 @@ namespace SemplestModel
         public decimal AverageCPC { get; set; }
         public int AdvertisingEngineBidDataPK { get; set; }
         public int UserPK { get; set; }
+        public bool IsActive { get; set; }
     }
 }
