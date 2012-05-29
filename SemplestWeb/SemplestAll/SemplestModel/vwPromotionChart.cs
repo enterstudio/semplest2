@@ -14,7 +14,8 @@ namespace SemplestModel
     
     public partial class vwPromotionChart
     {
-        public int AdvertisingEngineBidDataPK { get; set; }
+        public string Keyword { get; set; }
+        public string PromotionName { get; set; }
         public int NumberImpressions { get; set; }
         public int NumberClick { get; set; }
         public int AdvertisingEngineFK { get; set; }
@@ -23,5 +24,7 @@ namespace SemplestModel
         public int MicroBidAmount { get; set; }
         public int AveragePosition { get; set; }
         public decimal AverageCPC { get; set; }
+        public int AdvertisingEngineBidDataPK { get; set; }
+        public int UserPK { get; set; }
     }
 }
