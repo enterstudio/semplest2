@@ -57,10 +57,10 @@ namespace Semplest.Core.Controllers
         public ActionResult ReportGraph(int promotionFk, int advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            var reportDate = dbContext.PromotionCharts.Where(t => t.PromotionFK == promotionFk && t.AdvertisingEngineFK == advertisingEngineFk);
+            var reportDate = dbContext.vwPromotionCharts.Where(t => t.PromotionFK == promotionFk && t.AdvertisingEngineFK == advertisingEngineFk);
             List<ReportChartModel> reports = new List<ReportChartModel>();
             List<ReportChartModel> reports1 = new List<ReportChartModel>();
-            var grp = reportDate.GroupBy(t => t.StartDate);
+            var grp = reportDate.GroupBy(t => t.TransactionDate);
             int count = grp.Count();
             foreach (var data in grp)
             {
