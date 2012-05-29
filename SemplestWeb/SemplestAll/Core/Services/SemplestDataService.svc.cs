@@ -558,7 +558,7 @@ namespace SemplestWebApp.Services
                                     CreatedDate = DateTime.Now,
                                     IsActive = true,
                                     IsDeleted = false,
-                                    IsNegative = false,
+                                    IsNegative = true,
                                     SemplestProbability = 0,
                                     IsTargetMSN = false,
                                     IsTargetGoogle = false
