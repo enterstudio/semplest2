@@ -593,4 +593,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return null;
 	}
 
+	@Override
+	public Boolean AddAd(Integer customerID, Integer promotionID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean AdSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
