@@ -13,25 +13,29 @@ public class TestServiceImpl implements TestServiceInterface
 	{
 		
 		long start = System.currentTimeMillis();
-		for (int i =0; i < 2000; i++) doWork();
+		//for (int i =0; i < 2000; i++) doWork();		
+		// nan's test
+		try {
+			for (int i =0; i < 500; i++) doWork();
+			Thread.sleep(150);
+			for (int i =0; i < 500; i++) doWork();
+			Thread.sleep(150);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		
 		long total =  System.currentTimeMillis() - start;
 		//interpret the jsoStr for the method
 		return "Result from " + jsonStr + " time ms=" + String.valueOf(total);
 	}
 	private void doWork()
 	{
-		for (int i=0; i<5000; i++) //i<100000
+		for (int i=0; i<100000; i++) 
 		{
 			double x  = 1.0;
 			x = Math.pow(x, 2.0);
 		}
 		
-		try {
-			Thread.sleep(300);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	@Override
 	public void initializeService(String input) throws Exception {
