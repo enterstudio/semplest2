@@ -939,8 +939,7 @@ namespace Semplest.Admin.Controllers
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
-
-
+                //revisit 
                 ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
                 Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillTypeFK = m.SelectedBillTypeID, ProductGroupCycleType = pgct });
