@@ -85,7 +85,8 @@
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="vwPromotionChart" EntityType="SemplestModel.Store.vwPromotionChart" store:Type="Views" store:Schema="dbo" store:Name="vwPromotionChart">
             <DefiningQuery>SELECT 
-      [vwPromotionChart].[AdvertisingEngineBidDataPK] AS [AdvertisingEngineBidDataPK], 
+      [vwPromotionChart].[Keyword] AS [Keyword], 
+      [vwPromotionChart].[PromotionName] AS [PromotionName], 
       [vwPromotionChart].[NumberImpressions] AS [NumberImpressions], 
       [vwPromotionChart].[NumberClick] AS [NumberClick], 
       [vwPromotionChart].[AdvertisingEngineFK] AS [AdvertisingEngineFK], 
@@ -93,7 +94,9 @@
       [vwPromotionChart].[TransactionDate] AS [TransactionDate], 
       [vwPromotionChart].[MicroBidAmount] AS [MicroBidAmount], 
       [vwPromotionChart].[AveragePosition] AS [AveragePosition], 
-      [vwPromotionChart].[AverageCPC] AS [AverageCPC]
+      [vwPromotionChart].[AverageCPC] AS [AverageCPC], 
+      [vwPromotionChart].[AdvertisingEngineBidDataPK] AS [AdvertisingEngineBidDataPK], 
+      [vwPromotionChart].[UserPK] AS [UserPK]
       FROM [dbo].[vwPromotionChart] AS [vwPromotionChart]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="Address_Rel" Association="SemplestModel.Store.Address_Rel">
@@ -1115,7 +1118,8 @@
       -->
         <EntityType Name="vwPromotionChart">
           <Key>
-            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="Keyword" />
+            <PropertyRef Name="PromotionName" />
             <PropertyRef Name="NumberImpressions" />
             <PropertyRef Name="NumberClick" />
             <PropertyRef Name="AdvertisingEngineFK" />
@@ -1124,8 +1128,11 @@
             <PropertyRef Name="MicroBidAmount" />
             <PropertyRef Name="AveragePosition" />
             <PropertyRef Name="AverageCPC" />
+            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="UserPK" />
           </Key>
-          <Property Name="AdvertisingEngineBidDataPK" Type="int" Nullable="false" />
+          <Property Name="Keyword" Type="nvarchar" Nullable="false" MaxLength="250" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
           <Property Name="NumberImpressions" Type="int" Nullable="false" />
           <Property Name="NumberClick" Type="int" Nullable="false" />
           <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
@@ -1134,6 +1141,8 @@
           <Property Name="MicroBidAmount" Type="int" Nullable="false" />
           <Property Name="AveragePosition" Type="int" Nullable="false" />
           <Property Name="AverageCPC" Type="money" Nullable="false" />
+          <Property Name="AdvertisingEngineBidDataPK" Type="int" Nullable="false" />
+          <Property Name="UserPK" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="Address_Rel">
           <End Role="Address" Type="SemplestModel.Store.Address" Multiplicity="1" />
@@ -4135,7 +4144,8 @@
         </Association>
         <EntityType Name="vwPromotionChart">
           <Key>
-            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="Keyword" />
+            <PropertyRef Name="PromotionName" />
             <PropertyRef Name="NumberImpressions" />
             <PropertyRef Name="NumberClick" />
             <PropertyRef Name="AdvertisingEngineFK" />
@@ -4144,8 +4154,11 @@
             <PropertyRef Name="MicroBidAmount" />
             <PropertyRef Name="AveragePosition" />
             <PropertyRef Name="AverageCPC" />
+            <PropertyRef Name="AdvertisingEngineBidDataPK" />
+            <PropertyRef Name="UserPK" />
           </Key>
-          <Property Type="Int32" Name="AdvertisingEngineBidDataPK" Nullable="false" />
+          <Property Type="String" Name="Keyword" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="NumberImpressions" Nullable="false" />
           <Property Type="Int32" Name="NumberClick" Nullable="false" />
           <Property Type="Int32" Name="AdvertisingEngineFK" Nullable="false" />
@@ -4154,6 +4167,8 @@
           <Property Type="Int32" Name="MicroBidAmount" Nullable="false" />
           <Property Type="Int32" Name="AveragePosition" Nullable="false" />
           <Property Type="Decimal" Name="AverageCPC" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="AdvertisingEngineBidDataPK" Nullable="false" />
+          <Property Type="Int32" Name="UserPK" Nullable="false" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -4967,6 +4982,8 @@
           <EntitySetMapping Name="vwPromotionCharts">
             <EntityTypeMapping TypeName="SemplestModel.vwPromotionChart">
               <MappingFragment StoreEntitySet="vwPromotionChart">
+                <ScalarProperty Name="UserPK" ColumnName="UserPK" />
+                <ScalarProperty Name="AdvertisingEngineBidDataPK" ColumnName="AdvertisingEngineBidDataPK" />
                 <ScalarProperty Name="AverageCPC" ColumnName="AverageCPC" />
                 <ScalarProperty Name="AveragePosition" ColumnName="AveragePosition" />
                 <ScalarProperty Name="MicroBidAmount" ColumnName="MicroBidAmount" />
@@ -4975,7 +4992,8 @@
                 <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
                 <ScalarProperty Name="NumberClick" ColumnName="NumberClick" />
                 <ScalarProperty Name="NumberImpressions" ColumnName="NumberImpressions" />
-                <ScalarProperty Name="AdvertisingEngineBidDataPK" ColumnName="AdvertisingEngineBidDataPK" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="Keyword" ColumnName="Keyword" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -5000,7 +5018,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="21">
+      <Diagram Name="SemplestModel" ZoomLevel="25">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
@@ -5634,7 +5652,7 @@
           <ConnectorPoint PointX="9.0833333333333339" PointY="31.557444661458334" />
           <ConnectorPoint PointX="9.75" PointY="31.557444661458334" />
         </AssociationConnector>
-        <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="7.75" Height="2.7494921874999818" />
+        <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="3.3263964843749818" />
       </Diagram>
     </Diagrams>
   </Designer>
