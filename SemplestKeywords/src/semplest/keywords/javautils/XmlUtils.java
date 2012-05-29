@@ -12,7 +12,6 @@ import java.net.URL;
 import java.util.Comparator;
 
 // Uses Google's autocomplete service to get keyword suggestions and volume
-
 public class XmlUtils {
 
   // - The interface ----------
@@ -27,8 +26,9 @@ public class XmlUtils {
       for(int i = 0; i < l.getLength(); i++ ){
         Element s = (Element) l.item( i ).getFirstChild();
         Element n = (Element) l.item( i ).getLastChild();
-        res.put( s.getAttribute( "data" ), 
-            Integer.decode( n.getAttribute( "int" )));
+        String  da= s.getAttribute("data"); 
+        String  in= n.getAttribute("int").equals("") ?"0": n.getAttribute("int");
+        res.put( da, Integer.decode( in ));
       }
     } catch (Exception e) { e.printStackTrace(); }
     return res;
@@ -38,6 +38,7 @@ public class XmlUtils {
   // Number of search results for term
   public static int getPopularity( String query ){
     Map<String,Integer> r = autoCompletes( query );
+    if( r.isEmpty() ) return 0;
     if( r.containsKey( query)) return r.get( query );
     String k = java.util.Collections.min( r.keySet(),
       new Comparator<String>(){ 
