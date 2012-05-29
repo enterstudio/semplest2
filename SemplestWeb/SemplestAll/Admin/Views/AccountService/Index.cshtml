@@ -47,7 +47,8 @@ Account Service
     <li><a href="#">Enable</a> </li>
     <li><a href="#">Pause</a> </li>
     <li><a href="#">Issue Refund</a> </li>
-    <li><a href="#">Excel Import Customer Data</a> </li>
+    <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })
+    @*<a href="#">Excel Import Customer Data</a> </li>*@
     @*<li><a href="url">Edit Start or End Date</a> </li>*@
     <li><br /></li>
     <li><h2>Reporting</h2></li>
