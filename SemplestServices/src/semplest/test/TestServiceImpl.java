@@ -20,10 +20,17 @@ public class TestServiceImpl implements TestServiceInterface
 	}
 	private void doWork()
 	{
-		for (int i=0; i<10000; i++)
+		for (int i=0; i<5000; i++) //i<100000
 		{
 			double x  = 1.0;
 			x = Math.pow(x, 2.0);
+		}
+		
+		try {
+			Thread.sleep(300);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	@Override
