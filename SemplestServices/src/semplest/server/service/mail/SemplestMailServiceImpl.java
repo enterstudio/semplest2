@@ -43,7 +43,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	@Override
 	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt) throws Exception
 	{
-		
+		logger.debug("SendMail" + "- subject:" + subject +"; from: " + from + "; recipient: " + recipient + "; msgTxt: " + msgTxt);
 		if (sessionObj.getSession() == null)
 		{
 			throw new Exception("Session is Null");
