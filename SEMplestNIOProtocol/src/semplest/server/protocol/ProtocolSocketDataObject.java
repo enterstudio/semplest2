@@ -13,6 +13,7 @@ public class ProtocolSocketDataObject
 	private String ServiceRecQueueName = null;
 	private String ServiceOffered = null;
 	private int pingFrequency;
+	private String error = null;
 	
 	public byte getheader()
 	{
@@ -78,6 +79,14 @@ public class ProtocolSocketDataObject
 	public void setPingFrequency(int pingFrequency)
 	{
 		this.pingFrequency = pingFrequency;
+	}
+	public String getError()
+	{
+		return error;
+	}
+	public void setError(String error)
+	{
+		this.error = error;
 	}
 	
 }

@@ -1,15 +1,9 @@
 package semplest.server.service;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
-import semplest.client.nio.NIOClient;
-import semplest.client.nio.NIOResponseHandler;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
@@ -185,6 +179,11 @@ public class PingService implements Runnable
 				mq.createConsumer(data.getServiceRecQueueName());
 
 				logger.info("Service registered " + data.getServiceSendQueueName());
+			}
+			else if (data.getheader() == ProtocolJSON.SEMplest_ERROR)
+			{
+				logger.error("ERROR Returned from ESB " + data.getError());
+				return false;
 			}
 			else
 			{
