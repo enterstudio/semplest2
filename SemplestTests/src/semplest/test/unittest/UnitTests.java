@@ -65,8 +65,8 @@ public class UnitTests {
 		Date date = new Date();
 		now = dateFormat.format(date);
 		String reportName = "UnitTestReport" + now + ".txt";
-		//String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
-		String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
+		String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
+		//String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
 		
 		try{
 			//Create Report Header						
@@ -169,7 +169,7 @@ public class UnitTests {
 		unitTest.sendEmail(subject, "nan@semplest.com", "nan@semplest.com", summary);
 		if(numAllErrs > 0){
 			//if test failed, send report to Mitch
-			//unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
+			unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
 		}
         
 	}	
