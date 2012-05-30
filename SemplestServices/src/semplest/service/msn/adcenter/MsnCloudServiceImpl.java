@@ -3136,7 +3136,27 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			throw new Exception(e);
 		}		
 	}
-
+	
+	public Double[] getAdGroupDefaultBidValue(Long accountId, Long campaignId, Long adGroupId) throws AdApiFaultDetail, ApiFaultDetail, RemoteException{
+		
+		Double[] defaultBids = new Double[3];
+		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		GetAdGroupsByCampaignIdRequest adGroupReq = new GetAdGroupsByCampaignIdRequest();
+		adGroupReq.setCampaignId(campaignId);
+		GetAdGroupsByCampaignIdResponse adGroupResp= campaignManagement.getAdGroupsByCampaignId(adGroupReq);
+		AdGroup[] adGroups = adGroupResp.getAdGroups();
+		for(AdGroup adG : adGroups){
+			if(adG.getId().equals(adGroupId)){
+				defaultBids[0] = adG.getExactMatchBid().getAmount();
+				defaultBids[1] = adG.getPhraseMatchBid().getAmount();
+				defaultBids[2] = adG.getBroadMatchBid().getAmount();
+			}
+		}
+		
+		return defaultBids;
+		
+	}
+	
 	@Override
 	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws Exception{
 			
@@ -3145,23 +3165,36 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		AdGroup[] adGroups = this.getAdGroupsByCampaignId(accountId,campaignId);
 		if(adGroups.length>1){throw new Exception("More than one adgroup in this campaign");}
 		Long adGroupId = adGroups[0].getId();
+		Double[] defaultBids = this.getAdGroupDefaultBidValue(accountId, campaignId, adGroupId);
 		Keyword[] keywords = this.getKeywordByAdGroupId(accountId, adGroupId);
 		
 		//getReportData
 		Map<String, String[]> ret2 = this.getReportData(ret1, accountId);
 		ArrayList<ReportObject> reportObjectList = new  ArrayList<ReportObject>();
+		
 		if(ret2.get("keyword") != null){
 			for(int i = 0; i < ret2.get("keyword").length; i++){
 				ReportObject data = new ReportObject();
 				data.setAccountID(accountId);
 				data.setCampaignID(Long.valueOf(ret2.get("campaignid")[i]));
 				data.setKeyword(ret2.get("keyword")[i]);
-				Double maxcpc = new Double(ret2.get("currentmaxcpc")[i]);
+				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
+				Double maxcpc = 0.0;
+				String maxCpcStr = ret2.get("currentmaxcpc")[i];
+				if(maxCpcStr.length()>0){
+					maxcpc = new Double(maxCpcStr);
+				}else{
+					if(data.getBidMatchType().equalsIgnoreCase("exact"))
+						maxcpc = defaultBids[0];
+					if(data.getBidMatchType().equalsIgnoreCase("phrase"))
+						maxcpc = defaultBids[1];
+					if(data.getBidMatchType().equalsIgnoreCase("broad"))
+						maxcpc = defaultBids[2];
+				}
 				maxcpc = maxcpc*1000000;
+				data.setMicroBidAmount(maxcpc.longValue());
 				Double microCost = new Double(ret2.get("spend")[i]);
 				microCost = microCost*1000000;
-				data.setMicroBidAmount(maxcpc.longValue());
-				data.setBidMatchType(ret2.get("biddedmatchtype")[i]);
 				data.setNumberImpressions(Integer.valueOf(ret2.get("impressions")[i]));
 				data.setNumberClick(Integer.valueOf(ret2.get("clicks")[i]));
 				data.setAveragePosition(Float.valueOf(ret2.get("averageposition")[i]));
@@ -3177,7 +3210,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 						data.setApprovalStatus(keywords[j].getEditorialStatus().getValue());
 					}
 				}
-				reportObjectList.add(data);			
+				reportObjectList.add(data);	
 			}
 		}
 		
