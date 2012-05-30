@@ -65,4 +65,11 @@ public class GeoTargetObject
 	{
 		this.radius = radius;
 	}
+	@Override
+	public String toString()
+	{
+		return "GeoTargetObject [address=" + address + ", city=" + city + ", state=" + state + ", zip=" + zip + ", latitude=" + latitude
+				+ ", longitude=" + longitude + ", radius=" + radius + "]";
+	}
+	
 }

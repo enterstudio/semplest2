@@ -2,10 +2,11 @@ package semplest.services.client.interfaces;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -85,7 +86,8 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 
 	// GeoTargeting
 	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
-	
+	public abstract Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;
+	 
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService
 	 */
