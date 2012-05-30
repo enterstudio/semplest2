@@ -16,10 +16,7 @@ public class TestServiceImpl implements TestServiceInterface
 		//for (int i =0; i < 2000; i++) doWork();		
 		// nan's test
 		try {
-			for (int i =0; i < 500; i++) doWork();
-			Thread.sleep(150);
-			for (int i =0; i < 500; i++) doWork();
-			Thread.sleep(150);
+			Thread.sleep(600);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
