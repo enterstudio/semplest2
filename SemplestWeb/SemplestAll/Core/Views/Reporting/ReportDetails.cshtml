@@ -2,14 +2,18 @@
 @model Semplest.Core.Models.ReportIndexModel
 @Html.Partial("ReportChart", @Model)
 <br/>
+<div id="summaryGrid">
+</div>
+<br><br>
 <div id="grid1">
 </div>
+
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#grid1").kendoGrid({
+        $("#summaryGrid").kendoGrid({
             dataSource: {
                 transport: {
-                    read: '@Url.Action("ReportDetailsGrid")',
+                    read: '@Url.Action("ReportSummaryGrid")',
                     error: function (e) {
                         alert(e);
                     }
@@ -18,31 +22,33 @@
                     model: {
                         fields: {
                             AdvertisingEngineBidDataPK: { type: "number" },
-                            Keyword: { type: "string" },
+                            KeyWord: { type: "string" },
                             IsActive: { type: "boolean" },
                             NumberImpressions: { type: "number" },
                             NumberClick: { type: "number" },
-                            AveragePosition: { type: "number" }
+                            AveragePosition: { type: "number" },
+                            AmountSpent: { type: "number" },
+                            CPC: { type: "number" }
                         }
                     }
                 }
             },
-            height: 250,
+            height: 55,
             filterable: true,
-            sortable: true,
+            scrollable:false,
             columns: [
-                        {
-                            field: "AdvertisingEngineBidDataPK",
-                            filterable: false,
-                            width: 1
+                     
+                      {    
+                      field: "KeyWord",
+                      title: "Promotion",
                         },
-                      "Keyword",
                         {
                             field: "IsActive",
                             title: "Status",
                             width: 60
                         },
                         {
+                            field: "AmountSpent",
                             title: "Amount Spent"
                         },
                 {
@@ -56,10 +62,11 @@
                     width: 60
                 },
                 {
-                    field: "NumberClick",
+                    field: "SearchCTR",
                     title: "Search CTR"
                 },
                 {
+                    field: "CPC",
                     title: "CPC"
                 },
                 {
@@ -67,6 +74,69 @@
                     field: "AveragePosition"
                 }
             ]
-        });
+            });
+
+
+            $("#grid1").kendoGrid({
+                dataSource: {
+                    transport: {
+                        read: '@Url.Action("ReportDetailsGrid")',
+                        error: function (e) {
+                            alert(e);
+                        }
+                    },
+                    schema: {
+                        model: {
+                            fields: {
+                                AdvertisingEngineBidDataPK: { type: "number" },
+                                KeyWord: { type: "string" },
+                                IsActive: { type: "boolean" },
+                                NumberImpressions: { type: "number" },
+                                NumberClick: { type: "number" },
+                                AveragePosition: { type: "number" },
+                                AmountSpent: { type: "number" },
+                                CPC: { type: "number" }
+                            }
+                        }
+                    }
+                },
+                height: 250,
+                filterable: true,
+                sortable: true,
+                columns: [
+                      "KeyWord",
+                        {
+                            field: "IsActive",
+                            title: "Status",
+                            width: 60
+                        },
+                        {
+                            field: "AmountSpent",
+                            title: "Amount Spent"
+                        },
+                {
+                    field: "NumberImpressions",
+                    title: "Impr.",
+                    width: 60
+                },
+                {
+                    field: "NumberClick",
+                    title: "Clicks",
+                    width: 60
+                },
+                {
+                    field: "SearchCTR",
+                    title: "Search CTR"
+                },
+                {
+                    field: "CPC",
+                    title: "CPC"
+                },
+                {
+                    title: "Avg. Position",
+                    field: "AveragePosition"
+                }
+            ]
+            });
     });
 </script>

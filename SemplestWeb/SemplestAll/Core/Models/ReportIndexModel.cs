@@ -6,6 +6,19 @@ using SemplestModel;
 
 namespace Semplest.Core.Models
 {
+
+    public class vwPromotionChartModel
+    {
+        public string KeyWord;
+        public bool IsActive;
+        public decimal AmountSpent;
+        public double NumberImpressions;
+        public double NumberClick;
+        public decimal SearchCTR;
+        public decimal CPC;
+        public double AveragePosition;
+    }
+
     public class ReportIndexModel : ModelBase
     {
         public ReportIndexModel()

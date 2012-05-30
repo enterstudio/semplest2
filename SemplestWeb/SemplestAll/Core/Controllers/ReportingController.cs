@@ -45,10 +45,49 @@ namespace Semplest.Core.Controllers
             model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
+        
         public ActionResult ReportDetailsGrid()
         {
             var dbContext = new SemplestEntities();
-            return Json(dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword), JsonRequestBehavior.AllowGet);
+            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
+            List<vwPromotionChartModel> reports = new List<vwPromotionChartModel>();
+            foreach (var v in grp)
+            {
+                reports.Add(new vwPromotionChartModel
+                { 
+                                        AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC) ,
+                                        NumberImpressions = v.Sum(t => t.NumberImpressions),
+                                        KeyWord = v.Key.Keyword,
+                                        NumberClick = v.Sum(t => t.NumberClick), 
+                                        SearchCTR = v.Sum(t => t.NumberClick * 100 / t.NumberImpressions),
+                                        CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
+                                        AveragePosition = v.Sum(t => t.AveragePosition),
+                                        IsActive = v.FirstOrDefault().IsActive
+                                        }); 
+                }
+            return Json(reports, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ReportSummaryGrid()
+        {
+            var dbContext = new SemplestEntities();
+            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
+            List<vwPromotionChartModel> reports = new List<vwPromotionChartModel>();
+            foreach (var v in grp)
+            {
+                reports.Add(new vwPromotionChartModel
+                {
+                    AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC),
+                    NumberImpressions = v.Sum(t => t.NumberImpressions),
+                    KeyWord = v.FirstOrDefault().PromotionName,
+                    NumberClick = v.Sum(t => t.NumberClick),
+                    SearchCTR = v.Sum(t => t.NumberClick * 100 / t.NumberImpressions),
+                    CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
+                    AveragePosition = v.Sum(t => t.AveragePosition),
+                    IsActive = v.FirstOrDefault().IsActive
+                });
+            }
+            return Json(reports, JsonRequestBehavior.AllowGet);
         }​​
         public ActionResult ReportChart(ReportIndexModel model)
         {
