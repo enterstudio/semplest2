@@ -44,6 +44,9 @@ public class StoreFPCPCReport {
 		ArrayList<String> fpcpcGoogle = repTGoogle.getFPCPCreportForKeywords(keywords,"/home/lluis/Downloads/Keywordreport.csv" );
 		ReportUtils.saveArrayListString(fpcpcGoogle, args[5]+args[6]+"fpcpcReportGoogle.csv");
 		
+		ReportUtils.combineFPCPCReports(args[5]+args[6]+"fpcpcReportMSN.csv", 
+				args[5]+args[6]+"fpcpcReportGoogle.csv", args[5]+args[6]+"fpcpcReportCombined.csv");
+		
 		
 	}
 
