@@ -18,7 +18,7 @@ public class SCtest {
 			
 			//Test Service
 			
-			executor.execute(new ServiceTestThread(50));	
+			executor.execute(new ServiceTestThread(700));	
 			//Thread.sleep(10);
 			//executor.execute(new ServiceTestThread(50));
 			//Thread.sleep(10);

@@ -65,7 +65,8 @@ public class UnitTests {
 		Date date = new Date();
 		now = dateFormat.format(date);
 		String reportName = "UnitTestReport" + now + ".txt";
-		String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
+		//String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
+		String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
 		
 		try{
 			//Create Report Header						
@@ -104,7 +105,18 @@ public class UnitTests {
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
 				numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
-			}
+			}		
+			
+			
+			//Test Keyword Service		
+			KeywordServiceTest keywordServiceTest = new KeywordServiceTest();
+			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService1();
+			numKeywordServiceError = keywordServiceTest.Test_KeywordService2();
+			
+			
+			//Test Bidding Service		
+			BiddingServiceTest biddingServiceTest = new BiddingServiceTest();
+			numBiddingServiceError = biddingServiceTest.Test_BiddingService2();
 			
 			
 			//Test Scheduler
@@ -116,10 +128,7 @@ public class UnitTests {
 			//numDatabaseError = databaseTest.Test_ALL();
 			
 			
-			//Test Adengine Service					
-			//Test Keyword Service			
-			//Test Bidding Service		
-			
+			//Test Adengine Service		
 			
 		}
 		catch(Exception e){
@@ -160,7 +169,7 @@ public class UnitTests {
 		unitTest.sendEmail(subject, "nan@semplest.com", "nan@semplest.com", summary);
 		if(numAllErrs > 0){
 			//if test failed, send report to Mitch
-			unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
+			//unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
 		}
         
 	}	
@@ -172,17 +181,10 @@ public class UnitTests {
         sb.append("Msn Report: 		" + numMsnServiceError + " errors" + eol);
         sb.append("Google APIs: 		" + numGoogleStandaloneError + " errors" + eol);
         sb.append("Google Report: 		" + numGoogleServiceError + " errors" + eol);
-        sb.append("Database: 		" + numDatabaseError + " errors" + eol);        
+        sb.append("Keyword Service:	" + numKeywordServiceError + " errors" + eol);
+        sb.append("Bidding Service:	" + numBiddingServiceError + " errors" + eol);
+        //sb.append("Database: 		" + numDatabaseError + " errors" + eol);        
         
-        //Services that are not ready yet
-        /*
-        sb.append("Adengine Service (Standalone): 		" + numAdEngineStandalongError + " errors" + eol);
-        sb.append("Adengine Service (Service): 		" + numAdEngineServiceError + " errors" + eol);
-        sb.append("Keyword Service (Standalone): 		" + numKeywordStandaloneError + " errors" + eol);
-        sb.append("Keyword Service (Service): 		" + numKeywordServiceError + " errors" + eol);
-        sb.append("Bidding Service (Standalone): 		" + numBiddingStandaloneError + " errors" + eol);
-        sb.append("Bidding Service (Service):	 	" + numBiddingServiceError + " errors" + eol);
-        */
         
         return sb.toString();		
 	}
