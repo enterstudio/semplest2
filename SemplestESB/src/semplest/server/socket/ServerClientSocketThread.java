@@ -131,68 +131,69 @@ public class ServerClientSocketThread implements Runnable
 		String serviceOffered = response.getServiceOffered();
 		int pingFreqMS = response.getPingFrequency();
 		logger.debug("Registered Client " + clientServiceName + " service offered=" + serviceOffered + ":" + pingFreqMS);
-		synchronized (ESBServer.esb.getServiceRegistrationMap())
-		{
-			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
 
-			// Make sure not already registered
-			if (!serviceRegistrationMap.containsKey(clientServiceName))
+		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+
+		// Make sure not already registered
+		if (!serviceRegistrationMap.containsKey(clientServiceName))
+		{
+			// add Queue to ActiveMQ
+			String serviceSendQueueName = clientServiceName + "_Send";
+			String serviceRecQueueName = clientServiceName + "_Rec";
+			// ESB produces messages on the Serive Rec Queue
+			try
 			{
-				// add Queue to ActiveMQ
-				String serviceSendQueueName = clientServiceName + "_Send";
-				String serviceRecQueueName = clientServiceName + "_Rec";
-				// ESB produces messages on the Serive Rec Queue
-				try
-				{
-					ESBServer.esb.getMQConnection().createProducerAndConsumerQueue(serviceRecQueueName, serviceSendQueueName);
-				}
-				catch (Exception e)
-				{
-					logger.error("Error in creating MQ producer or Consumer " + e.getMessage());
-					e.printStackTrace();
-					sendBackError("Error registering: " + e.getMessage());
-					throw new JMSException(e.getMessage());
-				}
-				// ESB Rec messares on the Service send queue
-				// this.esbServer.getMQConnection().createConsumer(serviceSendQueueName);
-				ServiceRegistrationData regData = new ServiceRegistrationData();
-				regData.setMessageProducer(ESBServer.esb.getMQConnection().getMessageProducerByQueue(serviceRecQueueName));
-				regData.setESBRecQueueName(serviceSendQueueName);
-				regData.setESBSendQueueName(serviceRecQueueName);
-				regData.setRegTime(new java.util.Date());
-				regData.setServiceOffered(serviceOffered);
-				// create thread for handling ping
-				ServicePingHandler pingHandler = new ServicePingHandler(clientServiceName, serviceOffered, pingFreqMS);
-				regData.setPingHandler(pingHandler);
-				Thread pingThread = new Thread(pingHandler);
-				pingThread.setPriority(Thread.MAX_PRIORITY);
-				pingThread.start();
+				ESBServer.esb.getMQConnection().createProducerAndConsumerQueue(serviceRecQueueName, serviceSendQueueName);
+			}
+			catch (Exception e)
+			{
+				logger.error("Error in creating MQ producer or Consumer " + e.getMessage());
+				e.printStackTrace();
+				sendBackError("Error registering: " + e.getMessage());
+				throw new JMSException(e.getMessage());
+			}
+			// ESB Rec messares on the Service send queue
+			// this.esbServer.getMQConnection().createConsumer(serviceSendQueueName);
+			ServiceRegistrationData regData = new ServiceRegistrationData();
+			regData.setMessageProducer(ESBServer.esb.getMQConnection().getMessageProducerByQueue(serviceRecQueueName));
+			regData.setESBRecQueueName(serviceSendQueueName);
+			regData.setESBSendQueueName(serviceRecQueueName);
+			regData.setRegTime(new java.util.Date());
+			regData.setServiceOffered(serviceOffered);
+			// create thread for handling ping
+			ServicePingHandler pingHandler = new ServicePingHandler(clientServiceName, serviceOffered, pingFreqMS);
+			regData.setPingHandler(pingHandler);
+			Thread pingThread = new Thread(pingHandler);
+			pingThread.setPriority(Thread.MAX_PRIORITY);
+			pingThread.start();
+			synchronized(serviceRegistrationMap)
+			{
 				serviceRegistrationMap.put(clientServiceName, regData);
-				ESBServer.esb.setServiceNameList(serviceOffered, clientServiceName);
-				// setup currentServiceIndexMap
-				if (!ESBServer.esb.getCurrentServiceIndexMap().containsKey(serviceOffered))
-				{
-					AtomicInteger currentServiceIndex = new AtomicInteger(0);
-					ESBServer.esb.getCurrentServiceIndexMap().put(serviceOffered, currentServiceIndex);
-				}
-				// send back queue name for client to connect to as new
-				// destination
-				ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
-				returndata.setHeader(ProtocolJSON.SEMplest_REGISTER);
-				returndata.setServiceSendQueueName(serviceSendQueueName);
-				returndata.setServiceRecQueueName(serviceRecQueueName);
-				returndata.setmessageQueueIP(ESBServer.esb.getServerData().getBrokerIP());
-				returndata.setmessageQueuePort(ESBServer.esb.getServerData().getBrokerPort());
-				String jsonStr = json.createJSONFromSocketDataObj(returndata);
-				byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
-				send(returnData);
-				logger.info("Register " + clientServiceName);
 			}
-			else
-			// already registered
+			ESBServer.esb.setServiceNameList(serviceOffered, clientServiceName);
+			// setup currentServiceIndexMap
+			if (!ESBServer.esb.getCurrentServiceIndexMap().containsKey(serviceOffered))
 			{
-				logger.info("Already Registered " + clientServiceName);
+				AtomicInteger currentServiceIndex = new AtomicInteger(0);
+				ESBServer.esb.getCurrentServiceIndexMap().put(serviceOffered, currentServiceIndex);
 			}
+			// send back queue name for client to connect to as new
+			// destination
+			ProtocolSocketDataObject returndata = new ProtocolSocketDataObject();
+			returndata.setHeader(ProtocolJSON.SEMplest_REGISTER);
+			returndata.setServiceSendQueueName(serviceSendQueueName);
+			returndata.setServiceRecQueueName(serviceRecQueueName);
+			returndata.setmessageQueueIP(ESBServer.esb.getServerData().getBrokerIP());
+			returndata.setmessageQueuePort(ESBServer.esb.getServerData().getBrokerPort());
+			String jsonStr = json.createJSONFromSocketDataObj(returndata);
+			byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
+			send(returnData);
+			logger.info("Register " + clientServiceName);
+		}
+		else
+		// already registered
+		{
+			logger.info("Already Registered " + clientServiceName);
 		}
 
 	}
@@ -212,25 +213,24 @@ public class ServerClientSocketThread implements Runnable
 	{
 		String client = socketDataObject.getclientServiceName();
 		logger.debug("Received Shutdown request from " + client);
-		synchronized (ESBServer.esb.getServiceRegistrationMap())
+
+		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
+		if (serviceRegistrationMap.containsKey(client))
 		{
-			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-			Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
-			if (serviceRegistrationMap.containsKey(client))
+			serviceRegistrationMap.remove(client);
+			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
+			if (servicesList.contains(client))
 			{
-				serviceRegistrationMap.remove(client);
-				logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
-				if (servicesList.contains(client))
-				{
-					servicesList.remove(client);
-				}
-				logger.debug("Removed: " + client);
+				servicesList.remove(client);
 			}
-			else
-			{
-				logger.debug(client + "not in registrationMap");
-			}
+			logger.debug("Removed: " + client);
 		}
+		else
+		{
+			logger.debug(client + "not in registrationMap");
+		}
+
 	}
 
 	public void ClientPing(ProtocolSocketDataObject socketDataObject)
@@ -240,14 +240,13 @@ public class ServerClientSocketThread implements Runnable
 		{
 
 			ServiceRegistrationData regData = null;
-			synchronized (ESBServer.esb.getServiceRegistrationMap())
-			{
-				ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-				// Vector<String> servicesList =
-				// ESBServer.esb.getServicesList();
-				logger.info("PING " + socketDataObject.getclientServiceName() + " serviceRegistrationMap size" + serviceRegistrationMap.size());
-				regData = serviceRegistrationMap.get(socketDataObject.getclientServiceName());
-			}
+
+			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+			// Vector<String> servicesList =
+			// ESBServer.esb.getServicesList();
+			logger.info("PING " + socketDataObject.getclientServiceName() + " serviceRegistrationMap size" + serviceRegistrationMap.size());
+			regData = serviceRegistrationMap.get(socketDataObject.getclientServiceName());
+
 			if (regData == null)
 			{
 				logger.error("Registration Data for:" + socketDataObject.getclientServiceName() + " is NULL");

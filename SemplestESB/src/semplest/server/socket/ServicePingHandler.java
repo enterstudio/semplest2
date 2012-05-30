@@ -71,27 +71,24 @@ public class ServicePingHandler implements Runnable
 	private void removeClient()
 	{
 		logger.debug("Removing: " + client);
-		
-		synchronized (ESBServer.esb.getServiceRegistrationMap())
+
+		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
+		if (serviceRegistrationMap.containsKey(client))
 		{
-			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-			Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
-			if (serviceRegistrationMap.containsKey(client))
-			{
 
-				serviceRegistrationMap.remove(client);
+			serviceRegistrationMap.remove(client);
 
-				logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
-				if (servicesList.contains(client))
-				{
-					servicesList.remove(client);
-				}
-				logger.debug("Removed: " + client);
-			}
-			else
+			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
+			if (servicesList.contains(client))
 			{
-				logger.debug(client + "not in registrationMap");
+				servicesList.remove(client);
 			}
+			logger.debug("Removed: " + client);
+		}
+		else
+		{
+			logger.debug(client + "not in registrationMap");
 		}
 
 	}
