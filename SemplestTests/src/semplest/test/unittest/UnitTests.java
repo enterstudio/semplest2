@@ -103,7 +103,7 @@ public class UnitTests {
 			Boolean useSandbox = (Boolean) configDB.configData.get("AdwordsUseSandbox");
 			if(useSandbox){
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
-				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
+				//numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
 				//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
 			}		
 			
