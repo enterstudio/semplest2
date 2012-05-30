@@ -54,7 +54,6 @@ public class UnitTests {
 		 * 	- GoogleAdwordsService Test
 		 *  - SchedulerService Test
 		 *  - Database Test
-		 *  
 		 *  - SemplestAdengineService
 		 * 	- KeywordsService
 		 * 	- BiddingService
