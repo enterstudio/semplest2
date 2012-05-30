@@ -27,9 +27,14 @@ public class MultiWords {
 	
 	public static ArrayList<String> getMultiWords(String in, int [] n, int minCount){
 		
+		
 		ArrayList<String> list = new ArrayList<String>();
 		
-		String [] words = in.split("\\s+");
+		
+		in=in.replaceAll("   ", " ");
+		in=in.replaceAll("  ", " ");
+		String [] words = in.split(" ");
+		//String [] words = in.split("\\s+");
 		
 		for(int i=0; i<n.length; i++){
 			
