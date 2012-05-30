@@ -95,7 +95,7 @@ public class UnitTests {
 			//Test Msn Service
 			MsnServiceTest msnServiceTest = new MsnServiceTest();
 			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
-			numMsnServiceError = msnServiceTest.Test_MsnReport();  //Test only Report through ESB
+			//numMsnServiceError = msnServiceTest.Test_MsnReport();  //Test only Report through ESB
 			
 			
 			//Test Google Service
@@ -110,13 +110,13 @@ public class UnitTests {
 			
 			//Test Keyword Service		
 			KeywordServiceTest keywordServiceTest = new KeywordServiceTest();
-			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService1();
-			numKeywordServiceError = keywordServiceTest.Test_KeywordService2();
+			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService1();  //Impl
+			numKeywordServiceError = keywordServiceTest.Test_KeywordService2();  //client
 			
 			
 			//Test Bidding Service		
 			BiddingServiceTest biddingServiceTest = new BiddingServiceTest();
-			numBiddingServiceError = biddingServiceTest.Test_BiddingService2();
+			numBiddingServiceError = biddingServiceTest.Test_BiddingService2();  //Client
 			
 			
 			//Test Scheduler

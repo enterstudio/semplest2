@@ -69,8 +69,8 @@ public class MsnServiceTest {
 			System.out.println("####################################################################################");	
 			
 			//getKeywordReport
-			//MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
-			MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+			MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
+			//MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 			
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getKeywordReport:");
