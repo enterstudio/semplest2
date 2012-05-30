@@ -1,0 +1,43 @@
+
+/**
+ * IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage.java
+ *
+ * This file was auto-generated from WSDL
+ * by the Apache Axis2 version: 1.6.2  Built on : Apr 17, 2012 (05:33:49 IST)
+ */
+
+package com.microsoft.adcenter.v8;
+
+public class IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage extends java.lang.Exception{
+
+    private static final long serialVersionUID = 1337717127856L;
+    
+    private com.microsoft.adcenter.v8.ApiFaultDetailE faultMessage;
+
+    
+        public IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage() {
+            super("IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage");
+        }
+
+        public IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage(java.lang.String s) {
+           super(s);
+        }
+
+        public IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage(java.lang.String s, java.lang.Throwable ex) {
+          super(s, ex);
+        }
+
+        public IAdIntelligenceService_GetEstimatedBidByKeywords_ApiFaultDetailFault_FaultMessage(java.lang.Throwable cause) {
+            super(cause);
+        }
+    
+
+    public void setFaultMessage(com.microsoft.adcenter.v8.ApiFaultDetailE msg){
+       faultMessage = msg;
+    }
+    
+    public com.microsoft.adcenter.v8.ApiFaultDetailE getFaultMessage(){
+       return faultMessage;
+    }
+}
+    

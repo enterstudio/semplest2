@@ -1,0 +1,11 @@
+<project name="MsnAdcenterV8R3Build" default="jar" basedir=".">
+	
+	<target name="jar"> 			
+		
+		<echo message="Creating Jar for Msn Adcenter V8R3..."/>				
+		<jar destfile="${basedir}/msn_adcenter_v8r3.jar" basedir="${basedir}/classes">				 
+		</jar> 	
+		
+	</target>
+	
+</project>
