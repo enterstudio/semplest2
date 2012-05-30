@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.BasicConfigurator;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
@@ -20,8 +20,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
-	private static final Logger logger = Logger.getLogger( SemplestAdEngineServiceClient.class);
 	private String baseurl;
+	
+	public static void main(String[] args) throws Exception
+	{
+		BasicConfigurator.configure();
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);
+		//final String accountId = "54101"; 
+		//final Long campaignId = 647605L;
+		final Integer PromotionID = 62;
+		client.UpdateGeoTargeting(PromotionID);
+	}
 
 	@Override
 	public void initializeService(String input) throws Exception
@@ -87,10 +96,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean UpdateGeoTargeting(Integer customerID, Integer productGroupID, Integer GeoTargetingID) throws Exception
+	public Boolean UpdateGeoTargeting(Integer PromotionID) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		//jsonHash.put("accountId", accountId);
+		//jsonHash.put("campaignId", Long.toString(campaignId));
+		jsonHash.put("PromotionID", Integer.toString(PromotionID));
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "UpdateGeoTargeting", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
@@ -161,7 +175,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean AdSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

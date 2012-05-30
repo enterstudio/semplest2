@@ -3,15 +3,15 @@ package semplest.services.client.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
-import semplest.other.Money;
 import semplest.server.protocol.ProtocolJSON;
-import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
@@ -675,6 +675,14 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	@Override
 	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType)
 			throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	// this class only going to be called directly by Adengine Service
+	@Override
+	public Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
