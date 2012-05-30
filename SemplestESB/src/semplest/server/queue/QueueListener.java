@@ -70,6 +70,10 @@ public class QueueListener implements MessageListener
 							logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
 						}
 					}
+					else
+					{
+						logger.error("Asynch Context is NULL.  Cannot send back result - Should not be???");
+					}
 				}
 			}
 		}

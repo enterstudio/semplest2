@@ -48,14 +48,19 @@ public class ActiveMQConnection
 		// + "?wireFormat=openwire&wireFormat.tightEncodingEnabled=true");
 		cn = cacheCF.createQueueConnection();
 		cn.start();
+		logger.debug("Started MQ connection..host = " + host +  " port=" + port);
 		session = cn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
+		logger.debug("create MQ session...");
 	}
 
 	public void createProducerAndConsumerQueue(String queueName, String consumerQueue) throws JMSException
 	{
+		logger.debug("createProducerAndConsumerQueue producer=" + queueName + " consumer=" + consumerQueue );
 		producerDestination = session.createQueue(queueName);
+		logger.debug("create producer destination");
 		MessageProducer producer = session.createProducer(producerDestination);
 		producerListByQueue.put(queueName, producer);
+		logger.debug("Created and store MessageProducer...");
 		createConsumer(consumerQueue);
 	}
 
@@ -85,9 +90,11 @@ public class ActiveMQConnection
 	
 	public void createConsumer(String queueName) throws JMSException
 	{
+		logger.debug("createConsumer " + queueName);
 		Destination consumerDestination = session.createQueue(queueName);
 		consumer = session.createConsumer(consumerDestination);
 		consumer.setMessageListener(new QueueListener());
+		logger.debug("created consumer with a new Queue Listener");
 		//consumerListByQueue.put(queueName, consumer);
 	}
 	
@@ -98,7 +105,7 @@ public class ActiveMQConnection
 		return session.createReceiver(consumerQueueListByQueueName.get(queueName), "JMSCorrelationID='" + uniqueID + "'");
 	}
 
-	public MessageProducer getMessageProducerByQueue(String queueName)
+	public synchronized MessageProducer getMessageProducerByQueue(String queueName)
 	{
 		if (producerListByQueue.containsKey(queueName))
 		{

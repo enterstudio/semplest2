@@ -17,7 +17,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.jetty.util.MultiMap;
 import org.eclipse.jetty.util.UrlEncoded;
 
-
 @WebServlet(urlPatterns = "/semplest", asyncSupported = true)
 public class AsyncServlet extends HttpServlet
 {
@@ -36,19 +35,21 @@ public class AsyncServlet extends HttpServlet
 		executor = ESBServer.esb.getExecutor();
 		defaultTimeoutMS = Long.valueOf(ESBServer.esb.getServerData().getAsynchCallDefaultTimeoutMS());
 		logger.info("SERVLET init");
-		
+
 	}
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		doGet(request, response);
 	}
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		//parse the query String
-		MultiMap<String> queryStrParams = new MultiMap<String>(); 
+		// parse the query String
+		MultiMap<String> queryStrParams = new MultiMap<String>();
 		if (request.getQueryString() != null)
 		{
-			UrlEncoded.decodeTo( request.getQueryString(), queryStrParams, "UTF-8");
+			UrlEncoded.decodeTo(request.getQueryString(), queryStrParams, "UTF-8");
 		}
 		String json = queryStrParams.getString("jsonStr");
 		String service = queryStrParams.getString("service");
@@ -59,13 +60,15 @@ public class AsyncServlet extends HttpServlet
 			response.getOutputStream().print("ERROR: Must provide a Service and method in query string");
 			return;
 		}
-		logger.info("AsyncServlet: Processing request: " + service + ":" + method + ":" + json + ". on thread: " + Thread.currentThread().getId() + ":" + Thread.currentThread().getName() + "[" + new Date() + "]");
-		
-		//Unique Work ID used for both getting the AsynchContext and Retrieving from MQ
+		logger.info("AsyncServlet: Processing request: " + service + ":" + method + ":" + json + ". on thread: " + Thread.currentThread().getId()
+				+ ":" + Thread.currentThread().getName() + "[" + new Date() + "]");
+
+		// Unique Work ID used for both getting the AsynchContext and Retrieving
+		// from MQ
 		String uniqueID = getRandomString(8);
 		request.setAttribute("uniqueID", uniqueID);
-		//save the request
-		request.setAttribute("service",service);
+		// save the request
+		request.setAttribute("service", service);
 		request.setAttribute("method", method);
 		request.setAttribute("json", json);
 
@@ -73,23 +76,25 @@ public class AsyncServlet extends HttpServlet
 		 * Setup timeout on call
 		 */
 		boolean timeout = false;
-		String timeoutParam =  queryStrParams.getString("timeout");
+		String timeoutParam = queryStrParams.getString("timeout");
 		if (timeoutParam != null)
 		{
 			try
 			{
-				defaultTimeoutMS =  Long.valueOf(timeoutParam);
+				defaultTimeoutMS = Long.valueOf(timeoutParam);
 				timeout = true;
 			}
 			catch (NumberFormatException e)
 			{
 				logger.error("Error Setting timeout.  No timeout set on call");
 			}
-			
-		}else if(defaultTimeoutMS!=null){
-			timeout= true;
+
 		}
-		//Start Asynch Context
+		else if (defaultTimeoutMS != null)
+		{
+			timeout = true;
+		}
+		// Start Asynch Context
 		AsyncContext asyncCtx = request.startAsync();
 		asyncCtx.addListener(new AsyncServletListener());
 		if (timeout)
@@ -103,7 +108,8 @@ public class AsyncServlet extends HttpServlet
 				+ Thread.currentThread().getName() + "[" + new Date() + "]");
 
 	}
-	private static String getRandomString(int length)
+
+	private synchronized static String getRandomString(int length)
 	{
 		UUID uuid = UUID.randomUUID();
 		String myRandom = uuid.toString();

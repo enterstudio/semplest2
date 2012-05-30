@@ -200,7 +200,7 @@ public class ESBServer
 		return MQConnection;
 	}
 
-	public Vector<String> getServiceNameList(String serviceOffered)
+	public synchronized Vector<String> getServiceNameList(String serviceOffered)
 	{
 		if (this.servicesMap.containsKey(serviceOffered))
 		{
@@ -212,7 +212,7 @@ public class ESBServer
 			return null;
 		}
 	}
-	public void setServiceNameList(String serviceOffered, String serviceName)
+	public synchronized void setServiceNameList(String serviceOffered, String serviceName)
 	{
 		if (this.servicesMap.containsKey(serviceOffered))
 		{
@@ -228,11 +228,11 @@ public class ESBServer
 	}
 
 	
-	public ConcurrentHashMap<String, ServiceRegistrationData> getServiceRegistrationMap()
+	public synchronized ConcurrentHashMap<String, ServiceRegistrationData> getServiceRegistrationMap()
 	{
 		return serviceRegistrationMap;
 	}
-	public String getServiceOfferedFromRegMap(String serviceName)
+	public synchronized String getServiceOfferedFromRegMap(String serviceName)
 	{
 		if (serviceRegistrationMap.containsKey(serviceName))
 		{
@@ -251,7 +251,7 @@ public class ESBServer
 	}
 	*/
 
-	public int readCurrentServiceIndexAndIncrement(String serviceOffered) throws Exception
+	public synchronized int readCurrentServiceIndexAndIncrement(String serviceOffered) throws Exception
 	{
 		if (currentServiceIndexMap.containsKey(serviceOffered))
 		{

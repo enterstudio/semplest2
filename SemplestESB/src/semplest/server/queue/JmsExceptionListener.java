@@ -11,6 +11,7 @@ public class JmsExceptionListener implements ExceptionListener
 
 	public void onException( final JMSException e )  
 	{  
+		logger.error("JmsExceptionListener " + e.getMessage());
 		e.printStackTrace();  
 	}  
 } 

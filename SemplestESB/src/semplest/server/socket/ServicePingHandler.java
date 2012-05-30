@@ -8,28 +8,27 @@ import org.apache.log4j.Logger;
 import semplest.server.ESB.ESBServer;
 import semplest.server.ESB.ServiceRegistrationData;
 
-
-
 public class ServicePingHandler implements Runnable
 {
-	//private final Socket socket;
+	// private final Socket socket;
 	private final String client;
 	private String serviceName = null;
 	private int pingFrequencyPlusDelayMS;
 	private final String serviceOffered;
-	
-	//private final int delayMS = 500; 
-	
+
+	// private final int delayMS = 500;
+
 	static final Logger logger = Logger.getLogger(ServicePingHandler.class);
-	
+
 	public ServicePingHandler(String service, String serviceOffered, int pingFrequencyMS)
 	{
-		//this.socket = socket;
+		// this.socket = socket;
 		this.client = service;
 		this.serviceOffered = serviceOffered;
 		this.pingFrequencyPlusDelayMS = pingFrequencyMS;
-		logger.info("client=" + client + " serviceOffed = " +serviceOffered + " pingMS=" + pingFrequencyMS );
+		logger.info("client=" + client + " serviceOffed = " + serviceOffered + " pingMS=" + pingFrequencyMS);
 	}
+
 	public synchronized boolean handleResponse(String serviceName)
 	{
 		this.serviceName = serviceName;
@@ -68,33 +67,40 @@ public class ServicePingHandler implements Runnable
 		}
 
 	}
+
 	private void removeClient()
 	{
 		logger.debug("Removing: " + client);
-		ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
-		Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
-		if (serviceRegistrationMap.containsKey(client))
+		
+		synchronized (ESBServer.esb.getServiceRegistrationMap())
 		{
-			serviceRegistrationMap.remove(client);
-			logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size() );
-			if (servicesList.contains(client))
-			{	
-				servicesList.remove(client);
+			ConcurrentHashMap<String, ServiceRegistrationData> serviceRegistrationMap = ESBServer.esb.getServiceRegistrationMap();
+			Vector<String> servicesList = ESBServer.esb.getServiceNameList(serviceRegistrationMap.get(client).getServiceOffered());
+			if (serviceRegistrationMap.containsKey(client))
+			{
+
+				serviceRegistrationMap.remove(client);
+
+				logger.debug(client + "removed in registrationMap size=" + serviceRegistrationMap.size());
+				if (servicesList.contains(client))
+				{
+					servicesList.remove(client);
+				}
+				logger.debug("Removed: " + client);
 			}
-			logger.debug("Removed: " + client);
+			else
+			{
+				logger.debug(client + "not in registrationMap");
+			}
 		}
-		else
-		{
-			logger.debug(client + "not in registrationMap" );
-		}
-		
-		
+
 	}
+
 	@Override
 	public void run()
 	{
 		waitForResponse();
-		
+
 	}
 
 }
