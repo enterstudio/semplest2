@@ -44,7 +44,7 @@ BEGIN TRY
 	select @paid = SUM(pp.Amount) * 1000000 from PromotionPayment pp 
 	where pp.IsValid = 1 and pp.BudgetToAddDate <= @EndDate and pp.PromotionFK = @PromotionPK
 	--update the remaining budget
-	update Promotion set RemainingBudgetInCycle = @paid -@Cost, EditedDate = CURRENT_TIMESTAMP
+	update Promotion set RemainingBudgetInCycle = (@paid -@Cost)/1000000, EditedDate = CURRENT_TIMESTAMP
 	from Promotion p where p.PromotionPK = @PromotionPK
 	
 	Set @ID = @PromotionPK
