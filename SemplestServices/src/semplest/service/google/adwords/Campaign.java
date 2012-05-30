@@ -1,51 +1,138 @@
 package semplest.service.google.adwords;
 
-import com.google.api.adwords.v201109.o.*;
 import com.google.api.adwords.v201109.cm.*;
 import com.google.api.adwords.lib.AdWordsUser;
 import com.google.api.adwords.lib.AdWordsService;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.AbstractMap;
+import org.apache.log4j.Logger;
 
-public class Campaign {
+import semplest.server.protocol.adengine.GeoTargetObject;
+
+public class Campaign 
+{
+	private static final Logger logger = Logger.getLogger(semplest.service.google.adwords.Campaign.class);  
+	static String[] fields = {"Id","CampaignId","LocationName","DisplayType", "RadiusInUnits","GeoPoint","Address"};
+	//static String[] fields = {"Id", "CampaignId", "CriteriaType", "GeoPoint", "RadiusDistanceUnits", "RadiusInUnits", "Address"};
+	String clid = "";
+	Long cid = null;
+	AdWordsUser user = null;
+	CampaignCriterionServiceInterface ccs = null;
+
+	// Interface ---------
+	public Campaign( String clientid, Long caid, AdWordsUser user ) throws Exception 
+	{
+		clid  =  clientid;
+		cid   =  caid;
+		this.user  =  user;
+		ccs = user.getService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
+	}
+	
+	public void addGeoLoc(final List<GeoTargetObject> geoTargets) throws Exception 
+	{
+		for (final GeoTargetObject geoTarget : geoTargets)
+		{
+			final Double radius = geoTarget.getRadius();
+			final String addr = geoTarget.getAddress();
+			final String city = geoTarget.getCity();
+			final String state = geoTarget.getState();
+			final String zip = geoTarget.getZip();
+			if (radius <= 0)
+			{
+				setGeoLoc(state);
+			}
+			else
+			{
+				setGeoLoc(radius, addr, city, state, zip);
+			}
+		}
+	}
   
-  static String[] fields = {"Id","CampaignId","LocationName","DisplayType",
-    "RadiusInUnits","GeoPoint","Address"};
-  String clid = "";
-  Long cid = null;
-  AdWordsUser user = null;
-  CampaignCriterionServiceInterface ccs = null;
+	public void removeAllGeoLoc(final Long campaignId) throws Exception 
+	{ 
+	  	logger.info("Will try to remove all Geo Locations for Campaign [" + campaignId + "]");
+	  	final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+	    final Selector selector = new Selector();
+	    selector.setFields(fields);
+	    final Predicate cp = new Predicate("CampaignId", PredicateOperator.EQUALS, new String[]{"" + campaignId});
+	    selector.setPredicates(new Predicate[]{cp});
+	    final CampaignCriterionPage page = campaignCriterionService.get(selector);
+	    final CampaignCriterion[] campaignCriterion = page.getEntries();
+	    final List<Long> existingProximityIds = new ArrayList<Long>();	    
+	    for (int i = 0; i < campaignCriterion.length; ++i)
+		{
+			final CampaignCriterion campaignCriteria = campaignCriterion[i];
+			final Criterion criterion = campaignCriteria.getCriterion();			
+			if (criterion.getType() == CriterionType.PROXIMITY)
+			{
+				existingProximityIds.add(criterion.getId());
+			}
+		}
+	    logger.info("Found " + existingProximityIds.size() + " Proximity IDs within Google Adwords: [" + existingProximityIds + "]");
+	    if (existingProximityIds.isEmpty())
+	    {
+	    	return;
+	    }
+	    final List<CampaignCriterionOperation> removeProximityOperations = new ArrayList<CampaignCriterionOperation>();
+		for (final Long proximityId : existingProximityIds)
+		{
+			final Criterion removeProximityCriterion = new Criterion();
+			removeProximityCriterion.setId(proximityId);
+			removeProximityCriterion.setType(CriterionType.PROXIMITY);
+			final CampaignCriterion removeProximityCampaignCriterion = new CampaignCriterion();
+			removeProximityCampaignCriterion.setCampaignId(campaignId);
+			removeProximityCampaignCriterion.setCriterion(removeProximityCriterion);
+			final CampaignCriterionOperation removeProximityOperation = new CampaignCriterionOperation();
+			removeProximityOperation.setOperand(removeProximityCampaignCriterion);
+			removeProximityOperation.setOperator(Operator.REMOVE);
+			removeProximityOperations.add(removeProximityOperation);
+		}
+		final CampaignCriterionOperation[] removeProximityOperationsArray = removeProximityOperations.toArray(new CampaignCriterionOperation[removeProximityOperations.size()]);
+		final CampaignCriterion[] resultCampaignCriterionArray = ccs.mutate(removeProximityOperationsArray).getValue();
+		final List<Long> resultCriterionIds = new ArrayList<Long>();
+		for (int i = 0; i < resultCampaignCriterionArray.length; ++i)
+		{
+			final CampaignCriterion resultCampaignCriterion = resultCampaignCriterionArray[i];
+			final Long resultCriterionId = resultCampaignCriterion.getCriterion().getId();
+			resultCriterionIds.add(resultCriterionId);
+		}
+		logger.info("Criterion IDs returned from Google Adwords call to remove all Proximities: [" + resultCriterionIds + "]");
+	}
 
-  // Interface ---------
-  public Campaign( String clientid, Long caid, AdWordsUser user ) throws Exception {
-    clid  =  clientid;
-    cid   =  caid;
-    this.user  =  user;
-    ccs = user.getService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
-  }
+	// Set
+	public long setGeoLoc( String state ) throws Exception 
+	{ 
+		return sGeoLocation( cCriterion( state )); 
+	}
+	public long setGeoLoc( Double r, int lat, int lon) throws Exception 
+	{
+		return sGeoLocation( cProximity( r, lat, lon ));
+	}
+	public long setGeoLoc(Double r, String addr, String city, String state, String zip) throws Exception 
+	{ 
+		return sGeoLocation( cCriterion( r, addr, city, state, zip ));
+	}
+	public long setGeoLoc( Double r, String zip) throws Exception 
+	{ 
+		return sGeoLocation( cCriterion( r, "", "", "", zip ));
+	}
+	public long setGeoLoc( Long id ) throws Exception 
+	{ 
+		return sGeoLocation( cLocation( id )); 
+	}
 
-  // Set
-  public long setGeoLoc( String state ) throws Exception { 
-    return sGeoLocation( cCriterion( state )); }
-  public long setGeoLoc( Double r, int lat, int lon) throws Exception {
-    return sGeoLocation( cProximity( r, lat, lon ));}
-  public long setGeoLoc( Double r,
-      String addr, String city, String state, String zip) throws Exception { 
-    return sGeoLocation( cCriterion( r, addr, city, state, zip ));}
-  public long setGeoLoc( Double r, String zip) throws Exception { 
-    return sGeoLocation( cCriterion( r, "", "", "", zip ));}
-  public long setGeoLoc( Long id ) throws Exception { 
-    return sGeoLocation( cLocation( id )); }
-
-  // Get
-  public String[] getGeoLocs() throws Exception {
-    ArrayList<String> res = new ArrayList<String>();
-    for( CampaignCriterion c : gCriteria())
-      res.add( gResults( c ) );
-    return res.toArray( new String[]{} );
-  }
+	// Get
+	public String[] getGeoLocs() throws Exception 
+	{
+		ArrayList<String> res = new ArrayList<String>();
+		for( CampaignCriterion c : gCriteria())
+		{
+			res.add( gResults( c ) );
+		}
+		return res.toArray( new String[]{} );
+	}
  
   // Print
   public void printCC() throws Exception { pCCs( gCriteria() ); }

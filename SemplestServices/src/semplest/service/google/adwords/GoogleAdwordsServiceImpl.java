@@ -19,17 +19,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
-import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.service.SemplestConfiguration;
-import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.server.protocol.google.KeywordToolStats;
 
@@ -2603,11 +2601,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Double latitude = Double.parseDouble(data.get("latitude"));
 		Double longitude = Double.parseDouble(data.get("longitude"));
 		Double radius = Double.parseDouble(data.get("radius"));
-		Boolean retval = setGeoTarget(data.get("accountId"), campaignId,latitude, longitude, radius, data.get("addr"), data.get("city"), data.get("state"),
-				data.get("zip"));
+		Boolean retval = setGeoTarget(data.get("accountId"), campaignId,latitude, longitude, radius, data.get("addr"), data.get("city"), data.get("state"), data.get("zip"));
 		return gson.toJson(retval);
 	}
-
+	
 	@Override
 	public Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip)
 			throws Exception
@@ -2621,6 +2618,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			res = c.setGeoLoc(radius, addr, city, state, zip);
 		if (res == 0)
 			return false;
+		return true;
+	}
+	
+	@Override
+	public Boolean updateGeoTargets(final String accountId, final Long campaignId, final List<GeoTargetObject> geoTargets)
+			throws Exception
+	{
+		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+		final semplest.service.google.adwords.Campaign semplestCampaign = new semplest.service.google.adwords.Campaign(accountId, campaignId, user);
+		semplestCampaign.removeAllGeoLoc(campaignId);
+		semplestCampaign.addGeoLoc(geoTargets);
 		return true;
 	}
 

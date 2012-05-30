@@ -454,7 +454,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	 */
 	public String ExecuteBidProcess(String json) throws Exception
 	{
-		logger.debug("call  ExecuteBidProcess(String json)" + json);
+		logger.debug("call ExecuteBidProcess(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
@@ -550,11 +550,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return null;
 	}
 
-	@Override
-	public Boolean UpdateGeoTargeting(Integer customerID, Integer productGroupID, Integer GeoTargetingID) throws Exception
+	public String UpdateGeoTargeting(String json) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		//final String accountId = data.get("accountId");
+		//final Long campaignId = Long.parseLong(data.get("campaignId"));
+		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
+		final Boolean res = UpdateGeoTargeting(PromotionID);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean UpdateGeoTargeting(Integer PromotionID) throws Exception
+	{
+		logger.info("call UpdateGeoTargeting(" + PromotionID + ")");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(PromotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
+		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
+		logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId+ "]/Promotion[" + PromotionID + "] with the following GeoTargets: [" + geoTargets + "]");
+		final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+		final Boolean result = googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);
+		return result;
 	}
 
 	@Override
@@ -601,7 +621,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean AdSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
