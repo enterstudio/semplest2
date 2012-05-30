@@ -121,7 +121,6 @@
                     for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
                         items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
                     }
-                    treeview.append({ text: data[mainGroup].SubItems[subitem].Name, url: data[mainGroup].SubItems[subitem].Url, items: items });
                 }
             }
         });

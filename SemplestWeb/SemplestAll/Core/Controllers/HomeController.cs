@@ -13,16 +13,16 @@ namespace SemplestWebApp.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
-    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class HomeController : Controller
     {
-        
+
         public ActionResult Index()
         {
-            return RedirectToAction("Index2", "Home",new HomeModelChild());
+            return RedirectToAction("Index2", "Home", new HomeModelChild());
             HomeModelParent hm = new HomeModelParent();
             SemplestEntities dbContext = new SemplestEntities();
-            int userId = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            int userId = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == userId).First().Customer.ProductGroups)
             {
                 foreach (Promotion p in pg.Promotions)
@@ -37,21 +37,24 @@ namespace SemplestWebApp.Controllers
             return View(hm);
         }
 
-        
+
         public ActionResult Index2()
         {
             SemplestEntities dbContext = new SemplestEntities();
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            
-            HomeModelChild child = new HomeModelChild();
-            //dbContext.Credentials.Where(x =>x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups
 
-                IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
-                ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
-                child.ProductGroups = cCred.First().User.Customer.ProductGroups;
+            HomeModelChild child = new HomeModelChild();
+            IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+            ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
+            child.ProductGroups = cCred.First().User.Customer.ProductGroups;
             return View(child);
         }
-
+        public ActionResult GetLiveProductGroups()
+        {
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            SemplestEntities dbContext = new SemplestEntities();
+            return Json(dbContext.vwGetLivePromotionsForUsers.Where(t => t.UserPK == cred.UsersFK), JsonRequestBehavior.AllowGet);
+        }
 
         public ActionResult About()
         {
@@ -80,7 +83,7 @@ namespace SemplestWebApp.Controllers
                 if (ModelState.IsValid)
                 {
                     var scw = new ServiceClientWrapper();
-                    var addcopies = new[] {model.AdCopy};
+                    var addcopies = new[] { model.AdCopy };
                     List<string> categories = scw.GetCategories(null, model.Product, model.Description, addcopies,
                                                                 model.LandingPage);
                     if (categories != null && categories.Count > 0)
@@ -88,7 +91,7 @@ namespace SemplestWebApp.Controllers
                         int i = 0;
                         foreach (string cate in categories)
                         {
-                            var cm = new SearchKeywordsModel.CategoriesModel {Id = i, Name = cate};
+                            var cm = new SearchKeywordsModel.CategoriesModel { Id = i, Name = cate };
                             i++;
                             model.AllCategories.Add(cm);
                         }
@@ -126,7 +129,7 @@ namespace SemplestWebApp.Controllers
                     //SemplestWebApp.Helpers.ServiceHelper.CallSemplestTestGetMethod();
                     if (model.AllCategories.Count == 0)
                     {
-                        model.AllCategories = (List<SearchKeywordsModel.CategoriesModel>) Session["AllCategories"];
+                        model.AllCategories = (List<SearchKeywordsModel.CategoriesModel>)Session["AllCategories"];
                     }
 
                     if (model.AllCategories.Count <= 0)
@@ -154,7 +157,7 @@ namespace SemplestWebApp.Controllers
                     //            select  c.Name ;
                     //List<string> catList = model.AllCategories.Select(m => m.Name).Where(
                     //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
-                    var addcopies = new[] {model.AdCopy};
+                    var addcopies = new[] { model.AdCopy };
                     List<string> keywords = scw.GetKeywords(catList, null, model.Product, model.Description, addcopies,
                                                             model.LandingPage, null);
                     if (keywords != null && keywords.Count > 0)
@@ -219,11 +222,11 @@ namespace SemplestWebApp.Controllers
             //model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Name = "category 3" });
             //model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Name = "category 4" });
             //model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Name = "category 5" });
-            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel {Id = 1, Name = "category 1"});
-            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel {Id = 2, Name = "category 2"});
-            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel {Id = 3, Name = "category 3"});
-            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel {Id = 4, Name = "category 4"});
-            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel {Id = 5, Name = "category 5"});
+            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Id = 1, Name = "category 1" });
+            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Id = 2, Name = "category 2" });
+            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Id = 3, Name = "category 3" });
+            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Id = 4, Name = "category 4" });
+            model.AllCategories.Add(new SearchKeywordsModel.CategoriesModel { Id = 5, Name = "category 5" });
         }
 
         #region Nested type: AcceptSubmitTypeAttribute
