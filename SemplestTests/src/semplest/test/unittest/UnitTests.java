@@ -104,7 +104,7 @@ public class UnitTests {
 			if(useSandbox){
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
-				numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
+				//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
 			}		
 			
 			
