@@ -23,9 +23,10 @@ public class SchedulerServiceTest {
 			
 			//test.TestCase3("bad task example");
 			//Thread.sleep(5000);
-			//test.TestCase5();
+			test.TestCase5();
 			
-			test.TestCase1();
+			//test.TestCase1();
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -143,7 +144,7 @@ public class SchedulerServiceTest {
 			Calendar cal = Calendar.getInstance();		
 			
 			//morning
-			cal.set(2012, 4, 14, 8, 30, 0);
+			cal.set(2012, 4, 30, 8, 30, 0);
 			Date morning = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> morningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject morningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Morning!", "nan@semplest.com", "nan@semplest.com", "Good Morning! I'm doing fine. \n\nBest,\nSemplestScheduler");
@@ -152,7 +153,7 @@ public class SchedulerServiceTest {
 			Thread.sleep(5000);
 			
 			//afternoon
-			cal.set(2012, 4, 14, 13, 00, 0);
+			cal.set(2012, 4, 30, 13, 00, 0);
 			Date afternoon = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> afternoonTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject afternoonMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Afternoon!", "nan@semplest.com", "nan@semplest.com", "Good Afternoon! I'm doing fine. \n\nBest,\nSemplestScheduler");
@@ -161,7 +162,7 @@ public class SchedulerServiceTest {
 			Thread.sleep(5000);
 			
 			//evening
-			cal.set(2012, 4, 14, 17, 30, 0);
+			cal.set(2012, 4, 30, 17, 30, 0);
 			Date evening = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> eveningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject eveningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Evening!", "nan@semplest.com", "nan@semplest.com", "Good Evening! I'm doing fine. \n\nBest,\nSemplestScheduler");

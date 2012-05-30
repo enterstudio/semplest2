@@ -92,6 +92,8 @@ public class DatabaseTest extends BaseDB{
 			test_accountId = System.currentTimeMillis();
 			test_campaignId = test_accountId + 1;
 			
+			
+			//Create Test Promotion
 			try{
 				int ProductGroupFK = 81;
 				String PromotionName = "Database Test";
