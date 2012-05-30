@@ -885,7 +885,7 @@ public class MsnServiceTest {
 				exactMatchBid.setAmount(2.02);
 				Bid phraseMatchBid = new Bid();
 				phraseMatchBid.setAmount(2.03);
-				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);			
+				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", null, null, null, null);						
 				System.out.println("OK");
 				
 				if(keywordId == 0L)
@@ -977,7 +977,10 @@ public class MsnServiceTest {
 				exactMatchBid.setAmount(5.02);
 				Bid phraseMatchBid = new Bid();
 				phraseMatchBid.setAmount(5.03);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, null, null, null);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, contentMatchBid, null, null);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, null, exactMatchBid, null);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, null, null, phraseMatchBid);
 				System.out.println("OK");
 				
 			}
@@ -1001,7 +1004,10 @@ public class MsnServiceTest {
 					bids[i] = new Bid();
 					bids[i].setAmount(i+0.05);
 				}			
-				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, bids, bids, bids, bids);
+				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, bids, null, null, null);
+				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, bids, null, null);
+				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, null, bids, null);
+				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, null, null, bids);
 				System.out.println("OK");	
 				
 				//verify result
