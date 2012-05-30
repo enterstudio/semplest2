@@ -89,6 +89,7 @@ namespace SemplestModel
         public DbSet<WebContent> WebContents { get; set; }
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
         public DbSet<vwProductPromotion> vwProductPromotions { get; set; }
+        public DbSet<vwGetLivePromotionsForUser> vwGetLivePromotionsForUsers { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

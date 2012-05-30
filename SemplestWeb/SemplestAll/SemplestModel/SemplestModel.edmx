@@ -83,6 +83,17 @@
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="vwGetLivePromotionsForUser" EntityType="SemplestModel.Store.vwGetLivePromotionsForUser" store:Type="Views" store:Schema="dbo" store:Name="vwGetLivePromotionsForUser">
+            <DefiningQuery>SELECT 
+      [vwGetLivePromotionsForUser].[PromotionPK] AS [PromotionPK], 
+      [vwGetLivePromotionsForUser].[PromotionName] AS [PromotionName], 
+      [vwGetLivePromotionsForUser].[UserPK] AS [UserPK], 
+      [vwGetLivePromotionsForUser].[IsPaused] AS [IsPaused], 
+      [vwGetLivePromotionsForUser].[IsCompleted] AS [IsCompleted], 
+      [vwGetLivePromotionsForUser].[IsLaunched] AS [IsLaunched], 
+      [vwGetLivePromotionsForUser].[IsDeleted] AS [IsDeleted]
+      FROM [dbo].[vwGetLivePromotionsForUser] AS [vwGetLivePromotionsForUser]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vwProductPromotions" EntityType="SemplestModel.Store.vwProductPromotions" store:Type="Views" store:Schema="dbo" store:Name="vwProductPromotions">
             <DefiningQuery>SELECT 
       [vwProductPromotions].[ProductGroupPK] AS [ProductGroupPK], 
@@ -1123,6 +1134,27 @@
           <Property Name="FAQ" Type="nvarchar(max)" />
           <Property Name="AboutUs" Type="nvarchar(max)" />
           <Property Name="ContactUs" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.vwGetLivePromotionsForUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="vwGetLivePromotionsForUser">
+          <Key>
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="UserPK" />
+            <PropertyRef Name="IsPaused" />
+            <PropertyRef Name="IsCompleted" />
+            <PropertyRef Name="IsLaunched" />
+            <PropertyRef Name="IsDeleted" />
+          </Key>
+          <Property Name="PromotionPK" Type="int" Nullable="false" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="UserPK" Type="int" Nullable="false" />
+          <Property Name="IsPaused" Type="bit" Nullable="false" />
+          <Property Name="IsCompleted" Type="bit" Nullable="false" />
+          <Property Name="IsLaunched" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'semplest.dbo.vwProductPromotions' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -2487,6 +2519,7 @@
           </AssociationSet>
           <EntitySet Name="vwPromotionCharts" EntityType="SemplestModel.vwPromotionChart" />
           <EntitySet Name="vwProductPromotions" EntityType="SemplestModel.vwProductPromotion" />
+          <EntitySet Name="vwGetLivePromotionsForUsers" EntityType="SemplestModel.vwGetLivePromotionsForUser" />
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -4221,6 +4254,24 @@
           <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="UserPK" Nullable="false" />
         </EntityType>
+        <EntityType Name="vwGetLivePromotionsForUser">
+          <Key>
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="UserPK" />
+            <PropertyRef Name="IsPaused" />
+            <PropertyRef Name="IsCompleted" />
+            <PropertyRef Name="IsLaunched" />
+            <PropertyRef Name="IsDeleted" />
+          </Key>
+          <Property Type="Int32" Name="PromotionPK" Nullable="false" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="UserPK" Nullable="false" />
+          <Property Type="Boolean" Name="IsPaused" Nullable="false" />
+          <Property Type="Boolean" Name="IsCompleted" Nullable="false" />
+          <Property Type="Boolean" Name="IsLaunched" Nullable="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5061,6 +5112,19 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vwGetLivePromotionsForUsers">
+            <EntityTypeMapping TypeName="SemplestModel.vwGetLivePromotionsForUser">
+              <MappingFragment StoreEntitySet="vwGetLivePromotionsForUser">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
+                <ScalarProperty Name="IsPaused" ColumnName="IsPaused" />
+                <ScalarProperty Name="UserPK" ColumnName="UserPK" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5718,6 +5782,7 @@
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="3.5186979166666674" />
         <EntityTypeShape EntityType="SemplestModel.vwProductPromotion" Width="1.5" PointX="7.375" PointY="8.75" Height="2.1725878906249818" />
+        <EntityTypeShape EntityType="SemplestModel.vwGetLivePromotionsForUser" Width="1.5" PointX="9.375" PointY="0.75" Height="1.5956835937499818" />
       </Diagram>
     </Diagrams>
   </Designer>
