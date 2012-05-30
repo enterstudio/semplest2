@@ -135,14 +135,16 @@ public class TrafficEstimatorObject
 		{
 			String[] keywords = trafficData.getListOfKeywords();
 			for (int i = 0; i < keywords.length; i++)
-			{
+			{	
 				HashMap<Long, BidData> ptData = trafficData.getMapOfPoints(keywords[i], matchType);
-				Iterator<Long> bidsIT = ptData.keySet().iterator();
-				while (bidsIT.hasNext())
-				{
-					Long bid = bidsIT.next();
-					BidData aBidData = ptData.get(bid);
-					this.setBidData(keywords[i], matchType, bid, aBidData);
+				if(ptData!=null){
+					Iterator<Long> bidsIT = ptData.keySet().iterator();
+					while (bidsIT.hasNext())
+					{
+						Long bid = bidsIT.next();
+						BidData aBidData = ptData.get(bid);
+						this.setBidData(keywords[i], matchType, bid, aBidData);
+					}
 				}
 			}
 		}
