@@ -28,13 +28,41 @@
                                 Search Engines</h3>
                             Google MSN/Yahoo
                             <br />
-                            <h3>
-                                Where to Show Your Ad</h3>
-                            @foreach (var address in @Model.AdModelProp.Addresses)
+                            <br />
+                            <h3>Where to Show Your Ad</h3>
+                            @if (@Model.AdModelProp.Addresses.Count() > 0)
                             {
-                                <p>@address.Address @address.City @address.StateCodes.FirstOrDefault(t => t.StateAbbrPK == @address.StateCodeFK).StateAbbr
-                                    @address.Zip @address.ProximityRadius
-                                </p>
+                                foreach (var address in @Model.AdModelProp.Addresses)
+                                {
+                                    string stateStr = @address.StateCodes.FirstOrDefault(t => t.StateAbbrPK == @address.StateCodeFK).StateAbbr;
+                                    if (address != null && (!String.IsNullOrEmpty(address.City) || !String.IsNullOrEmpty(address.Zip)))
+                                    {
+                                        if (address.ProximityRadius != null)
+                                        {
+                                            string proxStr = System.Math.Round((decimal)address.ProximityRadius, 0).ToString();
+                                            if (!String.IsNullOrEmpty(address.Address))
+                                            {
+                                                <p>@proxStr miles or less from @address.Address @address.City @stateStr @address.Zip</p>
+                                            }
+                                            else
+                                            {
+                                                <p>@proxStr miles or less from @address.City @stateStr @address.Zip</p>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p>@address.Address @address.City @stateStr @address.Zip</p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>United States</p>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <p>United States</p>
                             }
                         </div>
                         <div class="right">
