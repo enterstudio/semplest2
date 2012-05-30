@@ -1,8 +1,14 @@
 package semplest.analysis.reports.google;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.log4j.BasicConfigurator;
@@ -36,13 +42,56 @@ public class GoogleReportTools {
 		
 		BasicConfigurator.configure();
 		GoogleReportTools repT = new GoogleReportTools("SemplestBiddingTestPiperHall", 6870692153L, 1);
+		
+		
+		/*
+		//Create Report Test for a specific campaign
 		String firstDay = "20120525"; 
 		String lastDay = "20120525";
 		ReportObject[] reps = repT.getKeywordReportObjects(firstDay, lastDay);
 		ReportUtils.saveSerializedObject(reps, "/semplest/lluis/PiperHallTest/serializedReportGoogle");
 		reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/lluis/PiperHallTest/serializedReportGoogle");
 		ReportUtils.saveReportDataCSV(reps, "/semplest/lluis/PiperHallTest/testReportGoogle");
-
+		*/
+		
+		//Create FPCPC Report
+		ArrayList<String> msnReport = ReportUtils.readFile("/semplest/lluis/fpcpcReport.csv");
+		ArrayList<String> keywords = new ArrayList<String>();
+		for(String line : msnReport){
+			String[] parts = line.split(",");
+			keywords.add(parts[0].replaceAll("^\\s+", "").replace("\\s+$", ""));
+			
+		}
+		ArrayList<String> fpcpc = repT.getFPCPCreportForKeywords(keywords,"/home/lluis/Downloads/Keywordreport.csv" );
+		ReportUtils.saveArrayListString(fpcpc, "/semplest/lluis/fpcpcReportGoogle.csv");
+		
+	}
+	
+	public ArrayList<String> getFPCPCreportForKeywords(ArrayList<String> kw, String reportFilePath) throws IOException{
+		//Takes in a list of keywords and a report downloaded from Google Reports and generates a report for the fpcpc of the specified keywords
+		
+		
+		ArrayList<String> relevantLines = new ArrayList<String>();
+		FileInputStream fstream = new FileInputStream(reportFilePath);
+	    // Get the object of DataInputStream
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    int i=0;
+	    String line;
+	    while((line = br.readLine())!=null){
+	    	if(i>2){//Avoid headers
+	    		String[] parts = line.split(",");
+	    		String keyword = parts[1].replaceAll("\\[", "").replaceAll("\\]", "");//.replace("\"", "");
+	    		if(kw.contains(keyword)){
+	    			relevantLines.add(keyword+", "+parts[14]+", "+parts[5]);
+	    		}
+	    	}
+	    	i++;
+	    }
+	    
+	    String[] array = relevantLines.toArray(new String[]{});
+	    Arrays.sort(array);
+	    return new ArrayList<String>(Arrays.asList(array));
 	}
 	
 	public GoogleReportTools(String accountNameIn, Long accountIdIn, int campaignIndex) throws Exception{
