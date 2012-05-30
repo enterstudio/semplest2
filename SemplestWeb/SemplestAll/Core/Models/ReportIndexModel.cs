@@ -10,7 +10,7 @@ namespace Semplest.Core.Models
     public class vwPromotionChartModel
     {
         public string KeyWord;
-        public bool IsActive;
+        public String IsActive;
         public decimal AmountSpent;
         public double NumberImpressions;
         public double NumberClick;
