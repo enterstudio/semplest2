@@ -440,29 +440,29 @@ namespace Semplest.Core.Controllers
 
         public ActionResult GetSideBar()
         {
-            int userid = ((Credential) (Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            int userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var sds = new SemplestDataService();
-            var user = sds.GetUserWithProductGroupAndPromotions(userid);
+            var vwProductPromotions = sds.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
-            var productGroupsBar = new NavBar {Name = "Product Groups..", SubItems = new List<NavBar>()};
-            foreach (var promotion in user.Customer.ProductGroups.OrderBy(t => t.ProductGroupName))
+            var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
+            foreach (var promotion in vwProductPromotions.GroupBy(t => new { t.ProductGroupPK, t.ProductGroupName }))
             {
                 var promotionBar = new NavBar
-                                       {
-                                           Name = promotion.ProductGroupName,
-                                           Id = promotion.ProductGroupPK,
-                                           SubItems = new List<NavBar>()
-                                       };
+                {
+                    Name = promotion.Key.ProductGroupName,
+                    Id = promotion.Key.ProductGroupPK,
+                    SubItems = new List<NavBar>()
+                };
 
-                foreach (var prom in promotion.Promotions)
+                foreach (var prom in promotion)
                     promotionBar.SubItems.Add(new NavBar
-                                                  {
-                                                      Name = prom.PromotionName,
-                                                      Id = prom.PromotionPK,
-                                                      Url =
-                                                          ConfigurationManager.AppSettings["CampaignUrl"] +
-                                                          prom.PromotionPK.ToString(CultureInfo.InvariantCulture)
-                                                  });
+                    {
+                        Name = prom.PromotionName,
+                        Id = prom.PromotionPK,
+                        Url =
+                            ConfigurationManager.AppSettings["CampaignUrl"] +
+                            prom.PromotionPK.ToString(CultureInfo.InvariantCulture)
+                    });
                 //promotionBar.SubItems.Add(new NavBar { Name = prom.PromotionName, Id = prom.PromotionPK, Url = "../Campaign/CampaignSetup?promotionId=" + prom.PromotionPK.ToString() });
 
                 productGroupsBar.SubItems.Add(promotionBar);
@@ -470,6 +470,7 @@ namespace Semplest.Core.Controllers
             navBars.Add(productGroupsBar);
             return Json(navBars, JsonRequestBehavior.AllowGet);
         }
+
 
         [RequireRequestValue("promotionId")]
         public ActionResult Preview(int promotionId)

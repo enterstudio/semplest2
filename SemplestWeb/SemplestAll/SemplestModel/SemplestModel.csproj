@@ -252,6 +252,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Validations\MultifieldRequired.cs" />
+    <Compile Include="vwProductPromotion.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="vwPromotionChart.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

@@ -1,4 +1,5 @@
-﻿@model Semplest.Core.Models.ReportIndexModel
+﻿
+@model Semplest.Core.Models.ReportIndexModel
 @{
     ViewBag.Title = "ReportDetails";
 }
@@ -22,32 +23,34 @@
                             alert(e.xhr.responseText);
                         }
                     },
+                    change: function (e) {
+                        var totalitems = e.sender.total();
+                        $('#chart').css('width', totalitems * 50);
+                    },
                     sort: {
                         field: "Date",
                         dir: "asc"
                     }
-
                 },
                 title: {
                     text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + ""
+                    , position: "left"
                 },
                 legend: {
                     position: "top"
-                },
-                seriesDefaults: {
-                    type: "line"
                 },
                 series:
                         [{
                             field: "Impressions",
                             name: "Impressions",
                             type: "column"
-                        },{
+                        }, {
                             field: "Clicks",
-                            name: "Clicks"
+                            name: "Clicks",
+                            type: "line"
                         }],
                 categoryAxis: {
-                    field: "Date",
+                    field: "Date"
                 },
                 valueAxis: {
                     labels: {
@@ -63,8 +66,8 @@
         }
     });
 </script>
-<div class="chart-wrapper" style="margin: auto;">
-    <div id="chart">
+<div class="chart-wrapper" style="margin: auto; overflow: auto; height: 270px">
+    <div id="chart" style=" height: 250px">
     </div>
 </div>
 @Html.HiddenFor(t => t.PromotionFK)

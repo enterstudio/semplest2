@@ -1,46 +1,72 @@
-﻿@model Semplest.Core.Models.ReportIndexModel
+﻿
+@model Semplest.Core.Models.ReportIndexModel
 @Html.Partial("ReportChart", @Model)
-
-@* <table id="grid">
-  <thead>
-      <tr>
-          <th data-field="title">Budget</th>
-          <th data-field="year">Amount Spent</th>
-          <th data-field="year">Impr.</th>
-          <th data-field="year">Clicks</th>
-          <th data-field="year">Search CTR</th>
-          <th data-field="year">CPC</th>
-          <th data-field="year">Avg. Position</th>
-      </tr>
-  </thead>
- <tbody>*@
-
- <table id="grid">
-  <thead>
-      <tr>
-          <th >Keyword</th>
-          <th >Status</th>
-          <th >Amount Spent</th>
-          <th >Impr.</th>
-          <th >Clicks</th>
-          <th >Search CTR</th>
-          <th >CPC</th>
-          <th >Avg. Position</th>
-      </tr>
-  </thead>
- <tbody>
-                @foreach (SemplestModel.vwPromotionChart item in Model.Detail)
-                {
-                    <tr>
-                        <td>@item.Keyword</td>
-                        <td>@item.IsActive</td>
-                        <td></td>
-                        <td>@item.NumberImpressions</td>
-                        <td>@item.NumberClick</td>
-                        <td>@(item.NumberClick/item.NumberImpressions)</td>
-                        <td></td>
-                        <td>@item.AveragePosition</td>
-                    </tr>
+<br/>
+<div id="grid1">
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#grid1").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: '@Url.Action("ReportDetailsGrid")',
+                    error: function (e) {
+                        alert(e);
+                    }
+                },
+                schema: {
+                    model: {
+                        fields: {
+                            AdvertisingEngineBidDataPK: { type: "number" },
+                            Keyword: { type: "string" },
+                            IsActive: { type: "boolean" },
+                            NumberImpressions: { type: "number" },
+                            NumberClick: { type: "number" },
+                            AveragePosition: { type: "number" }
+                        }
+                    }
                 }
-            </tbody>
- </table>
+            },
+            height: 250,
+            filterable: true,
+            sortable: true,
+            columns: [
+                        {
+                            field: "AdvertisingEngineBidDataPK",
+                            filterable: false,
+                            width: 1
+                        },
+                      "Keyword",
+                        {
+                            field: "IsActive",
+                            title: "Status",
+                            width: 60
+                        },
+                        {
+                            title: "Amount Spent"
+                        },
+                {
+                    field: "NumberImpressions",
+                    title: "Impr.",
+                    width: 60
+                },
+                {
+                    field: "NumberClick",
+                    title: "Clicks",
+                    width: 60
+                },
+                {
+                    field: "NumberClick",
+                    title: "Search CTR"
+                },
+                {
+                    title: "CPC"
+                },
+                {
+                    title: "Avg. Position",
+                    field: "AveragePosition"
+                }
+            ]
+        });
+    });
+</script>

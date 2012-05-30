@@ -83,6 +83,16 @@
           <EntitySet Name="UserRolesAssociation" EntityType="SemplestModel.Store.UserRolesAssociation" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="vwProductPromotions" EntityType="SemplestModel.Store.vwProductPromotions" store:Type="Views" store:Schema="dbo" store:Name="vwProductPromotions">
+            <DefiningQuery>SELECT 
+      [vwProductPromotions].[ProductGroupPK] AS [ProductGroupPK], 
+      [vwProductPromotions].[CustomerFK] AS [CustomerFK], 
+      [vwProductPromotions].[ProductGroupName] AS [ProductGroupName], 
+      [vwProductPromotions].[PromotionPK] AS [PromotionPK], 
+      [vwProductPromotions].[PromotionName] AS [PromotionName], 
+      [vwProductPromotions].[UserPK] AS [UserPK]
+      FROM [dbo].[vwProductPromotions] AS [vwProductPromotions]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vwPromotionChart" EntityType="SemplestModel.Store.vwPromotionChart" store:Type="Views" store:Schema="dbo" store:Name="vwPromotionChart">
             <DefiningQuery>SELECT 
       [vwPromotionChart].[Keyword] AS [Keyword], 
@@ -1113,6 +1123,25 @@
           <Property Name="FAQ" Type="nvarchar(max)" />
           <Property Name="AboutUs" Type="nvarchar(max)" />
           <Property Name="ContactUs" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.vwProductPromotions' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="vwProductPromotions">
+          <Key>
+            <PropertyRef Name="ProductGroupPK" />
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="ProductGroupName" />
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="UserPK" />
+          </Key>
+          <Property Name="ProductGroupPK" Type="int" Nullable="false" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="ProductGroupName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="PromotionPK" Type="int" Nullable="false" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="UserPK" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'semplest.dbo.vwPromotionChart' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -2457,6 +2486,7 @@
             <End Role="PromotionPayment" EntitySet="PromotionPayments" />
           </AssociationSet>
           <EntitySet Name="vwPromotionCharts" EntityType="SemplestModel.vwPromotionChart" />
+          <EntitySet Name="vwProductPromotions" EntityType="SemplestModel.vwProductPromotion" />
         </EntityContainer>
         <EntityType Name="Address">
           <Key>
@@ -4175,6 +4205,22 @@
           <Property Type="Int32" Name="UserPK" Nullable="false" />
           <Property Type="Boolean" Name="IsActive" Nullable="false" />
         </EntityType>
+        <EntityType Name="vwProductPromotion">
+          <Key>
+            <PropertyRef Name="ProductGroupPK" />
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="ProductGroupName" />
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="UserPK" />
+          </Key>
+          <Property Type="Int32" Name="ProductGroupPK" Nullable="false" />
+          <Property Type="Int32" Name="CustomerFK" Nullable="false" />
+          <Property Type="String" Name="ProductGroupName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="PromotionPK" Nullable="false" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="UserPK" Nullable="false" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5003,6 +5049,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vwProductPromotions">
+            <EntityTypeMapping TypeName="SemplestModel.vwProductPromotion">
+              <MappingFragment StoreEntitySet="vwProductPromotions">
+                <ScalarProperty Name="UserPK" ColumnName="UserPK" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
+                <ScalarProperty Name="ProductGroupName" ColumnName="ProductGroupName" />
+                <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+                <ScalarProperty Name="ProductGroupPK" ColumnName="ProductGroupPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5024,7 +5082,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="25">
+      <Diagram Name="SemplestModel" ZoomLevel="21">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="29.875" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="26.625" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="23.5" Height="2.1725878906249818" />
@@ -5659,6 +5717,7 @@
           <ConnectorPoint PointX="9.75" PointY="31.557444661458334" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.vwPromotionChart" Width="1.5" PointX="7.375" PointY="3.75" Height="3.5186979166666674" />
+        <EntityTypeShape EntityType="SemplestModel.vwProductPromotion" Width="1.5" PointX="7.375" PointY="8.75" Height="2.1725878906249818" />
       </Diagram>
     </Diagrams>
   </Designer>

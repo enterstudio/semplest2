@@ -1,4 +1,5 @@
-﻿@model Semplest.Core.Models.HomeModelChild
+﻿
+@model Semplest.Core.Models.HomeModelChild
 @section Title{
     My Account (@ViewBag.Title)
 }
@@ -92,7 +93,9 @@
                 </form>
             </div>
             <script type="text/javascript">
+                $('#loading').hide();
                 $(document).ready(function () {
+                    $('#loading').hide();
                     $(".deletead").click(function (event) {
                         $('#promotionId').val(event.target.id);
                         $('.question').html("Are you sure you want to delete " + event.target.name + "?");
@@ -145,12 +148,15 @@
                         $.unblockUI();
                     });
                     $('.preview').mouseover(function (e) {
-                        var data = { promotionId: 1 };
+                        $('#loading').show();
+                        $('#preview').hide();
                         //$.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>'});
-                        $('#preview').load('@Url.Action("Preview","Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
+                        $('#preview').load('@Url.Action("Preview", "Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
+                            $('#preview').show();
                             if (status == "error") {
                                 var msg = "Sorry but there was an error: ";
                                 $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                $('#loading').hide();
                             }
                             //$.unblockUI();
                         });
@@ -160,6 +166,10 @@
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
         <td style="vertical-align: top; width: 450px;">
+            <div id='loading'>
+                <h3 style="margin-left: 22px">
+                    Loading Preview...</h3>
+            </div>
             <div id="preview" />
         </td>
     </tr>

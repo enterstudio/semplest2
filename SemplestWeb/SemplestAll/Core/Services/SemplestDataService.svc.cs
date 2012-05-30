@@ -159,11 +159,10 @@ namespace SemplestWebApp.Services
             return model;
         }
 
-        public User GetUserWithProductGroupAndPromotions(int userid)
+        public IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid)
         {
             var semplestEntities = new SemplestEntities();
-            var user = semplestEntities.Users.Include("Customer.ProductGroups").Include("Customer.ProductGroups.Promotions").FirstOrDefault(t => t.UserPK == userid);
-            return user;
+            return semplestEntities.vwProductPromotions.Where(t => t.UserPK == userid);
         }
 
         private Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)

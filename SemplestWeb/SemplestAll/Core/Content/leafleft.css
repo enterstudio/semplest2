@@ -769,3 +769,16 @@ span.k-tooltip
     position: absolute;
     background-image: url('Metro/loading.gif');
 }
+
+
+#loading 
+{
+    position:absolute;
+    background-image: url('Metro/loading.gif');
+    background-repeat: no-repeat;
+    vertical-align: middle;
+    margin-top: 130px;
+    margin-left: 200px;
+}
+
+​

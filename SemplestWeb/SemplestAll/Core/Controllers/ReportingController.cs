@@ -45,7 +45,11 @@ namespace Semplest.Core.Controllers
             model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
-
+        public ActionResult ReportDetailsGrid()
+        {
+            var dbContext = new SemplestEntities();
+            return Json(dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword), JsonRequestBehavior.AllowGet);
+        }​​
         public ActionResult ReportChart(ReportIndexModel model)
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
