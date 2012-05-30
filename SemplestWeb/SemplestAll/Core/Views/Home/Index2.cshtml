@@ -146,13 +146,13 @@
                     });
                     $('.preview').mouseover(function (e) {
                         var data = { promotionId: 1 };
-                        $.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>'});
+                        //$.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>'});
                         $('#preview').load('@Url.Action("Preview","Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
                             if (status == "error") {
                                 var msg = "Sorry but there was an error: ";
                                 $("#error").html(msg + xhr.status + " " + xhr.statusText);
                             }
-                            $.unblockUI();
+                            //$.unblockUI();
                         });
                     });
                 });
