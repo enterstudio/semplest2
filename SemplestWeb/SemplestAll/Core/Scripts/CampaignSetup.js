@@ -18,7 +18,8 @@ $(document).ready(function () {
                     if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
                         return false;
                     }
-                    return true; ;
+                    status.text("").addClass("valid");
+                    return true;
                 }
                 return true;
             }
@@ -27,7 +28,7 @@ $(document).ready(function () {
             required: function (e) {
                 return e.attr('name').split('.')[e.attr('name').split('.').length - 1] + " is Requried..";
             },
-            minreq: "Budjet must be not les than or euql to " + parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val()),
+            minreq: "Budget must not be less than " + parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val()),
             min: "{0} should be greater than or equal to {1}",
             max: "{0} should be smaller than or equal to {1}"
         }
