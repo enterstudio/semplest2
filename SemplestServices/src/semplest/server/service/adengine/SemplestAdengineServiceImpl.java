@@ -86,7 +86,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// String u = adEng.getURL("www.xyz.com");
 			// Tovah Photography 2 47 Photography 58 38 Event and portrait
 			// photos
-			adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+			//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+			adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
 
 		}
 		catch (Exception e)
@@ -330,17 +331,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adGrpData.setAdGroupID(adGroupID);
 			for (AdsObject ad : adList)
 			{
+				Thread.sleep(1000);
 				Long adID = google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdTextLine1(), ad.getAdTextLine2(),
 						promotionData.getLandingPageURL(), promotionData.getLandingPageURL());
 				ad.setAdEngineAdID(adID);
+				logger.info("Added Ad Copy. Title=" + ad.getAdTitle());
 			}
 			adGrpData.setAds(adList);
 			// AD GEOTARGET HERE
 			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 			for (GeoTargetObject geoObj : geoObjList)
 			{
+				Thread.sleep(1000);
 				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
 						geoObj.getZip());
+				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
+				
 			}
 
 		}

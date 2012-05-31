@@ -284,11 +284,14 @@ public class SemplestDB extends BaseDB
 			for (int i = 0; i < keywordDataObjectList.size(); i++)
 			{
 				KeywordDataObject kdObj = keywordDataObjectList.get(i);
+				
 				Integer firstpgcpc = null;
 				if (kdObj.getFirstPageCpc() != null)
 				{
 					firstpgcpc = kdObj.getFirstPageCpc().intValue();
 				}
+				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + AdEngine  + ":" + kdObj.getMatchType()  + ":" + kdObj.getQualityScore()  + ":" +
+						kdObj.getApprovalStatus() + ":" + firstpgcpc + ":" + kdObj.isIsEligibleForShowing());
 				//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing
 				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
 						kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());

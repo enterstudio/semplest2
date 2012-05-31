@@ -413,13 +413,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
 			selector.setClientCustomerIds(new long[]
 			{ accountID });
-			SimpleDateFormat form = new SimpleDateFormat("yyyyMMdd");
 			String start = "";
 			String end = "";
 			if (startDate != null && endDate != null)
 			{
-				start = form.format(startDate);
-				end = form.format(endDate);
+				start = YYYYMMDD.format(startDate);
+				end = YYYYMMDD.format(endDate);
 			}
 			else
 			{

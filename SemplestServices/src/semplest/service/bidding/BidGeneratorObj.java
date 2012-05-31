@@ -18,14 +18,11 @@ import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
-//import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
-//import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
-import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.service.SemplestConfiguration;
@@ -33,7 +30,6 @@ import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
-//import com.google.gson.Gson;
 
 public class BidGeneratorObj {
 	
@@ -385,6 +381,7 @@ public class BidGeneratorObj {
 				o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
 						KeywordMatchType.EXACT,	wordBidMap);
 			} catch (Exception e) {
+				logger.error(e.getMessage());
 				e.printStackTrace();
 				throw new Exception("Failed to get Google traffic estimator data.");
 			}
@@ -419,6 +416,7 @@ public class BidGeneratorObj {
 					SemplestDB.storeKeywordDataObjects(promotionID, google,
 							new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 				} catch (Exception e) {
+					logger.error(e.getMessage());
 					e.printStackTrace();
 					throw new Exception("Failed to store Google adGroupCriterion data to database.");
 				}
@@ -435,6 +433,7 @@ public class BidGeneratorObj {
 				try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
 				} catch (Exception e) {
+					logger.error(e.getMessage());
 					e.printStackTrace();
 					logger.info("Failed to write traffic estimator data");
 				}
