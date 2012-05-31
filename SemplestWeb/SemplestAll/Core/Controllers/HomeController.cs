@@ -68,6 +68,12 @@ namespace SemplestWebApp.Controllers
             return View("Static", vm);
         }
 
+        public ActionResult Contact()
+        {
+            StaticModel vm = new StaticModel(StaticPages.Contact);
+            return View("Static", vm);
+        }
+
         public ActionResult SearchKeywords()
         {
             return View();

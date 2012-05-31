@@ -46,6 +46,10 @@ namespace Semplest.Core.Models
                         Text = entities.WebContents.FirstOrDefault().FAQ;
                         Title = "FAQs";
                         break;
+                    case StaticPages.Contact:
+                        Text = entities.WebContents.FirstOrDefault().ContactUs;
+                        Title = "Contact Us";
+                        break;
                     default:
                         Text = "No such Page";
                         break;
@@ -56,5 +60,5 @@ namespace Semplest.Core.Models
         public string Title { get; set; }
     }
 
-    public enum StaticPages { About, FAQ}
+    public enum StaticPages { About, FAQ, Contact}
 }
