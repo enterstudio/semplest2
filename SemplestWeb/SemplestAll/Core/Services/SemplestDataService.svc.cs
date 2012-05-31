@@ -452,7 +452,7 @@ namespace SemplestWebApp.Services
                     if (!queryKeyword.Any())
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
-                        var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword, CreatedDate = DateTime.Now });
+                        var newKeyword = dbcontext.Keywords.Add(new Keyword { Keyword1 = kpo.keyword.Trim(), CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
                         dbcontext.PromotionKeywordAssociations.Add(
