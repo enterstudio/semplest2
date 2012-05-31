@@ -29,7 +29,8 @@
                 <h3>
                     Budget
                 </h3>
-                @(!@Model.IsEdit ? Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter Budjet", @min = @Convert.ToInt32(@Model.Configuration.CustomerMinOrderAmount) }) : Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}", @mimimum = @Convert.ToInt32(@Model.Configuration.CustomerMinOrderAmount), @maximum = 999999 }))
+                @(!@Model.IsEdit ? Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @minreq = true }) : Html.TextBoxFor(t => t.Budget, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter {0}" }))
+                @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
                 <br />
                 <label style="color: #BFBFBF; margin-top: 5px;">
                     Enter whole numbers only. Ex: $100 not $100.00 Minimum @Convert.ToInt32(@Model.Configuration.CustomerMinOrderAmount)</label>

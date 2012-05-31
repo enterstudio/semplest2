@@ -2,7 +2,7 @@
 $(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
-    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: $('#ProductGroup_Configuration_CustomerMinOrderAmount').val() }).data("kendoNumericTextBox");
+    var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
     budjet.wrapper.find(".k-link")
         .addClass("k-state-disabled").unbind("keydown");
@@ -10,10 +10,27 @@ $(document).ready(function () {
         .addClass("k-state-disabled").unbind("mousedown");
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
-    var validator = $("#productGroupModel").kendoValidator({ messages: {
-        min: "{0} should be greater than or equal to {1}",
-        max: "{0} should be smaller than or equal to {1}"
-    }
+    var validator = $("#productGroupModel").kendoValidator({
+        rules: {
+            minreq: function (input) {
+                if (input.is("[name=ProductGroup.Budget]")) {
+
+                    if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
+                        return false;
+                    }
+                    return true; ;
+                }
+                return true;
+            }
+        },
+        messages: {
+            required: function (e) {
+                return e.attr('name').split('.')[e.attr('name').split('.').length - 1] + " is Requried..";
+            },
+            minreq: "Budjet must be not les than or euql to " + parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val()),
+            min: "{0} should be greater than or equal to {1}",
+            max: "{0} should be smaller than or equal to {1}"
+        }
     }).data("kendoValidator"), status = $(".status");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
