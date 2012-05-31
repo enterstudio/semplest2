@@ -25,7 +25,7 @@ BEGIN TRY
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
 	--get general info
-	select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,
+	select p.PromotionPK,p.ProductGroupFK,p.PromotionName,p.PromotionDescription,p.LandingPageURL,p.DisplayURL,
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
 		p.BudgetToAddToNextCycle,p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
