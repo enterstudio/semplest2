@@ -29,7 +29,6 @@
 	<classpathentry kind="lib" path="lib/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="lib/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/adwords-api-8.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/gson-2.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-pool-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-dbcp-1.4.jar"/>
@@ -45,6 +44,7 @@
 	<classpathentry kind="lib" path="lib/sunrsasign.jar"/>
 	<classpathentry kind="lib" path="lib/flanagan.jar"/>
 	<classpathentry kind="lib" path="lib/msn_adcenter_v8r3.jar"/>
+	<classpathentry kind="lib" path="lib/adwords-api-8.6.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry kind="lib" path="lib/SemplestBidding.jar"/>
