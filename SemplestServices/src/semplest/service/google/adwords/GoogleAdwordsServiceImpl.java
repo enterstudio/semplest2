@@ -4,10 +4,10 @@ package semplest.service.google.adwords;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +19,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
+import semplest.server.keyword.KeywordMatchingType;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -27,9 +28,9 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
-import semplest.server.protocol.google.KeywordToolStats;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
@@ -129,9 +130,11 @@ import com.google.api.adwords.v201109.o.TargetingIdeaServiceInterface;
 import com.google.api.adwords.v201109.o.TrafficEstimatorResult;
 import com.google.api.adwords.v201109.o.TrafficEstimatorSelector;
 import com.google.api.adwords.v201109.o.TrafficEstimatorServiceInterface;
+import com.google.api.adwords.v201109_1.billing.BudgetOrder;
+import com.google.api.adwords.v201109_1.billing.BudgetOrderOperation;
+import com.google.api.adwords.v201109_1.billing.BudgetOrderReturnValue;
+import com.google.api.adwords.v201109_1.billing.BudgetOrderServiceInterface;
 import com.google.gson.Gson;
-
-import semplest.server.keyword.KeywordMatchingType;
 
 
 public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
@@ -144,6 +147,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
 	private final boolean useSandbox; // = false; // true; // // true; //
+	
+	
+	private static SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
 	
 	public GoogleAdwordsServiceImpl() throws Exception
@@ -2681,6 +2687,54 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception(e);
 		}
 
+	}
+	
+	/*
+	 * initialBudget null means unlimited amount
+	 */
+	public Boolean setAccountBudget(String accountID, String billingAccountID, Long initialBudgetAmount) throws Exception
+	{
+		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		//Get the BudgetOrderService
+		BudgetOrderServiceInterface budgetOrderService = user.getService(AdWordsService.V201109_1.BUDGET_ORDER_SERVICE);
+		//create a budget order
+		BudgetOrder budgetOrder = new BudgetOrder();
+		budgetOrder.setBillingAccountId(billingAccountID);
+		//states now
+		Calendar cal = Calendar.getInstance();
+		budgetOrder.setStartDateTime(YYYYMMDD.format(cal.getTime()));
+		//assume enddate 15 years in future
+		cal.add(Calendar.YEAR, 15);
+		budgetOrder.setEndDateTime(YYYYMMDD.format(cal.getTime()));
+		//setUnlimited Budget
+		if (initialBudgetAmount == null)
+		{
+			initialBudgetAmount = -1L;
+		}
+		com.google.api.adwords.v201109_1.cm.Money initialBudgetAmountMicro = new com.google.api.adwords.v201109_1.cm.Money();
+		initialBudgetAmountMicro.setMicroAmount(initialBudgetAmount);
+		budgetOrder.setSpendingLimit(initialBudgetAmountMicro);
+		//create the Add operation
+		BudgetOrderOperation budgetOrderOperation =  new BudgetOrderOperation();
+		budgetOrderOperation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.ADD);
+		budgetOrderOperation.setOperand(budgetOrder);
+		
+		//run
+		BudgetOrderOperation[] operations = new BudgetOrderOperation[] { budgetOrderOperation};
+		BudgetOrderReturnValue result = budgetOrderService.mutate(operations);
+		
+		BudgetOrder[] orders = result.getValue();
+		if (orders.length > 0)
+		{
+			logger.info("Setup Account budget for " + accountID + " On BillingAccountID=" +  orders[0].getBillingAccountId() + " For " +  orders[0].getSpendingLimit().getMicroAmount());
+			return true;
+		}
+		else
+		{
+			logger.warn("Unable to setup Account budget for " + accountID + " On BillingAccountID=" +  billingAccountID );
+			return false;
+		}
+		
 	}
 
 	@Override

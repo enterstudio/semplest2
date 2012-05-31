@@ -431,6 +431,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			Account account = google.CreateOneAccountService(null, null, companyName, "Semplest account for " + companyName);
+			//setup initial budget
+			String googleBillingAccount = (String) SemplestConfiguration.configData.get("AdwordsBillingAccount");
+			try
+			{
+				if (google.setAccountBudget(String.valueOf(account.getCustomerId()), googleBillingAccount, null))
+				{
+					logger.info("Setup unlimited budget at the account level");
+				}
+				else
+				{
+					logger.warn("Unable to setup budget at the account level");
+				}
+			}
+			catch (Exception e)
+			{
+				logger.error("Error Setting up Budget at the account level " + e.getMessage());
+			}
 			return account.getCustomerId();
 		}
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
