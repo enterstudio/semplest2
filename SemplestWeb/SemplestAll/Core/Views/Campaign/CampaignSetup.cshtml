@@ -100,7 +100,7 @@ Ad Setup (@ViewBag.Title)
     function OnSuccess(id) {
         $.unblockUI();
         var tab;
-        alert(id);
+        //alert(id);
         if (id == "Categories") {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
