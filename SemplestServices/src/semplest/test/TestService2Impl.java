@@ -14,50 +14,29 @@ import semplest.services.client.interfaces.TestServiceInterface;
 
 public class TestService2Impl implements TestServiceInterface
 {
-	public static String eol = System.getProperty("line.separator");
-	private static Gson gson = new Gson();
-
 	@Override
 	public String TestMethod(String jsonStr)
 	{
-		try{
-			DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");		
-			String reportName = "SchedulerTest" + ".txt";
-			String reportPath = "\\Z:\\TestReports\\" + reportName;			
-			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
-			System.setOut(out);	
-			
-			long begin =System.currentTimeMillis();
-			
-			Date start = new Date();
-			String startTime = dateFormat.format(start);
-			
-			doWork();
-			
-			Date end = new Date();
-			String endTime = dateFormat.format(end);		
-			
-			long total =  System.currentTimeMillis() - begin;			
-			System.out.println(startTime + "-" + endTime + " [" + total + "] " + jsonStr);		
-			
-			out.close();
-			
-			//interpret the jsoStr for the method
-			return gson.toJson(total);
-		}
-		catch(Exception e){
+		
+		long start = System.currentTimeMillis();
+		try {
+			Thread.sleep(600);
+		} catch (InterruptedException e) {
 			e.printStackTrace();
-			return gson.toJson(e.getMessage());
 		}
+		
+		long total =  System.currentTimeMillis() - start;
+		//interpret the jsoStr for the method
+		return "Result from " + jsonStr + " time ms=" + String.valueOf(total);
 	}
 	private void doWork()
 	{
-		try{						
-			//Thread.sleep(60000);  //wait for 1 minute!
+		for (int i=0; i<100000; i++) 
+		{
+			double x  = 1.0;
+			x = Math.pow(x, 2.0);
 		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
+		
 	}
 	@Override
 	public void initializeService(String input) throws Exception {
@@ -74,6 +53,5 @@ public class TestService2Impl implements TestServiceInterface
 		}
 		
 	}
-
 
 }
