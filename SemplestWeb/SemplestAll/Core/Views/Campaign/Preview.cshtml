@@ -26,8 +26,20 @@
                             <br />
                             <h3>
                                 Search Engines</h3>
-                            <img src="@Url.Content("~/Content/Google Logo.png")" />
-                            <img src="@Url.Content("~/Content/MSN Logo.png")" />
+                                @if (Model.ProductGroup.AdEnginesSelectedList.Any())
+                                {
+                                    foreach (Semplest.Core.Models.AdEngineSelectModel aem in @Model.ProductGroup.AdEnginesSelectedList)
+                                    {
+                                        if (aem.Name == "Google")
+                                        {
+                                            <img src="@Url.Content("~/Content/Google Logo.png")" />
+                                        }
+                                        else
+                                        {
+                                            <img src="@Url.Content("~/Content/MSN Logo.png")" />
+                                        }
+                                    }
+                                }
                             <br />
                             <br />
                             <h3>Where to Show Your Ad</h3>
