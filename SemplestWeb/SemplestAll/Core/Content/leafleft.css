@@ -781,4 +781,22 @@ span.k-tooltip
     margin-left: 200px;
 }
 
-​
+.help-button
+{
+    border-color: #8EBC00;
+    background-color: #F5F7F4;
+    color: #8EBC00;
+    border-style: solid;
+    border-width: 1px;
+    vertical-align: super;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 6pt;
+    padding: 2px 2px 2px;
+}
+.help-button:hover, .help-draghandle:hover
+{
+    border-color: #e6e6e6;
+    background-color: #e6e6e6;
+}
+

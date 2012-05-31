@@ -90,6 +90,7 @@ namespace SemplestModel
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
         public DbSet<vwProductPromotion> vwProductPromotions { get; set; }
         public DbSet<vwGetLivePromotionsForUser> vwGetLivePromotionsForUsers { get; set; }
+        public DbSet<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

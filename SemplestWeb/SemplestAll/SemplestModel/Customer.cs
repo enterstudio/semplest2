@@ -28,6 +28,7 @@ namespace SemplestModel
             this.Users = new HashSet<User>();
             this.EmailTemplates = new HashSet<EmailTemplate>();
             this.WebContents = new HashSet<WebContent>();
+            this.WebContentQuestionMarkHelps = new HashSet<WebContentQuestionMarkHelp>();
         }
     
         public int CustomerPK { get; set; }
@@ -56,5 +57,6 @@ namespace SemplestModel
         public virtual ICollection<User> Users { get; set; }
         public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
         public virtual ICollection<WebContent> WebContents { get; set; }
+        public virtual ICollection<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
     }
 }

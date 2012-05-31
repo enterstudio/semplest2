@@ -515,5 +515,17 @@ namespace Semplest.Core.Controllers
             return View();
         }
 
+        [RequireRequestValue("HelpId")]
+        public ActionResult DisplayHelp(int helpId)
+        {
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            return Content(dbcontext.WebContentQuestionMarkHelps.FirstOrDefault(h => h.WebContentQuestionMarkHelpPK == helpId).Copy);
+
+
+
+
+        }
+
     }
 }

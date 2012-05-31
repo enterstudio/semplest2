@@ -111,5 +111,6 @@ namespace SemplestModel
         public Nullable<int> SemplestKeywordsnumThreads { get; set; }
         public bool DisplayTargetCPCLevel { get; set; }
         public Nullable<int> ServiceESBPingWaitMS { get; set; }
+        public string AdwordsBillingAccount { get; set; }
     }
 }

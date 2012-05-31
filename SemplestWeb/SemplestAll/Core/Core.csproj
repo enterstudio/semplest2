@@ -221,6 +221,7 @@
     <Content Include="Scripts\Maps.js" />
     <Content Include="Scripts\PanelBar.js" />
     <Content Include="Scripts\Profile.js" />
+    <Content Include="Scripts\QuestionMarkHelp.js" />
     <Content Include="Scripts\tooltip.js" />
     <Content Include="Services\LogService.svc" />
     <Content Include="Services\SemplestDataService.svc" />

@@ -49,6 +49,7 @@ namespace SemplestModel
         public Nullable<System.DateTime> EditedDate { get; set; }
         public bool IsDeleted { get; set; }
         public string TargetCPCLevel { get; set; }
+        public string DisplayURL { get; set; }
     
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual BudgetCycle BudgetCycle { get; set; }
