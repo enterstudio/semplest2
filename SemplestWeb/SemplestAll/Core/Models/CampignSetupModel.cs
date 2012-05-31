@@ -4,10 +4,11 @@ using SemplestModel;
 using SemplestModel.Validations;
 using System.Linq;
 using Semplest.SharedResources.Services;
+using System;
 
 namespace Semplest.Core.Models
 {
-   
+
     public class CampaignSetupModel : ModelBase
     {
         public CampaignSetupModel()
@@ -32,7 +33,7 @@ namespace Semplest.Core.Models
         public AdModel AdModelProp { get; set; }
         public BillingLaunchModel BillingLaunch { get; set; }
 
-        
+
 
         #region Nested type: CategoriesModel
 

@@ -10,7 +10,11 @@ $(document).ready(function () {
         .addClass("k-state-disabled").unbind("mousedown");
     $('.k-dropdownlist').kendoDropDownList();
     // Juery Validator for Validations
-    var validator = $("#productGroupModel").kendoValidator().data("kendoValidator"), status = $(".status");
+    var validator = $("#productGroupModel").kendoValidator({ messages: {
+        min: "{0} should be greater than or equal to {1}",
+        max: "{0} should be smaller than or equal to {1}"
+    }
+    }).data("kendoValidator"), status = $(".status");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
     $("#save1").click(function () {
@@ -19,8 +23,9 @@ $(document).ready(function () {
         if (searchengines[0].checked == true || searchengines[1].checked == true) {
             if (validator.validate()) {
                 status.text("").addClass("valid");
+                tab = tabStrip.select();
+                tabStrip.enable(tab.next(), true);
                 tabStrip.select(1);
-                tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
             } else {
                 status.text("Oops! There is invalid data in the form.").addClass("invalid");
             }
@@ -208,7 +213,7 @@ function addNestedForm(container, counter, ticks, content) {
         content = content.replace("doOptions()", "doOptions('AdModelProp_Addresses_" + nextIndex +
 "__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
 "__Zip','AdModelProp_Addresses_" + nextIndex + "__Proximity')");
-       
+
         content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
     }
