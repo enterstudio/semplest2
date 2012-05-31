@@ -28,6 +28,7 @@ public class SemplestScheduler extends Thread
 	private boolean cancel = false;
 	private boolean scheduleRunning = false;
 	private static final Logger logger = Logger.getLogger(SemplestScheduler.class);
+	private String serviceName = "SemplestSchedulerService";
 
 	private Vector<SchedulerRecord> recordMessageList = null;
 
@@ -135,11 +136,12 @@ public class SemplestScheduler extends Thread
 
 			catch (InterruptedException ie)
 			{
-				// do nothing
+				errorHandler(ie);
 			}
 			catch (Exception e)
 			{
 				logger.error(e);
+				errorHandler(e);
 			}
 		}
 	}
@@ -321,6 +323,7 @@ public class SemplestScheduler extends Thread
 		catch (Exception e)
 		{
 			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID);
+			errorHandler(e);
 			return false;
 
 		}
@@ -386,6 +389,7 @@ public class SemplestScheduler extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());		
+			errorHandler(e);
 			return false;
 		}
 
@@ -444,7 +448,8 @@ public class SemplestScheduler extends Thread
 					errorOutput.setIsSuccessful(false);
 					errorOutput.setErrorMessage(e.getMessage());
 					previousTaskOutput = errorOutput;
-					logger.error(e.getMessage());				
+					logger.error(e.getMessage());			
+					errorHandler(e);
 				}
 				//Update results to the DB and add next Job if necessary
 				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
@@ -459,6 +464,7 @@ public class SemplestScheduler extends Thread
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			errorHandler(e);
 			return false;
 		}
 	}
@@ -476,6 +482,11 @@ public class SemplestScheduler extends Thread
 			newschedule.setTimeToRunInMS(nextJob.getExecutionStartTime().getTime());
 			this.receiveSchedulerRecord(newschedule);
 		}
+	}
+	
+	private void errorHandler(Exception e){
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }

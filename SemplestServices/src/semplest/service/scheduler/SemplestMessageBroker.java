@@ -6,6 +6,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.service.springjdbc.SemplestDB;
+
 public class SemplestMessageBroker extends Thread
 {
 	// private Vector<SchedulerRecord> recordMessageList = null;
@@ -13,6 +15,7 @@ public class SemplestMessageBroker extends Thread
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
 	private BlockingQueue<SchedulerRecord> messageQueue = new LinkedBlockingQueue<SchedulerRecord>();
+	private String serviceName = "SemplestSchedulerService";
 
 	public SemplestMessageBroker(Object synchLock, SemplestScheduler scheduler)
 	{
@@ -33,6 +36,7 @@ public class SemplestMessageBroker extends Thread
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				errorHandler(e);
 			}
 
 		}
@@ -57,6 +61,7 @@ public class SemplestMessageBroker extends Thread
 		{
 			// TODO Auto-generated catch block
 			logger.error("Error getting Message: " + e.getMessage());
+			errorHandler(e);
 		}
 	}
 
@@ -77,4 +82,10 @@ public class SemplestMessageBroker extends Thread
 			i++;
 		}
 	}
+	
+	private void errorHandler(Exception e){
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
+	}
+	
 }

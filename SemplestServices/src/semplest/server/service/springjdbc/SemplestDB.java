@@ -878,4 +878,22 @@ public class SemplestDB extends BaseDB
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
 
 	}
+	
+	public static void logError(Exception e, String errorSource){		
+		
+		StackTraceElement[] ste = e.getStackTrace();
+		StackTraceElement err = ste[ste.length-1];		
+		String errorClass = err.getClassName();
+		StringBuilder sb = new StringBuilder();
+		for(StackTraceElement s : ste){
+			sb.append(s.getFileName() + ":" + s.getLineNumber() + "|"); 
+		}
+		
+		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
+				"VALUES (?, ?, ?, ?, ?)";
+		
+		jdbcTemplate.update(sql, new Object[]
+				{errorSource, errorClass, e.getMessage(), sb.toString(), new Date()});
+	}
+
 }
