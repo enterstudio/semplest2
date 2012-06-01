@@ -3,11 +3,15 @@ package semplest.services.client.api;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
+import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
@@ -15,6 +19,8 @@ import com.google.gson.Gson;
 
 public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface, SchedulerTaskRunnerInterface
 {
+	private static final Logger logger = Logger.getLogger(SemplestAdEngineServiceClient.class);
+	
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
@@ -26,10 +32,36 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		BasicConfigurator.configure();
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);
-		//final String accountId = "54101"; 
-		//final Long campaignId = 647605L;
+
+		/*		
+		//
+		// UpdateGeoTargeting
+		//
 		final Integer PromotionID = 62;
-		client.UpdateGeoTargeting(PromotionID);
+		final List<String> adEngines = new ArrayList<String>();
+		adEngines.add(AdEngine.Google.name());
+		client.UpdateGeoTargeting(PromotionID, adEngines);
+			*/	
+		
+		//
+		// AddAd
+		//
+		final Integer promotionID_AddAd = 62;
+		final Integer promotionAdID_AddAd = 218;
+		final List<String> adEngines_AddAd = new ArrayList<String>();
+		adEngines_AddAd.add(AdEngine.Google.name());
+		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
+		
+		/*
+		//
+		// DeleteAd
+		//
+		final Integer promotionID_DeleteAd = 62;
+		final Integer promotionAdID_DeleteAd = 218;
+		final List<String> adEngines_DeleteAd = new ArrayList<String>();
+		adEngines_DeleteAd.add(AdEngine.Google.name());
+		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
+		*/
 	}
 
 	@Override
@@ -68,40 +100,47 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean PausePromotion(Integer customerID, Integer promotionID, String adEngine) throws Exception
+	public Boolean PausePromotion(Integer customerID, Integer promotionID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, String adEngine) throws Exception
+	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean DeleteAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean UpdateGeoTargeting(Integer PromotionID) throws Exception
+	public Boolean DeleteAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		//jsonHash.put("accountId", accountId);
-		//jsonHash.put("campaignId", Long.toString(campaignId));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("DeleteAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "DeleteAd", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
+	}
+
+	@Override
+	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception
+	{
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("PromotionID", Integer.toString(PromotionID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "UpdateGeoTargeting", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
@@ -110,13 +149,11 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		
+		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
-		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
+		String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
 		jsonHash.put("adEngineList",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "ExecuteBidProcess", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
@@ -132,14 +169,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink)
+	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -147,35 +184,42 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget) throws Exception
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate) throws Exception
+	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean DeleteKeyword(Integer promotionID, String Keyword) throws Exception
+	public Boolean DeleteKeyword(Integer promotionID, String Keyword, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean AddAd(Integer customerID, Integer promotionID) throws Exception
+	public Boolean AddAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("AddAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "AddAd", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
-	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
