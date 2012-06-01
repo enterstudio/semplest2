@@ -42,236 +42,260 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	}
 	@Override
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
-		if(searchTerm!=null && searchTerm.length()>0) searchTerm = searchTerm.toLowerCase().replaceAll("\\p{Punct}", " ");
-		if(description==null || description.length()<=0) throw new Exception("No description data provided");
-		description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
-		if(url!=null) url = TextUtils.formURL(url);
-		ArrayList<String> categories = this.getCategories(description);
-		return categories;
+		try{
+			if(searchTerm!=null && searchTerm.length()>0) searchTerm = searchTerm.toLowerCase().replaceAll("\\p{Punct}", " ");
+			if(description==null || description.length()<=0) throw new Exception("No description data provided");
+			description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
+			if(url!=null) url = TextUtils.formURL(url);
+			ArrayList<String> categories = this.getCategories(description);
+			return categories;
+		}catch(Exception e){
+			logger.error(e);
+			throw e;
+		}
 	}
 	public ArrayList<String> getCategories(String searchTerm) throws Exception {
 		//Get category results from dmoz query
-		
-		String qs="";
-		String[] res;
-		String categories;
-		ArrayList<String> optList = new ArrayList<String>();
-		ArrayList<String> optInitial = new ArrayList<String>();
-		int numresults = 100; // Number of results from the query
-		qs=searchTerm;
-		String qsStem = this.stemvString( qs, data.dict );
-		if(qsStem !=null && qsStem.length()>0){
-			logger.debug(qsStem);
-			res = data.dl.search(qsStem,numresults);
-			for(int i=0; i<res.length; i++){
-				categories = res[i].replaceAll("\\s+", "");
-				if(catUtils.validcat(categories))
-						optInitial.add(categories);
-						//logger.debug(categories);
+		try{
+			String qs="";
+			String[] res;
+			String categories;
+			ArrayList<String> optList = new ArrayList<String>();
+			ArrayList<String> optInitial = new ArrayList<String>();
+			int numresults = 100; // Number of results from the query
+			qs=searchTerm;
+			String qsStem = this.stemvString( qs, data.dict );
+			if(qsStem !=null && qsStem.length()>0){
+				logger.debug(qsStem);
+				res = data.dl.search(qsStem,numresults);
+				for(int i=0; i<res.length; i++){
+					categories = res[i].replaceAll("\\s+", "");
+					if(catUtils.validcat(categories))
+							optInitial.add(categories);
+							//logger.debug(categories);
+				}
+				//Select repeated patterns
+				optList= selectOptions(optInitial);
 			}
-			//Select repeated patterns
-			optList= selectOptions(optInitial);
+			return optList;
+		}catch(Exception e){
+			logger.error(e);
+			throw e;
 		}
-		return optList;
 	}
 	
 	@Override
 	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
-		ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
-		if(searchTerm!=null || searchTerm.length()>=0) searchTerm = searchTerm.toLowerCase().replaceAll("\\p{Punct}", " ");
-		if(description==null || description.length()==0) throw new Exception("No description provided");
-		description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
-
-		HashMap<String,String> reverseMap = this.createReverseStemMap(description);
-		for(int i=0; i< searchEngines.length; i++){
-			for (SearchEngine se : SearchEngine.values()){
-				if(searchEngines[i].equalsIgnoreCase(se.toString())&& !srchE.contains(se))
-					srchE.add(se);
-			}
-			if(srchE.size()<1){
-				throw new Exception("Not valid Search Engines");
-			}
-		}
-		int[] numKw = new int[srchE.size()];
-		int j=0;
-		for(SearchEngine se : srchE){
-			if(se.toString().equalsIgnoreCase("google"))
-				numKw[j]=data.numKeywordsGoogle;
-			else if(se.toString().equalsIgnoreCase("msn"))
-				numKw[j]=data.numKeywordsMSN;
-			else
-				numKw[j]=0;
-			j++;
-		}
-		
-		if(categories==null || categories.size()==0){
-			throw new Exception("No categories provided");
-		}
-		if(nGrams==null || nGrams.length!=2){
-			throw new Exception("Wrong number nGrams provided");
-		} 
-		
-		String data1 =  "";
-		
-		data1 = this.weightData(data.userInfoWeight, url, adds,companyName,searchTerm, description);
-		String[] dataCount = data1.split("\\s+");
-		if(dataCount.length<30) throw new Exception("Not enough data provided");
-		String stemdata1 = new String();
-		stemdata1 = this.stemvStringNoFilter( data1, data.dict );
-		int numkw =0;
-		for(int i = 0; i<numKw.length; i++){
-	    	if(numKw[i]>numkw)
-	    		numkw=numKw[i];
-	    }
-		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
-		ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
-		int num = 0;
-		for(ArrayList<KeywordProbabilityObject> list1 : keywords){
-			for(KeywordProbabilityObject kw : list1){
-				for(int n=0; n<srchE.size();n++){
-					SearchEngine se = srchE.get(n);
-					if(se.toString().equalsIgnoreCase("google")&& num>=numKw[n])
-						kw.setIsTargetGoogle(false);
-					else if(se.toString().equalsIgnoreCase("msn")&& num>=numKw[n])
-						kw.setIsTargetMSN(false);
+		try{
+			ArrayList<SearchEngine> srchE =  new ArrayList<SearchEngine>();
+			if(searchTerm!=null || searchTerm.length()>=0) searchTerm = searchTerm.toLowerCase().replaceAll("\\p{Punct}", " ");
+			if(description==null || description.length()==0) throw new Exception("No description provided");
+			description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
+	
+			HashMap<String,String> reverseMap = this.createReverseStemMap(description);
+			for(int i=0; i< searchEngines.length; i++){
+				for (SearchEngine se : SearchEngine.values()){
+					if(searchEngines[i].equalsIgnoreCase(se.toString())&& !srchE.contains(se))
+						srchE.add(se);
 				}
-				keywordsList.add(this.backStemming(kw, reverseMap));
-				num++;
+				if(srchE.size()<1){
+					throw new Exception("Not valid Search Engines");
+				}
 			}
+			int[] numKw = new int[srchE.size()];
+			int j=0;
+			for(SearchEngine se : srchE){
+				if(se.toString().equalsIgnoreCase("google"))
+					numKw[j]=data.numKeywordsGoogle;
+				else if(se.toString().equalsIgnoreCase("msn"))
+					numKw[j]=data.numKeywordsMSN;
+				else
+					numKw[j]=0;
+				j++;
+			}
+			
+			if(categories==null || categories.size()==0){
+				throw new Exception("No categories provided");
+			}
+			if(nGrams==null || nGrams.length!=2){
+				throw new Exception("Wrong number nGrams provided");
+			} 
+			
+			String data1 =  "";
+			
+			data1 = this.weightData(data.userInfoWeight, url, adds,companyName,searchTerm, description);
+			String[] dataCount = data1.split("\\s+");
+			if(dataCount.length<30) throw new Exception("Not enough data provided");
+			String stemdata1 = new String();
+			stemdata1 = this.stemvStringNoFilter( data1, data.dict );
+			int numkw =0;
+			for(int i = 0; i<numKw.length; i++){
+		    	if(numKw[i]>numkw)
+		    		numkw=numKw[i];
+		    }
+			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
+			ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
+			int num = 0;
+			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
+				for(KeywordProbabilityObject kw : list1){
+					for(int n=0; n<srchE.size();n++){
+						SearchEngine se = srchE.get(n);
+						if(se.toString().equalsIgnoreCase("google")&& num>=numKw[n])
+							kw.setIsTargetGoogle(false);
+						else if(se.toString().equalsIgnoreCase("msn")&& num>=numKw[n])
+							kw.setIsTargetMSN(false);
+					}
+					keywordsList.add(this.backStemming(kw, reverseMap));
+					num++;
+				}
+			}
+			
+			return keywordsList.toArray(new KeywordProbabilityObject[]{});
+		}catch(Exception e){
+			logger.error(e);
+			throw e;
 		}
-		
-		return keywordsList.toArray(new KeywordProbabilityObject[]{});
 	}
 	
 
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories, String searchTerm, String data1,  
 			int numkw, ArrayList<SearchEngine> srchE, Integer[] nGrams) throws Exception {
-		//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
-		//with data form those categories
-		long startTime = System.currentTimeMillis();
-		ArrayList<String> optCateg = new ArrayList<String>();
-		ArrayList<ArrayList<KeywordProbabilityObject>> keywordsfull = new ArrayList<ArrayList<KeywordProbabilityObject>>();
-		ArrayList<ArrayList<KeywordProbabilityObject>> keywords = new ArrayList<ArrayList<KeywordProbabilityObject>>();
-		Set<String> labels = data.TrainingData.keySet();
-		ArrayList<String> trainLines = new ArrayList<String>();
-		String cataux;
-		for (String label : labels){
-			for (int n=0; n<categories.size();n++){
-				cataux = categories.get(n);
-				if( label.indexOf( cataux ) == 0 ) {
-					//logger.debug(label);
-    				optCateg.add(label);
-    				//Gather training data
-    				trainLines.add(data.TrainingData.get(label));
+		try{
+			//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
+			//with data form those categories
+			long startTime = System.currentTimeMillis();
+			ArrayList<String> optCateg = new ArrayList<String>();
+			ArrayList<ArrayList<KeywordProbabilityObject>> keywordsfull = new ArrayList<ArrayList<KeywordProbabilityObject>>();
+			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = new ArrayList<ArrayList<KeywordProbabilityObject>>();
+			Set<String> labels = data.TrainingData.keySet();
+			ArrayList<String> trainLines = new ArrayList<String>();
+			String cataux;
+			for (String label : labels){
+				for (int n=0; n<categories.size();n++){
+					cataux = categories.get(n);
+					if( label.indexOf( cataux ) == 0 ) {
+						//logger.debug(label);
+	    				optCateg.add(label);
+	    				//Gather training data
+	    				trainLines.add(data.TrainingData.get(label));
+					}
 				}
 			}
-		}
 		
 		
-	    long endTime = System.currentTimeMillis();
-	    logger.info("time for categories" + (endTime-startTime));
-	    logger.info("Number of categories to add " + trainLines.size());
-		//Train LDA for categories selected and return sorted keywords
-	    //and obtain word probability
-	    
-	    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
-	    logger.info("previous wordmap size: "+ wordMap.size());
-	    //Rank monograms by probability
-	    ValueComparator bvc =  new ValueComparator(wordMap);
-		TreeMap<String,Double> wordM = new TreeMap(bvc);
-		wordM.putAll(wordMap);
-	    logger.info("wordMap Size: "+ wordM.size());
-	    
-	    logger.info("Generating Kewyords");
-	    Set<String> kwSet = wordM.keySet();
-
-	    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
-	    keywordsfull= this.getKwMultiCombined(optCateg, searchTerm, nGrams, wordMap, 5, srchE);
-	    int kwCount = 0;
-	    int iter = 0;
-	    ArrayList<KeywordProbabilityObject> finalkwList;
-	    for(ArrayList<KeywordProbabilityObject> kwList: keywordsfull){
-	    	if(iter<2){
-	    		finalkwList = kwList;
-	    	}else{
-	    		finalkwList = new ArrayList<KeywordProbabilityObject>();
-	    	}
-	    	int remain = numkw - kwCount;
-	    	int num2Gen=0;
-	    	//fourgrams and fivegrams 
-		    if(iter==2)
-		   		num2Gen = remain/2;
-		    if(iter==3) num2Gen = remain;
-		    int j=0;
-		    for(KeywordProbabilityObject keyw: kwList){
-		    		if(j>= num2Gen) break;
-		    		finalkwList.add(keyw);
-		    		j++;
-		    }
+		    long endTime = System.currentTimeMillis();
+		    logger.info("time for categories" + (endTime-startTime));
+		    logger.info("Number of categories to add " + trainLines.size());
+			//Train LDA for categories selected and return sorted keywords
+		    //and obtain word probability
 		    
-		    kwCount = kwCount+finalkwList.size();
-	    	iter++;
-	    	keywords.add(finalkwList);
-	    }
-
-		return keywords;
+		    HashMap<String, Double> wordMap= this.createWordMap(data1, trainLines, searchTerm);
+		    logger.info("previous wordmap size: "+ wordMap.size());
+		    //Rank monograms by probability
+		    ValueComparator bvc =  new ValueComparator(wordMap);
+			TreeMap<String,Double> wordM = new TreeMap(bvc);
+			wordM.putAll(wordMap);
+		    logger.info("wordMap Size: "+ wordM.size());
+		    
+		    logger.info("Generating Kewyords");
+		    Set<String> kwSet = wordM.keySet();
+	
+		    //Generate a maximum of 5000 keywords nGrams[0] bigrams + nGrams[1] trigrams and the rest split between 4 grams and 5 grams
+		    keywordsfull= this.getKwMultiCombined(optCateg, searchTerm, nGrams, wordMap, 5, srchE);
+		    int kwCount = 0;
+		    int iter = 0;
+		    ArrayList<KeywordProbabilityObject> finalkwList;
+		    for(ArrayList<KeywordProbabilityObject> kwList: keywordsfull){
+		    	if(iter<2){
+		    		finalkwList = kwList;
+		    	}else{
+		    		finalkwList = new ArrayList<KeywordProbabilityObject>();
+		    	}
+		    	int remain = numkw - kwCount;
+		    	int num2Gen=0;
+		    	//fourgrams and fivegrams 
+			    if(iter==2)
+			   		num2Gen = remain/2;
+			    if(iter==3) num2Gen = remain;
+			    int j=0;
+			    for(KeywordProbabilityObject keyw: kwList){
+			    		if(j>= num2Gen) break;
+			    		finalkwList.add(keyw);
+			    		j++;
+			    }
+			    
+			    kwCount = kwCount+finalkwList.size();
+		    	iter++;
+		    	keywords.add(finalkwList);
+		    }
+	
+			return keywords;
+		}catch(Exception e){
+			logger.error(e);
+			throw e;
+		}
 	}
 	
-	private ArrayList<String> expandCategories(ArrayList<String> newCategories){
-		ArrayList<String> optCateg = new ArrayList<String>();
-		Set<String> labels = data.TrainingData.keySet();
-		String cataux;
-		
-	    for (String label : labels){
-	    	for (int n=0; n<newCategories.size();n++){
-	    		cataux=newCategories.get(n);
-	    		if( label.indexOf( cataux ) == 0 ) {
-	    			if (!optCateg.contains(label)){
-	    				//logger.debug(label);
-	    				optCateg.add(label);
-	    			}
-	    		}
-	    	}
-	    }
-	    return optCateg;
+	private ArrayList<String> expandCategories(ArrayList<String> newCategories) throws Exception{
+
+			ArrayList<String> optCateg = new ArrayList<String>();
+			Set<String> labels = data.TrainingData.keySet();
+			String cataux;
+			
+		    for (String label : labels){
+		    	for (int n=0; n<newCategories.size();n++){
+		    		cataux=newCategories.get(n);
+		    		if( label.indexOf( cataux ) == 0 ) {
+		    			if (!optCateg.contains(label)){
+		    				//logger.debug(label);
+		    				optCateg.add(label);
+		    			}
+		    		}
+		    	}
+		    }
+		    return optCateg;
+
 	}
 	
 	private HashMap<String, Double> createWordMap(String data1, ArrayList<String> trainLines, String searchTerm) throws Exception{
-		HashMap<String, Double> wordMap = new HashMap<String, Double>();
-		//Instanciate topic model
-		MalletTopic lda = new MalletTopic();
-		double alpha=0.01;
-		double beta=0.01;
-		int numiter=100;
-		logger.info("Number of categories" + trainLines.size());
-		
-		lda.CreateInstances(trainLines);
-		int numTopics = data.numTopics;
-		if(trainLines.size()<numTopics)
-			numTopics = trainLines.size();
-		lda.setNumTopics(numTopics);
-		lda.LDAcreateModel(alpha, beta, numiter);
-		InstanceList inferInst;
-	    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
-	    //logger.info("inferInst alphabet size: "+ inferInst.getAlphabet().size());
-			    
-	    //Infer word probability based on input data
-	    wordMap = lda.inferWordprob(inferInst, 0,true);
-	    //logger.info("insider word map size:"+wordMap.size());
-	    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
-	    if(searchTerm!=null){
-	    	String[] terms = qsStem.split("\\s+");
-		    for(int n=0; n<terms.length; n++){
-		    	wordMap.put(terms[n], new Double(1.0));
+
+			HashMap<String, Double> wordMap = new HashMap<String, Double>();
+			//Instanciate topic model
+			MalletTopic lda = new MalletTopic();
+			double alpha=0.01;
+			double beta=0.01;
+			int numiter=100;
+			logger.info("Number of categories" + trainLines.size());
+			
+			lda.CreateInstances(trainLines);
+			int numTopics = data.numTopics;
+			if(trainLines.size()<numTopics)
+				numTopics = trainLines.size();
+			lda.setNumTopics(numTopics);
+			lda.LDAcreateModel(alpha, beta, numiter);
+			InstanceList inferInst;
+		    inferInst=lda.CreateInferInstfromData("0", "Test Data", data1);
+		    //logger.info("inferInst alphabet size: "+ inferInst.getAlphabet().size());
+				    
+		    //Infer word probability based on input data
+		    wordMap = lda.inferWordprob(inferInst, 0,true);
+		    //logger.info("insider word map size:"+wordMap.size());
+		    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
+		    if(searchTerm!=null){
+		    	String[] terms = qsStem.split("\\s+");
+			    for(int n=0; n<terms.length; n++){
+			    	wordMap.put(terms[n], new Double(1.0));
+			    }
 		    }
-	    }
-		return wordMap;
+			return wordMap;
+
 	}
 	
 	private ArrayList<ArrayList<KeywordProbabilityObject>> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, 
 			HashMap<String, Double> wordMap, int nGramsmax, ArrayList<SearchEngine> srchE) throws Exception{
 		
+	
 		//Returns 4 grams combining 2 and 3 grams
 		ArrayList<KeywordProbabilityObject> bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2, srchE);
 		ArrayList<KeywordProbabilityObject> trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3, srchE);
@@ -368,18 +392,21 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 		return results;
+
+		
 	}
-	private Double calculateKWProb(String keyword, HashMap<String,Double> wordMap){
-	  String[] kwPart = keyword.split("\\s+");
-	  double wProb = 1;
-	  for(int i=0; i< kwPart.length;i++){
-		  if(wordMap.containsKey(kwPart[i])){
-			  wProb = wProb*wordMap.get(kwPart[i]);
-		  } else { 
-				  wProb = 0; break;
+	private Double calculateKWProb(String keyword, HashMap<String,Double> wordMap) throws Exception{
+	
+		  String[] kwPart = keyword.split("\\s+");
+		  double wProb = 1;
+		  for(int i=0; i< kwPart.length;i++){
+			  if(wordMap.containsKey(kwPart[i])){
+				  wProb = wProb*wordMap.get(kwPart[i]);
+			  } else { 
+					  wProb = 0; break;
+			  }
 		  }
-	  }
-	  return new Double(wProb);
+		  return new Double(wProb);
 	}
 	
 	private ArrayList<KeywordProbabilityObject> getKwMulti(String searchTerms,ArrayList<String> optCateg, 
@@ -639,9 +666,14 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 	@Override
 	public void initializeService(String str) throws Exception {
-		data = new KWGenDmozLDAdata(configData);
-		Thread thread = new Thread(data);
-		thread.start();
+		try{
+			data = new KWGenDmozLDAdata(configData);
+			Thread thread = new Thread(data);
+			thread.start();
+		}catch(Exception e){
+			logger.error(e);
+			throw e;
+		}
 	}
 	
 	private String stemvString( String raws, dictUtils dict) throws Exception{
