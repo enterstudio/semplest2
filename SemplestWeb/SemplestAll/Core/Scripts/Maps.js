@@ -31,12 +31,7 @@ function showOptionsURL(type, address, city, state, zip, proximity) {
     jsonText += ' ';
     jsonText += location.city;
     jsonText += ' ';
-    if (location.state == "--")
-        jsonText += "USA";
-    else
-        jsonText += location.state;
-    jsonText += '",postcode:"';
-    jsonText += location.zip;
+    jsonText += location.state;
     jsonText += ' ';
     jsonText += location.zip;
     jsonText += '"}';
