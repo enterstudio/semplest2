@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
