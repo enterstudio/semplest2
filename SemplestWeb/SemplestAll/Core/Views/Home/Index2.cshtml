@@ -15,56 +15,61 @@
             <br />
             <h3>
                 Live Advertising: scroll over to see summary, click to edit</h3>
-            <table class="gradient-style" style="width: 250px">
-                @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-                {
 
-                    foreach (SemplestModel.Promotion p in pg.Promotions)
+            <div style="width: 270px; height:150px;overflow:auto">
+                <table class="gradient-style" style="width: 250px;">
+                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
-                        if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
+                        foreach (SemplestModel.Promotion p in pg.Promotions)
                         {
-                    <tr>
-                        <td style="width: 150px;">
-                            @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                        </td>
-                        @if (p.IsPaused)
-                        {
-                            <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
-                            </td>
-                        }
-                        else
-                        {
-                            <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                            </td>
-                        }
-                    </tr>    
-            
-
+                            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
+                            {
+                                <tr>
+                                    <td style="width: 150px;">
+                                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                                    </td>
+                                    @if (p.IsPaused)
+                                    {
+                                        <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                                        </td>
+                                    }
+                                    else
+                                    {
+                                        <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                                        </td>
+                                    }
+                                </tr>    
+                            }
                         }
                     }
-                }
-            </table>
+                </table>
+            </div>
+
+
             <br />
             <h3>
                 Unfinished Advertising</h3>
-            <table class="gradient-style" style="width: 250px">
-                @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-                {
-                    foreach (SemplestModel.Promotion p in pg.Promotions)
+            <div style="width: 270px; height:300px;overflow:auto">
+                <table class="gradient-style" style="width: 250px">
+                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
-                        if (!p.IsLaunched && !p.IsDeleted)
+                        foreach (SemplestModel.Promotion p in pg.Promotions)
                         {
-                    <tr>
-                        <td style="width: 150px;">
-                            @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                        </td>
-                        <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-                        </td>
-                    </tr>
+                            if (!p.IsLaunched && !p.IsDeleted)
+                            {
+                                <tr>
+                                    <td style="width: 150px;">
+                                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                                    </td>
+                                    <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                                    </td>
+                                </tr>
+                            }
                         }
                     }
-                }
-            </table>
+                </table>
+            </div>
+
             <div style="display: none;">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
@@ -165,7 +170,7 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; width: 450px;">
+        <td style="vertical-align: top; width: 430px;">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
