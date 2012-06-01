@@ -52,12 +52,18 @@
                 categoryAxis: {
                     field: "Date"
                 },
-                valueAxis: {
+                valueAxis: [{
                     labels: {
                         format: "{0:N0}"
                     },
                     majorUnit: 2000
                 },
+                {
+                    labels: {
+                        format: "{0:N0}"
+                    },
+                    majorUnit: 2000
+                }],
                 tooltip: {
                     visible: true,
                     format: "{0:N0}"
