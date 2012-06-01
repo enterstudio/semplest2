@@ -17,12 +17,15 @@ public class SCtest {
 			ExecutorService executor = Executors.newCachedThreadPool();					
 			
 			//Test Service
+			/*
+			executor.execute(new ServiceTestThread(3000));	
+			Thread.sleep(10);
+			executor.execute(new ServiceTestThread(3000));
+			Thread.sleep(10);
+			executor.execute(new ServiceTestThread(3000));
+			*/
 			
-			executor.execute(new ServiceTestThread(50));	
-			Thread.sleep(10);
-			executor.execute(new ServiceTestThread(50));
-			Thread.sleep(10);
-			executor.execute(new ServiceTestThread(50));
+			executor.execute(new KeywordTestThread(3000));
 	
 		}
 		catch(Exception e){

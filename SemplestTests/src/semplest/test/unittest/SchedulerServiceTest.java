@@ -23,9 +23,9 @@ public class SchedulerServiceTest {
 			
 			//test.TestCase3("bad task example");
 			//Thread.sleep(5000);
-			test.TestCase5();
+			//test.TestCase5();
 			
-			//test.TestCase1();
+			test.TestCase1();
 			
 		}
 		catch(Exception e){

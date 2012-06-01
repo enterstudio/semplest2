@@ -52,7 +52,7 @@ public class GoogleServiceTest {
 			GoogleServiceTest t = new GoogleServiceTest();
 			//int ret = t.Test_CreateOneAccountService();
 			//t.cleanUp();
-			t.Test_getReportForAccount();
+			//t.Test_getReportForAccount();
 			
 			//GoogleAdwordsServiceClient service = new GoogleAdwordsServiceClient(null);
 			//service.CreateOneCampaignForAccount("7250251887", "temptest", CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
@@ -62,6 +62,55 @@ public class GoogleServiceTest {
 			//boolean ret = test.changeCampaignStatus(test_accountId, test_campaignId, CampaignStatus.PAUSED);
 			//test.getReportForAccount(test_accountId, "20120115", "20120220");
 			
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			
+			String now = String.valueOf(System.currentTimeMillis());
+			Long campaignID = 0L;
+			Long adGroupID = 0L;
+			Long AdID = 0L;
+			Long keywordID = 0L;	
+			
+			String accountID = "54102";
+			//CreateOneCampaignForAccount
+			System.out.println("------------------------------------------------------------");
+			System.out.println("CreateOneCampaignForAccount:");		
+			try{				
+				String campaignName = "test_" + now;
+				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 1000000000L);
+				System.out.println("OK");	
+				System.out.println("campaignId = " + cpn.getId());
+				System.out.println("campaign name = " + cpn.getName());
+				
+				campaignID = cpn.getId();
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}		
+			Thread.sleep(500);			
+
+			//getCampaignsByAccountId
+			System.out.println("------------------------------------------------------------");
+			System.out.println("getCampaignsByAccountId:");		
+			try{
+				ArrayList<HashMap<String, String>> ret = test.getCampaignsByAccountId(accountID, false);
+				System.out.println("OK");	
+				for(HashMap<String, String> map : ret){
+					System.out.println("campaignId = " + map.get("Id"));
+				}				
+				
+			}
+			catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -232,7 +281,7 @@ public class GoogleServiceTest {
 			System.out.println("CreateOneCampaignForAccount:");		
 			try{
 				String campaignName = "test_" + now;
-				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 10000000L);
+				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.MONTHLY, 1000000000L);
 				System.out.println("OK");	
 				System.out.println("campaignId = " + cpn.getId());
 				System.out.println("campaign name = " + cpn.getName());

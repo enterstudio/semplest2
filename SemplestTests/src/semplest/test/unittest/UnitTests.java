@@ -64,8 +64,8 @@ public class UnitTests {
 		Date date = new Date();
 		now = dateFormat.format(date);
 		String reportName = "UnitTestReport" + now + ".txt";
-		String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
-		//String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
+		//String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
+		String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
 		
 		try{
 			//Create Report Header						
@@ -93,7 +93,7 @@ public class UnitTests {
 			
 			//Test Msn Service
 			MsnServiceTest msnServiceTest = new MsnServiceTest();
-			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
+			//numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
 			//numMsnServiceError = msnServiceTest.Test_MsnReport();  //Test only Report through ESB
 			
 			
@@ -102,7 +102,7 @@ public class UnitTests {
 			Boolean useSandbox = (Boolean) configDB.configData.get("AdwordsUseSandbox");
 			if(useSandbox){
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
-				//numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
+				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
 				//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
 			}		
 			
@@ -110,12 +110,12 @@ public class UnitTests {
 			//Test Keyword Service		
 			KeywordServiceTest keywordServiceTest = new KeywordServiceTest();
 			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService1();  //Impl
-			numKeywordServiceError = keywordServiceTest.Test_KeywordService2();  //client
+			//numKeywordServiceError = keywordServiceTest.Test_KeywordService2();  //client
 			
 			
 			//Test Bidding Service		
 			BiddingServiceTest biddingServiceTest = new BiddingServiceTest();
-			numBiddingServiceError = biddingServiceTest.Test_BiddingService2();  //Client
+			//numBiddingServiceError = biddingServiceTest.Test_BiddingService2();  //Client
 			
 			
 			//Test Scheduler
@@ -123,7 +123,7 @@ public class UnitTests {
 			
 			
 			//Test Database
-			//DatabaseTest databaseTest = new DatabaseTest();
+			DatabaseTest databaseTest = new DatabaseTest();
 			//numDatabaseError = databaseTest.Test_ALL();
 			
 			
@@ -168,7 +168,7 @@ public class UnitTests {
 		unitTest.sendEmail(subject, "nan@semplest.com", "nan@semplest.com", summary);
 		if(numAllErrs > 0){
 			//if test failed, send report to Mitch
-			unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
+			//unitTest.sendEmail(subject, "nan@semplest.com", "mitch@semplest.com", summary);
 		}
         
 	}	

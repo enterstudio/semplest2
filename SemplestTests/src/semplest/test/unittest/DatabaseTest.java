@@ -92,7 +92,7 @@ public class DatabaseTest extends BaseDB{
 			test_accountId = System.currentTimeMillis();
 			test_campaignId = test_accountId + 1;
 			
-			
+			/*
 			//Create Test Promotion
 			try{
 				int ProductGroupFK = 81;
@@ -121,6 +121,7 @@ public class DatabaseTest extends BaseDB{
 				errorHandler(new Exception("Failed to create a test promotion. Exit the test now." + eol + e.getMessage()));
 				return 1;
 			}
+			*/
 			
 			/*
 			Test_PromotionData();		
@@ -132,6 +133,20 @@ public class DatabaseTest extends BaseDB{
 			Test_ReportData();	
 			Test_Other();
 			*/
+			
+			ArrayList<KeywordDataObject> kdo = new ArrayList<KeywordDataObject>();
+			KeywordDataObject k = new KeywordDataObject();
+			k.setKeyword("test");
+			kdo.add(k);
+			
+			try {
+				db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				errorHandler(e);
+			}
+			
 			return errorCounter;
 		}
 		finally{
