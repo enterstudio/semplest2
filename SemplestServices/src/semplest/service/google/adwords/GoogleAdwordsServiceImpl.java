@@ -44,7 +44,6 @@ import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupAdOperation;
 import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
-import com.google.api.adwords.v201109.cm.AdGroupAdStatus;
 import com.google.api.adwords.v201109.cm.AdGroupBidLandscape;
 import com.google.api.adwords.v201109.cm.AdGroupBidLandscapePage;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
@@ -1922,17 +1921,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	public String changeCampaignBudget(String json) throws Exception
 	{
-		logger.debug("call changeCampaignStatus" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Long campaignID = Long.parseLong(data.get("campaignID"));
-		Boolean res = changeCampaignBudget(data.get("accountID"), campaignID, Long.valueOf(data.get("microBudgetAmount")));
-		// convert result to Json String
+		logger.debug("call changeCampaignStatus(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final String accountID = data.get("accountID");
+		final Long campaignID = Long.parseLong(data.get("campaignID"));
+		final Long microBudgetAmount = Long.valueOf(data.get("microBudgetAmount"));
+		final Boolean res = changeCampaignBudget(accountID, campaignID, microBudgetAmount);
 		return gson.toJson(res);
 	}
 
 	@Override
 	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
 	{
+		logger.info("Will try to update Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]");		
 		try
 		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -1957,15 +1958,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception(e.dumpToString());
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]", e);
 		}
 	}
 

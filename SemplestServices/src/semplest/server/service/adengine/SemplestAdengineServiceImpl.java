@@ -826,7 +826,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);								
+				getPromoDataSP.execute(promotionID);
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final List<AdsObject> ads = getPromoDataSP.getAds();
 				final List<AdsObject> adsForPromotionAdID = getsAdForPromotionAdID(ads, promotionAdID);
@@ -902,8 +902,47 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to change budget for PromotionID [" + promotionID + "] by [" + changeInBudget + "] for AdEngines [" + adEngines + "]");
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+				final Double oldBudgetAmount = promotion.getPromotionBudgetAmount();
+				final Double newBudgetDouble =  oldBudgetAmount + changeInBudget;
+				final Long newBudgetAmount = newBudgetDouble.longValue();
+				logger.info("Will try to update Old Budget [" + oldBudgetAmount + "] with New Budget [" + newBudgetDouble + "]");
+				final Boolean processedSuccessully = googleAdwordsService.changeCampaignBudget(accountID, campaignID, newBudgetAmount);
+				if (!processedSuccessully)
+				{
+					final String errMsg = "Problem processing budget change from Old Budget [" + oldBudgetAmount + "] to New Budget [" + newBudgetDouble + "] for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating ads (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = "Error Summary:\n" + getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}
 	}
 
 	@Override
