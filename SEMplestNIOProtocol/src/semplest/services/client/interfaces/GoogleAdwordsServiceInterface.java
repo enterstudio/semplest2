@@ -39,12 +39,12 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;
 	public abstract ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
-	public abstract  Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
+	public abstract Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
 	
 	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
 	public abstract Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
-	public abstract Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
+	public abstract Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
 	public abstract Boolean updateAD(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
 	

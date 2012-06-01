@@ -1,5 +1,7 @@
 package semplest.server.protocol.adengine;
 
+import java.util.Comparator;
+
 public class AdsObject
 {
 	private Integer PromotionAdsPK;
@@ -8,6 +10,18 @@ public class AdsObject
 	private String AdTextLine1;
 	private String AdTextLine2;
 	private Long AdEngineAdID;
+		
+	public AdsObject() {}  // needed by Spring
+	
+	public AdsObject(Integer promotionAdsPK, Integer promotionFK, String adTitle, String adTextLine1, String adTextLine2, Long adEngineAdID)
+	{
+		PromotionAdsPK = promotionAdsPK;
+		PromotionFK = promotionFK;
+		AdTitle = adTitle;
+		AdTextLine1 = adTextLine1;
+		AdTextLine2 = adTextLine2;
+		AdEngineAdID = adEngineAdID;
+	}
 	
 	public String getAdTitle()
 	{
@@ -57,6 +71,75 @@ public class AdsObject
 	{
 		AdTextLine2 = adTextLine2;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((AdEngineAdID == null) ? 0 : AdEngineAdID.hashCode());
+		result = prime * result + ((AdTextLine1 == null) ? 0 : AdTextLine1.hashCode());
+		result = prime * result + ((AdTextLine2 == null) ? 0 : AdTextLine2.hashCode());
+		result = prime * result + ((AdTitle == null) ? 0 : AdTitle.hashCode());
+		result = prime * result + ((PromotionAdsPK == null) ? 0 : PromotionAdsPK.hashCode());
+		result = prime * result + ((PromotionFK == null) ? 0 : PromotionFK.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AdsObject other = (AdsObject) obj;
+		if (AdEngineAdID == null)
+		{
+			if (other.AdEngineAdID != null)
+				return false;
+		}
+		else if (!AdEngineAdID.equals(other.AdEngineAdID))
+			return false;
+		if (AdTextLine1 == null)
+		{
+			if (other.AdTextLine1 != null)
+				return false;
+		}
+		else if (!AdTextLine1.equals(other.AdTextLine1))
+			return false;
+		if (AdTextLine2 == null)
+		{
+			if (other.AdTextLine2 != null)
+				return false;
+		}
+		else if (!AdTextLine2.equals(other.AdTextLine2))
+			return false;
+		if (AdTitle == null)
+		{
+			if (other.AdTitle != null)
+				return false;
+		}
+		else if (!AdTitle.equals(other.AdTitle))
+			return false;
+		if (PromotionAdsPK == null)
+		{
+			if (other.PromotionAdsPK != null)
+				return false;
+		}
+		else if (!PromotionAdsPK.equals(other.PromotionAdsPK))
+			return false;
+		if (PromotionFK == null)
+		{
+			if (other.PromotionFK != null)
+				return false;
+		}
+		else if (!PromotionFK.equals(other.PromotionFK))
+			return false;
+		return true;
+	}	
+	
 	@Override
 	public String toString()
 	{
@@ -64,4 +147,29 @@ public class AdsObject
 				+ AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + "]";
 	}
 	
+	/**
+	 * Sorts in descending order of AdEngineAdID
+	 */
+	public static Comparator<AdsObject> AD_ENGINE_AD_ID_COMPARATOR = new Comparator<AdsObject>() 
+	{
+		@Override
+		public int compare(final AdsObject ad1, final AdsObject ad2)
+		{
+			final Long adEngineAdId1 = ad1.getAdEngineAdID();
+			final Long adEngineAdId2 = ad2.getAdEngineAdID();
+			if (adEngineAdId1 == null && adEngineAdId2 == null)
+			{
+				return 0;
+			}
+			else if (adEngineAdId1 != null && adEngineAdId2 == null)
+			{
+				return -1;
+			}
+			else if (adEngineAdId1 == null && adEngineAdId2 != null)
+			{
+				return 1;
+			}
+			return adEngineAdId2.compareTo(adEngineAdId1);
+		}		
+	};
 }
