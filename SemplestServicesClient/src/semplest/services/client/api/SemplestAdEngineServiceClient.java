@@ -51,7 +51,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_AddAd = new ArrayList<String>();
 		adEngines_AddAd.add(AdEngine.Google.name());
 		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
-			*/	
+
 		
 		//
 		// UpdateAd
@@ -63,7 +63,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		//adEngines_UpdateAd.add(AdEngine.MSN.name());
 		client.UpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
 		
-		/*
+		
 		//
 		// DeleteAd
 		//
@@ -73,10 +73,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		adEngines_DeleteAd.add(AdEngine.Google.name());
 		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
 		
-		*/	
-		
 		// 9824192 old, 9824193 new (30 in semplest, 10 in google)
 		// added: 9824192
+		 
+		*/	
+		
+		final Integer promotionID_UpdateBudget = 62; 
+		final Double changeInBudget_UpdateBudget = 10d; 
+		final List<String> adEngines_UpdateBudget = new ArrayList<String>();
+		adEngines_UpdateBudget.add(AdEngine.Google.name());
+		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
 		
 		
 	}
