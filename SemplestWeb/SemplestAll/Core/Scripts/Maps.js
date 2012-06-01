@@ -5,20 +5,19 @@ var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&c
 var advancedOptions = '';
 var outFormat = '';
 var index = '';
-function showOptionsURL(type, city, state, zip, proximity) {
+function showOptionsURL(type, address, city, state, zip, proximity) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = {};
     if (city == ' ' || city == '' || city == null) {
+        location.address = $('#AdModelProp_Addresses_0__Address').val();
         location.city = $('#AdModelProp_Addresses_0__City').val();
         location.state = $("#AdModelProp_Addresses_0__StateCodeFK option:selected").text();
         location.zip = $('#AdModelProp_Addresses_0__Zip').val();
     } else {
+        location.address = this.$.find("input[id='" + address + "']")[0].value;
         location.city = this.$.find("input[id='" + city + "']")[0].value;
-        location.state = this.$.find("select[id='" + state + "'] option:selected")[0].value;
+        location.state = this.$.find("select[id='" + state + "'] option:selected")[0].innerText;
         location.zip = this.$.find("input[id='" + zip + "']")[0].value;
-        //location.city = $('#' + city).val();
-        //location.state = $('#' + state + ' option:selected').text();
-        //location.zip = $('#' + zip).val();
     }
     var thumbMaps = 'true';
     var maxResults = 1;
@@ -27,16 +26,30 @@ function showOptionsURL(type, city, state, zip, proximity) {
     advancedOptions += '&inFormat=json';
     advancedOptions += "&json=";
     var jsonText = '{';
-    jsonText += 'location:{city:"';
+    jsonText += 'location:{street:"';
+    jsonText += location.address;
+    jsonText += ' ';
     jsonText += location.city;
-    jsonText += '",state:"';
+    jsonText += ' ';
     if (location.state == "--")
         jsonText += "USA";
     else
         jsonText += location.state;
     jsonText += '",postcode:"';
     jsonText += location.zip;
+    jsonText += ' ';
+    jsonText += location.zip;
     jsonText += '"}';
+
+    //////
+//    jsonText += 'location:{city:"';
+//    jsonText += location.city;
+//    jsonText += '",state:"';
+//    jsonText += location.state;
+//    jsonText += '"}';
+
+///////
+
 
     jsonText += ',options:{';
     jsonText += 'thumbMaps:' + thumbMaps;
@@ -129,7 +142,7 @@ location.latLng.lng;
     $('#optionsNarrative_' + index).html(html);
 }
 
-function doOptions(city, state, zip, proximity) {
+function doOptions(address, city, state, zip, proximity) {
     if (city != null) {
         index = city.toString().replace('Addresses', '');
         index = index.replace('City', '');
@@ -141,7 +154,7 @@ function doOptions(city, state, zip, proximity) {
     }
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    showOptionsURL('buttonClick', city, state, zip, proximity);
+    showOptionsURL('buttonClick', address, city, state, zip, proximity);
     var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
     script.src = newUrl;
     document.body.appendChild(script);
