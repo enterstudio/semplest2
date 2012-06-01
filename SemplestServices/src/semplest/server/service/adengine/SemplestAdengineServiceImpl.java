@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -624,16 +625,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return null;
 	}
 	
-	public AdsObject getAd(final List<AdsObject> ads, final Integer promotionAdID)
+	public List<AdsObject> getsAdForPromotionAdID(final List<AdsObject> ads, final Integer promotionAdID)
 	{
+		final List<AdsObject> adsFound = new ArrayList<AdsObject>();
 		for (final AdsObject ad : ads)
 		{
 			if (ad.getPromotionAdsPK().intValue() == promotionAdID.intValue())
 			{
-				return ad;
+				adsFound.add(ad);
 			}
 		}
-		return null;
+		return adsFound;
 	}
 	
 	public String AddAd(String json) throws Exception
@@ -660,9 +662,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				getPromoDataSP.execute(promotionID);
 				final List<AdsObject> ads = getPromoDataSP.getAds();				
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final AdsObject ad = getAd(ads, promotionAdID);						
-				if (ad != null)
+				final List<AdsObject> adsForPromotionID = getsAdForPromotionAdID(ads, promotionAdID);						
+				if (!adsForPromotionID.isEmpty())
 				{
+					Collections.sort(adsForPromotionID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					final AdsObject ad = adsForPromotionID.get(0);
 					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
 					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
 					final String headline = ad.getAdTitle();
@@ -679,8 +683,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					}
 					else
 					{
-						logger.info("Google AdWords Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
-						SemplestDB.setAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
+						logger.info("Google AdWords Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
+						final int rowCount = SemplestDB.setAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
+						if (rowCount != 1)
+						{
+							logger.warn("Num or rows added when adding SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], GoogleAdID [" + googleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
+						}
 					}
 				}
 				else
@@ -733,13 +741,36 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				getPromoDataSP.execute(promotionID);								
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final List<AdsObject> ads = getPromoDataSP.getAds();
-				final AdsObject ad = getAd(ads, promotionAdID);		
-				if (ad != null)
+				final List<AdsObject> adsForPromotionAdID = getsAdForPromotionAdID(ads, promotionAdID);
+				if (!adsForPromotionAdID.isEmpty())
 				{
+					Collections.sort(adsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					final AdsObject ad = adsForPromotionAdID.get(0);					
 					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
 					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-					final Long AdID = ad.getAdEngineAdID();
-					googleAdwordsService.deleteAD(accountID, adGroupID, AdID);
+					final Long semplestGoogleAdID = ad.getAdEngineAdID();
+					final Long googleAdID = googleAdwordsService.deleteAD(accountID, adGroupID, semplestGoogleAdID);
+					if (googleAdID == null || googleAdID == 0)
+					{
+						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to delete the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "].  This means there was a problem creating the ad within Google AdWords.";
+						logger.error(errMsg);
+						errorMap.put(adEngine, errMsg);
+					}
+					else if (!googleAdID.equals(semplestGoogleAdID))
+					{
+						final String errMsg = "Google Ad ID returned from Google AdWords after trying to delete the Ad [" + googleAdID + "] does not equal the SemplestGoogleAdID [" + semplestGoogleAdID + "].  Maybe the wrong Google Ad was deleted?  Other params used in the delete call: PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "].";
+						logger.error(errMsg);
+						errorMap.put(adEngine, errMsg);
+					}
+					else
+					{
+						logger.info("Google AdWords Ad ID returned after deleting the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is the same as the SemplestGoogleAdID [" + semplestGoogleAdID + "] that we expected to delete: [" + googleAdID + "].  This means the ad was deleted successfully within Google AdWords.");
+						final int rowCount = SemplestDB.deleteAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
+						if (rowCount != 1)
+						{
+							logger.warn("Num or rows deleted when deleting SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
+						}
+					}
 				}
 				else
 				{

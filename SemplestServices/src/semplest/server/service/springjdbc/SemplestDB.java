@@ -861,12 +861,21 @@ public class SemplestDB extends BaseDB
 	
 	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK)  " +
-				"select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
-
-		return jdbcTemplate.update(strSQL, new Object[]
-		{ advertisingEngineAdPK, promotionAdsFK, advertisingEngine });
-
+		String strSQL = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) " +
+				        "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
+		return jdbcTemplate.update(strSQL, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
+	}
+	
+	public static Integer deleteAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
+	{
+		final String strSQL = "delete  	AdvertisingEngineAds " + 	
+							    "from	AdvertisingEngineAds aea, " +  
+							  		   "AdvertisingEngine e " + 
+							   "where	aea.PromotionAdsFK = ? " + 
+							     "and 	aea.AdvertisingEngineAdPK = ? " + 
+							  	 "and	aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
+							  	 "and 	e.AdvertisingEngine = ?";
+		return jdbcTemplate.update(strSQL, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
 	}
 	
 	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork,

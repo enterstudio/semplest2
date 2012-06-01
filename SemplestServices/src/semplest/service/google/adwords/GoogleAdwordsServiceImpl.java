@@ -395,8 +395,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call getSpentAPIUnitsPerAccountID(String json)" + json);
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class); // protocolJson.getHashMapFromJson(json);
 		Long accountID = Long.parseLong(data.get("accountID"));
-		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class),
-				gson.fromJson(data.get("endDate"), java.util.Date.class));
+		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class), gson.fromJson(data.get("endDate"), java.util.Date.class));
 		// convert result to Json String
 		return gson.toJson(unitsSpent);
 	}
@@ -663,8 +662,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
 			throws Exception
 	{
-		//TODO: remove this hack after testing is done 
-		headline = "Exp123123123";
+		//headline = "Exp123123123"; // for testing
 		logger.info("Will try to add Text Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
 		try
 		{
@@ -870,17 +868,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	public String deleteAD(String json) throws Exception
 	{
-		logger.debug("call deleteAd(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		logger.debug("call deleteAd(String json) [" + json + "]");
+		Map<String, String> data = gson.fromJson(json, Map.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long AdID = Long.parseLong(data.get("AdID"));
-		Boolean del = deleteAD(data.get("accountID"), adGroupID, AdID);
-		// convert result to Json String
-		return gson.toJson(del);
+		Long googleAdID = deleteAD(data.get("accountID"), adGroupID, AdID);
+		return gson.toJson(googleAdID);
 	}
 
 	@Override
-	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
+	public Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
 		logger.info("Will try to delete ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]");
 		try
@@ -902,27 +899,31 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupAdOperation[] operations = new AdGroupAdOperation[]
 			{ operation };
 			// Delete ad.
-			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
+			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
 			if (result != null && result.getValue() != null)
 			{
-				return true;
+				final AdGroupAd[] adGroupAdArray = result.getValue();
+				final AdGroupAd adGroupAdReturned = adGroupAdArray[0];
+				final Ad returnedAd = adGroupAdReturned.getAd();
+				final Long returnedAdID = returnedAd.getId();
+				return returnedAdID;
 			}
 			else
 			{
-				return false;
-			}
+				return null;
+			}			
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception(e.dumpToString());
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]", e);
 		}
 	}
 
