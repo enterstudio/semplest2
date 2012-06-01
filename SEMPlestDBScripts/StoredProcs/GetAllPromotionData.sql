@@ -38,7 +38,7 @@ BEGIN TRY
 		--get ADs
 		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdTextLine1, pa.AdTextLine2, aea.AdvertisingEngineAdPK [AdEngineAdID] from Promotion p
 		inner join PromotionAds pa on pa.PromotionFK = p.PromotionPK
-		inner join AdvertisingEngineAds aea on aea.PromotionAdsFK = pa.PromotionAdsPK
+		left outer join AdvertisingEngineAds aea on aea.PromotionAdsFK = pa.PromotionAdsPK
 		where p.PromotionPK = @PromotionPK
 		--get Geotargeting
 		select gt.Address, gt.City,st.StateAbbr [State], gt.Zip, gt.Latitude, gt.Longitude,gt.ProximityRadius [Radius] from Promotion p 
