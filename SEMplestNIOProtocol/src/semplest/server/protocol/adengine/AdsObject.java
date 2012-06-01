@@ -8,6 +8,7 @@ public class AdsObject
 	private String AdTextLine1;
 	private String AdTextLine2;
 	private Long AdEngineAdID;
+	
 	public String getAdTitle()
 	{
 		return AdTitle;
@@ -56,4 +57,11 @@ public class AdsObject
 	{
 		AdTextLine2 = adTextLine2;
 	}
+	@Override
+	public String toString()
+	{
+		return "AdsObject [PromotionAdsPK=" + PromotionAdsPK + ", PromotionFK=" + PromotionFK + ", AdTitle=" + AdTitle + ", AdTextLine1="
+				+ AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + "]";
+	}
+	
 }
