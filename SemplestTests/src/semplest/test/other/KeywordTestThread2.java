@@ -7,25 +7,24 @@ import java.util.Random;
 
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.api.KeywordLDAServiceClient;
-import semplest.test.scalability.ScalabilityTests.SERVICE_INDEX;
 
-
-public class KeywordTestThread implements Runnable{
+public class KeywordTestThread2 implements Runnable{
 
 	private int sleep_time;	
 	
 	private HashMap<String, String> wordList;
 	
-	public KeywordTestThread(int sleep_time) {
+	public KeywordTestThread2(int sleep_time) {
 		super();
 		this.sleep_time = sleep_time;
 	}
 
 	@Override
 	public void run() {
-		try{			
+		try{		
+			init_wordList();
+			
 			while(true){
-				init_wordList();
 				
 				Date now = new Date();				
 				System.out.println("KEYWORD SERVICE >>> " 

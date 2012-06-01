@@ -9,6 +9,7 @@ public class ServiceTestThread implements Runnable{
 	private int sleep_time;	
 	private String reportPath;
 	private FileWriter writer;
+	boolean noError = true;
 	
 	public ServiceTestThread(int sleep_time) {
 		super();
@@ -19,16 +20,17 @@ public class ServiceTestThread implements Runnable{
 	public void run() {
 		try{	
 			
-			String reportName = "EsbTest_" + System.currentTimeMillis();
+			String reportName = "Test_Stress_ESB_" + System.currentTimeMillis();
 			
-			reportPath = "Z:\\TestReports\\PerformanceTest\\" + reportName + ".csv";		
+			reportPath = "Z:\\TestReports\\ScalabilityTest\\" + reportName + ".csv";		
 			writer = new FileWriter(reportPath);	 
 		    //writer.append("Computation");
 		   // writer.append(',');
 		    writer.append("Latency");
 		    writer.append('\n');
+		    writer.flush();
 		 
-			while(true){
+			while(noError){
 				Date now = new Date();				
 				System.out.println("TEST SERVICE >>> " 
 				+ now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
@@ -67,6 +69,7 @@ public class ServiceTestThread implements Runnable{
 					writer.append(',');
 					writer.append('\n');
 				}				
+				noError = false;
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
