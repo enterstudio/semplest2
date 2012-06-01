@@ -6,13 +6,14 @@ import java.util.List;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
+import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
-import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleSiteLink;
 
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
@@ -47,6 +48,8 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	public abstract Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
 	public abstract Boolean updateAD(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
 	public abstract Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
+	
+	public abstract Boolean addSiteLinkForCampaign(String accountID, Long campaignID, ArrayList<GoogleSiteLink> siteLinks) throws Exception;
 	
 	public abstract GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
 	public abstract GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;

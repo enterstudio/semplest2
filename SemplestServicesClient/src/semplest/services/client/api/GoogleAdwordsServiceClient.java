@@ -18,6 +18,7 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
@@ -687,6 +688,16 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 
+	@Override
+	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, ArrayList<GoogleSiteLink> siteLinks) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+	
 
 }
 
