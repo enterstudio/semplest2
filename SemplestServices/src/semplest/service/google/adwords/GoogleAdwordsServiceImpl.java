@@ -31,6 +31,7 @@ import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.lib.AdWordsServiceLogger;
@@ -638,12 +639,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	public String addTextAd(String json) throws Exception
 	{
-		logger.debug("call addTextAd" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Long addGroupID = Long.parseLong(data.get("addGroupID"));
-		Long res = addTextAd(data.get("accountID"), addGroupID, data.get("headline"), data.get("description1"), data.get("description2"),
-				data.get("displayURL"), data.get("url"));
-		// convert result to Json String
+		logger.debug("call addTextAd (" + json + ")");		
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final String accountID = data.get("accountID");
+		final Long addGroupID = Long.parseLong(data.get("addGroupID"));
+		final String headline = data.get("headline");
+		final String description1 = data.get("description1");
+		final String description2 = data.get("description2");
+		final String displayURL = data.get("displayURL");
+		final String url = data.get("url");
+		final Long res = addTextAd(accountID, addGroupID, headline, description1, description2, displayURL, url);
 		return gson.toJson(res);
 	}
 
@@ -658,6 +663,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
 			throws Exception
 	{
+		//TODO: remove this hack after testing is done 
+		headline = "Exp123123123";
+		logger.info("Will try to add Text Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
 		try
 		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -666,11 +674,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 			// Create text ad.
 			TextAd textAd = new TextAd();
-			textAd.setHeadline(headline.trim());
-			textAd.setDescription1(description1.trim());
-			textAd.setDescription2(description2.trim());
-			textAd.setDisplayUrl(displayURL.trim());
-			textAd.setUrl(url.trim());
+			textAd.setHeadline(SemplestUtils.getTrimmedNonNullString(headline));
+			textAd.setDescription1(SemplestUtils.getTrimmedNonNullString(description1));
+			textAd.setDescription2(SemplestUtils.getTrimmedNonNullString(description2));
+			textAd.setDisplayUrl(SemplestUtils.getTrimmedNonNullString(displayURL));
+			textAd.setUrl(SemplestUtils.getTrimmedNonNullString(url));
 			// Create ad group ad.
 			AdGroupAd textAdGroupAd = new AdGroupAd();
 			textAdGroupAd.setAdGroupId(adGroupID.longValue());
@@ -679,9 +687,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupAdOperation textAdGroupAdOperation = new AdGroupAdOperation();
 			textAdGroupAdOperation.setOperand(textAdGroupAd);
 			textAdGroupAdOperation.setOperator(Operator.ADD);
-
-			AdGroupAdOperation[] operations = new AdGroupAdOperation[]
-			{ textAdGroupAdOperation };
+			AdGroupAdOperation[] operations = new AdGroupAdOperation[]{textAdGroupAdOperation};
 			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
 			if (result != null && result.getValue() != null)
 			{
@@ -694,15 +700,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception(e.dumpToString());
+			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
 		}
 
 	}
@@ -876,6 +882,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
+		logger.info("Will try to delete ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]");
 		try
 		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);

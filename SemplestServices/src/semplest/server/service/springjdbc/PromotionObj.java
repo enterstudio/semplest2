@@ -16,6 +16,7 @@ public class PromotionObj
 	private String PromotionName;
 	private String PromotionDescription;
 	private String LandingPageURL;
+	private String DisplayURL;	
 	private Double PromotionBudgetAmount;
 	private Date PromotionStartDate;
 	private Date PromotionEndDate;
@@ -32,6 +33,15 @@ public class PromotionObj
 	private Long AdvertisingEngineCampaignPK;
 	private Long AdvertisingEngineAdGroupID;
 	private Long AdvertisingEngineAccountPK; 
+	
+	public String getDisplayURL()
+	{
+		return DisplayURL;
+	}
+	public void setDisplayURL(String displayURL)
+	{
+		DisplayURL = displayURL;
+	}
 	public Integer getPromotionPK()
 	{
 		return PromotionPK;

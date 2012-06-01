@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -545,34 +546,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return true;
 	}
 
-	@Override
-	public Boolean PausePromotion(Integer customerID, Integer promotionID, String adEngine) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, String adEngine) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean DeleteAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	public String UpdateGeoTargeting(String json) throws Exception
 	{
 		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");
@@ -580,35 +553,236 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		//final String accountId = data.get("accountId");
 		//final Long campaignId = Long.parseLong(data.get("campaignId"));
 		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
-		final Boolean res = UpdateGeoTargeting(PromotionID);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = UpdateGeoTargeting(PromotionID, adEngines);
 		return gson.toJson(res);
 	}
 	
 	@Override
-	public Boolean UpdateGeoTargeting(Integer PromotionID) throws Exception
+	public Boolean UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception
 	{
-		logger.info("call UpdateGeoTargeting(" + PromotionID + ")");
+		logger.info("call UpdateGeoTargeting(" + PromotionID + ", " + adEngines + ")");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(PromotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
 		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
-		logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId+ "]/Promotion[" + PromotionID + "] with the following GeoTargets: [" + geoTargets + "]");
-		final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-		final Boolean result = googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);
-		return result;
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId+ "]/Promotion[" + PromotionID + "] with the following GeoTargets: [" + geoTargets + "]");
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);				
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Updating GEO Targets (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}		
 	}
-
+	
+	public String getEasilyReadableString(final Map<String, String> m)
+	{
+		final StringBuffer sb = new StringBuffer();
+		for (final Map.Entry<String, String> mapEntry : m.entrySet())
+		{
+			if (sb.length() != 0)
+			{
+				sb.append("\n");
+			}
+			sb.append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
+		}
+		return sb.toString();
+	}
+	
 	@Override
-	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean PausePromotion(Integer customerID, Integer promotionID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink)
+	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public AdsObject getAd(final List<AdsObject> ads, final Integer promotionAdID)
+	{
+		for (final AdsObject ad : ads)
+		{
+			if (ad.getPromotionAdsPK().intValue() == promotionAdID.intValue())
+			{
+				return ad;
+			}
+		}
+		return null;
+	}
+	
+	public String AddAd(String json) throws Exception
+	{
+		logger.debug("call AddAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = AddAd(promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean AddAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	{
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final List<AdsObject> ads = getPromoDataSP.getAds();				
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final AdsObject ad = getAd(ads, promotionAdID);						
+				if (ad != null)
+				{
+					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
+					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+					final String headline = ad.getAdTitle();
+					final String description1 = ad.getAdTextLine1();
+					final String description2 = ad.getAdTextLine2();
+					final String displayURL = promotion.getDisplayURL(); 
+					final String url = promotion.getLandingPageURL();
+					final Long googleAdID = googleAdwordsService.addTextAd(accountID, adGroupID, headline, description1, description2, displayURL, url);
+					if (googleAdID == null || googleAdID == 0)
+					{
+						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to create the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].  This means there was a problem creating the ad within Google AdWords.";
+						logger.error(errMsg);
+						errorMap.put(adEngine, errMsg);
+					}
+					else
+					{
+						logger.info("Google AdWords Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
+						SemplestDB.setAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
+					}
+				}
+				else
+				{
+					final String errMsg = "Could not find Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}								
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Adding Ads (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}		
+	}
+	
+	public String DeleteAd(String json) throws Exception
+	{
+		logger.debug("call DeleteAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = DeleteAd(promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
+
+	@Override
+	public Boolean DeleteAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	{
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);								
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final List<AdsObject> ads = getPromoDataSP.getAds();
+				final AdsObject ad = getAd(ads, promotionAdID);		
+				if (ad != null)
+				{
+					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+					final Long AdID = ad.getAdEngineAdID();
+					googleAdwordsService.deleteAD(accountID, adGroupID, AdID);
+				}
+				else
+				{
+					final String errMsg = "Could not find Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}								
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Removing Ads (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}		
+	}
+
+	@Override
+	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -616,35 +790,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget) throws Exception
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate) throws Exception
+	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean DeleteKeyword(Integer promotionID, String Keyword) throws Exception
+	public Boolean DeleteKeyword(Integer promotionID, String Keyword, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Boolean AddAd(Integer customerID, Integer promotionID) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID) throws Exception
+	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

@@ -2,7 +2,6 @@ package semplest.server.service.springjdbc.storedproc;
 
 import java.sql.Types;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +19,9 @@ import semplest.server.service.springjdbc.PromotionObj;
 public class GetAllPromotionDataSP extends StoredProcedure
 {
 	private static final String SPROC_NAME = "GetAllPromotionData";
-	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper(PromotionObj.class);
-	private static final RowMapper<AdsObject> adsObjMapper = new BeanPropertyRowMapper(AdsObject.class);
-	private static final RowMapper<GeoTargetObject> geoTargetObjectMapper = new BeanPropertyRowMapper(GeoTargetObject.class);
+	private static final RowMapper<PromotionObj> promotionObjMapper = new BeanPropertyRowMapper<PromotionObj>(PromotionObj.class);
+	private static final RowMapper<AdsObject> adsObjMapper = new BeanPropertyRowMapper<AdsObject>(AdsObject.class);
+	private static final RowMapper<GeoTargetObject> geoTargetObjectMapper = new BeanPropertyRowMapper<GeoTargetObject>(GeoTargetObject.class);
 	private Map<String, Object> results = null;
 	
 	public GetAllPromotionDataSP()
@@ -51,7 +50,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 		}
 		else
 		{
-			List<PromotionObj> res = (ArrayList<PromotionObj>) results.get("promotion");
+			List<PromotionObj> res = (List<PromotionObj>) results.get("promotion");
 			if (res.size() > 0)
 			{
 				return res.get(0);
@@ -70,7 +69,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 		}
 		else
 		{
-			return (ArrayList<AdsObject>) results.get("ads");
+			return (List<AdsObject>) results.get("ads");
 		}
 	}
 	public List<GeoTargetObject> getGeoTargets()
@@ -81,7 +80,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 		}
 		else
 		{
-			return (ArrayList<GeoTargetObject>) results.get("geotarget");
+			return (List<GeoTargetObject>) results.get("geotarget");
 		}
 	}
 }
