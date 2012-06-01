@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -34,6 +33,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);
 
 		/*		
+		
 		//
 		// UpdateGeoTargeting
 		//
@@ -41,7 +41,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines = new ArrayList<String>();
 		adEngines.add(AdEngine.Google.name());
 		client.UpdateGeoTargeting(PromotionID, adEngines);
-			*/	
+			
 		
 		//
 		// AddAd
@@ -52,7 +52,8 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		adEngines_AddAd.add(AdEngine.Google.name());
 		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
 		
-		/*
+		
+		
 		//
 		// DeleteAd
 		//
@@ -61,7 +62,8 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_DeleteAd = new ArrayList<String>();
 		adEngines_DeleteAd.add(AdEngine.Google.name());
 		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
-		*/
+		*/	//9821013 (28 in semplest, 9 in google)
+		
 	}
 
 	@Override

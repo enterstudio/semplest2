@@ -407,16 +407,15 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 	@Override
-	public Boolean deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
+	public Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		jsonHash.put("AdID", String.valueOf(AdID));
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAD", json,timeoutMS);
-		return gson.fromJson(returnData, Boolean.class);
+		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
 	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
