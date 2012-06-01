@@ -6,7 +6,7 @@
     <div class="configuration1">
         <span>Please type in several words or phrases that you never want associated with your
             ad (separated by commas): </span>
-        @Html.TextBoxFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
+        @Html.TextAreaFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
     </div>
     <div class="options" style="margin-top: 100px">
         <button class="k-button" id="back3" type="button">
@@ -17,7 +17,8 @@
 </div>
 <style>
     .negKeyw {
-        width: 40.4em;
+        width: 100%;
+        height: 100px;
     }
 </style>
 <script type="text/javascript">
@@ -34,3 +35,5 @@
         tabStrip.select(otherTab);
     }
 </script>
+
+​

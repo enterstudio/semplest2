@@ -132,8 +132,9 @@ div.clue-bottom-default .cluetip-arrows {
 }
 
 .cluetip-jtip .ui-cluetip-header {
-  background-color: #ccc;
+  background-color: #8ebc00;
   padding: 6px;
+  color:#fff;
 /*  margin-bottom: 1em;*/
 }
 

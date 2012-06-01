@@ -56,7 +56,7 @@
                     Search Engines <a href ="#" class="help-button" id="helpbutton5" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]5"  >?</a>
                 </label>
                 <br />
-                @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.AdEnginesSelectedList)
+                        @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.ImageUrl, t => t.AdEnginesSelectedList, new { })
                 @Html.ValidationMessageFor(t => t.AdEnginesList)
             </li>
             <li>

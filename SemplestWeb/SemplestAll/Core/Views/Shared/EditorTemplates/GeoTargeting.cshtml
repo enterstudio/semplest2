@@ -1,4 +1,4 @@
-﻿@using Semplest.Core.Helpers
+﻿        @using Semplest.Core.Helpers
 @using Semplest.SharedResources.Helpers
 @using SemplestWebApp.Helpers
 @model SemplestModel.GeoTargeting
@@ -9,14 +9,14 @@
                 Street
             </td>
             <td>
-                @Html.TextBoxFor(t => t.Address, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
             </td>
             <td rowspan="5">
-                <div id="optionsNarrative">
+                <div id="optionsNarrative" style="margin-left: 20px;">
                 </div>
             </td>
             <td>
-                  @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
                 @Html.LinkToRemoveNestedForm("Delete", "div.address", "input.mark-for-delete")
             </td>
         </tr>
@@ -25,7 +25,7 @@
                 City
             </td>
             <td>
-                @Html.TextBoxFor(t => t.City, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.City, new { @class = "street" })
                 @Html.ValidationMessageFor(t => t.City)
             </td>
         </tr>
@@ -34,7 +34,7 @@
                 State
             </td>
             <td>
-                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr",@Model.StateCodeFK), new { @class = "k-dropdownlist" })
+                @Html.DropDownListFor(t => t.StateCodeFK, new SelectList(Model.StateCodes, "StateAbbrPK", "StateAbbr", @Model.StateCodeFK), new { @class = "k-dropdownlist state" })
             </td>
         </tr>
         <tr>
@@ -42,7 +42,7 @@
                 Zip
             </td>
             <td>
-                @Html.TextBoxFor(t => t.Zip, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.Zip, new { @class = "zip" })
             </td>
         </tr>
         <tr>
@@ -50,7 +50,7 @@
                 Proximity
             </td>
             <td>
-                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "k-textbox k-textboxAd" })
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
@@ -59,25 +59,24 @@
         <tr>
             <td colspan="3">
                 @Html.ValidationSummary(true)
-                
             </td>
         </tr>
     </table>
 </div>
 <script>
-    $("#@Html.ClientIdFor(t=>t.ProximityRadius)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function (e) {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t=>t.City)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.City)").change(function (e) {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t=>t.StateCodeFK)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.StateCodeFK)").change(function (e) {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t=>t.Zip)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.Zip)").change(function (e) {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t=>t.Address)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.Address)").change(function (e) {
         doOptions();
     });
 </script>
@@ -85,5 +84,70 @@
     .hidden
     {
         display: none;
+    }
+    .street
+    {
+        width: 150px;
+        border-color: grey;
+        background-color: #fff;
+        color: #777;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        font-size: 100%;
+        font-family: inherit;
+        border-style: solid;
+        border-width: 1px;
+        -webkit-appearance: none;
+        outline: 0;
+        height: 1.66em;
+        line-height: 1.66em;
+        padding: 2px 0;
+        text-indent: .3em;
+    }
+    .street:hover
+    {
+        border-color: #e6e6e6;
+    }
+    .state {
+        width: 34%;
+    }
+    .zip {
+        width: 70px;
+         border-color: grey;
+        background-color: #fff;
+        color: #777;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        font-size: 100%;
+        font-family: inherit;
+        border-style: solid;
+        border-width: 1px;
+        -webkit-appearance: none;
+        outline: 0;
+        height: 1.66em;
+        line-height: 1.66em;
+        padding: 2px 0;
+        text-indent: .3em;
+    }
+    .proximity {
+        width: 40px;
+         border-color: grey;
+        background-color: #fff;
+        color: #777;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        font-size: 100%;
+        font-family: inherit;
+        border-style: solid;
+        border-width: 1px;
+        -webkit-appearance: none;
+        outline: 0;
+        height: 1.66em;
+        line-height: 1.66em;
+        padding: 2px 0;
+        text-indent: .3em;
     }
 </style>

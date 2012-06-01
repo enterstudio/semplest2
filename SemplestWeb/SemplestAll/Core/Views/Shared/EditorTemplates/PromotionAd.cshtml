@@ -6,27 +6,35 @@
         <legend>Ad #</legend>
         <div class="content">
             <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
-                <li>@Html.HiddenFor(t => t.PromotionAdsPK) 
-                    <label style="min-width: 45px">Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  >?</a></label>
-                    
+                <li>@Html.HiddenFor(t => t.PromotionAdsPK)
+                    <label style="min-width: 65px">
+                        Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  >
+                            ?</a></label>
                     @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
-                    @Html.ValidationMessageFor(t => t.AdTitle, "", new { @class = "k-widget k-tooltip k-tooltip-validation" })
+                    @Html.ValidationMessageFor(t => t.AdTitle)
                     <label class="hint">
                         25 characters max.</label>
                 </li>
                 <li>
-                    <label style="vertical-align: top">Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  >?</a></label>
-                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
+                    <label style="vertical-align: top; min-width: 65px">
+                        Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  >
+                            ?</a></label>
+                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
                     <label class="hint">
                         35 characters max.</label>
-                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAd hint alpha", @maxlength = 35 })
+                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAdDescrition hint alpha", @maxlength = 35 })
                     <label class="hint">
                         35 characters max.</label>
-                </li>
-                <!--<li><button type="button" class="additionalLinks k-button"><span class="k-add k-icon"></span>Add additional click through options</button> <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  >?</a>-->
                 </li>
                 <li>
-                    @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                    <div style="display: inline-block; vert-align: top; overflow: hidden; width: 600px;margin-left: 75px">
+                        @Html.LinkToRemoveNestedForm("Delete Ad Group", "div.ads", "input.mark-for-delete")
+                        <button type="button" class="additionalLinks k-button">
+                            <span class="k-add k-icon"></span>Add additional click through options</button>
+                        <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  >
+                            ?</a>
+                        @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                    </div>
                 </li>
             </ul>
         </div>
@@ -34,7 +42,6 @@
             <div class="example">
                 <div class="k-header product-view">
                     <div class="right">
-                        @Html.LinkToRemoveNestedForm("Delete", "div.ads", "input.mark-for-delete")
                     </div>
                     <div id="@Html.ClientIdFor(t => t.PromotionAdsPK)_div">
                     </div>
@@ -46,7 +53,7 @@
 <style scoped>
     .hint
     {
-        margin-left: 53px;
+        margin-left: 75px;
         margin-top: 5px;
     }
     .content
@@ -114,7 +121,7 @@
     var template = kendo.template($("#template").html());
 
     $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
-        id : "1",
+        id: "1",
         title: $("#AdModelProp_Url").val(),
         twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
         content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),

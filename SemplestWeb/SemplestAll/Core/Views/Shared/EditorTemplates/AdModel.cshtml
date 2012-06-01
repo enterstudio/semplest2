@@ -5,24 +5,24 @@
     <ul class="options">
         <li>
             <h3>
-                Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  >?</a></h3>
+                Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  >
+                    ?</a></h3>
         </li>
         <li>
             <fieldset>
                 <legend>Business Address</legend>
-                    <table>
-                        <tr>
-                            <td>
-                                <div id="addresses">
-                                    @Html.EditorFor(t => t.Addresses)
-                                </div>
-                                <div style="text-align: left;margin-left: 56px">
-                                    @Html.LinkToAddNestedForm("Add Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting),"AdModelProp")
-                                </div>
-                            </td>
-                        </tr>
-                    </table>
-                
+                <table>
+                    <tr>
+                        <td>
+                            <div id="addresses">
+                                @Html.EditorFor(t => t.Addresses)
+                            </div>
+                            <div style="text-align: left; margin-left: 56px">
+                                @Html.LinkToAddNestedForm("Add Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
+                            </div>
+                        </td>
+                    </tr>
+                </table>
             </fieldset>
         </li>
         <li class="infoHead">
@@ -30,18 +30,22 @@
                 Ad Copy</h3>
         </li>
         <li>
-            <label style="width: 45px">
-                URL <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  >?</a></label>
+            <label style="width: 68px">
+                URL <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  >
+                    ?</a></label>
             @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
-            @Html.ValidationMessageFor(t=>t.Url)
+            @Html.ValidationMessageFor(t => t.Url)
             <span>This url will appears in all of your ads</span> </li>
         <li>
             <div id="ads">
                 @Html.EditorFor(t => t.Ads)
             </div>
         </li>
-        <li><button class="k-button" id="negativeKeyWords" type="button"><span class="k-add k-icon"></span>Negative Keywords</button> <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  >?</a></li>
         <li>
+            <button class="k-button" id="negativeKeyWords" type="button">
+                <span class="k-add k-icon"></span>Negative Keywords</button>
+            <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  >
+                ?</a>
             @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>
         <li class="options">
             <button class="k-button" id="back1" type="button">
@@ -56,9 +60,13 @@
         {
             width: 145px;
         }
-         .k-textboxAd1
+        .k-textboxAdDescrition
         {
-            width: 190px;
+            width: 200px;
+        }
+        .k-textboxAd1
+        {
+            width: 250px;
         }
     </style>
 </div>

@@ -91,6 +91,7 @@ namespace Semplest.Core.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string ImageUrl { get; set; }
     }
 
     public class ProductGroupModel
@@ -100,11 +101,12 @@ namespace Semplest.Core.Models
             using (var entities = new SemplestEntities())
             {
                 Configuration = entities.Configurations.FirstOrDefault();
-                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1 }).ToList();
+                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = "/Content/" + t.LogoURL }).ToList();
                 AdEnginesSelectedList = AdvertisingEngines;
             }
             AdEnginesList = new List<string>();
         }
+
         public Configuration Configuration { get; set; }
         public string ProductGroupName { get; set; }
         public string ProductPromotionName { get; set; }

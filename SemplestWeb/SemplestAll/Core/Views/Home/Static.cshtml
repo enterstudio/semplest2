@@ -1,7 +1,26 @@
 ﻿@model Semplest.Core.Models.StaticModel
 @section Title{
-@Model.Title
+    @Model.Title
 }
-<div>
-@Html.Raw(Model.Text)
+<style scoped>
+    #about {
+        padding: 10px;
+    }
+    #about li {
+        display: block;
+    }
+    #about p {
+        display: block;
+        text-indent: 20px;
+        padding-bottom: 5px;
+        line-height: 20px;
+        text-align: justify;
+    }
+    #about br 
+    {
+        display: block;
+    }
+</style>
+<div id="about">
+    @Html.Raw(Model.Text)
 </div>
