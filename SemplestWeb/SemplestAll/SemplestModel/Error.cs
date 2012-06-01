@@ -19,6 +19,9 @@ namespace SemplestModel
         public Nullable<int> ErrorID { get; set; }
         public Nullable<int> UsersFK { get; set; }
         public System.DateTime CreatedDate { get; set; }
+        public string ErrorSource { get; set; }
+        public string ErrorClass { get; set; }
+        public string ErrorDetails { get; set; }
     
         public virtual User User { get; set; }
     }
