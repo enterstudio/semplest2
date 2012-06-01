@@ -41,7 +41,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines = new ArrayList<String>();
 		adEngines.add(AdEngine.Google.name());
 		client.UpdateGeoTargeting(PromotionID, adEngines);
-			
+	
 		
 		//
 		// AddAd
@@ -51,9 +51,19 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_AddAd = new ArrayList<String>();
 		adEngines_AddAd.add(AdEngine.Google.name());
 		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
+			*/	
 		
+		//
+		// UpdateAd
+		//		
+		final Integer promotionID_UpdateAd = 62;
+		final Integer promotionAdID_UpdateAd = 218;
+		final List<String> adEngines_UpdateAd = new ArrayList<String>();
+		adEngines_UpdateAd.add(AdEngine.Google.name());
+		//adEngines_UpdateAd.add(AdEngine.MSN.name());
+		client.UpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
 		
-		
+		/*
 		//
 		// DeleteAd
 		//
@@ -62,7 +72,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_DeleteAd = new ArrayList<String>();
 		adEngines_DeleteAd.add(AdEngine.Google.name());
 		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
-		*/	//9821013 (28 in semplest, 9 in google)
+		
+		*/	
+		
+		// 9824192 old, 9824193 new (30 in semplest, 10 in google)
+		// added: 9824192
+		
 		
 	}
 
@@ -171,10 +186,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public Boolean UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("DeleteAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "UpdateAd", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override

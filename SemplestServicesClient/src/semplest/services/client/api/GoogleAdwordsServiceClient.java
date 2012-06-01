@@ -41,7 +41,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	private String timeoutMS = "20000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
-	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceClient.class);
 	
 	private final String baseurl;
 	
@@ -457,7 +456,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
 	@Override
-	public Boolean updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
+	public Long updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
 			String displayURL, String url) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -470,9 +469,8 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		jsonHash.put("displayURL", displayURL);
 		jsonHash.put("url", url);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl,SERVICEOFFERED, " updateAD", json,timeoutMS);
-		return gson.fromJson(returnData, Boolean.class);
+		return gson.fromJson(returnData, Long.class);
 	}
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
