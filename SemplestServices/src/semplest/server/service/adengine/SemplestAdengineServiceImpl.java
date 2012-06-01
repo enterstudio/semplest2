@@ -683,7 +683,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					}
 					else
 					{
-						logger.info("Google AdWords Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
+						logger.info("Google Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
 						final int rowCount = SemplestDB.setAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
 						if (rowCount != 1)
 						{
@@ -764,11 +764,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					}
 					else
 					{
-						logger.info("Google AdWords Ad ID returned after deleting the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is the same as the SemplestGoogleAdID [" + semplestGoogleAdID + "] that we expected to delete: [" + googleAdID + "].  This means the ad was deleted successfully within Google AdWords.");
+						logger.info("Google Ad ID returned after deleting the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is the same as the SemplestGoogleAdID [" + semplestGoogleAdID + "] that we expected to delete: [" + googleAdID + "].  This means the ad was deleted successfully within Google AdWords.");
 						final int rowCount = SemplestDB.deleteAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
 						if (rowCount != 1)
 						{
-							logger.warn("Num or rows deleted when deleting SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
+							logger.warn("Num or rows deleted when deleting SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], GoogleAdID [" + googleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
 						}
 					}
 				}
@@ -804,12 +804,91 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public String UpdateAd(String json) throws Exception
+	{
+		logger.debug("call UpdateAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = UpdateAd(promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
 
 	@Override
-	public Boolean UpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public Boolean UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);								
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final List<AdsObject> ads = getPromoDataSP.getAds();
+				final List<AdsObject> adsForPromotionAdID = getsAdForPromotionAdID(ads, promotionAdID);
+				if (!adsForPromotionAdID.isEmpty())
+				{
+					Collections.sort(adsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					final AdsObject ad = adsForPromotionAdID.get(0);					
+					final Long semplestGoogleAdID = ad.getAdEngineAdID();
+					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
+					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+					final String headline = ad.getAdTitle();
+					final String description1 = ad.getAdTextLine1();
+					final String description2 = ad.getAdTextLine2();
+					final String displayURL = promotion.getDisplayURL(); 
+					final String url = promotion.getLandingPageURL();
+					final Long googleAdID = googleAdwordsService.updateAD(accountID, adGroupID, semplestGoogleAdID, headline, description1, description2, displayURL, url);
+					if (googleAdID == null || googleAdID == 0)
+					{
+						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to update the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].  This means there was a problem updating the ad within Google AdWords.";
+						logger.error(errMsg);
+						errorMap.put(adEngine, errMsg);
+					}
+					else if (googleAdID.equals(semplestGoogleAdID))
+					{
+						final String errMsg = "Google Ad ID returned from Google AdWords after trying to update the Ad for GoogleAdID [" + googleAdID + "] equals the SemplestGoogleAdID [" + semplestGoogleAdID + "].  This is not expected.  Update consists of creatae new ad and deleting the old ad.  If the 2 are the same, then the NEW Ad ID is the same as the OLD, but it should be different.  Other params used in the update call: PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].";
+						logger.error(errMsg);
+						errorMap.put(adEngine, errMsg);
+					}
+					else
+					{
+						logger.info("Google Ad ID returned after updating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is different from the SemplestGoogleAdID [" + semplestGoogleAdID + "] as we expect since the update is a delete of old ad and create of new ad: [" + googleAdID + "].  This means the ad was 'updated' successfully within Google AdWords.");
+						final int rowCount = SemplestDB.updateAdIDForAdGroup(googleAdID, semplestGoogleAdID, adEngine, promotionAdID);
+						if (rowCount != 1)
+						{
+							logger.warn("Num or rows updated when updating SemplestPromotionAdsPk<->GoogleAdID mapping for NewGoogleAdID [" + googleAdID + "], OldGoogleAdID [" + semplestGoogleAdID + "], PromotionAdID [" + promotionAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
+						}
+					}
+				}
+				else
+				{
+					final String errMsg = "Could not find Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}								
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating ads (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}		
 	}
 
 	@Override

@@ -866,6 +866,19 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(strSQL, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
 	}
 	
+	public static Integer updateAdIDForAdGroup(Long newAdvertisingEngineAdPK, Long oldAdvertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
+	{
+		final String strSQL = "update   AdvertisingEngineAds " + 	
+								 "set	AdvertisingEngineAdPK = ? " +  	
+							    "from	AdvertisingEngineAds aea, " +  
+							  		   "AdvertisingEngine e " + 
+							   "where	aea.PromotionAdsFK = ? " + 
+							     "and 	aea.AdvertisingEngineAdPK = ? " + 
+							  	 "and	aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
+							  	 "and 	e.AdvertisingEngine = ?";
+		return jdbcTemplate.update(strSQL, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
+	}
+	
 	public static Integer deleteAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
 		final String strSQL = "delete  	AdvertisingEngineAds " + 	
