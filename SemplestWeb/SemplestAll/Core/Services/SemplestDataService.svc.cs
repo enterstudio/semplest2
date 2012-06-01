@@ -448,7 +448,7 @@ namespace SemplestWebApp.Services
 
                 foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
                 {
-                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.keyword);
+                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == kpo.keyword.Trim());
                     if (!queryKeyword.Any())
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
