@@ -163,7 +163,7 @@ public class ReportUtils {
 				else
 					psData.print(-1+", ");
 				psData.print("\n");
-				psKw.println(rep.getKeyword());
+				psKw.println(rep.getKeyword()+", "+rep.getBidMatchType());
 			}
 		}
 		
