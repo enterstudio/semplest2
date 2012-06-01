@@ -60,6 +60,6 @@
 	<classpathentry kind="lib" path="lib/jackson-jaxrs-1.9.2.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.9.2.jar"/>
 	<classpathentry kind="lib" path="lib/SemplestServices.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
+	<classpathentry kind="lib" path="lib/SemplestProtocol.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

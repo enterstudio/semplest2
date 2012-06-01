@@ -41,7 +41,7 @@ public class GoogleReportTools {
 	public static void main(String[] args) throws Exception {
 		
 		BasicConfigurator.configure();
-		GoogleReportTools repT = new GoogleReportTools("SemplestBiddingTestPiperHall", 6870692153L, 1);
+		//GoogleReportTools repT = new GoogleReportTools("SemplestBiddingTestPiperHall", 6870692153L, 1);
 		
 		
 		/*
@@ -52,7 +52,7 @@ public class GoogleReportTools {
 		ReportUtils.saveSerializedObject(reps, "/semplest/lluis/PiperHallTest/serializedReportGoogle");
 		reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/lluis/PiperHallTest/serializedReportGoogle");
 		ReportUtils.saveReportDataCSV(reps, "/semplest/lluis/PiperHallTest/testReportGoogle");
-		*/
+		
 		
 		//Create FPCPC Report
 		ArrayList<String> msnReport = ReportUtils.readFile("/semplest/lluis/fpcpcReport.csv");
@@ -64,6 +64,13 @@ public class GoogleReportTools {
 		}
 		ArrayList<String> fpcpc = repT.getFPCPCreportForKeywords(keywords,"/home/lluis/Downloads/Keywordreport.csv" );
 		ReportUtils.saveArrayListString(fpcpc, "/semplest/lluis/fpcpcReportGoogle.csv");
+		*/
+		
+		//Create correlation report
+		ArrayList<String> correl = GoogleReportTools.extractFromFilesFpcpcQSComp("/semplest/data/correlations/FpcpcQsComp/ParkWinters/GoogleDownloadedReport20120531.csv", 
+				"/semplest/data/correlations/FpcpcQsComp/ParkWinters/keyword_ideas_20120531_1450686_Exact.csv", "Exact");
+		ReportUtils.saveArrayListString(correl, "/semplest/data/correlations/FpcpcQsComp/ParkWinters/20120531FpcpcQSCompReportExact" +
+				".csv");
 		
 	}
 	
@@ -81,7 +88,7 @@ public class GoogleReportTools {
 	    while((line = br.readLine())!=null){
 	    	if(i>2){//Avoid headers
 	    		String[] parts = line.split(",");
-	    		String keyword = parts[1].replaceAll("\\[", "").replaceAll("\\]", "");//.replace("\"", "");
+	    		String keyword = parts[1].replaceAll("\\[", "").replaceAll("\\]", "").replace("\"", "");
 	    		if(kw.contains(keyword)){
 	    			relevantLines.add(keyword+", "+parts[14]+", "+parts[5]);
 	    		}
@@ -127,5 +134,64 @@ public class GoogleReportTools {
 		return repList.toArray(new ReportObject[]{});
 	}
 	
+	public static ArrayList<String> extractFromFilesFpcpcQSComp(String keywordReportPath, String keywordToolPath, String matchType) throws Exception{
+		
+
+		ArrayList<String> relevantLines = new ArrayList<String>();
+		if(!keywordToolPath.toLowerCase().contains(matchType.toLowerCase()))
+			throw new Exception("Input file corresponding to a differt match type");
+		relevantLines.add("Keyword, FPCPC, Quality Score, Competition Score");
+		FileInputStream fstream = new FileInputStream(keywordReportPath);
+	    // Read data from keyword report
+	    DataInputStream in = new DataInputStream(fstream);
+	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+	    int i=0;
+	    String line;
+	    while((line = br.readLine())!=null){
+	    	if(i>2){//Avoid headers
+	    		String[] parts = line.split(",");
+	    		String keyword = parts[1].replaceAll("\\[", "").replaceAll("\\]", "").replace("\"", "");
+	    		if(parts[14].equalsIgnoreCase(matchType)){
+	    			relevantLines.add(keyword+", "+parts[5]+", "+parts[7]);
+	    		}
+	    	}
+	    	i++;
+	    }
+	    //Read data from keyword tool
+	    
+	    FileInputStream fstream2 = new FileInputStream(keywordToolPath);
+	    DataInputStream in2 = new DataInputStream(fstream2);
+	    BufferedReader br2 = new BufferedReader(new InputStreamReader(in2));
+	    HashMap<String,Double> kwCompMap = new HashMap<String, Double>();
+	    i=0;
+	    while((line = br2.readLine())!=null){
+	    	if(i>1){//Avoid headers
+		    	String[] parts = line.split(",");
+		    	String keyword = parts[0].replaceAll("\\[", "").replaceAll("\\]", "").replace("\"", "");
+		    	if(!parts[1].contains("-"))
+		    		kwCompMap.put(keyword, Double.valueOf(parts[1]));
+	    	}
+	    	i++;
+	    }
+	    
+	    //Add competition score to line
+	    i=0;
+	    for(int j=0; j<relevantLines.size(); j++){
+	    	if(i>0){//Avoid headers
+	    		line = relevantLines.get(j);
+		    	String[] parts = line.split(",");
+		    	if(kwCompMap.containsKey(parts[0])){
+		    		line=line+", "+ kwCompMap.get(parts[0]);
+		    	}else{
+		    		line=line+", -1";
+		    	}
+		    	relevantLines.set(j, line);
+	    	}
+	    	i++;
+	    }
+	    return relevantLines;
+
+		
+	}
 
 }
