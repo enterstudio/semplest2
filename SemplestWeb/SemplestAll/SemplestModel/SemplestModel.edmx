@@ -754,6 +754,9 @@
           <Property Name="ErrorID" Type="int" />
           <Property Name="UsersFK" Type="int" />
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="ErrorSource" Type="varchar" MaxLength="25" />
+          <Property Name="ErrorClass" Type="varchar" MaxLength="100" />
+          <Property Name="ErrorDetails" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="Frequency">
           <Key>
@@ -2928,6 +2931,9 @@
           <Property Type="Int32" Name="UsersFK" />
           <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
           <NavigationProperty Name="User" Relationship="SemplestModel.REL_Users_Error_1" FromRole="Error" ToRole="User" />
+          <Property Type="String" Name="ErrorSource" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ErrorClass" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ErrorDetails" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Frequency">
           <Key>
@@ -4666,6 +4672,9 @@
           <EntitySetMapping Name="Errors">
             <EntityTypeMapping TypeName="SemplestModel.Error">
               <MappingFragment StoreEntitySet="Error">
+                <ScalarProperty Name="ErrorDetails" ColumnName="ErrorDetails" />
+                <ScalarProperty Name="ErrorClass" ColumnName="ErrorClass" />
+                <ScalarProperty Name="ErrorSource" ColumnName="ErrorSource" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
                 <ScalarProperty Name="UsersFK" ColumnName="UsersFK" />
                 <ScalarProperty Name="ErrorID" ColumnName="ErrorID" />
