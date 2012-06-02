@@ -1,13 +1,12 @@
-﻿
-@model Semplest.Core.Models.ReportIndexModel
+﻿@model Semplest.Core.Models.ReportIndexModel
 @Html.Partial("ReportChart", @Model)
-<br/>
+<br />
 <div id="summaryGrid">
 </div>
-<br><br>
+<br>
+<br>
 <div id="grid1">
 </div>
-
 <script type="text/javascript">
     $(document).ready(function () {
         $("#summaryGrid").kendoGrid({
@@ -35,13 +34,13 @@
             },
             height: 55,
             filterable: true,
-            scrollable:false,
+            scrollable: false,
             columns: [
-                     
-                      {    
-                      field: "KeyWord",
-                      title: "Promotion",
-                        },
+             {
+                 field: "KeyWord",
+                 title: "Promotion",
+                 width: 250
+             },
                         {
                             field: "IsActive",
                             title: "Status",
@@ -49,62 +48,75 @@
                         },
                         {
                             field: "AmountSpent",
-                            title: "Amount Spent"
+                            title: "Amount Spent", format: "{0:N2}",
+                            width: 110,
+                            template: '<div style="text-align:right;">#= kendo.toString(AmountSpent, "n2") #</div>'
                         },
                 {
                     field: "NumberImpressions",
-                    title: "Impr.",
-                    width: 60
+                    title: "IMPs",
+                    width: 60,
+                    template: '<div style="text-align:right;">#= kendo.toString(NumberImpressions, "n0") #</div>'
                 },
                 {
                     field: "NumberClick",
                     title: "Clicks",
-                    width: 60
+                    width: 60,
+                    template: '<div style="text-align:right;">#= kendo.toString(NumberClick, "n0") #</div>'
                 },
                 {
                     field: "SearchCTR",
-                    title: "Search CTR"
+                    title: "Search CTR",
+                    template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(SearchCTR, "p2") #</div>'
                 },
                 {
                     field: "CPC",
-                    title: "CPC"
+                    title: "CPC",
+                    format: "{0:N2}",
+                    width: 60,
+                    template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(CPC, "n2") #</div>'
                 },
                 {
-                    title: "Avg. Position",
-                    field: "AveragePosition"
+                    title: "Avg.Pos",
+                    field: "AveragePosition",
+                    template: '<div style="text-align:center;">#= kendo.toString(AveragePosition, "n0") #</div>'
                 }
             ]
-            });
+        });
 
 
-            $("#grid1").kendoGrid({
-                dataSource: {
-                    transport: {
-                        read: '@Url.Action("ReportDetailsGrid")',
-                        error: function (e) {
-                            alert(e);
-                        }
-                    },
-                    schema: {
-                        model: {
-                            fields: {
-                                AdvertisingEngineBidDataPK: { type: "number" },
-                                KeyWord: { type: "string" },
-                                IsActive: { type: "string" },
-                                NumberImpressions: { type: "number" },
-                                NumberClick: { type: "number" },
-                                AveragePosition: { type: "number" },
-                                AmountSpent: { type: "number" },
-                                CPC: { type: "number" }
-                            }
-                        }
+        $("#grid1").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: '@Url.Action("ReportDetailsGrid")',
+                    error: function (e) {
+                        alert(e);
                     }
                 },
-                height: 250,
-                filterable: true,
-                sortable: true,
-                columns: [
-                      "KeyWord",
+                schema: {
+                    model: {
+                        fields: {
+                            AdvertisingEngineBidDataPK: { type: "number" },
+                            KeyWord: { type: "string" },
+                            IsActive: { type: "string" },
+                            NumberImpressions: { type: "number" },
+                            NumberClick: { type: "number" },
+                            AveragePosition: { type: "number" },
+                            AmountSpent: { type: "number" },
+                            CPC: { type: "number" }
+                        }
+                    }
+                }
+            },
+            height: 250,
+            filterable: true,
+            sortable: true,
+            columns: [
+                      {
+                          field: "KeyWord",
+                          title: "Promotion",
+                          width: 250
+                      },
                         {
                             field: "IsActive",
                             title: "Status",
@@ -112,31 +124,40 @@
                         },
                         {
                             field: "AmountSpent",
-                            title: "Amount Spent"
+                            title: "Amount Spent", format: "{0:N2}",
+                            width: 110,
+                            template: '<div style="text-align:right;">#= kendo.toString(AmountSpent, "n2") #</div>'
                         },
                 {
                     field: "NumberImpressions",
-                    title: "Impr.",
-                    width: 60
+                    title: "IMPs",
+                    width: 60,
+                    template: '<div style="text-align:right;">#= kendo.toString(NumberImpressions, "n0") #</div>'
                 },
                 {
                     field: "NumberClick",
                     title: "Clicks",
-                    width: 60
+                    width: 60,
+                    template: '<div style="text-align:right;">#= kendo.toString(NumberClick, "n0") #</div>'
                 },
                 {
                     field: "SearchCTR",
-                    title: "Search CTR"
+                    title: "Search CTR",
+                    template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(SearchCTR, "p2") #</div>'
                 },
                 {
                     field: "CPC",
-                    title: "CPC"
+                    title: "CPC",
+                    format: "{0:N2}",
+                    width: 60,
+                    template: '<div style="text-align:right; font-weight:bold;">#= kendo.toString(CPC, "n2") #</div>'
                 },
                 {
-                    title: "Avg. Position",
-                    field: "AveragePosition"
+                    title: "Avg.Pos",
+                    field: "AveragePosition",
+                    template: '<div style="text-align:center;">#= kendo.toString(AveragePosition, "n0") #</div>'
                 }
             ]
-            });
+        });
     });
 </script>
