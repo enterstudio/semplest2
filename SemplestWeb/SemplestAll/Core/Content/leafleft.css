@@ -800,3 +800,7 @@ span.k-tooltip
     background-color: #e6e6e6;
 }
 
+hr
+{
+    color:#fff; height:1px; border-width:2px; border-style:solid; border-color:White; background-color:White; margin-bottom:15px;
+}
