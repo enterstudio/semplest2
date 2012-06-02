@@ -224,10 +224,11 @@
                 break;
             }
         }
+        var keywordsUrl = $("#ViewSelectedKeywordsUrl").val();
         if (!isSelectedKeywordsAdded)
             tabStrip.append({
                 text: "View Keywords",
-                contentUrl: '@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'
+                contentUrl: keywordsUrl
             });
         var tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
         tabStrip.select(tab);
@@ -238,7 +239,8 @@
     });
 
     $("#getLaunchAdProduct").click(function () {
-        $('#displayBox').attr('src', @ConfigurationManager.AppSettings["LogoUrl"]+'congratulations.jpg');
+        var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
+        $('#displayBox').attr('src', urlStr);
     });
 
     function tabChange1(parameters) {
