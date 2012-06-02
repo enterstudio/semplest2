@@ -25,6 +25,7 @@ public class NIOClient implements Runnable
 	private InetAddress hostAddress;
 	private int port;
 
+	
 	// The selector we'll be monitoring
 	private Selector selector;
 	// The buffer into which we'll read data when it's available
