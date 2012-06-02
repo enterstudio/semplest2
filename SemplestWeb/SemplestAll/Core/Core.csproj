@@ -184,12 +184,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\cardslogo.jpg" />
+    <Content Include="Content\congratulations.jpg" />
     <Content Include="Content\example.css" />
     <Content Include="Content\formStyle.css" />
     <Content Include="Content\kendo.common.min.css" />
     <Content Include="Content\kendo.dataviz.min.css" />
     <Content Include="Content\kendo.metro.min.css" />
     <Content Include="Content\leafleft.css" />
+    <Content Include="Content\maximizing your results.jpg" />
     <Content Include="Content\Metro\editor.png" />
     <Content Include="Content\Metro\imagebrowser.png" />
     <Content Include="Content\Metro\loading-image.gif" />
@@ -202,6 +204,7 @@
     <Content Include="Content\Metro\wait.gif" />
     <Content Include="Content\MyStylesProfile.css" />
     <Content Include="Content\report.png" />
+    <Content Include="Content\reviewing your input.jpg" />
     <Content Include="Content\themes\base\images\logo.png" />
     <Content Include="Content\Google Logo.png" />
     <Content Include="Content\MSN Logo.png" />
@@ -376,7 +379,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>False</UseIIS>
+          <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>61294</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

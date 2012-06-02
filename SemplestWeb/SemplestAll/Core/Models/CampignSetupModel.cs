@@ -101,7 +101,7 @@ namespace Semplest.Core.Models
             using (var entities = new SemplestEntities())
             {
                 Configuration = entities.Configurations.FirstOrDefault();
-                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = "/Content/" + t.LogoURL }).ToList();
+                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = "/Core/Content/" + t.LogoURL }).ToList();
                 AdEnginesSelectedList = AdvertisingEngines;
             }
             AdEnginesList = new List<string>();
