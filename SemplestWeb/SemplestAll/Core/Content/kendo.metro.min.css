@@ -104,7 +104,7 @@
 .k-button:hover, .k-draghandle:hover
 {
     border-color: #e6e6e6;
-    background-color: #e6e6e6;
+    background-color: #fff;
 }
 .k-state-active, .k-state-active:hover, .k-active-filter
 {
