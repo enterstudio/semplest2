@@ -828,3 +828,19 @@ hr
 {
     margin: 10px 0 0 0;
 }
+
+.delete-link
+{
+    width: 12px;
+    height: 12px;
+    background: transparent url("Metro/close.png") no-repeat 50% 50%;
+    overflow: hidden;
+    display: inline-block;
+    font-size: 0;
+    line-height: 0;
+    vertical-align: top;
+    margin: 2px 0 0 3px;
+    -webkit-border-radius: 5px;
+    -mox-border-radius: 5px;
+    border-radius: 5px;
+}
