@@ -2542,7 +2542,7 @@ div.old-browser
 }
 #gradient-style td
 {
-    padding: 8px;
+    padding: 2px;
     border-bottom: 1px solid #8ebc00;
     color: #669;
     border-top: 1px solid #fff;
@@ -2556,7 +2556,7 @@ div.old-browser
 }
 #gradient-style tbody tr:hover td
 {
-    background: #8ebc00;
+    background: lightgrey;
     color: #fff;
 }
 
