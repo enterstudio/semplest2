@@ -19,404 +19,114 @@ My Profile
             $("#MiddleInitial").mask("a");
         });
     </script>
-    <style>
-    .table ul
-    {
-        list-style: none;
-        margin-left:-50px; 
-    }
-    
- 
-    
-    .editor-label [for=AccountNumber]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #AccountNumber
-    {
-         margin-left: 0px;
-    }
-
-    
-     .editor-label [for=Customer]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #Customer
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=Address1]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #Address1
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-
-      @*////////////////////*@
-    
-    
-         .editor-label [for=Address2]
-    {
-         margin-left: 10px;
-         
-          text-align:left;
-    }
-    
-
-    .editor-field #Address2
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=City]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #City
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=States]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #States
-    {
-         margin-left: 0px;
-         text-align:left;
-         width:100px;
-         .
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=Zip]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #Zip
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=FirstName]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #FirstName
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=MiddleInitial]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #MiddleInitial
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=LastName]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #LastName
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-
-
-       
-    @*////////////////////*@
-    
-    
-         .editor-label [for=Phone]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #Phone
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=Email]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #Email
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=UserID]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #UserID
-    {
-         margin-left: 0px;
-         text-align:left;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=SecurityQuestion]
-    {
-         margin-left: 10px;
-          text-align:left;
-    }
-    
-
-    .editor-field #SecurityQuestion
-    {
-         margin-left: 0px;
-         text-align:left;
-         width:250px;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-         .editor-label [for=SecurityAnswer]
-    {
-         margin-left: 10px;
-          text-align:left;
-          
-    }
-    
-
-    .editor-field #SecurityAnswer
-    {
-         margin-left: 0px;
-         text-align:left;
-      width:250px;
-    }
-    
-    
-    @*////////////////////*@
-    
-    
-    
-    
-    
-    
-    
-</style>
-    @*  <link href="@Url.Content("~/Content/MyStylesProfile.css")" rel="Stylesheet" />*@
 }
+<style>
+    .k-label
+    {
+        text-align: left;
+        margin-left: 20px;
+    }
+    .extraspace
+    {
+        margin-left: 194px;
+    }
+    .k-dropdown
+    {
+        width: 135px;
+    }
+    .question
+    {
+        width:670%;
+    }
+</style>
 @using (Html.BeginForm())
 {
     @Html.HiddenFor(model => model.UserPK)
     @Html.HiddenFor(model => model.AccountNumber)
     <div class="table">
-        <ul class="accept">
-            <div class="editor-label">
-                @Html.LabelFor(model => model.AccountNumber, new { id = "AccountNumber", @class = "k-label" })
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(model => model.AccountNumber, new { @class = "k-textbox", @readonly = true })
-                @Html.ValidationMessageFor(model => model.AccountNumber)
-            </div>
-            <div class="editor-label">
+        <ul>
+            <li>
                 @Html.LabelFor(model => model.Customer, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.Customer, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Customer)
-            </div>
-            <div class="editor-label">
+                <label>
+                    Account No # @Model.AccountNumber</label>
+            </li>
+            <li>
                 @Html.LabelFor(model => model.Address1, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.Address1, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Address1)
-            </div>
-            @*<div class="editor-label">
-            @Html.LabelFor(model => model.Address2, new { @class = "k-label" })
-        </div>*@
-            <div class="editor-field">
-                @Html.TextBoxFor(model => model.Address2, new { @class = "k-textbox" })
+            </li>
+            <li>
+                @Html.TextBoxFor(model => model.Address2, new { @class = "k-textbox extraspace" })
                 @Html.ValidationMessageFor(model => model.Address2)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.City, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.City, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.City)
-            </div>
-            <div class="editor-label">
-                @Html.LabelFor(model => model.States)
-            </div>
-            <div class="editor-field">
-                @Html.DropDownListFor(r => r.SelectedStateID, Model.States)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
+                @Html.LabelFor(model => model.States, new { @class = "k-label" })
+                @Html.DropDownListFor(r => r.SelectedStateID, Model.States, new { @class = "k-dropdown" })
+            </li>
+            <li>
                 @Html.LabelFor(model => model.Zip, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.Zip, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Zip)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.FirstName, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.FirstName, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.FirstName)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.MiddleInitial, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.MiddleInitial, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.MiddleInitial)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.LastName, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.LastName, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.LastName)
-            </div>
-            
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.Phone, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.Phone, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Phone)
-            </div>
-            
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.Email, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.Email, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Email)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.UserID, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
                 @Html.TextBoxFor(model => model.UserID, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.UserID)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
-                <input class="k-textbox" data-val="true" data-val-required="The Password field is required." id="UserPassword" name="UserPassword" type="password" value=@Model.UserPassword  />
+                <input class="k-textbox extraspace" data-val="true" data-val-required="The Password field is required." id="UserPassword" name="UserPassword" type="password" value=@Model.UserPassword  />
                 @Html.ValidationMessageFor(model => model.UserPassword)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.SecurityQuestion, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(model => model.SecurityQuestion, new { @class = "k-textbox" })
+                @Html.TextBoxFor(model => model.SecurityQuestion, new { @class = "k-textbox question" })
                 @Html.ValidationMessageFor(model => model.SecurityQuestion)
-            </div>
-            <div class="editor-label">
+            </li>
+            <li>
                 @Html.LabelFor(model => model.SecurityAnswer, new { @class = "k-label" })
-            </div>
-            <div class="editor-field">
-                @Html.TextBoxFor(model => model.SecurityAnswer, new { @class = "k-textbox" })
+                @Html.TextBoxFor(model => model.SecurityAnswer, new { @class = "k-textbox question" })
                 @Html.ValidationMessageFor(model => model.SecurityAnswer)
-            </div>
+            </li>
+        </ul>
+        <br />
+        <hr />
+        <div style="text-align: center">
             <input type="submit" name="command" value="Save" class="k-button" />
             <input type="submit" name="command" value="Cancel" class="k-button" />
-        </ul>
+        </div>
     </div>
 }
 <script>
