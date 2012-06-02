@@ -1,4 +1,5 @@
-﻿@using Semplest.Core.Helpers
+﻿@using System.Configuration
+@using Semplest.Core.Helpers
 @model Semplest.Core.Models.AdModel
 <script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
 <div id="adModel" class="configuration">
@@ -72,6 +73,6 @@
 </div>
 <script>
     $('#getCategories').click(function () {
-        $('#displayBox').attr('src', '/Core/Content/congratulations.jpg');
+        $('#displayBox').attr('src', @ConfigurationManager.AppSettings["LogoUrl"]+'reviewing your input.jpg');
     });
 </script>

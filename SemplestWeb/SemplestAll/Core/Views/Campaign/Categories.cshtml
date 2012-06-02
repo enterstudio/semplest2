@@ -1,4 +1,5 @@
-﻿@model Semplest.Core.Models.CampaignSetupModel
+﻿@using System.Configuration
+@model Semplest.Core.Models.CampaignSetupModel
 <div class="configuration">
     <h3 >How Would you Classify Your Product? <a href ="#" class="help-button" id="helpbutton12" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]12"  >?</a></h3>
     <div class="options">
@@ -29,5 +30,8 @@
         else
             tabStrip.select(tabStrip.tabGroup.children().first());
 
+    });
+    $('#getKeywords').click(function () {
+        $('#displayBox').attr('src', @ConfigurationManager.AppSettings["LogoUrl"]+'maximizing your results.jpg');
     });
 </script>
