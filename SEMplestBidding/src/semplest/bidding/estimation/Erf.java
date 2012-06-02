@@ -75,7 +75,6 @@ public class Erf {
 			return scale * Math.exp(-0.5*Math.pow(z,2))/(Math.sqrt(2.0));
 		default:
 			return 0;
-			
 		}
 	}
     
