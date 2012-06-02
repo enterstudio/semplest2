@@ -8,8 +8,8 @@
                         <div class="left">
                             <h3>
                                 Budget</h3>
-                            <p>
-                                $@Model.ProductGroup.Budget</p>
+                            <strong>
+                                $@Model.ProductGroup.Budget</strong>
                             @if (string.IsNullOrEmpty(@Model.ProductGroup.EndDate))
                             {
                                 <p>
@@ -55,11 +55,11 @@
                                             string proxStr = System.Math.Round((decimal)address.ProximityRadius, 0).ToString();
                                             if (!String.IsNullOrEmpty(address.Address))
                                             {
-                                                <p>@proxStr miles or less from @address.Address @address.City @stateStr @address.Zip</p>
+                                                <p><strong>@proxStr</strong> miles or less from @address.Address @address.City @stateStr @address.Zip</p>
                                             }
                                             else
                                             {
-                                                <p>@proxStr miles or less from @address.City @stateStr @address.Zip</p>
+                                                <p><strong>@proxStr</strong> miles or less from @address.City @stateStr @address.Zip</p>
                                             }
                                         }
                                         else
@@ -87,7 +87,7 @@
                                         Ad 1# Preview
                                     </h3>
                                     <ul style="width: 100%; float: left; margin: 0; padding: 10px 0 30px 0;">
-                                        <li style="list-style: none; padding: 5px 0;"><a target="__blank">@ad.AdTitle</a></li>
+                                        <li style="list-style: none; padding: 5px 0;"><a target="__blank" style="font-weight:bold; color:Blue; text-decoration:underline">@ad.AdTitle</a></li>
                                         <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine1</li>
                                         <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine2</li>
                                         <li style="list-style: none; padding: 5px 0;"><a style="color: green;" target="__blank">@Model.AdModelProp.Url</a></li>
