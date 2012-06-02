@@ -6,6 +6,7 @@ using System.Linq;
 using Semplest.SharedResources.Services;
 using System;
 
+
 namespace Semplest.Core.Models
 {
 
@@ -101,7 +102,8 @@ namespace Semplest.Core.Models
             using (var entities = new SemplestEntities())
             {
                 Configuration = entities.Configurations.FirstOrDefault();
-                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = "/Core/Content/" + t.LogoURL }).ToList();
+                string filePath = System.Configuration.ConfigurationManager.AppSettings["LogoURL"].ToString();
+                AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = filePath + t.LogoURL }).ToList();
                 AdEnginesSelectedList = AdvertisingEngines;
             }
             AdEnginesList = new List<string>();
