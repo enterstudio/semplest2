@@ -52,7 +52,7 @@ My Profile
                 <label>
                     Account No # @Model.AccountNumber</label>
             </li>
-            <li>
+            <li style="margin-top: 20px">
                 @Html.LabelFor(model => model.Address1, new { @class = "k-label" })
                 @Html.TextBoxFor(model => model.Address1, new { @class = "k-textbox" })
                 @Html.ValidationMessageFor(model => model.Address1)
