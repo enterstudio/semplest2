@@ -1,36 +1,61 @@
 ﻿@model Semplest.Core.Models.CampaignSetupModel
+<style>
+    .spacing
+    {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    .options1
+    {
+        border-color:#fff;
+        border-width:0.3em;
+        border-style:inset;
+        height: 345px; width: 700px; overflow-x: auto
+    }
+</style>
 <div class="configuration">
-    <h3>View Keywords</h3>
-    <p>Hundreds of keywords have been generated for you.  It is recommemded that you do
-        not delete keywords that seem obscure because they help you beat the
-        competition by reaching potential customers without engaging in a price war for the
-        most obvious ones. In the following weeks, this tool will take care of cleaning up your
-        keywords, keeping only the most effective ones.
+    <h3>
+        View Keywords</h3>
+    <p>
+        Hundreds of keywords have been generated for you. It is recommemded that you do
+        not delete keywords that seem obscure because they help you beat the competition
+        by reaching potential customers without engaging in a price war for the most obvious
+        ones. In the following weeks, this tool will take care of cleaning up your keywords,
+        keeping only the most effective ones.
     </p>
+    <div style="display: inline-block">
+        <label style="color:#919297">
+            Delete</label>
+        <label style="color:#919297; margin-left:7px;">
+            Keywords</label>
+    </div>
+    <br />
     <div class="options" id="keywords">
-    
         @if (Model != null)
         {
          
-            @*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+@*@Html.ListBoxFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
             
 
-            <div style = "height:345px;width:700px;overflow-x:auto" id="wrap">
-           @* <h1 id="headerF">Filter</h1>  *@   @* <<<----- uncomment h1  to get the filter*@
-            @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds))
+            <div class="options1" id="wrap">
+                @* <h1 id="headerF">Filter</h1>  *@ @* <<<----- uncomment h1  to get the filter*@
+                @Html.CheckBoxListFor(m => m.KeywordIds, new MultiSelectList(Model.AllKeywords, "Id", "Name", Model.KeywordIds), new { @class = "spacing" }, 2)
             </div>
 
         }
     </div>
     <div class="options">
         <br />
+        <hr />
         <button class="k-button" id="backKey" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="KeyWords">
-       
             <span class="k-update k-icon"></span>Save And Continue</button>
-             @*<input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>*@
+        @*<input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>*@
     </div>
+@*    <div style="border:3px solid #fff">
+    </div>
+*@ 
 </div>
 <script type="text/javascript">
     $('#backKey').click(function () {
@@ -47,17 +72,12 @@
         otherTab = tab.prev();
         tabStrip.remove(tab);
         tabStrip.select(otherTab);
-        
+
     }
 
 
 </script>
-
-
-
-
-
-<script type="text/javascript" >
+<script type="text/javascript">
 
     (function ($) {
         // custom css expression for a case-insensitive contains()
@@ -102,4 +122,4 @@
         });
     } (jQuery));
 
-  </script>
+</script>
