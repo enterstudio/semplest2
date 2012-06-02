@@ -71,8 +71,9 @@
         }
     </style>
 </div>
-<script>
+<script type="text/javascript">
     $('#getCategories').click(function () {
-        $('#displayBox').attr('src', @ConfigurationManager.AppSettings["LogoUrl"]+'reviewing your input.jpg');
+        var urlStr = $('#LogoUrlStr').val() + 'reviewing your input.jpg';
+        $('#displayBox').attr('src', urlStr);
     });
 </script>
