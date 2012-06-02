@@ -47,7 +47,11 @@
                             {
                                 foreach (var address in @Model.AdModelProp.Addresses)
                                 {
-                                    string stateStr = @address.StateCodes.FirstOrDefault(t => t.StateAbbrPK == @address.StateCodeFK).StateAbbr;
+                                    string stateStr = String.Empty;
+                                    if (address.StateCodeFK != null)
+                                    {
+                                        stateStr = @address.StateCodes.FirstOrDefault(t => t.StateAbbrPK == @address.StateCodeFK).StateAbbr;
+                                    }
                                     if (address != null && (!String.IsNullOrEmpty(address.City) || !String.IsNullOrEmpty(address.Zip)))
                                     {
                                         if (address.ProximityRadius != null)
