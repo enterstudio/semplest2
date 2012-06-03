@@ -48,7 +48,7 @@ namespace Semplest.WebSite.Controllers
                 try
                 {
                     model.CreatedDate = DateTime.Now;
-                    using (SemplestEntities dbContext = new SemplestEntities())
+                    using (var dbContext = new SemplestEntities())
                     {
                         string semEmail = dbContext.Configurations.Select(m => m.DefalutEmailContactMe).FirstOrDefault();
 
@@ -60,7 +60,7 @@ namespace Semplest.WebSite.Controllers
                         {
                             model.Phone = "";
                         }
-                        dbContext.SEMCustomerDetails.Add(model);
+                        dbContext.SEMCustomerDetails.AddObject(model);
                         dbContext.SaveChanges();
 
                         // send email using smtp server
@@ -71,7 +71,7 @@ namespace Semplest.WebSite.Controllers
                 catch (Exception ex)
                 {
                     string errMsg = "Error: " + ex.Message + "\r\n" + ex.StackTrace;
-                    ErrorModel errModel = new ErrorModel() { MsgToLog = errMsg, MsgToShow = "Error" };
+                    var errModel = new ErrorModel() { MsgToLog = errMsg, MsgToShow = "Error" };
                     return View("ErrorPage", errModel);
                 }
                 return RedirectToAction("ThankYou");
