@@ -62,7 +62,7 @@ namespace Semplest.Core.Services
                                 // promotion ads
                                 AddPromotionAdsToPromotion(updatePromotion, model);
 
-                                dbcontext.Promotions.Add(updatePromotion);
+                                dbcontext.Promotions.AddObject(updatePromotion);
                             }
                             else
                             {
@@ -101,16 +101,16 @@ namespace Semplest.Core.Services
                         AddPromotionAdsToPromotion(promo, model);
 
                         // add product group
-                        dbcontext.ProductGroups.Add(prodgroup);
+                        dbcontext.ProductGroups.AddObject(prodgroup);
                         // add promotion
-                        dbcontext.Promotions.Add(promo);
+                        dbcontext.Promotions.AddObject(promo);
                         dbcontext.SaveChanges();
                     }
                 }
             }
         }
 
-        public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
+        public static CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
         {
             var model = new CampaignSetupModel();
             var dbcontext = new SemplestEntities();
@@ -291,7 +291,7 @@ namespace Semplest.Core.Services
             // update Geotargeting
             foreach (GeoTargeting geo in updatePromotion.GeoTargetings.ToList())
             {
-                dbcontext.GeoTargetings.Remove(geo);
+                dbcontext.GeoTargetings.DeleteObject(geo);
             }
 
             // update promotion ads; delete first and add them again
@@ -299,9 +299,9 @@ namespace Semplest.Core.Services
             {
                 foreach (SiteLink sli in pad.SiteLinks.ToList())
                 {
-                    dbcontext.SiteLinks.Remove(sli);
+                    dbcontext.SiteLinks.DeleteObject(sli);
                 }
-                dbcontext.PromotionAds.Remove(pad);
+                dbcontext.PromotionAds.DeleteObject(pad);
             }
 
             SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
@@ -318,7 +318,7 @@ namespace Semplest.Core.Services
             var dn = existingAdenginesSeleccted.Where(t => !templist.Contains(t.AdvertisingEngineFK));
             foreach (var adsel in dn)
             {
-                dbcontext.PromotionAdEngineSelecteds.Remove(adsel);
+                dbcontext.PromotionAdEngineSelecteds.DeleteObject(adsel);
             }
 
             foreach (string aes in model.ProductGroup.AdEnginesList)
@@ -335,7 +335,7 @@ namespace Semplest.Core.Services
                             AdvertisingEngineFK = proAdEng.AdvertisingEnginePK,
                             PromotionFK = promo.PromotionPK
                         };
-                        dbcontext.PromotionAdEngineSelecteds.Add(adEngineSel);
+                        dbcontext.PromotionAdEngineSelecteds.AddObject(adEngineSel);
                     }
                     //dbcontext.SaveChanges();
                 }
@@ -400,7 +400,7 @@ namespace Semplest.Core.Services
                 {
                     foreach (var keyCategory in selectedCategories.Select(category => new KeywordCategory { PromotionFK = promotionId, KeywordCategory1 = category }))
                     {
-                        dbcontext.KeywordCategories.Add(keyCategory);
+                        dbcontext.KeywordCategories.AddObject(keyCategory);
                     }
                     dbcontext.SaveChanges();
                 }
@@ -409,13 +409,13 @@ namespace Semplest.Core.Services
                     // delete them first
                     foreach (KeywordCategory kc in query)
                     {
-                        dbcontext.KeywordCategories.Remove(kc);
+                        dbcontext.KeywordCategories.DeleteObject(kc);
                     }
                     dbcontext.SaveChanges();
                     // add them
                     foreach (var keyCategory in selectedCategories.Select(category => new KeywordCategory { PromotionFK = promotionId, KeywordCategory1 = category }))
                     {
-                        dbcontext.KeywordCategories.Add(keyCategory);
+                        dbcontext.KeywordCategories.AddObject(keyCategory);
                     }
                     dbcontext.SaveChanges();
                 }
@@ -436,10 +436,10 @@ namespace Semplest.Core.Services
                     if (!queryKeyword.Any())
                     {
                         // add it in Keywords table and in PromotionKeywordAssociations
-                        dbcontext.Keywords.Add(entity: new Keyword { Keyword1 = kpo.keyword.Trim(), CreatedDate = DateTime.Now });
+                        dbcontext.Keywords.AddObject(entity: new Keyword { Keyword1 = kpo.keyword.Trim(), CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
-                        dbcontext.PromotionKeywordAssociations.Add(
+                        dbcontext.PromotionKeywordAssociations.AddObject(
                             new PromotionKeywordAssociation
                             {
                                 PromotionFK = promotionId,
@@ -463,7 +463,7 @@ namespace Semplest.Core.Services
                         var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
                         if (!queryPka.Any())
                         {
-                            dbcontext.PromotionKeywordAssociations.Add(
+                            dbcontext.PromotionKeywordAssociations.AddObject(
                                 new PromotionKeywordAssociation
                                 {
                                     PromotionFK = promotionId,
@@ -512,7 +512,7 @@ namespace Semplest.Core.Services
                             var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
                             if (!queryPka.Any())
                             {
-                                dbcontext.PromotionKeywordAssociations.Add(
+                                dbcontext.PromotionKeywordAssociations.AddObject(
                                     new PromotionKeywordAssociation
                                         {
                                             PromotionFK = promo.PromotionPK,
@@ -540,11 +540,11 @@ namespace Semplest.Core.Services
                     }
                     else
                     {
-                        dbcontext.Keywords.Add(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
+                        dbcontext.Keywords.AddObject(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
                         //dbcontext.SaveChanges();
 
                         if (dbcontext.PromotionKeywordAssociations != null)
-                            dbcontext.PromotionKeywordAssociations.Add(new PromotionKeywordAssociation
+                            dbcontext.PromotionKeywordAssociations.AddObject(new PromotionKeywordAssociation
                                     {
                                         PromotionFK = promo.PromotionPK,
                                         //KeywordFK = keywordId,

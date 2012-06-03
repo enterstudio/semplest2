@@ -59,7 +59,7 @@ namespace Semplest.Core.Controllers
             {
                 using (var db = new SemplestEntities())
                 {
-                    db.BillTypes.Add(billtype);
+                    db.BillTypes.AddObject(billtype);
                     db.SaveChanges();
                 }
                 return RedirectToAction("BillType");
