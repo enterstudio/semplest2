@@ -2,7 +2,6 @@ package semplest.server.ESB;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,8 +20,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
-import semplest.server.nio.NIOServer;
-import semplest.server.nio.ProcessRequestWorker;
 import semplest.server.queue.ActiveMQConnection;
 import semplest.server.socket.SocketServerThread;
 
