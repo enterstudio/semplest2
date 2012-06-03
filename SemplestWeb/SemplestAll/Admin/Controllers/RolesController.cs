@@ -40,11 +40,12 @@ namespace Semplest.Admin.Controllers
         public ActionResult Create(IEnumerable<sp_GetRigtsRolesInteraction_Result> userRights, FormCollection f)
         {
             // TODO: Add insert logic here
-            Role ro = _dbContext.Roles.Add(new Role { RoleName = f["roleName"].ToString() });
+            var ro = new Role {RoleName = f["roleName"].ToString()};
+            _dbContext.Roles.AddObject(ro);
             _dbContext.SaveChanges();
             foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
             {
-                _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, ro.RolePK));
+                _dbContext.RolesRightsAssociations.AddObject(AddRoleRightAssociation(s, ro.RolePK));
             }
             _dbContext.SaveChanges();
             return RedirectToAction("Index");
@@ -65,7 +66,7 @@ namespace Semplest.Admin.Controllers
                 foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
                 {
                     var z = _dbContext.RolesRightsAssociations.Where(x => x.RolesFK == id  && x.RightsFK == s.RightsPK);
-                    if (z.Count() > 0)
+                    if (z.Any())
                     {
                         foreach (var l in z)
                         {
@@ -73,7 +74,7 @@ namespace Semplest.Admin.Controllers
                             l.IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString());
                         }
                     }
-                    else {  _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, id)); }
+                    else {  _dbContext.RolesRightsAssociations.AddObject(AddRoleRightAssociation(s, id)); }
                 }
                 _dbContext.SaveChanges();
 
@@ -109,7 +110,7 @@ namespace Semplest.Admin.Controllers
                 SemplestEntities dbContext = new SemplestEntities();
                 Role r = dbContext.Roles.Where(x => x.RolePK == id).First();
                 r.RolesRightsAssociations.Clear();
-               dbContext.Roles.Remove(r);
+               dbContext.Roles.DeleteObject(r);
                dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }

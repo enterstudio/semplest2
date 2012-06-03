@@ -942,50 +942,83 @@ namespace Semplest.Admin.Controllers
                 //revisit 
                 ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
-                Customer c = dbcontext.Customers.Add(new Customer { Name = m.CustomerAccount.Customer, BillTypeFK = m.SelectedBillTypeID, ProductGroupCycleType = pgct });
-                User u = dbcontext.Users.Add(new User
-                {
-                    Customer = c,
-                    Email = m.CustomerAccount.Email,
-                    FirstName = m.CustomerAccount.FirstName,
-                    LastName = m.CustomerAccount.LastName,
-                    MiddleInitial = m.CustomerAccount.MiddleInitial,
-                    IsActive = m.CustomerAccount.isActive
-                });
+                var c = new Customer
+                            {
+                                Name = m.CustomerAccount.Customer,
+                                BillTypeFK = m.SelectedBillTypeID,
+                                ProductGroupCycleType = pgct
+                            };
+                dbcontext.Customers.AddObject(c);
+
+                var u = new User
+                            {
+                                Customer = c,
+                                Email = m.CustomerAccount.Email,
+                                FirstName = m.CustomerAccount.FirstName,
+                                LastName = m.CustomerAccount.LastName,
+                                MiddleInitial = m.CustomerAccount.MiddleInitial,
+                                IsActive = m.CustomerAccount.isActive
+                            };
+                dbcontext.Users.AddObject(u);
 
 
                 //
-                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.CustomerAccount.UserID, Password = m.CustomerAccount.UserPassword });
+                var cr = new Credential
+                             {
+                                 User = u,
+                                 UsersFK = u.UserPK,
+                                 Username = m.CustomerAccount.UserID,
+                                 Password = m.CustomerAccount.UserPassword
+                             };
+                dbcontext.Credentials.AddObject(cr);
 
 
                 PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
-                Phone ph = dbcontext.Phones.Add(new Phone { Phone1 = m.CustomerAccount.Phone, PhoneType = pt });
-                CustomerPhoneAssociation cpa = dbcontext.CustomerPhoneAssociations.Add(new CustomerPhoneAssociation { Customer = c, Phone = ph });
+                var ph = new Phone {Phone1 = m.CustomerAccount.Phone, PhoneType = pt};
+                dbcontext.Phones.AddObject(ph);
 
-                StateCode sc = dbcontext.StateCodes.First(p => p.StateAbbrPK == m.SelectedStateID);
-                AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
-                Address a = dbcontext.Addresses.Add(new Address { Address1 = m.CustomerAccount.Address1, Address2 = m.CustomerAccount.Address2, City = m.CustomerAccount.City, ZipCode = m.CustomerAccount.Zip, StateCode = sc });
-                CustomerAddressAssociation caa = dbcontext.CustomerAddressAssociations.Add(new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at });
+                var cpa = new CustomerPhoneAssociation {Customer = c, Phone = ph};
+                dbcontext.CustomerPhoneAssociations.AddObject(cpa);
 
-                CustomerNote cn = dbcontext.CustomerNotes.Add(new CustomerNote { Customer = c, Note = m.CustomerAccount.CustomerNote });
+                var sc = dbcontext.StateCodes.First(p => p.StateAbbrPK == m.SelectedStateID);
+                var at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
 
+                var a = new Address
+                            {
+                                Address1 = m.CustomerAccount.Address1,
+                                Address2 = m.CustomerAccount.Address2,
+                                City = m.CustomerAccount.City,
+                                ZipCode = m.CustomerAccount.Zip,
+                                StateCode = sc
+                            };
+                dbcontext.Addresses.AddObject(a);
 
-                EmployeeCustomerAssociation addrep = dbcontext.EmployeeCustomerAssociations.Add(new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedRepID });
-                EmployeeCustomerAssociation addsales = dbcontext.EmployeeCustomerAssociations.Add(new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedSalesPersonID });
+                var caa = new CustomerAddressAssociation {Address = a, Customer = c, AddressType = at};
+                dbcontext.CustomerAddressAssociations.AddObject(caa);
 
-                CustomerHierarchy ch;
+                var cn = new CustomerNote {Customer = c, Note = m.CustomerAccount.CustomerNote};
+                dbcontext.CustomerNotes.AddObject(cn);
+
+                var addrep = new EmployeeCustomerAssociation {Customer = c, EmployeeFK = m.SelectedRepID};
+                dbcontext.EmployeeCustomerAssociations.AddObject(addrep);
+                var addsales = new EmployeeCustomerAssociation {Customer = c, EmployeeFK = m.SelectedSalesPersonID};
+                dbcontext.EmployeeCustomerAssociations.AddObject(addsales);
+
+                CustomerHierarchy ch = null;
                 if (m.SelectedParentID == -1) //set parent
                 {
-
-                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = null });
+                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = null};
+                    dbcontext.CustomerHierarchies.AddObject(ch);
                 }
                 else if (m.SelectedParentID == 0) //set self -- single user
                 {
-                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK });
+                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK};
+                    dbcontext.CustomerHierarchies.AddObject(ch);
                 }
                 else //assign a parent
                 {
-                    ch = dbcontext.CustomerHierarchies.Add(new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = m.SelectedParentID });
+                    ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = m.SelectedParentID};
+                    dbcontext.CustomerHierarchies.AddObject(ch);
                 }
                 dbcontext.SaveChanges();
 
@@ -1108,13 +1141,13 @@ namespace Semplest.Admin.Controllers
                     //workaround for deletion:
 
 
-                    CustomerAddressAssociation caa = customeraddressassociation;
-                    Address a = address;
-                    CustomerNote cn = customernotes;
+                    var caa = customeraddressassociation;
+                    var a = address;
+                    var cn = customernotes;
 
-                    dbcontext.CustomerAddressAssociations.Remove(caa);
-                    dbcontext.Addresses.Remove(a);
-                    dbcontext.CustomerNotes.Remove(cn);
+                    dbcontext.CustomerAddressAssociations.DeleteObject(caa);
+                    dbcontext.Addresses.DeleteObject(a);
+                    dbcontext.CustomerNotes.DeleteObject(cn);
 
 
                     //EmployeeCustomerAssociation eca = employeecustomerassociation;
@@ -1124,44 +1157,41 @@ namespace Semplest.Admin.Controllers
                     {
                         if (c1.CustomerFK.Equals(m.CustomerAccount.AccountNumber))
                         {
-                            dbcontext.EmployeeCustomerAssociations.Remove(c1);
+                            dbcontext.EmployeeCustomerAssociations.DeleteObject(c1);
                         }
                     }
 
 
-                    Customer c = customer;
-                    dbcontext.Customers.Remove(c);
+                    var c = customer;
+                    dbcontext.Customers.DeleteObject(c);
 
-                    Credential cr = credentials;
-                    dbcontext.Credentials.Remove(cr);
+                    var cr = credentials;
+                    dbcontext.Credentials.DeleteObject(cr);
 
-                    User u = user;
-                    dbcontext.Users.Remove(u);
+                    var u = user;
+                    dbcontext.Users.DeleteObject(u);
 
+                    var cpa = customerphoneassociation;
+                    dbcontext.CustomerPhoneAssociations.DeleteObject(cpa);
 
-                    CustomerPhoneAssociation cpa = customerphoneassociation;
-                    dbcontext.CustomerPhoneAssociations.Remove(cpa);
-
-                    Phone ph = phone;
-                    dbcontext.Phones.Remove(ph);
+                    var ph = phone;
+                    dbcontext.Phones.DeleteObject(ph);
 
 
                     if (customerstyle != null)
                     {
-                        CustomerStyle cs = customerstyle;
-                        dbcontext.CustomerStyles.Remove(cs);
+                        var cs = customerstyle;
+                        dbcontext.CustomerStyles.DeleteObject(cs);
                     }
 
                     if (userrolesassociation != null)
                     {
-                        UserRolesAssociation ura = userrolesassociation;
-                        dbcontext.UserRolesAssociations.Remove(ura);
+                        var ura = userrolesassociation;
+                        dbcontext.UserRolesAssociations.DeleteObject(ura);
                     }
 
-                    CustomerHierarchy ch = customerhierarchy;
-                    dbcontext.CustomerHierarchies.Remove(ch);
-
-
+                    var ch = customerhierarchy;
+                    dbcontext.CustomerHierarchies.DeleteObject(ch);
 
                     dbcontext.SaveChanges();
 

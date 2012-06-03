@@ -502,29 +502,38 @@ namespace Semplest.Admin.Controllers
 
             try
             {
-                
 
-                User u = dbcontext.Users.Add(new User
-                {
-                    Customer = null,
-                    Email = m.EmployeeSetup.Email,
-                    FirstName = m.EmployeeSetup.FirstName,
-                    MiddleInitial = m.EmployeeSetup.MiddleInitial,
-                    LastName = m.EmployeeSetup.LastName,
-                    CustomerFK=null,
-                    IsActive=m.EmployeeSetup.isActive,
-                    IsRegistered=true //only for admin, force registered=true (Andre)
+                var u = new User
+                            {
+                                Customer = null,
+                                Email = m.EmployeeSetup.Email,
+                                FirstName = m.EmployeeSetup.FirstName,
+                                MiddleInitial = m.EmployeeSetup.MiddleInitial,
+                                LastName = m.EmployeeSetup.LastName,
+                                CustomerFK = null,
+                                IsActive = m.EmployeeSetup.isActive,
+                                IsRegistered = true //only for admin, force registered=true (Andre)
 
-                });
+                            };
+                dbcontext.Users.AddObject(u);
 
-                Role r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
-                UserRolesAssociation ura = dbcontext.UserRolesAssociations.Add(new UserRolesAssociation { Role = r, User = u });
+                var r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
+                var ura = new UserRolesAssociation {Role = r, User = u};
+                dbcontext.UserRolesAssociations.AddObject(ura);
 
-                EmployeeType et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
-                Employee e = dbcontext.Employees.Add(new Employee { EmployeeType = et, User = u, HireDate=m.EmployeeSetup.HireDate  });
+                var et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
+                var e = new Employee {EmployeeType = et, User = u, HireDate = m.EmployeeSetup.HireDate};
+                dbcontext.Employees.AddObject(e);
                 //Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
 
-                Credential cr = dbcontext.Credentials.Add(new Credential { User = u, UsersFK = u.UserPK, Username = m.EmployeeSetup.UserID, Password = m.EmployeeSetup.UserPassword }); 
+                var cr = new Credential
+                             {
+                                 User = u,
+                                 UsersFK = u.UserPK,
+                                 Username = m.EmployeeSetup.UserID,
+                                 Password = m.EmployeeSetup.UserPassword
+                             };
+                dbcontext.Credentials.AddObject(cr); 
 
 
                 
@@ -610,7 +619,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Delete(EmployeeSetupWithRolesModel m, string command)
         {
-            SemplestEntities dbcontext = new SemplestEntities();
+            var dbcontext = new SemplestEntities();
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
             if (command.ToLower() == "delete") {
@@ -633,13 +642,11 @@ namespace Semplest.Admin.Controllers
 
                 if (employeecustomerassociation != null) throw new Exception("Could not delete employee");
 
-                dbcontext.Users.Remove(user);
-                dbcontext.Employees.Remove(employee);
-                dbcontext.UserRolesAssociations.Remove(userrolesassociation);
-                dbcontext.Credentials.Remove(credential);
+                dbcontext.Users.DeleteObject(user);
+                dbcontext.Employees.DeleteObject(employee);
+                dbcontext.UserRolesAssociations.DeleteObject(userrolesassociation);
+                dbcontext.Credentials.DeleteObject(credential);
 
-                    ///
-                
                 dbcontext.SaveChanges();
                 TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " has been successfully deleted.";
                 }
