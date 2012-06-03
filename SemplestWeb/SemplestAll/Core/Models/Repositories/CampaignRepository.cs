@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
+using Semplest.Core.Services;
 using Semplest.SharedResources.Services;
 using SemplestWebApp.Services;
 
@@ -141,13 +142,13 @@ namespace Semplest.Core.Models.Repositories
         public string GetStateNameFromDb(int stateCode)
         {
             var sds = new SemplestDataService();
-            return sds.GetStateNameFromCode(stateCode);
+            return SemplestDataService.GetStateNameFromCode(stateCode);
         }
 
         public List<string> GetAdEnginesListFromDb()
         {
             var sds = new SemplestDataService();
-            return sds.GetAdEngines();
+            return SemplestDataService.GetAdEngines();
         }
 
         public CampaignSetupModel GetKeyWordsOld(CampaignSetupModel model)

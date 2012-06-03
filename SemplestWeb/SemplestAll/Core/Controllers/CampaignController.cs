@@ -10,6 +10,7 @@ using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
+using Semplest.Core.Services;
 using SemplestModel;
 using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
@@ -206,9 +207,9 @@ namespace Semplest.Core.Controllers
                     WriteLog(msg, model);
 
                     SemplestDataService ds = new SemplestDataService();
-                    int promoId = ds.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                    int promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                     model.ProductGroup.ProductPromotionName);
-                    ds.SaveSelectedCategories(promoId, catList);
+                    SemplestDataService.SaveSelectedCategories(promoId, catList);
 
                     msg =
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -257,7 +258,7 @@ namespace Semplest.Core.Controllers
         {
             ThreadData locData = (ThreadData) data;
             SemplestDataService ds = new SemplestDataService();
-            ds.SaveKeywords(locData._promoId, locData._model);
+            SemplestDataService.SaveKeywords(locData._promoId, locData._model);
         }
 
         private class ThreadData
