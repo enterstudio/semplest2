@@ -477,14 +477,14 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult Preview(int promotionId)
         {
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
-            Logger.Write(logEnty);
+            //var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
+            //Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            SemplestDataService ds = new SemplestDataService();
+            var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
             if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
