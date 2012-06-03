@@ -298,7 +298,9 @@ namespace Semplest.Core.Controllers
             Logger.Write(logEnty);
 
             //return View();
-            return Json("Congratulations, Your Product has Launched!!!");
+            //return Json("Congratulations, Your Product has Launched!!!");
+            // now we are showing the image with wait window so we don't to show this in message box
+            return Json("");
             //return Json("LaunchAdProduct");
 
         }
@@ -525,13 +527,9 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("HelpId")]
         public ActionResult DisplayHelp(int helpId)
         {
-            SemplestEntities dbcontext = new SemplestEntities();
+            var dbcontext = new SemplestEntities();
 
             return Content(dbcontext.WebContentQuestionMarkHelps.FirstOrDefault(h => h.WebContentQuestionMarkHelpPK == helpId).Copy);
-
-
-
-
         }
 
     }
