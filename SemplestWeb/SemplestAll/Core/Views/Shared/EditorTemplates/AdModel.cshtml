@@ -9,7 +9,7 @@
                     ?</a></h3>
         </li>
         <li>
-            <fieldset>
+            <fieldset style="padding-bottom: 10px">
                 <legend>Business Address</legend>
                 <table>
                     <tr>
@@ -17,7 +17,7 @@
                             <div id="addresses">
                                 @Html.EditorFor(t => t.Addresses)
                             </div>
-                            <div style="text-align: left; margin-left: 75px">
+                            <div style="text-align: left; margin-left: 75px; margin-top: -30px;">
                                 @Html.LinkToAddNestedForm("Add Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
                             </div>
                         </td>
@@ -46,12 +46,16 @@
                 <span class="k-add k-icon"></span>Negative Keywords</button>
             <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  >
                 ?</a>
+                <label>identify keywords to avoid in association with your business</label>
             @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>
         <li class="options">
-            <button class="k-button" id="back1" type="button">
-                <span class="k-back k-icon"></span>back</button>
-            <button class="k-button" id="getCategories" type="submit" name="Command" value="GetCategories">
-                <span class="k-update k-icon"></span>Save And Continue</button>
+            <hr />
+            <div style="text-align: center;">
+                <button class="k-button" id="back1" type="button">
+                    <span class="k-back k-icon"></span>back</button>
+                <button class="k-button" id="getCategories" type="submit" name="Command" value="GetCategories">
+                    <span class="k-update k-icon"></span>Save And Continue</button>
+            </div>
         </li>
         <li class="status"></li>
     </ul>

@@ -2,7 +2,7 @@
 @using Semplest.SharedResources.Helpers
 @model SemplestModel.PromotionAd
 <div class="ads">
-    <fieldset>
+    <fieldset style="padding-bottom: 15px;">
         <legend>Ad #</legend>
         <div class="content">
             <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
@@ -10,7 +10,7 @@
                     <label style="min-width: 65px">
                         Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  >
                             ?</a></label>
-                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAd alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
+                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
                     @Html.ValidationMessageFor(t => t.AdTitle)
                     <label class="hint">
                         25 characters max.</label>
@@ -63,7 +63,7 @@
     }
     .content2
     {
-        float: left;
+        float: right;
         width: 300px; /* ie5win fudge begins */
     }
     .example h3
@@ -94,7 +94,7 @@
         width: 100%;
         float: left;
         margin: 0;
-        padding: 10px 0 30px 0;
+        padding: 5px 0 10px 0;
     }
     
     .fieldlist li
