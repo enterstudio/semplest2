@@ -27,7 +27,7 @@ namespace Semplest.SharedResources.Helpers
                 else
                     er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                 er.CreatedDate = DateTime.Now;
-                _dbContext.Errors.Add(er);
+                _dbContext.Errors.AddObject(er);
                 _dbContext.SaveChanges();
                 var scw = new ServiceClientWrapper();
                 scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);

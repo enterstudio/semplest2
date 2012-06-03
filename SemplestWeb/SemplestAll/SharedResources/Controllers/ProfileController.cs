@@ -173,7 +173,7 @@ namespace Semplest.SharedResources.Controllers
                         {
                             if (!found)
                             {
-                                dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
+                                dbContext.Rights.AddObject(new Right { Controller = controllerActionName, Label = label });
                                 dbContext.SaveChanges();
                             }
                         }
