@@ -33,7 +33,7 @@
                     Budget <a href ="#" class="help-button" id="helpbutton4" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]4"  >
                         ?</a>
                 </h3>
-                @(!@Model.IsEdit ? Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @minreq = true }) : Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @validationmessage = "Please enter {0}" }))
+                @(!@Model.IsEdit ? Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @minreq = true, @style = "width:60px" }) : Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @validationmessage = "Please enter {0}", @style = "width:60px" }))
                 @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
                 <br />
                 <label style="color: #BFBFBF; margin-top: 5px;">
@@ -90,7 +90,6 @@
         -webkit-appearance: none;
         outline: 0;
         line-height: 1.66em;
-        padding: 2px 0;
         text-indent: .3em;
         height: 3.5em;
     }
