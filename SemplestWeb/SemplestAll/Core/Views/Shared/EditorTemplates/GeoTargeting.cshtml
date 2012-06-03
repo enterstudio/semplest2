@@ -1,6 +1,5 @@
 ﻿        @using Semplest.Core.Helpers
 @using Semplest.SharedResources.Helpers
-@using SemplestWebApp.Helpers
 @model SemplestModel.GeoTargeting
 <div class="address">
     <table>
@@ -64,23 +63,24 @@
     </table>
 </div>
 <script>
-    $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function () {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t => t.City)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.City)").change(function () {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t => t.StateCodeFK)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.StateCodeFK)").change(function () {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t => t.Zip)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.Zip)").change(function () {
         doOptions();
     });
-    $("#@Html.ClientIdFor(t => t.Address)").change(function (e) {
+    $("#@Html.ClientIdFor(t => t.Address)").change(function () {
         doOptions();
     });
 </script>
 <style>
+    .address{}
     .hidden
     {
         display: none;

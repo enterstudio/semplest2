@@ -485,7 +485,14 @@ namespace Semplest.Core.Controllers
             SemplestDataService ds = new SemplestDataService();
             var campaignSetupModel = ds.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
+            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
+                campaignSetupModel.ProductGroup.StartDate =
+                    Convert.ToDateTime(campaignSetupModel.ProductGroup.StartDate).ToString("MM/dd/yyyy");
+            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
+                campaignSetupModel.ProductGroup.EndDate =
+                    Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
             Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+
             // set negative keywords in session
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;

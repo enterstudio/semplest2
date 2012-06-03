@@ -12,8 +12,8 @@ namespace Semplest.SharedResources.Helpers
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
 
-            //SemplestEntities db = new SemplestEntities();
-            //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.Where(x => x.UsersFK == 1).First();
+            //var db = new SemplestEntities();
+            //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 12);
             //return true;
             string userId = string.Empty;
             if (HttpContext.Current.Session["UserId"] != null)

@@ -2,7 +2,7 @@
 @section Title{
     My Account (@ViewBag.Title)
 }
-<table style="width: 250px">
+<table>
     <tr>
         <td>
             <fieldset style="padding: 0; border-width: 1px; width: 250px">
@@ -173,12 +173,12 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; width: 430px;">
+        <td style="vertical-align: top; width: 440px;height:350px">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
             </div>
-            <div id="preview" />
+            <div id="preview" style="vertical-align: top;height:350px; overflow: auto"/>
         </td>
     </tr>
 </table>

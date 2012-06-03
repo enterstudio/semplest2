@@ -527,6 +527,7 @@ internal static class MvcCheckBoxList
             linked_img_builder.MergeAttribute("for", link_name.Replace(".", "_"));
             linked_img_builder.MergeAttributes(htmlAttributesForCheckBox.toDictionary());
             linked_img_builder.Attributes.Add("src", imgUrl);
+            linked_img_builder.Attributes.Add("style", "vertical-align:middle");
 
         }
         // if there are any errors for a named field, we add the css attribute
