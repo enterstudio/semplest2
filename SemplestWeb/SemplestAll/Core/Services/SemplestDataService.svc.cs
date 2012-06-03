@@ -13,6 +13,10 @@ namespace Semplest.Core.Services
     public class SemplestDataService : DataService<SemplestEntities>
     {
         private static SemplestEntities _dbcontext;
+        static SemplestDataService()
+        {
+            _dbcontext = new SemplestEntities();
+        }
         // This method is called only once to initialize service-wide policies.
         public static void InitializeService(DataServiceConfiguration config)
         {
