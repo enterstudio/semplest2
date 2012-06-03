@@ -66,7 +66,7 @@ namespace Semplest.Core.Models
         private string ReplacePlaceHolders(string Text)
         {
             string returnText;
-            returnText = Text.Replace("[~IMAGE_BEGIN]", "<img src=/Content/").Replace("[~IMAGE_END]", " />");
+            returnText = Text.Replace("[~IMAGE_BEGIN]", "<img src=\"" + System.Configuration.ConfigurationManager.AppSettings["LogoURL"].ToString()).Replace("[~IMAGE_END]", "\" />");
             return returnText;
         }
     }
