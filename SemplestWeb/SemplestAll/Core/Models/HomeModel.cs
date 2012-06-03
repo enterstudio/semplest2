@@ -56,8 +56,19 @@ namespace Semplest.Core.Models
                 }
             }
         }
-        public string Text { get; set; }
+        string _Text;
+        public string Text { 
+            get { return ReplacePlaceHolders(_Text); }
+            set { _Text = value; } 
+        }
         public string Title { get; set; }
+
+        private string ReplacePlaceHolders(string Text)
+        {
+            string returnText;
+            returnText = Text.Replace("[~IMAGE_BEGIN]", "<img src=/Content/").Replace("[~IMAGE_END]", " />");
+            return returnText;
+        }
     }
 
     public enum StaticPages { About, FAQ, Contact}
