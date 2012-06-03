@@ -1,5 +1,4 @@
-﻿
-@model Semplest.Core.Models.HomeModelChild
+﻿@model Semplest.Core.Models.HomeModelChild
 @section Title{
     My Account (@ViewBag.Title)
 }
@@ -8,15 +7,19 @@
         <td>
             <fieldset style="padding: 0; border-width: 1px; width: 250px">
                 <legend><b>Account Actions</b></legend>
-                <br />
-                <button class="k-button" id="btnCreatAd">
-                    <span class="k-icon k-add"></span>Create Advertising</button>
+               <div style="padding: 5px">
+               <button class="k-button" id="btnCreatAd">
+                   <span class="k-icon k-add"></span>Create Advertising</button>
+                   </div>
             </fieldset>
             <br />
-            <h3>
-                Live Advertising: scroll over to see summary, click to edit</h3>
-
-            <div style="width: 270px; height:150px;overflow:auto">
+            <h3 style="margin-bottom: 0px;">
+                Live Advertising:
+            </h3>
+            <label style="color:grey;width: 270px; text-align:left;margin-top:-3px">
+                scroll over to see summary, click to edit
+            </label>
+            <div style="width: 270px; height: 150px; overflow: auto">
                 <table class="gradient-style" style="width: 250px;">
                     @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
@@ -24,32 +27,33 @@
                         {
                             if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
                             {
-                                <tr>
-                                    <td style="width: 150px;">
-                                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                                    </td>
-                                    @if (p.IsPaused)
-                                    {
-                                        <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                                        </td>
-                                    }
-                                </tr>    
+                        <tr>
+                            <td style="width: 150px;">
+                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                            </td>
+                            @if (p.IsPaused)
+                            {
+                                <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                                </td>
+                            }
+                        </tr>    
                             }
                         }
                     }
                 </table>
             </div>
-
-
             <br />
-            <h3>
+            <h3 style="margin-bottom: 0px;">
                 Unfinished Advertising</h3>
-            <div style="width: 270px; height:300px;overflow:auto">
+                 <label style="color:grey;width: 270px; text-align:left;margin-top:-3px">
+                scroll over to see summary, click to edit
+            </label>
+            <div style="width: 270px; height: 300px; overflow: auto">
                 <table class="gradient-style" style="width: 250px">
                     @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
@@ -57,19 +61,18 @@
                         {
                             if (!p.IsLaunched && !p.IsDeleted)
                             {
-                                <tr>
-                                    <td style="width: 150px;">
-                                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                                    </td>
-                                    <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-                                    </td>
-                                </tr>
+                        <tr>
+                            <td style="width: 150px;">
+                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                            </td>
+                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                        </tr>
                             }
                         }
                     }
                 </table>
             </div>
-
             <div style="display: none;">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
