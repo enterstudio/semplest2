@@ -12,7 +12,6 @@ using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
 using Semplest.Core.Services;
 using SemplestModel;
-using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
 using System.Configuration;
 
@@ -73,7 +72,7 @@ namespace Semplest.Core.Controllers
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            SemplestDataService ds = new SemplestDataService();
+            var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
             Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
@@ -185,7 +184,7 @@ namespace Semplest.Core.Controllers
                 {
                     model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
 
-                    if (model.CategoryIds.Count() == 0)
+                    if (!model.CategoryIds.Any())
                         return Json("Atleast one Category needs to be selected");
 
 
@@ -206,8 +205,8 @@ namespace Semplest.Core.Controllers
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                     WriteLog(msg, model);
 
-                    SemplestDataService ds = new SemplestDataService();
-                    int promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                    var ds = new SemplestDataService();
+                    var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                     model.ProductGroup.ProductPromotionName);
                     SemplestDataService.SaveSelectedCategories(promoId, catList);
 
@@ -232,7 +231,7 @@ namespace Semplest.Core.Controllers
 
                     // save the keywords to database
                     //ds.SaveKeywords(promoId, model);
-                    ThreadData tData = new ThreadData(promoId, model);
+                    var tData = new ThreadData(promoId, model);
                     _workerThread = new Thread(new ParameterizedThreadStart(DoWorkFast));
                     _workerThread.Start(tData);
 
@@ -256,15 +255,15 @@ namespace Semplest.Core.Controllers
 
         public void DoWorkFast(object data)
         {
-            ThreadData locData = (ThreadData) data;
-            SemplestDataService ds = new SemplestDataService();
+            var locData = (ThreadData) data;
+            var ds = new SemplestDataService();
             SemplestDataService.SaveKeywords(locData._promoId, locData._model);
         }
 
         private class ThreadData
         {
-            public int _promoId;
-            public CampaignSetupModel _model;
+            public readonly int _promoId;
+            public readonly CampaignSetupModel _model;
 
             public ThreadData(int promoId, CampaignSetupModel model)
             {
@@ -284,14 +283,14 @@ namespace Semplest.Core.Controllers
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
-            SemplestEntities dbContext = new SemplestEntities();
+            var dbContext = new SemplestEntities();
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
             //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
-            int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            Promotion pm =
-                dbContext.Users.Where(x => x.UserPK == userid).First().Customer.ProductGroups.Where(
-                    x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(
-                        p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
+            var userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var pm =
+                dbContext.Users.First(x => x.UserPK == userid).Customer.ProductGroups.First(
+                    x => x.ProductGroupName == model.ProductGroup.ProductGroupName).Promotions.First(
+                    p => p.PromotionName == model.ProductGroup.ProductPromotionName);
             pm.IsLaunched = true;
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
