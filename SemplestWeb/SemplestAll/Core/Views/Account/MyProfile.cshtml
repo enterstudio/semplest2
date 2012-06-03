@@ -38,6 +38,47 @@ My Profile
     {
         width:60%;
     }
+    .state {
+        width: 6%;
+    }
+    .zip {
+        width: 70px;
+         border-color: grey;
+        background-color: #fff;
+        color: #777;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        font-size: 100%;
+        font-family: inherit;
+        border-style: solid;
+        border-width: 1px;
+        -webkit-appearance: none;
+        outline: 0;
+        height: 1.66em;
+        line-height: 1.66em;
+        padding: 2px 0;
+        text-indent: .3em;
+    }
+    .firstinitial {
+        width: 25px;
+         border-color: grey;
+        background-color: #fff;
+        color: #777;
+        -moz-border-radius: 0;
+        -webkit-border-radius: 0;
+        border-radius: 0;
+        font-size: 100%;
+        font-family: inherit;
+        border-style: solid;
+        border-width: 1px;
+        -webkit-appearance: none;
+        outline: 0;
+        height: 1.66em;
+        line-height: 1.66em;
+        padding: 2px 0;
+        text-indent: .3em;
+    }
 </style>
 @using (Html.BeginForm())
 {
@@ -68,11 +109,11 @@ My Profile
             </li>
             <li>
                 @Html.LabelFor(model => model.States, new { @class = "k-label" })
-                @Html.DropDownListFor(r => r.SelectedStateID, Model.States, new { @class = "k-dropdown" })
+                @Html.DropDownListFor(r => r.SelectedStateID, Model.States, new { @class = "k-dropdown state" })
             </li>
             <li>
                 @Html.LabelFor(model => model.Zip, new { @class = "k-label" })
-                @Html.TextBoxFor(model => model.Zip, new { @class = "k-textbox" })
+                @Html.TextBoxFor(model => model.Zip, new { @class = "zip" })
                 @Html.ValidationMessageFor(model => model.Zip)
             </li>
             <li>
@@ -82,7 +123,7 @@ My Profile
             </li>
             <li>
                 @Html.LabelFor(model => model.MiddleInitial, new { @class = "k-label" })
-                @Html.TextBoxFor(model => model.MiddleInitial, new { @class = "k-textbox" })
+                @Html.TextBoxFor(model => model.MiddleInitial, new { @class = "firstinitial" })
                 @Html.ValidationMessageFor(model => model.MiddleInitial)
             </li>
             <li>
