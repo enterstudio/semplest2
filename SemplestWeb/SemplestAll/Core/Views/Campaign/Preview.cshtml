@@ -3,13 +3,14 @@
     <div id="portfolio_items">
         <div class="mini_portfolio_item">
             <div class="block_inside">
-                <div class="table">
+                <h3>Preview Of @Model.ProductGroup.ProductGroupName - @Model.ProductGroup.ProductPromotionName</h3>
+                <div class="table1">
                     <div class="row">
                         <div class="left">
                             <h3>
                                 Budget</h3>
                             <strong>
-                                $@Model.ProductGroup.Budget</strong>
+                                $@Math.Round(@Model.ProductGroup.Budget,2)</strong>
                             @if (string.IsNullOrEmpty(@Model.ProductGroup.EndDate))
                             {
                                 <p>
@@ -26,20 +27,20 @@
                             <br />
                             <h3>
                                 Search Engines</h3>
-                                @if (Model.ProductGroup.AdEnginesSelectedList.Any())
+                            @if (Model.ProductGroup.AdEnginesSelectedList.Any())
+                            {
+                                foreach (Semplest.Core.Models.AdEngineSelectModel aem in @Model.ProductGroup.AdEnginesSelectedList)
                                 {
-                                    foreach (Semplest.Core.Models.AdEngineSelectModel aem in @Model.ProductGroup.AdEnginesSelectedList)
+                                    if (aem.Name == "Google")
                                     {
-                                        if (aem.Name == "Google")
-                                        {
-                                            <img src="@Url.Content("~/Content/Google Logo.png")" />
-                                        }
-                                        else
-                                        {
-                                            <img src="@Url.Content("~/Content/MSN Logo.png")" />
-                                        }
+                                        <img src="@Url.Content("~/Content/Google Logo.png")" />
+                                    }
+                                    else
+                                    {
+                                        <img src="@Url.Content("~/Content/MSN Logo.png")" />
                                     }
                                 }
+                            }
                             <br />
                             <br />
                             <h3>Where to Show Your Ad</h3>
@@ -87,15 +88,15 @@
                                 @{
                                     foreach (var ad in @Model.AdModelProp.Ads)
                                     {   
-                                    <h3 style="padding: 5px 0; font-weight: normal; border-bottom: 1px solid #999; width: 225px;">
-                                        Ad 1# Preview
-                                    </h3>
-                                    <ul style="width: 100%; float: left; margin: 0; padding: 10px 0 30px 0;">
-                                        <li style="list-style: none; padding: 5px 0;"><a target="__blank" style="font-weight:bold; color:Blue; text-decoration:underline">@ad.AdTitle</a></li>
-                                        <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine1</li>
-                                        <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine2</li>
-                                        <li style="list-style: none; padding: 5px 0;"><a style="color: green;" target="__blank">@Model.AdModelProp.Url</a></li>
-                                    </ul>
+                                        <h3 style="padding: 5px 0; font-weight: normal; border-bottom: 1px solid #999; width: 225px;">
+                                            Ad 1# Preview
+                                        </h3>
+                                        <ul style="width: 100%; float: left; margin: 0; padding: 10px 0 30px 0;">
+                                            <li style="list-style: none; padding: 5px 0;"><a target="__blank" style="font-weight:bold; color:Blue; text-decoration:underline">@ad.AdTitle</a></li>
+                                            <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine1</li>
+                                            <li style="list-style: none; padding: 5px 0;">@ad.AdTextLine2</li>
+                                            <li style="list-style: none; padding: 5px 0;"><a style="color: green;" target="__blank">@Model.AdModelProp.Url</a></li>
+                                        </ul>
                                     }
                                 }
                             </div>
@@ -149,7 +150,7 @@
         margin-right: 20px;
         border: 1px solid #979390;
     }
-    .table
+    .table1
     {
         display: table;
     }
