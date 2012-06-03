@@ -61,7 +61,7 @@
             <label>
                 keywords to bid on!
             </label>
-            <a href="#" id="viewSelectedKeywords" style="margin-left: 50px;">View selected keywords</a>
+            <a href="#" id="viewSelectedKeywords" style="margin-left: 65px;">View selected keywords</a>
         </li>
         <li>
             <label id="lblYourCreditInvoice">
@@ -82,8 +82,8 @@
                 Total Credit Card Charge</label>
         </li>
         <li>
-            @Html.TextBoxFor(m => m.ProductGroup.Budget, new { @class = "k-input", @readonly = true, @style = "width:100px" })
-            <input type="text" class="k-input" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="margin-left: 50px;"/>
+            @Html.TextBoxFor(m =>  m.ProductGroup.Budget, new { @class = "k-input", @readonly = true, @style = "width:100px;text-align:right" })
+            <input type="text" class="k-input" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="margin-left: 50px;text-align:right;"/>
             <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly"  style="margin-left: 50px;"/>
             <input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="margin-left: 50px;"/>
         </li>

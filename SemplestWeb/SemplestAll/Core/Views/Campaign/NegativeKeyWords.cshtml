@@ -6,19 +6,23 @@
     <div class="configuration1">
         <span>Please type in several words or phrases that you never want associated with your
             ad (separated by commas): </span>
+        <br/>
+        <br/>
         @Html.TextAreaFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
     </div>
-    <div class="options" style="margin-top: 100px">
+    
+    <div class="options" style="margin-top: 100px;text-align: center">
+        <hr/>
         <button class="k-button" id="back3" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="setNegativeKeywords" type="submit" name="Command" value="SetNegativeKeywords">
-                <span class="k-update k-icon"></span>Save And Continue</button>
+            <span class="k-update k-icon"></span>Save And Continue</button>
     </div>
 </div>
 <style>
     .negKeyw {
         width: 100%;
-        height: 100px;
+        height: 150px;
     }
 </style>
 <script type="text/javascript">

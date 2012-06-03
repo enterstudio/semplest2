@@ -51,7 +51,7 @@
                 <label style="min-width: 65px">Proximity</label>
             </td>
             <td>
-                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })
+                @Html.TextBoxFor(t => t.ProximityRadius, new { @class = "proximity" })<label style="padding-left: 10px"> in miles</label>
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
@@ -141,7 +141,7 @@
         text-indent: .3em;
     }
     .proximity {
-        width: 40px;
+        width: 45px;
          border-color: grey;
         background-color: #fff;
         color: #777;

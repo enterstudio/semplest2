@@ -103,8 +103,8 @@ Reporting}
     <div style="padding: 10px;">
         <div class="table">
             <ul>
-                <li><strong>1# Please select a product group for which you would like to view reports.
-                    Selecting more than one product group will provide you a report with combined data.</strong>
+                <li><strong>1# Please select a product group for which you would like to view reports.</strong><br/>
+                    <strong style="margin-left: 16px">Selecting more than one product group will provide you a report with combined data.</strong>
                 </li>
                 <li>
                     <table>
@@ -122,7 +122,7 @@ Reporting}
                                     @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
                                     {
                                         <br />
-                                        @Html.CheckBox("ps.PromotionPK", new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                                        @Html.CheckBox("ps.PromotionPK",true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
                                         <img src="@Url.Content("~/Content/" + item.LogoURL)" style="vertical-align: middle;" />
                                     }
                                     <br />
