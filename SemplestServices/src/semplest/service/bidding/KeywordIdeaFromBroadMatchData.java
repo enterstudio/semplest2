@@ -8,6 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
@@ -15,7 +17,9 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 
 public class KeywordIdeaFromBroadMatchData {
 	
-	
+
+	private static final Logger logger = Logger.getLogger(KeywordIdeaFromBroadMatchData.class);
+
 
 	public static HashMap<String,Integer> getHighVolumeBroadMatchWords(String accountID){
 		
@@ -27,7 +31,8 @@ public class KeywordIdeaFromBroadMatchData {
 			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 			ret = client.getSearchQueryReportForAccount(new SemplestString().toSemplestString(accountID));
 		} catch(Exception e){
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 			for(ReportObject r : ret){
 				if (r.getBidMatchType().equalsIgnoreCase("broad")){
