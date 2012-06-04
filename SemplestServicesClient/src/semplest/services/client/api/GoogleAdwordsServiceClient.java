@@ -691,6 +691,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 
+	@Override
+	public Boolean ChangeCampaignStartDate(String accountID, Long campaignID, Date newStartDate) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

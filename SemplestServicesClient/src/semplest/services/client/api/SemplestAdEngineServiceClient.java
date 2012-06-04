@@ -1,7 +1,8 @@
 package semplest.services.client.api;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,6 +20,8 @@ import com.google.gson.Gson;
 public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static final Logger logger = Logger.getLogger(SemplestAdEngineServiceClient.class);
+	
+	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
@@ -107,6 +110,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
 		
 		*/
+		//
+		// ChangePromotionStartDate
+		//
+		final Integer promotionID_ChangePromotionStartDate = 62; 
+		final List<String> adEngines_ChangePromotionStartDate = new ArrayList<String>();
+		final java.util.Date newStartDate_ChangePromotionStartDate = new java.util.Date();
+		adEngines_ChangePromotionStartDate.add(AdEngine.Google.name());
+		client.ChangePromotionStartDate(promotionID_ChangePromotionStartDate, newStartDate_ChangePromotionStartDate, adEngines_ChangePromotionStartDate);
 	}
 
 	@Override
@@ -269,10 +280,18 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
+	public Boolean ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String newStartDateString = DATE_FORMAT_YYYYMMDD.format(newStartDate);
+		jsonHash.put("newStartDate", newStartDateString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("AddAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "ChangePromotionStartDate", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
