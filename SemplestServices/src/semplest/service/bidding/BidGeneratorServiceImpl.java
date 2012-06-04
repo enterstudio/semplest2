@@ -282,7 +282,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				Thread.sleep(500);
 			} catch (Exception e) {
 				e.printStackTrace();
-				logger.info("Couldn't add keyword: "+word+"to the account. Exception received.");
+				logger.error("Couldn't add keyword: "+word+"to the account. Exception received. "+e.getMessage());
 			}
 		}
 
