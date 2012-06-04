@@ -2,6 +2,8 @@ package semplest.util;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
 
 public final class SemplestUtils
 {
@@ -18,5 +20,33 @@ public final class SemplestUtils
 		{
 			return s.trim();
 		}
+	}
+	
+	public static String getEasilyReadableString(final List<?> list)
+	{
+		final StringBuffer sb = new StringBuffer();
+		for (final Object o : list)
+		{
+			if (sb.length() != 0)
+			{
+				sb.append("\n");
+			}
+			sb.append(o);
+		}
+		return sb.toString();
+	}
+	
+	public static String getEasilyReadableString(final Map<String, String> m)
+	{
+		final StringBuffer sb = new StringBuffer();
+		for (final Map.Entry<String, String> mapEntry : m.entrySet())
+		{
+			if (sb.length() != 0)
+			{
+				sb.append("\n");
+			}
+			sb.append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
+		}
+		return sb.toString();
 	}
 }

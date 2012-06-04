@@ -145,6 +145,7 @@ import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionOperation;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionPage;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionReturnValue;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionServiceInterface;
+import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionStatus;
 import com.google.api.adwords.v201109_1.cm.Sitelink;
 import com.google.api.adwords.v201109_1.cm.SitelinksExtension;
 import com.google.gson.Gson;
@@ -213,7 +214,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			l.setLinkText("TestSiteLink");
 			l.setLinkURL("http://www.semplest.com");
 			siteLinks.add(l);
-			Boolean res = g.addSiteLinkForCampaign("54102", 656140L, siteLinks);
+			Boolean res = g.addSiteLinkForCampaign("54100", 637295L, siteLinks);
 			
 			System.out.println(res);
 			
@@ -1601,7 +1602,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					}
 
 					if(kw.getText().split("\\s+").length>1){
-						returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+					returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 					}
 					if (stopWordSet.contains(kw))
 					{
@@ -3015,17 +3016,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 		// Create selector.
 		com.google.api.adwords.v201109_1.cm.Selector selector = new com.google.api.adwords.v201109_1.cm.Selector();
-		selector.setFields(new String[]
-		{ "AdExtensionId", "CampaignId" });
+		selector.setFields(new String[]{ "AdExtensionId", "CampaignId" });
 		selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[]
 		{ new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId", com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING) });
 	
 		// Create predicates.
 		com.google.api.adwords.v201109_1.cm.Predicate campaignIdPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("CampaignId",
-				com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]
-				{ campaignID.toString() });
-		selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[]
-		{ campaignIdPredicate });
+				com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]{ campaignID.toString() });
+		selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[]{ campaignIdPredicate });
 
 		// Get all campaign ad extensions.
 		CampaignAdExtensionPage page = campaignAdExtensionService.get(selector);
@@ -3035,7 +3033,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		{
 			for (CampaignAdExtension campaignAdExtension : page.getEntries())
 			{
-				if (campaignAdExtension.getAdExtension().getAdExtensionType().equalsIgnoreCase("SitelinksExtension"))
+				if (campaignAdExtension.getAdExtension().getAdExtensionType().equalsIgnoreCase("SitelinksExtension") &&
+					campaignAdExtension.getStatus() == CampaignAdExtensionStatus.ACTIVE)
 				{
 					logger.debug("Campaign ad extension with campaign id \"" + campaignAdExtension.getCampaignId() + "\", ad extension id \""
 							+ campaignAdExtension.getAdExtension().getId() + "\", and type \""
@@ -3068,18 +3067,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		operation.setOperand(campaignAdExtension);
 		operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.REMOVE);
 
-		CampaignAdExtensionOperation[] operations = new CampaignAdExtensionOperation[]
-		{ operation };
+		CampaignAdExtensionOperation[] operations = new CampaignAdExtensionOperation[]{ operation };
 
-		// Add campaign ad extension.
 		CampaignAdExtensionReturnValue result = campaignAdExtensionService.mutate(operations);
 		logger.debug("Removed site links");
 	}
 
 	@Override
-	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, ArrayList<GoogleSiteLink> siteLinks) throws Exception
+	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
 	{
-
+		logger.info("Will try to Add " + siteLinks.size() + " SiteLinks for AccountID [" + accountID + "], CampaignID [" + campaignID + "]");
 		// Can have only one Site link
 		Long currentID = GetActiveSitelinkExtension(accountID, campaignID);
 		if (currentID != null)
@@ -3134,7 +3131,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			else
 			{
-				System.out.println("No campaign ad extensions were added.");
+				logger.error("No campaign ad extensions were added.");
 			}
 		}
 		return true;

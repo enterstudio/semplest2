@@ -28,6 +28,8 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.SiteLink;
+import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
@@ -35,6 +37,7 @@ import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
+import semplest.server.service.springjdbc.storedproc.GetSiteLinksForPromotionSP;
 import semplest.server.service.springjdbc.storedproc.UpdateRemainingBudgetInCycleSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
@@ -301,7 +304,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
@@ -638,25 +641,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}		
 	}
 	
-	public String getEasilyReadableString(final Map<String, String> m)
-	{
-		final StringBuffer sb = new StringBuffer();
-		for (final Map.Entry<String, String> mapEntry : m.entrySet())
-		{
-			if (sb.length() != 0)
-			{
-				sb.append("\n");
-			}
-			sb.append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
-		}
-		return sb.toString();
-	}
+	
 	
 	public String PausePromotion(String json) throws Exception
 	{
@@ -694,7 +685,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Updating GEO Targets (at least not yet)";
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Pausing Promotions (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
 			}						
@@ -705,14 +696,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
 	}
 
 	@Override
-	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines) throws Exception
+	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -804,7 +795,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}		
@@ -920,14 +911,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}		
 	}
 
 	@Override
-	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
+	public Boolean DeleteSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -1013,14 +1004,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}		
 	}
 
 	@Override
-	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
+	public Boolean UpdateSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -1074,7 +1065,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating ads (at least not yet)";
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating budgets (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
 			}						
@@ -1085,7 +1076,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = "Error Summary:\n" + getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = "Error Summary:\n" + SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
@@ -1114,7 +1105,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
+				getPromoDataSP.execute(promotionID);				
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
 				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
@@ -1128,7 +1119,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating ads (at least not yet)";
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for changing Promotion Start Dates (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
 			}						
@@ -1139,17 +1130,82 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			final String errorMapEasilyReadableString = "Error Summary:\n" + getEasilyReadableString(errorMap);
+			final String errorMapEasilyReadableString = "Error Summary:\n" + SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
 	}
+	
+	public List<GoogleSiteLink> getGoogleSiteLinks(final List<SiteLink> siteLinks) 
+	{
+		final List<GoogleSiteLink> googleSiteLinks = new ArrayList<GoogleSiteLink>();
+		for (final SiteLink siteLink : siteLinks)
+		{
+			final GoogleSiteLink googleSiteLink = new GoogleSiteLink();
+			googleSiteLink.setLinkText(siteLink.getLinkText());
+			googleSiteLink.setLinkURL(siteLink.getLinkURL());
+			googleSiteLinks.add(googleSiteLink);
+		}
+		return googleSiteLinks;
+	}
+	
+	public String AddSiteLinkForAd(String json) throws Exception
+	{
+		logger.debug("call AddSiteLinkForAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = AddSiteLinkForAd(promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
 
 	@Override
-	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public Boolean AddSiteLinkForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to add SiteLinks in Google associated with PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
+				getSiteLinksForPromotionSP.execute(promotionAdID);
+				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
+				final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
+				logger.info("Found the following SiteLinks in Semplest DB:\n" + siteLinksEasilyReadableString);
+				final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);				
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+				final Boolean processedSuccessully = googleAdwordsService.addSiteLinkForCampaign(accountID, campaignID, googleSiteLinks);
+				if (!processedSuccessully)
+				{
+					final String errMsg = "Problem adding SiteLinks to Google Campaign [" + campaignID + "] for GoogleAccountID [" + accountID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for adding SiteLinks (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = "Error Summary:\n" + SemplestUtils.getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}
 	}
 
 }
