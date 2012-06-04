@@ -21,7 +21,7 @@ public class KeywordTestThread implements Runnable {
 	private HashMap<String, String> wordList;
 	boolean noError = true;
 	
-	private static String testUrl = "http://VMDEVJAVA1:9898/semplest";
+	private static String testUrl = "http://172.18.9.26:9898/semplest";
 	
 
 	public KeywordTestThread(int test_frequency) {
@@ -63,7 +63,7 @@ public class KeywordTestThread implements Runnable {
 			
 			while(noError){				
 								
-				KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);				
+				KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);				
 				
 				Random r = new Random();
 				int rWord = r.nextInt(wordList.size());

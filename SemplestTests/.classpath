@@ -2,10 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SemplestESB"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServices"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
 	<classpathentry kind="lib" path="lib/activemq-all-5.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/axis-ant.jar"/>
 	<classpathentry kind="lib" path="lib/axis.jar"/>
@@ -50,5 +46,28 @@
 	<classpathentry kind="lib" path="lib/rt.jar"/>
 	<classpathentry kind="lib" path="lib/msn_adcenter_v8r3.jar"/>
 	<classpathentry kind="lib" path="lib/adwords-api-8.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-client-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/asm-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/flanagan.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-asl-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-jaxrs-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-xc-1.9.2.jar"/>
+	<classpathentry kind="lib" path="lib/jersey-core-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/bcpg-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-ext-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk15on-147.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.instrument-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.instrument.tomcat-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.orm-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.oxm-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.test-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web.portlet-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/org.springframework.web.struts-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/SemplestProtocol.jar"/>
+	<classpathentry kind="lib" path="lib/SemplestServices.jar"/>
+	<classpathentry kind="lib" path="lib/SemplestServicesClient.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

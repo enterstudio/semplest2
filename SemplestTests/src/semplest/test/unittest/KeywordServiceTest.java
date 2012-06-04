@@ -13,6 +13,11 @@ public class KeywordServiceTest {
 
 	private int errorCounter = 0;
 	
+	public static void main(){
+		KeywordServiceTest test = new KeywordServiceTest();
+		test.Test_KeywordService2();
+	}
+	
 	public int Test_KeywordService1(){
 		errorCounter = 0;
 		

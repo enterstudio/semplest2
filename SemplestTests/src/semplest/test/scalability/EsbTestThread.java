@@ -22,7 +22,7 @@ import semplest.services.client.api.GoogleAdwordsServiceClient;
 import semplest.services.client.api.KeywordLDAServiceClient;
 import semplest.services.client.api.MSNAdcenterServiceClient;
 import semplest.services.client.api.SemplestBiddingServiceClient;
-import semplest.test.other.TestService2Client;
+import semplest.services.client.test.TestService2Client;
 
 public class EsbTestThread implements Runnable{
 	
@@ -33,7 +33,7 @@ public class EsbTestThread implements Runnable{
 	
 	private static int num_service = 3;
 	
-	private static String testUrl = "http://VMDEVJAVA1:9898/semplest";
+	private static String testUrl = "http://172.18.9.26:9898/semplest";
 	
 	public enum SERVICE_INDEX {all, test, keyword, bidding, google, msn, mail, adengine};
 	private SERVICE_INDEX service_index;	
@@ -176,6 +176,25 @@ public class EsbTestThread implements Runnable{
 				}
 				catch(Exception e){
 					e.printStackTrace();
+					try{
+						writer.append("ERROR:");
+						writer.append('\n');
+						writer.append(e.getMessage());
+						StackTraceElement[] ste = e.getStackTrace();
+						for(StackTraceElement s : ste){
+							writer.append(s.getClassName());
+							writer.append(',');
+							writer.append(s.getMethodName());
+							writer.append(',');
+							writer.append(String.valueOf(s.getLineNumber()));
+							writer.append(',');
+							writer.append('\n');
+						}				
+						noError = false;
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
 				}
 				break;
 			}
@@ -190,12 +209,31 @@ public class EsbTestThread implements Runnable{
 				}
 				catch(Exception e){
 					e.printStackTrace();
+					try{
+						writer.append("ERROR:");
+						writer.append('\n');
+						writer.append(e.getMessage());
+						StackTraceElement[] ste = e.getStackTrace();
+						for(StackTraceElement s : ste){
+							writer.append(s.getClassName());
+							writer.append(',');
+							writer.append(s.getMethodName());
+							writer.append(',');
+							writer.append(String.valueOf(s.getLineNumber()));
+							writer.append(',');
+							writer.append('\n');
+						}				
+						noError = false;
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
 				}
 				break;
 			}
 			case test:{
 				try{
-					TestService2Client client = new TestService2Client(null);
+					TestService2Client client = new TestService2Client(testUrl);
 					long start = System.currentTimeMillis();
 					String ret = client.TestMethod("nan");	
 					long latency = System.currentTimeMillis() - start;
@@ -218,8 +256,35 @@ public class EsbTestThread implements Runnable{
 		}
 		catch(Exception e){
 			e.printStackTrace();
+			try{
+				writer.append("ERROR:");
+				writer.append('\n');
+				writer.append(e.getMessage());
+				StackTraceElement[] ste = e.getStackTrace();
+				for(StackTraceElement s : ste){
+					writer.append(s.getClassName());
+					writer.append(',');
+					writer.append(s.getMethodName());
+					writer.append(',');
+					writer.append(String.valueOf(s.getLineNumber()));
+					writer.append(',');
+					writer.append('\n');
+				}				
+				noError = false;
+			}
+			catch(Exception e1){
+				e1.printStackTrace();
+			}
 		}
-		return 0;
+		finally{/*
+			try {				
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}		    */
+		}
+		return -1;
 	}	
 
 }

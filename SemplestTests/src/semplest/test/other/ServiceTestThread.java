@@ -4,12 +4,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 
+import semplest.services.client.test.TestService2Client;
+
 public class ServiceTestThread implements Runnable{
 
 	private int sleep_time;	
 	private String reportPath;
 	private FileWriter writer;
 	boolean noError = true;
+	
+	private static String testUrl = "http://172.18.9.26:9898/semplest";
 	
 	public ServiceTestThread(int sleep_time) {
 		super();
@@ -35,7 +39,7 @@ public class ServiceTestThread implements Runnable{
 				System.out.println("TEST SERVICE >>> " 
 				+ now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
 				
-				TestService2Client ts = new TestService2Client(null);
+				TestService2Client ts = new TestService2Client(testUrl);
 				
 				long start = System.currentTimeMillis();
 				String ret = ts.TestMethod("nan");	
