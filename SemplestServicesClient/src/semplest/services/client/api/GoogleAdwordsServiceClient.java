@@ -698,6 +698,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 
+	@Override
+	public Boolean deleteKeyWordFromAdGroup(String accountID, Long adGroupID, String keyword) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 	

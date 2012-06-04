@@ -109,7 +109,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		adEngines_PausePromotion.add(AdEngine.Google.name());
 		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
 		
-		*/
+		
 		//
 		// ChangePromotionStartDate
 		//
@@ -118,6 +118,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final java.util.Date newStartDate_ChangePromotionStartDate = new java.util.Date();
 		adEngines_ChangePromotionStartDate.add(AdEngine.Google.name());
 		client.ChangePromotionStartDate(promotionID_ChangePromotionStartDate, newStartDate_ChangePromotionStartDate, adEngines_ChangePromotionStartDate);
+
+		*/
+		
+		//
+		// DeleteKeyword
+		//
+		final Integer promotionID_DeleteKeyword = 62;
+		final String keyword_DeleteKeyword = "HelloKeyword";
+		final List<String> adEngines_DeleteKeyword = new ArrayList<String>();
+		adEngines_DeleteKeyword.add(AdEngine.Google.name());
+		client.DeleteKeyword(promotionID_DeleteKeyword, keyword_DeleteKeyword, adEngines_DeleteKeyword);
 	}
 
 	@Override
@@ -293,12 +304,19 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "ChangePromotionStartDate", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
-
+	
 	@Override
-	public Boolean DeleteKeyword(Integer promotionID, String Keyword, List<String> adEngines) throws Exception
+	public Boolean DeleteKeyword(Integer promotionID, String keyword, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("keyword", keyword);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("AddAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "DeleteKeyword", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
