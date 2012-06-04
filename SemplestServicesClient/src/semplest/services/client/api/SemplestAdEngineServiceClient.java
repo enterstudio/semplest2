@@ -63,7 +63,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		//adEngines_UpdateAd.add(AdEngine.MSN.name());
 		client.UpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
 		
-		
+			
 		//
 		// DeleteAd
 		//
@@ -76,7 +76,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// 9824192 old, 9824193 new (30 in semplest, 10 in google)
 		// added: 9824192
 		 
-		*/	
+		
 		
 		final Integer promotionID_UpdateBudget = 62; 
 		final Double changeInBudget_UpdateBudget = 10d; 
@@ -84,6 +84,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		adEngines_UpdateBudget.add(AdEngine.Google.name());
 		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
 		// current: 6250000                 campaign: 637295; ad group: 3066031127
+		 
+		*/
+		
+		final Integer customerID_DeleteAdEngineAd = 10;
+		final Integer promotionID_DeleteAdEngineAd = 62;
+		final Integer promotionAdID_DeleteAdEngineAd = 218; 
+		final List<String> adEngines_DeleteAdEngineAd = new ArrayList<String>();
+		adEngines_DeleteAdEngineAd.add(AdEngine.Google.name());
+		client.DeleteAdEngineAd(customerID_DeleteAdEngineAd, promotionID_DeleteAdEngineAd, promotionAdID_DeleteAdEngineAd, adEngines_DeleteAdEngineAd);
 		
 	}
 
@@ -123,7 +132,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean PausePromotion(Integer customerID, Integer promotionID, List<String> adEngines) throws Exception
+	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -134,6 +143,21 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public Boolean DeleteAdEngineAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	{
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("DeleteAd JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "DeleteAdEngineAd", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
@@ -146,7 +170,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("DeleteAd JSON [" + json + "]");
-		String returnData = runMethod(baseurl, SERVICEOFFERED, "DeleteAd", json, timeoutMS);
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "DeleteAd", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 
