@@ -248,6 +248,7 @@ public class GoogleServiceTest {
 		errorCounter = 0;
 		
 		try{
+			//Load the configuration
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			SemplestConfiguration configDB = new SemplestConfiguration(object);
@@ -257,9 +258,12 @@ public class GoogleServiceTest {
 			{
 				object.wait();
 			}
+			
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
 			
 			String now = String.valueOf(System.currentTimeMillis());
+			
+			//Variable List
 			Long campaignID = 0L;
 			Long adGroupID = 0L;
 			Long AdID = 0L;
@@ -474,6 +478,10 @@ public class GoogleServiceTest {
 				System.out.println("url2 = " + url2);	
 				
 				AdID = test.addTextAd(accountID, adGroupID, headline, description1, description2, url1, url2);
+				
+				//verify result
+				if(AdID.equals(0L))
+					errorHandler(new Exception(vMsg + "No AdID returned."));
 							
 				System.out.println("*** OK");					
 				System.out.println("adId = " + AdID);					
@@ -504,7 +512,11 @@ public class GoogleServiceTest {
 				System.out.println("url1 = " + url1);
 				System.out.println("url2 = " + url2);	
 				
-				boolean ret = test.updateAD(accountID, adGroupID, AdID, headline, description1, description2, url1, url2);			
+				Long ret = test.updateAD(accountID, adGroupID, AdID, headline, description1, description2, url1, url2);			
+				
+				//verify result
+				if(!ret.equals(AdID))
+					errorHandler(new Exception(vMsg + "Returned AdID not correct: " + ret + " != " + AdID));
 				
 				System.out.println("*** OK");	
 				System.out.println("successful = " + ret);
@@ -524,7 +536,7 @@ public class GoogleServiceTest {
 				System.out.println("adGroupID = " + adGroupID);
 				System.out.println("AdID = " + AdID);
 				
-				boolean ret = test.deleteAD(accountID, adGroupID, AdID);
+				Long ret = test.deleteAD(accountID, adGroupID, AdID);
 				
 				System.out.println("*** OK");	
 				System.out.println("successful = " + ret);
@@ -1016,7 +1028,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("updateAD:");		
 			try{
-				boolean ret = test.updateAD(accountID, adGroupID, AdID, "update headline", "updateAD", "unit test", "http://www.google.com", "http://www.gmail.com");
+				Long ret = test.updateAD(accountID, adGroupID, AdID, "update headline", "updateAD", "unit test", "http://www.google.com", "http://www.gmail.com");
 				System.out.println("OK");	
 				System.out.println("successful = " + ret);
 			}
@@ -1029,7 +1041,7 @@ public class GoogleServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("deleteAD:");		
 			try{
-				boolean ret = test.deleteAD(accountID, adGroupID, AdID);
+				Long ret = test.deleteAD(accountID, adGroupID, AdID);
 				System.out.println("OK");	
 				System.out.println("successful = " + ret);
 			}

@@ -119,10 +119,14 @@ public class KeywordTestThread implements Runnable {
 			e.printStackTrace();		
 			
 			try{
+				Date now = new Date();
+				writer.append(now.toString());
+				writer.append(',');				
 				writer.append("ERROR:");
 				writer.append(',');
 				writer.append(e.getMessage());
 				writer.append('\n');
+				writer.flush();
 				/*
 				StackTraceElement[] ste = e.getStackTrace();
 				for(StackTraceElement s : ste){

@@ -66,8 +66,9 @@
 	<classpathentry kind="lib" path="lib/org.springframework.web.portlet-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web.servlet-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.web.struts-3.1.0.RELEASE.jar"/>
-	<classpathentry kind="lib" path="lib/SemplestProtocol.jar"/>
-	<classpathentry kind="lib" path="lib/SemplestServices.jar"/>
-	<classpathentry kind="lib" path="lib/SemplestServicesClient.jar"/>
+	<classpathentry kind="lib" path="lib/SemplestAll.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServices"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServicesClient"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
