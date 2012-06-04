@@ -9,15 +9,36 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.properties.ProjectProperties;
 
 /* 
- * Utilities to manipulate the dmoz category hierarchy
+ * Utilities to translate and manipulate the dmoz category hierarchy
  * eg: top/recreation/pets/dogs/breeds/herding_group/welsh_corgi/pembroke/pets
  * eg node: breeds
  */
-public class catUtils
-{
+public class catUtils {
+
+  //-----------------------------------------------------------------
+  // Translating dmoz categories to semplest categories
+  private static final Logger logger = Logger.getLogger(catUtils.class);
+  HashMap<String,String> smap;        // Map from dmoz to semplest cats
+  HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
+
+  public catUtils (){
+    logger.info("catUtils(): loading semplest category map");
+    final String smfile = "/semplest/data/dmoz/dmoztosem.txt";
+    // final String smfile = ProjectProperties.dmozToSemCatFile;
+    smap = ioUtils.readPair(smfile);
+    for( Map.Entry<String,String> e: smap.entrySet())
+      ismap.put( e.getValue(), e.getKey());
+    logger.info("catUtils(): done loading semplest category map");
+  }
+  public String code  ( String dcat ){ return smap.get ( dcat ); }
+  public String decode( String scat ){ return ismap.get( scat ); }
+
+  // --------------------------------------------------------------------
   // return top level (returns "top")
   public static String head( String cat ){
     String[] nodes = cat.split("/");
@@ -60,7 +81,7 @@ public class catUtils
   public static int nodes( String cat ){ return cat.split("/" ).length; }
   public static int size( String cat ){ return cat.split("/" ).length; }
   public static String parent( String cat ){ return init( cat );}
-  
+
   //----------------------------------------
   // Operations on pairstriplets of categories
 
@@ -101,7 +122,7 @@ public class catUtils
     int mind = Integer.MAX_VALUE;
     for( String cat: cats )
       mind = nodes( cat ) < mind ? nodes( cat ) : mind;
-   
+
     if( mind < 1 ) return "";
 
     for(int i = mind; i >= 1; i--){
@@ -223,6 +244,8 @@ public class catUtils
     }
     return false;
   }
+
+
   // ------------
   public static void ctest (){
 
@@ -246,14 +269,14 @@ public class catUtils
     String File = "/semplest/data/dmoz/all.cids";
     HashMap<String,String> cid =  catId( File );
 
-    long start = System.currentTimeMillis();
+    long start  = System.currentTimeMillis();
     //String[] ch     = children( cid, args[0] ); 
     String[] des2   = descendants( cid, args[0]); 
-    long end = System.currentTimeMillis();
+    long end    = System.currentTimeMillis();
 
     //for( String r: ch) System.out.println( r );
     for( String r: des2) System.out.println( r );
-   System.out.println(des2.length);
+    System.out.println(des2.length);
     System.out.println("Duration: " + (end - start) + " ms");
 
   }
