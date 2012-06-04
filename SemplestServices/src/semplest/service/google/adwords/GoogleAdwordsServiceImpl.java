@@ -1588,7 +1588,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						kwMatchType = KeywordMatchingType.BROAD;
 					}
 
-					returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+					if(kw.getText().split("\\s+").length>1){
+						returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+					}
 					if (stopWordSet.contains(kw))
 					{
 						logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
