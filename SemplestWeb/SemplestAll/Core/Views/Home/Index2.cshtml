@@ -4,7 +4,7 @@
 }
 <table>
     <tr>
-        <td>
+        <td style="width: 300px;">
             <fieldset style="padding: 0; border-width: 1px; width: 250px">
                 <legend><b>Account Actions</b></legend>
                <div style="padding: 5px">
@@ -173,15 +173,12 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; width: 440px;height:350px">
+        <td style="vertical-align: top; height:350px;width:500px;">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
             </div>
-            <div id="preview" style="vertical-align: top;height:350px; overflow: auto"/>
+            <div id="preview" style="vertical-align: top;height:350px;width: auto; overflow: auto"/>
         </td>
     </tr>
 </table>
-<script>
-
-</script>
