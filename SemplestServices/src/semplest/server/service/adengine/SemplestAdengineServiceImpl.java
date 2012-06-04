@@ -258,6 +258,54 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestDB.setAdIDForAdGroup(adObj.getAdEngineAdID(), advertisingEngine, adObj.getPromotionAdsPK());
 		}
 	}
+	
+	public String DeleteKeyword(String json) throws Exception
+	{
+		logger.debug("call DeleteKeyword(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
+		final String keyword = data.get("keyword");
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = DeleteKeyword(PromotionID, keyword, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean DeleteKeyword(Integer promotionID, String keyword, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Delete Keyword [" + keyword + "] for PromotionID [" + promotionID + "] and AdEngines [" + adEngines + "]");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
+		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				logger.info("Will try to Delete Keyword [" + keyword + "] within Google Adwords for AccountID [" + accountId + "], AdGroupID [" + adGroupID + "]");
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				googleAdwordsService.deleteKeyWordFromAdGroup(accountId, adGroupID, keyword);		
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Deleting Keywords (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}
+	}
 
 	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine,
 			List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
@@ -1095,13 +1143,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
-	}
-
-	@Override
-	public Boolean DeleteKeyword(Integer promotionID, String Keyword, List<String> adEngines) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

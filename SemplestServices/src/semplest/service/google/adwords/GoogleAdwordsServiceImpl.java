@@ -77,6 +77,8 @@ import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.Criterion;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscape;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
+import com.google.api.adwords.v201109.cm.CriterionType;
+import com.google.api.adwords.v201109.cm.CriterionUse;
 import com.google.api.adwords.v201109.cm.DataServiceInterface;
 import com.google.api.adwords.v201109.cm.DateRange;
 import com.google.api.adwords.v201109.cm.Keyword;
@@ -194,6 +196,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+			/*
+			final String accountID = "54100";
+			final Long adGroupID = 3066031127L;
+			final String keyword = "HelloKeyword";
+			final KeywordMatchType matchType = KeywordMatchType.EXACT;
+			final Long microBidAmount = 5 * 1000000L;
+			final KeywordDataObject returnedKeyword = g.addKeyWordToAdGroup(accountID, adGroupID, keyword, matchType, microBidAmount);
+			logger.info("Returned keyword: " + returnedKeyword);
+			*/
 			
 			ArrayList<GoogleSiteLink> siteLinks = new ArrayList<GoogleSiteLink>();
 			GoogleSiteLink l = new GoogleSiteLink();
@@ -210,6 +221,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			//String url = "www.summithillsfloristnj.com";
 			String[] keywords = new String[]
 			{ "wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower" };
+			
+			
 			//int numberResults = 100;
 			//int categoryId = 11476; // Wedding Flowers
 			//String accountID = null;
@@ -1032,6 +1045,107 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception("Problem updating ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], GoogleAdId [" + oldGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
 		}
 	}
+	
+	@Override
+	public Boolean deleteKeyWordFromAdGroup(String accountID, Long adGroupID, String keyword) throws Exception
+	{
+		try
+		{			
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);			
+			final AdGroupCriterion[] adGroupCriterions = getAllAdGroupCriteria(accountID, adGroupID, false);
+			if (adGroupCriterions == null)
+			{
+				final String errMsg = "Problem deleting keyword [" + keyword + "] for Account [" + accountID + "] and AdGroup [" + adGroupID + "] because found no AdGroupCriterions for that AdGroup";
+				logger.info(errMsg);
+				throw new Exception(errMsg);
+			}
+			logger.info("Will look through " + adGroupCriterions.length + " AdGroupCriterions for the ID of the Keyword which we're trying to delete [" + keyword + "]");
+			Long keywordID = 0L;
+			for (int i = 0; i < adGroupCriterions.length; ++i)
+			{
+				final AdGroupCriterion adGroupCriterion = adGroupCriterions[i];				
+				final Criterion criterion = adGroupCriterion.getCriterion();
+				if (criterion.getType() == CriterionType.KEYWORD)
+				{
+					final Keyword keywordCriterion = (Keyword)criterion;
+					final String keywordCriterionText = keywordCriterion.getText();
+					if (keyword.equals(keywordCriterionText))
+					{
+						keywordID = keywordCriterion.getId();
+					}
+				}
+			}
+			if (keywordID == 0L)
+			{
+				final String errMsg = "Problem deleting keyword [" + keyword + "] for Account [" + accountID + "] and AdGroup [" + adGroupID + "] because the keyword is not found in Google";
+				logger.error(errMsg);
+				throw new Exception(errMsg);
+			}
+			logger.info("Google keyword ID for keyword [" + keyword + "] is [" + keywordID + "]");
+			
+			final Keyword keywrd = new Keyword();
+			keywrd.setText(keyword);
+			keywrd.setId(keywordID);
+			//keywrd.setMatchType(matchType);
+			final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
+			keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
+			keywordBiddableAdGroupCriterion.setCriterion(keywrd);
+			/*
+			ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
+			Money money = new Money();
+			money.setMicroAmount(microBidAmount);
+			bid.setMaxCpc(new Bid(money));
+			keywordBiddableAdGroupCriterion.setBids(bid);
+			*/
+			final AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
+			keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);
+			keywordAdGroupCriterionOperation.setOperator(Operator.REMOVE);
+			final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]{keywordAdGroupCriterionOperation};
+			final AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);
+			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
+			{/*
+				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
+				KeywordDataObject bidRes = new KeywordDataObject();
+				if (res.getQualityInfo() != null)
+				{
+					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
+				}
+				if (res.getFirstPageCpc() != null)
+				{
+					bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
+				}
+				bidRes.setBidID(res.getCriterion().getId());
+				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
+				bidRes.setKeyword(keyword);
+				bidRes.setMatchType(matchType.getValue());
+				bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());*/
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (ServiceException e)
+		{
+			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (ApiException e)
+		{
+			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]: " + e.dumpToString();
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (RemoteException e)
+		{
+			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
 
 	public String addKeyWordToAdGroup(String json) throws Exception
 	{
@@ -1039,10 +1153,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
-		KeywordDataObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
-				KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
-
-		// convert result to Json String
+		KeywordDataObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
 		return gson.toJson(res);
 	}
 
@@ -3014,5 +3125,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return true;
 	}
+
+	
 
 }
