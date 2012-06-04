@@ -12,6 +12,7 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.service.SEMplestService;
 import semplest.server.service.SemplestServiceTemplate;
 import semplest.server.service.ServiceThread;
+import semplest.server.service.springjdbc.SemplestDB;
 
 
 public class ServiceQueueListener implements MessageListener
@@ -20,7 +21,7 @@ public class ServiceQueueListener implements MessageListener
 	private final ServiceActiveMQConnection cn;
 	private SemplestServiceTemplate myService = null;
 	static final Logger logger = Logger.getLogger(ServiceQueueListener.class);
-	
+		
 	public ServiceQueueListener(ServiceActiveMQConnection cn)
 	{
 		this.cn = cn;
@@ -40,6 +41,7 @@ public class ServiceQueueListener implements MessageListener
 			    catch (final JMSException e)
 			    {
 			        e.printStackTrace();
+			        errorHandler(new Exception(e.getMessage() + " - TextMessage: " + textMessage.getText(), e));
 			    }
 			}
 			else if (message instanceof BytesMessage)
@@ -62,18 +64,27 @@ public class ServiceQueueListener implements MessageListener
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					errorHandler(new Exception(e.getMessage() + " - UniqueID is " + uniqueID + ", MethodName is " + methodName + ", jsonString is " + jsonStr, e));
 				}
 				
 			}
 			else
 			{
 				logger.error("MQ message rec but not processed");
+				errorHandler(new Exception("MQ message rec but not processed"));
 			}
 		}
 		catch (JMSException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(new Exception("JMSException: " + e.getMessage(), e));
 		}
     }
+    
+    private void errorHandler(Exception e){
+    	String serviceName = SEMplestService.properties.getProperty("ServiceName");    	
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
+	}
 }

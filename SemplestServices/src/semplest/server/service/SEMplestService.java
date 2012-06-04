@@ -16,6 +16,7 @@ import semplest.client.nio.NIOResponseHandler;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
+import semplest.server.service.springjdbc.SemplestDB;
 
 import com.google.gson.Gson;
 
@@ -43,6 +44,7 @@ public class SEMplestService
 	 */
 	public static void main(String[] args)
 	{
+		SEMplestService service = new SEMplestService();
 		try
 		{
 			// startup the service by registering the instance with the semplest ESB
@@ -51,7 +53,6 @@ public class SEMplestService
 			{
 				serviceNameOverride = args[0];
 			}
-			SEMplestService service = new SEMplestService();
 			service.configureLogging();
 			if (service.readProperties(serviceNameOverride))
 			{
@@ -77,6 +78,7 @@ public class SEMplestService
 			logger.error(e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			service.errorHandler(e);
 			return;
 		}
 	}
@@ -121,6 +123,7 @@ public class SEMplestService
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(new Exception("SEMplestService.readProperties: " + e.getMessage(), e));
 			return false;
 		}
 	}
@@ -140,6 +143,12 @@ public class SEMplestService
 		// BasicConfigurator.configure();
 		PropertyConfigurator.configure(LOG4JPROPSFILE);
 		logger.info("Starting log4j....");
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 	/*

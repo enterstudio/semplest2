@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
+import semplest.server.service.SEMplestService;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -28,7 +29,6 @@ public class SemplestScheduler extends Thread
 	private boolean cancel = false;
 	private boolean scheduleRunning = false;
 	private static final Logger logger = Logger.getLogger(SemplestScheduler.class);
-	private String serviceName = "SemplestSchedulerService";
 
 	private Vector<SchedulerRecord> recordMessageList = null;
 
@@ -485,6 +485,7 @@ public class SemplestScheduler extends Thread
 	}
 	
 	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");		
 		SemplestDB db = new SemplestDB();
 		db.logError(e, serviceName);
 	}

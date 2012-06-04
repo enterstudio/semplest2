@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.service.queue.ServiceActiveMQConnection;
+import semplest.server.service.springjdbc.SemplestDB;
 
 import com.google.gson.Gson;
 
@@ -63,6 +64,7 @@ public class ServiceThread implements Runnable
 			logger.error("Error running Service: " + methodName + ":" + jsonStr);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(new Exception("Error running Service: " + methodName + ":" + jsonStr, e));
 		}
 		//put result on message queue
 		try
@@ -74,6 +76,7 @@ public class ServiceThread implements Runnable
 			logger.error("maessage queue connection error" + e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			errorHandler(new Exception("maessage queue connection error" + e.getMessage(), e));
 		}
 	}
 	
@@ -93,6 +96,12 @@ public class ServiceThread implements Runnable
 		
 		errorMap.put("errorID", uniqueID);
 		return gson.toJson(errorMap);
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }

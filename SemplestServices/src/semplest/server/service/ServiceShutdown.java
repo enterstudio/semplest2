@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
+import semplest.server.service.springjdbc.SemplestDB;
 
 public class ServiceShutdown implements Runnable
 {
@@ -42,8 +43,15 @@ public class ServiceShutdown implements Runnable
 		{
 			logger.error(e);
 			e.printStackTrace();
+			errorHandler(new Exception("ServiceShutdown: " + e.getMessage(), e));
 		}
 		
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }

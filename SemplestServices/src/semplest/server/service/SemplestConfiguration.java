@@ -44,12 +44,19 @@ public class SemplestConfiguration implements Runnable
 			logger.error("FAILED TO LOAD CONFIGUATION");
 			configData = null;
 			e.printStackTrace();
+			errorHandler(new Exception("FAILED TO LOAD CONFIGUATION"));
 		}
 		synchronized(obj)
 		{
 			obj.notify();
 		}
 		
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }

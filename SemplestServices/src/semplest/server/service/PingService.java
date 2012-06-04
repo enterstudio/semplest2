@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
+import semplest.server.service.springjdbc.SemplestDB;
 
 public class PingService implements Runnable
 {
@@ -97,6 +98,7 @@ public class PingService implements Runnable
 		catch (Exception e)
 		{
 			logger.error("Unexpected Error in Ping Service...Terminating");
+			errorHandler(new Exception("Unexpected Error in Ping Service...Terminating", e));
 			return;
 		}
 	}
@@ -114,6 +116,7 @@ public class PingService implements Runnable
 			{
 				logger.error("Error connecting socket " + e.getMessage() );
 				e.printStackTrace();
+				errorHandler(new Exception("Error connecting socket " + e.getMessage(), e));
 				return false;
 			}
 			
@@ -125,6 +128,7 @@ public class PingService implements Runnable
 		else
 		{
 			logger.error("Socket not connected...");
+			errorHandler(new Exception("Socket not connected"));
 			return false;		
 		}
 	}
@@ -183,11 +187,13 @@ public class PingService implements Runnable
 			else if (data.getheader() == ProtocolJSON.SEMplest_ERROR)
 			{
 				logger.error("ERROR Returned from ESB " + data.getError());
+				errorHandler(new Exception("ERROR Returned from ESB " + data.getError()));
 				return false;
 			}
 			else
 			{
 				logger.error("ERROR - The Data Header rec from ESB was not SEMplest REGISTER");
+				errorHandler(new Exception("ERROR - The Data Header rec from ESB was not SEMplest REGISTER"));
 				return false;
 			}
 			logger.debug("Done with Reg to ESB");
@@ -197,8 +203,15 @@ public class PingService implements Runnable
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			errorHandler(new Exception("registerServiceWithESB: " + e.getMessage(), e));
 			return false;
 		}
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }

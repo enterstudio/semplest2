@@ -4,7 +4,9 @@ import java.lang.reflect.Method;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.service.SEMplestService;
 import semplest.server.service.ServiceInterface;
+import semplest.server.service.springjdbc.SemplestDB;
 
 
 
@@ -27,8 +29,15 @@ public class BidGeneratorService implements ServiceInterface {
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
+			errorHandler(e);
 			throw e;
 		}
+	}
+	
+	private void errorHandler(Exception e){
+		String serviceName = SEMplestService.properties.getProperty("ServiceName");
+		SemplestDB db = new SemplestDB();
+		db.logError(e, serviceName);
 	}
 
 }
