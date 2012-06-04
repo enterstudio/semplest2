@@ -5,7 +5,7 @@
     <ul class="options">
         <li>
             <h3>
-                Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  >
+                Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
                     ?</a></h3>
         </li>
         <li>
@@ -31,7 +31,7 @@
         </li>
         <li>
             <label style="width: 68px">
-                URL <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  >
+                URL <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
                     ?</a></label>
             @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
             @Html.ValidationMessageFor(t => t.Url)
@@ -44,7 +44,7 @@
         <li>
             <button class="k-button" id="negativeKeyWords" type="button">
                 <span class="k-add k-icon"></span>Negative Keywords</button>
-            <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  >
+            <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  tabindex="-1" >
                 ?</a>
                 <label>identify keywords to avoid in association with your business</label>
             @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>

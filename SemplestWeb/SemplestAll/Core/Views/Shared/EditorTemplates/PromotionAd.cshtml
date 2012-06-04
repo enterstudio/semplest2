@@ -8,7 +8,7 @@
             <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
                 <li>@Html.HiddenFor(t => t.PromotionAdsPK)
                     <label style="min-width: 65px">
-                        Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  >
+                        Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  tabindex="-1" >
                             ?</a></label>
                     @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
                     @Html.ValidationMessageFor(t => t.AdTitle)
@@ -17,7 +17,7 @@
                 </li>
                 <li>
                     <label style="vertical-align: top; min-width: 65px">
-                        Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  >
+                        Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  tabindex="-1" >
                             ?</a></label>
                     @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
                     <label class="hint">
@@ -31,7 +31,7 @@
                         @Html.LinkToRemoveNestedForm("Delete Ad Group", "div.ads", "input.mark-for-delete")
                         <button type="button" class="additionalLinks k-button">
                             <span class="k-add k-icon"></span>Add additional click through options</button>
-                        <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  >
+                        <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
                             ?</a>
                         @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
                     </div>
