@@ -552,8 +552,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");
 		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		//final String accountId = data.get("accountId");
-		//final Long campaignId = Long.parseLong(data.get("campaignId"));
 		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
 		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
 		final Boolean res = UpdateGeoTargeting(PromotionID, adEngines);
@@ -612,11 +610,57 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return sb.toString();
 	}
 	
-	@Override
-	public Boolean PausePromotion(Integer customerID, Integer promotionID, List<String> adEngines) throws Exception
+	public String PausePromotion(String json) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.debug("call PausePromotion(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = PausePromotion(PromotionID, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Pause Promotion [" + promotionID + "] for AdEngines [" + adEngines+ "])");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
+		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				logger.info("Will try to Pause Google Campaign using AccountID [" + accountId + "] and CampaignID [" + campaignId + "]");
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final Boolean result = googleAdwordsService.changeCampaignStatus(accountId, campaignId, CampaignStatus.PAUSED);
+				if (!result)
+				{
+					final String errMsg = "Request to Pause Google Campaign for AccountID [" + accountId + "] and CampaignID [" + campaignId + "] failed";
+					logger.info(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Updating GEO Targets (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}
 	}
 
 	@Override
@@ -718,6 +762,41 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}		
 	}
 	
+	public String DeleteAdEngineAd(String json) throws Exception
+	{
+		logger.debug("call DeleteAdEngineAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);		
+		final Boolean res = DeleteAdEngineAd(customerID, promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
+	
+	public Boolean DeleteAdEngineAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to schedule task for deleting Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+		final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteAdEngineAdTask(customerID, promotionID, promotionAdID, adEngines);
+		listOfTasks.add(task);		
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String scheduleName = promotion.getPromotionName() + " _DeleteAdEngineAd";
+		final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+		if (!taskScheduleSuccessful)
+		{
+			return false;
+		}
+		final Integer rowCount = SemplestDB.markPromotionAdDeleted(promotionID, new Date());
+		if (rowCount != 1)
+		{
+			logger.warn("Num of Promotions marked deleted for PromotionAdID [" + promotionAdID + "] should be 1 but was [" + rowCount + "]");
+		}
+		return true;
+	}
+	
 	public String DeleteAd(String json) throws Exception
 	{
 		logger.debug("call DeleteAd(String json): [" + json + "]");
@@ -766,10 +845,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					else
 					{
 						logger.info("Google Ad ID returned after deleting the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is the same as the SemplestGoogleAdID [" + semplestGoogleAdID + "] that we expected to delete: [" + googleAdID + "].  This means the ad was deleted successfully within Google AdWords.");
-						final int rowCount = SemplestDB.deleteAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
+						final int rowCount = SemplestDB.markPromotionAdDeleted(promotionAdID, new Date());
 						if (rowCount != 1)
 						{
-							logger.warn("Num or rows deleted when deleting SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], GoogleAdID [" + googleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
+							logger.warn("Num of Promotions marked deleted for PromotionAdID [" + promotionAdID + "] should be 1 but was [" + rowCount + "]");
 						}
 					}
 				}

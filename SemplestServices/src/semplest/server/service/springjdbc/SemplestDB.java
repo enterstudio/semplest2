@@ -153,7 +153,7 @@ public class SemplestDB extends BaseDB
 	 * Note Task execution order is determined by order of
 	 * ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList
 	 */
-	public static void createTaskAndAssociateToSchedule(int ScheduleFK, ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList) throws Exception
+	public static void createTaskAndAssociateToSchedule(int ScheduleFK, List<SemplestSchedulerTaskObject> scheduleTaskObjList) throws Exception
 	{
 		AddTaskSP addTask = new AddTaskSP();
 		int i = 0;
@@ -889,6 +889,15 @@ public class SemplestDB extends BaseDB
 							  	 "and	aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
 							  	 "and 	e.AdvertisingEngine = ?";
 		return jdbcTemplate.update(strSQL, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
+	}
+	
+	public static Integer markPromotionAdDeleted(Integer promotionAdsPK, java.util.Date deletedDate) throws Exception
+	{
+		final String strSQL = "update   PromotionAds " + 
+								 "set   IsDeleted = 1,  " + 
+									   "DeletedDate = ?  " + 
+								"where	PromotionAdsPK = ?";
+		return jdbcTemplate.update(strSQL, new Object[]{deletedDate, promotionAdsPK});
 	}
 	
 	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork,

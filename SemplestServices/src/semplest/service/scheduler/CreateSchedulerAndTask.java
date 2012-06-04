@@ -3,6 +3,7 @@ package semplest.service.scheduler;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.joda.time.DateTime;
 
@@ -134,11 +135,28 @@ public class CreateSchedulerAndTask
 		//
 		return taskObj;
 	}
+	
+	public static SemplestSchedulerTaskObject createDeleteAdEngineAdTask(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)
+	{
+		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteAdEngineAd.getClientServiceNameValue());
+		task.setMethodName("DeleteAdEngineAd");
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("customerID",Integer.toString(customerID));
+		jsonHash.put("promotionID",Integer.toString(promotionID));
+		jsonHash.put("promotionAdID",Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines",adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		task.setParameters(json);
+		return task;
+	}
+	
 	/*
 	 * method creates a new schedule and associated the tasks, add a new job to the database and run it
 	 * THIS NEEDS TO BE IN TRANACTION*******
 	 */
-	public static Boolean createScheduleAndRun(ArrayList<SemplestSchedulerTaskObject> tasks, String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, 
+	public static Boolean createScheduleAndRun(List<SemplestSchedulerTaskObject> tasks, String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, 
 			Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
 		if (tasks == null  || tasks.size() == 0)
@@ -152,8 +170,8 @@ public class CreateSchedulerAndTask
 		{
 			throw new Exception ("Unable to create Schedule " + ScheduleName);
 		}
-		SemplestDB.createTaskAndAssociateToSchedule(scheduleID, tasks);
 		AddScheduleJobSP addJob = new AddScheduleJobSP();
+		SemplestDB.createTaskAndAssociateToSchedule(scheduleID, tasks);
 		Integer jobID = addJob.execute(scheduleID, StartTime);
 		if (jobID == null)
 		{
