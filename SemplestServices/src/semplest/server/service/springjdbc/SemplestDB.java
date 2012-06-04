@@ -917,7 +917,7 @@ public class SemplestDB extends BaseDB
 		String errorClass = err.getClassName();
 		StringBuilder sb = new StringBuilder();
 		for(StackTraceElement s : ste){
-			sb.append(s.getFileName() + ":" + s.getLineNumber() + "|"); 
+			sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
 		}
 		
 		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
