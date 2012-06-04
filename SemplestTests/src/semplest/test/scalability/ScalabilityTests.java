@@ -36,6 +36,8 @@ public class ScalabilityTests {
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
+			Thread.sleep(10);
+			executor.execute(new KeywordTestThread(frequency));
 			//*/
 		}
 		catch(Exception e){

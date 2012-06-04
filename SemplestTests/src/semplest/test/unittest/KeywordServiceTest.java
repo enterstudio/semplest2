@@ -12,8 +12,10 @@ import semplest.services.client.api.KeywordLDAServiceClient;
 public class KeywordServiceTest {
 
 	private int errorCounter = 0;
+	private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";
 	
 	public static void main(){
+		serviceURL = "http://VMJAVA1:9898/semplest";
 		KeywordServiceTest test = new KeywordServiceTest();
 		test.Test_KeywordService2();
 	}
@@ -108,8 +110,8 @@ public class KeywordServiceTest {
 		System.out.println("#                                                                                  #");
 		System.out.println("####################################################################################");	
 		
-		try{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient(null);
+		try{			
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient(serviceURL);
 		
 			ArrayList<String> res = null;
 			try{

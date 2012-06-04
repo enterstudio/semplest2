@@ -19,7 +19,7 @@ public class KeywordTestThread implements Runnable {
 	private FileWriter writer;
 	private static String testName = "KEYWORD";	
 	private HashMap<String, String> wordList;
-	boolean noError = true;
+	//boolean noError = true;
 	
 	private static String testUrl = "http://172.18.9.26:9898/semplest";
 	
@@ -66,84 +66,94 @@ public class KeywordTestThread implements Runnable {
 			
 			while(true){	
 			//while(noError){				
+				try{
 								
-				KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);				
-				
-				Date now = new Date();
-				writer.append(now.toString());
-				writer.append(',');
-				writer.flush();
-				
-				//Random Keyword
-				//Random r = new Random();
-				//nWord = r.nextInt(wordList.size());					
-								
-				int numKeywords = wordList.keySet().size();
-				String[] keywords = new String[numKeywords];
-				wordList.keySet().toArray(keywords);
-				String k = keywords[nWord];
-				String url = wordList.get(k);			
-				
-				//Round robin keywords
-				if(++nWord > (numKeywords - 1))
-					nWord = 0;				
-				
-				writer.append(k);
-				writer.append(',');
-				writer.flush();
-				
-				long start = System.currentTimeMillis();
-				ArrayList<String> res = client.getCategories(null, k, k, null, null);
-				long latency = System.currentTimeMillis() - start;
-				
-				writer.append(String.valueOf(latency));
-				writer.append(',');
-				writer.flush();
-				
-				ArrayList<String> selectCateg = new ArrayList<String>();
-				selectCateg.add(res.get(5));
-				
-				start = System.currentTimeMillis();
-				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-						k, k, null, url, null ,new Integer[]{50,50});
-				latency = System.currentTimeMillis() - start;			
-				
-				writer.append(String.valueOf(latency));
-				writer.append('\n');				
-				writer.flush();
-				
-				Thread.sleep(sleep_time);				
+					KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);				
+					
+					Date now = new Date();
+					writer.append(now.toString());
+					writer.append(',');
+					writer.flush();
+					
+					//Random Keyword
+					//Random r = new Random();
+					//nWord = r.nextInt(wordList.size());					
+									
+					int numKeywords = wordList.keySet().size();
+					String[] keywords = new String[numKeywords];
+					wordList.keySet().toArray(keywords);
+					String k = keywords[nWord];
+					String url = wordList.get(k);			
+					
+					//Round robin keywords
+					if(++nWord > (numKeywords - 1))
+						nWord = 0;				
+					
+					writer.append(k);
+					writer.append(',');
+					writer.flush();
+					
+					long start = System.currentTimeMillis();
+					ArrayList<String> res = client.getCategories(null, k, k, null, null);
+					long latency = System.currentTimeMillis() - start;
+					
+					writer.append(String.valueOf(latency));
+					writer.append(',');
+					writer.flush();
+					
+					ArrayList<String> selectCateg = new ArrayList<String>();
+					selectCateg.add(res.get(5));
+					
+					start = System.currentTimeMillis();
+					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
+							k, k, null, url, null ,new Integer[]{50,50});
+					latency = System.currentTimeMillis() - start;			
+					
+					writer.append(String.valueOf(latency));
+					writer.append('\n');				
+					writer.flush();
+					
+					Thread.sleep(sleep_time);		
+				}
+				catch(Exception e){
+					e.printStackTrace();		
+					
+					try{
+						writer.append("ERROR:");
+						writer.append(',');
+						Date now = new Date();
+						writer.append(now.toString());
+						writer.append(',');										
+						writer.append(e.getMessage());
+						writer.append(',');						
+						
+						///*
+						writer.append("DETAILS:");
+						writer.append(',');
+						StackTraceElement[] ste = e.getStackTrace();
+						for(StackTraceElement s : ste){
+							writer.append(s.getClassName());
+							writer.append(',');
+							writer.append(s.getMethodName());
+							writer.append(',');
+							writer.append(String.valueOf(s.getLineNumber()));
+							writer.append(',');
+							writer.append('\n');
+						}		
+						//*/
+						
+						writer.flush();
+						
+						//noError = false;
+					}
+					catch(Exception e1){
+						e1.printStackTrace();
+					}
+				}
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();		
-			
-			try{
-				Date now = new Date();
-				writer.append(now.toString());
-				writer.append(',');				
-				writer.append("ERROR:");
-				writer.append(',');
-				writer.append(e.getMessage());
-				writer.append('\n');
-				writer.flush();
-				/*
-				StackTraceElement[] ste = e.getStackTrace();
-				for(StackTraceElement s : ste){
-					writer.append(s.getClassName());
-					writer.append(',');
-					writer.append(s.getMethodName());
-					writer.append(',');
-					writer.append(String.valueOf(s.getLineNumber()));
-					writer.append(',');
-					writer.append('\n');
-				}		
-				*/
-				noError = false;
-			}
-			catch(Exception e1){
-				e1.printStackTrace();
-			}
+			e.printStackTrace();					
 		}		
 		finally{
 			try {				
