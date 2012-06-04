@@ -83,7 +83,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_UpdateBudget = new ArrayList<String>();
 		adEngines_UpdateBudget.add(AdEngine.Google.name());
 		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
-		
+		// current: 6250000                 campaign: 637295; ad group: 3066031127
 		
 	}
 
@@ -216,8 +216,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("changeInBudget", Double.toString(changeInBudget));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("DeleteAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "UpdateBudget", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
