@@ -40,6 +40,8 @@ public class KeywordTestThread implements Runnable {
 			writer.append("Test Frequency: " + test_frequency);
 			writer.append('\n');
 			
+			writer.append("timestamp");
+			writer.append(',');
 			writer.append("keyword");
 			writer.append(',');
 			writer.append("getCatetories");
@@ -60,20 +62,35 @@ public class KeywordTestThread implements Runnable {
 	public void run() {
 		try{		
 			init_wordList();
+			int nWord = 0;
 			
-			while(noError){				
+			while(true){	
+			//while(noError){				
 								
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(testUrl);				
 				
-				Random r = new Random();
-				int rWord = r.nextInt(wordList.size());
-				String[] keywords = new String[wordList.keySet().size()];
+				Date now = new Date();
+				writer.append(now.toString());
+				writer.append(',');
+				writer.flush();
+				
+				//Random Keyword
+				//Random r = new Random();
+				//nWord = r.nextInt(wordList.size());					
+								
+				int numKeywords = wordList.keySet().size();
+				String[] keywords = new String[numKeywords];
 				wordList.keySet().toArray(keywords);
-				String k = keywords[rWord];
-				String url = wordList.get(k);
+				String k = keywords[nWord];
+				String url = wordList.get(k);			
+				
+				//Round robin keywords
+				if(++nWord > (numKeywords - 1))
+					nWord = 0;				
 				
 				writer.append(k);
 				writer.append(',');
+				writer.flush();
 				
 				long start = System.currentTimeMillis();
 				ArrayList<String> res = client.getCategories(null, k, k, null, null);
@@ -81,6 +98,7 @@ public class KeywordTestThread implements Runnable {
 				
 				writer.append(String.valueOf(latency));
 				writer.append(',');
+				writer.flush();
 				
 				ArrayList<String> selectCateg = new ArrayList<String>();
 				selectCateg.add(res.get(5));
@@ -91,8 +109,7 @@ public class KeywordTestThread implements Runnable {
 				latency = System.currentTimeMillis() - start;			
 				
 				writer.append(String.valueOf(latency));
-				writer.append('\n');
-				
+				writer.append('\n');				
 				writer.flush();
 				
 				Thread.sleep(sleep_time);				
@@ -103,8 +120,10 @@ public class KeywordTestThread implements Runnable {
 			
 			try{
 				writer.append("ERROR:");
-				writer.append('\n');
+				writer.append(',');
 				writer.append(e.getMessage());
+				writer.append('\n');
+				/*
 				StackTraceElement[] ste = e.getStackTrace();
 				for(StackTraceElement s : ste){
 					writer.append(s.getClassName());
@@ -115,6 +134,7 @@ public class KeywordTestThread implements Runnable {
 					writer.append(',');
 					writer.append('\n');
 				}		
+				*/
 				noError = false;
 			}
 			catch(Exception e1){
