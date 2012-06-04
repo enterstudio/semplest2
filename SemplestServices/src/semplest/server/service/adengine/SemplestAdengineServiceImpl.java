@@ -41,6 +41,7 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
@@ -898,6 +899,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public String UpdateBudget(String json) throws Exception
+	{
+		logger.debug("call UpdateBudget(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Double changeInBudget = Double.parseDouble(data.get("changeInBudget"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = UpdateBudget(promotionID, changeInBudget, adEngines);
+		return gson.toJson(res);
+	}
 
 	@Override
 	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
@@ -915,15 +927,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
 				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
 				final Double oldBudgetAmount = promotion.getPromotionBudgetAmount();
-				final Double newBudgetDouble =  oldBudgetAmount + changeInBudget;
-				final Long newBudgetAmount = newBudgetDouble.longValue();
-				logger.info("Will try to update Old Budget [" + oldBudgetAmount + "] with New Budget [" + newBudgetDouble + "]");
-				final Boolean processedSuccessully = googleAdwordsService.changeCampaignBudget(accountID, campaignID, newBudgetAmount);
+				final Double newBudgetDouble = oldBudgetAmount + changeInBudget;
+				final Double newBudgetDoubleGoogleUnits =  newBudgetDouble * SemplestUtils.GOOGLE_MONEY_UNIT;
+				final Long newBudgetAmountGoogleUnits = newBudgetDoubleGoogleUnits.longValue();
+				final Double oldBudgetDoubleGoogleUnits = oldBudgetAmount * SemplestUtils.GOOGLE_MONEY_UNIT;
+				final Long oldBudgetAmountGoogleUnits = oldBudgetDoubleGoogleUnits.longValue(); 
+				logger.info("Will try to update Old Budget [" + oldBudgetAmount + "] (" + oldBudgetAmountGoogleUnits + " in Google Units) with New Budget [" + newBudgetDouble + "] (" + newBudgetAmountGoogleUnits + " in Google Units)");
+				final Boolean processedSuccessully = googleAdwordsService.changeCampaignBudget(accountID, campaignID, newBudgetAmountGoogleUnits);
 				if (!processedSuccessully)
 				{
 					final String errMsg = "Problem processing budget change from Old Budget [" + oldBudgetAmount + "] to New Budget [" + newBudgetDouble + "] for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
+				}
+				else
+				{
+					// TODO: update budget in DB (ask Mitch where to do that)
 				}
 			}
 			else

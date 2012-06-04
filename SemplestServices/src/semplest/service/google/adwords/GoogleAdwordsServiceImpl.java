@@ -1931,24 +1931,47 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
+	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long newMicroBudgetAmount) throws Exception
 	{
-		logger.info("Will try to update Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]");		
+		logger.info("Will try to update Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + newMicroBudgetAmount + "] for Google Account [" + accountID + "]");		
 		try
 		{
-			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
-			Budget budget = new Budget();
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
+			final Budget budget = new Budget();
 			budget.setPeriod(BudgetBudgetPeriod.DAILY);
-
-			Money money = new Money();
-			money.setMicroAmount(microBudgetAmount);
+			final Money money = new Money();
+			money.setMicroAmount(newMicroBudgetAmount);
 			budget.setAmount(money);
 			budget.setDeliveryMethod(BudgetBudgetDeliveryMethod.STANDARD);
-			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
-			CampaignReturnValue ret = campaignService.mutate(operations);
+			final Campaign campaign = new Campaign();
+			campaign.setId(campaignID);
+			campaign.setBudget(budget);
+			final CampaignOperation operation = new CampaignOperation();
+			operation.setOperand(campaign);
+			operation.setOperator(Operator.SET);
+			final CampaignOperation[] operations = new CampaignOperation[]{operation};
+			final CampaignReturnValue ret = campaignService.mutate(operations);
 			if (ret != null && ret.getValue() != null)
 			{
+				final Campaign[] affectedCampaigns = ret.getValue();
+				final Campaign affectedCampaign = affectedCampaigns[0];
+				final Long affectedCampaignID = affectedCampaign.getId();
+				final Budget affectedCampaignBudget = affectedCampaign.getBudget();
+				final Money affectedCampaignBudgetAmountMoney = affectedCampaignBudget.getAmount();
+				final Long affectedCampaignBudgetAmount = affectedCampaignBudgetAmountMoney.getMicroAmount();
+				if (!campaignID.equals(affectedCampaignID))
+				{
+					final String errMsg = "The ID of the Google campaign that was changed [" + affectedCampaignID + "] is not the same as the ID of the campaign that we intended to change [" + campaignID + "].  Perhaps the wrong campaign was changed.";
+					logger.error(errMsg);
+					throw new Exception(errMsg);
+				}
+				if (!newMicroBudgetAmount.equals(affectedCampaignBudgetAmount))
+				{
+					final String errMsg = "The resulting $-amount of the Google campaign that was changed [" + affectedCampaignBudgetAmount + "] is not the same as the amount that we intended [" + newMicroBudgetAmount + "].";
+					logger.error(errMsg);
+					throw new Exception(errMsg);
+				}
 				return true;
 			}
 			else
@@ -1958,15 +1981,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]", e);
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + newMicroBudgetAmount + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]: " + e.dumpToString(), e);
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + newMicroBudgetAmount + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + microBudgetAmount + "]", e);
+			throw new Exception("Problem updating Google Campaign for ID [" + campaignID + "] with new Micro Budget Amount [" + newMicroBudgetAmount + "]", e);
 		}
 	}
 
@@ -2080,14 +2103,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	private CampaignOperation[] getCampaignOp(Long campaignID, Operator op)
 	{
-		Campaign campaign = new Campaign();
-		campaign.setId(campaignID.longValue());
-
-		CampaignOperation operation = new CampaignOperation();
+		final Campaign campaign = new Campaign();
+		campaign.setId(campaignID);
+		final CampaignOperation operation = new CampaignOperation();
 		operation.setOperand(campaign);
 		operation.setOperator(op);
-		return new CampaignOperation[]
-		{ operation };
+		return new CampaignOperation[]{operation};
 	}
 
 	/*
