@@ -145,7 +145,8 @@ public class ProtocolEnum
 		GoogleReport("semplest.services.client.api.GoogleAdwordsServiceClient"),
 		MsnReport("semplest.services.client.api.MSNAdcenterServiceClient"),
 		AddPromotionToAdEngine("semplest.services.client.api.SemplestAdEngineServiceClient"),
-		ExecuteBidProcess("semplest.services.client.api.SemplestAdEngineServiceClient");;
+		ExecuteBidProcess("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		DeleteAdEngineAd("semplest.services.client.api.SemplestAdEngineServiceClient");
 		
 		private String val;
 
