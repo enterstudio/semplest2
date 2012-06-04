@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -119,7 +120,6 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		adEngines_ChangePromotionStartDate.add(AdEngine.Google.name());
 		client.ChangePromotionStartDate(promotionID_ChangePromotionStartDate, newStartDate_ChangePromotionStartDate, adEngines_ChangePromotionStartDate);
 
-		*/
 		
 		//
 		// DeleteKeyword
@@ -129,6 +129,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_DeleteKeyword = new ArrayList<String>();
 		adEngines_DeleteKeyword.add(AdEngine.Google.name());
 		client.DeleteKeyword(promotionID_DeleteKeyword, keyword_DeleteKeyword, adEngines_DeleteKeyword);
+			*/
+		
+		//
+		// AddSiteLinkForAd
+		//
+		final Integer promotionID_AddSiteLinkForAd = 62;
+		final Integer promotionAdID_AddSiteLinkForAd = 218;
+		final List<String> adEngines_AddSiteLinkForAd = new ArrayList<String>();
+		adEngines_AddSiteLinkForAd.add(AdEngine.Google.name());
+		client.AddSiteLinkForAd(promotionID_AddSiteLinkForAd, promotionAdID_AddSiteLinkForAd, adEngines_AddSiteLinkForAd);
+		
 	}
 
 	@Override
@@ -178,7 +189,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean PauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines) throws Exception
+	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -214,7 +225,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean DeleteSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
+	public Boolean DeleteSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
@@ -269,7 +280,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean UpdateSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
+	public Boolean UpdateSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
 			throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -332,12 +343,19 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "AddAd", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
-
+	
 	@Override
-	public Boolean AddSiteLinkForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public Boolean AddSiteLinkForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("AddAd JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, "AddSiteLinkForAd", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 }

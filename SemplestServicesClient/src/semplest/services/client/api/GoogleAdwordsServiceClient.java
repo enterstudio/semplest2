@@ -685,7 +685,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, ArrayList<GoogleSiteLink> siteLinks) throws Exception
+	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
