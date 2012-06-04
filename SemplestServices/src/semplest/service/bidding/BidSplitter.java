@@ -4,12 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.log4j.Logger;
+
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.SemplestConfiguration;
 
 public class BidSplitter {
 	
+	private static final Logger logger = Logger.getLogger(BidSplitter.class);
+
 	public static HashMap<String, Double> GetMonthlyBudgetPercentPerSE(
 			Integer promotionID, ArrayList<String> searchEngine) throws Exception {
 		
@@ -18,7 +22,7 @@ public class BidSplitter {
 			Thread.sleep(1000);
 		} catch (Exception e) {
 			e.printStackTrace();
-			//logger.info("Unable to sleep! May have error in default config values!");
+			logger.error("Unable to sleep! May have error in default config values! "+e.getMessage());
 		}
 		
 		Double googlePercent =  ((Integer) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent")).doubleValue();
