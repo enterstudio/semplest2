@@ -71,29 +71,42 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionAdID_DeleteAd = 218;
 		final List<String> adEngines_DeleteAd = new ArrayList<String>();
 		adEngines_DeleteAd.add(AdEngine.Google.name());
-		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
-		
+		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);		
 		// 9824192 old, 9824193 new (30 in semplest, 10 in google)
 		// added: 9824192
-		 
 		
 		
-		final Integer promotionID_UpdateBudget = 62; 
-		final Double changeInBudget_UpdateBudget = 10d; 
-		final List<String> adEngines_UpdateBudget = new ArrayList<String>();
-		adEngines_UpdateBudget.add(AdEngine.Google.name());
-		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
-		// current: 6250000                 campaign: 637295; ad group: 3066031127
-		 
-		*/
-		
+		//
+		// DeleteAdEngineAd
+		//
 		final Integer customerID_DeleteAdEngineAd = 10;
 		final Integer promotionID_DeleteAdEngineAd = 62;
 		final Integer promotionAdID_DeleteAdEngineAd = 218; 
 		final List<String> adEngines_DeleteAdEngineAd = new ArrayList<String>();
 		adEngines_DeleteAdEngineAd.add(AdEngine.Google.name());
 		client.DeleteAdEngineAd(customerID_DeleteAdEngineAd, promotionID_DeleteAdEngineAd, promotionAdID_DeleteAdEngineAd, adEngines_DeleteAdEngineAd);
+		 
 		
+		//
+		// UpdateBudget
+		//
+		final Integer promotionID_UpdateBudget = 62; 
+		final Double changeInBudget_UpdateBudget = 10d; 
+		final List<String> adEngines_UpdateBudget = new ArrayList<String>();
+		adEngines_UpdateBudget.add(AdEngine.Google.name());
+		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
+		// current: 6250000                 campaign: 637295; ad group: 3066031127
+		
+		
+		//
+		// PausePromotion
+		//
+		final Integer promotionID_PausePromotion = 62; 
+		final List<String> adEngines_PausePromotion = new ArrayList<String>();
+		adEngines_PausePromotion.add(AdEngine.Google.name());
+		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
+		
+		*/
 	}
 
 	@Override
@@ -119,23 +132,27 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("productGroupID", Integer.toString(productGroupID));
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
-		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
+		final String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
 		jsonHash.put("adEngineList",adEngineListStr);
-		String json = protocolJson.createJSONHashmap(jsonHash);
-
-		String returnData = runMethod(baseurl, SERVICEOFFERED, "AddPromotionToAdEngine", json, timeoutMS);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "AddPromotionToAdEngine", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
 	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("PromotionID",Integer.toString(promotionID));
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines",adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "PausePromotion", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 
 	@Override
