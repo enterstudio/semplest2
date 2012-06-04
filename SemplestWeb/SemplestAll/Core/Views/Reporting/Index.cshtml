@@ -110,36 +110,44 @@ Reporting}
                     <table>
                         <tr>
                             <td>
-                                <div style="height: 476px; width: 250px;" class="k-treeview">
-                                    <ul id="reportTreeView">
+                                <div style="height: 476px; width: 250px; border:gray solid 1px; " class="k-treeview">
+                                    <ul id="reportTreeView" style="margin: 5px;">
                                     </ul>
                                 </div>
                             </td>
                             <td style="vertical-align: top">
-                                <div style="margin-left: 10px">
-                                    <strong>2# Please select a search engine for which you would like to view reports. Selecting
-                                        more than one engine will provide you a report with combined data.</strong>
-                                    @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
-                                    {
-                                        <br />
-                                        @Html.CheckBox("ps.PromotionPK",true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
-                                        <img src="@Url.Content("~/Content/" + item.LogoURL)" style="vertical-align: middle;" />
-                                    }
+                                <div style="margin-left: 10px;">
+                                    <div style="border:gray solid 1px;">
+                                        <div style="margin: 5px;">
+                                        <strong>2# Please select a search engine for which you would like to view reports. Selecting
+                                            more than one engine will provide you a report with combined data.</strong>
+                                        @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+                                        {
+                                            <br />
+                                            @Html.CheckBox("ps.PromotionPK",true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                                            <img src="@Url.Content("~/Content/" + item.LogoURL)" style="vertical-align: middle;" />
+                                        }
+                                        </div>
+                                    </div>
                                     <br />
                                     <br />
                                     <br />
                                     <br />
                                     <br />
-                                    <strong>#3 Please Select Date Range</strong>
-                                    <br />
-                                    <div class="table" style="margin-left: 5px;">
-                                        <ul>
-                                            <li>Start date
-                                                @Html.TextBoxFor(t => t.StartDate)
-                                                <span style="margin-left: 30px">End date</span>
-                                                @Html.TextBoxFor(t => t.EndDate)
-                                            </li>
-                                        </ul>
+                                    <div style="margin-left: 5px;border:gray solid 1px;">
+                                        <div style="margin: 5px;">
+                                            <strong>#3 Please Select Date Range</strong>
+                                            <br />
+                                            <div class="table" style="margin: 5px;">
+                                                <ul>
+                                                    <li>Start date
+                                                        @Html.TextBoxFor(t => t.StartDate)
+                                                        <span style="margin-left: 30px">End date</span>
+                                                        @Html.TextBoxFor(t => t.EndDate)
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
                                     </div>
                                     <br/>
                                     <br/>
