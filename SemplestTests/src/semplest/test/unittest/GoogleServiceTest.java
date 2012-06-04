@@ -219,11 +219,12 @@ public class GoogleServiceTest {
 			
 			//CreateOneCampaignForAccount
 			System.out.println("------------------------------------------------------------");
-			System.out.println("CreateOneCampaignForAccount:");		
 			try{
 				String campaignName = "test_" + now;
-				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.MONTHLY, 1000000000L);
-				System.out.println("OK");	
+				Long microBudgetAmount = 1000000000L;
+				System.out.println("CreateOneCampaignForAccount(" + accountID + ", " + campaignName + ", " + CampaignStatus.PAUSED.getValue() + ", " + BudgetBudgetPeriod.DAILY.getValue() + ", " + microBudgetAmount + ")");
+				Campaign cpn = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, microBudgetAmount);
+				System.out.println("***OK");	
 				System.out.println("campaignId = " + cpn.getId());
 				System.out.println("campaign name = " + cpn.getName());
 				
@@ -241,10 +242,10 @@ public class GoogleServiceTest {
 
 			//getCampaignsByAccountId
 			System.out.println("------------------------------------------------------------");
-			System.out.println("getCampaignsByAccountId:");		
 			try{
+				System.out.println("getCampaignsByAccountId(" + accountID + ", false)");
 				ArrayList<HashMap<String, String>> ret = test.getCampaignsByAccountId(accountID, false);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				for(HashMap<String, String> map : ret){
 					System.out.println("campaignId = " + map.get("Id"));
 				}				
@@ -261,13 +262,13 @@ public class GoogleServiceTest {
 			
 			//deleteCampaign
 			System.out.println("------------------------------------------------------------");
-			System.out.println("deleteCampaign:");		
 			try{
 				String campaignName = "temp_" + now;
 				Campaign cpn1 = test.CreateOneCampaignForAccount(accountID, campaignName, CampaignStatus.PAUSED, BudgetBudgetPeriod.DAILY, 2050000L);
 				System.out.println("created a temp campaign " + cpn1.getId() + ", and we'll delete it now.");
+				System.out.println("deleteCampaign(" + accountID + ", " + cpn1.getId().toString() + ")");
 				boolean ret = test.deleteCampaign(accountID, cpn1.getId());
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				System.out.println("successful = " + ret);
 				
 				//verify result
@@ -285,10 +286,10 @@ public class GoogleServiceTest {
 			
 			//changeCampaignStatus
 			System.out.println("------------------------------------------------------------");
-			System.out.println("changeCampaignStatus:");		
 			try{
+				System.out.println("changeCampaignStatus(" + accountID + ", " + campaignID + ", " + CampaignStatus.ACTIVE.getValue() + ")");
 				boolean ret = test.changeCampaignStatus(accountID, campaignID, CampaignStatus.ACTIVE);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				System.out.println("successful = " + ret);
 				
 				//verify result
@@ -307,11 +308,11 @@ public class GoogleServiceTest {
 			
 			//changeCampaignBudget
 			System.out.println("------------------------------------------------------------");
-			System.out.println("changeCampaignBudget:");		
 			try{
 				Long newBudget = 10550000L;
+				System.out.println("changeCampaignBudget(" + accountID + ", " + campaignID + ", " + newBudget + ")");	
 				boolean ret = test.changeCampaignBudget(accountID, campaignID, newBudget);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				System.out.println("successful = " + ret);
 				
 				//verify result
@@ -330,11 +331,11 @@ public class GoogleServiceTest {
 			
 			//UpdateCampaignName
 			System.out.println("------------------------------------------------------------");
-			System.out.println("UpdateCampaignName:");		
 			try{
 				String campaignName = "update_" + now;
+				System.out.println("UpdateCampaignName(" + accountID + ", " + campaignID + ", " + campaignName + ")");	
 				boolean ret = test.UpdateCampaignName(accountID, campaignID, campaignName);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				System.out.println("successful = " + ret);
 				
 				//verify result
@@ -358,11 +359,12 @@ public class GoogleServiceTest {
 			
 			//AddAdGroup
 			System.out.println("------------------------------------------------------------");
-			System.out.println("AddAdGroup:");		
 			try{
 				String AdGroupName = "test_" + now;
-				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED, 1000000L);
-				System.out.println("OK");	
+				Long defaultMicroBid = 1000000L;
+				System.out.println("AddAdGroup(" + accountID + ", " + campaignID + ", " + AdGroupName + ", " + AdGroupStatus.PAUSED.getValue() + ", " + defaultMicroBid + ")");	
+				adGroupID = test.AddAdGroup(accountID, campaignID, AdGroupName, AdGroupStatus.PAUSED, defaultMicroBid);
+				System.out.println("***OK");	
 				System.out.println("adGroupId = " + adGroupID);
 				
 				//verify result
@@ -377,10 +379,10 @@ public class GoogleServiceTest {
 			
 			//getAdGroupsByCampaignId
 			System.out.println("------------------------------------------------------------");
-			System.out.println("getAdGroupsByCampaignId:");		
 			try{
+				System.out.println("getAdGroupsByCampaignId(" + accountID + ", " + campaignID + ", false)");
 				GoogleAdGroupObject[] adGrps = test.getAdGroupsByCampaignId(accountID, campaignID, false);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				for(GoogleAdGroupObject a : adGrps){
 					System.out.println("adGroupId = " + a.getAdGroupID());
 				}				
@@ -397,7 +399,6 @@ public class GoogleServiceTest {
 			
 			//addTextAd
 			System.out.println("------------------------------------------------------------");
-			System.out.println("addTextAd:");		
 			try{
 				String headline = "test_" + now;
 				String description1 = "unit test";
@@ -405,23 +406,14 @@ public class GoogleServiceTest {
 				String url1 = "http://www.semplest.com";
 				String url2 = "http://www.semplest.com/test";
 				
-				System.out.println("*** Inputs:");
-				System.out.println("accountID = " + accountID);
-				System.out.println("adGroupID = " + adGroupID);
-				System.out.println("headline = " + headline);
-				System.out.println("description1 = " + description1);
-				System.out.println("description2 = " + description2);
-				System.out.println("url1 = " + url1);
-				System.out.println("url2 = " + url2);	
-				
-				AdID = test.addTextAd(accountID, adGroupID, headline, description1, description2, url1, url2);
+				System.out.println("addTextAd(" + accountID + ", " + adGroupID + ", " + headline + ", " + description1 + ", " + description2 + ", " + url1 + ", " + url2 + ")");
+				AdID = test.addTextAd(accountID, adGroupID, headline, description1, description2, url1, url2);				
+				System.out.println("***OK");					
+				System.out.println("adId = " + AdID);
 				
 				//verify result
 				if(AdID.equals(0L))
-					errorHandler(new Exception(vMsg + "No AdID returned."));
-							
-				System.out.println("*** OK");					
-				System.out.println("adId = " + AdID);					
+					errorHandler(new Exception(vMsg + "No AdID returned."));										
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -431,32 +423,22 @@ public class GoogleServiceTest {
 			
 			//updateAD
 			System.out.println("------------------------------------------------------------");
-			System.out.println("updateAD:");		
 			try{
 				String headline = "update headline";
 				String description1 = "updateAD";
 				String description2 = "unit test";
 				String url1 = "http://www.semplest.com/update_test";
-				String url2 = "http://www.semplest.com/updat_test2";
+				String url2 = "http://www.semplest.com/updat_test2";				
 				
-				System.out.println("*** Inputs:");
-				System.out.println("accountID = " + accountID);
-				System.out.println("adGroupID = " + adGroupID);
-				System.out.println("AdID = " + AdID);
-				System.out.println("headLine = " + headline);
-				System.out.println("description1 = " + description1);
-				System.out.println("description2 = " + description2);
-				System.out.println("url1 = " + url1);
-				System.out.println("url2 = " + url2);	
-				
+				System.out.println("updateAD(" + accountID + ", " + adGroupID + ", " + AdID + ", " + headline + ", " + description1 + ", " + description2 + ", " + url1 + ", " + url2 + ")");
 				Long ret = test.updateAD(accountID, adGroupID, AdID, headline, description1, description2, url1, url2);			
+				System.out.println("***OK");	
+				System.out.println("successful = " + ret);
 				
 				//verify result
 				if(!ret.equals(AdID))
-					errorHandler(new Exception(vMsg + "Returned AdID not correct: " + ret + " != " + AdID));
+					errorHandler(new Exception(vMsg + "Returned AdID not correct: " + ret + " != " + AdID));		
 				
-				System.out.println("*** OK");	
-				System.out.println("successful = " + ret);
 			}
 			catch(Exception e){
 				e.printStackTrace();
@@ -466,16 +448,11 @@ public class GoogleServiceTest {
 			
 			//deleteAD
 			System.out.println("------------------------------------------------------------");
-			System.out.println("deleteAD:");		
-			try{
-				System.out.println("*** Inputs:");
-				System.out.println("accountID = " + accountID);
-				System.out.println("adGroupID = " + adGroupID);
-				System.out.println("AdID = " + AdID);
-				
+			try{				
+				System.out.println("deleteAD(" + accountID + ", " + adGroupID + ", " + AdID + ")");
 				Long ret = test.deleteAD(accountID, adGroupID, AdID);
 				
-				System.out.println("*** OK");	
+				System.out.println("***OK");	
 				System.out.println("successful = " + ret);
 			}
 			catch(Exception e){
@@ -486,12 +463,12 @@ public class GoogleServiceTest {
 						
 			//deleteAdGroup
 			System.out.println("------------------------------------------------------------");
-			System.out.println("deleteAdGroup:");		
 			try{
 				Long tempAdGroup = test.AddAdGroup(accountID, campaignID, "temp", AdGroupStatus.PAUSED, 1000000L);
-				System.out.println("created a temp adGroup " + tempAdGroup + ", and we'll delete it now.");
+				System.out.println("created a temp adGroup " + tempAdGroup + ", and we'll delete it now.");				
 				boolean ret = test.deleteAdGroup(accountID, tempAdGroup);
-				System.out.println("OK");	
+				System.out.println("deleteAdGroup(" + accountID + ", " + tempAdGroup + ")");	
+				System.out.println("***OK");
 				System.out.println("successful = " + ret);
 				
 				//verify result
@@ -546,10 +523,15 @@ public class GoogleServiceTest {
 			
 			//addKeyWordToAdGroup
 			System.out.println("------------------------------------------------------------");
-			System.out.println("addKeyWordToAdGroup:");		
 			try{
+				System.out.println("addKeyWordToAdGroup(" + accountID + ", " + adGroupID + ", 'wedding', " + KeywordMatchType.BROAD.getValue() + ", 2150000L)");	
 				KeywordDataObject k = test.addKeyWordToAdGroup(accountID, adGroupID, "wedding", KeywordMatchType.BROAD, 2150000L);
-				System.out.println("OK");	
+				System.out.println("***OK");	
+				
+				//verify result
+				if(k.equals(null)){
+					errorHandler(new Exception(vMsg + "No keyword data object returned."));
+				}
 				System.out.println("keywordId = " + k.getBidID());
 				System.out.println("keyword = " + k.getKeyword());
 				System.out.println("MicroBidAmount = " + k.getMicroBidAmount());
@@ -567,12 +549,17 @@ public class GoogleServiceTest {
 			
 			//getAllAdGroupKeywords
 			System.out.println("------------------------------------------------------------");
-			System.out.println("getAllAdGroupKeywords:");		
 			try{
+				System.out.println("getAllAdGroupKeywords(" + accountID + ", " + adGroupID + ", true)");
 				String[] keywords = test.getAllAdGroupKeywords(accountID, adGroupID, true);
-				System.out.println("OK");	
+				System.out.println("***OK");	
 				for(String s : keywords){
 					System.out.println("keyword = " + s);
+				}
+				
+				//verify result
+				if(keywords.length == 0){
+					errorHandler(new Exception(vMsg + "No Keyword returned from the AdGroup."));
 				}
 			}
 			catch(Exception e){
@@ -583,10 +570,15 @@ public class GoogleServiceTest {
 			
 			//getAllBiddableAdGroupCriteria
 			System.out.println("------------------------------------------------------------");
-			System.out.println("getAllBiddableAdGroupCriteria:");		
 			try{
+				System.out.println("getAllBiddableAdGroupCriteria(" + accountID + ", " + adGroupID + ", true)");
 				KeywordDataObject[] ret = test.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
-				System.out.println("OK");	
+				System.out.println("***OK");	
+				
+				//verify result
+				if(ret.length == 0){
+					errorHandler(new Exception(vMsg + "No KeywordDataObject returned."));
+				}
 				for(KeywordDataObject k : ret){
 					System.out.println("->");
 					System.out.println("keyword = " + k.getKeyword());
@@ -604,10 +596,15 @@ public class GoogleServiceTest {
 			
 			//setBidForKeyWord
 			System.out.println("------------------------------------------------------------");
-			System.out.println("setBidForKeyWord:");		
 			try{
+				System.out.println("setBidForKeyWord(" + accountID + ", " + keywordID + ", " + adGroupID + ", 3500000L)");
 				KeywordDataObject k = test.setBidForKeyWord(accountID, keywordID, adGroupID, 3500000L);
-				System.out.println("OK");	
+				System.out.println("***OK");	
+				
+				//verify result
+				if(k.equals(null)){
+					errorHandler(new Exception(vMsg + "No KeywordDataObject returned."));
+				}
 				System.out.println("keywordId = " + k.getBidID());
 				System.out.println("keyword = " + k.getKeyword());
 				System.out.println("MicroBidAmount = " + k.getMicroBidAmount());
@@ -718,10 +715,14 @@ public class GoogleServiceTest {
 			
 			//getAllAdGroupCriteria
 			System.out.println("------------------------------------------------------------");
-			System.out.println("getAllAdGroupCriteria:");		
 			try{
+				System.out.println("getAllAdGroupCriteria(" + accountID + ", " + adGroupID + ", true)");	
 				AdGroupCriterion[] ret = test.getAllAdGroupCriteria(accountID, adGroupID, true);
-				System.out.println("OK");	
+				System.out.println("***OK");	
+				//verify result
+				if(ret.length == 0){
+					errorHandler(new Exception(vMsg + "No AdGroupCriterion returned."));
+				}
 				for(AdGroupCriterion a : ret){
 					System.out.println("->");										
 					System.out.println("AdGroupId = " + a.getAdGroupId());
@@ -1216,37 +1217,64 @@ public class GoogleServiceTest {
 			}
 			Thread.sleep(sleepTime);
 			
-			/*
+			
 			//getReportForAccount
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getReportForAccount:");		
 			try{
-				ReportObject[] ret = test.getReportForAccount(accountID, "20120301", "20120430");
+				ReportObject[] ret = test.getReportForAccount(test_accountId, "20110101", "20120520");
 				System.out.println("OK");	
-				for(ReportObject r : ret){
-					System.out.println("->");										
-					System.out.println("AccountID = " + r.getAccountID());
-					System.out.println("keyword = " + r.getKeyword());
-					System.out.println("ApprovalStatus = " + r.getApprovalStatus());		
-					System.out.println("BidMatchType = " + r.getBidMatchType());
-					System.out.println("AverageCPC = " + r.getAverageCPC());
-					System.out.println("AveragePosition = " + r.getAveragePosition());
-					System.out.println("CampaignID = " + r.getCampaignID());
-					System.out.println("FirstPageCPC = " + r.getFirstPageCPC());
-					System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
-					System.out.println("MicroCost = " + r.getMicroCost());
-					System.out.println("NumberClick = " + r.getNumberClick());
-					System.out.println("NumberImpressions = " + r.getNumberImpressions());
-					System.out.println("QualityScore = " + r.getQualityScore());
-					System.out.println("CreatedDate = " + r.getCreatedDate());
-					System.out.println("TransactionDate = " + r.getTransactionDate());
+				
+				//verify result
+				if(ret.length == 0){
+					errorHandler(new Exception(vMsg + "Empty report data returned."));
+					return 1;
 				}
+				
+				//print out only the first and last transactions
+				System.out.println("Num of Transactions in the report = " + ret.length);
+				System.out.println(" ");
+				System.out.println("*** Print out the first transaction ***");
+				ReportObject r = ret[0];										
+				System.out.println("AccountID = " + r.getAccountID());
+				System.out.println("keyword = " + r.getKeyword());
+				System.out.println("ApprovalStatus = " + r.getApprovalStatus());		
+				System.out.println("BidMatchType = " + r.getBidMatchType());
+				System.out.println("AverageCPC = " + r.getAverageCPC());
+				System.out.println("AveragePosition = " + r.getAveragePosition());
+				System.out.println("CampaignID = " + r.getCampaignID());
+				System.out.println("FirstPageCPC = " + r.getFirstPageCPC());
+				System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
+				System.out.println("MicroCost = " + r.getMicroCost());
+				System.out.println("NumberClick = " + r.getNumberClick());
+				System.out.println("NumberImpressions = " + r.getNumberImpressions());
+				System.out.println("QualityScore = " + r.getQualityScore());
+				System.out.println("CreatedDate = " + r.getCreatedDate());
+				System.out.println("TransactionDate = " + r.getTransactionDate());
+				System.out.println(" ");
+				System.out.println("*** Print out the last transaction ***");
+				r = ret[ret.length-1];
+				System.out.println("AccountID = " + r.getAccountID());
+				System.out.println("keyword = " + r.getKeyword());
+				System.out.println("ApprovalStatus = " + r.getApprovalStatus());		
+				System.out.println("BidMatchType = " + r.getBidMatchType());
+				System.out.println("AverageCPC = " + r.getAverageCPC());
+				System.out.println("AveragePosition = " + r.getAveragePosition());
+				System.out.println("CampaignID = " + r.getCampaignID());
+				System.out.println("FirstPageCPC = " + r.getFirstPageCPC());
+				System.out.println("MicroBidAmount = " + r.getMicroBidAmount());
+				System.out.println("MicroCost = " + r.getMicroCost());
+				System.out.println("NumberClick = " + r.getNumberClick());
+				System.out.println("NumberImpressions = " + r.getNumberImpressions());
+				System.out.println("QualityScore = " + r.getQualityScore());
+				System.out.println("CreatedDate = " + r.getCreatedDate());
+				System.out.println("TransactionDate = " + r.getTransactionDate());
 			}
 			catch(Exception e){
 				errorHandler(e);
 			}
 			Thread.sleep(sleepTime);
-			*/
+			
 			
 			//---Methods not ready. to be implemented.
 			//addAccountBudget
