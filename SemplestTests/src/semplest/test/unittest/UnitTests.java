@@ -64,8 +64,8 @@ public class UnitTests {
 		Date date = new Date();
 		now = dateFormat.format(date);
 		String reportName = "UnitTestReport" + now + ".txt";
-		//String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
-		String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
+		String reportPath = "/semplest/TestReports/UnitTest/" + reportName;
+		//String reportPath = "Z:\\TestReports\\UnitTest\\" + reportName;
 		
 		try{
 			//Create Report Header						
