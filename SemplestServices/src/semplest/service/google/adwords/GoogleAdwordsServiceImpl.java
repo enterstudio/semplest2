@@ -110,6 +110,7 @@ import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
 import com.google.api.adwords.v201109.o.AdGroupEstimateRequest;
 import com.google.api.adwords.v201109.o.Attribute;
 import com.google.api.adwords.v201109.o.AttributeType;
+import com.google.api.adwords.v201109.o.AverageTargetedMonthlySearchesSearchParameter;
 import com.google.api.adwords.v201109.o.CampaignEstimateRequest;
 import com.google.api.adwords.v201109.o.CategoryProductsAndServicesSearchParameter;
 import com.google.api.adwords.v201109.o.CriterionAttribute;
@@ -121,6 +122,7 @@ import com.google.api.adwords.v201109.o.KeywordEstimateRequest;
 import com.google.api.adwords.v201109.o.KeywordMatchTypeSearchParameter;
 import com.google.api.adwords.v201109.o.LocationSearchParameter;
 import com.google.api.adwords.v201109.o.LongAttribute;
+import com.google.api.adwords.v201109.o.LongComparisonOperation;
 import com.google.api.adwords.v201109.o.RelatedToKeywordSearchParameter;
 import com.google.api.adwords.v201109.o.RelatedToUrlSearchParameter;
 import com.google.api.adwords.v201109.o.RequestType;
@@ -1509,6 +1511,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		searchParamList.add(excludeKeywordSearchParameter);
 		*/
 
+		
+		// Average monthly search  
+		AverageTargetedMonthlySearchesSearchParameter avgMonthlySearchParameter = new AverageTargetedMonthlySearchesSearchParameter();
+		LongComparisonOperation range = new LongComparisonOperation();
+		range.setMinimum(100L); // may dynamically change in future -- TBD
+		range.setMaximum(100000000000000000L);
+		avgMonthlySearchParameter.setOperation(range);
+		searchParamList.add(avgMonthlySearchParameter);
+		
+		
 		/*
 
 		// Create related to URL search parameter.
