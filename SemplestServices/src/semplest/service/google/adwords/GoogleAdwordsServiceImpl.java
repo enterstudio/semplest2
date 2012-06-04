@@ -1289,21 +1289,31 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 	
-	public ArrayList<KeywordToolStats> getGoogleKeywordIdeas(String accountID, String url, String[] keywords, String[] exclude_keywords,
-			Integer categoryId, int numberResults) throws Exception
+	public ArrayList<KeywordToolStats> getGoogleKeywordIdeas(String[] keywords, int numberResults) throws Exception
 	{
 	
+		
+
+		if (numberResults > 1000)
+		{
+			throw new Exception("numberResults must be <= 1000. Google doesn't return more than that!! The feature"
+					+ " is given so that you may use a smaller number to save API cost in case a small number of keywords needed.");
+		}
+		
 		ArrayList<KeywordToolStats> returnData = new ArrayList<KeywordToolStats>();
 		TargetingIdeaPage page;
 		TargetingIdeaServiceInterface targetingIdeaService;
 
-		if (numberResults > 100)
-		{
-			throw new Exception("numberResults must be <= 100. Google doesn't return more than that!! The feature"
-					+ " is given so that you may use a smaller number to save API cost in case a small number of keywords needed.");
-		}
 		HashSet<Keyword> stopWordSet = new HashSet<Keyword>();
+		
+		int iterations=1;
+		int numResIter = numberResults;
+		if(numberResults>800) {
+			iterations=2;
+			numResIter=numberResults-800;
+		}
 
+		/*
 		for (String word : keywords)
 		{
 			Keyword kw = new Keyword();
@@ -1326,12 +1336,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				stopWordSet.add(kw);
 			}
 		}
+		*/
 
 		try
 		{
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
-			// AdWordsUser user = new
-			// AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
+			// AdWordsUser user = new AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
 			// Get the TargetingIdeaService
 			targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
 		}
@@ -1355,7 +1365,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Set selector paging (required for targeting idea service).
 		Paging paging = new Paging();
 		paging.setStartIndex(0);
-		paging.setNumberResults(numberResults);
+		paging.setNumberResults(numResIter);
 		selector.setPaging(paging);
 
 		ArrayList<SearchParameter> searchParamList = new ArrayList<SearchParameter>();
@@ -1381,19 +1391,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		searchParamList.add(relatedToKeywordSearchParameter);
 
 
+		/*
+		
 		// Exclude search parameter
 		ExcludedKeywordSearchParameter excludeKeywordSearchParameter = new ExcludedKeywordSearchParameter();
 		excludeKeywordSearchParameter.setKeywords(stopWordSet.toArray(new Keyword[stopWordSet.size()]));
 		searchParamList.add(excludeKeywordSearchParameter);
+		*/
 
+		/*
 
 		// Create related to URL search parameter.
 		RelatedToUrlSearchParameter relatedToUrlSearchParameter = new RelatedToUrlSearchParameter();
-		relatedToUrlSearchParameter.setUrls(new String[]
-		{ url });
+		relatedToUrlSearchParameter.setUrls(new String[] { url });
 		//relatedToUrlSearchParameter.setIncludeSubUrls(true);
 		searchParamList.add(relatedToUrlSearchParameter);
-
+		 */
 
 		// matchType parameter
 		KeywordMatchTypeSearchParameter matchTypeParameter = new KeywordMatchTypeSearchParameter();
@@ -1402,6 +1415,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		searchParamList.add(matchTypeParameter);
 
 
+		/*
 		// Category ID parameter
 		CategoryProductsAndServicesSearchParameter categoryProductServiceSearchParameter = new CategoryProductsAndServicesSearchParameter ();
 		if (categoryId != null)
@@ -1409,6 +1423,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			categoryProductServiceSearchParameter.setCategoryId(categoryId);
 			searchParamList.add(categoryProductServiceSearchParameter);
 		}
+		*/
 
 
 		// Location search parameter		
@@ -1423,65 +1438,78 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// set the selector
 		selector.setSearchParameters(searchParamList.toArray(new SearchParameter[searchParamList.size()]));
 
-		try
-		{
-			// Get related placements.
-			page = targetingIdeaService.get(selector);
-		}
-		catch (ApiException e)
-		{
-			throw new Exception(e.dumpToString());
-		}
-		catch (RemoteException e)
-		{
-			throw new Exception(e);
-		}
-
-
-		if (page != null && page.getEntries() != null)
-		{
-
-			for (TargetingIdea targetingIdea : page.getEntries())
-			{
-				Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
-				Keyword kw = (Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();
-				Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue();
-				Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
-				// logger.info(kw.getText()+" "+
-				// kw.getMatchType().getValue()+" "+ averageMonthlySearches+" "+
-				// comp);
-				//logger.info(kw.getText()+": "+averageMonthlySearches);
-				//logger.info(kw.getText());
-				
-				KeywordMatchingType kwMatchType = null;
-				if (kw.getMatchType() == KeywordMatchType.EXACT)
-				{
-					kwMatchType = KeywordMatchingType.EXACT;
-				}
-				else if (kw.getMatchType() == KeywordMatchType.PHRASE)
-				{
-					kwMatchType = KeywordMatchingType.PHRASE;
-				}
-				else if (kw.getMatchType() == KeywordMatchType.BROAD)
-				{
-					kwMatchType = KeywordMatchingType.BROAD;
-				}
-				
-				returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
-				if (stopWordSet.contains(kw))
-				{
-					logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
-				}
-				else
-				{
-					if (stopWordSet.size() < 200)
-					{
-						stopWordSet.add(kw);
-					}
-				}
+		
+		for (int iter = 1; iter <= iterations; iter++){ 
+			try {
+				// Get related placements.
+				page = targetingIdeaService.get(selector);
+			} catch (ApiException e) {
+				throw new Exception(e.dumpToString());
+			} catch (RemoteException e) {
+				throw new Exception(e);
 			}
 
+
+			if (page != null && page.getEntries() != null) {
+
+				for (TargetingIdea targetingIdea : page.getEntries()) {
+					
+					Map<AttributeType, Attribute> data = MapUtils.toMap(targetingIdea.getData());
+					Keyword kw = (Keyword) ((CriterionAttribute) data.get(AttributeType.CRITERION)).getValue();
+					Long averageMonthlySearches = ((LongAttribute) data.get(AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES)).getValue();
+					Double comp = ((DoubleAttribute) data.get(AttributeType.COMPETITION)).getValue();
+					// logger.info(kw.getText()+" "+
+					// kw.getMatchType().getValue()+" "+ averageMonthlySearches+" "+
+					// comp);
+					//logger.info(kw.getText()+": "+averageMonthlySearches);
+					//logger.info(kw.getText());
+
+					KeywordMatchingType kwMatchType = null;
+					if (kw.getMatchType() == KeywordMatchType.EXACT)
+					{
+						kwMatchType = KeywordMatchingType.EXACT;
+					}
+					else if (kw.getMatchType() == KeywordMatchType.PHRASE)
+					{
+						kwMatchType = KeywordMatchingType.PHRASE;
+					}
+					else if (kw.getMatchType() == KeywordMatchType.BROAD)
+					{
+						kwMatchType = KeywordMatchingType.BROAD;
+					}
+
+					returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+					if (stopWordSet.contains(kw))
+					{
+						logger.info("Google is fooling us... returned a keyword from the stop list: "+kw.getText());
+					}
+					else
+					{
+						if (stopWordSet.size() < 200)
+						{
+							stopWordSet.add(kw);
+						}
+					}
+				}
+
+			}
+
+
+			// Exclude search parameter
+			ExcludedKeywordSearchParameter excludeKeywordSearchParameter = new ExcludedKeywordSearchParameter();
+			excludeKeywordSearchParameter.setKeywords(stopWordSet.toArray(new Keyword[stopWordSet.size()]));
+			searchParamList.add(excludeKeywordSearchParameter);
+
+			selector.setSearchParameters(searchParamList.toArray(new SearchParameter[searchParamList.size()]));
+			numResIter=800;
+			// Set selector paging (required for targeting idea service).
+			paging = new Paging();
+			paging.setStartIndex(0);
+			paging.setNumberResults(numResIter);
+			selector.setPaging(paging);
+		
 		}
+		
 
 		//logger.info("Keyword "+word+" is done.");
 		//} //for (String word : keywords)
