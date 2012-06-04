@@ -10,10 +10,13 @@ public class AdsObject
 	private String AdTextLine1;
 	private String AdTextLine2;
 	private Long AdEngineAdID;
+	private boolean IsDeleted;
+	private java.util.Date CreatedDate;
+	private java.util.Date DeletedDate;
 		
 	public AdsObject() {}  // needed by Spring
 	
-	public AdsObject(Integer promotionAdsPK, Integer promotionFK, String adTitle, String adTextLine1, String adTextLine2, Long adEngineAdID)
+	public AdsObject(Integer promotionAdsPK, Integer promotionFK, String adTitle, String adTextLine1, String adTextLine2, Long adEngineAdID, boolean isDeleted, java.util.Date createdDate, java.util.Date deletedDate)
 	{
 		PromotionAdsPK = promotionAdsPK;
 		PromotionFK = promotionFK;
@@ -21,6 +24,9 @@ public class AdsObject
 		AdTextLine1 = adTextLine1;
 		AdTextLine2 = adTextLine2;
 		AdEngineAdID = adEngineAdID;
+		IsDeleted = isDeleted;		
+		CreatedDate = createdDate;
+		DeletedDate = deletedDate;
 	}
 	
 	public String getAdTitle()
@@ -72,6 +78,36 @@ public class AdsObject
 		AdTextLine2 = adTextLine2;
 	}
 	
+	public boolean isIsDeleted()
+	{
+		return IsDeleted;
+	}
+
+	public void setIsDeleted(boolean isDeleted)
+	{
+		IsDeleted = isDeleted;
+	}
+
+	public java.util.Date getCreatedDate()
+	{
+		return CreatedDate;
+	}
+
+	public void setCreatedDate(java.util.Date createdDate)
+	{
+		CreatedDate = createdDate;
+	}
+
+	public java.util.Date getDeletedDate()
+	{
+		return DeletedDate;
+	}
+
+	public void setDeletedDate(java.util.Date deletedDate)
+	{
+		DeletedDate = deletedDate;
+	}
+
 	@Override
 	public int hashCode()
 	{
@@ -81,10 +117,14 @@ public class AdsObject
 		result = prime * result + ((AdTextLine1 == null) ? 0 : AdTextLine1.hashCode());
 		result = prime * result + ((AdTextLine2 == null) ? 0 : AdTextLine2.hashCode());
 		result = prime * result + ((AdTitle == null) ? 0 : AdTitle.hashCode());
+		result = prime * result + ((CreatedDate == null) ? 0 : CreatedDate.hashCode());
+		result = prime * result + ((DeletedDate == null) ? 0 : DeletedDate.hashCode());
+		result = prime * result + (IsDeleted ? 1231 : 1237);
 		result = prime * result + ((PromotionAdsPK == null) ? 0 : PromotionAdsPK.hashCode());
 		result = prime * result + ((PromotionFK == null) ? 0 : PromotionFK.hashCode());
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -123,6 +163,22 @@ public class AdsObject
 		}
 		else if (!AdTitle.equals(other.AdTitle))
 			return false;
+		if (CreatedDate == null)
+		{
+			if (other.CreatedDate != null)
+				return false;
+		}
+		else if (!CreatedDate.equals(other.CreatedDate))
+			return false;
+		if (DeletedDate == null)
+		{
+			if (other.DeletedDate != null)
+				return false;
+		}
+		else if (!DeletedDate.equals(other.DeletedDate))
+			return false;
+		if (IsDeleted != other.IsDeleted)
+			return false;
 		if (PromotionAdsPK == null)
 		{
 			if (other.PromotionAdsPK != null)
@@ -138,15 +194,16 @@ public class AdsObject
 		else if (!PromotionFK.equals(other.PromotionFK))
 			return false;
 		return true;
-	}	
-	
+	}
+
 	@Override
 	public String toString()
 	{
 		return "AdsObject [PromotionAdsPK=" + PromotionAdsPK + ", PromotionFK=" + PromotionFK + ", AdTitle=" + AdTitle + ", AdTextLine1="
-				+ AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + "]";
+				+ AdTextLine1 + ", AdTextLine2=" + AdTextLine2 + ", AdEngineAdID=" + AdEngineAdID + ", IsDeleted=" + IsDeleted + ", CreatedDate="
+				+ CreatedDate + ", DeletedDate=" + DeletedDate + "]";
 	}
-	
+
 	/**
 	 * Sorts in descending order of AdEngineAdID
 	 */
