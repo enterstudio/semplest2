@@ -210,5 +210,17 @@ public class PromotionObj
 	{
 		AdvertisingEngineAccountPK = advertisingEngineAccountPK;
 	}
+	@Override
+	public String toString()
+	{
+		return "PromotionObj [PromotionPK=" + PromotionPK + ", ProductGroupFK=" + ProductGroupFK + ", PromotionName=" + PromotionName
+				+ ", PromotionDescription=" + PromotionDescription + ", LandingPageURL=" + LandingPageURL + ", DisplayURL=" + DisplayURL
+				+ ", PromotionBudgetAmount=" + PromotionBudgetAmount + ", PromotionStartDate=" + PromotionStartDate + ", PromotionEndDate="
+				+ PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", BudgetToAddToNextCycle=" + BudgetToAddToNextCycle + ", CycleStartDate="
+				+ CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle=" + StartBudgetInCycle
+				+ ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused
+				+ ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
+				+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + "]";
+	}
 	
 }
