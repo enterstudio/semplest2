@@ -36,7 +36,7 @@ BEGIN TRY
 		left join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK
 		where p.PromotionPK  = @PromotionPK
 		--get ADs
-		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdTextLine1, pa.AdTextLine2, aea.AdvertisingEngineAdPK [AdEngineAdID] from Promotion p
+		select pa.PromotionAdsPK,pa.PromotionFK,  pa.AdTitle, pa.AdTextLine1, pa.AdTextLine2, aea.AdvertisingEngineAdPK [AdEngineAdID], pa.IsDeleted, pa.CreatedDate, pa.DeletedDate from Promotion p
 		inner join PromotionAds pa on pa.PromotionFK = p.PromotionPK
 		left outer join AdvertisingEngineAds aea on aea.PromotionAdsFK = pa.PromotionAdsPK
 		where p.PromotionPK = @PromotionPK
