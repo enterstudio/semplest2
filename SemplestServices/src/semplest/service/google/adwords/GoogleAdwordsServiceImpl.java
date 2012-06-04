@@ -1892,10 +1892,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		try
 		{
-			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
-			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
-			CampaignReturnValue ret = campaignService.mutate(operations);
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);			
+			final Campaign campaign = new Campaign();
+			campaign.setId(campaignID);
+			campaign.setStatus(status);
+			final CampaignOperation operation = new CampaignOperation();
+			operation.setOperand(campaign);
+			operation.setOperator(Operator.SET);
+			final CampaignOperation[] operations = new CampaignOperation[]{operation};
+			final CampaignReturnValue ret = campaignService.mutate(operations);
 			if (ret != null && ret.getValue() != null)
 			{
 				return true;
@@ -1907,15 +1913,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception(e);
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception(e.dumpToString());
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]: " + e.dumpToString();
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 

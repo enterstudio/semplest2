@@ -634,7 +634,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				logger.info("Will try to Pause Google Campaign using AccountID [" + accountId + "] and CampaignID [" + campaignId + "]");
+				logger.info("Will try to Pause Google Campaign using AccountID [" + accountId + "] and CampaignID [" + campaignId + "] (it's associated with SEMplest Promotion for ID [" + promotionID + "])");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final Boolean result = googleAdwordsService.changeCampaignStatus(accountId, campaignId, CampaignStatus.PAUSED);
 				if (!result)
