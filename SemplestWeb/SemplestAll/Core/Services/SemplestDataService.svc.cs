@@ -6,6 +6,7 @@ using System.Data.Services;
 using System.Data.Services.Common;
 using Semplest.Core.Models;
 using SemplestModel;
+using System.Data.Objects;
 
 namespace Semplest.Core.Services
 {
@@ -117,11 +118,14 @@ namespace Semplest.Core.Services
             }
         }
 
+        static readonly Func<SemplestEntities, int, Promotion> PromotonIdQuery = CompiledQuery.Compile((SemplestEntities nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
+
         public static CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
         {
             var model = new CampaignSetupModel();
             var dbcontext = InitializeContext();
-            var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
+            //var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
+            var promo = PromotonIdQuery.Invoke(dbcontext, promoId);
 
             // populate model from promotions
             if (promo != null)
