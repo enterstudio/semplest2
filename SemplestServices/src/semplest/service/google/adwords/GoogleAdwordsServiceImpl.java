@@ -1,6 +1,7 @@
 package semplest.service.google.adwords;
 
 import java.rmi.RemoteException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -154,8 +155,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
 	private final boolean useSandbox; // = false; // true; // // true; //
-
-	private static SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
@@ -432,8 +431,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			String end = "";
 			if (startDate != null && endDate != null)
 			{
-				start = YYYYMMDD.format(startDate);
-				end = YYYYMMDD.format(endDate);
+				start = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(startDate);
+				end = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(endDate);
 			}
 			else
 			{
@@ -1904,6 +1903,52 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			throw new Exception(e);
 		}
 	}
+	
+	@Override
+	public Boolean ChangeCampaignStartDate(String accountID, Long campaignID, java.util.Date newStartDate) throws Exception
+	{
+		logger.info("Will try to change the Campaign StartDate to [" + newStartDate + "] for AccountID [" + accountID + "] and CampaignID [" + campaignID + "]");
+		try
+		{
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);			
+			final Campaign campaign = new Campaign();
+			campaign.setId(campaignID);
+			final String startDateString = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(newStartDate);
+			campaign.setStartDate(startDateString);
+			final CampaignOperation operation = new CampaignOperation();
+			operation.setOperand(campaign);
+			operation.setOperator(Operator.SET);
+			final CampaignOperation[] operations = new CampaignOperation[]{operation};
+			final CampaignReturnValue ret = campaignService.mutate(operations);
+			if (ret != null && ret.getValue() != null)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (ServiceException e)
+		{
+			final String errMsg = "Problem changing the StartDate of Google campaign [" + campaignID + "] to StartDate [" + newStartDate + "] for Google Account ID [" + accountID + "]";
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (ApiException e)
+		{
+			final String errMsg = "Problem changing the StartDate of Google campaign [" + campaignID + "] to StartDate [" + newStartDate + "] for Google Account ID [" + accountID + "]: " + e.dumpToString();
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (RemoteException e)
+		{
+			final String errMsg = "Problem changing the StartDate of Google campaign [" + campaignID + "] to StartDate [" + newStartDate + "] for Google Account ID [" + accountID + "]";
+			logger.info(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
 
 	public String changeCampaignStatus(String json) throws Exception
 	{
@@ -1918,6 +1963,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
 	{
+		logger.info("Will try to change the CampaignStatus to [" + status + "] for AccountID [" + accountID + "] and CampaignID [" + campaignID + "]");
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -2781,10 +2827,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		budgetOrder.setBillingAccountId(billingAccountID);
 		//states now
 		Calendar cal = Calendar.getInstance();
-		budgetOrder.setStartDateTime(YYYYMMDD.format(cal.getTime()));
+		budgetOrder.setStartDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD.format(cal.getTime()));
 		//assume enddate 15 years in future
 		cal.add(Calendar.YEAR, 15);
-		budgetOrder.setEndDateTime(YYYYMMDD.format(cal.getTime()));
+		budgetOrder.setEndDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD.format(cal.getTime()));
 		//setUnlimited Budget
 		if (initialBudgetAmount == null)
 		{

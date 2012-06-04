@@ -1042,12 +1042,59 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			return false;
 		}
 	}
+	
+	public String ChangePromotionStartDate(String json) throws Exception
+	{
+		logger.debug("call ChangePromotionStartDate(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String newStartDateString = data.get("newStartDate");	
+		final java.util.Date newStartDate = SemplestUtils.DATE_FORMAT_YYYYMMDD.parse(newStartDateString);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = ChangePromotionStartDate(promotionID, newStartDate, adEngines);
+		return gson.toJson(res);
+	}
 
 	@Override
 	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to change StartDate for PromotionID [" + promotionID + "] to  [" + newStartDate + "] for AdEngines [" + adEngines + "]");
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+				final Boolean processedSuccessully = googleAdwordsService.ChangeCampaignStartDate(accountID, campaignID, newStartDate);
+				if (!processedSuccessully)
+				{
+					final String errMsg = "Problem changing StartDate in Google Campaign [" + campaignID + "] to [" + newStartDate + "] for GoogleAccountID [" + accountID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating ads (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = "Error Summary:\n" + getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}
 	}
 
 	@Override
