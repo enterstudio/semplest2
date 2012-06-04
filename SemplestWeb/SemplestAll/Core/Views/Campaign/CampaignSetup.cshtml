@@ -37,8 +37,8 @@
             @Html.ValidationSummary(true)
             <div id="tabstrip">
                 <ul>
-                    <li class="k-state-active">DEFINE PRODUCT</li>
-                    <li>CREATE ADS</li>
+                    <li class="k-state-active">Define Product</li>
+                    <li>Create Ads</li>
                 </ul>
                 <div>
                     @Html.EditorFor(t => t.ProductGroup)
@@ -60,12 +60,12 @@
 
     var onActivate = function () {
         switch (tabStrip.select().text()) {
-            case "DEFINE PRODUCT":
+            case "Define Product":
                 $("input[type='button']#btnOne").addClass('k-state-btnerror');
                 $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
                 $("input[type='button']#btnThree").removeClass('k-state-btnerror');
                 break;
-            case "CREATE ADS":
+            case "Create Ads":
                 $("input[type='button']#btnOne").removeClass('k-state-btnerror');
                 $("input[type='button']#btnTwo").addClass('k-state-btnerror');
                 $("input[type='button']#btnThree").removeClass('k-state-btnerror');
