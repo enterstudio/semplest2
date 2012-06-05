@@ -266,7 +266,18 @@ namespace Semplest.Admin.Models
         public IEnumerable<SelectListItem> EmployeeTypes { get; set; }
     }
 
-    
+
+    public class CustomerImport
+    {
+
+        public int ParentID { get; set; }
+        //for billtype dropdown
+        public int SelectedBillTypeID { get; set; }
+
+        [DisplayName("Bill Type")]
+        public IEnumerable<SelectListItem> BillTypes { get; set; }
+    }
+
     public class CustomerAccountWithEmployeeModel
     {
         public CustomerAccount CustomerAccount { get; set; }
@@ -311,7 +322,14 @@ namespace Semplest.Admin.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
     }
-    
+
+    public class ImportResultModel
+    {
+        public String Importresult { get; set; }
+    }
+
+
+
 
     public class AccountServiceWithEmployeeModel
     {
