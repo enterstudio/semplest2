@@ -133,15 +133,14 @@ public class KeywordTestThread implements Runnable {
 						StackTraceElement[] ste = e.getStackTrace();
 						for(StackTraceElement s : ste){
 							writer.append(s.getClassName());
-							writer.append(',');
+							writer.append(':');
 							writer.append(s.getMethodName());
-							writer.append(',');
+							writer.append(':');
 							writer.append(String.valueOf(s.getLineNumber()));
 							writer.append(',');
-							writer.append('\n');
 						}		
 						//*/
-						
+						writer.append('\n');
 						writer.flush();
 						
 						//noError = false;

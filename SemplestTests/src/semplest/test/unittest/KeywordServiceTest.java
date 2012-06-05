@@ -14,10 +14,23 @@ public class KeywordServiceTest {
 	private int errorCounter = 0;
 	private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";
 	
-	public static void main(){
-		serviceURL = "http://VMJAVA1:9898/semplest";
-		KeywordServiceTest test = new KeywordServiceTest();
-		test.Test_KeywordService2();
+	public static void main(String args[]){
+		try{
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://172.18.9.26:9898/semplest");
+			System.out.println("------------------------------------------------------------");
+			System.out.println("getCategories:");		
+			long start = System.currentTimeMillis();
+			ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
+			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
+			System.out.println("categories took " + sec + " seconds");
+			for (int i = 0; i < res.size(); i++)
+			{
+				System.out.println(res.get(i));
+			}
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	public int Test_KeywordService1(){

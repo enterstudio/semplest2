@@ -34,50 +34,61 @@ public class ServiceTestThread implements Runnable{
 		    writer.append('\n');
 		    writer.flush();
 		 
-			while(noError){
-				Date now = new Date();				
-				System.out.println("TEST SERVICE >>> " 
-				+ now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
-				
-				TestService2Client ts = new TestService2Client(testUrl);
-				
-				long start = System.currentTimeMillis();
-				String ret = ts.TestMethod("nan");	
-				long time = System.currentTimeMillis() - start;
-				System.out.println("--- " + ret + " >>> " + time);
-				
-				//String[] ret1 = ret.split("=");
-				//writer.append(ret1[1]);
-			    //writer.append(',');
-			    writer.append(String.valueOf(time));
-			    writer.append('\n');  			
-			    
-			    writer.flush();
-				
-				Thread.sleep(sleep_time);				
+		    while(true){
+			//while(noError){
+		    	try{
+					Date now = new Date();				
+					System.out.println("TEST SERVICE >>> " 
+					+ now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds());
+					
+					TestService2Client ts = new TestService2Client(testUrl);
+					
+					long start = System.currentTimeMillis();
+					String ret = ts.TestMethod("nan");	
+					long time = System.currentTimeMillis() - start;
+					System.out.println("--- " + ret + " >>> " + time);
+					
+					//String[] ret1 = ret.split("=");
+					//writer.append(ret1[1]);
+				    //writer.append(',');
+				    writer.append(String.valueOf(time));
+				    writer.append('\n');  			
+				    
+				    writer.flush();
+					
+					Thread.sleep(sleep_time);		
+		    	}
+				catch(Exception e){
+					e.printStackTrace();		
+					try {
+						writer.append("ERROR:");
+						writer.append(',');
+						Date now = new Date();
+						writer.append(now.toString());
+						writer.append(',');
+						writer.append(e.getMessage());
+						writer.append(',');
+						StackTraceElement[] ste = e.getStackTrace();
+						for(StackTraceElement s : ste){
+							writer.append(s.getClassName());
+							writer.append(':');
+							writer.append(s.getMethodName());
+							writer.append(':');
+							writer.append(String.valueOf(s.getLineNumber()));
+							writer.append(',');
+						}		
+						writer.append('\n');
+						writer.flush();
+						noError = false;
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
 			}
 		}
 		catch(Exception e){
-			e.printStackTrace();		
-			try {
-				writer.append("ERROR:");
-				writer.append('\n');
-				writer.append(e.getMessage());
-				StackTraceElement[] ste = e.getStackTrace();
-				for(StackTraceElement s : ste){
-					writer.append(s.getClassName());
-					writer.append(',');
-					writer.append(s.getMethodName());
-					writer.append(',');
-					writer.append(String.valueOf(s.getLineNumber()));
-					writer.append(',');
-					writer.append('\n');
-				}				
-				noError = false;
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			e.printStackTrace();					
 		}
 		finally{
 			try {				

@@ -73,53 +73,92 @@ public class EsbTestThread implements Runnable{
 	public void run() {
 		try{			
 			if(service_index == SERVICE_INDEX.all){
-				while(noError){
-					Random r = new Random();
-					int randomService = r.nextInt(num_service) + 1;
-					SERVICE_INDEX run_service = SERVICE_INDEX.values()[randomService];
-					long latency  = Run_Service(run_service);
-					writer.append(run_service.name());
-					writer.append(',');
-					writer.append(String.valueOf(latency));
-					writer.append('\n');
-					writer.flush();
-					Thread.sleep(sleep_time);
+				while(true){
+				//while(noError){
+					try{
+						Random r = new Random();
+						int randomService = r.nextInt(num_service) + 1;
+						SERVICE_INDEX run_service = SERVICE_INDEX.values()[randomService];
+						long latency  = Run_Service(run_service);
+						writer.append(run_service.name());
+						writer.append(',');
+						writer.append(String.valueOf(latency));
+						writer.append('\n');
+						writer.flush();
+						Thread.sleep(sleep_time);
+					}
+					catch(Exception e){
+						e.printStackTrace();		
+						try {
+							writer.append("ERROR:");
+							writer.append(',');
+							Date now = new Date();
+							writer.append(now.toString());
+							writer.append(',');
+							writer.append(e.getMessage());
+							writer.append(',');
+							StackTraceElement[] ste = e.getStackTrace();
+							for(StackTraceElement s : ste){
+								writer.append(s.getClassName());
+								writer.append(':');
+								writer.append(s.getMethodName());
+								writer.append(':');
+								writer.append(String.valueOf(s.getLineNumber()));
+								writer.append(',');
+							}		
+							writer.append('\n');
+							writer.flush();
+							noError = false;
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 				}
 			}
 			else{
 				while(noError){
-					long latency  = Run_Service(service_index);
-					writer.append(service_index.name());
-					writer.append(',');
-					writer.append(String.valueOf(latency));
-					writer.append('\n');
-					writer.flush();
-					Thread.sleep(sleep_time);
+					try{
+						long latency  = Run_Service(service_index);
+						writer.append(service_index.name());
+						writer.append(',');
+						writer.append(String.valueOf(latency));
+						writer.append('\n');
+						writer.flush();
+						Thread.sleep(sleep_time);
+					}
+					catch(Exception e){
+						e.printStackTrace();		
+						try {
+							writer.append("ERROR:");
+							writer.append(',');
+							Date now = new Date();
+							writer.append(now.toString());
+							writer.append(',');
+							writer.append(e.getMessage());
+							writer.append(',');
+							StackTraceElement[] ste = e.getStackTrace();
+							for(StackTraceElement s : ste){
+								writer.append(s.getClassName());
+								writer.append(':');
+								writer.append(s.getMethodName());
+								writer.append(':');
+								writer.append(String.valueOf(s.getLineNumber()));
+								writer.append(',');
+							}		
+							writer.append('\n');
+							writer.flush();
+							noError = false;
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
 				}
 			}
 		}
 		catch(Exception e){
 			e.printStackTrace();		
-			
-			try{
-				writer.append("ERROR:");
-				writer.append('\n');
-				writer.append(e.getMessage());
-				StackTraceElement[] ste = e.getStackTrace();
-				for(StackTraceElement s : ste){
-					writer.append(s.getClassName());
-					writer.append(',');
-					writer.append(s.getMethodName());
-					writer.append(',');
-					writer.append(String.valueOf(s.getLineNumber()));
-					writer.append(',');
-					writer.append('\n');
-				}				
-				noError = false;
-			}
-			catch(Exception e1){
-				e1.printStackTrace();
-			}
 		}		
 		finally{
 			try {				

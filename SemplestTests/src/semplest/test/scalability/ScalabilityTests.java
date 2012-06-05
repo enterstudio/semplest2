@@ -23,22 +23,22 @@ public class ScalabilityTests {
 			int frequency = 0;			
 			
 			//Test ESB		
-			/*
+			///*
 			frequency = 3;
 			executor.execute(new EsbTestThread(EsbTestThread.SERVICE_INDEX.all, frequency));	
 			Thread.sleep(10);
 			executor.execute(new EsbTestThread(EsbTestThread.SERVICE_INDEX.all, frequency));
-			*/
+			//*/
 			
 			//Test Keyword
-			///*
+			/*
 			frequency = 2;
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
-			//*/
+			*/
 		}
 		catch(Exception e){
 			e.printStackTrace();
