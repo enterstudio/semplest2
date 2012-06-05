@@ -29,9 +29,12 @@ import java.io.PrintStream;
 import java.net.URL;
 import java.net.URI;
 
+import org.apache.log4j.Logger;
 
-public class TextUtils
-{
+public class TextUtils {
+
+  private static final Logger logger = Logger.getLogger( TextUtils.class );
+
   // HTML parsing utilities ---------------------
   //------------------
   // recursively collect nodes that match filter
@@ -45,13 +48,13 @@ public class TextUtils
         e.nextNode().collectInto( list, filter );
     return list;
   }
-	//Returns a fully formed url
-	 public static String formURL (String url){
-	   String newurl;
-	   if(url.contains("http://") || url.contains("https://")) newurl = url;
-	   else newurl = "http://"+url;
-	   return newurl;
-	 }
+  //Returns a fully formed url
+  public static String formURL (String url){
+    String newurl;
+    if(url.contains("http://") || url.contains("https://")) newurl = url;
+    else newurl = "http://"+url;
+    return newurl;
+  }
   // Return a list/Array of text strings from a web-page inside tag "filter"
   public static ArrayList<String> getLinks (String url, NodeFilter filter)
     throws ParserException {
@@ -81,6 +84,7 @@ public class TextUtils
     NodeFilter filter = new AndFilter ( fa ); 
     return filter;
   }
+
 
   //----------------------------
   // recursively process nodes and get text(top level is <html>)
@@ -120,6 +124,7 @@ public class TextUtils
       java.io.InputStream is = conn.getInputStream();
     } catch (Exception e) {
       e.printStackTrace();
+      logger.error( e.getMessage());
       return false;
     }
     return true;
@@ -138,6 +143,7 @@ public class TextUtils
     try {
       baseURI = new URI( url );
     } catch (Exception e) { e.printStackTrace(); 
+      logger.error( e.getMessage());
       return new URL[0];
     }
 
@@ -147,7 +153,10 @@ public class TextUtils
       URL fqurl = null;  
       try {
         fqurl = baseURI.resolve( outlinks[i].toURI() ).toURL();  
-      } catch (Exception e) { e.printStackTrace(); }
+      } catch (Exception e) { 
+        e.printStackTrace(); 
+        logger.error( e.getMessage());
+      }
       if( fqurl != null )
         fqurls.add( fqurl ); 
     }
@@ -167,6 +176,7 @@ public class TextUtils
       outs = sb.getStrings();
     } catch (Exception e) {
       e.printStackTrace();
+      logger.error( e.getMessage());
     }
     return outs;
   }
@@ -244,6 +254,7 @@ public class TextUtils
       htmlString = HTMLText( url );
     } catch ( Exception e ){
       e.printStackTrace();
+      logger.error( e.getMessage());
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validStems( words );
@@ -269,6 +280,7 @@ public class TextUtils
       htmlString = HTMLText( url );
     } catch ( Exception e ){
       e.printStackTrace();
+      logger.error( e.getMessage());
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
@@ -282,6 +294,7 @@ public class TextUtils
       htmlString = FileText( url );
     } catch ( Exception e ){
       e.printStackTrace();
+      logger.error( e.getMessage());
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
@@ -303,7 +316,7 @@ public class TextUtils
     in.close();
     return data;
   }
-  
+
   public static void getUniqueKeywords(String[] filepaths, String outputfile) throws IOException{
 	  ArrayList<String> kw = new ArrayList<String>();
 	  PrintStream out = new PrintStream(new FileOutputStream(outputfile));
@@ -331,26 +344,26 @@ public class TextUtils
   }
    
   public static void changeKeywordMatchtoExact(String filepath) throws IOException{
-	    FileInputStream fstream = new FileInputStream(filepath);
-	    DataInputStream in = new DataInputStream(fstream);
-	    // Get the object of DataInputStream
-	    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-	    String outputfile = filepath+"Exact";
-	    String strLine;
-	    PrintStream stdout = System.out;
-	    PrintStream out = new PrintStream(new FileOutputStream(outputfile));
-	    System.setOut(out);
-	    //Read File Line By Line
-	    while ((strLine = br.readLine()) != null)   {
-	      // Print the content on the console
-	    	System.out.println("["+strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "")+"]");
-	    }
-	    System.setOut(stdout);
-	    
-	    //Close the input stream
-	    in.close();
-}
-  
+    FileInputStream fstream = new FileInputStream(filepath);
+    DataInputStream in = new DataInputStream(fstream);
+    // Get the object of DataInputStream
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    String outputfile = filepath+"Exact";
+    String strLine;
+    PrintStream stdout = System.out;
+    PrintStream out = new PrintStream(new FileOutputStream(outputfile));
+    System.setOut(out);
+    //Read File Line By Line
+    while ((strLine = br.readLine()) != null)   {
+      // Print the content on the console
+      System.out.println("["+strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "")+"]");
+    }
+    System.setOut(stdout);
+
+    //Close the input stream
+    in.close();
+  }
+
   // Return stemmed words from a web page, in our dictionary 
   public static ArrayList<String> validWords( ArrayList<String> words ){
     Stemmer stemmer = new Stemmer();
@@ -374,13 +387,16 @@ public class TextUtils
   }
 
   // Create a parser with the right properties (needed for Google search)
-  private static Parser getParser( String url ){
+  public static Parser getParser( String url ){
     try {
       java.net.URLConnection conn = (new java.net.URL( url )).openConnection();
       conn.setRequestProperty("User-Agent", "Mozilla");
       Parser p = new Parser( conn );
       return p;
-    } catch (Exception e) { e.printStackTrace (); }
+    } catch (Exception e) { 
+      e.printStackTrace (); 
+      logger.error( e.getMessage());
+    }
     return null;
   }
 
@@ -420,7 +436,5 @@ public class TextUtils
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    if( args.length > 0 )
-      System.out.println( getSynonyms( args[0] ));
   }
 }
