@@ -58,6 +58,16 @@ public class SemplestDB extends BaseDB
 	}
 	
 	/*
+	 * Configuration
+	 */
+	public static List<Integer> getPromotionIdsForProductGroup(final Integer ProductGroupID) throws Exception
+	{
+		final String strSQL = "select PromotionPK from Promotion where ProductGroupFK = ?";
+		final List<Integer> promotionIds = jdbcTemplate.queryForList(strSQL, Integer.class, ProductGroupID);
+		return promotionIds;
+	}
+	
+	/*
 	 * Customer
 	 */
 	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class);

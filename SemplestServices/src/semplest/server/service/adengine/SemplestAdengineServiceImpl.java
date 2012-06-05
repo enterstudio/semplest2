@@ -65,42 +65,32 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	// CustomerID = 2 State Farm coffee machine promotionID = 4
 	// ProductGroupID=37 coffee machine
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
-		try
-		{
-
-			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
-			
-			/*
-			 * GetKeywordForAdEngineSP getKeywords = new
-			 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
-			 * List<KeywordProbabilityObject> keywordList =
-			 * getKeywords.execute(4,
-			 * (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ?
-			 * true : false ,
-			 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
-			 * : false); keywordList.size();
-			 */
-			ArrayList<String> adEngList = new ArrayList<String>();
-			adEngList.add("Google");
-			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
-			adEng.initializeService(null);
-			//Thread.sleep(1000);
-			// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
-			// Double(25.0), 30);
-			// String u = adEng.getURL("www.xyz.com");
-			// Tovah Photography 2 47 Photography 58 38 Event and portrait
-			// photos
-			//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
-			adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
-
-		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+		
+		/*
+		 * GetKeywordForAdEngineSP getKeywords = new
+		 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
+		 * List<KeywordProbabilityObject> keywordList =
+		 * getKeywords.execute(4,
+		 * (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ?
+		 * true : false ,
+		 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
+		 * : false); keywordList.size();
+		 */
+		ArrayList<String> adEngList = new ArrayList<String>();
+		adEngList.add("Google");
+		SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+		adEng.initializeService(null);
+		//Thread.sleep(1000);
+		// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
+		// Double(25.0), 30);
+		// String u = adEng.getURL("www.xyz.com");
+		// Tovah Photography 2 47 Photography 58 38 Event and portrait
+		// photos
+		//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+		adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
 	}
 
 	@Override
@@ -679,6 +669,43 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return ChangePromotionPromotionStatus(promotionID, adEngines, CampaignStatus.PAUSED);
 	}
 	
+	public String PauseProductGroup(String json) throws Exception
+	{
+		logger.debug("call PauseProductGroup(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = PauseProductGroup(productGroupID, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Pause ProductGroup [" + productGroupID + "] for AdEngines [" + adEngines+ "])");
+		final List<Integer> promotionIds = SemplestDB.getPromotionIdsForProductGroup(productGroupID);
+		final String promotionIdsEasyReadableString = SemplestUtils.getEasilyReadableString(promotionIds);
+		logger.info("Found the following Promotion IDs for which will need to Pause:\n" + promotionIdsEasyReadableString);
+		final List<Integer> promotionIdsWithErrors = new ArrayList<Integer>();
+		for (final Integer promotionId : promotionIds)
+		{
+			final Boolean pausedSuccessfully = PausePromotion(promotionId, adEngines);
+			if (!pausedSuccessfully)
+			{
+				promotionIdsWithErrors.add(promotionId);
+			}
+		}
+		if (!promotionIdsWithErrors.isEmpty())
+		{
+			logger.error("The following Promotions had errors when trying to Pause: " + promotionIdsWithErrors);
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+	
 	public Boolean ChangePromotionPromotionStatus(Integer promotionID, List<String> adEngines, CampaignStatus newStatus) throws Exception
 	{
 		logger.info("Will try to Change Status to [" + newStatus + "] for Promotion [" + promotionID + "] and AdEngines [" + adEngines+ "])");
@@ -719,15 +746,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
-	}	
-	
-
-	@Override
-	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+	}		
 	
 	public List<AdsObject> getsAdForPromotionAdID(final List<AdsObject> ads, final Integer promotionAdID)
 	{

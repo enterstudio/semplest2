@@ -136,8 +136,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_UnpausePromotion = 62; 
 		final List<String> adEngines_UnpausePromotion = new ArrayList<String>();
 		adEngines_UnpausePromotion.add(AdEngine.Google.name());
-		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);
-		*/
+		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);		
 		
 		
 		//
@@ -148,6 +147,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_RefreshSiteLinksForAd = new ArrayList<String>();
 		adEngines_RefreshSiteLinksForAd.add(AdEngine.Google.name());
 		client.RefreshSiteLinksForAd(promotionID_RefreshSiteLinksForAd, promotionAdID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
+		*/
+		
+		//
+		// PauseProductGroup
+		//
+		final Integer productGroupID_PauseProductGroup = 76;
+		final List<String> adEngines_PauseProductGroup = new ArrayList<String>();
+		adEngines_PauseProductGroup.add(AdEngine.Google.name());
+		client.PauseProductGroup(productGroupID_PauseProductGroup, adEngines_PauseProductGroup);
 		
 	}
 
@@ -214,8 +222,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("productGroupID", Integer.toString(productGroupID));		
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("PauseProductGroup JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "PauseProductGroup", json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	
 	@Override
