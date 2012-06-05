@@ -52,7 +52,7 @@
             <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
             <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
-            <img id="displayBox"  style="display: none" />
+            <img id="displayBox" style="display: none" />
         }
     </div>
 </div>
@@ -97,12 +97,17 @@
             top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
             left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
             width: $('#displayBox')[0].naturalWidth + 'px',
-            border:'0px solid #aaa'
+            border: '0px solid #aaa'
         }
         });
     }
-    function OnSuccess(id) {
+
+    $('#displayBox').click(function () {
         $.unblockUI();
+    });
+    function OnSuccess(id) {
+        if ($('#displayBox').attr('src') != $('#LogoUrlStr').val() + 'congratulations.jpg')
+            $.unblockUI();
         var tab;
         //alert(id);
         if (id == "Categories") {
