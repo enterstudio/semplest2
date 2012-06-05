@@ -12,12 +12,25 @@ namespace Semplest.Core.Services
 {
     public class SemplestDataService : DataService<SemplestEntities>
     {
+        private static bool _savedCampaign;
+        public  SemplestDataService()
+        {
+            _savedCampaign = false;
+        }
         private static SemplestEntities _dbcontext;
 
 
-        public static SemplestEntities InitializeContext()
+        private static SemplestEntities InitializeContext()
         {
-            return _dbcontext ?? (_dbcontext = new SemplestEntities());
+            // we need to check _savedCampaign flag because the _dbcontext is static and campaign is updated 
+            // to reflect changes we need to create new context
+
+            if (_dbcontext == null || _savedCampaign == true)
+            {
+                _dbcontext = new SemplestEntities();
+                _savedCampaign = false;
+            }
+            return _dbcontext;
         }
 
         // This method is called only once to initialize service-wide policies.
@@ -80,6 +93,9 @@ namespace Semplest.Core.Services
                         }
 
                         dbcontext.SaveChanges();
+
+                        // we need to set this because the _dbcontext is static and campaign is updated so reflect changes we need to create new context
+                        _savedCampaign = true;
                     }
                     else
                     {
@@ -177,7 +193,7 @@ namespace Semplest.Core.Services
             return model;
         }
 
-        public IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid)
+        public static IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid)
         {
             var semplestEntities = new SemplestEntities();
             return semplestEntities.vwProductPromotions.Where(t => t.UserPK == userid);
