@@ -295,6 +295,7 @@ public class BidGeneratorObj {
 		if(searchEngine.equalsIgnoreCase(google)){
 			if (compKeywords.size()>0) {
 				try {
+					logger.info("Attenpting to get traffic estimator info.");
 					o = getTrafficEstimatorDataForGoogle();
 				} catch (Exception e) {
 					//e.printStackTrace();
@@ -630,13 +631,14 @@ public class BidGeneratorObj {
 		for (String s : compKeywords){
 			bids.put(s, firstPageCPCMap.get(s)+stepFirst); // stepFirst above fp CPC
 		}
-		System.out.println("Number of initial competitive keywords: "+bids.size());
+		logger.info("Number of initial competitive keywords: "+bids.size());
 
 		
 		k=0;
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
+				logger.info("Fetching traffic estimator data for Point 1");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
@@ -661,16 +663,16 @@ public class BidGeneratorObj {
 			{
 				Long abid= bidIT.next();
 				if(points.get(abid).getMaxTotalDailyMicroCost() < 10000L){
-//					 System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
-//					 System.out.println(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
+					logger.info("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
+					logger.info(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
 					compKeywords.remove(words[i]);
 					nonCompKeywords.add(words[i]);
 					continue;
 				} else {
-					System.out.println(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
+					//logger.info(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
 
-//					 System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-//					 System.out.println(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
+					 logger.info("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
+					 logger.info(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
 					
 					EstimatorData clickDataObj = new EstimatorData();
 					clickDataObj.addData(abid/1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2);
@@ -682,7 +684,7 @@ public class BidGeneratorObj {
 				}
 			}
 		}
-		System.out.println("Number of intermediate competitive keywords: "+compKeywords.size());
+		logger.info("Number of intermediate competitive keywords: "+compKeywords.size());
 
 		
 		// get the second point
@@ -694,6 +696,7 @@ public class BidGeneratorObj {
 		while(true) {
 			Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 			try {
+				logger.info("Fetching traffic estimator data for Point 2");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 				break;
 			} catch (Exception e) {
@@ -717,8 +720,8 @@ public class BidGeneratorObj {
 			{
 				Long abid= bidIT.next();
 				
-				// System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-				// System.out.println(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
+				 logger.info("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
+				 logger.info(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
 
 				EstimatorData clickDataObj = clickDataMap.get(words[i]);
 				clickDataObj.addData(abid/1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2);
@@ -728,7 +731,7 @@ public class BidGeneratorObj {
 				costDataObj.addData(abid/1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/(2*1e6));
 				costDataMap.put(words[i], costDataObj);
 				
-				System.out.println(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
+				logger.info(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
 
 
 				/*
@@ -763,6 +766,7 @@ public class BidGeneratorObj {
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 				try {
+					logger.info("Fetching traffic estimator data for Point "+(j+1));
 					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
 					break;
 				} catch (Exception e) {
@@ -786,8 +790,8 @@ public class BidGeneratorObj {
 				{
 					Long abid= bidIT.next();
 
-					// System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-					// System.out.println(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
+					 logger.info("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
+					 logger.info(words[i] + ": " + abid/1e6 + ": " + points.get(abid).getMaxAveCPC()/1e6 + ": " + points.get(abid).getMaxClickPerDay());
 
 					EstimatorData clickDataObj = clickDataMap.get(words[i]);
 					clickDataObj.addData(abid/1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2);
@@ -797,7 +801,7 @@ public class BidGeneratorObj {
 					costDataObj.addData(abid/1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/(2*1e6));
 					costDataMap.put(words[i], costDataObj);
 					
-					System.out.println(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
+					logger.info(words[i]+":: Total daily cost: $"+points.get(abid).getMaxTotalDailyMicroCost()/1e6);
 
 
 				}
@@ -813,7 +817,7 @@ public class BidGeneratorObj {
 			double [] costArray = costDataMap.get(words[i]).getData(bidArray);
 //			if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
 			if (costArray[costArray.length-1]<costArray[0]+1e-4){
-				 System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
+				 logger.info("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
 				compKeywords.remove(words[i]);
 				nonCompKeywords.add(words[i]);
 				clickDataMap.remove(words[i]);
@@ -822,7 +826,7 @@ public class BidGeneratorObj {
 			}
 		}
 		
-		System.out.println("Number of final competitive keywords: "+compKeywords.size());
+		logger.info("Number of final competitive keywords: "+compKeywords.size());
 		
 		return o;
 	}
@@ -853,6 +857,7 @@ public class BidGeneratorObj {
 					try {
 						if(newKeywordWithBid.size()>0){
 							Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+							logger.info("Calling Google API for traffic estimator data.");
 							o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
 						}
 						break;
