@@ -6,13 +6,18 @@ using System.Web.Mvc;
 using Semplest.Admin.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
-
+using System.Text;
+using System.IO;
+using System.Data;
+using System.Data.OleDb;
+using FileHelpers;
+using System.Transactions;
 
 namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRoleAttribute]
-    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class AccountServiceController : Controller
     {
         //
@@ -86,7 +91,7 @@ namespace Semplest.Admin.Controllers
 
                 if (parent.FirstOrDefault().CustomerParentFK == null) //parent
                 {
-                    
+
                     x.ParentName = "This is a parent";
 
                 }
@@ -94,7 +99,7 @@ namespace Semplest.Admin.Controllers
                 {
                     //parent
                     var findparent = from p in dbcontext.Customers
-                                     where p.CustomerPK==(parent.FirstOrDefault().CustomerParentFK)
+                                     where p.CustomerPK == (parent.FirstOrDefault().CustomerParentFK)
                                      select p;
                     x.ParentName = findparent.FirstOrDefault().Name;
 
@@ -131,39 +136,301 @@ namespace Semplest.Admin.Controllers
             return View(x);
         }
 
-        public ActionResult Finance(int id)
+
+
+        public ActionResult CustomerImport(int id)
         {
-
             SemplestEntities dbcontext = new SemplestEntities();
-            var viewModel =
-               from u in dbcontext.Users
-               join c in dbcontext.Customers on u.CustomerFK equals c.CustomerPK
-               join caa in dbcontext.CustomerAddressAssociations on c.CustomerPK equals caa.CustomerFK
-               join a in dbcontext.Addresses on caa.AddressFK equals a.AddressPK
-               join sc in dbcontext.StateCodes on a.StateAbbrFK equals sc.StateAbbrPK
-               join at in dbcontext.AddressTypes on caa.AddressTypeFK equals at.AddressTypePK
-               join cpa in dbcontext.CustomerPhoneAssociations on c.CustomerPK equals cpa.CustomerFK
-               join p in dbcontext.Phones on cpa.PhoneFK equals p.PhonePK
-               join b in dbcontext.BillTypes on c.BillTypeFK equals b.BillTypePK
-               where (c.CustomerPK == id)
-               select new AccountServiceModel
-               {
-                   AccountNumber = c.CustomerPK,
-                   Customer = c.Name,
-                   FirstName = u.FirstName,
-                   LastName = u.LastName,
-                   Address1 = a.Address1,
-                   Address2 = a.Address2,
-                   City = a.City,
-                   State = sc.StateAbbr,
-                   Zip = a.ZipCode,
-                   Phone = p.Phone1,
-                   Email = u.Email,
-                   BillType = b.BillType1
-               };
 
-            return View(viewModel.Single(c => c.AccountNumber == id));
+
+            CustomerImport x = new CustomerImport();
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for billtype dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var allbilltypes = (from a in dbcontext.BillTypes select a).ToList();
+
+            x.SelectedBillTypeID = 1;
+            x.BillTypes = allbilltypes.Select(r => new SelectListItem
+            {
+                Value = r.BillTypePK.ToString(),
+                Text = r.BillType1.ToString()
+            });
+
+            x.ParentID = id;
+
+            return View(x);
         }
 
+
+       
+
+
+        public ActionResult CustomerImportResult(ImportResultModel m)
+        {
+            return View(m);
+        }
+
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult Upload(HttpPostedFileBase uploadFile, CustomerImport imp)
+        {
+            string importstatus;
+            importstatus  = "The import was the successful..";
+            SemplestEntities dbcontext = new SemplestEntities();
+
+            {
+
+                StringBuilder strValidations = new StringBuilder(string.Empty);
+                try
+                {
+                    if (uploadFile.ContentLength > 0)
+                    {
+                        string filePath = Path.Combine(HttpContext.Server.MapPath("../Uploads"),
+                        Path.GetFileName(uploadFile.FileName));
+                        uploadFile.SaveAs(filePath);
+                        FileHelperEngine engine = new FileHelperEngine(typeof(CustomerImportData));
+                        engine.ErrorManager.ErrorMode = ErrorMode.SaveAndContinue;
+
+                        CustomerImportData[] customersimported = (CustomerImportData[])engine.ReadFile(filePath);
+
+
+                        if (engine.ErrorManager.HasErrors)
+                            foreach (ErrorInfo err in engine.ErrorManager.Errors)
+                            {
+                                string s;
+                                s = err.LineNumber + " / " + err.RecordString + " / " + err.ExceptionInfo.ToString();
+
+                                //Console.WriteLine(err.LineNumber);    
+                                //Console.WriteLine(err.RecordString);   
+                                //Console.WriteLine(err.ExceptionInfo.ToString());
+                            }
+
+                        if (customersimported.Count() < 1) throw new Exception();
+                        ///////////
+                        ///////////
+                        ///////
+                        ///////
+                        ///////
+
+
+                        //IEnumerable<CustomerAccount> custs;
+
+                        //List<CustomerAccount> customers;
+
+
+
+                        foreach (CustomerImportData cust in customersimported)
+                        {
+
+                            CustomerAccount m = new CustomerAccount();
+
+
+                            #region
+                            //cust.ContactCompanyName;
+                            //cust.ContactEmail;
+                            //cust.ContactFirstName;
+                            //cust.ContactLastName;
+                            //cust.ContactMiddleInitial;
+                            //cust.ContactPhoneNumber;
+                            //cust.ContactAddressLine1;
+                            //cust.ContactAddressLine2;
+                            //cust.ContactCity;
+                            //cust.ContactState;
+                            //cust.ContactStatus;
+                            //cust.ContactZip;
+                            //cust.FixedMonthlybudget;
+                            //cust.InternalCustomerID;
+                            ///////
+                            //cust.LocalTargetAddress1;
+                            //cust.LocalTargetAddress2;
+                            //cust.LocalTargetAddress3;
+                            //cust.LocalTargetProximity1;
+                            //cust.LocalTargetProximity1;
+                            //cust.LocalTargetProximity2;
+                            //cust.LocalTargetProximity3;
+                            //cust.ParentCompanyName;
+
+                            //ca.Address1;
+                            //ca.Address2;
+                            //ca.City;
+                            //ca.Customer;
+                            //ca.Email;
+                            //ca.FirstName;
+                            //ca.MiddleInitial;
+                            //ca.Phone;
+                            //ca.State;
+                            //ca.UserID;
+                            //ca.UserPassword;
+                            //ca.Zip;
+                            //ca.isActive;
+                            #endregion
+
+                            /*
+                        //cust.ContactStatus;
+                        cust.FixedMonthlybudget;
+                        //cust.InternalCustomerID;
+                        /////
+                        cust.LocalTargetAddress1;
+                        cust.LocalTargetAddress2;
+                        cust.LocalTargetAddress3;
+                        cust.LocalTargetProximity1;
+                        cust.LocalTargetProximity2;
+                        cust.LocalTargetProximity3;
+                        cust.ParentCompanyName;
+                        /////
+                        */
+
+                            m.Address1 = cust.ContactAddressLine1;
+                            m.Address2 = cust.ContactAddressLine2;
+                            m.City = cust.ContactCity;
+                            m.Customer = cust.ContactCompanyName;
+                            m.Email = cust.ContactEmail;
+                            m.FirstName = cust.ContactFirstName;
+                            m.MiddleInitial = cust.ContactMiddleInitial;
+                            m.LastName = cust.ContactLastName;
+                            m.Phone = cust.ContactPhoneNumber;
+                            m.State = cust.ContactState;
+                            m.UserID = cust.ContactEmail;
+                            m.UserPassword = Semplest.SharedResources.Helpers.RandomPassword.Generate(8, 10);
+                            m.Zip = cust.ContactZip;
+                            m.isActive = true;
+
+                            
+                            try
+                            {
+                                var existing = (from ex in dbcontext.Customers
+                                                where ex.InternalCustomerId.Equals(cust.InternalCustomerID) && ex.Name.Equals(m.Customer)
+                                                select ex).ToList();
+
+                                if (existing.Count() > 0) throw new Exception();
+
+
+                                ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
+
+                                //Customer c = dbcontext.Customers.Add(new Customer { Name = m.Customer, BillTypeFK = imp.SelectedBillTypeID, ProductGroupCycleType = pgct, InternalCustomerId = cust.InternalCustomerID });
+                                var c = new Customer { Name = m.Customer, BillTypeFK = imp.SelectedBillTypeID, ProductGroupCycleType = pgct, InternalCustomerId = cust.InternalCustomerID };
+                                dbcontext.Customers.AddObject(c);
+                                var u = new User
+                                {
+                                    Customer = c,
+                                    Email = m.Email,
+                                    FirstName = m.FirstName,
+                                    LastName = m.LastName,
+                                    MiddleInitial = m.MiddleInitial,
+                                    IsActive = m.isActive
+                                };
+                                dbcontext.Users.AddObject(u);
+
+                                
+
+
+
+                                //
+                                var cr = new Credential { User = u, UsersFK = u.UserPK, Username = m.UserID, Password = m.UserPassword };
+                                dbcontext.Credentials.AddObject(cr);
+
+
+                                PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
+                                Phone ph = new Phone { Phone1 = m.Phone, PhoneType = pt };
+                                dbcontext.Phones.AddObject(ph);
+                                
+                                var cpa = new CustomerPhoneAssociation { Customer = c, Phone = ph };
+                                dbcontext.CustomerPhoneAssociations.AddObject(cpa);
+
+                                StateCode sc = dbcontext.StateCodes.First(p => p.StateAbbr == m.State);
+                                AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
+                                var a = new Address { Address1 = m.Address1, Address2 = m.Address2, City = m.City, ZipCode = m.Zip, StateCode = sc };
+                                dbcontext.Addresses.AddObject(a);
+                                var caa = new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at };
+                                dbcontext.CustomerAddressAssociations.AddObject(caa);
+
+                                var cn = new CustomerNote { Customer = c, Note = m.CustomerNote };
+                                dbcontext.CustomerNotes.AddObject(cn);
+
+
+                                //default to the parent's rep and salesperson
+
+                                var parentrepandsales = (from prs in dbcontext.EmployeeCustomerAssociations
+                                                         where prs.CustomerFK.Equals(imp.ParentID)
+                                                         select prs).ToList();
+
+                                foreach (EmployeeCustomerAssociation eca in parentrepandsales)
+                                {
+                                    var addrepandsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = eca.EmployeeFK };
+                                    dbcontext.EmployeeCustomerAssociations.AddObject(addrepandsales);
+                                }
+
+                                var ch = new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = imp.ParentID };
+                                dbcontext.CustomerHierarchies.AddObject(ch);
+                                
+
+                                dbcontext.SaveChanges();
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.TargetSite);
+                            }
+                        }//endforeach
+
+                    }
+                    else throw new Exception();
+
+                }
+                catch (Exception ex)
+                {
+                    importstatus = "An error has occured. Please check the file for errors and try again..";
+                }
+
+
+               
+                //scope.Complete();
+            }
+
+            //return View(m);
+
+            ImportResultModel res = new ImportResultModel();
+            res.Importresult = importstatus;
+            return RedirectToAction("CustomerImportResult", "AccountService",   res );
+        }
+      
+
+
+        [IgnoreFirst(1)] 
+        [DelimitedRecord(",")]
+        public class CustomerImportData
+        {
+            public string ParentCompanyName;
+            public string ContactCompanyName;	
+            public string ContactFirstName;	
+            public string ContactMiddleInitial;
+            public string ContactLastName;
+            public string ContactPhoneNumber;
+            public string ContactEmail;
+            public string ContactAddressLine1;
+            public string ContactAddressLine2;
+            public string ContactCity;
+            public string ContactState;
+            public string ContactZip;
+            public string ContactStatus;
+            public string  InternalCustomerID;
+            public decimal FixedMonthlybudget;
+            [FieldQuotedAttribute]
+            public string LocalTargetAddress1;
+            [FieldQuotedAttribute]
+            public string LocalTargetProximity1;
+            [FieldQuotedAttribute]
+            public string LocalTargetAddress2;
+            [FieldQuotedAttribute]
+            public string LocalTargetProximity2;
+            [FieldQuotedAttribute]
+            public string LocalTargetAddress3;
+            [FieldQuotedAttribute]
+            public string LocalTargetProximity3;
+           
+        }
+        
     }
 }
+
+
