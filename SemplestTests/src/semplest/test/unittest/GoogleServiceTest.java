@@ -433,11 +433,12 @@ public class GoogleServiceTest {
 				System.out.println("updateAD(" + accountID + ", " + adGroupID + ", " + AdID + ", " + headline + ", " + description1 + ", " + description2 + ", " + url1 + ", " + url2 + ")");
 				Long ret = test.updateAD(accountID, adGroupID, AdID, headline, description1, description2, url1, url2);			
 				System.out.println("***OK");	
-				System.out.println("successful = " + ret);
+				System.out.println("new AdID = " + ret);
+				AdID = ret;
 				
 				//verify result
-				if(!ret.equals(AdID))
-					errorHandler(new Exception(vMsg + "Returned AdID not correct: " + ret + " != " + AdID));		
+				if(ret.equals(null))
+					errorHandler(new Exception(vMsg + "No updated AdID returned"));		
 				
 			}
 			catch(Exception e){
