@@ -1,5 +1,5 @@
-﻿@*@model Semplest.Admin.Models.AccountServiceWithEmployeeModel
-           *@
+﻿@model Semplest.Admin.Models.CustomerImport 
+           
            
 @{
     ViewBag.Title = "Customer Import";
@@ -13,7 +13,27 @@ Customer Import
 @section Links{
     @Html.Partial("TopMenu")
 }
-@using (Html.BeginForm("Index"))
+
+@using (Html.BeginForm("Upload","AccountService",FormMethod.Post , new { enctype = "multipart/form-data" } ))
 {
+    <label>Upload file</label>
+    <input name="uploadFile" type="file" />
+    
+    <h3>Billing:</h3>
+    <br />
+   @Html.HiddenFor(m=>m.ParentID)
+   
+                                         
+    <div class="editor-label">
+    @Html.LabelFor(model => model.BillTypes)
+            
+    </div>
+    <div class="editor-field">
+    @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes)
+   
+    </div>
+    
+    <input type="submit" value="UploadFile" title="Upload File" />
+    
     
 }
