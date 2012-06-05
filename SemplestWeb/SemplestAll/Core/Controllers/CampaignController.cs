@@ -375,7 +375,7 @@ namespace Semplest.Core.Controllers
             if (string.IsNullOrEmpty(model.NegativeKeywordsText))
                 return Json("NegativeKeywords");
             var addl = model.NegativeKeywordsText.Split(',').ToList();
-            addl.ForEach(t => model.NegativeKeywords.Add(t));
+            addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
             Session["NegativeKeywords"] = model.NegativeKeywords;
             Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
 
