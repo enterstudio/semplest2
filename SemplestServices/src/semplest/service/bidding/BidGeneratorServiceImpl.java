@@ -4,7 +4,9 @@ package semplest.service.bidding;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
@@ -306,34 +308,43 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	
 	
-//	public static ClassPathXmlApplicationContext appContext = null;
-//
-//	public static void main(String [] args){
-//		// test 
-//
-//		BasicConfigurator.configure();
-//		/*Properties properties = new Properties();
-//		FileInputStream is = new FileInputStream(PROPSFILE);
-//		properties.load(is);
-//		is.close();
-//		 */	
-//
-//		appContext = new ClassPathXmlApplicationContext("Service.xml");
-//
-//		BidGeneratorServiceImpl client = new BidGeneratorServiceImpl ();
-//		Integer promotionID = new Integer(62); 
-//		//Integer promotionID = new Integer(71); 
-//		String searchEngine = "Google";
-//		BudgetObject budgetData = new BudgetObject();
-//		budgetData.setRemainingBudgetInCycle(100.0);
-//		budgetData.setRemainingDays(20);
-//		try {
-//			client.setBidsInitial(promotionID, searchEngine, budgetData);
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
+	public static ClassPathXmlApplicationContext appContext = null;
+
+	public static void main(String [] args){
+		// test 
+
+		try {
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
+
+			/*Properties properties = new Properties();
+		FileInputStream is = new FileInputStream(PROPSFILE);
+		properties.load(is);
+		is.close();
+			 */	
+
+
+			BidGeneratorServiceImpl client = new BidGeneratorServiceImpl ();
+			Integer promotionID = new Integer(60); 
+			//Integer promotionID = new Integer(71); 
+			String searchEngine = "Google";
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(75.0);
+			budgetData.setRemainingDays(31);
+		
+			//client.setBidsInitial(promotionID, searchEngine, budgetData);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	
 
