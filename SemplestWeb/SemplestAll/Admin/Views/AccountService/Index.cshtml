@@ -39,7 +39,7 @@ Account Service
 <br />
     <ul style="display: block" class="kendo-nav">
     <li>@Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber})</li>
-    <li>@Html.RouteLink("Delete Delete", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber})</li>
+    <li>@Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber})</li>
     <li><br /></li>
     <li><h2>Account Actions</h2></li>
     <li><a href="#">Impresonate</a></li>
@@ -47,10 +47,16 @@ Account Service
     <li><a href="#">Enable</a> </li>
     <li><a href="#">Pause</a> </li>
     <li><a href="#">Issue Refund</a> </li>
-    <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })
+    
+
+    @if (Model.ParentName.ToLower()=="self".ToLower())
+    {
+    <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })</li>
+    }
+
     @*<a href="#">Excel Import Customer Data</a> </li>*@
     @*<li><a href="url">Edit Start or End Date</a> </li>*@
-    <li><br /></li>
+    <li><br />
     <li><h2>Reporting</h2></li>
     <li><a href="#">Customer Summary Report</a></li>
     <li><a href="#">Customer Billing Report</a></li>
