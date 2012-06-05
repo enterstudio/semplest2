@@ -22,6 +22,7 @@ public class catUtils {
 
   //-----------------------------------------------------------------
   // Translating dmoz categories to semplest categories
+  // Note: s == decode( code( s )) is not alwyas true (depends on map file)
   private static final Logger logger = Logger.getLogger(catUtils.class);
   HashMap<String,String> smap;        // Map from dmoz to semplest cats
   HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
@@ -31,6 +32,7 @@ public class catUtils {
     final String smfile = "/semplest/data/dmoz/dmoztosem.txt";
     // final String smfile = ProjectProperties.dmozToSemCatFile;
     smap = ioUtils.readPair(smfile);
+    ismap = new HashMap<String,String>();
     for( Map.Entry<String,String> e: smap.entrySet())
       ismap.put( e.getValue(), e.getKey());
     logger.info("catUtils(): done loading semplest category map");
@@ -265,19 +267,17 @@ public class catUtils {
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    args = new String[] {"top/business"};
     String File = "/semplest/data/dmoz/all.cids";
     HashMap<String,String> cid =  catId( File );
 
-    long start  = System.currentTimeMillis();
-    //String[] ch     = children( cid, args[0] ); 
-    String[] des2   = descendants( cid, args[0]); 
-    long end    = System.currentTimeMillis();
+    catUtils cu = new catUtils();
 
-    //for( String r: ch) System.out.println( r );
-    for( String r: des2) System.out.println( r );
-    System.out.println(des2.length);
-    System.out.println("Duration: " + (end - start) + " ms");
-
+    for( Map.Entry<String,String> e: cid.entrySet() ){
+      String oc = e.getKey();
+      String tc = cu.code( oc ); 
+      String rc = cu.decode( tc ); 
+      if( ! oc.equals( rc ) )
+        System.out.println( oc + "(" + rc + ") : " + tc ); 
+    }
   }
 }
