@@ -72,7 +72,7 @@ namespace Semplest.Core.Controllers
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            var ds = new SemplestDataService();
+            //var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
             Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
@@ -205,7 +205,7 @@ namespace Semplest.Core.Controllers
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                     WriteLog(msg, model);
 
-                    var ds = new SemplestDataService();
+                    //var ds = new SemplestDataService();
                     var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                     model.ProductGroup.ProductPromotionName);
                     SemplestDataService.SaveSelectedCategories(promoId, catList);
@@ -256,7 +256,7 @@ namespace Semplest.Core.Controllers
         public void DoWorkFast(object data)
         {
             var locData = (ThreadData) data;
-            var ds = new SemplestDataService();
+            //var ds = new SemplestDataService();
             SemplestDataService.SaveKeywords(locData._promoId, locData._model);
         }
 
@@ -443,8 +443,8 @@ namespace Semplest.Core.Controllers
         public ActionResult GetSideBar()
         {
             int userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            var sds = new SemplestDataService();
-            var vwProductPromotions = sds.GetUserWithProductGroupAndPromotions(userid);
+            //var sds = new SemplestDataService();
+            var vwProductPromotions = SemplestDataService.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in vwProductPromotions.GroupBy(t => new { t.ProductGroupPK, t.ProductGroupName }))
@@ -484,7 +484,7 @@ namespace Semplest.Core.Controllers
             //var scw = new ServiceClientWrapper();
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            var ds = new SemplestDataService();
+            //var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
             if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
