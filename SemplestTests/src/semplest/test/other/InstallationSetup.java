@@ -37,6 +37,16 @@ public class InstallationSetup {
 				is.ServiceTest();
 			}			
 			
+			if(hostName.equals("VMDEVJAVA3")){
+				//DEV Box Keyword Service
+				is.KeywordDev();
+			}
+			
+			if(hostName.equals("VMJAVA3")){
+				//TEST Box Keyword Service
+				is.KeywordTest();
+			}
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,7 +103,7 @@ public class InstallationSetup {
 	}
 	
 	public void ServiceTest(){
-String service;
+		String service;
 		
 		service = "SemplestAdengineService";
 		setServicePropsTest(service);
@@ -108,6 +118,16 @@ String service;
 		setServicePropsTest(service);
 		
 		service = "SemplestSchedulerService";
+		setServicePropsTest(service);
+	}
+	
+	public void KeywordDev(){
+		String service = "SemplestKeywordGeneratorService";
+		setServicePropsDev(service);
+	}
+	
+	public void KeywordTest(){
+		String service = "SemplestKeywordGeneratorService";
 		setServicePropsTest(service);
 	}
 	
