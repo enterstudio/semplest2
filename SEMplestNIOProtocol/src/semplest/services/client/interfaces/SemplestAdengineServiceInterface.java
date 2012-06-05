@@ -15,12 +15,11 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	public abstract Boolean UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;	
 	public abstract Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception;
 	public abstract Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
+	public abstract Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
 	public abstract Boolean ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception;
 	public abstract Boolean DeleteKeyword(Integer promotionID, String Keyword, List<String> adEngines) throws Exception;
-	public abstract Boolean AddSiteLinkForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;
-	
+	public abstract Boolean RefreshSiteLinksForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;
+		
 	// not yet implemented		
-	public abstract Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception;		
-	public abstract Boolean DeleteSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception;	
-	public abstract Boolean UpdateSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines) throws Exception;			
+	public abstract Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception;				
 }

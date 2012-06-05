@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -214,7 +215,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			l.setLinkText("TestSiteLink");
 			l.setLinkURL("http://www.semplest.com");
 			siteLinks.add(l);
-			Boolean res = g.addSiteLinkForCampaign("54100", 637295L, siteLinks);
+			Boolean res = g.refreshSiteLinkForCampaign("54100", 637295L, siteLinks);
 			
 			System.out.println(res);
 			
@@ -3007,28 +3008,55 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 
 	}
+	
+	private List<SitelinksExtension> GetSitelinkExtensions(String accountID, Long campaignID, CampaignAdExtensionStatus status) throws Exception
+	{
+		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final com.google.api.adwords.v201109_1.cm.Selector selector = new com.google.api.adwords.v201109_1.cm.Selector();
+		selector.setFields(new String[]{ "AdExtensionId", "CampaignId" });
+		selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[]{new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId", com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING)});
+		final com.google.api.adwords.v201109_1.cm.Predicate campaignIdPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("CampaignId", com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]{campaignID.toString()});
+		final com.google.api.adwords.v201109_1.cm.Predicate adExtensionStatusPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("Status", com.google.api.adwords.v201109_1.cm.PredicateOperator.EQUALS, new String[]{status.toString()});
+		selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[]{campaignIdPredicate, adExtensionStatusPredicate});
+		final CampaignAdExtensionPage page = campaignAdExtensionService.get(selector);
+		final CampaignAdExtension[] campaignAdExtensions = page.getEntries();
+		final List<SitelinksExtension> sitelinksExtensions = new ArrayList<SitelinksExtension>();
+		if (campaignAdExtensions != null && campaignAdExtensions.length > 0)
+		{
+			for (final CampaignAdExtension campaignAdExtension : campaignAdExtensions)
+			{
+				final AdExtension adExtension = campaignAdExtension.getAdExtension();
+				final Boolean isSitelinksExtension = adExtension.getAdExtensionType().equalsIgnoreCase("SitelinksExtension");
+				final CampaignAdExtensionStatus campaignAdExtensionStatus = campaignAdExtension.getStatus();
+				//final Boolean isRequiredStatus = status.equals(campaignAdExtensionStatus);
+				//if (isSitelinksExtension && isRequiredStatus)
+			    if (isSitelinksExtension)
+				{
+					final SitelinksExtension siteLinkExtension = (SitelinksExtension)adExtension; 
+					logger.debug("Found SiteLinkExtension with campaign id [" + campaignAdExtension.getCampaignId() + "], ad extension [" + siteLinkExtension.getId() + "], and type [" + siteLinkExtension.getAdExtensionType() + "] for GoogleAccountID [" + accountID + "]");
+					sitelinksExtensions.add(siteLinkExtension);
+				}
+			}
+		}
+		if (sitelinksExtensions.isEmpty())
+		{
+			logger.debug("No SitelinksExtensions were found for GoogleAccountID [" + accountID + "] and CampaignID [" + campaignID + "] and CampaignAdExtensionStatus [" + status + "].");
+		}
+		return sitelinksExtensions;
+	}
+
 
 	private Long GetActiveSitelinkExtension(String accountID, Long campaignID) throws Exception
 	{
-		// Get the CampaignAdExtensionService.
-		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-		CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
-
-		// Create selector.
-		com.google.api.adwords.v201109_1.cm.Selector selector = new com.google.api.adwords.v201109_1.cm.Selector();
+		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final com.google.api.adwords.v201109_1.cm.Selector selector = new com.google.api.adwords.v201109_1.cm.Selector();
 		selector.setFields(new String[]{ "AdExtensionId", "CampaignId" });
-		selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[]
-		{ new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId", com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING) });
-	
-		// Create predicates.
-		com.google.api.adwords.v201109_1.cm.Predicate campaignIdPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("CampaignId",
-				com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]{ campaignID.toString() });
+		selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[]{ new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId", com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING) });
+		final com.google.api.adwords.v201109_1.cm.Predicate campaignIdPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("CampaignId", com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]{ campaignID.toString() });
 		selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[]{ campaignIdPredicate });
-
-		// Get all campaign ad extensions.
-		CampaignAdExtensionPage page = campaignAdExtensionService.get(selector);
-
-		// Display campaign ad extensions.
+		final CampaignAdExtensionPage page = campaignAdExtensionService.get(selector);
 		if (page.getEntries() != null && page.getEntries().length > 0)
 		{
 			for (CampaignAdExtension campaignAdExtension : page.getEntries())
@@ -3039,7 +3067,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					logger.debug("Campaign ad extension with campaign id \"" + campaignAdExtension.getCampaignId() + "\", ad extension id \""
 							+ campaignAdExtension.getAdExtension().getId() + "\", and type \""
 							+ campaignAdExtension.getAdExtension().getAdExtensionType() + "\" was found.");
-
 					return campaignAdExtension.getAdExtension().getId();
 				}
 			}
@@ -3051,46 +3078,107 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return null;
 	}
 
-	private void RemoveActiveSitelinkExtension(String accountID, Long campaignID, Long siteLinkExtID) throws Exception
+	private void RemoveActiveSitelinkExtensions(String accountID, Long campaignID, List<Long> siteLinkExtIds) throws Exception
 	{
-		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-		CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
-
-		// Create ad extension override.
-		CampaignAdExtension campaignAdExtension = new CampaignAdExtension();
-		campaignAdExtension.setCampaignId(campaignID);
-		AdExtension adExt = new AdExtension();
-		adExt.setId(siteLinkExtID);
-		campaignAdExtension.setAdExtension(adExt);
-
-		CampaignAdExtensionOperation operation = new CampaignAdExtensionOperation();
-		operation.setOperand(campaignAdExtension);
-		operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.REMOVE);
-
-		CampaignAdExtensionOperation[] operations = new CampaignAdExtensionOperation[]{ operation };
-
-		CampaignAdExtensionReturnValue result = campaignAdExtensionService.mutate(operations);
-		logger.debug("Removed site links");
-	}
-
-	@Override
-	public Boolean addSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
-	{
-		logger.info("Will try to Add " + siteLinks.size() + " SiteLinks for AccountID [" + accountID + "], CampaignID [" + campaignID + "]");
-		// Can have only one Site link
-		Long currentID = GetActiveSitelinkExtension(accountID, campaignID);
-		if (currentID != null)
+		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final List<CampaignAdExtensionOperation> operationList = new ArrayList<CampaignAdExtensionOperation>(); 
+		for (final Long siteLinkExtID : siteLinkExtIds)
 		{
-			RemoveActiveSitelinkExtension(accountID, campaignID, currentID);
+			final CampaignAdExtension campaignAdExtension = new CampaignAdExtension();
+			campaignAdExtension.setCampaignId(campaignID);
+			final AdExtension adExt = new AdExtension();
+			adExt.setId(siteLinkExtID);
+			campaignAdExtension.setAdExtension(adExt);
+			final CampaignAdExtensionOperation operation = new CampaignAdExtensionOperation();
+			operation.setOperand(campaignAdExtension);
+			operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.REMOVE);
+			operationList.add(operation);
+		}		
+		final CampaignAdExtensionOperation[] operations = operationList.toArray(new CampaignAdExtensionOperation[operationList.size()]);
+		final CampaignAdExtensionReturnValue result = campaignAdExtensionService.mutate(operations);
+		final CampaignAdExtension[] resultCampaignAdExtensions = result.getValue();
+		if (resultCampaignAdExtensions.length != siteLinkExtIds.size())
+		{
+			logger.warn("# of SitelinkExtensions deleted [" + resultCampaignAdExtensions.length + "] is not as we expected [" + siteLinkExtIds.size() + "].\n\tSitelinkExtension deleted: []\n\tSitelinkExtensions intended to delete: []");
+		}
+	}
+	
+	public static List<SitelinksExtension> getMatchingSitelinks(final List<SitelinksExtension> sitelinksExtensions, final List<GoogleSiteLink> siteLinks)
+	{
+		final List<SitelinksExtension> matchingSitelinksExtensions = new ArrayList<SitelinksExtension>();
+		if (sitelinksExtensions == null || siteLinks == null)
+		{
+			return matchingSitelinksExtensions;
+		}		
+		for (final SitelinksExtension sitelinksExtension : sitelinksExtensions)
+		{
+			final Sitelink[] sitelinks = sitelinksExtension.getSitelinks();
+			if (sitelinks != null)
+			{
+				for (int i = 0; i < sitelinks.length; ++i)
+				{
+					final Sitelink sitelink = sitelinks[i];
+					final String text = sitelink.getDisplayText();
+					final String url = sitelink.getDestinationUrl();
+					for (final GoogleSiteLink semplestSiteLink : siteLinks)
+					{
+						final Boolean textMatches = semplestSiteLink.getLinkText().equals(text);
+						final Boolean urlMatches = semplestSiteLink.getLinkURL().equals(url);
+						if (textMatches && urlMatches)
+						{
+							matchingSitelinksExtensions.add(sitelinksExtension);
+						}
+					}
+				}
+			}
+		}
+		return matchingSitelinksExtensions;
+	}
+	
+	public static List<Long> getIds(final List<SitelinksExtension> sitelinksExtensions)
+	{		
+		final List<Long> ids = new ArrayList<Long>();
+		if (sitelinksExtensions == null)
+		{
+			return ids;
+		}
+		for (final SitelinksExtension sitelinksExtension : sitelinksExtensions)
+		{
+			ids.add(sitelinksExtension.getId());
+		}
+		return ids;
+	}
+	/*
+	@Override
+	public Boolean deleteSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
+	{
+		final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
+		logger.info("Will try to Delete the following SiteLinks for AccountID [" + accountID + "], CampaignID [" + campaignID + "]:\n" + siteLinksEasilyReadableString);
+		final List<SitelinksExtension> sitelinksExtensions = GetSitelinkExtensions(accountID, campaignID, CampaignAdExtensionStatus.ACTIVE);
+		logger.info("Found " + sitelinksExtensions.size() + " Active SitelinksExtensions for GoogleAccountID [" + accountID + "] and CampaignID [" + campaignID + "].  Now will try to filter them for those that we need to delete.");
+		final List<SitelinksExtension> matchingSitelinksExtensions = getMatchingSitelinks(sitelinksExtensions, siteLinks);
+		final List<Long> matchingSitelinkIds = getIds(matchingSitelinksExtensions); 
+		RemoveActiveSitelinkExtensions(accountID, campaignID, matchingSitelinkIds);
+		return true;
+	}
+*/
+	@Override
+	public Boolean refreshSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
+	{
+		final String siteLinksReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
+		logger.info("Will try to Refresh SiteLinks for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "] with the following:\n" + siteLinksReadableString);
+		final List<SitelinksExtension> activeSitelinksExtensions = GetSitelinkExtensions(accountID, campaignID, CampaignAdExtensionStatus.ACTIVE);
+		final List<Long> existingActiveSitelinkIds = getIds(activeSitelinksExtensions);
+		if (!existingActiveSitelinkIds.isEmpty())
+		{
+			RemoveActiveSitelinkExtensions(accountID, campaignID, existingActiveSitelinkIds);
 		}
 		if (siteLinks != null)
 		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
-
-			// Create ad extensionfor site links.
 			Sitelink[] googleSitelinks = new Sitelink[siteLinks.size()];
-
 			int i = 0;
 			for (GoogleSiteLink gl : siteLinks)
 			{
@@ -3131,8 +3219,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			else
 			{
-				logger.error("No campaign ad extensions were added.");
+				final String errMsg = "Problem adding the following SiteLinks to Google for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]: [" + siteLinks + "]";
+				logger.error(errMsg);
+				throw new Exception(errMsg);
 			}
+		}
+		{
+			logger.info("No SiteLinks specified to refresh with, so simply removed the existing ones");
 		}
 		return true;
 	}

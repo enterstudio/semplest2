@@ -9,6 +9,7 @@ public final class SemplestUtils
 {
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
+	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
 	public static final String getTrimmedNonNullString(final String s)
 	{
@@ -24,28 +25,38 @@ public final class SemplestUtils
 	
 	public static String getEasilyReadableString(final List<?> list)
 	{
+		if (list == null)
+		{
+			return "";
+		}
+		int counter = 0;
 		final StringBuffer sb = new StringBuffer();
 		for (final Object o : list)
 		{
 			if (sb.length() != 0)
 			{
-				sb.append("\n");
+				sb.append(LINE_SEPARATOR);
 			}
-			sb.append(o);
+			sb.append(++counter).append(": ").append(o);
 		}
 		return sb.toString();
 	}
 	
-	public static String getEasilyReadableString(final Map<String, String> m)
+	public static String getEasilyReadableString(final Map<?, ?> m)
 	{
+		if (m == null)
+		{
+			return "";
+		}
+		int counter = 0;
 		final StringBuffer sb = new StringBuffer();
-		for (final Map.Entry<String, String> mapEntry : m.entrySet())
+		for (final Map.Entry<?, ?> mapEntry : m.entrySet())
 		{
 			if (sb.length() != 0)
 			{
-				sb.append("\n");
+				sb.append(LINE_SEPARATOR);
 			}
-			sb.append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
+			sb.append(++counter).append(": ").append(mapEntry.getKey()).append(" -> ").append(mapEntry.getValue());
 		}
 		return sb.toString();
 	}

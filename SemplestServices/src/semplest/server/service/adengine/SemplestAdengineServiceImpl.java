@@ -647,7 +647,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}		
 	}
 	
+	public String UnpausePromotion(String json) throws Exception
+	{
+		logger.debug("call UnpausePromotion(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = UnpausePromotion(PromotionID, adEngines);
+		return gson.toJson(res);
+	}
 	
+	@Override
+	public Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception
+	{
+		return ChangePromotionPromotionStatus(promotionID, adEngines, CampaignStatus.ACTIVE);
+	}
 	
 	public String PausePromotion(String json) throws Exception
 	{
@@ -662,7 +676,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Pause Promotion [" + promotionID + "] for AdEngines [" + adEngines+ "])");
+		return ChangePromotionPromotionStatus(promotionID, adEngines, CampaignStatus.PAUSED);
+	}
+	
+	public Boolean ChangePromotionPromotionStatus(Integer promotionID, List<String> adEngines, CampaignStatus newStatus) throws Exception
+	{
+		logger.info("Will try to Change Status to [" + newStatus + "] for Promotion [" + promotionID + "] and AdEngines [" + adEngines+ "])");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
@@ -673,19 +692,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				logger.info("Will try to Pause Google Campaign using AccountID [" + accountId + "] and CampaignID [" + campaignId + "] (it's associated with SEMplest Promotion for ID [" + promotionID + "])");
+				logger.info("Will try to Change Status of Google Campaign using AccountID [" + accountId + "] and CampaignID [" + campaignId + "] (it's associated with SEMplest Promotion for ID [" + promotionID + "])");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Boolean result = googleAdwordsService.changeCampaignStatus(accountId, campaignId, CampaignStatus.PAUSED);
+				final Boolean result = googleAdwordsService.changeCampaignStatus(accountId, campaignId, newStatus);
 				if (!result)
 				{
-					final String errMsg = "Request to Pause Google Campaign for AccountID [" + accountId + "] and CampaignID [" + campaignId + "] failed";
+					final String errMsg = "Request to Change Status of Google Campaign for AccountID [" + accountId + "] and CampaignID [" + campaignId + "] failed";
 					logger.info(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
 			}
 			else
 			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Pausing Promotions (at least not yet)";
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Changing Promotion Status (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
 			}						
@@ -700,7 +719,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}
-	}
+	}	
+	
 
 	@Override
 	public Boolean PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
@@ -916,12 +936,64 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			return false;
 		}		
 	}
+	
+	public String RefreshSiteLinksForAd(String json) throws Exception
+	{
+		logger.debug("call RefreshSiteLinksForAd(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Boolean res = RefreshSiteLinksForAd(promotionID, promotionAdID, adEngines);
+		return gson.toJson(res);
+	}
 
 	@Override
-	public Boolean DeleteSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, List<String> adEngines) throws Exception
+	public Boolean RefreshSiteLinksForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to Refresh SiteLinks in Google associated with PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{							
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+				final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
+				getSiteLinksForPromotionSP.execute(promotionAdID);
+				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
+				final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
+				logger.info("Found the following SiteLinks in Semplest DB:\n" + siteLinksEasilyReadableString);
+				final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final Boolean processedSuccessully = googleAdwordsService.refreshSiteLinkForCampaign(accountID, campaignId, googleSiteLinks);
+				if (!processedSuccessully)
+				{
+					final String errMsg = "Problem adding SiteLinks to Google Campaign [" + campaignId + "] for GoogleAccountID [" + accountID + "]";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}						
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for refreshing sitelinks (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (errorMap.isEmpty())
+		{
+			return true;
+		}
+		else
+		{
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
+			logger.error(errorMapEasilyReadableString);
+			return false;
+		}	
 	}
 	
 	public String UpdateAd(String json) throws Exception
@@ -1008,14 +1080,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errorMapEasilyReadableString);
 			return false;
 		}		
-	}
-
-	@Override
-	public Boolean UpdateSiteLinkForAd(Integer promotionID, Integer promotionAdID, Integer SiteLinkID, String siteLink, List<String> adEngines)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 	
 	public String UpdateBudget(String json) throws Exception
@@ -1147,65 +1211,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			googleSiteLinks.add(googleSiteLink);
 		}
 		return googleSiteLinks;
-	}
-	
-	public String AddSiteLinkForAd(String json) throws Exception
-	{
-		logger.debug("call AddSiteLinkForAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
-		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		final Boolean res = AddSiteLinkForAd(promotionID, promotionAdID, adEngines);
-		return gson.toJson(res);
-	}
-
-	@Override
-	public Boolean AddSiteLinkForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
-	{
-		logger.info("Will try to add SiteLinks in Google associated with PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
-		final Map<String, String> errorMap = new HashMap<String, String>();
-		for (final String adEngine : adEngines)
-		{
-			if (AdEngine.Google.name().equals(adEngine))
-			{
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
-				getSiteLinksForPromotionSP.execute(promotionAdID);
-				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
-				final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
-				logger.info("Found the following SiteLinks in Semplest DB:\n" + siteLinksEasilyReadableString);
-				final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);				
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
-				final Boolean processedSuccessully = googleAdwordsService.addSiteLinkForCampaign(accountID, campaignID, googleSiteLinks);
-				if (!processedSuccessully)
-				{
-					final String errMsg = "Problem adding SiteLinks to Google Campaign [" + campaignID + "] for GoogleAccountID [" + accountID + "]";
-					logger.error(errMsg);
-					errorMap.put(adEngine, errMsg);
-				}
-			}
-			else
-			{
-				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for adding SiteLinks (at least not yet)";
-				logger.error(errMsg);
-				errorMap.put(adEngine, errMsg);
-			}						
-		}			
-		if (errorMap.isEmpty())
-		{
-			return true;
-		}
-		else
-		{
-			final String errorMapEasilyReadableString = "Error Summary:\n" + SemplestUtils.getEasilyReadableString(errorMap);
-			logger.error(errorMapEasilyReadableString);
-			return false;
-		}
 	}
 
 }
