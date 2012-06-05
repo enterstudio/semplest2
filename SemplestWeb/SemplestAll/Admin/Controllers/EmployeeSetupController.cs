@@ -516,6 +516,7 @@ namespace Semplest.Admin.Controllers
 
                             };
                 dbcontext.Users.AddObject(u);
+                
 
                 var r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
                 var ura = new UserRolesAssociation {Role = r, User = u};
@@ -534,10 +535,6 @@ namespace Semplest.Admin.Controllers
                                  Password = m.EmployeeSetup.UserPassword
                              };
                 dbcontext.Credentials.AddObject(cr); 
-
-
-                
-
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
