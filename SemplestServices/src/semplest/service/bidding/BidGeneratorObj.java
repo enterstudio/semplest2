@@ -859,6 +859,7 @@ public class BidGeneratorObj {
 							Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 							logger.info("Calling Google API for traffic estimator data.");
 							o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+							logger.info("Returned from Google API call.");
 						}
 						break;
 					} catch (Exception e) {
@@ -877,8 +878,10 @@ public class BidGeneratorObj {
 				if(firstLoop || o==null){
 					o=o2;
 					firstLoop=false;
+					logger.info("First loop for this bid point.");
 				} else {
 					o.addGoogleTrafficEstimatorObject(o2,KeywordMatchType.EXACT.getValue());
+					logger.info("Added data for this bid point.");
 				}
 			} // if(i/500==0) 
 		} // while(it.hasNext())
