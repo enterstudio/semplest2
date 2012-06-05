@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolJSON;
@@ -21,28 +22,33 @@ import com.google.gson.reflect.TypeToken;
 public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
-	private static String DEFAULTBIDTIMEOUT = "40000";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
+	private static String DEFAULTBIDTIMEOUT = "3600000";
 	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(SemplestBiddingServiceClient.class);
 	private String baseurl = null;
 	private String timeoutMS = null;
+	
+	
+	//public static ClassPathXmlApplicationContext appContext = null;
+
 
 	public static void main(String[] args)
 	{
 		try
 		{
-			String cust = "0";
-			Long camp = 1L;
-			Long ad = 2L;
-			ArrayList<String> keywords = new  ArrayList<String>();
-			keywords.add("peanut butter"); 
-			keywords.add("ice"); 
+			
+			BasicConfigurator.configure();
+ 
 			SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(null, null);
-			HashMap<String, Double> res = client.getBid(cust, camp, ad, keywords);
-			System.out.println(String.valueOf(res.get("ice")));
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(75.00);
+			budgetData.setRemainingDays(31);
+			
+			//client.setBidsInitial(60, "Google", budgetData);
+			
 		}
 		catch (Exception e)
 		{
