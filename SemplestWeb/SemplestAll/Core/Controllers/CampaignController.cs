@@ -447,7 +447,7 @@ namespace Semplest.Core.Controllers
             var vwProductPromotions = SemplestDataService.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
-            foreach (var promotion in vwProductPromotions.GroupBy(t => new { t.ProductGroupPK, t.ProductGroupName }))
+            foreach (var promotion in vwProductPromotions.GroupBy(t => new { t.ProductGroupPK, t.ProductGroupName }).OrderBy(x => x.Key.ProductGroupName))
             {
                 var promotionBar = new NavBar
                 {
@@ -455,8 +455,8 @@ namespace Semplest.Core.Controllers
                     Id = promotion.Key.ProductGroupPK,
                     SubItems = new List<NavBar>()
                 };
-
-                foreach (var prom in promotion)
+                
+                foreach (var prom in promotion.OrderBy(x => x.PromotionName))
                     promotionBar.SubItems.Add(new NavBar
                     {
                         Name = prom.PromotionName,
