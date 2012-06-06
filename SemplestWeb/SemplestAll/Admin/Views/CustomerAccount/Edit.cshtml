@@ -226,7 +226,7 @@ Edit Customer Account:
 
    
 
-    <h3>
+   @* <h3>
         Enter Your Creditcard Information:</h3>
     <label>
         Card number
@@ -279,17 +279,17 @@ Edit Customer Account:
         Style Sheet Edits:<input type="text" /></label> <br />
     <br />
     <br />
-
+*@
     
 
-    <input type="submit" value="Save" class="k-button"/> 
+    <input type="submit"  name="command" value="Save" class="k-button"/> <input type="submit"  name="command" value="Cancel" class="k-button"/> <input type="submit"  name="command" value="Delete" class="k-button"/> 
     <br />
     <br />
     <br />
 
 
     <ul style="display: block" class="kendo-nav">
-    <li> @Html.RouteLink("Delete Customer", new { Controller = "CustomerAccount", action = "Delete", id = Model.CustomerAccount.AccountNumber  }) </li>
+    @*<li> @Html.RouteLink("Delete Customer", new { Controller = "CustomerAccount", action = "Delete", id = Model.CustomerAccount.AccountNumber  }) </li>*@
     </ul>
     </fieldset> 
 
