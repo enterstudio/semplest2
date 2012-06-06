@@ -22,6 +22,8 @@ import java.util.zip.*;
 import java.io.*;
 import java.text.NumberFormat;
 
+import org.apache.log4j.Logger;
+
 import cc.mallet.types.*;
 import cc.mallet.topics.TopicAssignment;
 import cc.mallet.util.Randoms;
@@ -40,7 +42,8 @@ public class ParallelTopicModel implements Serializable {
 
 	public static final int UNASSIGNED_TOPIC = -1;
 
-	public static Logger logger = MalletLogger.getLogger(ParallelTopicModel.class.getName());
+	//public static Logger logger = MalletLogger.getLogger(ParallelTopicModel.class.getName());
+	private static final Logger logger = Logger.getLogger(ParallelTopicModel.class);
 	
 	public ArrayList<TopicAssignment> data;  // the training instances and their topic assignments
 	public Alphabet alphabet; // the alphabet for the input data
@@ -798,7 +801,7 @@ public class ParallelTopicModel implements Serializable {
 						runnables[thread].collectAlphaStatistics();
 					}
 					
-					logger.fine("submitting thread " + thread);
+					logger.info("submitting thread " + thread);
 					executor.submit(runnables[thread]);
 					//runnables[thread].run();
 				}
@@ -810,12 +813,12 @@ public class ParallelTopicModel implements Serializable {
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
-					
+					logger.error("Sleep Exception " + e.getMessage());
 				}
 				
 				//Test_Nan
 				long start  = System.currentTimeMillis();
-				long timeOut = 12000;
+				long timeOut = 20000; //Timeout after 20 sec
 				
 				boolean finished = false;
 				while (! finished) {
@@ -839,14 +842,15 @@ public class ParallelTopicModel implements Serializable {
 								errCounter++;
 							}
 						}
-						
+						logger.error("TIMEOUT " + this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter + ". Details - " + errMsg);
+						executor.shutdownNow();
 						throw new IOException(this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter + ". Details - " + errMsg);
 					}
 					
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
-						
+						logger.error("Sleep Exception " + e.getMessage());
 					}
 					
 					finished = true;
@@ -903,10 +907,10 @@ public class ParallelTopicModel implements Serializable {
 
 			long elapsedMillis = System.currentTimeMillis() - iterationStart;
 			if (elapsedMillis < 1000) {
-				logger.fine(elapsedMillis + "ms ");
+				logger.info(elapsedMillis + "ms ");
 			}
 			else {
-				logger.fine((elapsedMillis/1000) + "s ");
+				logger.info((elapsedMillis/1000) + "s ");
 			}   
 
 			if (iteration > burninPeriod && optimizeInterval != 0 &&
@@ -915,7 +919,7 @@ public class ParallelTopicModel implements Serializable {
 				optimizeAlpha(runnables);
 				optimizeBeta(runnables);
 				
-				logger.fine("[O " + (System.currentTimeMillis() - iterationStart) + "] ");
+				logger.info("[O " + (System.currentTimeMillis() - iterationStart) + "] ");
 			}
 			
 			if (iteration % 10 == 0) {
@@ -1510,11 +1514,11 @@ public class ParallelTopicModel implements Serializable {
 				logLikelihood += Dirichlet.logGammaStirling(beta + count);
 
 				if (Double.isNaN(logLikelihood)) {
-					logger.warning("NaN in log likelihood calculation");
+					logger.warn("NaN in log likelihood calculation");
 					return 0;
 				}
 				else if (Double.isInfinite(logLikelihood)) {
-					logger.warning("infinite log likelihood");
+					logger.warn("infinite log likelihood");
 					return 0;
 				}
 
