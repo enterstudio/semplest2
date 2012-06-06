@@ -146,7 +146,16 @@ public class ProtocolEnum
 		MsnReport("semplest.services.client.api.MSNAdcenterServiceClient"),
 		AddPromotionToAdEngine("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		ExecuteBidProcess("semplest.services.client.api.SemplestAdEngineServiceClient"),
-		DeleteAdEngineAd("semplest.services.client.api.SemplestAdEngineServiceClient");
+		AddAd("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		DeleteAdEngineAd("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		UpdateGeoTargeting("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		UpdateBudget("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		PausePromotion("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		UnpausePromotion("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		DeleteKeyword("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		RefreshSiteLinksForAd("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		PauseProductGroup("semplest.services.client.api.SemplestAdEngineServiceClient"),		
+		ChangePromotionStartDate("semplest.services.client.api.SemplestAdEngineServiceClient");
 		
 		private String val;
 
