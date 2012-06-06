@@ -448,29 +448,46 @@ public class ParallelTopicModel implements Serializable {
 			int[] targetCounts = typeTopicCounts[type];
 			
 			int position = 0;
-			while (position < targetCounts.length && 
-				   targetCounts[position] > 0) {
+			while (position < targetCounts.length && targetCounts[position] > 0) {
 				targetCounts[position] = 0;
 				position++;
 			}
 
 		}
 
-		for (int thread = 0; thread < numThreads; thread++) {
+		// -Raj
+		if( runnables.length != numThreads)
+			logger.finest("Error: Required threads ("+numThreads+") !=  runnable threads ("+ runnables.length + ")");
+		
+		int activeThreads = Math.min( runnables.length, numThreads ); 
+		for (int thread = 0; thread < activeThreads; thread++) {
 
 			// Handle the total-tokens-per-topic array
 
+			
 			int[] sourceTotals = runnables[thread].getTokensPerTopic();
-			for (int topic = 0; topic < numTopics; topic++) {
+			
+			// -Raj
+			if( numTopics > tokensPerTopic.length || numTopics > sourceTotals.length )
+				logger.finest("Error: numTopics not equal to tokensPerTopi and sourceTotals");
+			
+			int usedTopics = Math.min( Math.min( numTopics,tokensPerTopic.length), sourceTotals.length );
+			for (int topic = 0; topic < usedTopics; topic++) {
 				tokensPerTopic[topic] += sourceTotals[topic];
 			}
+			
 			
 			// Now handle the individual type topic counts
 			
 			int[][] sourceTypeTopicCounts = 
 				runnables[thread].getTypeTopicCounts();
 			
-			for (int type = 0; type < numTypes; type++) {
+			// -Raj
+			if( numTypes > sourceTypeTopicCounts.length || numTypes > typeTopicCounts.length )
+				logger.finest("Error: numTypes not equal to sourceTypeTopicCounts and typeTopicCounts");
+			
+			int usedTypes = Math.min( Math.min( numTypes, sourceTypeTopicCounts.length), typeTopicCounts.length);
+			for (int type = 0; type < usedTypes; type++) {
 
 				// Here the source is the individual thread counts,
 				//  and the target is the global counts.
@@ -489,13 +506,15 @@ public class ParallelTopicModel implements Serializable {
 					int currentTopic = targetCounts[targetIndex] & topicMask;
 					int currentCount;
 					
-					while (targetCounts[targetIndex] > 0 && currentTopic != topic) {
+					// put in check for targetIndex < targetCounts.length  -Raj
+					while (targetCounts[targetIndex] > 0 && currentTopic != topic && targetIndex < (targetCounts.length-1)) {
 						targetIndex++;
-						if (targetIndex == targetCounts.length) {
-							logger.info("overflow in merging on type " + type);
-						}
+						
 						currentTopic = targetCounts[targetIndex] & topicMask;
 					}
+					if (targetIndex == (targetCounts.length-1)) 
+						logger.info("potential overflow in merging on type " + type);
+					
 					currentCount = targetCounts[targetIndex] >> topicBits;
 					
 					targetCounts[targetIndex] =
@@ -518,10 +537,10 @@ public class ParallelTopicModel implements Serializable {
 			}
 		}
 
-		/* // Debuggging code to ensure counts are being 
-		   // reconstructed correctly.
-
-		for (int type = 0; type < numTypes; type++) {
+		 // Debuggging code to ensure counts are being 
+		 // reconstructed correctly.                    (uncommented)  -Raj
+		int usedTypes = Math.min( Math.min( numTypes, typeTopicCounts.length), typeTotals.length);
+		for (int type = 0; type < usedTypes; type++) {
 			
 			int[] targetCounts = typeTopicCounts[type];
 			
@@ -534,11 +553,11 @@ public class ParallelTopicModel implements Serializable {
 			}
 			
 			if (count != typeTotals[type]) {
-				System.err.println("Expected " + typeTotals[type] + ", found " + count);
+				logger.finest("Expected " + typeTotals[type] + ", found " + count);
 			}
 			
 		}
-		*/
+		
 	}
 	
 
