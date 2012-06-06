@@ -103,12 +103,35 @@ namespace Semplest.Core.Models.Repositories
         {
             foreach (var negK in model.AdModelProp.NegativeKeywords)
             {
-                string k = negK;
-                var i = keywordProbList.Where(key => key.keyword.Contains(k));
-                if (i.Any())
-                {
-                    keywordProbList.Remove(i.First());
-                }
+
+
+
+                string k = negK.ToUpper();
+                var i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(k));
+                foreach (KeywordProbabilityObject s in i)
+                    s.isDeleted = true;
+
+                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(k + " "));
+                foreach (KeywordProbabilityObject s in i)
+                    s.isDeleted = true;
+
+                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(" " + k));
+                foreach (KeywordProbabilityObject s in i)
+                    s.isDeleted = true;
+
+                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(" " + k + " "));
+                foreach (KeywordProbabilityObject s in i)
+                    s.isDeleted = true;
+
+
+
+                //string k = negK.ToUpper();
+                //int j;
+                ////negK
+                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper() == k);
+                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(k + " "));
+                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(" " + k));
+                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(" " + k + " "));
             }
         }
 

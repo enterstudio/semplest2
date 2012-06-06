@@ -282,6 +282,7 @@ namespace Semplest.SharedResources.Services
         public double semplestProbability { get; set; }
         public bool isTargetMSN { get; set; }
         public bool isTargetGoogle { get; set; }
+        public bool isDeleted { get; set; }
     }
 
 }

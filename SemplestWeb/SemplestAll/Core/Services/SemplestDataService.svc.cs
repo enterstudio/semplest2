@@ -450,7 +450,12 @@ namespace Semplest.Core.Services
                     dbcontext.SaveChanges();
                 }
             }
-        }
+        
+        
+        
+        
+        
+}
 
         public static void SaveKeywords(int promotionId, CampaignSetupModel model)
         {
@@ -458,9 +463,11 @@ namespace Semplest.Core.Services
             {
                 // todo need to fix this
                 //return true;
-                //remove all associations whenever new keywords are retrieved from the service
+                //remove all associations whenever new keywords are retrieved from the service - need to optimize this 
                 var p = dbcontext.Promotions.Where(x => x.PromotionPK == promotionId);
-                p.First().PromotionKeywordAssociations.Clear();
+                foreach (PromotionKeywordAssociation z in p.First().PromotionKeywordAssociations.Where(x => x.IsNegative == false).ToList())
+                    dbcontext.DeleteObject(z);
+
                 dbcontext.SaveChanges();
                 foreach (var kpo in model.AllKeywordProbabilityObjects)
                 {
@@ -479,7 +486,7 @@ namespace Semplest.Core.Services
                                 //KeywordFK = keywordId,
                                 CreatedDate = DateTime.Now,
                                 IsActive = true,
-                                IsDeleted = false,
+                                IsDeleted = kpo.isDeleted,
                                 IsNegative = false,
                                 SemplestProbability = kpo.semplestProbability,
                                 IsTargetMSN = kpo.isTargetMSN,
@@ -503,7 +510,7 @@ namespace Semplest.Core.Services
                                     KeywordFK = keywordId,
                                     CreatedDate = DateTime.Now,
                                     IsActive = true,
-                                    IsDeleted = false,
+                                    IsDeleted = kpo.isDeleted,
                                     IsNegative = false,
                                     SemplestProbability = kpo.semplestProbability,
                                     IsTargetMSN = kpo.isTargetMSN,
@@ -519,7 +526,7 @@ namespace Semplest.Core.Services
                             pka.SemplestProbability = kpo.semplestProbability;
                             pka.IsTargetMSN = kpo.isTargetMSN;
                             pka.IsTargetGoogle = kpo.isTargetGoogle;
-
+                            pka.IsDeleted = kpo.isDeleted;
                             dbcontext.SaveChanges();
                         }
                     }
