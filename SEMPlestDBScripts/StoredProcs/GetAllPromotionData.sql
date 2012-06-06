@@ -43,7 +43,7 @@ BEGIN TRY
 		--get Geotargeting
 		select gt.Address, gt.City,st.StateAbbr [State], gt.Zip, gt.Latitude, gt.Longitude,gt.ProximityRadius [Radius] from Promotion p 
 		inner join GeoTargeting gt on gt.PromotionFK = p.PromotionPK
-		inner join StateCode st on st.StateAbbrPK = gt.StateCodeFK
+		left join StateCode st on st.StateAbbrPK = gt.StateCodeFK
 		where p.PromotionPK = @PromotionPK			 
 	
 END TRY
