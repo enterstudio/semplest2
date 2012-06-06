@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -210,6 +212,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			logger.info("Returned keyword: " + returnedKeyword);
 			*/
 			
+			/*
 			ArrayList<GoogleSiteLink> siteLinks = new ArrayList<GoogleSiteLink>();
 			GoogleSiteLink l = new GoogleSiteLink();
 			l.setLinkText("TestSiteLink");
@@ -219,24 +222,35 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			
 			System.out.println(res);
 			
+			*/
+			
 			// Long id = g.GetActiveSitelinkExtension("54102", 656140L);
 			// System.out.println("id=" + id);
 			
 			//String url = "www.summithillsfloristnj.com";
 			String[] keywords = new String[]
-			{ "wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower" };
+					{"wedding dresses", "bridesmaids dresses", "mother of the bride dresses", "flower girl dresses",
+					"wedding accessories", "engagement rings", "wedding rings", "tuxedos", "wedding invitations", "wedding registry"};
+			//{ "wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower" };
+			
 			
 			
 			//int numberResults = 100;
 			//int categoryId = 11476; // Wedding Flowers
 			//String accountID = null;
 			//String [] exclude_keywords = null;
-			/*
-			 * ArrayList<KeywordToolStats> keyWordIdeaMap; try{ keyWordIdeaMap =
-			 * g.getGoogleKeywordIdeas(accountID, url, keywords,
-			 * exclude_keywords, categoryId, numberResults); } catch (Exception
-			 * e){ e.printStackTrace(); }
-			 */
+			
+			ArrayList<KeywordToolStats> keyWordIdeaList; 
+			try{ 
+				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, 1000); 
+//				for (KeywordToolStats w : keyWordIdeaList){
+//					System.out.println(w.getKeyword());
+//				}
+			} catch (Exception e){ 
+				e.printStackTrace(); 
+			}
+
+			
 			/*
 			 * ArrayList<KeywordToolStats> stats =
 			 * g.getGoogleVolumeCompetition(keywords, null); for
@@ -1603,7 +1617,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					}
 
 					if(kw.getText().split("\\s+").length>1){
-					returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+						returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 					}
 					if (stopWordSet.contains(kw))
 					{
@@ -1642,6 +1656,20 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 
 		logger.info("Total number of words received from Google: "+returnData.size());
+		
+		
+		// sort according to volume before returning
+		Collections.sort(returnData, new Comparator<KeywordToolStats>(){
+			  public int compare(KeywordToolStats s1, KeywordToolStats s2) {
+			    return s2.getAverageMonthlySearches().compareTo(s1.getAverageMonthlySearches());
+			  }
+			});
+		
+		logger.info("Words suggested by Google keyword tool are:");
+		for(KeywordToolStats w : returnData){
+			logger.info(w.getKeyword()+","+w.getMatchType()+","+w.getCompetition()+","+w.getAverageMonthlySearches());
+		}
+		
 		return returnData;
 
 	}
