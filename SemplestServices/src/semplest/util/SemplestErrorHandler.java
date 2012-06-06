@@ -7,10 +7,10 @@ public class SemplestErrorHandler {
 	private String serviceName;
 	
 	public SemplestErrorHandler(){
-		serviceName = SEMplestService.properties.getProperty("YAJSW.servicename");
+		//serviceName = SEMplestService.properties.getProperty("YAJSW.servicename");
 	}
 
 	public void logToDatabase(Exception e){		 
-		SemplestDB.logError(e, serviceName);
+		//SemplestDB.logError(e, serviceName);
 	}
 }
