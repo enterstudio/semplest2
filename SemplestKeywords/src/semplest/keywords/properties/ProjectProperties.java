@@ -10,6 +10,8 @@ import org.apache.log4j.Logger;
 
 public class ProjectProperties {
 
+  final public static String PROPSFILE =  "data/SemplestKeywords.properties";
+
   public static Properties properties;
 
   //for dictUtils
@@ -38,79 +40,72 @@ public class ProjectProperties {
   private static final Logger logger = Logger.getLogger(ProjectProperties.class);
   private static HashMap<String,Object> configData;
 
+  // statics should be initialized in a static constructor block
+  // Read in data from properties file
+  static {
+    properties = new Properties();
+    try {
+      properties.load( new FileInputStream(PROPSFILE) );
+    } catch (Exception e ){
+      e.printStackTrace();
+      // Note: Logger may not be initialized yet
+    }
 
-  //load properties
-  public ProjectProperties() throws IOException{
-    this(null);
+    dictfile  = properties.getProperty("dictfile");
+    docfile   = properties.getProperty("docfile"); 
+    twfile    = properties.getProperty("twfile"); 
+    dfile     = properties.getProperty("dfile"); 
+    baseMultiWPath = properties.getProperty("baseMultiWPath");
+    nGramsC     = properties.getProperty("nGramsC");; 
+    catMap      = properties.getProperty("catMap");
+    lucenedfile = properties.getProperty("lucenedfile");
+    smallhCounts  = properties.getProperty("smallhCounts");
+    stoplist      = properties.getProperty("stoplist");
+    numTopics     = Integer.parseInt(properties.getProperty("numTopics"));
+    numThreads      = Integer.parseInt(properties.getProperty("numThreads"));
+    numKeywordsGoogle = 
+      Integer.parseInt(properties.getProperty("numKeywordsGoogle"));
+    numKeywordsMSN  = 
+      Integer.parseInt( properties.getProperty("numKeywordsMSN"));
+    userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
+    validCat    = loadStringArrayfromfile("validcat");
+    nGramsSubC  = loadStringArrayfromfile("nGramsSubC");
   }
 
+  // null ctr not needed, but there to keep code from breaking 
+  public ProjectProperties() throws IOException { this(null); }
+  // if data is provided from database (as hash), override file properties
   public ProjectProperties( HashMap<String,Object> configDataIn) 
     throws IOException{
 
-    // Read in data from properties file
-      File directory = new File (".");
-      String PROPSFILE =  "data/SemplestKeywords.properties";
-      properties = new Properties();
-      logger.info("PROPSFILE=" + PROPSFILE);
+    if( configDataIn == null) return;
 
-      FileInputStream is = new FileInputStream(PROPSFILE);
+    logger.info("Updating keyword properties properties from hash...");
+    configData = configDataIn;
 
-      properties.load(is);
-      is.close();
-      logger.info("Read in properties file...");
+    dictfile  = getString( "SemplestKeywordsdictfile",  dictfile );
+    docfile   = getString("SemplestKeywordsdocfile",    docfile); 
+    twfile    = getString("SemplestKeywordstwfile",     twfile); 
+    dfile     = getString("SemplestKeywordsdfile",      dfile); 
+    nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
+    catMap      = getString("catMap",                   catMap);
+    lucenedfile = getString("SemplestKeywordslucenedfile",  lucenedfile );
+    smallhCounts= getString("SemplestKeywordssmallhCounts", smallhCounts );
+    stoplist    = getString("SemplestKeywordsstoplist",     stoplist);
+    baseMultiWPath = getString("SemplestKeywordsbaseMultiWPath",
+        baseMultiWPath);
+    numTopics   = getInteger("SemplestKeywordsnumTopics",   numTopics);
+    numKeywordsGoogle = getInteger("SemplestKeywordsnumKeywordsGoogle", 
+        numKeywordsGoogle);
+    numKeywordsMSN    = getInteger("SemplestKeywordsnumKeywordsMSN",
+        numKeywordsMSN);
+    numThreads        = getInteger("SemplestKeywordsnumThreads",  numThreads);
+    userInfoWeight    = getDouble("SemplestKeywordsuserInfoWeight",
+        userInfoWeight);
+    nGramsSubC  = getStringArray("SemplestKeywordsnGramsSubC",    nGramsSubC);
+    validCat    = getStringArray("SemplestKeywordsvalidcat",      validCat);
 
-      dictfile = properties.getProperty("dictfile");
-      docfile = properties.getProperty("docfile"); 
-      twfile = properties.getProperty("twfile"); 
-      dfile = properties.getProperty("dfile"); 
-      baseMultiWPath = properties.getProperty("baseMultiWPath");
-      nGramsSubC = loadStringArrayfromfile("nGramsSubC");
-      nGramsC = properties.getProperty("nGramsC");; 
-      validCat = loadStringArrayfromfile("validcat");
-      catMap  = properties.getProperty("catMap");
-      lucenedfile = properties.getProperty("lucenedfile");
-      smallhCounts = properties.getProperty("smallhCounts");
-      stoplist = properties.getProperty("stoplist");
-      numTopics = Integer.parseInt(properties.getProperty("numTopics"));
-      userInfoWeight = Double.parseDouble(
-          properties.getProperty("userInfoWeight"));
-      numKeywordsGoogle = Integer.parseInt(
-          properties.getProperty("numKeywordsGoogle"));
-      numKeywordsMSN = Integer.parseInt(
-          properties.getProperty("numKeywordsMSN"));
-      numThreads= Integer.parseInt(properties.getProperty("numThreads"));
-
-    // if data is provided from database (as hash), override file properties
-    if( configDataIn != null){
-
-      logger.info("Updating keyword properties properties from hash...");
-      configData = configDataIn;
-
-      dictfile  = getString( "SemplestKeywordsdictfile",  dictfile );
-      docfile   = getString("SemplestKeywordsdocfile",    docfile); 
-      twfile    = getString("SemplestKeywordstwfile",     twfile); 
-      dfile     = getString("SemplestKeywordsdfile",      dfile); 
-      nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
-      catMap      = getString("catMap",                   catMap);
-      lucenedfile = getString("SemplestKeywordslucenedfile",  lucenedfile );
-      smallhCounts= getString("SemplestKeywordssmallhCounts", smallhCounts );
-      stoplist    = getString("SemplestKeywordsstoplist",     stoplist);
-      baseMultiWPath = getString("SemplestKeywordsbaseMultiWPath",
-          baseMultiWPath);
-      numTopics   = getInteger("SemplestKeywordsnumTopics",   numTopics);
-      numKeywordsGoogle = getInteger("SemplestKeywordsnumKeywordsGoogle", 
-          numKeywordsGoogle);
-      numKeywordsMSN    = getInteger("SemplestKeywordsnumKeywordsMSN",
-          numKeywordsMSN);
-      numThreads        = getInteger("SemplestKeywordsnumThreads",  numThreads);
-      userInfoWeight    = getDouble("SemplestKeywordsuserInfoWeight",
-          userInfoWeight);
-      nGramsSubC  = getStringArray("SemplestKeywordsnGramsSubC",    nGramsSubC);
-      validCat    = getStringArray("SemplestKeywordsvalidcat",      validCat);
-      
-      logger.info("Properties Update done...");
-
-    }
+    logger.info("Properties Update done...");
   }
 
   // - private helpers ----------------
