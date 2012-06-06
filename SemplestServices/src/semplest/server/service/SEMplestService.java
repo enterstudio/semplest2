@@ -17,6 +17,7 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.util.SemplestErrorHandler;
 
 import com.google.gson.Gson;
 
@@ -27,6 +28,7 @@ public class SEMplestService
 	private ServiceActiveMQConnection mq = null;
 	private ProtocolJSON json = new ProtocolJSON();
 	private static final Logger logger = Logger.getLogger(SEMplestService.class);
+	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
@@ -78,7 +80,7 @@ public class SEMplestService
 			logger.error(e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			service.errorHandler(e);
+			service.errorHandler.logToDatabase(e);
 			return;
 		}
 	}
@@ -123,7 +125,7 @@ public class SEMplestService
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			errorHandler(new Exception("SEMplestService.readProperties: " + e.getMessage(), e));
+			errorHandler.logToDatabase(new Exception("SEMplestService.readProperties - " + e.getMessage(), e));
 			return false;
 		}
 	}
@@ -145,12 +147,6 @@ public class SEMplestService
 		logger.info("Starting log4j....");
 	}
 	
-	private void errorHandler(Exception e){
-		String serviceName = SEMplestService.properties.getProperty("ServiceName");
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
-	}
-
 	/*
 	private boolean registerServiceWithESB()
 	{

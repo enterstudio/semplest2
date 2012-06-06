@@ -7,11 +7,13 @@ import org.apache.log4j.Logger;
 import semplest.server.service.SEMplestService;
 import semplest.server.service.ServiceInterface;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.util.SemplestErrorHandler;
 
 public class ChaseOrbitalGatewayService implements ServiceInterface 
 {
 
 	private static final Logger logger = Logger.getLogger(ChaseOrbitalGatewayService.class);
+	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -28,15 +30,9 @@ public class ChaseOrbitalGatewayService implements ServiceInterface
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler(e);
+			errorHandler.logToDatabase(e);
 			throw e;
 		}
-	}
-	
-	private void errorHandler(Exception e){
-		String serviceName = SEMplestService.properties.getProperty("ServiceName");
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
 	}
 
 }

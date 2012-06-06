@@ -929,12 +929,13 @@ public class SemplestDB extends BaseDB
 		for(StackTraceElement s : ste){
 			sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
 		}
+		String errDetails = sb.toString().substring(0, 255);
 		
 		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
 				"VALUES (?, ?, ?, ?, ?)";
 		
 		jdbcTemplate.update(sql, new Object[]
-				{errorSource, errorClass, e.getMessage(), sb.toString(), new Date()});
+				{errorSource, errorClass, e.getMessage(), errDetails, new Date()});
 	}
 
 }

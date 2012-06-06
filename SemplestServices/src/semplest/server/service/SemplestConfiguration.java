@@ -6,11 +6,13 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.util.SemplestErrorHandler;
 
 public class SemplestConfiguration implements Runnable
 {
 	private final Object obj;
 	private static final Logger logger = Logger.getLogger(SemplestConfiguration.class);
+	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	public static HashMap<String, Object> configData = null;
 	
@@ -44,19 +46,13 @@ public class SemplestConfiguration implements Runnable
 			logger.error("FAILED TO LOAD CONFIGUATION");
 			configData = null;
 			e.printStackTrace();
-			errorHandler(new Exception("FAILED TO LOAD CONFIGUATION"));
+			errorHandler.logToDatabase(new Exception("FAILED TO LOAD CONFIGUATION - " + e.getMessage(), e));
 		}
 		synchronized(obj)
 		{
 			obj.notify();
 		}
 		
-	}
-	
-	private void errorHandler(Exception e){
-		String serviceName = SEMplestService.properties.getProperty("ServiceName");
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
 	}
 
 }

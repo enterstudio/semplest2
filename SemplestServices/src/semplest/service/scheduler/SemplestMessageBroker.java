@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.service.SEMplestService;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.util.SemplestErrorHandler;
 
 public class SemplestMessageBroker extends Thread
 {
@@ -15,6 +16,7 @@ public class SemplestMessageBroker extends Thread
 	//private SimpleDateFormat MMddYYYYHHMMSS = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
+	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 	private BlockingQueue<SchedulerRecord> messageQueue = new LinkedBlockingQueue<SchedulerRecord>();
 
 	public SemplestMessageBroker(Object synchLock, SemplestScheduler scheduler)
@@ -36,7 +38,7 @@ public class SemplestMessageBroker extends Thread
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				errorHandler(e);
+				errorHandler.logToDatabase(e);
 			}
 
 		}
@@ -61,7 +63,7 @@ public class SemplestMessageBroker extends Thread
 		{
 			// TODO Auto-generated catch block
 			logger.error("Error getting Message: " + e.getMessage());
-			errorHandler(e);
+			errorHandler.logToDatabase(new Exception("Error getting Message - " + e.getMessage(), e));
 		}
 	}
 
@@ -82,11 +84,4 @@ public class SemplestMessageBroker extends Thread
 			i++;
 		}
 	}
-	
-	private void errorHandler(Exception e){
-		String serviceName = SEMplestService.properties.getProperty("ServiceName");		
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
-	}
-	
 }

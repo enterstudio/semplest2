@@ -17,6 +17,7 @@ import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
 import semplest.server.service.springjdbc.storedproc.SetScheduleJobCompleteSP;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
+import semplest.util.SemplestErrorHandler;
 
 
 
@@ -29,6 +30,7 @@ public class SemplestScheduler extends Thread
 	private boolean cancel = false;
 	private boolean scheduleRunning = false;
 	private static final Logger logger = Logger.getLogger(SemplestScheduler.class);
+	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	private Vector<SchedulerRecord> recordMessageList = null;
 
@@ -136,12 +138,12 @@ public class SemplestScheduler extends Thread
 
 			catch (InterruptedException ie)
 			{
-				errorHandler(ie);
+				errorHandler.logToDatabase(ie);
 			}
 			catch (Exception e)
 			{
 				logger.error(e);
-				errorHandler(e);
+				errorHandler.logToDatabase(e);
 			}
 		}
 	}
@@ -323,7 +325,7 @@ public class SemplestScheduler extends Thread
 		catch (Exception e)
 		{
 			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID);
-			errorHandler(e);
+			errorHandler.logToDatabase(new Exception("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID, e));
 			return false;
 
 		}
@@ -389,7 +391,7 @@ public class SemplestScheduler extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());		
-			errorHandler(e);
+			errorHandler.logToDatabase(e);
 			return false;
 		}
 
@@ -449,7 +451,7 @@ public class SemplestScheduler extends Thread
 					errorOutput.setErrorMessage(e.getMessage());
 					previousTaskOutput = errorOutput;
 					logger.error(e.getMessage());			
-					errorHandler(e);
+					errorHandler.logToDatabase(e);
 					//TODO: send email is successful = false
 				}
 				//Update results to the DB and add next Job if necessary
@@ -465,7 +467,7 @@ public class SemplestScheduler extends Thread
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler(e);
+			errorHandler.logToDatabase(e);
 			return false;
 		}
 	}
@@ -483,12 +485,6 @@ public class SemplestScheduler extends Thread
 			newschedule.setTimeToRunInMS(nextJob.getExecutionStartTime().getTime());
 			this.receiveSchedulerRecord(newschedule);
 		}
-	}
-	
-	private void errorHandler(Exception e){
-		String serviceName = SEMplestService.properties.getProperty("ServiceName");		
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
 	}
 
 }
