@@ -821,6 +821,7 @@ public class ParallelTopicModel implements Serializable {
 				long timeOut = 20000; //Timeout after 20 sec
 				
 				boolean finished = false;
+				logger.debug("Starting Thread loop...");
 				while (! finished) {
 					//If it takes too long, timeout it
 					if(System.currentTimeMillis() - start > timeOut){
@@ -862,7 +863,7 @@ public class ParallelTopicModel implements Serializable {
 					}
 					
 				}
-				
+				logger.debug("Finished Thread Loop");
 				//System.out.print("[" + (System.currentTimeMillis() - iterationStart) + "] ");
 				
 				sumTypeTopicCounts(runnables);
