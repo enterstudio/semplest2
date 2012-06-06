@@ -450,6 +450,7 @@ public class SemplestScheduler extends Thread
 					previousTaskOutput = errorOutput;
 					logger.error(e.getMessage());			
 					errorHandler(e);
+					//TODO: send email is successful = false
 				}
 				//Update results to the DB and add next Job if necessary
 				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
