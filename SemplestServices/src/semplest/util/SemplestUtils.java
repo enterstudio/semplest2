@@ -8,6 +8,8 @@ import java.util.Map;
 public final class SemplestUtils
 {
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+	public static final DateFormat DATE_FORMAT_YYYYMMDD_HHmmss = new SimpleDateFormat("yyyyMMdd HHmmss");
+	 
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	
