@@ -67,6 +67,54 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	// ProductGroupID=37 coffee machine
 	public static void main(String[] args) throws Exception
 	{
+		try
+		{
+
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
+			/*
+			 * GetKeywordForAdEngineSP getKeywords = new
+			 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
+			 * List<KeywordProbabilityObject> keywordList =
+			 * getKeywords.execute(4,
+			 * (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ?
+			 * true : false ,
+			 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
+			 * : false); keywordList.size();
+			 */
+			
+			
+			ArrayList<String> adEngList = new ArrayList<String>();
+			adEngList.add("Google");
+			String scheduleName = "ReceptionHalls_OnGoingBidding";
+			// Schedule for next day at the same time
+			cal.setTime(new Date());
+			cal.add(Calendar.DAY_OF_MONTH, 1);
+			Date startTime = cal.getTime();
+			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+			adEng.initializeService(null);
+			adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
+			
+			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+			//adEng.initializeService(null);
+			//Thread.sleep(1000);
+			// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
+			// Double(25.0), 30);
+			// String u = adEng.getURL("www.xyz.com");
+			// Tovah Photography 2 47 Photography 58 38 Event and portrait
+			// photos
+			//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
+			//adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
+			//adEng.AddPromotionToAdEngine(95,182, 197, adEngList);
+			//adEng.AddPromotionToAdEngine(26,51, 60, adEngList);
+
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		
 		/*
@@ -91,6 +139,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// photos
 		//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
 		adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
+
 	}
 
 	@Override
@@ -234,9 +283,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngineList);
 		listOfTasks.add(executeOngoinBiddingTask);
-		//CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
+		CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
 		//*****TEST
-		CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, promotionID, null, null, null);
+		//CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, promotionID, null, null, null);
 	}
 
 	/*
@@ -330,8 +379,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Add Keyword " + keywordDataObj.getKeyword() + " to " + promotionID.toString());
 				Thread.sleep(500); // Wait for google
 				//*****TEST
-				TEST++;
-				if (TEST > 15) return;
+				//TEST++;
+				//if (TEST > 15) return;
 			}
 		}
 
@@ -447,7 +496,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 			// get the promotion name/ campaign name, Budget period,
 			Long microbudgetAmount = calculateDailyMicroBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
-			Campaign campaign = google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName() + System.currentTimeMillis(),
+			Campaign campaign = google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), // + System.currentTimeMillis(),
 					CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, microbudgetAmount);
 			return campaign.getId();
 		}
@@ -890,18 +939,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean DeleteAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
 	{
 		final Map<String, String> errorMap = new HashMap<String, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);								
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final List<AdsObject> ads = getPromoDataSP.getAds();
+		final List<AdsObject> adsForPromotionAdID = getsAdForPromotionAdID(ads, promotionAdID);
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);								
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final List<AdsObject> ads = getPromoDataSP.getAds();
-				final List<AdsObject> adsForPromotionAdID = getsAdForPromotionAdID(ads, promotionAdID);
+				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();				
 				if (!adsForPromotionAdID.isEmpty())
 				{
+					//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
 					Collections.sort(adsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
 					final AdsObject ad = adsForPromotionAdID.get(0);					
 					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
@@ -952,6 +1002,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errorMapEasilyReadableString);
+			// TODO: change this to throw exception (and any other worker method)
 			return false;
 		}		
 	}
