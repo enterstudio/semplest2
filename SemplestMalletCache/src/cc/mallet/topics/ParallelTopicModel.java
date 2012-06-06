@@ -435,127 +435,135 @@ public class ParallelTopicModel implements Serializable {
 	}
 	
 
-	public void sumTypeTopicCounts (WorkerRunnable[] runnables) {
+	public void sumTypeTopicCounts (WorkerRunnable[] runnables) throws Exception {
 
-		// Clear the topic totals
-		Arrays.fill(tokensPerTopic, 0);
-		
-		// Clear the type/topic counts, only 
-		//  looking at the entries before the first 0 entry.
+		try
+		{
+			// Clear the topic totals
+			Arrays.fill(tokensPerTopic, 0);
+			
+			// Clear the type/topic counts, only 
+			//  looking at the entries before the first 0 entry.
 
-		for (int type = 0; type < numTypes; type++) {
-			
-			int[] targetCounts = typeTopicCounts[type];
-			
-			int position = 0;
-			while (position < targetCounts.length && targetCounts[position] > 0) {
-				targetCounts[position] = 0;
-				position++;
-			}
-
-		}
-
-		// -Raj
-		if( runnables.length != numThreads)
-			logger.finest("Error: Required threads ("+numThreads+") !=  runnable threads ("+ runnables.length + ")");
-		
-		int activeThreads = Math.min( runnables.length, numThreads ); 
-		for (int thread = 0; thread < activeThreads; thread++) {
-
-			// Handle the total-tokens-per-topic array
-
-			
-			int[] sourceTotals = runnables[thread].getTokensPerTopic();
-			
-			// -Raj
-			if( numTopics > tokensPerTopic.length || numTopics > sourceTotals.length )
-				logger.finest("Error: numTopics not equal to tokensPerTopi and sourceTotals");
-			
-			int usedTopics = Math.min( Math.min( numTopics,tokensPerTopic.length), sourceTotals.length );
-			for (int topic = 0; topic < usedTopics; topic++) {
-				tokensPerTopic[topic] += sourceTotals[topic];
-			}
-			
-			
-			// Now handle the individual type topic counts
-			
-			int[][] sourceTypeTopicCounts = 
-				runnables[thread].getTypeTopicCounts();
-			
-			// -Raj
-			if( numTypes > sourceTypeTopicCounts.length || numTypes > typeTopicCounts.length )
-				logger.finest("Error: numTypes not equal to sourceTypeTopicCounts and typeTopicCounts");
-			
-			int usedTypes = Math.min( Math.min( numTypes, sourceTypeTopicCounts.length), typeTopicCounts.length);
-			for (int type = 0; type < usedTypes; type++) {
-
-				// Here the source is the individual thread counts,
-				//  and the target is the global counts.
-
-				int[] sourceCounts = sourceTypeTopicCounts[type];
+			for (int type = 0; type < numTypes; type++) {
+				
 				int[] targetCounts = typeTopicCounts[type];
+				
+				int position = 0;
+				while (position < targetCounts.length && targetCounts[position] > 0) {
+					targetCounts[position] = 0;
+					position++;
+				}
 
-				int sourceIndex = 0;
-				while (sourceIndex < sourceCounts.length &&
-					   sourceCounts[sourceIndex] > 0) {
-					
-					int topic = sourceCounts[sourceIndex] & topicMask;
-					int count = sourceCounts[sourceIndex] >> topicBits;
+			}
 
-					int targetIndex = 0;
-					int currentTopic = targetCounts[targetIndex] & topicMask;
-					int currentCount;
-					
-					// put in check for targetIndex < targetCounts.length  -Raj
-					while (targetCounts[targetIndex] > 0 && currentTopic != topic && targetIndex < (targetCounts.length-1)) {
-						targetIndex++;
+			// -Raj
+			if( runnables.length != numThreads)
+				logger.finest("Error: Required threads ("+numThreads+") !=  runnable threads ("+ runnables.length + ")");
+			
+			int activeThreads = Math.min( runnables.length, numThreads ); 
+			for (int thread = 0; thread < activeThreads; thread++) {
+
+				// Handle the total-tokens-per-topic array
+
+				
+				int[] sourceTotals = runnables[thread].getTokensPerTopic();
+				
+				// -Raj
+				if( numTopics > tokensPerTopic.length || numTopics > sourceTotals.length )
+					logger.finest("Error: numTopics not equal to tokensPerTopi and sourceTotals");
+				
+				int usedTopics = Math.min( Math.min( numTopics,tokensPerTopic.length), sourceTotals.length );
+				for (int topic = 0; topic < usedTopics; topic++) {
+					tokensPerTopic[topic] += sourceTotals[topic];
+				}
+				
+				
+				// Now handle the individual type topic counts
+				
+				int[][] sourceTypeTopicCounts = 
+					runnables[thread].getTypeTopicCounts();
+				
+				// -Raj
+				if( numTypes > sourceTypeTopicCounts.length || numTypes > typeTopicCounts.length )
+					logger.finest("Error: numTypes not equal to sourceTypeTopicCounts and typeTopicCounts");
+				
+				int usedTypes = Math.min( Math.min( numTypes, sourceTypeTopicCounts.length), typeTopicCounts.length);
+				for (int type = 0; type < usedTypes; type++) {
+
+					// Here the source is the individual thread counts,
+					//  and the target is the global counts.
+
+					int[] sourceCounts = sourceTypeTopicCounts[type];
+					int[] targetCounts = typeTopicCounts[type];
+
+					int sourceIndex = 0;
+					while (sourceIndex < sourceCounts.length &&
+						   sourceCounts[sourceIndex] > 0) {
 						
-						currentTopic = targetCounts[targetIndex] & topicMask;
-					}
-					if (targetIndex == (targetCounts.length-1)) 
-						logger.info("potential overflow in merging on type " + type);
-					
-					currentCount = targetCounts[targetIndex] >> topicBits;
-					
-					targetCounts[targetIndex] =
-						((currentCount + count) << topicBits) + topic;
-					
-					// Now ensure that the array is still sorted by 
-					//  bubbling this value up.
-					while (targetIndex > 0 &&
-						   targetCounts[targetIndex] > targetCounts[targetIndex - 1]) {
-						int temp = targetCounts[targetIndex];
-						targetCounts[targetIndex] = targetCounts[targetIndex - 1];
-						targetCounts[targetIndex - 1] = temp;
+						int topic = sourceCounts[sourceIndex] & topicMask;
+						int count = sourceCounts[sourceIndex] >> topicBits;
+
+						int targetIndex = 0;
+						int currentTopic = targetCounts[targetIndex] & topicMask;
+						int currentCount;
 						
-						targetIndex--;
+						// put in check for targetIndex < targetCounts.length  -Raj
+						while (targetCounts[targetIndex] > 0 && currentTopic != topic && targetIndex < (targetCounts.length-1)) {
+							targetIndex++;
+							
+							currentTopic = targetCounts[targetIndex] & topicMask;
+						}
+						if (targetIndex == (targetCounts.length-1)) 
+							logger.info("potential overflow in merging on type " + type);
+						
+						currentCount = targetCounts[targetIndex] >> topicBits;
+						
+						targetCounts[targetIndex] =
+							((currentCount + count) << topicBits) + topic;
+						
+						// Now ensure that the array is still sorted by 
+						//  bubbling this value up.
+						while (targetIndex > 0 &&
+							   targetCounts[targetIndex] > targetCounts[targetIndex - 1]) {
+							int temp = targetCounts[targetIndex];
+							targetCounts[targetIndex] = targetCounts[targetIndex - 1];
+							targetCounts[targetIndex - 1] = temp;
+							
+							targetIndex--;
+						}
+						
+						sourceIndex++;
 					}
 					
-					sourceIndex++;
+				}
+			}
+
+			 // Debuggging code to ensure counts are being 
+			 // reconstructed correctly.                    (uncommented)  -Raj
+			int usedTypes = Math.min( Math.min( numTypes, typeTopicCounts.length), typeTotals.length);
+			for (int type = 0; type < usedTypes; type++) {
+				
+				int[] targetCounts = typeTopicCounts[type];
+				
+				int index = 0;
+				int count = 0;
+				while (index < targetCounts.length &&
+					   targetCounts[index] > 0) {
+					count += targetCounts[index] >> topicBits;
+					index++;
+				}
+				
+				if (count != typeTotals[type]) {
+					logger.finest("Expected " + typeTotals[type] + ", found " + count);
 				}
 				
 			}
 		}
-
-		 // Debuggging code to ensure counts are being 
-		 // reconstructed correctly.                    (uncommented)  -Raj
-		int usedTypes = Math.min( Math.min( numTypes, typeTopicCounts.length), typeTotals.length);
-		for (int type = 0; type < usedTypes; type++) {
-			
-			int[] targetCounts = typeTopicCounts[type];
-			
-			int index = 0;
-			int count = 0;
-			while (index < targetCounts.length &&
-				   targetCounts[index] > 0) {
-				count += targetCounts[index] >> topicBits;
-				index++;
-			}
-			
-			if (count != typeTotals[type]) {
-				logger.finest("Expected " + typeTotals[type] + ", found " + count);
-			}
-			
+		catch (Exception e)
+		{
+			logger.finest("sumTypeTopicCounts Error:" + e.getMessage());
+			throw e;
 		}
 		
 	}
