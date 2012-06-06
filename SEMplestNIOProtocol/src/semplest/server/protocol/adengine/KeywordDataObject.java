@@ -2,9 +2,15 @@ package semplest.server.protocol.adengine;
 
 import java.util.Date;
 
-public class KeywordDataObject
+public class KeywordDataObject implements java.io.Serializable
 {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	private Long keywordAdEngineID;
 	private String keyword;
 	private Long microBidAmount;

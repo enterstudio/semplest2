@@ -7,8 +7,13 @@ import java.util.Set;
 /*
  * All estimates are in dollar amounts
  */
-public class TrafficEstimatorObject
+public class TrafficEstimatorObject implements java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	// keyword, matchtype, [list of bids]
 
 	private HashMap<String, HashMap<String, HashMap<Long, BidData>>> bidDataMap = new HashMap<String, HashMap<String, HashMap<Long, BidData>>>();
@@ -496,8 +501,14 @@ public class TrafficEstimatorObject
 	/*
 	 * All in micro amounts
 	 */
-	public class BidData
+	public class BidData implements java.io.Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		
+		
 		private Long minAveCPC;
 		private Long maxAveCPC;
 		private Double minAvePosition;
