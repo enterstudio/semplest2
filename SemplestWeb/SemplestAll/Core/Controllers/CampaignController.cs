@@ -242,7 +242,7 @@ namespace Semplest.Core.Controllers
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
                     WriteLog(msg, model);
 
-                    model.BillingLaunch.KeywordsCount = model.AllKeywords.Count;
+                    model.BillingLaunch.KeywordsCount = model.AllKeywordProbabilityObjects.Count(x => x.isDeleted == false);
                     Session.Add("FullModel", model);
 
                     return Json("BillingLaunch");
