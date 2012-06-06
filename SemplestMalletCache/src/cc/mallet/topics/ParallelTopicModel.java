@@ -813,8 +813,35 @@ public class ParallelTopicModel implements Serializable {
 					
 				}
 				
+				//Test_Nan
+				long start  = System.currentTimeMillis();
+				long timeOut = 12000;
+				
 				boolean finished = false;
 				while (! finished) {
+					//If it takes too long, timeout it
+					if(System.currentTimeMillis() - start > timeOut){
+						//throw exception
+						String errMsg = "";
+						int errCounter = 0;
+						for (int thread = 0; thread < numThreads; thread++) {
+							if(!runnables[thread].isFinished){	
+								errMsg = errMsg + "thread " + thread 
+								+ "[" 
+								+ "numTopics=" + runnables[thread].numTopics + "," 
+								+ "startDoc=" + runnables[thread].startDoc + "," 
+								+ "numDocs=" + runnables[thread].numDocs + ","
+								+ "data.size=" + runnables[thread].data.size() + ","
+								+ "shouldSaveState=" + runnables[thread].shouldSaveState + ","
+								+ "shouldBuildLocalCounts=" + runnables[thread].shouldBuildLocalCounts
+								+ "]; ";
+								
+								errCounter++;
+							}
+						}
+						
+						throw new IOException(this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter + ". Details - " + errMsg);
+					}
 					
 					try {
 						Thread.sleep(10);
