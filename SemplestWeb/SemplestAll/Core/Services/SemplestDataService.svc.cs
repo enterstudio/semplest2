@@ -531,7 +531,7 @@ namespace Semplest.Core.Services
             {
                 foreach (var negKeyword in model.AdModelProp.NegativeKeywords)
                 {
-                    var keyword = negKeyword;
+                    var keyword = negKeyword.Trim();
                     var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == keyword);
                     if (queryKeyword.Any())
                     {
@@ -570,24 +570,33 @@ namespace Semplest.Core.Services
                     }
                     else
                     {
-                        dbcontext.Keywords.AddObject(new Keyword { Keyword1 = negKeyword, CreatedDate = DateTime.Now });
-                        //dbcontext.SaveChanges();
+                        dbcontext.Keywords.AddObject(new Keyword {Keyword1 = keyword, CreatedDate = DateTime.Now});
+                        var changes = dbcontext.SaveChanges();
 
-                        if (dbcontext.PromotionKeywordAssociations != null)
-                            dbcontext.PromotionKeywordAssociations.AddObject(new PromotionKeywordAssociation
-                                    {
-                                        PromotionFK = promo.PromotionPK,
-                                        //KeywordFK = keywordId,
-                                        CreatedDate = DateTime.Now,
-                                        IsActive = true,
-                                        IsDeleted = false,
-                                        IsNegative = true,
-                                        SemplestProbability = 0,
-                                        IsTargetMSN = false,
-                                        IsTargetGoogle = false
-                                    });
+                        if (changes > 0)
+                        {
+                            var queryK = dbcontext.Keywords.Where(c => c.Keyword1 == keyword);
+                            if (queryK.Any())
+                            {
+                                var keywordId = queryK.First().KeywordPK;
 
-                        //dbcontext.SaveChanges();
+                                dbcontext.PromotionKeywordAssociations.AddObject(new PromotionKeywordAssociation
+                                                                             {
+                                                                                 PromotionFK = promo.PromotionPK,
+                                                                                 KeywordFK = keywordId,
+                                                                                 CreatedDate = DateTime.Now,
+                                                                                 IsActive = true,
+                                                                                 IsDeleted = false,
+                                                                                 IsNegative = true,
+                                                                                 SemplestProbability = 0,
+                                                                                 IsTargetMSN = false,
+                                                                                 IsTargetGoogle = false
+                                                                             });
+                            }
+
+                        }
+
+                    //dbcontext.SaveChanges();
                     }
                 }
             }
