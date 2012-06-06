@@ -80,6 +80,9 @@ namespace Semplest.Core.Models.Repositories
             var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(), model.ProductGroup.ProductPromotionName,
                                             model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
 
+            //
+            RemoveNegativeKeywordsFromList(ref keywords, model);
+
             if (keywords != null && keywords.Count > 0)
             {
                 model.AllKeywordProbabilityObjects.AddRange(keywords);
@@ -94,6 +97,19 @@ namespace Semplest.Core.Models.Repositories
                 Logger.Write(logEnty);
             }
             return model;
+        }
+
+        private void  RemoveNegativeKeywordsFromList(ref List<KeywordProbabilityObject> keywordProbList, CampaignSetupModel model )
+        {
+            foreach (var negK in model.AdModelProp.NegativeKeywords)
+            {
+                string k = negK;
+                var i = keywordProbList.Where(key => key.keyword.Contains(k));
+                if (i.Any())
+                {
+                    keywordProbList.Remove(i.First());
+                }
+            }
         }
 
         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
