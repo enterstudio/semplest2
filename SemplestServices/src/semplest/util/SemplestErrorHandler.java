@@ -11,7 +11,6 @@ public class SemplestErrorHandler {
 	}
 
 	public void logToDatabase(Exception e){		 
-		SemplestDB db = new SemplestDB();
-		db.logError(e, serviceName);
+		SemplestDB.logError(e, serviceName);
 	}
 }
