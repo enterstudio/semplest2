@@ -458,7 +458,10 @@ namespace Semplest.Core.Services
             {
                 // todo need to fix this
                 //return true;
-
+                //remove all associations whenever new keywords are retrieved from the service
+                var p = dbcontext.Promotions.Where(x => x.PromotionPK == promotionId);
+                p.First().PromotionKeywordAssociations.Clear();
+                dbcontext.SaveChanges();
                 foreach (var kpo in model.AllKeywordProbabilityObjects)
                 {
                     var kpo1 = kpo;
