@@ -214,7 +214,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final KeywordDataObject returnedKeyword = g.addKeyWordToAdGroup(accountID, adGroupID, keyword, matchType, microBidAmount);
 			logger.info("Returned keyword: " + returnedKeyword);
 			*/
-
+			
 			
 			/*
 			ArrayList<GoogleSiteLink> siteLinks = new ArrayList<GoogleSiteLink>();
@@ -1042,6 +1042,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	/**
 	 * Only status of an ad can be updated.  So in order to accomodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
 	 */
+	//TODO: split up update into 2 adengine tasks (1 for add, 1 for delete)
 	@Override
 	public Long updateAD(String accountID, Long adGroupID, Long oldGoogleAdID, String headline, String description1, String description2, String displayURL, String url) throws Exception
 	{	
@@ -1620,7 +1621,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					}
 
 					if(kw.getText().split("\\s+").length>1){
-						returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
+					returnData.add(new KeywordToolStats(kw.getText(),kwMatchType,averageMonthlySearches,comp));
 					}
 					if (stopWordSet.contains(kw))
 					{

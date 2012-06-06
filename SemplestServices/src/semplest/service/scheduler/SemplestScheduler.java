@@ -441,7 +441,7 @@ public class SemplestScheduler extends Thread
 						TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 						taskRunner = null;
 					}
-					
+					//TODO: send email for successfully executed schedule	
 				}
 				catch (Exception e)
 				{
@@ -452,7 +452,7 @@ public class SemplestScheduler extends Thread
 					logger.error(e.getMessage());			
 					SemplestErrorHandler.logToDatabase(e);
 					//TODO: send email is successful = false
-				}
+				}				 
 				//Update results to the DB and add next Job if necessary
 				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
 			}
@@ -485,6 +485,6 @@ public class SemplestScheduler extends Thread
 			this.receiveSchedulerRecord(newschedule);
 		}
 	}
-
+	
 }
 
