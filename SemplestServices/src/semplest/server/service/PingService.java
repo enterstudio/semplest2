@@ -21,7 +21,6 @@ public class PingService implements Runnable
 	private ProtocolJSON json = new ProtocolJSON();
 	private ServiceShutdown shutdown = null;
 	static final Logger logger = Logger.getLogger(PingService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	//
 	public static void main(String[] args)
@@ -100,7 +99,7 @@ public class PingService implements Runnable
 		catch (Exception e)
 		{
 			logger.error("Unexpected Error in Ping Service...Terminating");
-			errorHandler.logToDatabase(new Exception("Unexpected Error in Ping Service...Terminating - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("Unexpected Error in Ping Service...Terminating - " + e.getMessage(), e));
 			return;
 		}
 	}
@@ -118,7 +117,7 @@ public class PingService implements Runnable
 			{
 				logger.error("Error connecting socket " + e.getMessage() );
 				e.printStackTrace();
-				errorHandler.logToDatabase(new Exception("Error connecting socket - " + e.getMessage(), e));
+				SemplestErrorHandler.logToDatabase(new Exception("Error connecting socket - " + e.getMessage(), e));
 				return false;
 			}
 			
@@ -130,7 +129,7 @@ public class PingService implements Runnable
 		else
 		{
 			logger.error("Socket not connected...");
-			errorHandler.logToDatabase(new Exception("Socket not connected"));
+			SemplestErrorHandler.logToDatabase(new Exception("Socket not connected"));
 			return false;		
 		}
 	}
@@ -189,13 +188,13 @@ public class PingService implements Runnable
 			else if (data.getheader() == ProtocolJSON.SEMplest_ERROR)
 			{
 				logger.error("ERROR Returned from ESB " + data.getError());
-				errorHandler.logToDatabase(new Exception("ERROR Returned from ESB " + data.getError()));
+				SemplestErrorHandler.logToDatabase(new Exception("ERROR Returned from ESB " + data.getError()));
 				return false;
 			}
 			else
 			{
 				logger.error("ERROR - The Data Header rec from ESB was not SEMplest REGISTER");
-				errorHandler.logToDatabase(new Exception("ERROR - The Data Header rec from ESB was not SEMplest REGISTER"));
+				SemplestErrorHandler.logToDatabase(new Exception("ERROR - The Data Header rec from ESB was not SEMplest REGISTER"));
 				return false;
 			}
 			logger.debug("Done with Reg to ESB");
@@ -205,7 +204,7 @@ public class PingService implements Runnable
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("registerServiceWithESB - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("registerServiceWithESB - " + e.getMessage(), e));
 			return false;
 		}
 	}

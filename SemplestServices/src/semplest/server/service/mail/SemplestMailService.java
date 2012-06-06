@@ -13,7 +13,6 @@ import semplest.util.SemplestErrorHandler;
 public class SemplestMailService implements ServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(SemplestMailService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -31,7 +30,7 @@ public class SemplestMailService implements ServiceInterface
 		{
 			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
 			throw e;
 		}
 	}

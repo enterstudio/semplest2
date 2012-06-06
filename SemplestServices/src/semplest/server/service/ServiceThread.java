@@ -22,7 +22,6 @@ public class ServiceThread implements Runnable
 	private final SemplestServiceTemplate myService;
 	private final ServiceActiveMQConnection cn;
 	private static final Logger logger = Logger.getLogger(ServiceThread.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 	private static Gson gson = new Gson();
 	
 
@@ -66,7 +65,7 @@ public class ServiceThread implements Runnable
 			logger.error("Error running Service: " + methodName + ":" + jsonStr);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("Error running Service: " + methodName + ":" + jsonStr + " - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("Error running Service: " + methodName + ":" + jsonStr + " - " + e.getMessage(), e));
 		}
 		//put result on message queue
 		try
@@ -78,7 +77,7 @@ public class ServiceThread implements Runnable
 			logger.error("maessage queue connection error" + e.getMessage());
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("maessage queue connection error - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("maessage queue connection error - " + e.getMessage(), e));
 		}
 	}
 	

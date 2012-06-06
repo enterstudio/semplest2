@@ -16,7 +16,6 @@ public class ServiceShutdown implements Runnable
 	private final String serviceOffered;
 	private ProtocolJSON json = null;
 	private static final Logger logger = Logger.getLogger(ServiceShutdown.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 	
 	public ServiceShutdown(Socket socket, String serviceName, String serviceOffered)
 	{
@@ -45,7 +44,7 @@ public class ServiceShutdown implements Runnable
 		{
 			logger.error(e);
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("ServiceShutdown - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("ServiceShutdown - " + e.getMessage(), e));
 		}
 		
 	}

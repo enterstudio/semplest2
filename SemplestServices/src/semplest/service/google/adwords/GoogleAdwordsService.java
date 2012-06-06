@@ -12,7 +12,6 @@ import semplest.util.SemplestErrorHandler;
 public class GoogleAdwordsService implements ServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -30,7 +29,7 @@ public class GoogleAdwordsService implements ServiceInterface
 		{
 			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
 			throw e;
 		}
 	}

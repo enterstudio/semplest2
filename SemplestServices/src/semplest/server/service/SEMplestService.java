@@ -28,7 +28,6 @@ public class SEMplestService
 	private ServiceActiveMQConnection mq = null;
 	private ProtocolJSON json = new ProtocolJSON();
 	private static final Logger logger = Logger.getLogger(SEMplestService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
@@ -80,7 +79,7 @@ public class SEMplestService
 			logger.error(e);
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			service.errorHandler.logToDatabase(e);
+			SemplestErrorHandler.logToDatabase(e);
 			return;
 		}
 	}
@@ -125,7 +124,7 @@ public class SEMplestService
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("SEMplestService.readProperties - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("SEMplestService.readProperties - " + e.getMessage(), e));
 			return false;
 		}
 	}

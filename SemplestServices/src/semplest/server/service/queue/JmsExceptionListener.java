@@ -9,13 +9,11 @@ import semplest.util.SemplestErrorHandler;
 
 public class JmsExceptionListener implements ExceptionListener  
 {  
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
-
 	public void onException( final JMSException e )  
 	{  
 		
 		e.printStackTrace();  
-		errorHandler.logToDatabase(new Exception("JMSException: " + e.getMessage(), e));
+		SemplestErrorHandler.logToDatabase(new Exception("JMSException: " + e.getMessage(), e));
 	}  
 	
 } 

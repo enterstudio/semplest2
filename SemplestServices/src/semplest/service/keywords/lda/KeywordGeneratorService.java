@@ -12,7 +12,6 @@ import semplest.util.SemplestErrorHandler;
 public class KeywordGeneratorService implements ServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(KeywordGeneratorService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -29,7 +28,7 @@ public class KeywordGeneratorService implements ServiceInterface
 		{
 			logger.error("ServiceGet:" + e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("ServiceGet - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("ServiceGet - " + e.getMessage(), e));
 			throw e;	
 		}
 	}

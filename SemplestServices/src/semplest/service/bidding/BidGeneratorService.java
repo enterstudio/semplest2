@@ -14,7 +14,6 @@ import semplest.util.SemplestErrorHandler;
 public class BidGeneratorService implements ServiceInterface {
 
 	private static final Logger logger = Logger.getLogger(BidGeneratorService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -31,7 +30,7 @@ public class BidGeneratorService implements ServiceInterface {
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(e);
+			SemplestErrorHandler.logToDatabase(e);
 			throw e;
 		}
 	}

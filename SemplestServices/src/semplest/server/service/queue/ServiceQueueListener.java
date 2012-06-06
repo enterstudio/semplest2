@@ -22,7 +22,6 @@ public class ServiceQueueListener implements MessageListener
 	private final ServiceActiveMQConnection cn;
 	private SemplestServiceTemplate myService = null;
 	static final Logger logger = Logger.getLogger(ServiceQueueListener.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 		
 	public ServiceQueueListener(ServiceActiveMQConnection cn)
 	{
@@ -43,7 +42,7 @@ public class ServiceQueueListener implements MessageListener
 			    catch (final JMSException e)
 			    {
 			        e.printStackTrace();
-			        errorHandler.logToDatabase(new Exception(e.getMessage() + " - TextMessage: " + textMessage.getText(), e));
+			        SemplestErrorHandler.logToDatabase(new Exception(e.getMessage() + " - TextMessage: " + textMessage.getText(), e));
 			    }
 			}
 			else if (message instanceof BytesMessage)
@@ -66,21 +65,21 @@ public class ServiceQueueListener implements MessageListener
 				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-					errorHandler.logToDatabase(new Exception(e.getMessage() + " - UniqueID is " + uniqueID + ", MethodName is " + methodName + ", jsonString is " + jsonStr, e));
+					SemplestErrorHandler.logToDatabase(new Exception(e.getMessage() + " - UniqueID is " + uniqueID + ", MethodName is " + methodName + ", jsonString is " + jsonStr, e));
 				}
 				
 			}
 			else
 			{
 				logger.error("MQ message rec but not processed");
-				errorHandler.logToDatabase(new Exception("MQ message rec but not processed"));
+				SemplestErrorHandler.logToDatabase(new Exception("MQ message rec but not processed"));
 			}
 		}
 		catch (JMSException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			errorHandler.logToDatabase(new Exception("JMSException: " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("JMSException: " + e.getMessage(), e));
 		}
     }    
 }

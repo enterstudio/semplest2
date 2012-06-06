@@ -13,7 +13,6 @@ public class ChaseOrbitalGatewayService implements ServiceInterface
 {
 
 	private static final Logger logger = Logger.getLogger(ChaseOrbitalGatewayService.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	@Override
 	public String ServiceGet(String methodName, String jsonStr) throws Exception
@@ -30,7 +29,7 @@ public class ChaseOrbitalGatewayService implements ServiceInterface
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(e);
+			SemplestErrorHandler.logToDatabase(e);
 			throw e;
 		}
 	}

@@ -16,7 +16,6 @@ public class SemplestMessageBroker extends Thread
 	//private SimpleDateFormat MMddYYYYHHMMSS = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 	private BlockingQueue<SchedulerRecord> messageQueue = new LinkedBlockingQueue<SchedulerRecord>();
 
 	public SemplestMessageBroker(Object synchLock, SemplestScheduler scheduler)
@@ -38,7 +37,7 @@ public class SemplestMessageBroker extends Thread
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				errorHandler.logToDatabase(e);
+				SemplestErrorHandler.logToDatabase(e);
 			}
 
 		}
@@ -63,7 +62,7 @@ public class SemplestMessageBroker extends Thread
 		{
 			// TODO Auto-generated catch block
 			logger.error("Error getting Message: " + e.getMessage());
-			errorHandler.logToDatabase(new Exception("Error getting Message - " + e.getMessage(), e));
+			SemplestErrorHandler.logToDatabase(new Exception("Error getting Message - " + e.getMessage(), e));
 		}
 	}
 

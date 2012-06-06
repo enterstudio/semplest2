@@ -30,7 +30,6 @@ public class SemplestScheduler extends Thread
 	private boolean cancel = false;
 	private boolean scheduleRunning = false;
 	private static final Logger logger = Logger.getLogger(SemplestScheduler.class);
-	private SemplestErrorHandler errorHandler = new SemplestErrorHandler();
 
 	private Vector<SchedulerRecord> recordMessageList = null;
 
@@ -138,12 +137,12 @@ public class SemplestScheduler extends Thread
 
 			catch (InterruptedException ie)
 			{
-				errorHandler.logToDatabase(ie);
+				SemplestErrorHandler.logToDatabase(ie);
 			}
 			catch (Exception e)
 			{
 				logger.error(e);
-				errorHandler.logToDatabase(e);
+				SemplestErrorHandler.logToDatabase(e);
 			}
 		}
 	}
@@ -325,7 +324,7 @@ public class SemplestScheduler extends Thread
 		catch (Exception e)
 		{
 			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID);
-			errorHandler.logToDatabase(new Exception("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID, e));
+			SemplestErrorHandler.logToDatabase(new Exception("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID, e));
 			return false;
 
 		}
@@ -391,7 +390,7 @@ public class SemplestScheduler extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());		
-			errorHandler.logToDatabase(e);
+			SemplestErrorHandler.logToDatabase(e);
 			return false;
 		}
 
@@ -451,7 +450,7 @@ public class SemplestScheduler extends Thread
 					errorOutput.setErrorMessage(e.getMessage());
 					previousTaskOutput = errorOutput;
 					logger.error(e.getMessage());			
-					errorHandler.logToDatabase(e);
+					SemplestErrorHandler.logToDatabase(e);
 					//TODO: send email is successful = false
 				}
 				//Update results to the DB and add next Job if necessary
@@ -467,7 +466,7 @@ public class SemplestScheduler extends Thread
 		{
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			errorHandler.logToDatabase(e);
+			SemplestErrorHandler.logToDatabase(e);
 			return false;
 		}
 	}
