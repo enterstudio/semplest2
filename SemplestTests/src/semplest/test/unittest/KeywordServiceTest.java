@@ -16,7 +16,7 @@ public class KeywordServiceTest {
 	
 	public static void main(String args[]){
 		try{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://172.18.9.26:9898/semplest");
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://172.18.9.22:9898/semplest");
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getCategories:");		
 			long start = System.currentTimeMillis();

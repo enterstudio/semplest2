@@ -1,21 +1,27 @@
 package semplest.test.other;
 
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Properties;
 
 
 public class InstallationSetup {
 
+	private HashMap<String, String> properties = new HashMap<String, String>();
+	
 	public static void main(String args[]){		
 		
 		InstallationSetup is = new InstallationSetup();
 		try {
 			InetAddress ownIP = InetAddress.getLocalHost();
-			String hostName = ownIP.getHostName();
+			String hostName = ownIP.getHostName();			
 			
 			if(hostName.equals("VMDEVJAVA1")){
 				//DEV Box ESB
@@ -45,7 +51,8 @@ public class InstallationSetup {
 			if(hostName.equals("VMJAVA3")){
 				//TEST Box Keyword Service
 				is.KeywordTest();
-			}
+			}			
+			
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -131,7 +138,7 @@ public class InstallationSetup {
 		setServicePropsTest(service);
 	}
 	
-	private void setServicePropsDev(String serviceName){		
+	public void setServicePropsDev(String serviceName){		
 		try{
 			String path = "C:\\" + serviceName + "\\bin\\system.properties";
 			Properties properties = new Properties();
@@ -139,11 +146,9 @@ public class InstallationSetup {
 			properties.load(in);
 			in.close();		
 			
-			properties.setProperty("jdbc.url", "jdbc:jtds:sqlserver://172.18.9.23/semplest");		
-			
-			FileOutputStream out = new FileOutputStream(path);	
-			properties.store(out,"Service on Dev Box. Updated by InstallationSetup (Nan).");
-			out.close();
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest";
+			String comment = "Service on Dev Box. Updated by InstallationSetup (Nan).";
+			writeProps(path, properties, jdbc, comment);
 		}
 		catch(FileNotFoundException e){
 			//file not found. probably the service is not installed.
@@ -154,7 +159,7 @@ public class InstallationSetup {
 		}
 	}
 	
-	private void setServicePropsTest(String serviceName){		
+	public void setServicePropsTest(String serviceName){		
 		try{
 			String path = "C:\\" + serviceName + "\\bin\\system.properties";
 			Properties properties = new Properties();
@@ -162,11 +167,9 @@ public class InstallationSetup {
 			properties.load(in);
 			in.close();		
 			
-			properties.setProperty("jdbc.url", "jdbc:jtds:sqlserver://172.18.9.35/semplest");		
-			
-			FileOutputStream out = new FileOutputStream(path);	
-			properties.store(out,"Service on Test Box. Updated by InstallationSetup (Nan).");
-			out.close();
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplest";
+			String comment = "Service on Test Box. Updated by InstallationSetup (Nan).";
+			writeProps(path, properties, jdbc, comment);
 		}
 		catch(FileNotFoundException e){
 			//file not found. probably the service is not installed.
@@ -175,6 +178,43 @@ public class InstallationSetup {
 		catch(IOException e){
 			//do nothing
 		}
+	}	
+	
+	public void writeProps(String filePath, Properties props, String jdbc, String comment){
+		
+		try{
+			
+			FileWriter out = new FileWriter(filePath);
+			BufferedWriter writer = new BufferedWriter(out);
+			
+			Date now = new Date();
+			
+			writer.write("#" + comment);
+			writer.newLine();
+			
+			writer.write("#Date: " + now.toString());
+			writer.newLine();
+			
+			writer.append("semplest.service" + " = " + props.getProperty("semplest.service"));
+			writer.newLine();
+			writer.append("YAJSW.servicename" + " = " + props.getProperty("YAJSW.servicename"));
+			writer.newLine();
+			writer.append("jdbc.driverClassName" + " = " + props.getProperty("jdbc.driverClassName"));
+			writer.newLine();
+			writer.append("jdbc.url" + " = " + jdbc);  //update the JDBC link
+			writer.newLine();
+			writer.append("jdbc.username" + " = " + props.getProperty("jdbc.username"));
+			writer.newLine();
+			writer.append("jdbc.password" + " = " + props.getProperty("jdbc.password"));
+			writer.newLine();
+			
+			writer.close();
+		
+		}
+		catch(Exception e){
+			//do nothing
+		}
+		
 	}
 	
 }
