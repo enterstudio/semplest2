@@ -29,8 +29,7 @@ public class catUtils {
 
   public catUtils (){
     logger.info("catUtils(): loading semplest category map");
-    final String smfile = "/semplest/data/dmoz/dmoztosem.txt";
-    // final String smfile = ProjectProperties.dmozToSemCatFile;
+    final String smfile = ProjectProperties.catMap;
     smap = ioUtils.readPair(smfile);
     ismap = new HashMap<String,String>();
     for( Map.Entry<String,String> e: smap.entrySet())
