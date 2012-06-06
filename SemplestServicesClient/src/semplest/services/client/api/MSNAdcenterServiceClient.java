@@ -1280,6 +1280,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return mngId;
 	}
 
+
 	@Override
 	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception
 	{
@@ -1303,6 +1304,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		}
 		return ret;
 	}
+	
 	
 	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws Exception
 	{

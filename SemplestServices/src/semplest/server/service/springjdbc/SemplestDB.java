@@ -539,10 +539,12 @@ public class SemplestDB extends BaseDB
 		}
 		catch (EmptyResultDataAccessException e)
 		{
+			logger.error("getBudget " + e.getMessage());
 			return null;
 		}
 		catch (Exception e)
 		{
+			logger.error("getBudget " + e.getMessage());
 			throw e;
 		}
 	}

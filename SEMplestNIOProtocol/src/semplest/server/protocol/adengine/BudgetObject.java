@@ -4,7 +4,7 @@ public class BudgetObject
 {
 	private Double remainingBudgetInCycle;
 	private Integer remainingDays;
-	private Double budgetSplit;
+	//private Double budgetSplit;
 	
 	public Double getRemainingBudgetInCycle()
 	{

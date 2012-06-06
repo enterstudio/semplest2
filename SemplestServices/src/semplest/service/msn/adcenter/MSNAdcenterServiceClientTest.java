@@ -4,50 +4,31 @@ import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordAndConfidence;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
-import org.joda.time.DateTime;
 
-import semplest.other.KeywordEstimate;
-import semplest.other.Maybe;
-import semplest.other.Money;
-import semplest.other.MsnCloudKeywordProxy;
-import semplest.other.MsnManagementIds;
-import semplest.server.protocol.ProtocolJSON;
-import semplest.server.protocol.SemplestString;
-import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.msn.*;
-import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
-import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
-import com.google.gson.Gson;
-import com.microsoft.adcenter.api.customermanagement.Entities.Account;
-import com.microsoft.adcenter.v8.*;
+import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.Bid;
+import com.microsoft.adcenter.v8.BudgetLimitType;
+import com.microsoft.adcenter.v8.Campaign;
+import com.microsoft.adcenter.v8.CampaignStatus;
+import com.microsoft.adcenter.v8.Keyword;
 
 import flanagan.plot.PlotGraph;
-import semplest.services.client.api.MSNAdcenterServiceClient;
 /**
  * This test has been generated to create campaigns using MSN  and test the data obtained from them.
  * @author lluis

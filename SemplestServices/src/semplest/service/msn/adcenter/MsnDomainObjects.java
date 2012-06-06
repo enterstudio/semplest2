@@ -39,7 +39,7 @@ public class MsnDomainObjects {
 	public CampaignBuilder campaign() {
 		return CampaignBuilder.create();
 	}
-	
+	//NEED TO REMOVE THIS
 	public KeywordBuilder keyword() {
 		return KeywordBuilder.create();
 	}

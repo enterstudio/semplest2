@@ -202,6 +202,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
+
+			Boolean r = g.setAccountBudget("2387614989", "8490069727", null);
+
 			/*
 			final String accountID = "54100";
 			final Long adGroupID = 3066031127L;
@@ -211,6 +214,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final KeywordDataObject returnedKeyword = g.addKeyWordToAdGroup(accountID, adGroupID, keyword, matchType, microBidAmount);
 			logger.info("Returned keyword: " + returnedKeyword);
 			*/
+
 			
 			/*
 			ArrayList<GoogleSiteLink> siteLinks = new ArrayList<GoogleSiteLink>();
@@ -221,7 +225,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Boolean res = g.refreshSiteLinkForCampaign("54100", 637295L, siteLinks);
 			
 			System.out.println(res);
-			
 			*/
 			
 			// Long id = g.GetActiveSitelinkExtension("54102", 656140L);
@@ -2974,6 +2977,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	 */
 	public Boolean setAccountBudget(String accountID, String billingAccountID, Long initialBudgetAmount) throws Exception
 	{
+		AdWordsServiceLogger.log();
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		//Get the BudgetOrderService
 		BudgetOrderServiceInterface budgetOrderService = user.getService(AdWordsService.V201109_1.BUDGET_ORDER_SERVICE);
@@ -2982,10 +2986,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		budgetOrder.setBillingAccountId(billingAccountID);
 		//states now
 		Calendar cal = Calendar.getInstance();
-		budgetOrder.setStartDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD.format(cal.getTime()));
+		cal.add(Calendar.MINUTE, 10);
+		budgetOrder.setStartDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(cal.getTime()));
 		//assume enddate 15 years in future
 		cal.add(Calendar.YEAR, 15);
-		budgetOrder.setEndDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD.format(cal.getTime()));
+		budgetOrder.setEndDateTime(SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(cal.getTime()));
 		//setUnlimited Budget
 		if (initialBudgetAmount == null)
 		{

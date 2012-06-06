@@ -14,7 +14,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 
-public class TestServiceClient extends ServiceRun implements TestServiceInterface
+public class TestServiceClient extends ServiceRun implements TestServiceInterface, Runnable
 {
 
 	/**
@@ -27,24 +27,16 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 		 * client.resource("http://localhost:9898/semplest/TestMethod"); String
 		 * s = webResource.get(String.class); System.out.println(s);
 		 */
-		try
+		int numThreads = 4;
+		Thread[] threads = new Thread[numThreads];
+		for (int i= 0; i < numThreads; i++)
 		{
-			TestServiceInterface test = new TestServiceClient();
-			int i = 0;
-			while (true)
-			{
-				long startTime = System.currentTimeMillis();
-				System.out.println(test.TestMethod(String.valueOf(i)) + " Took " + String.valueOf((System.currentTimeMillis() - startTime)));
-				i++;
-				Thread.sleep(50);
-
-			}
+			TestServiceClient test = new TestServiceClient();
+			threads[i] = new Thread(test);
+			threads[i].start();
+			
 		}
-		catch (Exception e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 
 	}
 
@@ -59,7 +51,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 				HashMap<String, String> jsonHash = new HashMap<String, String>();
 				jsonHash.put("customerID", String.valueOf(uniqueID));
 				String json = protocolJson.createJSONHashmap(jsonHash);
-				return runMethod("http://VMDEVJAVA1:9898/semplest", "semplest.test.TestService", "TestMethod", json, "30000");
+				return runMethod("http://172.18.9.26:9898/semplest", "semplest.test.TestService", "TestMethod", json, "30000");
 			}
 			catch (Exception e)
 			{
@@ -97,6 +89,30 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 	{
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void run()
+	{
+		try
+		{
+			
+			int i = 0;
+			while (true)
+			{
+				long startTime = System.currentTimeMillis();
+				System.out.println(this.TestMethod(String.valueOf(i)) + " Took " + String.valueOf((System.currentTimeMillis() - startTime)));
+				i++;
+				Thread.sleep(0);
+
+			}
+		}
+		catch (Exception e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
