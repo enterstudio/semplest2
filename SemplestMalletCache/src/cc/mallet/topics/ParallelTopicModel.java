@@ -7,27 +7,47 @@
 
 package cc.mallet.topics;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.TreeSet;
-import java.util.Iterator;
-import java.util.Formatter;
-import java.util.Locale;
-
-import java.util.concurrent.*;
-import java.util.logging.*;
-import java.util.zip.*;
-
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Formatter;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
-import org.apache.log4j.Logger;
-
-import cc.mallet.types.*;
-import cc.mallet.topics.TopicAssignment;
-import cc.mallet.util.Randoms;
+import cc.mallet.types.Alphabet;
+import cc.mallet.types.AugmentableFeatureVector;
+import cc.mallet.types.Dirichlet;
+import cc.mallet.types.FeatureSequence;
+import cc.mallet.types.FeatureSequenceWithBigrams;
+import cc.mallet.types.IDSorter;
+import cc.mallet.types.Instance;
+import cc.mallet.types.InstanceList;
+import cc.mallet.types.LabelAlphabet;
+import cc.mallet.types.LabelSequence;
+import cc.mallet.types.MatrixOps;
+import cc.mallet.types.RankedFeatureVector;
 import cc.mallet.util.MalletLogger;
+import cc.mallet.util.Randoms;
 
 /**
  * Simple parallel threaded implementation of LDA,
@@ -42,8 +62,8 @@ public class ParallelTopicModel implements Serializable {
 
 	public static final int UNASSIGNED_TOPIC = -1;
 
-	//public static Logger logger = MalletLogger.getLogger(ParallelTopicModel.class.getName());
-	private static final Logger logger = Logger.getLogger(ParallelTopicModel.class);
+	public static Logger logger = MalletLogger.getLogger(ParallelTopicModel.class.getName());
+	//private static final Logger log = Logger.getLogger(ParallelTopicModel.class);
 	
 	public ArrayList<TopicAssignment> data;  // the training instances and their topic assignments
 	public Alphabet alphabet; // the alphabet for the input data
@@ -773,167 +793,208 @@ public class ParallelTopicModel implements Serializable {
 			runnables[0].makeOnlyThread();
 		}
 
-		ExecutorService executor = Executors.newFixedThreadPool(numThreads);
-	
-		for (int iteration = 1; iteration <= numIterations; iteration++) {
+		ExecutorService executor = null;
+		try
+		{
+			executor = Executors.newFixedThreadPool(numThreads);
 
-			long iterationStart = System.currentTimeMillis();
+			for (int iteration = 1; iteration <= numIterations; iteration++)
+			{
 
-			if (showTopicsInterval != 0 && iteration != 0 && iteration % showTopicsInterval == 0) {
-				logger.info("\n" + displayTopWords (wordsPerTopic, false));
-			}
+				long iterationStart = System.currentTimeMillis();
 
-			if (saveStateInterval != 0 && iteration % saveStateInterval == 0) {
-				this.printState(new File(stateFilename + '.' + iteration));
-			}
-
-			if (saveModelInterval != 0 && iteration % saveModelInterval == 0) {
-				this.write(new File(modelFilename + '.' + iteration));
-			}
-
-			if (numThreads > 1) {
-			
-				// Submit runnables to thread pool
-				
-				for (int thread = 0; thread < numThreads; thread++) {
-					if (iteration > burninPeriod && optimizeInterval != 0 &&
-						iteration % saveSampleInterval == 0) {
-						runnables[thread].collectAlphaStatistics();
-					}
-					
-					logger.info("submitting thread " + thread);
-					executor.submit(runnables[thread]);
-					//runnables[thread].run();
+				if (showTopicsInterval != 0 && iteration != 0 && iteration % showTopicsInterval == 0)
+				{
+					logger.info("\n" + displayTopWords(wordsPerTopic, false));
 				}
-				
-				// I'm getting some problems that look like 
-				//  a thread hasn't started yet when it is first
-				//  polled, so it appears to be finished. 
-				// This only occurs in very short corpora.
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
-					logger.error("Sleep Exception " + e.getMessage());
+
+				if (saveStateInterval != 0 && iteration % saveStateInterval == 0)
+				{
+					this.printState(new File(stateFilename + '.' + iteration));
 				}
-				
-				//Test_Nan
-				long start  = System.currentTimeMillis();
-				long timeOut = 20000; //Timeout after 20 sec
-				
-				boolean finished = false;
-				logger.debug("Starting Thread loop...");
-				while (! finished) {
-					//If it takes too long, timeout it
-					if(System.currentTimeMillis() - start > timeOut){
-						//throw exception
-						String errMsg = "";
-						int errCounter = 0;
-						for (int thread = 0; thread < numThreads; thread++) {
-							if(!runnables[thread].isFinished){	
-								errMsg = errMsg + "thread " + thread 
-								+ "[" 
-								+ "numTopics=" + runnables[thread].numTopics + "," 
-								+ "startDoc=" + runnables[thread].startDoc + "," 
-								+ "numDocs=" + runnables[thread].numDocs + ","
-								+ "data.size=" + runnables[thread].data.size() + ","
-								+ "shouldSaveState=" + runnables[thread].shouldSaveState + ","
-								+ "shouldBuildLocalCounts=" + runnables[thread].shouldBuildLocalCounts
-								+ "]; ";
-								
-								errCounter++;
-							}
+
+				if (saveModelInterval != 0 && iteration % saveModelInterval == 0)
+				{
+					this.write(new File(modelFilename + '.' + iteration));
+				}
+
+				if (numThreads > 1)
+				{
+
+					// Submit runnables to thread pool
+
+					for (int thread = 0; thread < numThreads; thread++)
+					{
+						if (iteration > burninPeriod && optimizeInterval != 0 && iteration % saveSampleInterval == 0)
+						{
+							runnables[thread].collectAlphaStatistics();
 						}
-						logger.error("TIMEOUT " + this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter + ". Details - " + errMsg);
-						executor.shutdownNow();
-						throw new IOException(this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter + ". Details - " + errMsg);
+
+						logger.info("submitting thread " + thread);
+						executor.submit(runnables[thread]);
+						// runnables[thread].run();
 					}
-					
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-						logger.error("Sleep Exception " + e.getMessage());
+
+					// I'm getting some problems that look like
+					// a thread hasn't started yet when it is first
+					// polled, so it appears to be finished.
+					// This only occurs in very short corpora.
+					try
+					{
+						Thread.sleep(20);
 					}
-					
-					finished = true;
-					
-					// Are all the threads done?
-					for (int thread = 0; thread < numThreads; thread++) {
-						//logger.info("thread " + thread + " done? " + runnables[thread].isFinished);
-						finished = finished && runnables[thread].isFinished;
+					catch (InterruptedException e)
+					{
+						logger.finest("Sleep Exception " + e.getMessage());
 					}
-					
-				}
-				logger.debug("Finished Thread Loop");
-				//System.out.print("[" + (System.currentTimeMillis() - iterationStart) + "] ");
-				
-				sumTypeTopicCounts(runnables);
-				
-				//System.out.print("[" + (System.currentTimeMillis() - iterationStart) + "] ");
-				
-				for (int thread = 0; thread < numThreads; thread++) {
-					int[] runnableTotals = runnables[thread].getTokensPerTopic();
-					System.arraycopy(tokensPerTopic, 0, runnableTotals, 0, numTopics);
-					
-					int[][] runnableCounts = runnables[thread].getTypeTopicCounts();
-					for (int type = 0; type < numTypes; type++) {
-						int[] targetCounts = runnableCounts[type];
-						int[] sourceCounts = typeTopicCounts[type];
-						
-						int index = 0;
-						while (index < sourceCounts.length) {
-							
-							if (sourceCounts[index] != 0) {
-								targetCounts[index] = sourceCounts[index];
+
+					// Test_Nan
+					long start = System.currentTimeMillis();
+					long timeOut = 20000; // Timeout after 20 sec
+
+					boolean finished = false;
+					logger.fine("Starting Thread loop...");
+					while (!finished)
+					{
+						// If it takes too long, timeout it
+						if (System.currentTimeMillis() - start > timeOut)
+						{
+							// throw exception
+							String errMsg = "";
+							int errCounter = 0;
+							for (int thread = 0; thread < numThreads; thread++)
+							{
+								if (!runnables[thread].isFinished)
+								{
+									errMsg = errMsg + "thread " + thread + "[" + "numTopics=" + runnables[thread].numTopics + "," + "startDoc="
+											+ runnables[thread].startDoc + "," + "numDocs=" + runnables[thread].numDocs + "," + "data.size="
+											+ runnables[thread].data.size() + "," + "shouldSaveState=" + runnables[thread].shouldSaveState + ","
+											+ "shouldBuildLocalCounts=" + runnables[thread].shouldBuildLocalCounts + "]; ";
+
+									errCounter++;
+								}
 							}
-							else if (targetCounts[index] != 0) {
-								targetCounts[index] = 0;
-							}
-							else {
-								break;
-							}
-							
-							index++;
+							logger.finest("TIMEOUT " + this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter
+									+ ". Details - " + errMsg);
+							executor.shutdownNow();
+							throw new IOException(this.getClass().getName() + ": estimate(): Time out (8s). Num threads not finished = " + errCounter
+									+ ". Details - " + errMsg);
 						}
-						//System.arraycopy(typeTopicCounts[type], 0, counts, 0, counts.length);
+
+						try
+						{
+							Thread.sleep(10);
+						}
+						catch (InterruptedException e)
+						{
+							logger.finest("Sleep Exception " + e.getMessage());
+						}
+
+						finished = true;
+
+						// Are all the threads done?
+						for (int thread = 0; thread < numThreads; thread++)
+						{
+							// logger.info("thread " + thread + " done? " +
+							// runnables[thread].isFinished);
+							finished = finished && runnables[thread].isFinished;
+						}
+
+					}
+					logger.fine("Finished Thread Loop");
+					// System.out.print("[" + (System.currentTimeMillis() -
+					// iterationStart) + "] ");
+
+					sumTypeTopicCounts(runnables);
+
+					// System.out.print("[" + (System.currentTimeMillis() -
+					// iterationStart) + "] ");
+
+					for (int thread = 0; thread < numThreads; thread++)
+					{
+						int[] runnableTotals = runnables[thread].getTokensPerTopic();
+						System.arraycopy(tokensPerTopic, 0, runnableTotals, 0, numTopics);
+
+						int[][] runnableCounts = runnables[thread].getTypeTopicCounts();
+						for (int type = 0; type < numTypes; type++)
+						{
+							int[] targetCounts = runnableCounts[type];
+							int[] sourceCounts = typeTopicCounts[type];
+
+							int index = 0;
+							while (index < sourceCounts.length)
+							{
+
+								if (sourceCounts[index] != 0)
+								{
+									targetCounts[index] = sourceCounts[index];
+								}
+								else if (targetCounts[index] != 0)
+								{
+									targetCounts[index] = 0;
+								}
+								else
+								{
+									break;
+								}
+
+								index++;
+							}
+							// System.arraycopy(typeTopicCounts[type], 0, counts, 0,
+							// counts.length);
+						}
 					}
 				}
-			}
-			else {
-				if (iteration > burninPeriod && optimizeInterval != 0 &&
-					iteration % saveSampleInterval == 0) {
-					runnables[0].collectAlphaStatistics();
+				else
+				{
+					if (iteration > burninPeriod && optimizeInterval != 0 && iteration % saveSampleInterval == 0)
+					{
+						runnables[0].collectAlphaStatistics();
+					}
+					runnables[0].run();
 				}
-				runnables[0].run();
-			}
 
-			long elapsedMillis = System.currentTimeMillis() - iterationStart;
-			if (elapsedMillis < 1000) {
-				logger.info(elapsedMillis + "ms ");
-			}
-			else {
-				logger.info((elapsedMillis/1000) + "s ");
-			}   
-
-			if (iteration > burninPeriod && optimizeInterval != 0 &&
-				iteration % optimizeInterval == 0) {
-
-				optimizeAlpha(runnables);
-				optimizeBeta(runnables);
-				
-				logger.info("[O " + (System.currentTimeMillis() - iterationStart) + "] ");
-			}
-			
-			if (iteration % 10 == 0) {
-				if (printLogLikelihood) {
-					logger.info ("<" + iteration + "> LL/token: " + formatter.format(modelLogLikelihood() / totalTokens));
+				long elapsedMillis = System.currentTimeMillis() - iterationStart;
+				if (elapsedMillis < 1000)
+				{
+					logger.info(elapsedMillis + "ms ");
 				}
-				else {
-					logger.info ("<" + iteration + ">");
+				else
+				{
+					logger.info((elapsedMillis / 1000) + "s ");
+				}
+
+				if (iteration > burninPeriod && optimizeInterval != 0 && iteration % optimizeInterval == 0)
+				{
+
+					optimizeAlpha(runnables);
+					optimizeBeta(runnables);
+
+					logger.info("[O " + (System.currentTimeMillis() - iterationStart) + "] ");
+				}
+
+				if (iteration % 10 == 0)
+				{
+					if (printLogLikelihood)
+					{
+						logger.info("<" + iteration + "> LL/token: " + formatter.format(modelLogLikelihood() / totalTokens));
+					}
+					else
+					{
+						logger.info("<" + iteration + ">");
+					}
 				}
 			}
 		}
-
-		executor.shutdownNow();
+		catch (Exception e)
+		{
+			logger.finest("Error thrown after creating ExecutorService " +  e.getMessage());
+			throw new IOException(e);
+		}
+		finally
+		{
+			if (executor != null) executor.shutdownNow();
+		}
 	
 		long seconds = Math.round((System.currentTimeMillis() - startTime)/1000.0);
 		long minutes = seconds / 60;	seconds %= 60;
@@ -1515,11 +1576,11 @@ public class ParallelTopicModel implements Serializable {
 				logLikelihood += Dirichlet.logGammaStirling(beta + count);
 
 				if (Double.isNaN(logLikelihood)) {
-					logger.warn("NaN in log likelihood calculation");
+					logger.finest("NaN in log likelihood calculation");
 					return 0;
 				}
 				else if (Double.isInfinite(logLikelihood)) {
-					logger.warn("infinite log likelihood");
+					logger.finest("infinite log likelihood");
 					return 0;
 				}
 
