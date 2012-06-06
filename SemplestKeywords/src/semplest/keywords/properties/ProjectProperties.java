@@ -44,29 +44,10 @@ public class ProjectProperties {
     this(null);
   }
 
-  public ProjectProperties( HashMap<String,Object> configDataIn) throws IOException{
-    if(configDataIn!=null){
-      logger.info("Read in properties file...");
-      configData = configDataIn;
-      dictfile = (String) configData.get("SemplestKeywordsdictfile");
-      docfile = (String) configData.get("SemplestKeywordsdocfile"); 
-      twfile = (String) configData.get("SemplestKeywordstwfile"); 
-      dfile = (String) configData.get("SemplestKeywordsdfile"); 
-      baseMultiWPath = (String) configData.get("SemplestKeywordsbaseMultiWPath");
-      nGramsSubC = loadStringArray("SemplestKeywordsnGramsSubC");
-      nGramsC = (String) configData.get("SemplestKeywordsnGramsC");; 
-      validCat = loadStringArray("SemplestKeywordsvalidcat");
-      catMap  = properties.getProperty("catMap");
-      lucenedfile = (String) configData.get("SemplestKeywordslucenedfile");
-      smallhCounts = (String) configData.get("SemplestKeywordssmallhCounts");
-      stoplist = (String) configData.get("SemplestKeywordsstoplist");
-      numTopics = (Integer) configData.get("SemplestKeywordsnumTopics");
-      userInfoWeight = (Double) configData.get("SemplestKeywordsuserInfoWeight");
-      numKeywordsGoogle = (Integer) configData.get("SemplestKeywordsnumKeywordsGoogle");
-      numKeywordsMSN = (Integer) configData.get("SemplestKeywordsnumKeywordsMSN");
-      numThreads= (Integer) configData.get("SemplestKeywordsnumThreads");
-      logger.info("Set all property data...");
-    }else{
+  public ProjectProperties( HashMap<String,Object> configDataIn) 
+    throws IOException{
+
+    // Read in data from properties file
       File directory = new File (".");
       String PROPSFILE =  "data/SemplestKeywords.properties";
       properties = new Properties();
@@ -86,29 +67,71 @@ public class ProjectProperties {
       nGramsSubC = loadStringArrayfromfile("nGramsSubC");
       nGramsC = properties.getProperty("nGramsC");; 
       validCat = loadStringArrayfromfile("validcat");
+      catMap  = properties.getProperty("catMap");
       lucenedfile = properties.getProperty("lucenedfile");
       smallhCounts = properties.getProperty("smallhCounts");
       stoplist = properties.getProperty("stoplist");
       numTopics = Integer.parseInt(properties.getProperty("numTopics"));
-      userInfoWeight = Double.parseDouble(properties.getProperty("userInfoWeight"));
-      numKeywordsGoogle = Integer.parseInt(properties.getProperty("numKeywordsGoogle"));
-      numKeywordsMSN = Integer.parseInt(properties.getProperty("numKeywordsMSN"));
+      userInfoWeight = Double.parseDouble(
+          properties.getProperty("userInfoWeight"));
+      numKeywordsGoogle = Integer.parseInt(
+          properties.getProperty("numKeywordsGoogle"));
+      numKeywordsMSN = Integer.parseInt(
+          properties.getProperty("numKeywordsMSN"));
       numThreads= Integer.parseInt(properties.getProperty("numThreads"));
-      logger.info("Set all property data...");
+
+    // if data is provided from database (as hash), override file properties
+    if( configDataIn != null){
+
+      logger.info("Updating keyword properties properties from hash...");
+      configData = configDataIn;
+
+      dictfile  = getString( "SemplestKeywordsdictfile",  dictfile );
+      docfile   = getString("SemplestKeywordsdocfile",    docfile); 
+      twfile    = getString("SemplestKeywordstwfile",     twfile); 
+      dfile     = getString("SemplestKeywordsdfile",      dfile); 
+      nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
+      catMap      = getString("catMap",                   catMap);
+      lucenedfile = getString("SemplestKeywordslucenedfile",  lucenedfile );
+      smallhCounts= getString("SemplestKeywordssmallhCounts", smallhCounts );
+      stoplist    = getString("SemplestKeywordsstoplist",     stoplist);
+      baseMultiWPath = getString("SemplestKeywordsbaseMultiWPath",
+          baseMultiWPath);
+      numTopics   = getInteger("SemplestKeywordsnumTopics",   numTopics);
+      numKeywordsGoogle = getInteger("SemplestKeywordsnumKeywordsGoogle", 
+          numKeywordsGoogle);
+      numKeywordsMSN    = getInteger("SemplestKeywordsnumKeywordsMSN",
+          numKeywordsMSN);
+      numThreads        = getInteger("SemplestKeywordsnumThreads",  numThreads);
+      userInfoWeight    = getDouble("SemplestKeywordsuserInfoWeight",
+          userInfoWeight);
+      nGramsSubC  = getStringArray("SemplestKeywordsnGramsSubC",    nGramsSubC);
+      validCat    = getStringArray("SemplestKeywordsvalidcat",      validCat);
+      
+      logger.info("Properties Update done...");
+
     }
-
-
   }
 
-  private static String[] loadStringArray(String property){
-    String aux;
-    aux =(String) configData.get(property);
-    aux =aux.replaceAll("\\s", "");
-    return aux.split(",");
+  // - private helpers ----------------
+  private String getString( String prop, String def ) {
+    return configData.get(prop) != null ? (String)configData.get(prop) : def; 
   }
-  private static String[] loadStringArrayfromfile(String property){
-    String aux;
-    aux =(String) properties.getProperty(property);
+  private Integer getInteger( String prop, Integer def ) {
+    return configData.get(prop) != null ? (Integer)configData.get(prop) : def; 
+  }
+  private Double getDouble( String prop, Double def ) {
+    return configData.get(prop) != null ? (Double)configData.get(prop) : def; 
+  }
+  private static String[] getStringArray(String prop, String[] def){
+    if( configData.get(prop) != null ){
+      String aux = (String) configData.get(prop);
+      aux = aux.replaceAll("\\s", "");
+      return aux.split(",");
+    } else return def;
+  }
+  private static String[] loadStringArrayfromfile(String prop){
+    String aux = (String) properties.getProperty(prop);
     aux =aux.replaceAll("\\s", "");
     return aux.split(",");
   }
