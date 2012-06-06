@@ -290,7 +290,7 @@ public class WorkerRunnable implements Runnable {
 	
 	protected void sampleTopicsForOneDoc (FeatureSequence tokenSequence,
 										  FeatureSequence topicSequence,
-										  boolean readjustTopicsAndStats /* currently ignored */) {
+										  boolean readjustTopicsAndStats /* currently ignored */) throws Exception {
 
 		int[] oneDocTopics = topicSequence.getFeatures();
 
