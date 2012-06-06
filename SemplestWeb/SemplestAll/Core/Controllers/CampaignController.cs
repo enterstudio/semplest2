@@ -183,6 +183,8 @@ namespace Semplest.Core.Controllers
                 if (ModelState.IsValid)
                 {
                     model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
+                    model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
+                    model.AdModelProp.NegativeKeywordsText = (string) Session["NegativeKeywordsText"];
 
                     if (!model.CategoryIds.Any())
                         return Json("Atleast one Category needs to be selected");
