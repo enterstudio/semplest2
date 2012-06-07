@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -807,7 +808,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
-	public static List getAdEngineAccount(int customerID, String adEngine) throws Exception
+	public static List<Map<String, Object>> getAdEngineAccount(int customerID, String adEngine) throws Exception
 	{
 		String strSQL = "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
 				+ "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK "
@@ -816,8 +817,7 @@ public class SemplestDB extends BaseDB
 
 		try
 		{
-			return jdbcTemplate.queryForList(strSQL, new Object[]
-			{ customerID, adEngine });
+			return jdbcTemplate.queryForList(strSQL, new Object[]{customerID, adEngine});
 		}
 		catch (EmptyResultDataAccessException e)
 		{

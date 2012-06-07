@@ -38,7 +38,7 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean schedulePauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines);
 	void PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception;
 		
-	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN,
+	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
 	
 	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList);	
 	void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception;
