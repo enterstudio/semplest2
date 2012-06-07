@@ -64,7 +64,7 @@ public class QueueListener implements MessageListener
 							logger.error(e.getMessage(), e);
 						}
 						asyncContext.complete();
-						if (ESBServer.esb.getServletAsynchContextMap().contains(uniqueID))
+						if (ESBServer.esb.getServletAsynchContextMap().containsKey(uniqueID))
 						{
 							ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
 							logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");

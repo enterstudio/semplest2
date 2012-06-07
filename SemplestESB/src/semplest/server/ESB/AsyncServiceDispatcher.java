@@ -66,7 +66,7 @@ public class AsyncServiceDispatcher implements Runnable
 				out.flush();
 				
 				logger.debug("Try to remove from ServletAsynchContextMap " + uniqueID);
-				if (ESBServer.esb.getServletAsynchContextMap().contains(uniqueID))
+				if (ESBServer.esb.getServletAsynchContextMap().containsKey(uniqueID))
 				{
 					ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
 					logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
