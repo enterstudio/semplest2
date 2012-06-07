@@ -470,18 +470,20 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String returnData = runMethod(baseurl,SERVICEOFFERED, " updateAD", json,timeoutMS);
 		return gson.fromJson(returnData, Long.class);
 	}
+	
 	@Override
-	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
+	public Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
-		jsonHash.put("campaignID", String.valueOf(campaignID));
+		final String campaignIdsString = gson.toJson(campaignIds);
+		jsonHash.put("campaignIds", campaignIdsString);
 		jsonHash.put("status", status.getValue());
-		String json = protocolJson.createJSONHashmap(jsonHash);
-
+		String json = protocolJson.createJSONHashmap(jsonHash);		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "changeCampaignStatus", json,timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
+	
 	@Override
 	public Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception
 	{

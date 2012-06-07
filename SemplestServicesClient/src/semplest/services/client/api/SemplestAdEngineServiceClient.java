@@ -154,25 +154,24 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionAdID_scheduleRefreshSiteLinksForAd = 218;
 		final List<String> adEngines_scheduleRefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testScheduleRefreshSiteLinksForAd(customerID_scheduleRefreshSiteLinksForAd, promotionID_scheduleRefreshSiteLinksForAd, promotionAdID_scheduleRefreshSiteLinksForAd, adEngines_scheduleRefreshSiteLinksForAd);
-*/
+
 		// RefreshSiteLinksForAd
 		final Integer promotionID_RefreshSiteLinksForAd = 62;
 		final Integer promotionAdID_RefreshSiteLinksForAd = 218;
 		final List<String> adEngines_RefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testRefreshSiteLinksForAd(promotionID_RefreshSiteLinksForAd, promotionAdID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
-/*
+
 		// schedulePauseProductGroup
 		final Integer customerID_schedulePauseProductGroup = 12;
 		final Integer productGroupID_schedulePauseProductGroup = 76;
 		final List<String> adEngines_schedulePauseProductGroup = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testSchedulePauseProductGroup(customerID_schedulePauseProductGroup, productGroupID_schedulePauseProductGroup, adEngines_schedulePauseProductGroup);
-			
+*/			
 		// PauseProductGroup
-		final Integer customerID_PauseProductGroup = 12;
 		final Integer productGroupID_PauseProductGroup = 76;
 		final List<String> adEngines_PauseProductGroup = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.testSchedulePauseProductGroup(customerID_PauseProductGroup, productGroupID_PauseProductGroup, adEngines_PauseProductGroup);		
-
+		client.testPauseProductGroup(productGroupID_PauseProductGroup, adEngines_PauseProductGroup);		
+/*
 		// scheduleUnpausePromotion
 		final Integer customerID_scheduleUnpausePromotion = 12;
 		final Integer promotionID_scheduleUnpausePromotion = 62;

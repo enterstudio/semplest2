@@ -28,6 +28,7 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.service.SemplestConfiguration;
@@ -726,7 +727,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public void UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
-		ChangePromotionPromotionStatus(promotionID, adEngines, CampaignStatus.ACTIVE);
+		final List<Integer> promotionIds = new ArrayList<Integer>();
+		promotionIds.add(promotionID);
+		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.ACTIVE);
 	}
 	
 	public String schedulePausePromotion(String json) throws Exception
@@ -777,7 +780,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public void PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
-		ChangePromotionPromotionStatus(promotionID, adEngines, CampaignStatus.PAUSED);
+		final List<Integer> promotionIds = new ArrayList<Integer>();
+		promotionIds.add(promotionID);
+		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
 	}
 	
 	public String PauseProductGroup(String json) throws Exception
@@ -796,50 +801,45 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Pause ProductGroup [" + productGroupID + "] for AdEngines [" + adEngines+ "])");
 		final List<Integer> promotionIds = SemplestDB.getPromotionIdsForProductGroup(productGroupID);
 		final String promotionIdsEasyReadableString = SemplestUtils.getEasilyReadableString(promotionIds);
-		logger.info("Found the following Promotion IDs for which will need to Pause:\n" + promotionIdsEasyReadableString);
-		final Map<Integer, String> errorMap = new HashMap<Integer, String>();
+		logger.info("Found the following Promotion IDs for which the Campaigns we'll need to Pause:\n" + promotionIdsEasyReadableString);	
+		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
+	}
+		
+	public void ChangePromotionsStatus(List<Integer> promotionIds, List<String> adEngines, SemplestCampaignStatus newStatus) throws Exception
+	{
+		logger.info("Will try to Change Status to [" + newStatus + "] for PromotionIds [" + promotionIds + "] and AdEngines [" + adEngines+ "])");
+		final List<Long> campaignIds = new ArrayList<Long>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		String accountId = null;
 		for (final Integer promotionId : promotionIds)
 		{
-			try
+			getPromoDataSP.execute(promotionId);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			if (accountId == null)
 			{
-				PausePromotion(promotionId, adEngines);
+				accountId = "" + promotion.getAdvertisingEngineAccountPK();
 			}
-			catch (Exception e)
+			final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+			if (campaignId != null)
 			{
-				final String errMsg = "Problem Pausing Promotion [" + promotionId + "] within ProductGroup [" + productGroupID + "]";
-				logger.error(errMsg, e);
-				errorMap.put(promotionId, errMsg + " - " + e.getMessage());
+				campaignIds.add(campaignId);
 			}
-		}
-		if (!errorMap.isEmpty())
-		{
-			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Pause ProductGroup [" + productGroupID + "] for AdEngines [" + adEngines+ "]:\n" + errorMapEasilyReadableString;
-			logger.error(errMsg);
-			throw new Exception(errMsg);
 		}	
-	}
-	
-	//TODO: make a common campaign status object that includes Google and MSN statuses
-	public void ChangePromotionPromotionStatus(Integer promotionID, List<String> adEngines, CampaignStatus newStatus) throws Exception
-	{
-		logger.info("Will try to Change Status to [" + newStatus + "] for Promotion [" + promotionID + "] and AdEngines [" + adEngines+ "])");
-		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
-		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		if (campaignIds.isEmpty())
+		{
+			throw new Exception("No CampaignIDs found for PromotionIDs [" + promotionIds + "]");
+		}
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				logger.info("Will try to Change Status of Google Campaign to [" + newStatus + "] using AccountID [" + accountId + "] and CampaignID [" + campaignId + "] (it's associated with SEMplest Promotion for ID [" + promotionID + "])");
+				logger.info("Will try to Change Status of Google Campaigns to [" + newStatus + "] using AccountID [" + accountId + "] and CampaignIds [" + campaignIds + "])");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Boolean result = googleAdwordsService.changeCampaignStatus(accountId, campaignId, newStatus);
+				final Boolean result = googleAdwordsService.changeCampaignsStatus(accountId, campaignIds, newStatus.getGoogleCampaignStatus());
 				if (!result)
 				{
-					final String errMsg = "Request to Change Status of Google Campaign for AccountID [" + accountId + "] and CampaignID [" + campaignId + "] failed";
+					final String errMsg = "Request to Change Status of Google Campaigns for AccountID [" + accountId + "] and CampaignIds [" + campaignIds + "] failed";
 					logger.info(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -854,7 +854,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Change Status to [" + newStatus + "] for Promotion [" + promotionID + "] and AdEngines [" + adEngines+ "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Change Status to [" + newStatus + "] for PromotionIds [" + promotionIds + "] and AdEngines [" + adEngines+ "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -1669,7 +1669,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			// TODO: is this the right way to name the schedule for pausing productGroup?  Can't use a single promotionID since there would be multiple
-			final String scheduleName = productGroupID + "_" + scheduleNamePostfix;
+			final String scheduleName = "ProductGroup" + productGroupID + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, productGroupID, null);
 			return taskScheduleSuccessful;
 		}

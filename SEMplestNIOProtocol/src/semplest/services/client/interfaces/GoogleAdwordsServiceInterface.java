@@ -36,7 +36,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//Campaign Data Management (cm)
 	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception;
 	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
-	public abstract Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception;
+	public abstract Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception;
 	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;
 	public abstract ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
 	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;

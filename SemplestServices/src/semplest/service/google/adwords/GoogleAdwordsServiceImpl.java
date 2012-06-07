@@ -2124,31 +2124,45 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String changeCampaignStatus(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Long campaignID = Long.parseLong(data.get("campaignID"));
-		Boolean res = changeCampaignStatus(data.get("accountID"), campaignID, CampaignStatus.fromString(data.get("status")));
-		// convert result to Json String
+		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		final String campaignIdsString = data.get("campaignIds");
+		final List<Long> campaignIds = gson.fromJson(campaignIdsString, List.class);
+		final String accountID = data.get("accountID");
+		final CampaignStatus status = CampaignStatus.fromString(data.get("status"));
+		final Boolean res = changeCampaignsStatus(accountID, campaignIds, status);
 		return gson.toJson(res);
 	}
-
-	@Override
-	public Boolean changeCampaignStatus(String accountID, Long campaignID, CampaignStatus status) throws Exception
+	
+	public List<CampaignOperation> getCampaignOperations(List<Long> campaignIds, CampaignStatus status)
 	{
-		logger.info("Will try to change the CampaignStatus to [" + status + "] for AccountID [" + accountID + "] and CampaignID [" + campaignID + "]");
-		try
+		final List<CampaignOperation> operations = new ArrayList<CampaignOperation>();
+		for (final Long campaignId : campaignIds)
 		{
-			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			final CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);			
 			final Campaign campaign = new Campaign();
-			campaign.setId(campaignID);
+			campaign.setId(campaignId);
 			campaign.setStatus(status);
 			final CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.SET);
-			final CampaignOperation[] operations = new CampaignOperation[]{operation};
+			operations.add(operation);
+		}
+		return operations;
+	}
+
+	@Override
+	public Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception
+	{
+		logger.info("Will try to change the CampaignStatus to [" + status + "] for AccountID [" + accountID + "] and CampaignIds [" + campaignIds + "]");
+		try
+		{
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);			
+			final List<CampaignOperation> campaignOperations = getCampaignOperations(campaignIds, status);
+			final CampaignOperation[] operations = campaignOperations.toArray(new CampaignOperation[campaignOperations.size()]);
 			final CampaignReturnValue ret = campaignService.mutate(operations);
 			if (ret != null && ret.getValue() != null)
 			{
+				
 				return true;
 			}
 			else
@@ -2158,19 +2172,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignIds + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
 			logger.info(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 		catch (ApiException e)
 		{
-			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]: " + e.dumpToString();
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignIds + "] to Status [" + status + "] for Google Account ID [" + accountID + "]: " + e.dumpToString();
 			logger.info(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 		catch (RemoteException e)
 		{
-			final String errMsg = "Problem changing the status of Google campaign [" + campaignID + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
+			final String errMsg = "Problem changing the status of Google campaign [" + campaignIds + "] to Status [" + status + "] for Google Account ID [" + accountID + "]";
 			logger.info(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
