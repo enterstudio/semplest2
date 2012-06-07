@@ -25,45 +25,45 @@ public class dictUtils
   static String dictfile = ProjectProperties.dictfile;
   static String docfile  = ProjectProperties.docfile;
   static String twfile   = ProjectProperties.twfile;
-  
+
   public static HashMap<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
   public static Map<Integer,String> dictwi = invert(dicti);
   public static HashMap<String,String> dict = ioUtils.readPair(dictfile);
   public static HashMap<String,Integer> docsi =  ioUtils.readFileIndex(docfile);
   public static Map<Integer,String> docis = invert(docsi);
   public static final HashMap<String,String> docs = ioUtils.topWords(twfile);
-   
+
   // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
-  
+
   /*
   // static methods to load paths from property file
   static {
-	  if(SEMplestService.properties==null){
-		  try{
-			String PROPSFILE = "../SemplestServices/bin/system.properties";
-			SEMplestService.properties = new Properties();
-			FileInputStream is;
-			is = new FileInputStream(PROPSFILE);
-			SEMplestService.properties.load(is);
-			is.close();
-		  } catch (Exception e){ e.printStackTrace();}
-	}
-	  dictfile= SEMplestService.properties.getProperty("data.stemworddict");
-	  docfile = SEMplestService.properties.getProperty("data.dmoz.allcats");
-	  twfile = SEMplestService.properties.getProperty("data.dmoz.alltw");;
-	  
+  if(SEMplestService.properties==null){
+  try{
+  String PROPSFILE = "../SemplestServices/bin/system.properties";
+  SEMplestService.properties = new Properties();
+  FileInputStream is;
+  is = new FileInputStream(PROPSFILE);
+  SEMplestService.properties.load(is);
+  is.close();
+  } catch (Exception e){ e.printStackTrace();}
+  }
+  dictfile= SEMplestService.properties.getProperty("data.stemworddict");
+  docfile = SEMplestService.properties.getProperty("data.dmoz.allcats");
+  twfile = SEMplestService.properties.getProperty("data.dmoz.alltw");;
+
   } 
-  */
-  
+   */
+
   // a word is valid if its stem is in the dictionary
   public static boolean validWord( String word ){
     return dict.containsKey( getRoot( word ) ) && 
       !cw.contains( word );
   }
   public static boolean commonWord(String word){
-	  boolean aux = cw.contains(word);
-	  return cw.contains(word);
+    boolean aux = cw.contains(word);
+    return cw.contains(word);
   }
   // is the stem in the dictionary ?
   public static boolean validStem(String stem ){
