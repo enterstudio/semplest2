@@ -48,11 +48,13 @@ public class KeywordTestThread implements Runnable {
 			writer.append(',');
 			writer.append("num Catetories");
 			writer.append(',');
+			writer.append("Catetory");
+			writer.append(',');
 			writer.append("time getKeywords");
 			writer.append(',');
 			writer.append("num Keywords");
 			writer.append(',');
-			writer.append("keywords (first & last)");
+			writer.append("Keywords (#0 | #1 | #2 | #last)");
 			writer.append('\n');
 			
 			writer.flush();
@@ -105,12 +107,14 @@ public class KeywordTestThread implements Runnable {
 					
 					writer.append(String.valueOf(latency));
 					writer.append(',');
-					writer.append(String.valueOf(res.size()));
-					writer.append(',');
-					writer.flush();
+					writer.append(String.valueOf(res.size()));					
 					
 					ArrayList<String> selectCateg = new ArrayList<String>();
 					selectCateg.add(res.get(5));
+					
+					writer.append(',');
+					writer.append(res.get(5));
+					writer.flush();
 					
 					start = System.currentTimeMillis();
 					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
@@ -121,7 +125,7 @@ public class KeywordTestThread implements Runnable {
 					writer.append(',');
 					writer.append(String.valueOf(kw.length));
 					writer.append(',');
-					writer.append(kw[0].getKeyword() + " | " + kw[kw.length-1].getKeyword());
+					writer.append(kw[0].getKeyword() + " | " + kw[1].getKeyword() + " | " + kw[2].getKeyword() + " | " + kw[kw.length-1].getKeyword());
 					writer.append('\n');				
 					writer.flush();
 					

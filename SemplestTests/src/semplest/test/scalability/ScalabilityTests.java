@@ -31,20 +31,20 @@ public class ScalabilityTests {
 			*/
 			
 			//Test Keyword
-			/*
+			///*
 			frequency = 2;
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
-			*/
+			//*/
 			
 			//Test Memory Leak
-			frequency = 5;
+			/*frequency = 5;
 			executor.execute(new OtherTestThread(frequency));
 			Thread.sleep(10);
-			executor.execute(new OtherTestThread(frequency));			
+			executor.execute(new OtherTestThread(frequency));	*/		
 			
 		}
 		catch(Exception e){
