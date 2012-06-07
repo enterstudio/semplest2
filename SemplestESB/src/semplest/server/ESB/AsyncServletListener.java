@@ -50,16 +50,17 @@ public class AsyncServletListener implements AsyncListener
 					PrintWriter out = asyncContext.getResponse().getWriter();
 					out.print(ret);
 					out.flush();
+					//cleanup
+					ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
+					logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
+					asyncContext.complete();
+					asyncContext = null;
 				}
 				catch (Exception e)
 				{
-					logger.error(e.getMessage(), e);
+					logger.error("onTimeout: " + e.getMessage(), e);
 				}
-				asyncContext.complete();
-
-				ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
-				logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
-
+				
 			}
 
 		}

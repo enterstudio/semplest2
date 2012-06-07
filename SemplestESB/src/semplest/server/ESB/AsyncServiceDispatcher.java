@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.jms.JMSException;
 import javax.servlet.AsyncContext;
 
 import org.apache.log4j.Logger;
@@ -49,11 +48,6 @@ public class AsyncServiceDispatcher implements Runnable
 			logger.debug("Add to service queue " + serviceData.getESBSendQueueName() + " rec on " + serviceData.getESBRecQueueName());
 			cn.sendMessage(serviceData.getESBSendQueueName(), methodName, ProtocolJSON.createBytePacketFromString(jsonStr),uniqueID);
 		}
-		catch (JMSException e)
-		{
-			logger.error("Error running request id " + uniqueID + ":" + serviceRequested + ":" + methodName + " ERROR: " + e.getMessage()); 
-			e.printStackTrace();
-		}
 		catch (Exception e)
 		{
 			//If service is not available (service not registered with ESB), send client error message
@@ -70,17 +64,23 @@ public class AsyncServiceDispatcher implements Runnable
 				PrintWriter out = asyncContext.getResponse().getWriter();
 				out.print(ret);
 				out.flush();
+				
+				logger.debug("Try to remove from ServletAsynchContextMap " + uniqueID);
+				if (ESBServer.esb.getServletAsynchContextMap().contains(uniqueID))
+				{
+					ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
+					logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
+				}
+				logger.debug(" call AsyncContextComplete");
+				asyncContext.complete();
+				asyncContext = null;
+				logger.debug("AsyncContextComplete");
 			}
 			catch (Exception err)
 			{
-				logger.error(err.getMessage(), err);
+				logger.error("Sending Respose block: " + err.getMessage(), err);
 			}
-			asyncContext.complete();
-			if (ESBServer.esb.getServletAsynchContextMap().contains(uniqueID))
-			{
-				ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
-				logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
-			}
+			
 		}
 	}
 	

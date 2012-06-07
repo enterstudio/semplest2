@@ -256,6 +256,7 @@ public class ESBServer
 		}
 		else
 		{
+			logger.debug("No Service for " + serviceOffered + " Available");
 			throw new Exception("No Service for " + serviceOffered + " Available");
 		}
 	}
