@@ -32,133 +32,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 	public static void main(String[] args) throws Exception
 	{
 		BasicConfigurator.configure();
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);
-
-		/*		
-		
-		//
-		// UpdateGeoTargeting
-		//
-		final Integer PromotionID = 62;
-		final List<String> adEngines = new ArrayList<String>();
-		adEngines.add(AdEngine.Google.name());
-		client.UpdateGeoTargeting(PromotionID, adEngines);
-	
-		
-		//
-		// AddAd
-		//
-		final Integer promotionID_AddAd = 62;
-		final Integer promotionAdID_AddAd = 218;
-		final List<String> adEngines_AddAd = new ArrayList<String>();
-		adEngines_AddAd.add(AdEngine.Google.name());
-		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
-
-		
-		//
-		// UpdateAd
-		//		
-		final Integer promotionID_UpdateAd = 62;
-		final Integer promotionAdID_UpdateAd = 218;
-		final List<String> adEngines_UpdateAd = new ArrayList<String>();
-		adEngines_UpdateAd.add(AdEngine.Google.name());
-		//adEngines_UpdateAd.add(AdEngine.MSN.name());
-		client.UpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
-		
-			
-		//
-		// DeleteAd
-		//
-		final Integer promotionID_DeleteAd = 62;
-		final Integer promotionAdID_DeleteAd = 218;
-		final List<String> adEngines_DeleteAd = new ArrayList<String>();
-		adEngines_DeleteAd.add(AdEngine.Google.name());
-		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);		
-		// 9824192 old, 9824193 new (30 in semplest, 10 in google)
-		// added: 9824192
-		
-		
-		//
-		// DeleteAdEngineAd
-		//
-		final Integer customerID_DeleteAdEngineAd = 10;
-		final Integer promotionID_DeleteAdEngineAd = 62;
-		final Integer promotionAdID_DeleteAdEngineAd = 218; 
-		final List<String> adEngines_DeleteAdEngineAd = new ArrayList<String>();
-		adEngines_DeleteAdEngineAd.add(AdEngine.Google.name());
-		client.DeleteAdEngineAd(customerID_DeleteAdEngineAd, promotionID_DeleteAdEngineAd, promotionAdID_DeleteAdEngineAd, adEngines_DeleteAdEngineAd);
-		 
-		
-		//
-		// UpdateBudget
-		//
-		final Integer promotionID_UpdateBudget = 62; 
-		final Double changeInBudget_UpdateBudget = 10d; 
-		final List<String> adEngines_UpdateBudget = new ArrayList<String>();
-		adEngines_UpdateBudget.add(AdEngine.Google.name());
-		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
-		// current: 6250000                 campaign: 637295; ad group: 3066031127
-		
-		
-		//
-		// ChangePromotionStartDate
-		//
-		final Integer promotionID_ChangePromotionStartDate = 62; 
-		final List<String> adEngines_ChangePromotionStartDate = new ArrayList<String>();
-		final java.util.Date newStartDate_ChangePromotionStartDate = new java.util.Date();
-		adEngines_ChangePromotionStartDate.add(AdEngine.Google.name());
-		client.ChangePromotionStartDate(promotionID_ChangePromotionStartDate, newStartDate_ChangePromotionStartDate, adEngines_ChangePromotionStartDate);
-
-		
-		//
-		// DeleteKeyword
-		//
-		final Integer promotionID_DeleteKeyword = 62;
-		final String keyword_DeleteKeyword = "HelloKeyword";
-		final List<String> adEngines_DeleteKeyword = new ArrayList<String>();
-		adEngines_DeleteKeyword.add(AdEngine.Google.name());
-		client.DeleteKeyword(promotionID_DeleteKeyword, keyword_DeleteKeyword, adEngines_DeleteKeyword);
-		
-		
-		//
-		// PausePromotion
-		//
-		final Integer promotionID_PausePromotion = 62; 
-		final List<String> adEngines_PausePromotion = new ArrayList<String>();
-		adEngines_PausePromotion.add(AdEngine.Google.name());
-		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
-	
-		
-		//
-		// UnpausePromotion
-		//
-		final Integer promotionID_UnpausePromotion = 62; 
-		final List<String> adEngines_UnpausePromotion = new ArrayList<String>();
-		adEngines_UnpausePromotion.add(AdEngine.Google.name());
-		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);		
-		
-		
-		//
-		// RefreshSiteLinksForAd
-		//
-		final Integer promotionID_RefreshSiteLinksForAd = 62;
-		final Integer promotionAdID_RefreshSiteLinksForAd = 218;
-		final List<String> adEngines_RefreshSiteLinksForAd = new ArrayList<String>();
-		adEngines_RefreshSiteLinksForAd.add(AdEngine.Google.name());
-		client.RefreshSiteLinksForAd(promotionID_RefreshSiteLinksForAd, promotionAdID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
-		
-		
-		//
-		// PauseProductGroup
-		//
-		final Integer productGroupID_PauseProductGroup = 76;
-		final List<String> adEngines_PauseProductGroup = new ArrayList<String>();
-		adEngines_PauseProductGroup.add(AdEngine.Google.name());
-		client.PauseProductGroup(productGroupID_PauseProductGroup, adEngines_PauseProductGroup);
-		*/
-		
-		
-		
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);		
 /*
 		// scheduleAddAd
 		final Integer customerID_ScheduleAddAd = 12;
@@ -192,13 +66,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionAdID_scheduleUpdateAd = 218;
 		final List<String> adEngines_scheduleUpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testScheduleUpdateAd(customerID_scheduleUpdateAd, promotionID_scheduleUpdateAd, promotionAdID_scheduleUpdateAd, adEngines_scheduleUpdateAd);
-	
+*/
 		// UpdateAd
 		final Integer promotionID_UpdateAd = 62;
 		final Integer promotionAdID_UpdateAd = 218;
 		final List<String> adEngines_UpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testUpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
-
+/*
 		// scheduleUpdateGeoTargeting
 		final Integer customerID_scheduleUpdateGeoTargeting = 12;
 		final Integer promotionID_scheduleUpdateGeoTargeting = 62;
@@ -298,7 +172,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer productGroupID_PauseProductGroup = 76;
 		final List<String> adEngines_PauseProductGroup = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testSchedulePauseProductGroup(customerID_PauseProductGroup, productGroupID_PauseProductGroup, adEngines_PauseProductGroup);		
-*/
+
 		// scheduleUnpausePromotion
 		final Integer customerID_scheduleUnpausePromotion = 12;
 		final Integer promotionID_scheduleUnpausePromotion = 62;
@@ -309,6 +183,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionID_UnpausePromotion = 62;
 		final List<String> adEngines_UnpausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testUnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);
+*/		
 	}
 	
 	public void testScheduleAddAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception

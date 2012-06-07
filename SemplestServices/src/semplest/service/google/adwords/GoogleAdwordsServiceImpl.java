@@ -699,6 +699,23 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Long res = addTextAd(accountID, addGroupID, headline, description1, description2, displayURL, url);
 		return gson.toJson(res);
 	}
+	
+	public static AdGroupAdOperation getAddAdOperation(Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
+	{
+		final TextAd textAd = new TextAd();
+		textAd.setHeadline(SemplestUtils.getTrimmedNonNullString(headline));
+		textAd.setDescription1(SemplestUtils.getTrimmedNonNullString(description1));
+		textAd.setDescription2(SemplestUtils.getTrimmedNonNullString(description2));
+		textAd.setDisplayUrl(SemplestUtils.getTrimmedNonNullString(displayURL));
+		textAd.setUrl(SemplestUtils.getTrimmedNonNullString(url));
+		final AdGroupAd textAdGroupAd = new AdGroupAd();
+		textAdGroupAd.setAdGroupId(adGroupID.longValue());
+		textAdGroupAd.setAd(textAd);
+		final AdGroupAdOperation textAdGroupAdOperation = new AdGroupAdOperation();
+		textAdGroupAdOperation.setOperand(textAdGroupAd);
+		textAdGroupAdOperation.setOperator(Operator.ADD);
+		return textAdGroupAdOperation;
+	}
 
 	/*
 	 * Ads can show, including spaces, 25 characters for the title, 70
@@ -714,27 +731,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.info("Will try to add Text Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
 		try
 		{
-			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			// Get the AdGroupAdService.
-			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-
-			// Create text ad.
-			TextAd textAd = new TextAd();
-			textAd.setHeadline(SemplestUtils.getTrimmedNonNullString(headline));
-			textAd.setDescription1(SemplestUtils.getTrimmedNonNullString(description1));
-			textAd.setDescription2(SemplestUtils.getTrimmedNonNullString(description2));
-			textAd.setDisplayUrl(SemplestUtils.getTrimmedNonNullString(displayURL));
-			textAd.setUrl(SemplestUtils.getTrimmedNonNullString(url));
-			// Create ad group ad.
-			AdGroupAd textAdGroupAd = new AdGroupAd();
-			textAdGroupAd.setAdGroupId(adGroupID.longValue());
-			textAdGroupAd.setAd(textAd);
-			// Create operations.
-			AdGroupAdOperation textAdGroupAdOperation = new AdGroupAdOperation();
-			textAdGroupAdOperation.setOperand(textAdGroupAd);
-			textAdGroupAdOperation.setOperator(Operator.ADD);
-			AdGroupAdOperation[] operations = new AdGroupAdOperation[]{textAdGroupAdOperation};
-			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
+			final AdGroupAdOperation adGroupAdOperation = getAddAdOperation(adGroupID, headline, description1, description2, displayURL, url);
+			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{adGroupAdOperation};
+			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
 			if (result != null && result.getValue() != null)
 			{
 				return result.getValue()[0].getAd().getId();
@@ -923,6 +924,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Long googleAdID = deleteAD(data.get("accountID"), adGroupID, AdID);
 		return gson.toJson(googleAdID);
 	}
+	
+	public AdGroupAdOperation getRemoveAdOperation(Long adGroupID, Long AdID)
+	{
+		final Ad ad = new Ad();
+		ad.setId(AdID.longValue());
+		final AdGroupAd adGroupAd = new AdGroupAd();
+		adGroupAd.setAdGroupId(adGroupID.longValue());
+		adGroupAd.setAd(ad);
+		final AdGroupAdOperation operation = new AdGroupAdOperation();
+		operation.setOperand(adGroupAd);
+		operation.setOperator(Operator.REMOVE);
+		return operation;
+	}
 
 	@Override
 	public Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
@@ -930,24 +944,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.info("Will try to delete ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]");
 		try
 		{
-			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			// Get the AdGroupAdService.
-			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-			// Create base class ad to avoid setting type specific fields.
-			Ad ad = new Ad();
-			ad.setId(AdID.longValue());
-			// Create ad group ad.
-			AdGroupAd adGroupAd = new AdGroupAd();
-			adGroupAd.setAdGroupId(adGroupID.longValue());
-			adGroupAd.setAd(ad);
-			// Create operations.
-			AdGroupAdOperation operation = new AdGroupAdOperation();
-			operation.setOperand(adGroupAd);
-			operation.setOperator(Operator.REMOVE);
-			AdGroupAdOperation[] operations = new AdGroupAdOperation[]
-			{ operation };
-			// Delete ad.
-			AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
+			final AdGroupAdOperation removeAdOperation = getRemoveAdOperation(adGroupID, AdID);
+			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{removeAdOperation};
+			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
 			if (result != null && result.getValue() != null)
 			{
 				final AdGroupAd[] adGroupAdArray = result.getValue();
@@ -1040,27 +1041,38 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	/**
-	 * Only status of an ad can be updated.  So in order to accomodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
+	 * Only status of an ad can be updated.  So in order to accommodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
 	 */
-	//TODO: split up update into 2 adengine tasks (1 for add, 1 for delete)
 	@Override
 	public Long updateAD(String accountID, Long adGroupID, Long oldGoogleAdID, String headline, String description1, String description2, String displayURL, String url) throws Exception
 	{	
 		logger.info("Will try to update ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], OldGoogleAdID [" + oldGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
 		try
 		{
-			final Long newTextAdID = addTextAd(accountID, adGroupID, headline, description1, description2, displayURL, url);
-			logger.info("New ad created (as part of update) with Google Ad ID [" + newTextAdID + "].  Now will try to delete the old ad for Google Ad ID [" + oldGoogleAdID + "]");
-			final Long deletedTextAdID = deleteAD(accountID, adGroupID, oldGoogleAdID);
-			if (deletedTextAdID.equals(oldGoogleAdID))
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
+			final AdGroupAdOperation addNewAdOperation = getAddAdOperation(adGroupID, headline, description1, description2, displayURL, url);
+			final AdGroupAdOperation removeOldAdOperation = getRemoveAdOperation(adGroupID, oldGoogleAdID);
+			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{addNewAdOperation, removeOldAdOperation};
+			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
+			if (result != null && result.getValue() != null)
 			{
-				logger.info("OLD Ad deleted (as part of update) with Google Ad ID [" + oldGoogleAdID + "].  Returning the NEW Google Ad ID [" + newTextAdID + "]");
-				return newTextAdID;
+				final AdGroupAd[] adGroupAdArray = result.getValue();
+				for (final AdGroupAd adGroupAd : adGroupAdArray)
+				{
+					final Ad returnedAd = adGroupAd.getAd();				
+					final Long returnedAdID = returnedAd.getId();
+					if (returnedAdID != oldGoogleAdID)
+					{
+						return returnedAdID;	
+					}					
+				}				
+				throw new Exception("Couldn't find the GoogleAdID for the newly-created Ad as part of the UpdateAd operation which deleted old version and creates new version");
 			}
 			else
 			{
-				throw new Exception("Google Ad ID returned from the delete part of the update operation [" + deletedTextAdID + "] is not the same as expected [" + oldGoogleAdID + "].  Maybe the wrong Google Ad was deleted?  Other params used in the delete call: GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "].");
-			}
+				throw new Exception("The result returned from Google is empty, which means the operations wasn't executed");
+			}	
 		}
 		catch (Exception e)
 		{
