@@ -249,8 +249,16 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Edit(EmployeeSetupWithRolesModel m)
+        public ActionResult Edit(EmployeeSetupWithRolesModel m, string command)
         {
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+
+            if (command.ToLower() == "delete") return RedirectToAction("delete", new { id = m.EmployeeSetup.EmployeePK });
+
+            //for cancel redirect to index
+
+            //for delete
+            //@Html.RouteLink("Delete Employee", new { Controller = "EmployeeSetup", action = "Delete", id = Model.EmployeeSetup.EmployeePK })
 
           SemplestEntities dbcontext = new SemplestEntities();
 
@@ -424,9 +432,11 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Add(EmployeeSetupWithRolesModel m)
+        public ActionResult Add(EmployeeSetupWithRolesModel m, string command)
         {
-           
+
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+
             SemplestEntities dbcontext = new SemplestEntities();
 
 
