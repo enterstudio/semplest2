@@ -2932,7 +2932,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		if (radius <= 0)
 			res = c.setGeoLoc(state);
 		else
-			res = c.setGeoLoc(radius, addr, city, state, zip);
+			res = c.setGeoLoc(radius, latitude, longitude); 
 		if (res == 0)
 			return false;
 		return true;
