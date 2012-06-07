@@ -38,6 +38,16 @@ public class catUtils {
   }
   public String code  ( String dcat ){ return smap.get ( dcat ); }
   public String decode( String scat ){ return ismap.get( scat ); }
+  public ArrayList<String> code( ArrayList<String> dcat){
+    ArrayList<String> ret = new ArrayList<String>( dcat.size() );
+    for( String c: dcat) ret.add( code( c ));
+    return ret;
+  }
+  public ArrayList<String> decode( ArrayList<String> scat){
+    ArrayList<String> ret = new ArrayList<String>( scat.size() );
+    for( String c: scat) ret.add( decode( c ));
+    return ret;
+  }
 
   // --------------------------------------------------------------------
   // return top level (returns "top")
