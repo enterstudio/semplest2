@@ -331,8 +331,8 @@ p#copy
 
 #exampleTitleHeader
 {
-    background-color: #8ebc00;
-    border-color: #8ebc00;
+    background-color: #ADC76E;
+    border-color: #ADC76E;
     color: #fff;
     height: 42px;
     margin-top: 10px;
@@ -735,16 +735,16 @@ span.k-tooltip
     font-size: 13px;
     font-weight: normal;
     padding: 8px;
-    background: #8ebc00;
+    background: #ADC76E;
     border-top: 2px solid #fff;
-    border-bottom: 1px solid #8ebc00;
+    border-bottom: 1px solid #ADC76E;
     color: #fff;
     text-align: left;
 }
 .gradient-style td
 {
     padding: 2px;
-    border-bottom: 1px solid #8ebc00;
+    border-bottom: 1px solid #ADC76E;
     color: #669;
     border-top: 1px solid #fff;
     background: #fff;
@@ -783,9 +783,9 @@ span.k-tooltip
 
 .help-button
 {
-    border-color: #8EBC00;
+    border-color: #ADC76E;
     background-color: #F5F7F4;
-    color: #8EBC00;
+    color: #ADC76E;
     border-style: solid;
     border-width: 1px;
     vertical-align: super;

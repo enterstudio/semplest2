@@ -94,12 +94,14 @@
 }
 .k-button
 {
-    color: #000;
+    color: #fff;
+    font-weight: bold;
+    font-variant: small-caps;
 }
 .k-button, .k-button.k-state-disabled:hover, .k-state-disabled .k-button:hover, .k-draghandle
 {
     border-color: #dadada;
-    background-color: #8ebc00;
+    background-color: #ADC76E;
 }
 .k-button:hover, .k-draghandle:hover
 {
@@ -109,7 +111,7 @@
 .k-state-active, .k-state-active:hover, .k-active-filter
 {
     background-color: #e3e3e3;
-    border-color: #8ebc00;
+    border-color: #ADC76E;
     color: #000;
 }
 .k-state-focused
@@ -121,8 +123,8 @@
 .k-state-selected, .k-list > .k-state-selected, .k-list > .k-state-focused, .k-panelbar > .k-state-selected, .k-panel > .k-state-selected, .k-button:active, .k-ghost-splitbar-vertical, .k-ghost-splitbar-horizontal, .k-draghandle.k-state-selected:hover
 {
     color: #fff;
-    background-color: #8ebc00;
-    border-color: #8ebc00;
+    background-color: #ADC76E;
+    border-color: #ADC76E;
 }
 .k-state-selected.k-state-focused
 {
@@ -180,7 +182,7 @@
 }
 .k-slider-selection
 {
-    background-color: #8ebc00;
+    background-color: #ADC76E;
 }
 .k-slider-horizontal .k-tick
 {
@@ -192,8 +194,8 @@
 }
 .k-tooltip
 {
-    border-color: #8ebc00;
-    background-color: #8ebc00;
+    border-color: #ADC76E;
+    background-color: #ADC76E;
     color: #fff;
 }
 .k-tooltip-validation
@@ -224,7 +226,7 @@
 }
 .k-tiles li.k-state-selected
 {
-    border-color: #8ebc00;
+    border-color: #ADC76E;
 }
 .k-tile .k-folder
 {
