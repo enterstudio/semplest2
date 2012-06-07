@@ -205,12 +205,7 @@ public class ESBServer
 		}
 		else
 		{			
-			logger.debug("No List of ServiceNames for " + serviceOffered);
-			//Test_Nan: Identify memory leak
-			logger.debug("Size of HashMaps: servicesMap = " + servicesMap.size() 
-					+ "; serviceRegistrationMap = " + serviceRegistrationMap.size() 
-					+ "; currentServiceIndexMap = " + currentServiceIndexMap.size()
-					+ "; ServletAsynchContextMap = " + ServletAsynchContextMap.size());
+			logger.debug("No List of ServiceNames for " + serviceOffered);			
 			return null;
 		}
 	}
