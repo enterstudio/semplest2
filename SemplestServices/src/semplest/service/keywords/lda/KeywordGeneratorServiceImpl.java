@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import semplest.keywords.lda.KWGenDmozLDAServer;
+import semplest.keywords.javautils.catUtils;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
@@ -18,6 +19,8 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 {
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordGeneratorServiceImpl.class);
+	
+	private static final catUtils cu = new catUtils();
 	
 	private KWGenDmozLDAServer kwGen;
 	public String getCategories(String json) throws Exception
@@ -44,7 +47,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 			logger.info("No categories found for " + searchTerm);
 			categOpt = new ArrayList<String>();
 		}
-		return categOpt;
+		return cu.code( categOpt );
 	}
 
 
@@ -92,7 +95,8 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
-		KeywordProbabilityObject[] keywords = kwGen.getKeywords(categories,companyName, searchEngines, searchTerm, description, adds,  url,  gt,  nGrams) ;
+		KeywordProbabilityObject[] keywords = kwGen.getKeywords( cu.decode( categories),
+				companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
 		if (keywords == null)
 		{
 			logger.info("No categories found for " + searchTerm);
