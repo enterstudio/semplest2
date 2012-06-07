@@ -372,10 +372,6 @@ namespace Semplest.Admin.Controllers
             //}
             //x.Parents = sl3;
 
-
-
-
-
             return View(x);
 
 
@@ -399,11 +395,17 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Edit(CustomerAccountWithEmployeeModel m)
+        public ActionResult Edit(CustomerAccountWithEmployeeModel m, string command)
         {
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+            //if (command.ToLower() == "delete") return  RedirectToAction("delete");
+            if (command.ToLower() == "delete") return RedirectToAction("Delete", new {id=m.CustomerAccount.AccountNumber});
 
-            
-            
+
+            //for delete
+            //<li> @Html.RouteLink("Delete Customer", new { Controller = "CustomerAccount", action = "Delete", id = Model.CustomerAccount.AccountNumber  }) </li>
+
+            //for cancel just redirect to main page
 
             SemplestEntities dbcontext = new SemplestEntities();
 
@@ -801,8 +803,10 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Add(CustomerAccountWithEmployeeModel m)
+        public ActionResult Add(CustomerAccountWithEmployeeModel m, string command )
         {
+            
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
 
             
             SemplestEntities dbcontext = new SemplestEntities();
