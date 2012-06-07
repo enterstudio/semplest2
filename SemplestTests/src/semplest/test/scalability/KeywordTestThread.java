@@ -44,9 +44,15 @@ public class KeywordTestThread implements Runnable {
 			writer.append(',');
 			writer.append("keyword");
 			writer.append(',');
-			writer.append("getCatetories");
+			writer.append("time getCatetories");
 			writer.append(',');
-			writer.append("getKeywords");
+			writer.append("num Catetories");
+			writer.append(',');
+			writer.append("time getKeywords");
+			writer.append(',');
+			writer.append("num Keywords");
+			writer.append(',');
+			writer.append("keywords (first & last)");
 			writer.append('\n');
 			
 			writer.flush();
@@ -99,6 +105,8 @@ public class KeywordTestThread implements Runnable {
 					
 					writer.append(String.valueOf(latency));
 					writer.append(',');
+					writer.append(String.valueOf(res.size()));
+					writer.append(',');
 					writer.flush();
 					
 					ArrayList<String> selectCateg = new ArrayList<String>();
@@ -110,6 +118,10 @@ public class KeywordTestThread implements Runnable {
 					latency = System.currentTimeMillis() - start;			
 					
 					writer.append(String.valueOf(latency));
+					writer.append(',');
+					writer.append(String.valueOf(kw.length));
+					writer.append(',');
+					writer.append(kw[0].getKeyword() + " | " + kw[kw.length-1].getKeyword());
 					writer.append('\n');				
 					writer.flush();
 					

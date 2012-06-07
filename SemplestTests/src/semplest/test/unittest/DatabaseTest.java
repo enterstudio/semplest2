@@ -710,12 +710,12 @@ public class DatabaseTest extends BaseDB{
 				System.out.println("------------------------------------------------------------");
 				System.out.println("getAdEngineAccount:");
 				
-				List<HashMap<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine);
+				List<Map<String, Object>> accs = db.getAdEngineAccount(customerID, adEngine);
 				System.out.println("OK");
 				
 				//--- verification
 				int i = 0;
-				for(HashMap<String, Object> m : accs){
+				for(Map<String, Object> m : accs){
 					System.out.println("#"+i+" ---------------------------------------");
 					System.out.println("AccountID = " + m.get("AccountID"));
 					System.out.println("CustomerName = " + m.get("CustomerName"));

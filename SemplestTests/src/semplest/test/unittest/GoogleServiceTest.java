@@ -285,7 +285,7 @@ public class GoogleServiceTest {
 			Thread.sleep(sleepTime);
 			
 			//changeCampaignStatus
-			System.out.println("------------------------------------------------------------");
+			/*System.out.println("------------------------------------------------------------");
 			try{
 				System.out.println("changeCampaignStatus(" + accountID + ", " + campaignID + ", " + CampaignStatus.ACTIVE.getValue() + ")");
 				boolean ret = test.changeCampaignStatus(accountID, campaignID, CampaignStatus.ACTIVE);
@@ -304,7 +304,7 @@ public class GoogleServiceTest {
 				e.printStackTrace();
 				errorHandler(e);
 			}
-			Thread.sleep(sleepTime);
+			Thread.sleep(sleepTime);*/
 			
 			//changeCampaignBudget
 			System.out.println("------------------------------------------------------------");
@@ -866,7 +866,7 @@ public class GoogleServiceTest {
 			Thread.sleep(sleepTime);
 			
 			//changeCampaignStatus
-			System.out.println("------------------------------------------------------------");
+			/*System.out.println("------------------------------------------------------------");
 			System.out.println("changeCampaignStatus:");		
 			try{
 				boolean ret = test.changeCampaignStatus(accountID, campaignID, CampaignStatus.ACTIVE);
@@ -889,7 +889,7 @@ public class GoogleServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
-			Thread.sleep(sleepTime);
+			Thread.sleep(sleepTime);*/
 			
 			//UpdateCampaignName
 			System.out.println("------------------------------------------------------------");

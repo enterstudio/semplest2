@@ -31,6 +31,9 @@ public class InstallationSetup {
 			if(hostName.equals("VMDEVJAVA2")){
 				//DEV Box Services
 				is.ServiceDev();
+				
+				//Exp Keyword Service for 172.18.9.26 ESB
+				is.KeywordExp();
 			}
 			
 			if(hostName.equals("VMJAVA1")){
@@ -52,6 +55,11 @@ public class InstallationSetup {
 				//TEST Box Keyword Service
 				is.KeywordTest();
 			}			
+			
+			if(ownIP.getHostAddress().equalsIgnoreCase("172.18.9.26")){
+				//Exp Box ESB
+				is.EsbExp();
+			}
 			
 			
 		} catch (Exception e) {
@@ -87,6 +95,21 @@ public class InstallationSetup {
 		
 		FileOutputStream out = new FileOutputStream(esbProps);	
 		properties.store(out,"ESB on Test Box. Updated by InstallationSetup (Nan).");
+		out.close();
+	}
+	
+	public void EsbExp() throws Exception{
+		String esbProps = "C:\\SEMplestESB\\properties\\system.properties";
+		
+		Properties properties = new Properties();
+		FileInputStream in = new FileInputStream(esbProps);
+		properties.load(in);
+		in.close();		
+		
+		properties.setProperty("BrokerIP", "172.18.9.26");		
+		
+		FileOutputStream out = new FileOutputStream(esbProps);	
+		properties.store(out,"ESB on Experiment Box. Updated by InstallationSetup (Nan).");
 		out.close();
 	}
 	
@@ -136,6 +159,27 @@ public class InstallationSetup {
 	public void KeywordTest(){
 		String service = "SemplestKeywordGeneratorService";
 		setServicePropsTest(service);
+	}
+	
+	public void KeywordExp(){
+		try{
+			String path = "C:\\SemplestKeywordGeneratorService\\bin\\system.properties";
+			Properties properties = new Properties();
+			FileInputStream in = new FileInputStream(path);
+			properties.load(in);
+			in.close();		
+			
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_test";
+			String comment = "Keyword Service on for Exp ESB. Updated by InstallationSetup (Nan).";
+			writeProps(path, properties, jdbc, comment);
+		}
+		catch(FileNotFoundException e){
+			//file not found. probably the service is not installed.
+			//do nothing
+		}
+		catch(IOException e){
+			//do nothing
+		}
 	}
 	
 	public void setServicePropsDev(String serviceName){		

@@ -23,12 +23,12 @@ public class ScalabilityTests {
 			int frequency = 0;			
 			
 			//Test ESB		
-			///*
+			/*
 			frequency = 3;
 			executor.execute(new EsbTestThread(EsbTestThread.SERVICE_INDEX.all, frequency));	
 			Thread.sleep(10);
 			executor.execute(new EsbTestThread(EsbTestThread.SERVICE_INDEX.all, frequency));
-			//*/
+			*/
 			
 			//Test Keyword
 			/*
@@ -39,6 +39,13 @@ public class ScalabilityTests {
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
 			*/
+			
+			//Test Memory Leak
+			frequency = 5;
+			executor.execute(new OtherTestThread(frequency));
+			Thread.sleep(10);
+			executor.execute(new OtherTestThread(frequency));			
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
