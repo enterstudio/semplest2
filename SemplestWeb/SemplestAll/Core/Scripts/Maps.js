@@ -1,10 +1,11 @@
-﻿
-var HOST_URL = 'http://www.mapquestapi.com';
+﻿var HOST_URL = 'http://www.mapquestapi.com';
 var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
 var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderOptions';
 var advancedOptions = '';
 var outFormat = '';
 var index = '';
+
+
 function showOptionsURL(type, address, city, state, zip, proximity) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = {};
@@ -35,117 +36,77 @@ function showOptionsURL(type, address, city, state, zip, proximity) {
     jsonText += ' ';
     jsonText += location.zip;
     jsonText += '"}';
-
-    //////
-//    jsonText += 'location:{city:"';
-//    jsonText += location.city;
-//    jsonText += '",state:"';
-//    jsonText += location.state;
-//    jsonText += '"}';
-
-///////
-
-
     jsonText += ',options:{';
     jsonText += 'thumbMaps:' + thumbMaps;
     if (maxResults != "") {
         jsonText += ',maxResults:' + maxResults;
     }
     jsonText += '}}';
-    //alert(jsonText);
     advancedOptions += jsonText;
 };
 
 function renderOptions(response) {
-    var html = '';
-    var i;
-
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
+            cloudmadeAttribution = '',
+            cloudmade = new L.TileLayer(cloudmadeUrl, { maxZoom: 18, attribution: cloudmadeAttribution });
     if (outFormat == "json") {
-        if (response.info.statuscode && (response.info.statuscode != 200)) {
-            var text = "Whoops!  There was an error during the request:\n";
-            if (response.info.messages) {
-                for (i = 0; i < response.info.messages.length; i++) {
-                    text += response.info.messages[i] + "\n";
-                }
-            }
-            if (index != '')
-                document.getElementById('optionsNarrative_' + index.split('_')[1]).innerHTML = text;
-            else
-                document.getElementById('optionsNarrative').innerHTML = text;
-            return;
-        }
-
         var locations = response.results[0].locations;
-        var location;
-        if (locations.length > 1) { // Location ambiguities!
-            html = "<p>Ambiguous addresses found in request:</p><table>";
-            for (i = 0; i < locations.length; i++) {
-                location = locations[i];
-                html += '<tr><td>';
-                html += ' ' + (location.adminArea5 || ' ');
-                html += ' ' + (location.adminArea4 || ' ');
-                html += ' ' + (location.adminArea3 || ' ');
-                html += ' ' + (location.adminArea2 || ' ');
-                html += ' ' + (location.adminArea1 || ' ');
-                html += '</td>';
-                if (location.mapUrl) {
-                    html += '<td>';
-                    html += '<img src="' + location.mapUrl + '"/>';
-                    html += '</td>';
-                }
-                html += '</tr>';
-            }
-            html += '</table>';
-            if (index != '')
-                $('#optionsNarrative_' + index).html(html);
-            else
-                $('#optionsNarrative').html(html);
-            return;
-        }
+        var location = locations[0];
+        var map;
+        var markerLocation;
+        var marker;
+        var circleLocation;
+        var circleOptions;
+        var circle;
 
-        //html = "<p>Location:</p>";
-        location = locations[0]; //            html += 'Country: ' + location.adminArea1;
-        //            html += '<br/>';
-        //            html += 'State: ' + location.adminArea3;
-        //            html += '<br/>';
-        //            html += 'County: ' + location.adminArea4;
-        //            html += '<br/>';
-        //            html += 'City: ' + location.adminArea5;
-        //            html += '<br/>';
-        //            html += 'Response Code:' + location.geocodeQualityCode;
-        //            html += '<br/>';
-        //            html += 'Lat: ' + location.latLng.lat + "   Lng: " + location.latLng.lng;
-        //            html += '<br/>';
-        //html += 'Static Map: ' + '<img src="' + location.mapUrl + '"/>';
-        html += '<img src="' + location.mapUrl + '" style="height: 160px; width:160px;"/>';
         if (index != 0) {
-            $('#optionsNarrative_' + index.split('_')[1]).html(html);
-            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Latitude']")[0].value =
-location.latLng.lat;
-            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Longitude']")[0].value =
-location.latLng.lng;
-            //$('#AdModelProp_Addresses_' + index + '__Latitude').val(location.latLng.lat);
-            //$('#AdModelProp_Addresses_' + index + '__Longitude').val(location.latLng.lng);
+
+            //$('#map_' + index.split('_')[1])[0]._leaflet = null;
+            if (map == null) {
+                map = new L.Map('map_' + index.split('_')[1], { zoomControl: false, doubleClickZoom: false, attributionControl: false });
+            }
+            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), 13).addLayer(cloudmade);
+            markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            marker = new L.Marker(markerLocation);
+            map.addLayer(marker);
+            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            circleOptions = { color: '#f03', opacity: 0.7 };
+            circle = new L.Circle(circleLocation, this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__ProximityRadius']")[0], circleOptions);
+            map.addLayer(circle);
+            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Latitude']")[0].value = location.latLng.lat;
+            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Longitude']")[0].value = location.latLng.lng;
         } else {
-            $('#optionsNarrative').html(html);
+            //this is first map
+            //$('#map')[0]._leaflet = null;
+            if (map == null) {
+                map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
+            }
+            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), 13, true).addLayer(cloudmade);
+            markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            marker = new L.Marker(markerLocation);
+            map.addLayer(marker);
+            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            circleOptions = { color: '#f03', opacity: 0.7 };
+            circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 10, circleOptions);
+            map.addLayer(circle);
+
             $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
             $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
         }
-
         return;
     }
-    $('#optionsNarrative_' + index).html(html);
 }
 
 function doOptions(address, city, state, zip, proximity) {
+    //alert('in doOptions');
     if (city != null) {
         index = city.toString().replace('Addresses', '');
         index = index.replace('City', '');
         index = index.replace('_', '');
         index = index.replace('__', '');
-        $('optionsNarrative_' + index).html('Pending...');
+        $('map_' + index).html('Pending...');
     } else {
-        $('#optionsNarrative').html('Pending...');
+        $('#map').html('Pending...');
     }
     var script = document.createElement('script');
     script.type = 'text/javascript';
