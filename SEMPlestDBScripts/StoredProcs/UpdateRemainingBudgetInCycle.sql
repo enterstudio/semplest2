@@ -35,27 +35,21 @@ BEGIN TRY
 		inner join AdvertisingEngineReportData aerd on aerd.KeywordBidFK = kb.KeywordBidPK
 		inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
 		where kb.PromotionFK = @PromotionPK
-		and aerd.TransactionDate >= @StartDate and aerd.TransactionDate <= @EndDate and aerd.CostAppliedToPromotionDate is null
+		and aerd.TransactionDate >= @StartDate and aerd.TransactionDate <= @EndDate and aerd.MicroCost > 0 and aerd.CostAppliedToPromotionDate is null
 		
-	--Declare @costTable Table(TransactionDate datetime2,KeywordFK int, Cost Bigint);
-	--get the transactions to apply as a cost to the promotion
-	--insert into @costTable(KeywordFK, Cost)
-	--	select kb.KeywordFK, Sum(aerd.MicroCost) [TotalMicroSpent] from KeywordBid kb 
-	--	inner join AdvertisingEngineReportData aerd on aerd.KeywordBidFK = kb.KeywordBidPK
-	--	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
-	--	where kb.PromotionFK = @PromotionPK
-	--	and aerd.TransactionDate >= @StartDate and aerd.TransactionDate <= @EndDate and aerd.CostAppliedToPromotionDate is null
-	--group by kb.KeywordFK	
-	--having Sum(aerd.MicroCost) > 0
 	--Total cost update a given Date
 	select @Cost = SUM(MicroCost) from @ReportDataTable
 	--Total amount paid until date
-	select @paid = SUM(pp.Amount) * 1000000 from PromotionPayment pp 
+	select @paid = SUM(cct.MediaSpend) * 1000000 from PromotionPayment pp
+	inner join CreditCardTransaction cct on cct.CreditCardTransactionPK = pp.CreditCardTransactionFK
 	where pp.IsValid = 1 and pp.BudgetToAddDate <= @EndDate and pp.PromotionFK = @PromotionPK
 	--update the remaining budget
 	BEGIN TRANSACTION
 	
-	 update Promotion set RemainingBudgetInCycle = (@paid -@Cost)/1000000, EditedDate = CURRENT_TIMESTAMP
+	 --update Promotion set RemainingBudgetInCycle = (Isnull(@paid,0) - isNull(@Cost,0))/1000000, EditedDate = CURRENT_TIMESTAMP
+	 --from Promotion p where p.PromotionPK = @PromotionPK
+	 --THIS NEEDS TO BE FIXED AFTER CREDIT CARD
+	 update Promotion set RemainingBudgetInCycle = RemainingBudgetInCycle - ((Isnull(@paid,0) - isNull(@Cost,0))/1000000), EditedDate = CURRENT_TIMESTAMP
 	 from Promotion p where p.PromotionPK = @PromotionPK
 	
 	 update AdvertisingEngineReportData set CostAppliedToPromotionDate = CURRENT_TIMESTAMP
