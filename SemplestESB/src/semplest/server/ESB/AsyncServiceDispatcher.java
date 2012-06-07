@@ -76,8 +76,11 @@ public class AsyncServiceDispatcher implements Runnable
 				logger.error(err.getMessage(), err);
 			}
 			asyncContext.complete();
-
-
+			if (ESBServer.esb.getServletAsynchContextMap().contains(uniqueID))
+			{
+				ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
+				logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
+			}
 		}
 	}
 	
