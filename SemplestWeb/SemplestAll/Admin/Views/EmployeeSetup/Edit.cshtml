@@ -117,7 +117,7 @@ Edit Employee:
             @Html.RadioButtonFor(model => model.EmployeeSetup.isActive, "False")
         </div>
         <p>
-            <input type="submit"  name="command" value="Save" class="k-button" /><input type="submit"  name="command" value="Cancel" class="k-button"  /> <input type="submit"  name="command" value="Delete" class="k-button" />
+            <input type="submit"  name="command" value="Save" class="k-button" /><input type="submit"  name="command" value="Cancel" class="k-button cancel"  /> <input type="submit"  name="command" value="Delete" class="k-button cancel" />
         </p>
         <ul style="display: block" class="kendo-nav">
             @*<li>@Html.RouteLink("Delete Employee", new { Controller = "EmployeeSetup", action = "Delete", id = Model.EmployeeSetup.EmployeePK })
