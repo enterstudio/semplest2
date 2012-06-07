@@ -394,7 +394,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		while (adEngineIT.hasNext())
 		{
 			String adEng = adEngineIT.next();
-			Double budgetSplit = remainingBudget.getRemainingBudgetInCycle() * (0.01 * AdEngineBudgetPercent.get(adEng));
+			//Double budgetSplit = remainingBudget.getRemainingBudgetInCycle() * (0.01 * AdEngineBudgetPercent.get(adEng));
+			Double budgetSplit = 10d;
 			HashMap<String, Object> data = new HashMap<String, Object>();
 			data.put("RemainingBudgetInCycle", budgetSplit);
 			data.put("RemainingDays", remainingBudget.getRemainingDays());

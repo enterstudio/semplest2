@@ -66,13 +66,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionAdID_scheduleUpdateAd = 218;
 		final List<String> adEngines_scheduleUpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testScheduleUpdateAd(customerID_scheduleUpdateAd, promotionID_scheduleUpdateAd, promotionAdID_scheduleUpdateAd, adEngines_scheduleUpdateAd);
-*/
+
 		// UpdateAd
 		final Integer promotionID_UpdateAd = 62;
 		final Integer promotionAdID_UpdateAd = 218;
 		final List<String> adEngines_UpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testUpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
-/*
+
 		// scheduleUpdateGeoTargeting
 		final Integer customerID_scheduleUpdateGeoTargeting = 12;
 		final Integer promotionID_scheduleUpdateGeoTargeting = 62;
@@ -120,7 +120,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionID_PausePromotion = 62;
 		final List<String> adEngines_PausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testPausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
-		
+	
 		// scheduleAddPromotionToAdEngine
 		final Integer customerID_scheduleAddPromotionToAdEngine = 12;
 		final Integer productGroupID_scheduleAddPromotionToAdEngine = 76;
@@ -154,13 +154,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun
 		final Integer promotionAdID_scheduleRefreshSiteLinksForAd = 218;
 		final List<String> adEngines_scheduleRefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testScheduleRefreshSiteLinksForAd(customerID_scheduleRefreshSiteLinksForAd, promotionID_scheduleRefreshSiteLinksForAd, promotionAdID_scheduleRefreshSiteLinksForAd, adEngines_scheduleRefreshSiteLinksForAd);
-
+*/
 		// RefreshSiteLinksForAd
 		final Integer promotionID_RefreshSiteLinksForAd = 62;
 		final Integer promotionAdID_RefreshSiteLinksForAd = 218;
 		final List<String> adEngines_RefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
 		client.testRefreshSiteLinksForAd(promotionID_RefreshSiteLinksForAd, promotionAdID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
-
+/*
 		// schedulePauseProductGroup
 		final Integer customerID_schedulePauseProductGroup = 12;
 		final Integer productGroupID_schedulePauseProductGroup = 76;

@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public interface SemplestAdengineServiceInterface extends ServiceInitialize
-{	
-	// TODO: make local db changes along with the schedule call where possible
-	
+{		
 	Boolean scheduleAddAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines);
 	void AddAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;
 	
@@ -34,12 +32,12 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean scheduleUpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines);
 	void UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;
 	
-	
-	// TODO: change these to do multiple updates in the same google mutate call
-			
 	Boolean scheduleRefreshSiteLinksForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines);
 	void RefreshSiteLinksForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception;
 	
+	
+	// TODO: change these to do multiple updates in the same google mutate call
+		
 	Boolean schedulePauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines);
 	void PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception;
 	
