@@ -114,6 +114,7 @@ public class KeywordTestThread implements Runnable {
 					
 					writer.append(',');
 					writer.append(res.get(5));
+					writer.append(',');
 					writer.flush();
 					
 					start = System.currentTimeMillis();
