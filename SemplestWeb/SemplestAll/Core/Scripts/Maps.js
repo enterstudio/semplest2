@@ -45,6 +45,24 @@ function showOptionsURL(type, address, city, state, zip, proximity) {
     advancedOptions += jsonText;
 };
 
+function getCustomZoom(miles) {
+    
+        if (miles > 0  && miles <= 1  ) return 13;
+        if (miles > 1  && miles <= 1.5) return 12;
+        if (miles > 1.5 && miles <= 3.0) return 11;
+        if (miles > 3.0  && miles <= 6.0  ) return 10;
+        if (miles > 6.0  && miles <= 14  ) return 9;
+        if (miles > 14  && miles <= 32  ) return 8;
+        if (miles > 32  && miles <= 50  ) return 7;
+        if (miles > 50  && miles <= 100  ) return 6;
+        if (miles > 100  && miles <= 200  ) return 5;
+        if (miles > 200  && miles <= 400  ) return 4;
+        if (miles > 400  && miles <= 800  ) return 3;
+        if (miles > 800  ) return 2;
+        
+
+}
+
 function renderOptions(response) {
     var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
             cloudmadeAttribution = '',
@@ -81,14 +99,18 @@ function renderOptions(response) {
             if (map == null) {
                 map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
             }
-            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), 13, true).addLayer(cloudmade);
+            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), getCustomZoom($('#AdModelProp_Addresses_0__ProximityRadius').val()), true).addLayer(cloudmade);
             markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
             marker = new L.Marker(markerLocation);
             map.addLayer(marker);
             circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
             circleOptions = { color: '#f03', opacity: 0.7 };
-            circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 10, circleOptions);
+            circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 1609.344, circleOptions);
             map.addLayer(circle);
+            bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
+
+            //map.fitBounds(new L.LatLngBounds(new L.LatLng(location.latLng.lat, location.latLng.lng)));
+            //map.fitBounds(circle.getBounds());
 
             $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
             $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
