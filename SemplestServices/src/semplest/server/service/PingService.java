@@ -7,7 +7,6 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.ProtocolSocketDataObject;
 import semplest.server.service.queue.ServiceActiveMQConnection;
-import semplest.server.service.springjdbc.SemplestDB;
 import semplest.util.SemplestErrorHandler;
 
 public class PingService implements Runnable
@@ -50,7 +49,7 @@ public class PingService implements Runnable
 			{
 				if (registerServiceWithESB())
 				{
-					byte[] bytes = new byte[300]; // 178 bytes coming back in
+					byte[] bytes = new byte[500]; // 178 bytes coming back in
 													// response
 					String jsonStr = json.createJSONFromSocketDataObj(pingData);
 					byte[] returnData = ProtocolJSON.createBytePacketFromString(jsonStr);
@@ -67,6 +66,10 @@ public class PingService implements Runnable
 								pingSocket.getOutputStream().flush();
 								// wait for return data
 								int numBytes = pingSocket.getInputStream().read(bytes);
+								if (numBytes <= 0 || pingSocket == null || pingSocket.isClosed() || !pingSocket.isConnected())
+								{
+									throw new Exception("No Longer Connected...");
+								}
 								logger.debug("Read bytes pingSocket = " + numBytes + ":" + bytes.toString());
 								Thread.sleep(frequencyMS);
 							}
@@ -99,8 +102,17 @@ public class PingService implements Runnable
 		catch (Exception e)
 		{
 			logger.error("Unexpected Error in Ping Service...Terminating");
-			SemplestErrorHandler.logToDatabase(new Exception("Unexpected Error in Ping Service...Terminating - " + e.getMessage(), e));
-			return;
+			SemplestErrorHandler.logToDatabase(new Exception("Unexpected Error in Ping Service...Waiting 10 sec and try to register again - " + e.getMessage(), e));
+			try
+			{
+				Thread.sleep(10000);
+			}
+			catch (InterruptedException e1)
+			{
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				logger.error(e1.getMessage());
+			}
 		}
 	}
 	
@@ -111,6 +123,8 @@ public class PingService implements Runnable
 			try
 			{
 				pingSocket = new Socket(connectionData.getServerURI(), Integer.parseInt(connectionData.getServerport()));
+				pingSocket.setSoTimeout(2*frequencyMS); //set timeout
+
 				return true;
 			}
 			catch (Exception e)
@@ -169,7 +183,7 @@ public class PingService implements Runnable
 			pingSocket.getOutputStream().flush();
 			// wait synchronously for response
 			byte[] response = new byte[8192];
-			int num = pingSocket.getInputStream().read(response);
+			int num = pingSocket.getInputStream().read(response); //Throws Timeout exception
 			// create ProtocolSocketDataObject from response
 			ProtocolSocketDataObject data = json.createSocketDataObjFromJSON(ProtocolJSON.convertbytesToString(response));
 			logger.debug("Response REC - " + data.getclientServiceName() + ":" + data.getServiceOffered() + ": ping Freq=" + data.getPingFrequency()
@@ -179,6 +193,13 @@ public class PingService implements Runnable
 				// create a connection to the destination queue
 				logger.debug("setting up MQ IP: " + data.getmessageQueueIP() + ":" + data.getmessageQueuePort() + " sendQ="
 						+ data.getServiceSendQueueName() + " RecQ=" + data.getServiceRecQueueName());
+				//handle the reconnect
+				if (mq != null)
+				{
+					logger.info("Closing out the MQ connection");
+					mq.closeMQ();
+					mq = null;
+				}
 				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
 				mq.createProducer(data.getServiceSendQueueName());
 				mq.createConsumer(data.getServiceRecQueueName());

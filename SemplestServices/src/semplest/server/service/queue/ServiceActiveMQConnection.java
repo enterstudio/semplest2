@@ -81,4 +81,38 @@ public class ServiceActiveMQConnection
 		logger.debug("Service sets consumr queue " + queueName);
 	}
 	
+	public void closeMQ()
+	{
+		try
+		{
+			if (producer != null)
+			{
+				producer.close();
+				producer = null;
+				
+			}
+			if (consumer != null)
+			{
+				consumer.close();
+				consumer = null;
+			}
+			if (cn != null)
+			{
+				cn.close();
+				cn = null;
+			}
+			if (session != null)
+			{
+				session.close();
+				session = null;
+			}
+		}
+		catch (JMSException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			logger.error("Error closing MQProducer:" + e.getMessage());
+		}
+	}
+	
 }
