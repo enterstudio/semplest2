@@ -6,11 +6,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+//import java.util.Set;
+import java.util.Date;
 
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 
@@ -33,83 +35,130 @@ public class MultiWordsMSNVolFiltered {
 	}
 	
 	
-	public static ArrayList<String> getMultiWords(String in, int [] n, int minCount, MsnCloudServiceImpl msn){
+	public static String getMultiWords(String in, int n, int minCount, MsnCloudServiceImpl msn){
 		
 		
-		ArrayList<String> list = new ArrayList<String>();
+		//ArrayList<String> list = new ArrayList<String>();
 		
-		
+		/*
 		in=in.replaceAll("   ", " ");
 		in=in.replaceAll("  ", " ");
-		String [] words = in.split(" ");
-		//String [] words = in.split("\\s+");
+		String [] words = new String[0];
+		try{
+			words = in.split(" ");
+		} catch(Exception e){
+			e.printStackTrace();
+			//return list;
+		}
+		*/
+		String [] words = in.split("\\s+");
 		
-		for(int i=0; i<n.length; i++){
+		
 			
-			StringBuilder out = new StringBuilder();
-			String key;
-			HashMap<String,Integer> indexMap = new HashMap<String,Integer>();
-			
-			String [] buffer = new String[n[i]];
-			int j=0;
-			for (String s : words){
-				if(j<n[i]){ // the intial buffer building
-					if (dictUtils.validWord(s)) {
-						buffer[j]=s;
-						j++;
-						continue;
-					}
-				} // if(j<n[i])
-				//if (dictUtils.validWord(s)){ // if in dictionary
-				if (s.length()>2){
-					//System.out.println(s+":"+s.length());
-					key=MultiWordsMSNVolFiltered.shiftWords(buffer, s);
-//					key=s;
-					if (indexMap.containsKey(key)){
-						indexMap.put(key, indexMap.get(key)+1);
-					} else {
-						indexMap.put(key, new Integer(1));
-					}
+		StringBuilder out = new StringBuilder();
+		int k=0;
+
+		
+		
+		String key;
+		HashMap<String,Integer> indexMap = new HashMap<String,Integer>();
+
+		String [] buffer = new String[n];
+		int j=0;
+		for (String s : words){
+			if(j<n){ // the intial buffer building
+				//if (dictUtils.validWord(s)) {
+				if (s.length()>2 && (!dictUtils.commonWord(s))) {
+
+					buffer[j]=s;
+					j++;
+					continue;
 				}
-			} // for (String s : words){
-			
-			List listEntrySet = new LinkedList(indexMap.entrySet());
+			} // if(j<n[i])
+			//if (dictUtils.validWord(s)){ // if in dictionary
+			if (s.length()>2 && (!dictUtils.commonWord(s))){
+				key=MultiWordsMSNVolFiltered.shiftWords(buffer, s);
+				if (indexMap.containsKey(key)){
+					indexMap.put(key, indexMap.get(key)+1);
+				} else {
+					indexMap.put(key, new Integer(1));
+				}
+			}
+		} // for (String s : words){
+
+		List listEntrySet = new LinkedList(indexMap.entrySet());
+		Collections.sort(listEntrySet, new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return ((Comparable) ((Map.Entry) (o2)).getValue()).compareTo(((Map.Entry) (o1)).getValue());
+			}
+		});
+
+
+
+
+		HashSet<String> topWords = new HashSet<String>();
+		k=0;
+		//for (String finalS : indexMap.keySet()){
+		Iterator it = listEntrySet.iterator();
+		while(it.hasNext()) {
+			Map.Entry entry = (Map.Entry)it.next();
+			//if((Integer) entry.getValue() > minCount){
+			k++;
+			topWords.add((String) entry.getKey());
+			//out.append(((String) entry.getKey()).replaceAll(" ", "+")+":"+entry.getValue()+" ");
+			if(k==1000){
+				break;
+			}
+			//}
+		}
+
+		//Set<String> keySet = indexMap.keySet(); 
+
+		k=0;
+		if(topWords.size()>0){
+			String [] keywords = topWords.toArray(new String[topWords.size()]);
+			System.out.println("Number of selected keywords: "+keywords.length);
+			System.out.println(new Date().toString());
+			HashMap<String, Integer> kwVolMap = getVolume(msn, keywords);
+
+
+
+			listEntrySet = new LinkedList(kwVolMap.entrySet());
 			Collections.sort(listEntrySet, new Comparator() {
 				public int compare(Object o1, Object o2) {
+					if(((Map.Entry) (o2)).getValue()==null || ((Map.Entry) (o1)).getValue()==null){
+						return 0;
+					}
 					return ((Comparable) ((Map.Entry) (o2)).getValue()).compareTo(((Map.Entry) (o1)).getValue());
 				}
 			});
-			
-			Set<String> keySet = indexMap.keySet(); 
-			String [] keywords = keySet.toArray(new String[keySet.size()]);
-			System.out.println("Number of selected keywords: "+keywords.length);
-			HashMap<String, Integer> kwVolMap = getVolume(msn, keywords);
 
-			int k=0;
-			//for (String finalS : indexMap.keySet()){
-			Iterator it = listEntrySet.iterator();
+
+			it = listEntrySet.iterator();
 			while(it.hasNext()) {
 				Map.Entry entry = (Map.Entry)it.next();
-				if((Integer) entry.getValue() > minCount && kwVolMap.get((String) entry.getKey())!=null){
+				String s=(String) entry.getKey();
+				if(kwVolMap.get(s)!=null){
 					k++;
-					out.append(((String) entry.getKey()).replaceAll(" ", "+")+":"+entry.getValue()+" ");
-					if(k==200) {
-						break;
-					}
+					out.append(s.replaceAll(" ", "+")+":"+indexMap.get(s)+":"+kwVolMap.get(s)+" ");
 				}
 			}
-			if(out.length()>0) // if there is anything written at all!
-				out.setLength(out.length()-1); // delete the last 
-			
-			
-//			list.add(out.toString()); 
-			list.add(k+" "+out.toString()); // changed for crawl level 2
-			System.out.println(out);
+		}
+
+
+		if(out.length()>0){ // if there is anything written at all!
+			out.setLength(out.length()-1); // delete the last 
+		}
+
+
+		
+		
+		//System.out.println(k+" "+out);
 
 			
-		} // for(int i=0; i<n.length; i++){
 		
-		return list;
+		return (k+" "+out.toString());
+		//return "0";
 	} // public static ArrayList<String> getMultiWords(String in, int [] n, int minCount)
 	
 	
@@ -163,9 +212,8 @@ public class MultiWordsMSNVolFiltered {
 							//System.out.println(res[i][0]+"-"+res[i][1]+":"+res[i][2]);
 						}
 						keywordVolumeMap.put(s,sum/res.length);
-						System.out.println(s+":"+sum/res.length);
 					} else{
-						keywordVolumeMap.put(s,null);
+						//keywordVolumeMap.put(s,null);
 					}
 
 				}

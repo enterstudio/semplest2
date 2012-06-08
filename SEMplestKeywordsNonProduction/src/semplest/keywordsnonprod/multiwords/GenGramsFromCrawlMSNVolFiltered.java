@@ -23,29 +23,34 @@ public class GenGramsFromCrawlMSNVolFiltered {
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
 			
+			
+			
+			
+			
 			FileWriter fstreamW = new FileWriter(outFile);
 			BufferedWriter out = new BufferedWriter(fstreamW);
 
 			
 			String strLine;
-			ArrayList<String> list=null;
+			String s;
 			
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 
-			HashSet<String> categorySet = new HashSet<String>();
-//			int i=0;
+			//HashSet<String> categorySet = new HashSet<String>();
+			//int i=0;
 			while ((strLine = br.readLine()) != null)   {
+				//i++;
 				String [] segments = strLine.split(" : ");
-				if(!categorySet.contains(segments[0]) && segments.length>1){
-					categorySet.add(segments[0]);
-					list=MultiWordsMSNVolFiltered.getMultiWords(segments[1].toLowerCase(), new int [] {n}, minCount,msn);
-					//System.out.print(segments[0]+":");
+				//if(!categorySet.contains(segments[0]) && segments.length>1){
+				if(segments.length>1){
+
+					//categorySet.add(segments[0]);
+					s=MultiWordsMSNVolFiltered.getMultiWords(segments[1].toLowerCase(), n, minCount,msn);
+					//System.out.print(i+": "+segments[0]+":");
 					out.write(segments[0]+":");
-					for (String s : list){
-						//System.out.println(s);
-						out.write(s+"\n");
-					}
-//					i++;
+					//System.out.println(s);
+					out.write(s+"\n");
+
 //					if(i==5){
 //						break;
 //					}
@@ -66,15 +71,30 @@ public class GenGramsFromCrawlMSNVolFiltered {
 		try {
 			ProjectProperties projProp = new ProjectProperties();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		String inFile="//fs3/Semplest/data/dmoz/"+args[0]+"/hTest.2";
-		String outFile="//fs3/Semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/"+args[0]+"."+args[1];
-//		String inFile="/semplest/data/dmoz/"+args[0]+"/hTest.2";
-//		String outFile="/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/"+args[0]+"."+args[1];
+//		String inFile="//fs3/Semplest/data/dmoz/"+args[0]+"/hTest.2";
+//		String outFile="//fs3/Semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/"+args[0]+"."+args[1];
+		String inFile="/semplest/data/dmoz/"+args[0]+"/hTest.2";
+		String outFile="/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/"+args[0]+"."+args[1];
 		int minCount = 2;
 		GenGramsFromCrawlMSNVolFiltered.parseFile(inFile, outFile,minCount,Integer.valueOf(args[1]));
+		
+//		try{
+//			FileInputStream fstream = new FileInputStream(inFile);
+//			DataInputStream in = new DataInputStream(fstream);
+//			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+//			String strLine;
+//			int i=0;
+//			while ((strLine = br.readLine()) != null) {
+//				i++;
+//				String [] spl = strLine.split("\\s+");
+//				System.out.println(i+": "+spl[0]+": "+spl.length);
+//			}
+//		} catch(Exception e){
+//			e.printStackTrace();
+//		}
+		
 	}
 }
 
