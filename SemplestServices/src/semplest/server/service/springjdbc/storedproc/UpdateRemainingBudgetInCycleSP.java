@@ -20,7 +20,7 @@ public class UpdateRemainingBudgetInCycleSP  extends StoredProcedure
 		declareParameter(new SqlParameter("PromotionPK", Types.INTEGER));
 		declareParameter(new SqlParameter("StartDate", Types.TIMESTAMP));
 		declareParameter(new SqlParameter("EndDate", Types.TIMESTAMP));
-		declareParameter(new SqlOutParameter("ID", Types.BIGINT));
+		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		compile();
 	}
 
@@ -36,7 +36,7 @@ public class UpdateRemainingBudgetInCycleSP  extends StoredProcedure
 		}
 		else
 		{
-			return ((Long)results.get("ID")).intValue();
+			return ((Integer)results.get("ID"));
 		}
 	}
 }
