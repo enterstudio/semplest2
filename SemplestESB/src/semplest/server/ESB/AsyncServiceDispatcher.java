@@ -57,24 +57,21 @@ public class AsyncServiceDispatcher implements Runnable
 			errorMap.put("errorID", uniqueID);
 			String ret = json.createJSONHashmap(errorMap);
 
-			asyncContext.getResponse().setContentType("text/html");
 			try
 			{
+				asyncContext.getResponse().setContentType("text/html");
 				asyncContext.getResponse().setContentLength(ESBServer.esb.getServerData().getHeaderBufferSize() + 12);
 				PrintWriter out = asyncContext.getResponse().getWriter();
 				out.print(ret);
 				out.flush();
 				
-				logger.debug("Try to remove from ServletAsynchContextMap " + uniqueID);
 				if (ESBServer.esb.getServletAsynchContextMap().containsKey(uniqueID))
 				{
 					ESBServer.esb.getServletAsynchContextMap().remove(uniqueID);
 					logger.info("Removed " + uniqueID + "  from ServletAsynchContextMap");
 				}
-				logger.debug(" call AsyncContextComplete");
 				asyncContext.complete();
 				asyncContext = null;
-				logger.debug("AsyncContextComplete");
 			}
 			catch (Exception err)
 			{
