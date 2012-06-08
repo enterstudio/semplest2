@@ -74,6 +74,18 @@ namespace SemplestWebApp.Controllers
             return View("Static", vm);
         }
 
+        public ActionResult PrivacyPolicy()
+        {
+            StaticModel vm = new StaticModel(StaticPages.PrivacyPolicy);
+            return View("Static", vm);
+        }
+
+        public ActionResult TermsAndConditions()
+        {
+            StaticModel vm = new StaticModel(StaticPages.TermsAndConditions);
+            return View("Static", vm);
+        }
+
         public ActionResult SearchKeywords()
         {
             return View();

@@ -50,6 +50,14 @@ namespace Semplest.Core.Models
                         Text = entities.WebContents.FirstOrDefault().ContactUs;
                         Title = "Contact Us";
                         break;
+                    case StaticPages.PrivacyPolicy:
+                        Text = entities.WebContents.FirstOrDefault().PrivacyPolicy;
+                        Title = "Privacy Policy";
+                        break;
+                    case StaticPages.TermsAndConditions:
+                        Text = entities.WebContents.FirstOrDefault().TermsAndConditions;
+                        Title = "Terms and Conditions";
+                        break;
                     default:
                         Text = "No such Page";
                         break;
@@ -71,5 +79,5 @@ namespace Semplest.Core.Models
         }
     }
 
-    public enum StaticPages { About, FAQ, Contact}
+    public enum StaticPages { About, FAQ, Contact, PrivacyPolicy, TermsAndConditions}
 }
