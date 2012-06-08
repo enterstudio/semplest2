@@ -113,6 +113,7 @@ namespace Semplest.Admin.Controllers
                    CustomerNote = (n.Note == null ? null : n.Note),
                    isActive = u.IsActive,
                    selectedBillTypeid = c.BillTypeFK
+                   
                };
 
             //viewmodel2 might not be needed
@@ -238,11 +239,33 @@ namespace Semplest.Admin.Controllers
             x.CustomerAccount = viewModel.Single(c => c.AccountNumber == id);
             x.EmployeeCustomerAssociaitionModel = viewModel2;
 
+            
+
 
             //add userid and password to model
             var credential = dbcontext.Credentials.First(r => r.UsersFK.Equals(x.CustomerAccount.UserPK));
             x.CustomerAccount.UserID = credential.Username;
             x.CustomerAccount.UserPassword = credential.Password;
+
+
+
+            /////////////////////////////////////////////////////////////////////////////////
+            //for roles dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+            //x.SelectedRoleID = viewModel.Select(r => r.RolesFK).FirstOrDefault();
+            
+            
+            var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == x.CustomerAccount.UserPK);
+            if (userrolesassociation == null) { x.SelectedRoleID = -1; }
+            else { x.SelectedRoleID = userrolesassociation.RolesFK; }
+
+
+            x.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.RolePK.ToString(),
+                Text = r.RoleName.ToString()
+            });
 
 
 
@@ -445,6 +468,21 @@ namespace Semplest.Admin.Controllers
                                   MiddleInitial = u.MiddleInitial
                               };
 
+                //repopulate 
+
+                /////////////////////////////////////////////////////////////////////////////////
+                //for roles dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+
+                m.Roles = roles.Select(r => new SelectListItem
+                {
+                    Value = r.RolePK.ToString(),
+                    Text = r.RoleName.ToString()
+                });
+
+
+
                 /////////////////////////////////////////////////////////////////////////////////
                 //for sales dropdown
                 /////////////////////////////////////////////////////////////////////////////////
@@ -544,6 +582,11 @@ namespace Semplest.Admin.Controllers
             user.EditedDate = DateTime.Now;
             user.IsActive = m.CustomerAccount.isActive;
             UpdateModel(user);
+
+
+            var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.CustomerAccount.UserPK);
+            userrolesassociation.RolesFK = m.SelectedRoleID;
+            UpdateModel(userrolesassociation);
 
 
             var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.CustomerAccount.AccountNumber);
@@ -651,6 +694,11 @@ namespace Semplest.Admin.Controllers
 
             SemplestEntities dbcontext = new SemplestEntities();
 
+
+
+           
+
+
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -699,6 +747,22 @@ namespace Semplest.Admin.Controllers
             //x.CustomerAccount = //viewModel.Single(c => c.AccountNumber == id);
             //x.EmployeeCustomerAssociaitionModel = viewModel2;
 
+
+             /////////////////////////////////////////////////////////////////////////////////
+            //for roles dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+            x.SelectedRoleID = -1;
+            x.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.RolePK.ToString(),
+                Text = r.RoleName.ToString()
+            });
+
+
+
+
+
             /////////////////////////////////////////////////////////////////////////////////
             //for parents dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -717,6 +781,7 @@ namespace Semplest.Admin.Controllers
                 Value = r.CustomerPK.ToString(),
                 Text = r.Name.ToString()
             }).Union(sli);
+
 
 
 
@@ -825,6 +890,20 @@ namespace Semplest.Admin.Controllers
 
                   if (!ModelState.IsValid)
                   {
+                      //repopulate 
+
+
+                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+
+                      m.Roles = roles.Select(r => new SelectListItem
+                      {
+                          Value = r.RolePK.ToString(),
+                          Text = r.RoleName.ToString()
+                      });
+
+
+
+
                       //repopualte
 
                       var allreps = from e in dbcontext.Employees
@@ -964,6 +1043,12 @@ namespace Semplest.Admin.Controllers
                                 IsActive = m.CustomerAccount.isActive
                             };
                 dbcontext.Users.AddObject(u);
+
+                var r = dbcontext.Roles.First(p => p.RolePK == m.SelectedRoleID);
+                var ura = new UserRolesAssociation { Role = r, User = u };
+                dbcontext.UserRolesAssociations.AddObject(ura);
+
+
 
 
                 //
