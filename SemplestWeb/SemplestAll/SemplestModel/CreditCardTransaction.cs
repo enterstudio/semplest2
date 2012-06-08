@@ -97,6 +97,38 @@ namespace SemplestModel
             }
         }
         private CreditCardProfile _creditCardProfile;
+    
+        public virtual ICollection<PromotionPayment> PromotionPayments
+        {
+            get
+            {
+                if (_promotionPayments == null)
+                {
+                    var newCollection = new FixupCollection<PromotionPayment>();
+                    newCollection.CollectionChanged += FixupPromotionPayments;
+                    _promotionPayments = newCollection;
+                }
+                return _promotionPayments;
+            }
+            set
+            {
+                if (!ReferenceEquals(_promotionPayments, value))
+                {
+                    var previousValue = _promotionPayments as FixupCollection<PromotionPayment>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupPromotionPayments;
+                    }
+                    _promotionPayments = value;
+                    var newValue = value as FixupCollection<PromotionPayment>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupPromotionPayments;
+                    }
+                }
+            }
+        }
+        private ICollection<PromotionPayment> _promotionPayments;
 
         #endregion
         #region Association Fixup
@@ -124,6 +156,28 @@ namespace SemplestModel
             else if (!_settingFK)
             {
                 CreditCardProfileFK = null;
+            }
+        }
+    
+        private void FixupPromotionPayments(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (PromotionPayment item in e.NewItems)
+                {
+                    item.CreditCardTransaction = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (PromotionPayment item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.CreditCardTransaction, this))
+                    {
+                        item.CreditCardTransaction = null;
+                    }
+                }
             }
         }
 

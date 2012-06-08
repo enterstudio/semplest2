@@ -340,6 +340,38 @@ namespace SemplestModel
         }
         private ICollection<PromotionAdEngineSelected> _promotionAdEngineSelecteds;
     
+        public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus
+        {
+            get
+            {
+                if (_promotionAdengineStatus == null)
+                {
+                    var newCollection = new FixupCollection<PromotionAdengineStatu>();
+                    newCollection.CollectionChanged += FixupPromotionAdengineStatus;
+                    _promotionAdengineStatus = newCollection;
+                }
+                return _promotionAdengineStatus;
+            }
+            set
+            {
+                if (!ReferenceEquals(_promotionAdengineStatus, value))
+                {
+                    var previousValue = _promotionAdengineStatus as FixupCollection<PromotionAdengineStatu>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupPromotionAdengineStatus;
+                    }
+                    _promotionAdengineStatus = value;
+                    var newValue = value as FixupCollection<PromotionAdengineStatu>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupPromotionAdengineStatus;
+                    }
+                }
+            }
+        }
+        private ICollection<PromotionAdengineStatu> _promotionAdengineStatus;
+    
         public virtual ICollection<PromotionAd> PromotionAds
         {
             get
@@ -404,6 +436,38 @@ namespace SemplestModel
         }
         private ICollection<PromotionKeywordAssociation> _promotionKeywordAssociations;
     
+        public virtual ICollection<PromotionPayment> PromotionPayments
+        {
+            get
+            {
+                if (_promotionPayments == null)
+                {
+                    var newCollection = new FixupCollection<PromotionPayment>();
+                    newCollection.CollectionChanged += FixupPromotionPayments;
+                    _promotionPayments = newCollection;
+                }
+                return _promotionPayments;
+            }
+            set
+            {
+                if (!ReferenceEquals(_promotionPayments, value))
+                {
+                    var previousValue = _promotionPayments as FixupCollection<PromotionPayment>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupPromotionPayments;
+                    }
+                    _promotionPayments = value;
+                    var newValue = value as FixupCollection<PromotionPayment>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupPromotionPayments;
+                    }
+                }
+            }
+        }
+        private ICollection<PromotionPayment> _promotionPayments;
+    
         public virtual ICollection<Schedule> Schedules
         {
             get
@@ -467,38 +531,6 @@ namespace SemplestModel
             }
         }
         private ICollection<TargetedDailyBudget> _targetedDailyBudgets;
-    
-        public virtual ICollection<PromotionPayment> PromotionPayments
-        {
-            get
-            {
-                if (_promotionPayments == null)
-                {
-                    var newCollection = new FixupCollection<PromotionPayment>();
-                    newCollection.CollectionChanged += FixupPromotionPayments;
-                    _promotionPayments = newCollection;
-                }
-                return _promotionPayments;
-            }
-            set
-            {
-                if (!ReferenceEquals(_promotionPayments, value))
-                {
-                    var previousValue = _promotionPayments as FixupCollection<PromotionPayment>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupPromotionPayments;
-                    }
-                    _promotionPayments = value;
-                    var newValue = value as FixupCollection<PromotionPayment>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupPromotionPayments;
-                    }
-                }
-            }
-        }
-        private ICollection<PromotionPayment> _promotionPayments;
 
         #endregion
         #region Association Fixup
@@ -631,6 +663,28 @@ namespace SemplestModel
             }
         }
     
+        private void FixupPromotionAdengineStatus(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (PromotionAdengineStatu item in e.NewItems)
+                {
+                    item.Promotion = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (PromotionAdengineStatu item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Promotion, this))
+                    {
+                        item.Promotion = null;
+                    }
+                }
+            }
+        }
+    
         private void FixupPromotionAds(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -675,6 +729,28 @@ namespace SemplestModel
             }
         }
     
+        private void FixupPromotionPayments(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (PromotionPayment item in e.NewItems)
+                {
+                    item.Promotion = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (PromotionPayment item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Promotion, this))
+                    {
+                        item.Promotion = null;
+                    }
+                }
+            }
+        }
+    
         private void FixupSchedules(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -710,28 +786,6 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (TargetedDailyBudget item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Promotion, this))
-                    {
-                        item.Promotion = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupPromotionPayments(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (PromotionPayment item in e.NewItems)
-                {
-                    item.Promotion = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (PromotionPayment item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Promotion, this))
                     {

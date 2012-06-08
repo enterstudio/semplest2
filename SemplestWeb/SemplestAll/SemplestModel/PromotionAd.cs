@@ -59,9 +59,59 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual bool IsDeleted
+        {
+            get;
+            set;
+        }
+    
+        public virtual System.DateTime CreatedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual Nullable<System.DateTime> DeletedDate
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties
+    
+        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds
+        {
+            get
+            {
+                if (_advertisingEngineAds == null)
+                {
+                    var newCollection = new FixupCollection<AdvertisingEngineAd>();
+                    newCollection.CollectionChanged += FixupAdvertisingEngineAds;
+                    _advertisingEngineAds = newCollection;
+                }
+                return _advertisingEngineAds;
+            }
+            set
+            {
+                if (!ReferenceEquals(_advertisingEngineAds, value))
+                {
+                    var previousValue = _advertisingEngineAds as FixupCollection<AdvertisingEngineAd>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupAdvertisingEngineAds;
+                    }
+                    _advertisingEngineAds = value;
+                    var newValue = value as FixupCollection<AdvertisingEngineAd>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupAdvertisingEngineAds;
+                    }
+                }
+            }
+        }
+        private ICollection<AdvertisingEngineAd> _advertisingEngineAds;
     
         public virtual Promotion Promotion
         {
@@ -109,38 +159,6 @@ namespace SemplestModel
             }
         }
         private ICollection<SiteLink> _siteLinks;
-    
-        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds
-        {
-            get
-            {
-                if (_advertisingEngineAds == null)
-                {
-                    var newCollection = new FixupCollection<AdvertisingEngineAd>();
-                    newCollection.CollectionChanged += FixupAdvertisingEngineAds;
-                    _advertisingEngineAds = newCollection;
-                }
-                return _advertisingEngineAds;
-            }
-            set
-            {
-                if (!ReferenceEquals(_advertisingEngineAds, value))
-                {
-                    var previousValue = _advertisingEngineAds as FixupCollection<AdvertisingEngineAd>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupAdvertisingEngineAds;
-                    }
-                    _advertisingEngineAds = value;
-                    var newValue = value as FixupCollection<AdvertisingEngineAd>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupAdvertisingEngineAds;
-                    }
-                }
-            }
-        }
-        private ICollection<AdvertisingEngineAd> _advertisingEngineAds;
 
         #endregion
         #region Association Fixup
@@ -165,28 +183,6 @@ namespace SemplestModel
             }
         }
     
-        private void FixupSiteLinks(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (SiteLink item in e.NewItems)
-                {
-                    item.PromotionAd = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (SiteLink item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.PromotionAd, this))
-                    {
-                        item.PromotionAd = null;
-                    }
-                }
-            }
-        }
-    
         private void FixupAdvertisingEngineAds(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -200,6 +196,28 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (AdvertisingEngineAd item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.PromotionAd, this))
+                    {
+                        item.PromotionAd = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupSiteLinks(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (SiteLink item in e.NewItems)
+                {
+                    item.PromotionAd = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (SiteLink item in e.OldItems)
                 {
                     if (ReferenceEquals(item.PromotionAd, this))
                     {

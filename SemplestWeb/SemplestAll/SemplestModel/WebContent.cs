@@ -67,6 +67,18 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual string TermsAndConditions
+        {
+            get;
+            set;
+        }
+    
+        public virtual string PrivacyPolicy
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

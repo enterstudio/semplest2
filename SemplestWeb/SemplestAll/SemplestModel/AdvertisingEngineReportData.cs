@@ -74,13 +74,13 @@ namespace SemplestModel
             set;
         }
     
-        public virtual int AveragePosition
+        public virtual double AveragePosition
         {
             get;
             set;
         }
     
-        public virtual decimal AverageCPC
+        public virtual long AverageCPC
         {
             get;
             set;
@@ -136,6 +136,12 @@ namespace SemplestModel
         }
     
         public virtual System.DateTime CreatedDate
+        {
+            get;
+            set;
+        }
+    
+        public virtual Nullable<System.DateTime> CostAppliedToPromotionDate
         {
             get;
             set;

@@ -66,6 +66,12 @@ namespace SemplestModel
         }
         private ObjectSet<AdvertisingEngineAccount> _advertisingEngineAccounts;
     
+        public ObjectSet<AdvertisingEngineAd> AdvertisingEngineAds
+        {
+            get { return _advertisingEngineAds  ?? (_advertisingEngineAds = CreateObjectSet<AdvertisingEngineAd>("AdvertisingEngineAds")); }
+        }
+        private ObjectSet<AdvertisingEngineAd> _advertisingEngineAds;
+    
         public ObjectSet<AdvertisingEnginePromotion> AdvertisingEnginePromotions
         {
             get { return _advertisingEnginePromotions  ?? (_advertisingEnginePromotions = CreateObjectSet<AdvertisingEnginePromotion>("AdvertisingEnginePromotions")); }
@@ -114,6 +120,12 @@ namespace SemplestModel
         }
         private ObjectSet<CreditCardProfile> _creditCardProfiles;
     
+        public ObjectSet<CreditCardTransaction> CreditCardTransactions
+        {
+            get { return _creditCardTransactions  ?? (_creditCardTransactions = CreateObjectSet<CreditCardTransaction>("CreditCardTransactions")); }
+        }
+        private ObjectSet<CreditCardTransaction> _creditCardTransactions;
+    
         public ObjectSet<Customer> Customers
         {
             get { return _customers  ?? (_customers = CreateObjectSet<Customer>("Customers")); }
@@ -149,6 +161,18 @@ namespace SemplestModel
             get { return _customerStyles  ?? (_customerStyles = CreateObjectSet<CustomerStyle>("CustomerStyles")); }
         }
         private ObjectSet<CustomerStyle> _customerStyles;
+    
+        public ObjectSet<EmailTemplate> EmailTemplates
+        {
+            get { return _emailTemplates  ?? (_emailTemplates = CreateObjectSet<EmailTemplate>("EmailTemplates")); }
+        }
+        private ObjectSet<EmailTemplate> _emailTemplates;
+    
+        public ObjectSet<EmailType> EmailTypes
+        {
+            get { return _emailTypes  ?? (_emailTypes = CreateObjectSet<EmailType>("EmailTypes")); }
+        }
+        private ObjectSet<EmailType> _emailTypes;
     
         public ObjectSet<Employee> Employees
         {
@@ -258,6 +282,12 @@ namespace SemplestModel
         }
         private ObjectSet<PromotionAdEngineSelected> _promotionAdEngineSelecteds;
     
+        public ObjectSet<PromotionAdengineStatu> PromotionAdengineStatus
+        {
+            get { return _promotionAdengineStatus  ?? (_promotionAdengineStatus = CreateObjectSet<PromotionAdengineStatu>("PromotionAdengineStatus")); }
+        }
+        private ObjectSet<PromotionAdengineStatu> _promotionAdengineStatus;
+    
         public ObjectSet<PromotionAd> PromotionAds
         {
             get { return _promotionAds  ?? (_promotionAds = CreateObjectSet<PromotionAd>("PromotionAds")); }
@@ -269,6 +299,18 @@ namespace SemplestModel
             get { return _promotionKeywordAssociations  ?? (_promotionKeywordAssociations = CreateObjectSet<PromotionKeywordAssociation>("PromotionKeywordAssociations")); }
         }
         private ObjectSet<PromotionKeywordAssociation> _promotionKeywordAssociations;
+    
+        public ObjectSet<PromotionPayment> PromotionPayments
+        {
+            get { return _promotionPayments  ?? (_promotionPayments = CreateObjectSet<PromotionPayment>("PromotionPayments")); }
+        }
+        private ObjectSet<PromotionPayment> _promotionPayments;
+    
+        public ObjectSet<PromotionStatu> PromotionStatus
+        {
+            get { return _promotionStatus  ?? (_promotionStatus = CreateObjectSet<PromotionStatu>("PromotionStatus")); }
+        }
+        private ObjectSet<PromotionStatu> _promotionStatus;
     
         public ObjectSet<Right> Rights
         {
@@ -372,53 +414,17 @@ namespace SemplestModel
         }
         private ObjectSet<User> _users;
     
-        public ObjectSet<AdvertisingEngineAd> AdvertisingEngineAds
-        {
-            get { return _advertisingEngineAds  ?? (_advertisingEngineAds = CreateObjectSet<AdvertisingEngineAd>("AdvertisingEngineAds")); }
-        }
-        private ObjectSet<AdvertisingEngineAd> _advertisingEngineAds;
-    
-        public ObjectSet<CreditCardTransaction> CreditCardTransactions
-        {
-            get { return _creditCardTransactions  ?? (_creditCardTransactions = CreateObjectSet<CreditCardTransaction>("CreditCardTransactions")); }
-        }
-        private ObjectSet<CreditCardTransaction> _creditCardTransactions;
-    
-        public ObjectSet<EmailTemplate> EmailTemplates
-        {
-            get { return _emailTemplates  ?? (_emailTemplates = CreateObjectSet<EmailTemplate>("EmailTemplates")); }
-        }
-        private ObjectSet<EmailTemplate> _emailTemplates;
-    
-        public ObjectSet<EmailType> EmailTypes
-        {
-            get { return _emailTypes  ?? (_emailTypes = CreateObjectSet<EmailType>("EmailTypes")); }
-        }
-        private ObjectSet<EmailType> _emailTypes;
-    
-        public ObjectSet<PromotionPayment> PromotionPayments
-        {
-            get { return _promotionPayments  ?? (_promotionPayments = CreateObjectSet<PromotionPayment>("PromotionPayments")); }
-        }
-        private ObjectSet<PromotionPayment> _promotionPayments;
-    
         public ObjectSet<WebContent> WebContents
         {
             get { return _webContents  ?? (_webContents = CreateObjectSet<WebContent>("WebContents")); }
         }
         private ObjectSet<WebContent> _webContents;
     
-        public ObjectSet<vwPromotionChart> vwPromotionCharts
+        public ObjectSet<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps
         {
-            get { return _vwPromotionCharts  ?? (_vwPromotionCharts = CreateObjectSet<vwPromotionChart>("vwPromotionCharts")); }
+            get { return _webContentQuestionMarkHelps  ?? (_webContentQuestionMarkHelps = CreateObjectSet<WebContentQuestionMarkHelp>("WebContentQuestionMarkHelps")); }
         }
-        private ObjectSet<vwPromotionChart> _vwPromotionCharts;
-    
-        public ObjectSet<vwProductPromotion> vwProductPromotions
-        {
-            get { return _vwProductPromotions  ?? (_vwProductPromotions = CreateObjectSet<vwProductPromotion>("vwProductPromotions")); }
-        }
-        private ObjectSet<vwProductPromotion> _vwProductPromotions;
+        private ObjectSet<WebContentQuestionMarkHelp> _webContentQuestionMarkHelps;
     
         public ObjectSet<vwGetLivePromotionsForUser> vwGetLivePromotionsForUsers
         {
@@ -426,11 +432,17 @@ namespace SemplestModel
         }
         private ObjectSet<vwGetLivePromotionsForUser> _vwGetLivePromotionsForUsers;
     
-        public ObjectSet<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps
+        public ObjectSet<vwProductPromotion> vwProductPromotions
         {
-            get { return _webContentQuestionMarkHelps  ?? (_webContentQuestionMarkHelps = CreateObjectSet<WebContentQuestionMarkHelp>("WebContentQuestionMarkHelps")); }
+            get { return _vwProductPromotions  ?? (_vwProductPromotions = CreateObjectSet<vwProductPromotion>("vwProductPromotions")); }
         }
-        private ObjectSet<WebContentQuestionMarkHelp> _webContentQuestionMarkHelps;
+        private ObjectSet<vwProductPromotion> _vwProductPromotions;
+    
+        public ObjectSet<vwPromotionChart> vwPromotionCharts
+        {
+            get { return _vwPromotionCharts  ?? (_vwPromotionCharts = CreateObjectSet<vwPromotionChart>("vwPromotionCharts")); }
+        }
+        private ObjectSet<vwPromotionChart> _vwPromotionCharts;
 
         #endregion
         #region Function Imports

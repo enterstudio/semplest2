@@ -50,12 +50,6 @@ namespace SemplestModel
         }
         private Nullable<int> _promotionFK;
     
-        public virtual decimal Amount
-        {
-            get;
-            set;
-        }
-    
         public virtual System.DateTime BudgetToAddDate
         {
             get;
@@ -73,9 +67,49 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual Nullable<int> CreditCardTransactionFK
+        {
+            get { return _creditCardTransactionFK; }
+            set
+            {
+                try
+                {
+                    _settingFK = true;
+                    if (_creditCardTransactionFK != value)
+                    {
+                        if (CreditCardTransaction != null && CreditCardTransaction.CreditCardTransactionPK != value)
+                        {
+                            CreditCardTransaction = null;
+                        }
+                        _creditCardTransactionFK = value;
+                    }
+                }
+                finally
+                {
+                    _settingFK = false;
+                }
+            }
+        }
+        private Nullable<int> _creditCardTransactionFK;
 
         #endregion
         #region Navigation Properties
+    
+        public virtual CreditCardTransaction CreditCardTransaction
+        {
+            get { return _creditCardTransaction; }
+            set
+            {
+                if (!ReferenceEquals(_creditCardTransaction, value))
+                {
+                    var previousValue = _creditCardTransaction;
+                    _creditCardTransaction = value;
+                    FixupCreditCardTransaction(previousValue);
+                }
+            }
+        }
+        private CreditCardTransaction _creditCardTransaction;
     
         public virtual Promotion Promotion
         {
@@ -96,6 +130,30 @@ namespace SemplestModel
         #region Association Fixup
     
         private bool _settingFK = false;
+    
+        private void FixupCreditCardTransaction(CreditCardTransaction previousValue)
+        {
+            if (previousValue != null && previousValue.PromotionPayments.Contains(this))
+            {
+                previousValue.PromotionPayments.Remove(this);
+            }
+    
+            if (CreditCardTransaction != null)
+            {
+                if (!CreditCardTransaction.PromotionPayments.Contains(this))
+                {
+                    CreditCardTransaction.PromotionPayments.Add(this);
+                }
+                if (CreditCardTransactionFK != CreditCardTransaction.CreditCardTransactionPK)
+                {
+                    CreditCardTransactionFK = CreditCardTransaction.CreditCardTransactionPK;
+                }
+            }
+            else if (!_settingFK)
+            {
+                CreditCardTransactionFK = null;
+            }
+        }
     
         private void FixupPromotion(Promotion previousValue)
         {

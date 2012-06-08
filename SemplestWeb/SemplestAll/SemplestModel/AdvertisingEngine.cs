@@ -72,6 +72,38 @@ namespace SemplestModel
         }
         private ICollection<AdvertisingEngineAccount> _advertisingEngineAccounts;
     
+        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds
+        {
+            get
+            {
+                if (_advertisingEngineAds == null)
+                {
+                    var newCollection = new FixupCollection<AdvertisingEngineAd>();
+                    newCollection.CollectionChanged += FixupAdvertisingEngineAds;
+                    _advertisingEngineAds = newCollection;
+                }
+                return _advertisingEngineAds;
+            }
+            set
+            {
+                if (!ReferenceEquals(_advertisingEngineAds, value))
+                {
+                    var previousValue = _advertisingEngineAds as FixupCollection<AdvertisingEngineAd>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupAdvertisingEngineAds;
+                    }
+                    _advertisingEngineAds = value;
+                    var newValue = value as FixupCollection<AdvertisingEngineAd>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupAdvertisingEngineAds;
+                    }
+                }
+            }
+        }
+        private ICollection<AdvertisingEngineAd> _advertisingEngineAds;
+    
         public virtual ICollection<KeywordBid> KeywordBids
         {
             get
@@ -136,6 +168,38 @@ namespace SemplestModel
         }
         private ICollection<PromotionAdEngineSelected> _promotionAdEngineSelecteds;
     
+        public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus
+        {
+            get
+            {
+                if (_promotionAdengineStatus == null)
+                {
+                    var newCollection = new FixupCollection<PromotionAdengineStatu>();
+                    newCollection.CollectionChanged += FixupPromotionAdengineStatus;
+                    _promotionAdengineStatus = newCollection;
+                }
+                return _promotionAdengineStatus;
+            }
+            set
+            {
+                if (!ReferenceEquals(_promotionAdengineStatus, value))
+                {
+                    var previousValue = _promotionAdengineStatus as FixupCollection<PromotionAdengineStatu>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupPromotionAdengineStatus;
+                    }
+                    _promotionAdengineStatus = value;
+                    var newValue = value as FixupCollection<PromotionAdengineStatu>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupPromotionAdengineStatus;
+                    }
+                }
+            }
+        }
+        private ICollection<PromotionAdengineStatu> _promotionAdengineStatus;
+    
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets
         {
             get
@@ -167,38 +231,6 @@ namespace SemplestModel
             }
         }
         private ICollection<TargetedDailyBudget> _targetedDailyBudgets;
-    
-        public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds
-        {
-            get
-            {
-                if (_advertisingEngineAds == null)
-                {
-                    var newCollection = new FixupCollection<AdvertisingEngineAd>();
-                    newCollection.CollectionChanged += FixupAdvertisingEngineAds;
-                    _advertisingEngineAds = newCollection;
-                }
-                return _advertisingEngineAds;
-            }
-            set
-            {
-                if (!ReferenceEquals(_advertisingEngineAds, value))
-                {
-                    var previousValue = _advertisingEngineAds as FixupCollection<AdvertisingEngineAd>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupAdvertisingEngineAds;
-                    }
-                    _advertisingEngineAds = value;
-                    var newValue = value as FixupCollection<AdvertisingEngineAd>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupAdvertisingEngineAds;
-                    }
-                }
-            }
-        }
-        private ICollection<AdvertisingEngineAd> _advertisingEngineAds;
 
         #endregion
         #region Association Fixup
@@ -216,6 +248,28 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (AdvertisingEngineAccount item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.AdvertisingEngine, this))
+                    {
+                        item.AdvertisingEngine = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupAdvertisingEngineAds(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (AdvertisingEngineAd item in e.NewItems)
+                {
+                    item.AdvertisingEngine = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (AdvertisingEngineAd item in e.OldItems)
                 {
                     if (ReferenceEquals(item.AdvertisingEngine, this))
                     {
@@ -269,6 +323,28 @@ namespace SemplestModel
             }
         }
     
+        private void FixupPromotionAdengineStatus(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (PromotionAdengineStatu item in e.NewItems)
+                {
+                    item.AdvertisingEngine = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (PromotionAdengineStatu item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.AdvertisingEngine, this))
+                    {
+                        item.AdvertisingEngine = null;
+                    }
+                }
+            }
+        }
+    
         private void FixupTargetedDailyBudgets(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -282,28 +358,6 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (TargetedDailyBudget item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.AdvertisingEngine, this))
-                    {
-                        item.AdvertisingEngine = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupAdvertisingEngineAds(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (AdvertisingEngineAd item in e.NewItems)
-                {
-                    item.AdvertisingEngine = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (AdvertisingEngineAd item in e.OldItems)
                 {
                     if (ReferenceEquals(item.AdvertisingEngine, this))
                     {

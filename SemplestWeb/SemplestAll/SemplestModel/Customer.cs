@@ -294,6 +294,38 @@ namespace SemplestModel
         }
         private ProductGroupCycleType _productGroupCycleType;
     
+        public virtual ICollection<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps
+        {
+            get
+            {
+                if (_webContentQuestionMarkHelps == null)
+                {
+                    var newCollection = new FixupCollection<WebContentQuestionMarkHelp>();
+                    newCollection.CollectionChanged += FixupWebContentQuestionMarkHelps;
+                    _webContentQuestionMarkHelps = newCollection;
+                }
+                return _webContentQuestionMarkHelps;
+            }
+            set
+            {
+                if (!ReferenceEquals(_webContentQuestionMarkHelps, value))
+                {
+                    var previousValue = _webContentQuestionMarkHelps as FixupCollection<WebContentQuestionMarkHelp>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupWebContentQuestionMarkHelps;
+                    }
+                    _webContentQuestionMarkHelps = value;
+                    var newValue = value as FixupCollection<WebContentQuestionMarkHelp>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupWebContentQuestionMarkHelps;
+                    }
+                }
+            }
+        }
+        private ICollection<WebContentQuestionMarkHelp> _webContentQuestionMarkHelps;
+    
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies1
         {
             get
@@ -373,6 +405,38 @@ namespace SemplestModel
         }
         private CustomerStyle _customerStyle;
     
+        public virtual ICollection<EmailTemplate> EmailTemplates
+        {
+            get
+            {
+                if (_emailTemplates == null)
+                {
+                    var newCollection = new FixupCollection<EmailTemplate>();
+                    newCollection.CollectionChanged += FixupEmailTemplates;
+                    _emailTemplates = newCollection;
+                }
+                return _emailTemplates;
+            }
+            set
+            {
+                if (!ReferenceEquals(_emailTemplates, value))
+                {
+                    var previousValue = _emailTemplates as FixupCollection<EmailTemplate>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupEmailTemplates;
+                    }
+                    _emailTemplates = value;
+                    var newValue = value as FixupCollection<EmailTemplate>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupEmailTemplates;
+                    }
+                }
+            }
+        }
+        private ICollection<EmailTemplate> _emailTemplates;
+    
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations
         {
             get
@@ -437,70 +501,6 @@ namespace SemplestModel
         }
         private ICollection<Schedule> _schedules;
     
-        public virtual ICollection<User> Users
-        {
-            get
-            {
-                if (_users == null)
-                {
-                    var newCollection = new FixupCollection<User>();
-                    newCollection.CollectionChanged += FixupUsers;
-                    _users = newCollection;
-                }
-                return _users;
-            }
-            set
-            {
-                if (!ReferenceEquals(_users, value))
-                {
-                    var previousValue = _users as FixupCollection<User>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupUsers;
-                    }
-                    _users = value;
-                    var newValue = value as FixupCollection<User>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupUsers;
-                    }
-                }
-            }
-        }
-        private ICollection<User> _users;
-    
-        public virtual ICollection<EmailTemplate> EmailTemplates
-        {
-            get
-            {
-                if (_emailTemplates == null)
-                {
-                    var newCollection = new FixupCollection<EmailTemplate>();
-                    newCollection.CollectionChanged += FixupEmailTemplates;
-                    _emailTemplates = newCollection;
-                }
-                return _emailTemplates;
-            }
-            set
-            {
-                if (!ReferenceEquals(_emailTemplates, value))
-                {
-                    var previousValue = _emailTemplates as FixupCollection<EmailTemplate>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupEmailTemplates;
-                    }
-                    _emailTemplates = value;
-                    var newValue = value as FixupCollection<EmailTemplate>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupEmailTemplates;
-                    }
-                }
-            }
-        }
-        private ICollection<EmailTemplate> _emailTemplates;
-    
         public virtual ICollection<WebContent> WebContents
         {
             get
@@ -533,37 +533,37 @@ namespace SemplestModel
         }
         private ICollection<WebContent> _webContents;
     
-        public virtual ICollection<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps
+        public virtual ICollection<User> Users
         {
             get
             {
-                if (_webContentQuestionMarkHelps == null)
+                if (_users == null)
                 {
-                    var newCollection = new FixupCollection<WebContentQuestionMarkHelp>();
-                    newCollection.CollectionChanged += FixupWebContentQuestionMarkHelps;
-                    _webContentQuestionMarkHelps = newCollection;
+                    var newCollection = new FixupCollection<User>();
+                    newCollection.CollectionChanged += FixupUsers;
+                    _users = newCollection;
                 }
-                return _webContentQuestionMarkHelps;
+                return _users;
             }
             set
             {
-                if (!ReferenceEquals(_webContentQuestionMarkHelps, value))
+                if (!ReferenceEquals(_users, value))
                 {
-                    var previousValue = _webContentQuestionMarkHelps as FixupCollection<WebContentQuestionMarkHelp>;
+                    var previousValue = _users as FixupCollection<User>;
                     if (previousValue != null)
                     {
-                        previousValue.CollectionChanged -= FixupWebContentQuestionMarkHelps;
+                        previousValue.CollectionChanged -= FixupUsers;
                     }
-                    _webContentQuestionMarkHelps = value;
-                    var newValue = value as FixupCollection<WebContentQuestionMarkHelp>;
+                    _users = value;
+                    var newValue = value as FixupCollection<User>;
                     if (newValue != null)
                     {
-                        newValue.CollectionChanged += FixupWebContentQuestionMarkHelps;
+                        newValue.CollectionChanged += FixupUsers;
                     }
                 }
             }
         }
-        private ICollection<WebContentQuestionMarkHelp> _webContentQuestionMarkHelps;
+        private ICollection<User> _users;
 
         #endregion
         #region Association Fixup
@@ -731,6 +731,28 @@ namespace SemplestModel
             }
         }
     
+        private void FixupWebContentQuestionMarkHelps(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (WebContentQuestionMarkHelp item in e.NewItems)
+                {
+                    item.Customer = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (WebContentQuestionMarkHelp item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Customer, this))
+                    {
+                        item.Customer = null;
+                    }
+                }
+            }
+        }
+    
         private void FixupCustomerHierarchies1(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -766,6 +788,28 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (CustomerNote item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Customer, this))
+                    {
+                        item.Customer = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupEmailTemplates(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (EmailTemplate item in e.NewItems)
+                {
+                    item.Customer = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (EmailTemplate item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Customer, this))
                     {
@@ -819,50 +863,6 @@ namespace SemplestModel
             }
         }
     
-        private void FixupUsers(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (User item in e.NewItems)
-                {
-                    item.Customer = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (User item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Customer, this))
-                    {
-                        item.Customer = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupEmailTemplates(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (EmailTemplate item in e.NewItems)
-                {
-                    item.Customer = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (EmailTemplate item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.Customer, this))
-                    {
-                        item.Customer = null;
-                    }
-                }
-            }
-        }
-    
         private void FixupWebContents(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -885,11 +885,11 @@ namespace SemplestModel
             }
         }
     
-        private void FixupWebContentQuestionMarkHelps(object sender, NotifyCollectionChangedEventArgs e)
+        private void FixupUsers(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
             {
-                foreach (WebContentQuestionMarkHelp item in e.NewItems)
+                foreach (User item in e.NewItems)
                 {
                     item.Customer = this;
                 }
@@ -897,7 +897,7 @@ namespace SemplestModel
     
             if (e.OldItems != null)
             {
-                foreach (WebContentQuestionMarkHelp item in e.OldItems)
+                foreach (User item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Customer, this))
                     {

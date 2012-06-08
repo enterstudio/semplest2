@@ -186,10 +186,16 @@
     <Compile Include="PromotionAdEngineSelected.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="PromotionAdengineStatu.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="PromotionKeywordAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="PromotionPayment.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionStatu.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
