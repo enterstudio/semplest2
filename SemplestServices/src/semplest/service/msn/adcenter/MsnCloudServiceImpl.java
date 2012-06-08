@@ -2331,6 +2331,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			GetHistoricalSearchCountResponse res =
 				aiSvc.getHistoricalSearchCount(req);
 			KeywordSearchCount[] searchCounts = res.getKeywordSearchCounts();
+			LOG.info("Received search count from MSN.");
 			
 			// now get the data we need for each keyword
 			for (int j = 0; j< searchCounts.length; j++) {
