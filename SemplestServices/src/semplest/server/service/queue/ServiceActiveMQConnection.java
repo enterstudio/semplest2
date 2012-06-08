@@ -36,7 +36,6 @@ public class ServiceActiveMQConnection
 	{
 		//Context ctx = new InitialContext();
 		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port);
-
 		cacheCF = new CachingConnectionFactory();
 		cacheCF.setTargetConnectionFactory(cf);
 		cacheCF.setSessionCacheSize(1);
@@ -96,16 +95,21 @@ public class ServiceActiveMQConnection
 				consumer.close();
 				consumer = null;
 			}
-			if (cn != null)
-			{
-				cn.close();
-				cn = null;
-			}
 			if (session != null)
 			{
 				session.close();
 				session = null;
 			}
+			if (cn != null)
+			{
+				cn.close();
+				cn = null;
+			}
+			if (cacheCF != null)
+			{
+				cacheCF.destroy();
+			}
+			
 		}
 		catch (JMSException e)
 		{
