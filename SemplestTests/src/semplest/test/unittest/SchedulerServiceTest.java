@@ -21,11 +21,11 @@ public class SchedulerServiceTest {
 		try{
 			SchedulerServiceTest test = new SchedulerServiceTest();		
 			
-			//test.TestCase3("bad task example");
-			//Thread.sleep(5000);
-			//test.TestCase5();
+			test.TestCase3("bad task example");
+			Thread.sleep(5000);
+			test.TestCase5();
 			
-			test.TestCase1();
+			//test.TestCase1();
 			
 		}
 		catch(Exception e){
@@ -147,7 +147,7 @@ public class SchedulerServiceTest {
 			cal.set(2012, 4, 30, 8, 30, 0);
 			Date morning = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> morningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject morningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Morning!", "nan@semplest.com", "nan@semplest.com", "Good Morning! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			SemplestSchedulerTaskObject morningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Morning!", "nan@semplest.com", "nan@semplest.com", "Good Morning! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			morningTask.add(morningMail);				
 			CreateSchedulerAndTask.createScheduleAndRun(morningTask, "SchedulerDailyMorning", morning, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			Thread.sleep(5000);
@@ -156,7 +156,7 @@ public class SchedulerServiceTest {
 			cal.set(2012, 4, 30, 13, 00, 0);
 			Date afternoon = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> afternoonTask = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject afternoonMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Afternoon!", "nan@semplest.com", "nan@semplest.com", "Good Afternoon! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			SemplestSchedulerTaskObject afternoonMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Afternoon!", "nan@semplest.com", "nan@semplest.com", "Good Afternoon! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			afternoonTask.add(afternoonMail);				
 			CreateSchedulerAndTask.createScheduleAndRun(afternoonTask, "SchedulerDailyAfternoon", afternoon, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			Thread.sleep(5000);
@@ -165,7 +165,7 @@ public class SchedulerServiceTest {
 			cal.set(2012, 4, 30, 17, 30, 0);
 			Date evening = cal.getTime();
 			ArrayList<SemplestSchedulerTaskObject> eveningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject eveningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] Good Evening!", "nan@semplest.com", "nan@semplest.com", "Good Evening! I'm doing fine. \n\nBest,\nSemplestScheduler");
+			SemplestSchedulerTaskObject eveningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Evening!", "nan@semplest.com", "nan@semplest.com", "Good Evening! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			eveningTask.add(eveningMail);				
 			CreateSchedulerAndTask.createScheduleAndRun(eveningTask, "SchedulerDailyEvening", evening, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			

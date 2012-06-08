@@ -12,6 +12,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import semplest.test.other.KeywordTestThread3;
+
 
 public class ScalabilityTests {		
 
@@ -31,20 +33,27 @@ public class ScalabilityTests {
 			*/
 			
 			//Test Keyword
-			///*
+			/*
 			frequency = 2;
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
-			//*/
+			*/
 			
 			//Test Memory Leak
-			/*frequency = 5;
+			/*
+			 * frequency = 5;
 			executor.execute(new OtherTestThread(frequency));
 			Thread.sleep(10);
-			executor.execute(new OtherTestThread(frequency));	*/		
+			executor.execute(new OtherTestThread(frequency));	
+			*/		
+			
+			//Compare keyword outputs
+			/*executor.execute(new KeywordTestThread3("DEV"));
+			Thread.sleep(10);
+			executor.execute(new KeywordTestThread3("EXP"));*/
 			
 		}
 		catch(Exception e){

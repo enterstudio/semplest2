@@ -49,6 +49,9 @@ public class InstallationSetup {
 			if(hostName.equals("VMDEVJAVA3")){
 				//DEV Box Keyword Service
 				is.KeywordDev();
+				
+				//Exp Services for 172.18.9.26 ESB
+				is.ServiceExp();
 			}
 			
 			if(hostName.equals("VMJAVA3")){
@@ -151,6 +154,25 @@ public class InstallationSetup {
 		setServicePropsTest(service);
 	}
 	
+	public void ServiceExp(){
+		String service;
+		
+		service = "SemplestAdengineService";
+		setServicePropsExp(service);
+		
+		service = "SemplestBidGeneratorService";
+		setServicePropsExp(service);
+		
+		service = "SemplestChaseOrbitalGatewayService";
+		setServicePropsExp(service);
+		
+		service = "SemplestMailService";
+		setServicePropsExp(service);
+		
+		service = "SemplestSchedulerService";
+		setServicePropsExp(service);
+	}
+	
 	public void KeywordDev(){
 		String service = "SemplestKeywordGeneratorService";
 		setServicePropsDev(service);
@@ -170,7 +192,7 @@ public class InstallationSetup {
 			in.close();		
 			
 			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_test";
-			String comment = "Keyword Service on for Exp ESB. Updated by InstallationSetup (Nan).";
+			String comment = "Keyword Service for Exp ESB. Updated by InstallationSetup (Nan).";
 			writeProps(path, properties, jdbc, comment);
 		}
 		catch(FileNotFoundException e){
@@ -223,6 +245,27 @@ public class InstallationSetup {
 			//do nothing
 		}
 	}	
+	
+	public void setServicePropsExp(String serviceName){		
+		try{
+			String path = "C:\\" + serviceName + "\\bin\\system.properties";
+			Properties properties = new Properties();
+			FileInputStream in = new FileInputStream(path);
+			properties.load(in);
+			in.close();		
+			
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_test";
+			String comment = "Service for Exp. Updated by InstallationSetup (Nan).";
+			writeProps(path, properties, jdbc, comment);
+		}
+		catch(FileNotFoundException e){
+			//file not found. probably the service is not installed.
+			//do nothing
+		}
+		catch(IOException e){
+			//do nothing
+		}
+	}
 	
 	public void writeProps(String filePath, Properties props, String jdbc, String comment){
 		
