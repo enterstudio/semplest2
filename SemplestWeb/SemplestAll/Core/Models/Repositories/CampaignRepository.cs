@@ -52,7 +52,7 @@ namespace Semplest.Core.Models.Repositories
             // save this some how while getting the keywords this is becoming null
         }
 
-        public CampaignSetupModel GetKeyWords(CampaignSetupModel model)
+        public CampaignSetupModel GetKeyWords(CampaignSetupModel model, int promoId)
         {
             if (model.AllCategories.Count == 0)
             {
@@ -80,12 +80,11 @@ namespace Semplest.Core.Models.Repositories
             var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(), model.ProductGroup.ProductPromotionName,
                                             model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
 
-            //
-            RemoveNegativeKeywordsFromList(ref keywords, model);
-
-            if (keywords != null && keywords.Count > 0)
+           
+            if (keywords != null && keywords.Length > 0)
             {
                 model.AllKeywordProbabilityObjects.AddRange(keywords);
+                SemplestDataService.SaveKeywords(promoId, model);
                 foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword }))
                 {
                     model.AllKeywords.Add(kwm);
@@ -97,42 +96,6 @@ namespace Semplest.Core.Models.Repositories
                 Logger.Write(logEnty);
             }
             return model;
-        }
-
-        private void  RemoveNegativeKeywordsFromList(ref List<KeywordProbabilityObject> keywordProbList, CampaignSetupModel model )
-        {
-            foreach (var negK in model.AdModelProp.NegativeKeywords)
-            {
-
-
-
-                string k = negK.ToUpper();
-                var i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(k));
-                foreach (KeywordProbabilityObject s in i)
-                    s.isDeleted = true;
-
-                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(k + " "));
-                foreach (KeywordProbabilityObject s in i)
-                    s.isDeleted = true;
-
-                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(" " + k));
-                foreach (KeywordProbabilityObject s in i)
-                    s.isDeleted = true;
-
-                i = keywordProbList.Where(key => key.keyword.ToUpper().Contains(" " + k + " "));
-                foreach (KeywordProbabilityObject s in i)
-                    s.isDeleted = true;
-
-
-
-                //string k = negK.ToUpper();
-                //int j;
-                ////negK
-                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper() == k);
-                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(k + " "));
-                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(" " + k));
-                //j = keywordProbList.RemoveAll(x => x.keyword.ToUpper().Contains(" " + k + " "));
-            }
         }
 
         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)

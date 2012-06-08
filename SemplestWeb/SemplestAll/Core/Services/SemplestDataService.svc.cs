@@ -7,6 +7,8 @@ using System.Data.Services.Common;
 using Semplest.Core.Models;
 using SemplestModel;
 using System.Data.Objects;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace Semplest.Core.Services
 {
@@ -459,81 +461,50 @@ namespace Semplest.Core.Services
 
         public static void SaveKeywords(int promotionId, CampaignSetupModel model)
         {
+            DataTable stationIds = new DataTable();
+            stationIds.Columns.Add("Keyword", typeof(string));
+            stationIds.Columns.Add("IsActive", typeof(Boolean));
+            stationIds.Columns.Add("IsDeleted", typeof(Boolean));
+            stationIds.Columns.Add("IsNegative", typeof(Boolean));
+            stationIds.Columns.Add("SemplestProbability", typeof(float));
+            stationIds.Columns.Add("IsTargetMSN", typeof(Boolean));
+            stationIds.Columns.Add("IsTargetGoogle", typeof(Boolean));
+            foreach (var kpo in model.AllKeywordProbabilityObjects)
+            {
+                kpo.isDeleted = IsNegativeKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords);
+                DataRow dr = stationIds.NewRow();
+                dr["Keyword"] = kpo.keyword.Trim();
+                dr["IsActive"] = "true";
+                dr["IsDeleted"] = kpo.isDeleted;
+                dr["IsNegative"] = "false";
+                dr["SemplestProbability"] = kpo.semplestProbability;
+                dr["IsTargetMSN"] = kpo.isTargetMSN;
+                dr["IsTargetGoogle"] = kpo.isTargetGoogle;
+                stationIds.Rows.Add(dr);
+            }
+            SqlParameter parameter = new SqlParameter("kwa", stationIds);
+            parameter.SqlDbType = SqlDbType.Structured;
+            parameter.TypeName = "PromotionKeywordTableType";
+
+
+            SqlParameter parameter2 = new SqlParameter("@PromotionId", promotionId);
+            parameter2.SqlDbType = SqlDbType.Int;
+
+            var parameters = new object[] { parameter, parameter2 };
             using (var dbcontext = new SemplestEntities())
             {
-                // todo need to fix this
-                //return true;
-                //remove all associations whenever new keywords are retrieved from the service - need to optimize this 
-                var p = dbcontext.Promotions.Where(x => x.PromotionPK == promotionId);
-                foreach (PromotionKeywordAssociation z in p.First().PromotionKeywordAssociations.Where(x => x.IsNegative == false).ToList())
-                    dbcontext.DeleteObject(z);
-
-                dbcontext.SaveChanges();
-                foreach (var kpo in model.AllKeywordProbabilityObjects)
-                {
-                    var kpo1 = kpo;
-                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == kpo1.keyword.Trim());
-                    if (!queryKeyword.Any())
-                    {
-                        // add it in Keywords table and in PromotionKeywordAssociations
-                        dbcontext.Keywords.AddObject(entity: new Keyword { Keyword1 = kpo.keyword.Trim(), CreatedDate = DateTime.Now });
-                        //dbcontext.SaveChanges();
-
-                        dbcontext.PromotionKeywordAssociations.AddObject(
-                            new PromotionKeywordAssociation
-                            {
-                                PromotionFK = promotionId,
-                                //KeywordFK = keywordId,
-                                CreatedDate = DateTime.Now,
-                                IsActive = true,
-                                IsDeleted = kpo.isDeleted,
-                                IsNegative = false,
-                                SemplestProbability = kpo.semplestProbability,
-                                IsTargetMSN = kpo.isTargetMSN,
-                                IsTargetGoogle = kpo.isTargetGoogle
-                            });
-
-                        dbcontext.SaveChanges();
-
-                    }
-                    else  // keyword already there in the Keywords table, setup an association with promotion if its not there
-                    {
-                        var keywordId = queryKeyword.First().KeywordPK;
-                        queryKeyword.First().EditedDate = DateTime.Now;
-                        var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promotionId && c.KeywordFK == keywordId);
-                        if (!queryPka.Any())
-                        {
-                            dbcontext.PromotionKeywordAssociations.AddObject(
-                                new PromotionKeywordAssociation
-                                {
-                                    PromotionFK = promotionId,
-                                    KeywordFK = keywordId,
-                                    CreatedDate = DateTime.Now,
-                                    IsActive = true,
-                                    IsDeleted = kpo.isDeleted,
-                                    IsNegative = false,
-                                    SemplestProbability = kpo.semplestProbability,
-                                    IsTargetMSN = kpo.isTargetMSN,
-                                    IsTargetGoogle = kpo.isTargetGoogle
-                                });
-
-                            dbcontext.SaveChanges();
-
-                        }
-                        else
-                        {
-                            var pka = queryPka.First();
-                            pka.SemplestProbability = kpo.semplestProbability;
-                            pka.IsTargetMSN = kpo.isTargetMSN;
-                            pka.IsTargetGoogle = kpo.isTargetGoogle;
-                            pka.IsDeleted = kpo.isDeleted;
-                            dbcontext.SaveChanges();
-                        }
-                    }
-                }
+                var results = dbcontext.ExecuteStoreCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
             }
         }
 
+        private static bool IsNegativeKeyword(string keyword, List<string> negativeKeywords)
+        {
+            string k = keyword.ToUpper();
+            return (negativeKeywords.Where(key => k.Contains(key.ToUpper())).Count() > 0 ||
+                    negativeKeywords.Where(key => k.Contains(key.ToUpper() + " ")).Count() > 0 ||
+                    negativeKeywords.Where(key => k.Contains(" " + key.ToUpper())).Count() > 0 ||
+                    negativeKeywords.Where(key => k.Contains(" " + key.ToUpper() + " ")).Count() > 0);
+        }
 
         private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {

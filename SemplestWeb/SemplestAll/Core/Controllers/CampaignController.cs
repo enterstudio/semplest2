@@ -221,7 +221,7 @@ namespace Semplest.Core.Controllers
                     WriteLog(msg, model);
 
                     // get the keywords from web service
-                    model = _campaignRepository.GetKeyWords(model);
+                    model = _campaignRepository.GetKeyWords(model, promoId);
 
                     msg =
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After getting keywords form web service";
@@ -230,13 +230,6 @@ namespace Semplest.Core.Controllers
                     msg =
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before saving keywords to database";
                     WriteLog(msg, model);
-
-                    // save the keywords to database
-                    //ds.SaveKeywords(promoId, model);
-                    var tData = new ThreadData(promoId, model);
-                    _workerThread = new Thread(new ParameterizedThreadStart(DoWorkFast));
-                    _workerThread.Start(tData);
-
 
                     msg =
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving keywords to database";
