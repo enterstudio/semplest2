@@ -931,8 +931,18 @@ public class SemplestDB extends BaseDB
 			StackTraceElement err = ste[ste.length-1];		
 			String errorClass = err.getClassName();
 			StringBuilder sb = new StringBuilder();
-			for(StackTraceElement s : ste){
-				sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
+			if(ste.length > 5){
+				//if the nested error is too long, record only the first 5 and the last one
+				for(int i = 0; i < 5; i++){
+					sb.append(ste[i].getFileName() + ":" + ste[i].getLineNumber() + "; ");					
+				}
+				sb.append("... ");
+				sb.append(ste[ste.length-1].getFileName() + ":" + ste[ste.length-1].getLineNumber() + ";");
+			}
+			else{
+				for(StackTraceElement s : ste){
+					sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
+				}
 			}
 			String errDetails = sb.toString();
 			
@@ -940,7 +950,7 @@ public class SemplestDB extends BaseDB
 					"VALUES (?, ?, ?, ?, ?)";
 			
 			jdbcTemplate.update(sql, new Object[]
-					{errorSource, errorClass, e.getMessage(), errDetails, new Date()});
+					{errorSource, errorClass, e.getMessage(), errDetails, new java.util.Date()});
 		}
 		catch (Exception e1)
 		{
