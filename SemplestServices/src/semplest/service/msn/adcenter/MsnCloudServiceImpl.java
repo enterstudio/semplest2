@@ -2333,10 +2333,17 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			KeywordSearchCount[] searchCounts = res.getKeywordSearchCounts();
 			LOG.info("Received search count from MSN.");
 			
+			if(searchCounts==null){
+				LOG.info("Received null search count array from MSN");
+			}
+			
 			// now get the data we need for each keyword
 			for (int j = 0; j< searchCounts.length; j++) {
 				//for each keyword
 				KeywordSearchCount c = searchCounts[j];
+				if(c==null){
+					continue;
+				}
 				String keyword = c.getKeyword();
 				HistoricalSearchCount[] hscs = c.getHistoricalSearchCounts();
 				
