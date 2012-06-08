@@ -24,22 +24,23 @@ public class ActiveMQConnection
 	private Destination producerDestination = null;
 	private MessageConsumer consumer = null;
 
-
 	private ActiveMQConnectionFactory cf = null;
 	private CachingConnectionFactory cacheCF = null;
 	// private MessageProducer producer = null;
 	// private MessageConsumer consumer = null;
 
 	private HashMap<String, MessageProducer> producerListByQueue = new HashMap<String, MessageProducer>();
+	private HashMap<String, MessageConsumer> consumerListByQueue = new HashMap<String, MessageConsumer>();
+
 	private HashMap<String, Queue> consumerQueueListByQueueName = new HashMap<String, Queue>();
-	
+
 	static final Logger logger = Logger.getLogger(ActiveMQConnection.class);
 
 	public ActiveMQConnection(String host, String port) throws JMSException
 	{
 		// Context ctx = new InitialContext();
 		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port);
-		
+
 		cacheCF = new CachingConnectionFactory();
 		cacheCF.setTargetConnectionFactory(cf);
 		cacheCF.setSessionCacheSize(100);
@@ -48,20 +49,47 @@ public class ActiveMQConnection
 		// + "?wireFormat=openwire&wireFormat.tightEncodingEnabled=true");
 		cn = cacheCF.createQueueConnection();
 		cn.start();
-		logger.debug("Started MQ connection..host = " + host +  " port=" + port);
+		logger.debug("Started MQ connection..host = " + host + " port=" + port);
 		session = cn.createQueueSession(false, Session.AUTO_ACKNOWLEDGE);
 		logger.debug("create MQ session...");
 	}
 
 	public void createProducerAndConsumerQueue(String queueName, String consumerQueue) throws JMSException
 	{
-		logger.debug("createProducerAndConsumerQueue producer=" + queueName + " consumer=" + consumerQueue );
-		producerDestination = session.createQueue(queueName);
-		logger.debug("create producer destination");
-		MessageProducer producer = session.createProducer(producerDestination);
-		producerListByQueue.put(queueName, producer);
-		logger.debug("Created and store MessageProducer...");
-		createConsumer(consumerQueue);
+		// check for reconnect
+		boolean createProducer = true;
+		boolean createConsumer = true;
+		if (producerListByQueue.containsKey(queueName))
+		{
+			MessageProducer p = producerListByQueue.get(queueName);
+			if (p != null && p.getDestination() != null)
+			{
+				logger.info("MessageProducer already Exists for " + queueName);
+				createProducer = false;
+			}
+		}
+		if (createProducer)
+		{
+			logger.debug("createProducerAndConsumerQueue producer=" + queueName + " consumer=" + consumerQueue);
+			producerDestination = session.createQueue(queueName);
+			logger.debug("create producer destination");
+			MessageProducer producer = session.createProducer(producerDestination);
+			producerListByQueue.put(queueName, producer);
+			logger.debug("Created and store MessageProducer...");
+		}
+		if (consumerListByQueue.containsKey(consumerQueue))
+		{
+			MessageConsumer c = consumerListByQueue.get(consumerQueue);
+			if (c != null && c.getMessageListener() != null)
+			{
+				logger.info("MessageConsumer already Exists for " + consumerQueue);
+				createConsumer = false;
+			}
+		}
+		if (createConsumer)
+		{
+			createConsumer(consumerQueue);
+		}
 	}
 
 	public void sendMessage(String queueName, String methodName, byte[] byteData, String correlationID) throws JMSException
@@ -83,11 +111,10 @@ public class ActiveMQConnection
 		}
 		else
 		{
-			throw new JMSException("The queue " + queueName + " does not have a JMS producer"); 
+			throw new JMSException("The queue " + queueName + " does not have a JMS producer");
 		}
 	}
 
-	
 	public void createConsumer(String queueName) throws JMSException
 	{
 		logger.debug("createConsumer " + queueName);
@@ -95,13 +122,12 @@ public class ActiveMQConnection
 		consumer = session.createConsumer(consumerDestination);
 		consumer.setMessageListener(new QueueListener());
 		logger.debug("created consumer with a new Queue Listener");
-		//consumerListByQueue.put(queueName, consumer);
+		consumerListByQueue.put(queueName, consumer);
 	}
-	
 
 	public QueueReceiver createConsumerForReturnMessage(String queueName, String uniqueID) throws JMSException
 	{
-		
+
 		return session.createReceiver(consumerQueueListByQueueName.get(queueName), "JMSCorrelationID='" + uniqueID + "'");
 	}
 
