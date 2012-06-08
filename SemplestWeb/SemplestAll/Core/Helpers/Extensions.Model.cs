@@ -113,7 +113,6 @@ public static class MvcCheckBoxList_Extensions_Model
 
                 columnCount = 0;
 
-                sb.Append("<br />");
 
             }
             sb.Append("</li>");
