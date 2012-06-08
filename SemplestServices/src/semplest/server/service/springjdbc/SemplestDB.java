@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -924,20 +925,29 @@ public class SemplestDB extends BaseDB
 	
 	public static void logError(Exception e, String errorSource){		
 		
-		StackTraceElement[] ste = e.getStackTrace();
-		StackTraceElement err = ste[ste.length-1];		
-		String errorClass = err.getClassName();
-		StringBuilder sb = new StringBuilder();
-		for(StackTraceElement s : ste){
-			sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
+		try
+		{
+			StackTraceElement[] ste = e.getStackTrace();
+			StackTraceElement err = ste[ste.length-1];		
+			String errorClass = err.getClassName();
+			StringBuilder sb = new StringBuilder();
+			for(StackTraceElement s : ste){
+				sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
+			}
+			String errDetails = sb.toString();
+			
+			String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
+					"VALUES (?, ?, ?, ?, ?)";
+			
+			jdbcTemplate.update(sql, new Object[]
+					{errorSource, errorClass, e.getMessage(), errDetails, new Date()});
 		}
-		String errDetails = sb.toString().substring(0, 255);
-		
-		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
-				"VALUES (?, ?, ?, ?, ?)";
-		
-		jdbcTemplate.update(sql, new Object[]
-				{errorSource, errorClass, e.getMessage(), errDetails, new Date()});
+		catch (Exception e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			logger.error("logError: " + e.getMessage() , e1);
+		}
 	}
 
 }
