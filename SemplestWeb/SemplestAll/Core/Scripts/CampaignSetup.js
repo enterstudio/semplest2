@@ -232,7 +232,7 @@ function addNestedForm(container, counter, ticks, content) {
 "__City','AdModelProp_Addresses_" + nextIndex + "__StateCodeFK','AdModelProp_Addresses_" + nextIndex +
 "__Zip','AdModelProp_Addresses_" + nextIndex + "__Proximity')");
 
-        content = content.replace("optionsNarrative", "optionsNarrative_" + nextIndex + "");
+        content = content.replace("map", "map_" + nextIndex + "");
         content.replace(new RegExp('nestedObject', "igm"), ' Addresses_' + nextIndex + '_');
     }
 
