@@ -78,9 +78,16 @@
     </table>
 </div>
 <script>
-    doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
+    $(document).ready(function () {
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
+        var addressId = '@Html.ClientIdFor(t => t.Address)';
+        var idx = addressId.substring(23 - 1, 23);
+        if(idx >0)
+            $('#map').attr('id', 'map_' + idx);
+    });
+
     $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function () {
-        doOptions('@Html.ClientIdFor(t => t.Address)','@Html.ClientIdFor(t => t.City)','@Html.ClientIdFor(t => t.StateCodeFK)','@Html.ClientIdFor(t => t.Zip)','@Html.ClientIdFor(t => t.ProximityRadius)');
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     });
     $("#@Html.ClientIdFor(t => t.City)").change(function () {
         doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
