@@ -65,8 +65,8 @@ namespace Semplest.Core.Controllers
         public ActionResult CampaignSetup(int promotionId)
         {
 
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
-            Logger.Write(logEnty);
+            //var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
+            //Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
             //var scw = new ServiceClientWrapper();
@@ -83,6 +83,10 @@ namespace Semplest.Core.Controllers
             campaignSetupModel.ProductGroup.IsEdit = true;
             ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " +
                             campaignSetupModel.ProductGroup.ProductPromotionName;
+
+            ViewBag.IsLaunched = campaignSetupModel.IsLaunched;
+            ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
+            ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
 
             return View(campaignSetupModel);
         }
