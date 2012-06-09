@@ -330,10 +330,10 @@ namespace Semplest.Core.Services
             // update promotion ads; delete first and add them again
             foreach (PromotionAd pad in updatePromotion.PromotionAds.ToList())
             {
-                foreach (SiteLink sli in pad.SiteLinks.ToList())
-                {
-                    dbcontext.SiteLinks.DeleteObject(sli);
-                }
+                //foreach (SiteLink sli in pad.SiteLinks.ToList())
+                //{
+                //    dbcontext.SiteLinks.DeleteObject(sli);
+                //}
                 dbcontext.PromotionAds.DeleteObject(pad);
             }
 
@@ -409,19 +409,19 @@ namespace Semplest.Core.Services
             {
                 var cad = new PromotionAd { AdTextLine1 = pad.AdTextLine1, AdTextLine2 = pad.AdTextLine2, AdTitle = pad.AdTitle };
 
-                if (pad.SiteLinks != null)
-                {
-                    // add sitelinks
-                    foreach (SiteLink slink in pad.SiteLinks)
-                    {
-                        // this is check should be removed once we fix the logic in partialview and model
-                        if (!String.IsNullOrEmpty(slink.LinkText) && !String.IsNullOrEmpty(slink.LinkURL))
-                        {
-                            var slinkobj = new SiteLink { LinkText = slink.LinkText, LinkURL = slink.LinkURL };
-                            cad.SiteLinks.Add(slinkobj);
-                        }
-                    }
-                }
+                //if (pad.SiteLinks != null)
+                //{
+                //    // add sitelinks
+                //    foreach (SiteLink slink in pad.SiteLinks)
+                //    {
+                //        // this is check should be removed once we fix the logic in partialview and model
+                //        if (!String.IsNullOrEmpty(slink.LinkText) && !String.IsNullOrEmpty(slink.LinkURL))
+                //        {
+                //            var slinkobj = new SiteLink { LinkText = slink.LinkText, LinkURL = slink.LinkURL };
+                //            cad.SiteLinks.Add(slinkobj);
+                //        }
+                //    }
+                //}
 
                 promo.PromotionAds.Add(cad);
             }

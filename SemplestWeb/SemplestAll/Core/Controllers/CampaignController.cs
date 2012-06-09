@@ -104,18 +104,19 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-                    if (addsStoreModel != null)
-                    {
-                        foreach (var ad in addsStoreModel.Ads)
-                        {
-                            var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
-                            if (admodel != null)
-                            {
-                                admodel.SiteLinks = ad.SiteLinks;
-                            }
-                        }
-                    }
+                    //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
+                    //if (addsStoreModel != null)
+                    //{
+                    //    foreach (var ad in addsStoreModel.Ads)
+                    //    {
+                    //        var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
+                    //        if (admodel != null)
+                    //        {
+                    //            admodel.SiteLinks = ad.SiteLinks;
+                    //        }
+                    //    }
+                    //}
+
                     //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                     model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
@@ -327,48 +328,85 @@ namespace Semplest.Core.Controllers
 
         public ActionResult AdditionalLinks(string model)
         {
+            //if (Session["AdTitle"] == null)
+            //    Session.Add("AdTitle", model);
+            //else
+            //    Session["AdTitle"] = model;
+            //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
+            //PromotionAd promotionAd;
+            //if (addsStoreModel != null)
+            //{
+            //    promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
+            //    if (promotionAd != null)
+            //        promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
+            //}
+            //else
+            //{
+            //    promotionAd = new PromotionAd {AdTitle = model};
+            //}
+            //return PartialView(promotionAd);
+            return PartialView();
+            //return PartialView(model);
+        }
+
+        public ActionResult AdditionalLinks(CampaignSetupModel model)
+        {
             if (Session["AdTitle"] == null)
                 Session.Add("AdTitle", model);
             else
                 Session["AdTitle"] = model;
-            var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-            PromotionAd promotionAd;
-            if (addsStoreModel != null)
-            {
-                promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
-                if (promotionAd != null)
-                    promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
-            }
-            else
-            {
-                promotionAd = new PromotionAd {AdTitle = model};
-            }
-            return PartialView(promotionAd);
+            var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+            return PartialView();
             //return PartialView(model);
         }
+
 
         [HttpPost]
         [ActionName("CampaignSetup")]
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(PromotionAd model)
         {
-            model.AdTitle = (string) Session["AdTitle"];
-            if (Session["AddsStoreModel"] == null)
-            {
-                Session.Add("AddsStoreModel", new AddsStoreModel {Ads = new List<PromotionAd> {model}});
-            }
-            else
-            {
-                var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-                var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
-                if (promotionAd != null)
-                    promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
-                else
-                    addsStoreModel.Ads.Add(model);
-                Session["AddsStoreModel"] = addsStoreModel;
-            }
+            //model.AdTitle = (string) Session["AdTitle"];
+            //if (Session["AddsStoreModel"] == null)
+            //{
+            //    Session.Add("AddsStoreModel", new AddsStoreModel {Ads = new List<PromotionAd> {model}});
+            //}
+            //else
+            //{
+            //    var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
+            //    var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
+            //    if (promotionAd != null)
+            //        promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
+            //    else
+            //        addsStoreModel.Ads.Add(model);
+            //    Session["AddsStoreModel"] = addsStoreModel;
+            //}
             return Json("AdditionalLinks");
         }
+
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
+        public ActionResult SetAdditionalLinks(CampaignSetupModel model)
+        {
+            //model.AdTitle = (string)Session["AdTitle"];
+            //if (Session["AddsStoreModel"] == null)
+            //{
+            //    Session.Add("AddsStoreModel", new AddsStoreModel { Ads = new List<PromotionAd> { model } });
+            //}
+            //else
+            //{
+            //    var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+            //    var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
+            //    if (promotionAd != null)
+            //        promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
+            //    else
+            //        addsStoreModel.Ads.Add(model);
+            //    Session["AddsStoreModel"] = addsStoreModel;
+            //}
+            return Json("AdditionalLinks");
+        }
+
 
         [HttpPost]
         [ActionName("CampaignSetup")]
