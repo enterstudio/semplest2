@@ -285,7 +285,7 @@ function addNestedForm(container, counter, ticks, content) {
         $('#AdModelProp_Addresses_' + nextIndex + '__Zip').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
         });
-        $('#AdModelProp_Addresses_' + nextIndex + '__Proximity').change(function (e) {
+        $('#AdModelProp_Addresses_' + nextIndex + '__ProximityRadius').change(function (e) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__Proximity');
         });
     }
