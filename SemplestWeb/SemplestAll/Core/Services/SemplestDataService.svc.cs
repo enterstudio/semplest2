@@ -181,6 +181,10 @@ namespace Semplest.Core.Services
                 // set negative keywords
                 if (promo.PromotionKeywordAssociations != null)
                     model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative).Select(m => m.Keyword.Keyword1).ToList();
+
+                // set islaunched
+                model.IsLaunched = promo.IsLaunched;
+                model.IsCompleted = promo.IsCompleted;
             }
             var cnt = model.AdModelProp.NegativeKeywords.Count();
             for (var i = 0; i < cnt; i++)
@@ -600,6 +604,33 @@ namespace Semplest.Core.Services
                 return db.AdvertisingEngines.Select(m => m.AdvertisingEngine1).ToList();
             }
 
+        }
+
+        public  static bool IsPromotionLaunched(int promoId)
+        {
+            using (var db = new SemplestEntities())
+            {
+                var promo = PromotonIdQuery.Invoke(db, promoId);
+                return promo.IsLaunched;
+            }
+        }
+
+        public static bool IsPromotionCompleted(int promoId)
+        {
+            using (var db = new SemplestEntities())
+            {
+                var promo = PromotonIdQuery.Invoke(db, promoId);
+                return promo.IsCompleted;
+            }
+        }
+
+        public static bool IsPromotionLaunchedAndCompleted(int promoId)
+        {
+            using (var db = new SemplestEntities())
+            {
+                var promo = PromotonIdQuery.Invoke(db, promoId);
+                return promo.IsCompleted && promo.IsLaunched;
+            }
         }
     }
 }
