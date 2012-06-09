@@ -65,6 +65,9 @@ namespace Semplest.Core.Models
 
         #endregion
 
+        public bool IsLaunched { get; set; }
+        public bool IsCompleted { get; set; }
+
     }
 
     public class AddsStoreModel
