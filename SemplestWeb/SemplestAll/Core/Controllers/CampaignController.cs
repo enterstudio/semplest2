@@ -57,6 +57,10 @@ namespace Semplest.Core.Controllers
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
             //var campaignSetupModel = new CampaignSetupModel();
+            ViewBag.IsLaunched = false;
+            ViewBag.IsCompleted = false;
+            ViewBag.IsLaunchedAndCompleted = false;
+
             return View(cs);
         }
 
