@@ -188,6 +188,9 @@ namespace Semplest.Admin.Models
         public bool isActive { get; set; }
 
 
+        public string RoleName { get; set; }
+        public int RolesFK { get; set; }
+
         
         //[Remote("doesUserNameExist", "CustomerAccount", HttpMethod = "POST", ErrorMessage = "User name already exists. Please enter a different user name.")]
         [Required]
@@ -311,6 +314,11 @@ namespace Semplest.Admin.Models
 
         [DisplayName("Bill Type")]
         public IEnumerable<SelectListItem> BillTypes { get; set; }
+
+        //for role dropdown
+        public int SelectedRoleID { get; set; }
+        public IEnumerable<SelectListItem> Roles { get; set; }
+        
 
 
     }
