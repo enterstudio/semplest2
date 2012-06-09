@@ -114,15 +114,23 @@ function renderOptions(response) {
             if (map == null) {
                 map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
             }
-            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), getCustomZoom($('#AdModelProp_Addresses_0__ProximityRadius').val()), true).addLayer(cloudmade);
+            var proxValElse = $('#AdModelProp_Addresses_0__ProximityRadius').val();
+            if (proxValElse == null || proxValElse == "")
+                proxValElse = 0;
+            var zoomvalElse = getCustomZoom(proxValElse);
+            if (zoomvalElse == null)
+                zoomvalElse = 3;
+            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), zoomvalElse, true).addLayer(cloudmade);
             markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
             marker = new L.Marker(markerLocation);
             map.addLayer(marker);
-            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-            circleOptions = { color: '#f03', opacity: 0.7 };
-            circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 1609.344, circleOptions);
-            map.addLayer(circle);
-            bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
+            if (proxValElse > 0) {
+                circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+                circleOptions = { color: '#f03', opacity: 0.7 };
+                circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 1609.344, circleOptions);
+                map.addLayer(circle);
+            }
+        bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
 
             //map.fitBounds(new L.LatLngBounds(new L.LatLng(location.latLng.lat, location.latLng.lng)));
             //map.fitBounds(circle.getBounds());
