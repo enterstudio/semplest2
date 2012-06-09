@@ -127,38 +127,6 @@ namespace SemplestModel
             }
         }
         private Promotion _promotion;
-    
-        public virtual ICollection<SiteLink> SiteLinks
-        {
-            get
-            {
-                if (_siteLinks == null)
-                {
-                    var newCollection = new FixupCollection<SiteLink>();
-                    newCollection.CollectionChanged += FixupSiteLinks;
-                    _siteLinks = newCollection;
-                }
-                return _siteLinks;
-            }
-            set
-            {
-                if (!ReferenceEquals(_siteLinks, value))
-                {
-                    var previousValue = _siteLinks as FixupCollection<SiteLink>;
-                    if (previousValue != null)
-                    {
-                        previousValue.CollectionChanged -= FixupSiteLinks;
-                    }
-                    _siteLinks = value;
-                    var newValue = value as FixupCollection<SiteLink>;
-                    if (newValue != null)
-                    {
-                        newValue.CollectionChanged += FixupSiteLinks;
-                    }
-                }
-            }
-        }
-        private ICollection<SiteLink> _siteLinks;
 
         #endregion
         #region Association Fixup
@@ -196,28 +164,6 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (AdvertisingEngineAd item in e.OldItems)
-                {
-                    if (ReferenceEquals(item.PromotionAd, this))
-                    {
-                        item.PromotionAd = null;
-                    }
-                }
-            }
-        }
-    
-        private void FixupSiteLinks(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (SiteLink item in e.NewItems)
-                {
-                    item.PromotionAd = this;
-                }
-            }
-    
-            if (e.OldItems != null)
-            {
-                foreach (SiteLink item in e.OldItems)
                 {
                     if (ReferenceEquals(item.PromotionAd, this))
                     {

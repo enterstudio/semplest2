@@ -25,22 +25,22 @@ namespace SemplestModel
             set;
         }
     
-        public virtual int PromotionAdsFK
+        public virtual int PromotionFK
         {
-            get { return _promotionAdsFK; }
+            get { return _promotionFK; }
             set
             {
-                if (_promotionAdsFK != value)
+                if (_promotionFK != value)
                 {
-                    if (PromotionAd != null && PromotionAd.PromotionAdsPK != value)
+                    if (Promotion != null && Promotion.PromotionPK != value)
                     {
-                        PromotionAd = null;
+                        Promotion = null;
                     }
-                    _promotionAdsFK = value;
+                    _promotionFK = value;
                 }
             }
         }
-        private int _promotionAdsFK;
+        private int _promotionFK;
     
         public virtual string LinkText
         {
@@ -57,40 +57,40 @@ namespace SemplestModel
         #endregion
         #region Navigation Properties
     
-        public virtual PromotionAd PromotionAd
+        public virtual Promotion Promotion
         {
-            get { return _promotionAd; }
+            get { return _promotion; }
             set
             {
-                if (!ReferenceEquals(_promotionAd, value))
+                if (!ReferenceEquals(_promotion, value))
                 {
-                    var previousValue = _promotionAd;
-                    _promotionAd = value;
-                    FixupPromotionAd(previousValue);
+                    var previousValue = _promotion;
+                    _promotion = value;
+                    FixupPromotion(previousValue);
                 }
             }
         }
-        private PromotionAd _promotionAd;
+        private Promotion _promotion;
 
         #endregion
         #region Association Fixup
     
-        private void FixupPromotionAd(PromotionAd previousValue)
+        private void FixupPromotion(Promotion previousValue)
         {
             if (previousValue != null && previousValue.SiteLinks.Contains(this))
             {
                 previousValue.SiteLinks.Remove(this);
             }
     
-            if (PromotionAd != null)
+            if (Promotion != null)
             {
-                if (!PromotionAd.SiteLinks.Contains(this))
+                if (!Promotion.SiteLinks.Contains(this))
                 {
-                    PromotionAd.SiteLinks.Add(this);
+                    Promotion.SiteLinks.Add(this);
                 }
-                if (PromotionAdsFK != PromotionAd.PromotionAdsPK)
+                if (PromotionFK != Promotion.PromotionPK)
                 {
-                    PromotionAdsFK = PromotionAd.PromotionAdsPK;
+                    PromotionFK = Promotion.PromotionPK;
                 }
             }
         }

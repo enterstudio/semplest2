@@ -62,12 +62,6 @@ namespace SemplestModel
         }
         private Nullable<int> _usersFK;
     
-        public virtual System.DateTime CreatedDate
-        {
-            get;
-            set;
-        }
-    
         public virtual string ErrorSource
         {
             get;
@@ -81,6 +75,12 @@ namespace SemplestModel
         }
     
         public virtual string ErrorDetails
+        {
+            get;
+            set;
+        }
+    
+        public virtual System.DateTime CreatedDate
         {
             get;
             set;

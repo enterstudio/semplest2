@@ -500,6 +500,38 @@ namespace SemplestModel
         }
         private ICollection<Schedule> _schedules;
     
+        public virtual ICollection<SiteLink> SiteLinks
+        {
+            get
+            {
+                if (_siteLinks == null)
+                {
+                    var newCollection = new FixupCollection<SiteLink>();
+                    newCollection.CollectionChanged += FixupSiteLinks;
+                    _siteLinks = newCollection;
+                }
+                return _siteLinks;
+            }
+            set
+            {
+                if (!ReferenceEquals(_siteLinks, value))
+                {
+                    var previousValue = _siteLinks as FixupCollection<SiteLink>;
+                    if (previousValue != null)
+                    {
+                        previousValue.CollectionChanged -= FixupSiteLinks;
+                    }
+                    _siteLinks = value;
+                    var newValue = value as FixupCollection<SiteLink>;
+                    if (newValue != null)
+                    {
+                        newValue.CollectionChanged += FixupSiteLinks;
+                    }
+                }
+            }
+        }
+        private ICollection<SiteLink> _siteLinks;
+    
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets
         {
             get
@@ -764,6 +796,28 @@ namespace SemplestModel
             if (e.OldItems != null)
             {
                 foreach (Schedule item in e.OldItems)
+                {
+                    if (ReferenceEquals(item.Promotion, this))
+                    {
+                        item.Promotion = null;
+                    }
+                }
+            }
+        }
+    
+        private void FixupSiteLinks(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                foreach (SiteLink item in e.NewItems)
+                {
+                    item.Promotion = this;
+                }
+            }
+    
+            if (e.OldItems != null)
+            {
+                foreach (SiteLink item in e.OldItems)
                 {
                     if (ReferenceEquals(item.Promotion, this))
                     {
