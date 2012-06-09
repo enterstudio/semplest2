@@ -83,14 +83,29 @@ function renderOptions(response) {
             if (map == null) {
                 map = new L.Map('map_' + index.split('_')[1], { zoomControl: false, doubleClickZoom: false, attributionControl: false });
             }
-            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), 13).addLayer(cloudmade);
+            var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__ProximityRadius']")[0].value;
+            if (proxVal == null || proxVal == "")
+                proxVal = 0;
+            var zoomval = getCustomZoom(proxVal);
+            if (zoomval == null)
+                zoomval = 13;
+            var lng = location.latLng.lng;
+            var lat = location.latLng.lat;
+            if (lng > -98)
+                map.setView(new L.LatLng(lat, lng), zoomval, true).addLayer(cloudmade);
+            else
+                map.setView(new L.LatLng(lat, lng), 3, true).addLayer(cloudmade);
+                
             markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
             marker = new L.Marker(markerLocation);
             map.addLayer(marker);
-            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-            circleOptions = { color: '#f03', opacity: 0.7 };
-            circle = new L.Circle(circleLocation, this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__ProximityRadius']")[0], circleOptions);
-            map.addLayer(circle);
+            if (proxVal > 0) {
+                var cirProx = proxVal * 1609.344;
+                circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+                circleOptions = { color: '#f03', opacity: 0.7 };
+                circle = new L.Circle(circleLocation, cirProx, circleOptions);
+                map.addLayer(circle);
+            }
             this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Latitude']")[0].value = location.latLng.lat;
             this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Longitude']")[0].value = location.latLng.lng;
         } else {
