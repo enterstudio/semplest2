@@ -12,7 +12,7 @@
                 @Html.TextBoxFor(t => t.Address, new { @class = "street textboxAd" })
             </td>
             <td rowspan="5">
-                <div style="margin-left: 85px;width: 400px; height: 160px">
+                <div style="margin-left: 85px; width: 400px; height: 160px">
                     <div id="map" style="width: 400px; height: 160px">
                     </div>
                 </div>
@@ -78,20 +78,21 @@
     </table>
 </div>
 <script>
+    doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     $("#@Html.ClientIdFor(t => t.ProximityRadius)").change(function () {
-        doOptions();
+        doOptions('@Html.ClientIdFor(t => t.Address)','@Html.ClientIdFor(t => t.City)','@Html.ClientIdFor(t => t.StateCodeFK)','@Html.ClientIdFor(t => t.Zip)','@Html.ClientIdFor(t => t.ProximityRadius)');
     });
     $("#@Html.ClientIdFor(t => t.City)").change(function () {
-        doOptions();
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     });
     $("#@Html.ClientIdFor(t => t.StateCodeFK)").change(function () {
-        doOptions();
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     });
     $("#@Html.ClientIdFor(t => t.Zip)").change(function () {
-        doOptions();
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     });
     $("#@Html.ClientIdFor(t => t.Address)").change(function () {
-        doOptions();
+        doOptions('@Html.ClientIdFor(t => t.Address)', '@Html.ClientIdFor(t => t.City)', '@Html.ClientIdFor(t => t.StateCodeFK)', '@Html.ClientIdFor(t => t.Zip)', '@Html.ClientIdFor(t => t.ProximityRadius)');
     });
 </script>
 <style>
