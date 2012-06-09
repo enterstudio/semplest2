@@ -499,8 +499,7 @@ namespace Semplest.Core.Services
             {
                 var results = dbcontext.ExecuteStoreCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
 
-                
-                int userid=61;//((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
+                int userid = ((Credential)System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                 var pkas = dbcontext.Users.Where(key => key.UserPK == userid).First().Customer.ProductGroups.Where(key => key.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(key => key.PromotionName == model.ProductGroup.ProductPromotionName).First().PromotionKeywordAssociations;
                 foreach (PromotionKeywordAssociation pka in pkas)
                 {
