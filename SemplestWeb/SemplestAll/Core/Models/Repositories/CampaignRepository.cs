@@ -83,9 +83,10 @@ namespace Semplest.Core.Models.Repositories
            
             if (keywords != null && keywords.Length > 0)
             {
+                
                 model.AllKeywordProbabilityObjects.AddRange(keywords);
                 SemplestDataService.SaveKeywords(promoId, model);
-                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword }))
+                foreach (var kwm in model.AllKeywordProbabilityObjects.Where(key => key.isDeleted == false).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword, Id = key.id }))
                 {
                     model.AllKeywords.Add(kwm);
                 }
@@ -98,7 +99,7 @@ namespace Semplest.Core.Models.Repositories
             return model;
         }
 
-        public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
+         public List<string> SerializeAdEnginesSelectedToStringArray(CampaignSetupModel model)
         {
             // THIS IS ONLY FOR TESTING
             //if (model.ProductGroup.Google)

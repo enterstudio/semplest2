@@ -107,7 +107,13 @@ namespace Semplest.SharedResources.Services
                 //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
                 //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
                 var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
-   
+
+                foreach (var kpolis in listoflist)
+                {
+                    kpolis.keyword = kpolis.keyword.Trim();
+                }
+
+
                 return listoflist;
             }
             catch 
@@ -272,6 +278,7 @@ namespace Semplest.SharedResources.Services
 
     public class KeywordProbabilityObject
     {
+        public int id { get; set; }
         public string keyword { get; set; }
         public double semplestProbability { get; set; }
         public bool isTargetMSN { get; set; }
