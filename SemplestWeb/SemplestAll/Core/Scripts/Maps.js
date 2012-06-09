@@ -6,7 +6,7 @@ var outFormat = '';
 var index = '';
 
 
-function showOptionsURL(type, address, city, state, zip, proximity) {
+function showOptionsURL(type, address, city, state, zip) {
     advancedOptions = SAMPLE_ADVANCED_POST;
     var location = {};
     if (city == ' ' || city == '' || city == null) {
@@ -46,20 +46,20 @@ function showOptionsURL(type, address, city, state, zip, proximity) {
 };
 
 function getCustomZoom(miles) {
-    
-        if (miles > 0  && miles <= 1  ) return 13;
-        if (miles > 1  && miles <= 1.5) return 12;
-        if (miles > 1.5 && miles <= 3.0) return 11;
-        if (miles > 3.0  && miles <= 6.0  ) return 10;
-        if (miles > 6.0  && miles <= 14  ) return 9;
-        if (miles > 14  && miles <= 32  ) return 8;
-        if (miles > 32  && miles <= 50  ) return 7;
-        if (miles > 50  && miles <= 100  ) return 6;
-        if (miles > 100  && miles <= 200  ) return 5;
-        if (miles > 200  && miles <= 400  ) return 4;
-        if (miles > 400  && miles <= 800  ) return 3;
-        if (miles > 800  ) return 2;
-        
+
+    if (miles > 0 && miles <= 1) return 13;
+    if (miles > 1 && miles <= 1.5) return 12;
+    if (miles > 1.5 && miles <= 3.0) return 11;
+    if (miles > 3.0 && miles <= 6.0) return 10;
+    if (miles > 6.0 && miles <= 14) return 9;
+    if (miles > 14 && miles <= 32) return 8;
+    if (miles > 32 && miles <= 50) return 7;
+    if (miles > 50 && miles <= 100) return 6;
+    if (miles > 100 && miles <= 200) return 5;
+    if (miles > 200 && miles <= 400) return 4;
+    if (miles > 400 && miles <= 800) return 3;
+    if (miles > 800) return 2;
+
 
 }
 
@@ -78,12 +78,11 @@ function renderOptions(response) {
         var circle;
 
         if (index != 0) {
-
-            //$('#map_' + index.split('_')[1])[0]._leaflet = null;
+            var localIndex = index.toString().indexOf('AdModelProp') >= -1 ? index : index.split('_')[1];
             if (map == null) {
-                map = new L.Map('map_' + index.split('_')[1], { zoomControl: false, doubleClickZoom: false, attributionControl: false });
+                map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
             }
-            var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__ProximityRadius']")[0].value;
+            var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__ProximityRadius']")[0].value;
             if (proxVal == null || proxVal == "")
                 proxVal = 0;
             var zoomval = getCustomZoom(proxVal);
@@ -95,7 +94,7 @@ function renderOptions(response) {
                 map.setView(new L.LatLng(lat, lng), zoomval, true).addLayer(cloudmade);
             else
                 map.setView(new L.LatLng(lat, lng), 3, true).addLayer(cloudmade);
-                
+
             markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
             marker = new L.Marker(markerLocation);
             map.addLayer(marker);
@@ -106,8 +105,8 @@ function renderOptions(response) {
                 circle = new L.Circle(circleLocation, cirProx, circleOptions);
                 map.addLayer(circle);
             }
-            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Latitude']")[0].value = location.latLng.lat;
-            this.$.find("input[id='AdModelProp_Addresses_" + index.split('_')[1] + "__Longitude']")[0].value = location.latLng.lng;
+            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
+            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
         } else {
             //this is first map
             //$('#map')[0]._leaflet = null;
@@ -130,7 +129,7 @@ function renderOptions(response) {
                 circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 1609.344, circleOptions);
                 map.addLayer(circle);
             }
-        bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
+            bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
 
             //map.fitBounds(new L.LatLngBounds(new L.LatLng(location.latLng.lat, location.latLng.lng)));
             //map.fitBounds(circle.getBounds());
@@ -143,7 +142,6 @@ function renderOptions(response) {
 }
 
 function doOptions(address, city, state, zip, proximity) {
-    //alert('in doOptions');
     if (city != null) {
         index = city.toString().replace('Addresses', '');
         index = index.replace('City', '');
@@ -151,8 +149,29 @@ function doOptions(address, city, state, zip, proximity) {
         index = index.replace('__', '');
         $('map_' + index).html('Pending...');
     } else {
+        $('.address').each(function (nextIndex) {
+            var addressAttr = $(this).find('input').attr('id').substring(22, 23);
+            var mapdiv = $(this).find('div.map');
+            if (nextIndex > 0) {
+                mapdiv.attr("id", "map_" + addressAttr);
+                doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
+            } else {
+                mapdiv.attr("id", "map");
+            }
+        });
         $('#map').html('Pending...');
     }
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    showOptionsURL('buttonClick', address, city, state, zip, proximity);
+    var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+    script.src = newUrl;
+    document.body.appendChild(script);
+};
+
+function doOptions1(address, city, state, zip, proximity, index1) {
+    $('map_' + index1).html('Pending...');
+    index = index1;
     var script = document.createElement('script');
     script.type = 'text/javascript';
     showOptionsURL('buttonClick', address, city, state, zip, proximity);
