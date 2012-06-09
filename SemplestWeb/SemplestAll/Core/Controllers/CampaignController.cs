@@ -457,7 +457,14 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "KeyWords")]
         public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
         {
-            model = (CampaignSetupModel) Session["FullModel"];
+            int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                model.ProductGroup.ProductPromotionName);
+            SemplestDataService.SetKeywordsDeleted(model.KeywordIds, promoId);
+            CampaignSetupModel sessionModel = (CampaignSetupModel)Session["FullModel"];
+            sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
+            Session["FullModel"] = sessionModel;
+            model = sessionModel;
             return Json("Keywords");
         }
 

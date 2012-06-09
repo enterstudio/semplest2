@@ -641,5 +641,15 @@ namespace Semplest.Core.Services
                 return promo.IsCompleted && promo.IsLaunched;
             }
         }
+
+        public static void SetKeywordsDeleted(List<int> keywordIds, int promoId)
+        {
+            using (var dbcontext = new SemplestEntities())
+            {
+                foreach (int keywordId in keywordIds)
+                    dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).Where(key => key.PromotionFK==promoId).First().IsDeleted = true;
+                dbcontext.SaveChanges();
+            }
+        }
     }
 }
