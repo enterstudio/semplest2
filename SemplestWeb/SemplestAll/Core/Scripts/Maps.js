@@ -59,8 +59,7 @@ function getCustomZoom(miles) {
     if (miles > 200 && miles <= 400) return 4;
     if (miles > 400 && miles <= 800) return 3;
     if (miles > 800) return 2;
-
-
+    return 13;
 }
 
 function renderOptions(response) {
@@ -76,7 +75,6 @@ function renderOptions(response) {
         var circleLocation;
         var circleOptions;
         var circle;
-
         if (index != 0) {
             var localIndex = index.toString().indexOf('AdModelProp') >= -1 ? index : index.split('_')[1];
             if (map == null) {
@@ -137,6 +135,11 @@ function renderOptions(response) {
             $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
             $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
         }
+        if (list != null) {
+            var nextIndex = list[0];
+            doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
+            list.pop(list[0]);
+        }
         return;
     }
 }
@@ -149,16 +152,22 @@ function doOptions(address, city, state, zip, proximity) {
         index = index.replace('__', '');
         $('map_' + index).html('Pending...');
     } else {
-        $('.address').each(function (nextIndex) {
+        $('.address').each(function (index) {
             var addressAttr = $(this).find('input').attr('id').substring(22, 23);
             var mapdiv = $(this).find('div.map');
-            if (nextIndex > 0) {
+            if (index > 0) {
                 mapdiv.attr("id", "map_" + addressAttr);
-                doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
+                list.push(index);
+
             } else {
                 mapdiv.attr("id", "map");
             }
         });
+        var nextIndex = list[0];
+        alert(nextIndex);
+        doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
+        list.pop(list[0]);
+
         $('#map').html('Pending...');
     }
     var script = document.createElement('script');
@@ -168,13 +177,13 @@ function doOptions(address, city, state, zip, proximity) {
     script.src = newUrl;
     document.body.appendChild(script);
 };
-
+var list = new Array();
 function doOptions1(address, city, state, zip, proximity, index1) {
     $('map_' + index1).html('Pending...');
     index = index1;
     var script = document.createElement('script');
     script.type = 'text/javascript';
-    showOptionsURL('buttonClick', address, city, state, zip, proximity);
+    showOptionsURL('buttonClick', address, city, state, zip, proximity, index1);
     var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
     script.src = newUrl;
     document.body.appendChild(script);
