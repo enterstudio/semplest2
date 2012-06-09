@@ -3,7 +3,7 @@ package semplest.server.protocol.adengine;
 public class SiteLink
 {
 	private Integer SiteLinkPK;
-	private Integer PromotionAdsFK;
+	private Integer PromotionFK;
 	private String LinkText;
 	private String LinkURL;
 	
@@ -15,14 +15,7 @@ public class SiteLink
 	{
 		SiteLinkPK = siteLinkPK;
 	}
-	public Integer getPromotionAdsFK()
-	{
-		return PromotionAdsFK;
-	}
-	public void setPromotionAdsFK(Integer promotionAdsFK)
-	{
-		PromotionAdsFK = promotionAdsFK;
-	}
+	
 	public String getLinkText()
 	{
 		return LinkText;
@@ -46,7 +39,7 @@ public class SiteLink
 		int result = 1;
 		result = prime * result + ((LinkText == null) ? 0 : LinkText.hashCode());
 		result = prime * result + ((LinkURL == null) ? 0 : LinkURL.hashCode());
-		result = prime * result + ((PromotionAdsFK == null) ? 0 : PromotionAdsFK.hashCode());
+		result = prime * result + ((PromotionFK == null) ? 0 : PromotionFK.hashCode());
 		result = prime * result + ((SiteLinkPK == null) ? 0 : SiteLinkPK.hashCode());
 		return result;
 	}
@@ -74,12 +67,12 @@ public class SiteLink
 		}
 		else if (!LinkURL.equals(other.LinkURL))
 			return false;
-		if (PromotionAdsFK == null)
+		if (PromotionFK == null)
 		{
-			if (other.PromotionAdsFK != null)
+			if (other.PromotionFK != null)
 				return false;
 		}
-		else if (!PromotionAdsFK.equals(other.PromotionAdsFK))
+		else if (!PromotionFK.equals(other.PromotionFK))
 			return false;
 		if (SiteLinkPK == null)
 		{
@@ -93,7 +86,15 @@ public class SiteLink
 	@Override
 	public String toString()
 	{
-		return "SiteLink [SiteLinkPK=" + SiteLinkPK + ", PromotionAdsFK=" + PromotionAdsFK + ", LinkText=" + LinkText + ", LinkURL=" + LinkURL + "]";
+		return "SiteLink [SiteLinkPK=" + SiteLinkPK + ", PromotionAdsFK=" + PromotionFK + ", LinkText=" + LinkText + ", LinkURL=" + LinkURL + "]";
+	}
+	public Integer getPromotionFK()
+	{
+		return PromotionFK;
+	}
+	public void setPromotionFK(Integer promotionFK)
+	{
+		PromotionFK = promotionFK;
 	}
 	
 }

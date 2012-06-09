@@ -15,14 +15,14 @@ import semplest.server.service.springjdbc.BaseDB;
 
 public class GetSiteLinksForPromotionSP extends StoredProcedure
 {
-	private static final String SPROC_NAME = "GetSiteLinksForPromotionAd";
+	private static final String SPROC_NAME = "GetSiteLinksForPromotion";
 	private static final RowMapper<SiteLink> siteLinkMapper = new BeanPropertyRowMapper<SiteLink>(SiteLink.class);
 	private Map<String, Object> results;
 	
 	public GetSiteLinksForPromotionSP()
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
-		declareParameter(new SqlParameter("PromotionAdsPK", Types.INTEGER));
+		declareParameter(new SqlParameter("PromotionID", Types.INTEGER));
 		declareParameter(new SqlReturnResultSet("sitelinks", siteLinkMapper));
 		compile();
 	}

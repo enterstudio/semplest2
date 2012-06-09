@@ -84,8 +84,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
 			 * : false); keywordList.size();
 			 */
+			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(60);
+			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
+			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			for (GeoTargetObject geoObj : geoObjList)
+			{
+				Thread.sleep(1000);
+				google.setGeoTarget("2387614989", 88453391L, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
+						geoObj.getZip());
+				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
+				
+			}
 			
-			
+			/*
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
 			String scheduleName = "ReceptionHalls_OnGoingBidding";
@@ -96,7 +108,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
-			
+			*/
 			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			//adEng.initializeService(null);
 			//Thread.sleep(1000);
@@ -116,31 +128,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
-		
-		/*
-		 * GetKeywordForAdEngineSP getKeywords = new
-		 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
-		 * List<KeywordProbabilityObject> keywordList =
-		 * getKeywords.execute(4,
-		 * (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ?
-		 * true : false ,
-		 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
-		 * : false); keywordList.size();
-		 */
-		ArrayList<String> adEngList = new ArrayList<String>();
-		adEngList.add("Google");
-		SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
-		adEng.initializeService(null);
-		//Thread.sleep(1000);
-		// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
-		// Double(25.0), 30);
-		// String u = adEng.getURL("www.xyz.com");
-		// Tovah Photography 2 47 Photography 58 38 Event and portrait
-		// photos
-		//adEng.AddPromotionToAdEngine(12, 76, 62, adEngList);
-		adEng.AddPromotionToAdEngine(74, 171, 183, adEngList);
 
 	}
 
@@ -1132,7 +1119,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
 				final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
 				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
-				getSiteLinksForPromotionSP.execute(promotionAdID);
+				getSiteLinksForPromotionSP.execute(promotionID);
 				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
 				final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
 				logger.info("Found the following SiteLinks in Semplest DB:\n" + siteLinksEasilyReadableString);
