@@ -20,7 +20,7 @@ CREATE PROCEDURE dbo.UpdateRemainingBudgetInCycle
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @Cost bigint, @paid bigint
+	DECLARE @ErrMsg VARCHAR(250), @Cost money, @paid money
 
 	--validate data
 	IF NOT EXISTS (select * from Promotion p where p.PromotionPK =@PromotionPK)
@@ -49,7 +49,7 @@ BEGIN TRY
 	 --update Promotion set RemainingBudgetInCycle = (Isnull(@paid,0) - isNull(@Cost,0))/1000000, EditedDate = CURRENT_TIMESTAMP
 	 --from Promotion p where p.PromotionPK = @PromotionPK
 	 --THIS NEEDS TO BE FIXED AFTER CREDIT CARD
-	 update Promotion set RemainingBudgetInCycle = RemainingBudgetInCycle - ((Isnull(@paid,0) - isNull(@Cost,0))/1000000), EditedDate = CURRENT_TIMESTAMP
+	 update Promotion set RemainingBudgetInCycle = RemainingBudgetInCycle - (isNull(@Cost,0)/1000000), EditedDate = CURRENT_TIMESTAMP
 	 from Promotion p where p.PromotionPK = @PromotionPK
 	
 	 update AdvertisingEngineReportData set CostAppliedToPromotionDate = CURRENT_TIMESTAMP
