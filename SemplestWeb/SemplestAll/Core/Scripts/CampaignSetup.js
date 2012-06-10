@@ -84,11 +84,13 @@ $(document).ready(function () {
         // access the selected item via e.item (jQuery object)
         var dataItem = this.dataItem(e.item.index());
         if (dataItem.text == 'Specific Period') {
+            $('#lblbudgetdisplay').html('/ Promotion');
             $("#ProductGroup_EndDate").removeClass("enddate");
             $("#ProductGroup_EndDate").kendoDatePicker({
                 change: endChange
             }).data("kendoDatePicker");
         } else {
+            $('#lblbudgetdisplay').html('/ Month');
             $("#ProductGroup_EndDate").addClass("enddate");
             disposeDatePicker();
         }
