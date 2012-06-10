@@ -34,6 +34,7 @@ import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.util.SemplestUtils;
 
@@ -201,10 +202,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				object.wait();
 			}
 			
+			
+
+			Long accountID = 2387614989L;
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
-
-			Boolean r = g.setAccountBudget("2387614989", "8490069727", null);
-
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_MONTH, -5);
+			Long api = g.getSpentAPIUnitsPerAccountID(accountID,cal.getTime(),new
+					java.util.Date());
+			
+			System.out.println("API COST=" + api);
 			/*
 			final String accountID = "54100";
 			final Long adGroupID = 3066031127L;
@@ -242,7 +249,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			//int categoryId = 11476; // Wedding Flowers
 			//String accountID = null;
 			//String [] exclude_keywords = null;
-			
+			/*
 			ArrayList<KeywordToolStats> keyWordIdeaList; 
 			try{ 
 				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, 1000); 
@@ -252,6 +259,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			} catch (Exception e){ 
 				e.printStackTrace(); 
 			}
+			*/
 
 			
 			/*
@@ -448,6 +456,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(unitsSpent);
 	}
 
+	/*
+	 *UNIT_COUNT_FOR_CLIENTS : Returns the number of API units recorded for a subset of clients over the given date range. The given dates are inclusive; 
+	 *to get the unit count for a single day, supply it as both the start and end date. Specify the apiUsageType, dateRange and clientEmails parameters.
+	 */
 	@Override
 	public Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception
 	{
@@ -475,9 +487,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// selector.setClientEmails(new String[]{email});
 			selector.setDateRange(new DateRange(start, end));
 			ApiUsageInfo info = infoService.get(selector);
-			// System.out.println("API Usage Record :"
-			// +info.getApiUsageRecords(0).getCost());
-			return info.getApiUsageRecords(0).getCost();
+			Long res = null;
+			if (info != null && info.getApiUsageRecords() != null && info.getApiUsageRecords().length>0)
+			{
+				res = info.getApiUsageRecords(0).getCost();
+			}
+			return res;
 
 		}
 		catch (ServiceException se)

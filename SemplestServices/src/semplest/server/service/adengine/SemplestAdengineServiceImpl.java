@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +38,7 @@ import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.server.service.springjdbc.storedproc.GetSiteLinksForPromotionSP;
+import semplest.server.service.springjdbc.storedproc.UpdateAdEngineAPIChargeSP;
 import semplest.server.service.springjdbc.storedproc.UpdateRemainingBudgetInCycleSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
@@ -47,7 +47,6 @@ import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 import semplest.util.SemplestUtils;
 
-import com.google.api.adwords.lib.AdWordsService;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
@@ -568,7 +567,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				catch (Exception e)
 				{
-					logger.error("Unable to download Report for account " + promoObj.getAdvertisingEngineAccountPK().toString());
+					logger.error("Unable to download Report for account " + promoObj.getAdvertisingEngineAccountPK().toString()  + ":" + e.getMessage());
+				}
+				//update the API charges
+				try
+				{
+					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(promoObj.getAdvertisingEngineAccountPK(), promoObj.getPromotionStartDate(), new Date());
+					if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
+					{
+						UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
+						Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), ProtocolEnum.AdEngine.Google.name(), cumulativeUnitsUsedFromStart);
+						logger.info("Added additional API Cost of " + newCost + " to Google Account " + promoObj.getAdvertisingEngineAccountPK());
+					}
+				}
+				catch (Exception e)
+				{
+					logger.error("Error updating API charges for Google Account " + promoObj.getAdvertisingEngineAccountPK().toString() + ":" + e.getMessage());
 				}
 			}
 			else if (adEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name()))
