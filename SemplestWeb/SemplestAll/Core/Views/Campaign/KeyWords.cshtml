@@ -7,10 +7,12 @@
     }
     .options1
     {
-        border-color:#fff;
-        border-width:0.3em;
-        border-style:inset;
-        height: 345px; width: 700px; overflow-x: auto
+        border-color: #fff;
+        border-width: 0.3em;
+        border-style: inset;
+        height: 345px;
+        width: 700px;
+        overflow-x: auto;
     }
 </style>
 <div class="configuration">
@@ -23,11 +25,14 @@
         ones. In the following weeks, this tool will take care of cleaning up your keywords,
         keeping only the most effective ones.
     </p>
-    <div style="display: inline-block">
-        <label style="color:#919297">
+    <div style="display: inline-block; margin-top:10px;margin-bottom: 10px;">
+        <label style="color: #919297">
             Delete</label>
-        <label style="color:#919297; margin-left:7px;">
+        <label style="color: #919297; margin-left: 7px;">
             Keywords</label>
+        <label style="color: #919297; margin-left: 150px;">
+            Search</label>
+            <input type="text" class="k-textbox"/>
     </div>
     <br />
     <div class="options" id="keywords">
@@ -47,15 +52,17 @@
     <div class="options">
         <br />
         <hr />
-        <button class="k-button" id="backKey" type="button">
-            <span class="k-back k-icon"></span>back</button>
-        <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="KeyWords">
-            <span class="k-update k-icon"></span>Save And Continue</button>
+        <div style="text-align: center;">
+            <button class="k-button" id="backKey" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getBillingLaunch" type="submit" name="Command" value="KeyWords">
+                <span class="k-update k-icon"></span>Save And Continue</button>
+        </div>
         @*<input class="k-button" id="getBillingLaunch" type="submit" name="Command" value="GetBillingLaunch"/>*@
     </div>
-@*    <div style="border:3px solid #fff">
+    @*    <div style="border:3px solid #fff">
     </div>
-*@ 
+*@
 </div>
 <script type="text/javascript">
     $('#backKey').click(function () {

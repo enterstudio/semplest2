@@ -13,7 +13,7 @@
 }
 .k-widget, .k-input, .k-textbox, .k-group, .k-content, .k-header, .k-editable-area, .k-separator, .k-colorpicker .k-arrow-down, .k-autocomplete, .k-dropdown-wrap, .k-toolbar, .k-group-footer td, .k-grid-footer, .k-footer-template td, .k-state-default, .k-state-default .k-select, .k-state-disabled, .k-grid-header-wrap, .k-grid-header, .k-grid td, .k-grid-footer-wrap, .k-pager-wrap, .k-grouping-header, .k-grouping-header .k-group-indicator, .k-dropdown-wrap, .k-autocomplete, .k-panelbar > .k-item > .k-link, .k-panel > .k-item > .k-link, .k-panelbar .k-panel, .k-panelbar .k-content, .k-calendar th, .k-slider-track, .k-splitbar, .k-dropzone-active, .k-upload-files, .k-tiles, .k-toolbar, .k-dropdown-wrap, .k-tooltip, .k-progress
 {
-    border-color: grey;
+    border-color: transparent;
 }
 .k-group, .k-toolbar, .k-grouping-header, .k-pager-wrap, .k-group-footer td, .k-grid-footer, .k-footer-template td, .k-widget .k-status, .k-grouping-row td, td.k-group-cell, .k-calendar th, .k-dropzone-hovered, .k-upload-files
 {
@@ -21,7 +21,7 @@
 }
 .k-list-container
 {
-    border-color: grey;
+    border-color: transparent;
     background-color: #fff;
 }
 .k-content, .k-editable-area, .k-panelbar > li.k-item, .k-panel > li.k-item, .k-tiles
@@ -34,12 +34,12 @@
 }
 .k-widget .k-dropdown-wrap, .k-widget .k-picker-wrap, .k-widget .k-numeric-wrap, .k-autocomplete.k-header, .k-autocomplete.k-state-focused, div.k-dropdown-wrap.k-state-active, .k-dropdown-wrap.k-state-focused, .k-dropdown-wrap.k-state-focused:hover, div.k-picker-wrap.k-state-active, .k-picker-wrap.k-state-focused, .k-picker-wrap.k-state-focused:hover, span.k-numeric-wrap.k-state-active, .k-numeric-wrap.k-state-focused, .k-numeric-wrap.k-state-focused:hover
 {
-    border-color: grey;
+    border-color: transparent;
     background-color: #fff;
 }
 .k-autocomplete .k-input, .k-dropdown-wrap .k-input, .k-autocomplete.k-state-focused .k-input, .k-dropdown-wrap.k-state-focused .k-input, .k-picker-wrap.k-state-focused .k-input, .k-numeric-wrap.k-state-focused .k-input
 {
-    border-color: #dadada;
+    border-color: transparent;
 }
 .k-input, .k-textbox
 {

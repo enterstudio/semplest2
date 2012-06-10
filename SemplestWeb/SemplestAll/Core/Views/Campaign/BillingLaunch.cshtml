@@ -84,24 +84,24 @@
                 Total Credit Card Charge</label>
         </li>
         <li>
-            <input type="text" class="k-input" id="budget" value="$@budget.ToString("n2")" readonly="readonly" style="width:60px; text-align:right;"/>
-            <input type="text" class="k-input" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="width: 70px; margin-left: 105px;text-align:right;"/>
-            <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly"  style=" width: 75px; margin-left: 110px;text-align:right;"/>
-            <input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="width:85px; margin-left: 120px;text-align:right;"/>
+            <input type="text" class="k-inputlabel" id="budget" value="$@budget.ToString("n2")" readonly="readonly" style="width:60px; text-align:right;"/>
+            <input type="text" class="k-inputlabel" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="width: 70px; margin-left: 105px;text-align:right;"/>
+            <input type="text" class="k-inputlabel" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly"  style=" width: 75px; margin-left: 110px;text-align:right;"/>
+            <input type="text" class="k-inputlabel" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="width:85px; margin-left: 120px;text-align:right;"/>
         </li>
         <li>
-            <input type="checkbox" /><label style="margin-left: 5px;">I have read the
+            <input type="checkbox" /><label style="margin-left: 5px; color:grey">I have read the
             </label>
-            @Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home") and agree that as long as my advertising are live,
+            @Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home") <label style="margin-left: 5px; color:grey">and agree that as long as my advertising are live,</label>
             <br />
-            <label style="margin-left: 18px;">
+            <label style="margin-left: 18px;color:grey">
                 I will be billed the amount above on a monthly basis</label>
         </li>
         <li>
-            <div style="text-align: center">
-                <button class="k-button" id="editadproduct" type="button">
+            <div style="text-align: center;">
+                <button class="k-button" id="editadproduct" type="button" style="margin-top: 4px;">
                     <span class="k-back k-icon"></span>EDIT</button>
-                <button class="k-button" id="getLaunchAdProduct" type="submit" name="Command" value="LaunchAdProduct">
+                <button class="k-button" id="getLaunchAdProduct" style="font-size: 14px;" type="submit" name="Command" value="LaunchAdProduct">
                     <span class="k-update k-icon"></span>LAUNCH ADVERTISING</button>
             </div>
         </li>

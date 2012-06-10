@@ -42,12 +42,19 @@
             </div>
         </li>
         <li>
-            <button class="k-button" id="negativeKeyWords" type="button">
-                <span class="k-add k-icon"></span>Negative Keywords</button>
-            <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  tabindex="-1" >
-                ?</a>
-                <label>identify keywords to avoid in association with your business</label>
-            @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")</li>
+            <div style="margin-left: 77px;">
+                @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")
+            
+                <button class="k-button" id="negativeKeyWords" type="button" style="margin-left: 55px">
+                    <span class="k-add k-icon"></span>Negative Keywords</button>
+                <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  tabindex="-1" >
+                    ? </a>
+                <button type="button" class="additionalLinks k-button" style="margin-left: 10px">
+                    <span class="k-add k-icon"></span>Add additional click through options</button>
+                <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
+                    ?</a>
+            </div>
+        </li>
         <li class="options">
             <hr />
             <div style="text-align: center;">
