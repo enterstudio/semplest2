@@ -75,66 +75,37 @@ function renderOptions(response) {
         var circleLocation;
         var circleOptions;
         var circle;
-        if (index.toString().indexOf('_') == -1 && index != 0) {
-            var localIndex = index.toString().indexOf('AdModelProp') > -1 ? index.split('_')[1] : index;
-            if (map == null) {
-                map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
-            }
-            var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__ProximityRadius']")[0].value;
-            if (proxVal == null || proxVal == "")
-                proxVal = 0;
-            var zoomval = getCustomZoom(proxVal);
-            if (zoomval == null)
-                zoomval = 13;
-            var lng = location.latLng.lng;
-            var lat = location.latLng.lat;
-            if (lng > -98)
-                map.setView(new L.LatLng(lat, lng), zoomval, true).addLayer(cloudmade);
-            else
-                map.setView(new L.LatLng(lat, lng), 3, true).addLayer(cloudmade);
-
-            markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-            marker = new L.Marker(markerLocation);
-            map.addLayer(marker);
-            if (proxVal > 0) {
-                var cirProx = proxVal * 1609.344;
-                circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-                circleOptions = { color: '#f03', opacity: 0.7 };
-                circle = new L.Circle(circleLocation, cirProx, circleOptions);
-                map.addLayer(circle);
-            }
-            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
-            this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
+        var localIndex = index.toString().indexOf('AdModelProp') > -1 ? index.split('_')[1] : index;
+        if (map == null && localIndex >0) {
+            map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
         } else {
-            //this is first map
-            //$('#map')[0]._leaflet = null;
-            if (map == null) {
-                map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
-            }
-            var proxValElse = $('#AdModelProp_Addresses_0__ProximityRadius').val();
-            if (proxValElse == null || proxValElse == "")
-                proxValElse = 0;
-            var zoomvalElse = getCustomZoom(proxValElse);
-            if (zoomvalElse == null)
-                zoomvalElse = 3;
-            map.setView(new L.LatLng(location.latLng.lat, location.latLng.lng), zoomvalElse, true).addLayer(cloudmade);
-            markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-            marker = new L.Marker(markerLocation);
-            map.addLayer(marker);
-            if (proxValElse > 0) {
-                circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
-                circleOptions = { color: '#f03', opacity: 0.7 };
-                circle = new L.Circle(circleLocation, $('#AdModelProp_Addresses_0__ProximityRadius').val() * 1609.344, circleOptions);
-                map.addLayer(circle);
-            }
-            bounds = new L.LatLngBounds(map.getBounds()._northEast, map.getBounds()._southWest);
-
-            //map.fitBounds(new L.LatLngBounds(new L.LatLng(location.latLng.lat, location.latLng.lng)));
-            //map.fitBounds(circle.getBounds());
-
-            $('#AdModelProp_Addresses_0__Latitude').val(location.latLng.lat);
-            $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
+            map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
         }
+        var proxVal = this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__ProximityRadius']")[0].value;
+        if (proxVal == null || proxVal == "")
+            proxVal = 0;
+        var zoomval = getCustomZoom(proxVal);
+        if (zoomval == null)
+            zoomval = 13;
+        var lng = location.latLng.lng;
+        var lat = location.latLng.lat;
+        if (lng > -98)
+            map.setView(new L.LatLng(lat, lng), zoomval, true).addLayer(cloudmade);
+        else
+            map.setView(new L.LatLng(lat, lng), 3, true).addLayer(cloudmade);
+
+        markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+        marker = new L.Marker(markerLocation);
+        map.addLayer(marker);
+        if (proxVal > 0) {
+            var cirProx = proxVal * 1609.344;
+            circleLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
+            circleOptions = { color: '#f03', opacity: 0.7 };
+            circle = new L.Circle(circleLocation, cirProx, circleOptions);
+            map.addLayer(circle);
+        }
+        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Latitude']")[0].value = location.latLng.lat;
+        this.$.find("input[id='AdModelProp_Addresses_" + localIndex + "__Longitude']")[0].value = location.latLng.lng;
         if (list != null) {
             var nextIndex = list.pop();
             if (nextIndex != null)
