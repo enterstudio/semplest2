@@ -10,7 +10,7 @@
     if (!isAdditionalLinksAdded)
         tabStrip.append({
             text: "Additional Links",
-            contentUrl: $('#AdditionalSiteLinksUrl').val() + $(this).parent().parent().find('input')[1].value
+            contentUrl: $('#AdditionalSiteLinksUrl').val()
         });
     tab = tabStrip.tabGroup.children('li:contains("Additional Links")');
     tabStrip.select(tab);

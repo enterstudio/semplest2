@@ -28,20 +28,20 @@ namespace Semplest.Core.Models
             KeywordIds = new List<int>();
             using (var entities = new SemplestEntities())
                 Configuration = entities.Configurations.FirstOrDefault();
-
+            SiteLinks = new List<SiteLink>();
         }
+
         public ProductGroupModel ProductGroup { get; set; }
         public AdModel AdModelProp { get; set; }
         public BillingLaunchModel BillingLaunch { get; set; }
 
-
+        public List<SiteLink> SiteLinks { get; set; }
 
         #region Nested type: CategoriesModel
 
         public List<int> CategoryIds { get; set; }
         public List<CategoriesModel> SelectedCategories { get; set; }
         public List<CategoriesModel> AllCategories { get; set; }
-
 
         public class CategoriesModel
         {

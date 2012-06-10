@@ -92,6 +92,7 @@ namespace Semplest.Core.Controllers
             ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
             ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
 
+            Session["CampaignSetupModel"] = campaignSetupModel;
             return View(campaignSetupModel);
         }
 
@@ -245,7 +246,7 @@ namespace Semplest.Core.Controllers
                     WriteLog(msg, model);
 
                     model.BillingLaunch.KeywordsCount = model.AllKeywordProbabilityObjects.Count(x => x.isDeleted == false);
-                    Session.Add("FullModel", model);
+                    Session.Add("CampaignSetupModel", model);
 
                     return Json("BillingLaunch");
                 }
@@ -283,7 +284,7 @@ namespace Semplest.Core.Controllers
         {
             if (ModelState.IsValid)
             {
-                model = (CampaignSetupModel) Session["FullModel"];
+                model = (CampaignSetupModel) Session["CampaignSetupModel"];
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
@@ -326,63 +327,64 @@ namespace Semplest.Core.Controllers
 
         #endregion
 
-        public ActionResult AdditionalLinks(string model)
+        //public ActionResult AdditionalLinks(string model)
+        //{
+        //    //if (Session["AdTitle"] == null)
+        //    //    Session.Add("AdTitle", model);
+        //    //else
+        //    //    Session["AdTitle"] = model;
+        //    //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
+        //    //PromotionAd promotionAd;
+        //    //if (addsStoreModel != null)
+        //    //{
+        //    //    promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
+        //    //    if (promotionAd != null)
+        //    //        promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
+        //    //}
+        //    //else
+        //    //{
+        //    //    promotionAd = new PromotionAd {AdTitle = model};
+        //    //}
+        //    //return PartialView(promotionAd);
+        //    return PartialView();
+        //    //return PartialView(model);
+        //}
+
+        public ActionResult AdditionalLinks()
         {
             //if (Session["AdTitle"] == null)
             //    Session.Add("AdTitle", model);
             //else
             //    Session["AdTitle"] = model;
-            //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-            //PromotionAd promotionAd;
-            //if (addsStoreModel != null)
-            //{
-            //    promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model));
-            //    if (promotionAd != null)
-            //        promotionAd.SiteLinks = promotionAd.SiteLinks.Where(t => !t.Delete).ToList();
-            //}
-            //else
-            //{
-            //    promotionAd = new PromotionAd {AdTitle = model};
-            //}
-            //return PartialView(promotionAd);
-            return PartialView();
-            //return PartialView(model);
-        }
-
-        public ActionResult AdditionalLinks(CampaignSetupModel model)
-        {
-            if (Session["AdTitle"] == null)
-                Session.Add("AdTitle", model);
-            else
-                Session["AdTitle"] = model;
-            var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
-            return PartialView();
+            //var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
+            var campaignModel = Session["CampaignSetupModel"];
+            return PartialView(campaignModel);
             //return PartialView(model);
         }
 
 
-        [HttpPost]
-        [ActionName("CampaignSetup")]
-        [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
-        public ActionResult SetAdditionalLinks(PromotionAd model)
-        {
-            //model.AdTitle = (string) Session["AdTitle"];
-            //if (Session["AddsStoreModel"] == null)
-            //{
-            //    Session.Add("AddsStoreModel", new AddsStoreModel {Ads = new List<PromotionAd> {model}});
-            //}
-            //else
-            //{
-            //    var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-            //    var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
-            //    if (promotionAd != null)
-            //        promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
-            //    else
-            //        addsStoreModel.Ads.Add(model);
-            //    Session["AddsStoreModel"] = addsStoreModel;
-            //}
-            return Json("AdditionalLinks");
-        }
+        //[HttpPost]
+        //[ActionName("CampaignSetup")]
+        //[AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
+        //public ActionResult SetAdditionalLinks(PromotionAd model)
+        //{
+        //    //model.AdTitle = (string) Session["AdTitle"];
+        //    //if (Session["AddsStoreModel"] == null)
+        //    //{
+        //    //    Session.Add("AddsStoreModel", new AddsStoreModel {Ads = new List<PromotionAd> {model}});
+        //    //}
+        //    //else
+        //    //{
+        //    //    var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
+        //    //    var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
+        //    //    if (promotionAd != null)
+        //    //        promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
+        //    //    else
+        //    //        addsStoreModel.Ads.Add(model);
+        //    //    Session["AddsStoreModel"] = addsStoreModel;
+        //    //}
+        //    return Json("AdditionalLinks");
+        //}
 
         [HttpPost]
         [ActionName("CampaignSetup")]
@@ -446,7 +448,7 @@ namespace Semplest.Core.Controllers
 
         public ActionResult KeyWords(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel) Session["FullModel"];
+            model = (CampaignSetupModel) Session["CampaignSetupModel"];
             return PartialView(model);
         }
 
@@ -461,16 +463,16 @@ namespace Semplest.Core.Controllers
             var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                 model.ProductGroup.ProductPromotionName);
             SemplestDataService.SetKeywordsDeleted(model.KeywordIds, promoId);
-            CampaignSetupModel sessionModel = (CampaignSetupModel)Session["FullModel"];
+            CampaignSetupModel sessionModel = (CampaignSetupModel)Session["CampaignSetupModel"];
             sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
-            Session["FullModel"] = sessionModel;
+            Session["CampaignSetupModel"] = sessionModel;
             model = sessionModel;
             return Json("Keywords");
         }
 
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel) Session["FullModel"];
+            model = (CampaignSetupModel) Session["CampaignSetupModel"];
             return PartialView(model);
         }
 
