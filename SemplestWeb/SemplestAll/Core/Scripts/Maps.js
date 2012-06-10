@@ -75,8 +75,8 @@ function renderOptions(response) {
         var circleLocation;
         var circleOptions;
         var circle;
-        if (index != 0) {
-            var localIndex = index.toString().indexOf('AdModelProp') >= -1 ? index : index.split('_')[1];
+        if (index.toString().indexOf('_') == -1 && index != 0) {
+            var localIndex = index.toString().indexOf('AdModelProp') > -1 ? index.split('_')[1] : index;
             if (map == null) {
                 map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
             }
@@ -136,9 +136,9 @@ function renderOptions(response) {
             $('#AdModelProp_Addresses_0__Longitude').val(location.latLng.lng);
         }
         if (list != null) {
-            var nextIndex = list[0];
-            doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
-            list.pop(list[0]);
+            var nextIndex = list.pop();
+            if (nextIndex != null)
+                doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
         }
         return;
     }
@@ -151,6 +151,12 @@ function doOptions(address, city, state, zip, proximity) {
         index = index.replace('_', '');
         index = index.replace('__', '');
         $('map_' + index).html('Pending...');
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        showOptionsURL('buttonClick', address, city, state, zip, proximity);
+        var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+        script.src = newUrl;
+        document.body.appendChild(script);
     } else {
         $('.address').each(function (index) {
             var addressAttr = $(this).find('input').attr('id').substring(22, 23);
@@ -161,30 +167,43 @@ function doOptions(address, city, state, zip, proximity) {
 
             } else {
                 mapdiv.attr("id", "map");
+                list.push(index);
             }
         });
-        var nextIndex = list[0];
-        alert(nextIndex);
+        var nextIndex = list.pop();
         doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
-        list.pop(list[0]);
-
         $('#map').html('Pending...');
     }
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    showOptionsURL('buttonClick', address, city, state, zip, proximity);
-    var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
-    script.src = newUrl;
-    document.body.appendChild(script);
+
 };
 var list = new Array();
 function doOptions1(address, city, state, zip, proximity, index1) {
-    $('map_' + index1).html('Pending...');
-    index = index1;
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    showOptionsURL('buttonClick', address, city, state, zip, proximity, index1);
-    var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
-    script.src = newUrl;
-    document.body.appendChild(script);
+    if (index1 != null) {
+        $('map_' + index1).html('Pending...');
+        index = index1;
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        showOptionsURL('buttonClick', address, city, state, zip, proximity, index1);
+        var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+        script.src = newUrl;
+        document.body.appendChild(script);
+    }
+    else {
+        address = address.replace('undefined', 0);
+        city = city.replace('undefined', 0);
+        state = state.replace('undefined', 0);
+        zip = zip.replace('undefined', 0);
+        proximity = proximity.replace('undefined', 0);
+        index = city.toString().replace('Addresses', '');
+        index = index.replace('City', '');
+        index = index.replace('_', '');
+        index = index.replace('__', '');
+        $('map_' + index).html('Pending...');
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        showOptionsURL('buttonClick', address, city, state, zip, proximity);
+        var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+        script.src = newUrl;
+        document.body.appendChild(script);
+    }
 };
