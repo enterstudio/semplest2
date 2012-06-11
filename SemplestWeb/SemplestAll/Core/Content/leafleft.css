@@ -269,60 +269,6 @@ a.more:hover
     text-decoration: underline;
 }
 
-#social
-{
-    position: absolute;
-    right: 0;
-    top: 64px;
-}
-
-#social h2
-{
-    background: -224px -51px url(sprite.misc.png);
-    height: 24px;
-    margin: 0;
-    text-align: center;
-    text-indent: -4444px;
-    width: 109px;
-}
-
-#social li
-{
-    float: left;
-    margin-left: 10px;
-}
-
-#social .icon
-{
-    background: url(sprite.misc.png);
-    display: block;
-    height: 32px;
-    overflow: hidden;
-    text-align: center;
-    text-indent: -4444px;
-    width: 32px;
-}
-
-#social .tw
-{
-    background-position: 0 -76px;
-}
-
-#social .fb
-{
-    background-position: -33px -76px;
-}
-
-#social .gplus
-{
-    background-position: -66px -76px;
-}
-
-#social .rss
-{
-    background-position: -99px -76px;
-}
-
 p#copy
 {
     font-size: .9em;
@@ -381,205 +327,6 @@ p#copy
     margin: 0;
 }
 
-#mainWrap .km-featured
-{
-    clip-path: url("iconmasks.svg#featured");
-}
-
-#mainWrap .km-toprated, #mainWrap .km-favorites
-{
-    clip-path: url("iconmasks.svg#toprated");
-}
-
-#mainWrap .km-mostviewed
-{
-    clip-path: url("iconmasks.svg#mostviewed");
-}
-
-#mainWrap .km-bookmarks
-{
-    clip-path: url("iconmasks.svg#bookmarks");
-}
-
-#mainWrap .km-contacts
-{
-    clip-path: url("iconmasks.svg#contacts");
-}
-
-#mainWrap .km-download, #mainWrap .km-downloads
-{
-    clip-path: url("iconmasks.svg#download");
-}
-
-#mainWrap .km-more
-{
-    clip-path: url("iconmasks.svg#more");
-}
-
-#mainWrap .km-android #mainWrap .km-more
-{
-    clip-path: url("iconmasks.svg#androidmore");
-}
-
-#mainWrap .km-meego #mainWrap .km-more
-{
-    clip-path: url("iconmasks.svg#meegomore");
-}
-
-#mainWrap .km-mostrecent
-{
-    clip-path: url("iconmasks.svg#mostrecent");
-}
-
-#mainWrap .km-recents
-{
-    clip-path: url("iconmasks.svg#recents");
-}
-
-#mainWrap .km-history
-{
-    clip-path: url("iconmasks.svg#history");
-}
-
-#mainWrap .km-add
-{
-    clip-path: url("iconmasks.svg#add");
-}
-
-#mainWrap .km-details
-{
-    clip-path: url("iconmasks.svg#details");
-}
-
-#mainWrap .km-info, #mainWrap .km-about
-{
-    clip-path: url("iconmasks.svg#info");
-}
-
-#mainWrap .km-action
-{
-    clip-path: url("iconmasks.svg#action");
-}
-
-#mainWrap .km-camera
-{
-    clip-path: url("iconmasks.svg#camera");
-}
-
-#mainWrap .km-edit, #mainWrap .km-compose
-{
-    clip-path: url("iconmasks.svg#edit");
-}
-
-#mainWrap .km-search
-{
-    clip-path: url("iconmasks.svg#search");
-}
-
-#mainWrap .km-trash, #mainWrap .km-delete
-{
-    clip-path: url("iconmasks.svg#trash");
-}
-
-#mainWrap .km-organize
-{
-    clip-path: url("iconmasks.svg#organize");
-}
-
-#mainWrap .km-reply
-{
-    clip-path: url("iconmasks.svg#reply");
-}
-
-#mainWrap .km-stop
-{
-    clip-path: url("iconmasks.svg#stop");
-}
-
-#mainWrap .km-sounds, #mainWrap .km-volume
-{
-    clip-path: url("iconmasks.svg#sounds");
-}
-
-#mainWrap .km-refresh
-{
-    clip-path: url("iconmasks.svg#refresh");
-}
-
-#mainWrap .km-play
-{
-    clip-path: url("iconmasks.svg#play");
-}
-
-#mainWrap .km-fastforward
-{
-    clip-path: url("iconmasks.svg#fastforward");
-}
-
-#mainWrap .km-pause
-{
-    clip-path: url("iconmasks.svg#pause");
-}
-
-#mainWrap .km-rewind
-{
-    clip-path: url("iconmasks.svg#rewind");
-}
-
-#mainWrap .km-settings
-{
-    clip-path: url("iconmasks.svg#settings");
-}
-
-#mainWrap .km-globe
-{
-    clip-path: url("iconmasks.svg#globe");
-}
-
-#mainWrap .km-home
-{
-    clip-path: url("iconmasks.svg#home");
-}
-
-#mainWrap .km-cart
-{
-    clip-path: url("iconmasks.svg#cart");
-}
-
-#mainWrap .km-battery
-{
-    clip-path: url("iconmasks.svg#battery");
-}
-
-#mainWrap .km-wifi
-{
-    clip-path: url("iconmasks.svg#wifi");
-}
-
-#mainWrap .km-share
-{
-    clip-path: url("iconmasks.svg#share");
-}
-
-#mainWrap .km-ios .km-loading, #mainWrap .km-ios .km-listview-refresh .km-icon
-{
-    clip-path: url("iconmasks.svg#iosrefresh");
-}
-
-#mainWrap .km-meego .km-loading, #mainWrap .km-meego .km-listview-refresh .km-icon
-{
-    clip-path: url("iconmasks.svg#berryrefresh");
-}
-
-#mainWrap .km-blackberry .km-loading, #mainWrap .km-blackberry .km-listview-refresh .km-icon
-{
-    clip-path: url("iconmasks.svg#berryrefresh");
-}
-
-#mainWrap .km-listview-pull .km-icon
-{
-    clip-path: url("iconmasks.svg#pullrefresh");
-}
 
 #mainWrap
 {
@@ -594,13 +341,6 @@ p#copy
 
 .configuration
 {
-    -moz-border-radius: 8px;
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(0, 0, 0, 0.07);
-    -webkit-border-radius: 8px;
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.45), inset 0 0 30px rgba(0, 0, 0, 0.07);
-    background-image: none;
-    border: 1px solid inherit;
-    border-radius: 8px;
     margin: 0 0 0 15px;
     min-width: 170px;
     padding: 10px;
@@ -1040,4 +780,13 @@ hr
     line-height: 1.66em;
     padding: 2px 0;
     text-indent: .3em;
+}
+
+.map {
+    width: 400px;height: 160px;
+    display: flexbox;
+}
+.mapcontainer {
+    margin-left: 85px; width: 400px;height: 160px;
+    display: block;
 }

@@ -61,7 +61,13 @@ function getCustomZoom(miles) {
     if (miles > 800) return 2;
     return 13;
 }
-
+var map;
+var markerLocation;
+var marker;
+var circleLocation;
+var circleOptions;
+var circle;
+var mapArray = new Array();
 function renderOptions(response) {
     var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/997/256/{z}/{x}/{y}.png',
             cloudmadeAttribution = '',
@@ -69,14 +75,10 @@ function renderOptions(response) {
     if (outFormat == "json") {
         var locations = response.results[0].locations;
         var location = locations[0];
-        var map;
-        var markerLocation;
-        var marker;
-        var circleLocation;
-        var circleOptions;
-        var circle;
+       
+       
         var localIndex = index.toString().indexOf('AdModelProp') > -1 ? index.split('_')[1] : index;
-        if (map == null && localIndex >0) {
+        if (localIndex >0) {
             map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
         } else {
             map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
@@ -90,9 +92,9 @@ function renderOptions(response) {
         var lng = location.latLng.lng;
         var lat = location.latLng.lat;
         if (lng > -98)
-            map.setView(new L.LatLng(lat, lng), zoomval, true).addLayer(cloudmade);
+            map.setView(new L.LatLng(lat, lng), zoomval).addLayer(cloudmade);
         else
-            map.setView(new L.LatLng(lat, lng), 3, true).addLayer(cloudmade);
+            map.setView(new L.LatLng(lat, lng), 3).addLayer(cloudmade);
 
         markerLocation = new L.LatLng(location.latLng.lat, location.latLng.lng);
         marker = new L.Marker(markerLocation);
@@ -111,10 +113,10 @@ function renderOptions(response) {
             if (nextIndex != null)
                 doOptions1('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius', nextIndex);
         }
+        mapArray.push(map);
         return;
     }
 }
-
 function doOptions(address, city, state, zip, proximity) {
     if (city != null) {
         index = city.toString().replace('Addresses', '');
@@ -149,13 +151,15 @@ function doOptions(address, city, state, zip, proximity) {
 };
 var list = new Array();
 function doOptions1(address, city, state, zip, proximity, index1) {
+    var script;
+    var newUrl;
     if (index1 != null) {
         $('map_' + index1).html('Pending...');
         index = index1;
-        var script = document.createElement('script');
+        script = document.createElement('script');
         script.type = 'text/javascript';
         showOptionsURL('buttonClick', address, city, state, zip, proximity, index1);
-        var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+        newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
         script.src = newUrl;
         document.body.appendChild(script);
     }
@@ -170,11 +174,11 @@ function doOptions1(address, city, state, zip, proximity, index1) {
         index = index.replace('_', '');
         index = index.replace('__', '');
         $('map_' + index).html('Pending...');
-        var script = document.createElement('script');
+        script = document.createElement('script');
         script.type = 'text/javascript';
         showOptionsURL('buttonClick', address, city, state, zip, proximity);
-        var newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
+        newUrl = advancedOptions.replace('YOUR_KEY_HERE', APP_KEY);
         script.src = newUrl;
         document.body.appendChild(script);
     }
-};
+}

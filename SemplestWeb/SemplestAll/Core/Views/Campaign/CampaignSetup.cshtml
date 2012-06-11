@@ -66,6 +66,9 @@
                 $("input[type='button']#btnThree").removeClass('k-state-btnerror');
                 break;
             case "Create Ads":
+                for (var map in mapArray) {
+                    L.Util.requestAnimFrame(mapArray[map].invalidateSize, mapArray[map], !1, mapArray[map]._container);
+                }
                 $("input[type='button']#btnOne").removeClass('k-state-btnerror');
                 $("input[type='button']#btnTwo").addClass('k-state-btnerror');
                 $("input[type='button']#btnThree").removeClass('k-state-btnerror');

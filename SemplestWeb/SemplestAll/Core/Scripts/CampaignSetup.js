@@ -44,6 +44,7 @@ $(document).ready(function () {
                 tab = tabStrip.select();
                 tabStrip.enable(tab.next(), true);
                 tabStrip.select(1);
+                
             } else {
                 status.text("Oops! There is invalid data in the form.").addClass("invalid");
             }

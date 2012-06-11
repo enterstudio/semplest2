@@ -16,6 +16,10 @@ div.ui-cluetip {
   float: right;
   position: relative;
 }
+.cluetip-title .cluetip-close a
+{
+    color: #fff;
+}
 .cluetip-close img {
   border: 0;
 }
