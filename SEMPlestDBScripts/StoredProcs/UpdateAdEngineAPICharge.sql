@@ -13,7 +13,8 @@ CREATE PROCEDURE dbo.UpdateAdEngineAPICharge
 (
 	@AdvertisingEngineAccountID            bigint,
 	@AdvertisingEngine nvarchar(50),
-	@CumulativeAPIUnits		bigint
+	@CumulativeAPIUnits		bigint,
+	@cost money output
 	
 )
 AS
@@ -33,6 +34,7 @@ BEGIN TRY
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
 	set @CurrentCumulativeAPIUnits = 0
+	set @cost = 0
 	--check to see if paid anything to date
 	if exists (select * from AdvertisingEngineAPICharge api where api.AdvertisingEngineAccountFK = @AdvertisingEngineAccountID)
 	begin
@@ -60,7 +62,7 @@ BEGIN TRY
 		insert into AdvertisingEngineAPICharge(AdvertisingEngineAccountFK, APIUnits,APICost,CreatedDate)
 			values (@AdvertisingEngineAccountID, (@CurrentCumulativeAPIUnits - @CumulativeAPIUnits),@charge,CURRENT_TIMESTAMP)
 	End
-
+	set @cost = @charge
 	
 			 
 	
