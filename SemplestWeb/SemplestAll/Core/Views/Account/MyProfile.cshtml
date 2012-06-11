@@ -151,6 +151,13 @@ My Profile
                 <input class="k-textbox extraspace" data-val="true" data-val-required="The Password field is required." id="UserPassword" name="UserPassword" type="password" value=@Model.UserPassword  />
                 @Html.ValidationMessageFor(model => model.UserPassword)
             </li>
+
+             <li>
+                @Html.LabelFor(model => model.internalID, new { @class = "k-label" })
+                @Html.TextBoxFor(model => model.internalID , new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.internalID)
+            </li>
+
             <li>
                 @Html.LabelFor(model => model.SecurityQuestion, new { @class = "k-label" })
                 @Html.TextBoxFor(model => model.SecurityQuestion, new { @class = "k-textbox question" })
