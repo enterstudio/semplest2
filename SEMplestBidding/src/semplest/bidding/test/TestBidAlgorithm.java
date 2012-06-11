@@ -13,9 +13,15 @@ public class TestBidAlgorithm {
 		ArrayList<String> lines;
 		int i, j;
 		
+		boolean isLinux = false;
+		
 		// keywords
 		String [] keywords;
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/keywords.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/keywords.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/keywords.txt");
+		}
 		keywords = new String[lines.size()];
 		
 		i=0;
@@ -26,7 +32,11 @@ public class TestBidAlgorithm {
 		}
 		
 		double [] scores = new double[keywords.length];
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/QualityScores.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/QualityScores.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/QualityScores.txt");
+		}
 		j=0;
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
@@ -36,7 +46,11 @@ public class TestBidAlgorithm {
 		
 		// bids
 		double [] bid = null;
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Bid.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Bid.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/Bid.txt");
+		}
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
 			String [] words = line.split("\\s+");
@@ -54,7 +68,11 @@ public class TestBidAlgorithm {
 		double [][] Clicks = new double[keywords.length][bid.length];
 		double [][] DCost = new double[keywords.length][bid.length];
 		
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/CPC.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/CPC.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/CPC.txt");
+		}
 		j=0;
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
@@ -67,7 +85,11 @@ public class TestBidAlgorithm {
 			j++;
 		}
 
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Pos.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Pos.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/Pos.txt");
+		}
 		j=0;
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
@@ -80,7 +102,11 @@ public class TestBidAlgorithm {
 			j++;
 		}
 
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Clicks.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/Clicks.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/Clicks.txt");
+		}
 		j=0;
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
@@ -93,7 +119,11 @@ public class TestBidAlgorithm {
 			j++;
 		}
 
-		lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/DCost.txt");
+		if(isLinux) {
+			lines = ioUtils.readFile("/semplest/data/SemplestQuantTest/tmpSubhojit/DCost.txt");
+		} else {
+			lines = ioUtils.readFile("//fs3/Semplest/data/SemplestQuantTest/tmpSubhojit/DCost.txt");
+		}
 		j=0;
 		for (String line : lines){
 			line=line.replaceAll("\n", "");
@@ -112,7 +142,7 @@ public class TestBidAlgorithm {
 //			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
 			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], null, null, DCost[i], null));
 		}
-		bidOptimizer.setDailyBudget(320.0);
+		bidOptimizer.setDailyBudget(20.0);
 		HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 		
 		
