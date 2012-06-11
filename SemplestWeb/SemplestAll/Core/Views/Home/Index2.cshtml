@@ -41,9 +41,9 @@
                                 <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
                                 </td>
                             }
-                            <td>@Html.ActionLink("Resume", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
                             </td>
-                            <td>@Html.ActionLink("Stop", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                            <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
                                 </td>
                         </tr>    
                             }
@@ -69,8 +69,8 @@
                             <td style="width: 150px;">
                                 @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
                             </td>
-                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-                            </td>
+                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })</td>
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})</td>
                         </tr>
                             }
                         }
@@ -104,6 +104,16 @@
                 <input type="hidden" id="promotionIdR" name="promotionIdR" />
                 </form>
             </div>
+            <div style="display: none;">
+                <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
+                <div class="questionE">
+                </div>
+                <input type="button" id="btnOkE" value="OK" class="k-button" />
+                <input type="button" id="btnCancelE" value="Cancel" class="k-button" />
+                <input type="hidden" id="promotionIdE" name="promotionIdE" />
+                </form>
+            </div>
+
             <script type="text/javascript">
                 $('#loading').hide();
                 $(document).ready(function () {
@@ -151,7 +161,7 @@
                         $.blockUI(({ message: $('#hiddenResume') }));
                         event.preventDefault();
                     });
-
+                  
                     $("#btnOkR").click(function (event) {
                         $("#hiddenResume").submit();
                     });
@@ -159,6 +169,22 @@
                     $("#btnCancelR").click(function (event) {
                         $.unblockUI();
                     });
+
+                    $(".endad").click(function (event) {
+                        $('#promotionIdE').val(event.target.id);
+                        $('.questionE').html("Are you sure you want to End this Live Advertising?");
+                        $.blockUI(({ message: $('#hiddenEnd') }));
+                        event.preventDefault();
+                    });
+
+                    $("#btnOkE").click(function (event) {
+                        $("#hiddenEnd").submit();
+                    });
+
+                    $("#btnCancelE").click(function (event) {
+                        $.unblockUI();
+                    });
+
                     $('.preview').mouseover(function (e) {
                         $('#loading').show();
                         $('#preview').hide();

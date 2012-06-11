@@ -259,6 +259,15 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
+        [HttpPost]
+        public ActionResult EndPromotion(int promotionIdE)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Promotions.Where(x => x.PromotionPK == promotionIdE).First().IsCompleted = true;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index2");
+        }
+
 
         private void CreateDummyModel(SearchKeywordsModel model)
         {
