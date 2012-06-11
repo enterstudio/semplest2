@@ -202,7 +202,9 @@ namespace Semplest.Core.Controllers
                    Phone = p.Phone1,
                    Email = u.Email,
                    UserPK = u.UserPK,
-                   SelectedStateID  = sc.StateAbbrPK
+                   SelectedStateID  = sc.StateAbbrPK,
+                   internalID= c.InternalCustomerId 
+
                };
 
             ChildModel cm = new ChildModel();
@@ -284,17 +286,16 @@ namespace Semplest.Core.Controllers
             user.MiddleInitial = m.MiddleInitial;
             user.Email = m.Email;
             user.EditedDate = DateTime.Now;
-            
             //UpdateModel(user);
-
 
             var customer = dbcontext.Customers.ToList().Find(p => p.CustomerPK == m.AccountNumber);
             var customeraddressassociation = dbcontext.CustomerAddressAssociations.ToList().Find(p => p.CustomerFK == customer.CustomerPK);
             var address = dbcontext.Addresses.ToList().Find(p => p.AddressPK == customeraddressassociation.AddressFK);
 
-
             customer.Name = m.Customer;
-            
+            customer.InternalCustomerId = m.internalID;
+            UpdateModel(customer);
+
             address.Address1 = m.Address1;
             address.Address2 = m.Address2;
             address.City = m.City;
@@ -302,8 +303,6 @@ namespace Semplest.Core.Controllers
             address.EditedDate = DateTime.Now;
             address.StateAbbrFK = m.SelectedStateID;
             UpdateModel(address);
-
-
 
             var customerphoneassociation = dbcontext.CustomerPhoneAssociations.ToList().Find(p => p.CustomerFK == m.AccountNumber);
             var phone = dbcontext.Phones.ToList().Find(p => p.PhonePK == customerphoneassociation.PhoneFK);
@@ -317,21 +316,8 @@ namespace Semplest.Core.Controllers
             credentials.SecurityQuestion = m.SecurityQuestion;
             credentials.SecurityAnswer = m.SecurityAnswer;
 
-
             UpdateModel(credentials);
-  
-
-            
-  
-
-
-  
             dbcontext.SaveChanges();
-
-
-
-
-
 
             return RedirectToAction("Index2","Home");
             //return View("index");
