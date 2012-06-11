@@ -187,10 +187,17 @@ namespace Semplest.Admin.Models
         public string CustomerNote { get; set; }
         public bool isActive { get; set; }
 
-
         public string RoleName { get; set; }
         public int RolesFK { get; set; }
 
+        [DisplayName("Percent Media")]
+        public decimal  PercentMedia { get; set; }
+
+        [DisplayName("Service Fee")]
+        public decimal ServiceFee { get; set; }
+
+        [DisplayName("Customer Internal ID")]
+        public string internalID {get;set;}
         
         //[Remote("doesUserNameExist", "CustomerAccount", HttpMethod = "POST", ErrorMessage = "User name already exists. Please enter a different user name.")]
         [Required]
