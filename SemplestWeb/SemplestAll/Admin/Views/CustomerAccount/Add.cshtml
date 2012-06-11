@@ -48,12 +48,24 @@ Add Customer Account:
     @*<label>
         Super Parent Name:<input type="text" /></label> <br />*@
 
+    <div class="editor-label">
+            <label>
+                Role</label>
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(r => r.SelectedRoleID, Model.Roles)
+        </div>
+    
     <label>
-        Parent Name:  @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents)
+        Parent Name:  @Html.DropDownListFor(r => r.SelectedParentID, Model.Parents)
         
         </label> <br />
     <label>
         Company Name:<br />
+
+
+
+
 
         <div class="editor-field">
             @Html.TextBoxFor(model => model.CustomerAccount.Customer, new { @class = "k-textbox" })
@@ -182,7 +194,7 @@ Add Customer Account:
         <label>Status:</label>
         </div>
       <div class="editor-field">Active
-     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "True", new {  @checked = "checked" })
+     @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "True", new { @checked = "checked" })
      Inactive
      @Html.RadioButtonFor(model => model.CustomerAccount.isActive, "False")
      </div>
@@ -209,6 +221,16 @@ Add Customer Account:
         @Html.ValidationMessageFor(model => model.CustomerAccount.UserPassword)
     </div>
    
+    
+    
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.internalID)
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.internalID, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.internalID)
+    </div>
+
      
     <br />
     <br />
@@ -229,7 +251,26 @@ Add Customer Account:
     @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes)
    
     </div>
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.PercentMedia)
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.PercentMedia, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.PercentMedia)
+    </div>
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.ServiceFee)
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.ServiceFee, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.ServiceFee)
+    </div>
+
     
+    
+        
     @*<h3>
         Enter Your Creditcard Information:</h3>
     <label>
