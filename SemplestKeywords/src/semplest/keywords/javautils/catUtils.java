@@ -40,12 +40,24 @@ public class catUtils {
   public String decode( String scat ){ return ismap.get( scat ); }
   public ArrayList<String> code( ArrayList<String> dcat){
     ArrayList<String> ret = new ArrayList<String>( dcat.size() );
-    for( String c: dcat) ret.add( code( c ));
+    for( String c: dcat)
+      if ( code(c ) != null )
+        ret.add( code( c ) );
+      else {
+        ret.add( c );
+        logger.info("catMap code returned null for: " + c );
+    }
     return ret;
   }
   public ArrayList<String> decode( ArrayList<String> scat){
     ArrayList<String> ret = new ArrayList<String>( scat.size() );
-    for( String c: scat) ret.add( decode( c ));
+    for( String c: scat) 
+      if ( decode( c ) != null )
+        ret.add( decode( c ));
+      else {
+        ret.add( c );
+        logger.info("catMap decode returned null for: " + c );
+      }
     return ret;
   }
 
