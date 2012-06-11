@@ -17,6 +17,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddScheduleJobSP;
 import semplest.services.client.api.SemplestSchedulerServiceClient;
+import semplest.util.SemplestUtils;
 
 /*
  * Object contains all services that can be scheduled to run by scheduler
@@ -132,7 +133,7 @@ public class CreateSchedulerAndTask
 		return taskObj;
 	}
 	
-	public static SemplestSchedulerTaskObject createChangePromotionStartDateTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createChangePromotionStartDateTask(Integer customerID, Integer promotionID, Date newStartDate, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.ChangePromotionStartDate.getClientServiceNameValue());
@@ -140,6 +141,8 @@ public class CreateSchedulerAndTask
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID",Integer.toString(customerID));
 		jsonHash.put("promotionID",Integer.toString(promotionID));
+		final String newStartDateString = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(newStartDate);
+		jsonHash.put("newStartDate", newStartDateString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -193,14 +196,15 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 		
-	public static SemplestSchedulerTaskObject createPauseProductGroupTask(Integer customerID, Integer productGroupID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createPauseProductGroupTask(Integer customerID, List<Integer> productGroupIds, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.RefreshSiteLinksForAd.getClientServiceNameValue());
 		task.setMethodName(scheduleNamePostfix);
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID", Integer.toString(customerID));
-		jsonHash.put("productGroupID", Integer.toString(productGroupID));
+		final String productGroupIdsString = gson.toJson(productGroupIds);		
+		jsonHash.put("productGroupIds", productGroupIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -208,7 +212,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}	
 		
-	public static SemplestSchedulerTaskObject createRefreshSiteLinksForAdTask(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createRefreshSiteLinksForAdTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.RefreshSiteLinksForAd.getClientServiceNameValue());
@@ -216,7 +220,6 @@ public class CreateSchedulerAndTask
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -224,15 +227,16 @@ public class CreateSchedulerAndTask
 		return task;
 	}	
 	
-	public static SemplestSchedulerTaskObject createDeleteKeywordTask(Integer customerID, Integer promotionID, String keyword, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createDeleteKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteKeyword.getClientServiceNameValue());
 		task.setMethodName(scheduleNamePostfix);
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID", Integer.toString(customerID));
-		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("keyword", keyword);
+		jsonHash.put("promotionID", Integer.toString(promotionID));		
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);		
+		jsonHash.put("keywordIds", keywordIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -247,7 +251,7 @@ public class CreateSchedulerAndTask
 		task.setMethodName(scheduleNamePostfix);
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID",Integer.toString(customerID));
-		jsonHash.put("promotionID",Integer.toString(promotionID));
+		jsonHash.put("promotionID",Integer.toString(promotionID));		
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -255,33 +259,52 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createAddAdTask(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createUpdateAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
-		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddAd.getClientServiceNameValue());
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.UpdateAds.getClientServiceNameValue());
 		task.setMethodName(scheduleNamePostfix);
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("customerID",Integer.toString(customerID));
-		jsonHash.put("promotionID",Integer.toString(promotionID));
-		jsonHash.put("promotionAdID",Integer.toString(promotionAdID));
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);		
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
-		jsonHash.put("adEngines",adEnginesStr);
+		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		task.setParameters(json);
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createDeleteAdEngineAdTask(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines, String deleteAdPostFix)
+	public static SemplestSchedulerTaskObject createAddAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
-		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteAdEngineAd.getClientServiceNameValue());
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddAds.getClientServiceNameValue());
+		task.setMethodName(scheduleNamePostfix);
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);		
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		task.setParameters(json);
+		return task;
+	}
+	
+	public static SemplestSchedulerTaskObject createDeleteAdEngineAdTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String deleteAdPostFix)
+	{
+		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteAd.getClientServiceNameValue());
 		task.setMethodName(deleteAdPostFix);
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("customerID",Integer.toString(customerID));
-		jsonHash.put("promotionID",Integer.toString(promotionID));
-		jsonHash.put("promotionAdID",Integer.toString(promotionAdID));
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
-		jsonHash.put("adEngines",adEnginesStr);
+		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		task.setParameters(json);
 		return task;

@@ -10,6 +10,7 @@ import java.util.List;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
@@ -35,92 +36,92 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		BasicConfigurator.configure();
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);		
+/*
+		// scheduleAddAds
+		final Integer customerID_ScheduleAddAds = 12;
+		final Integer promotionID_ScheduleAddAds = 62;
+		final List<Integer> promotionAdIds_ScheduleAddAds = Arrays.asList(218);
+		final List<String> adEngines_ScheduleAddAds = Arrays.asList(AdEngine.Google.name());
+		client.scheduleAddAds(customerID_ScheduleAddAds, promotionID_ScheduleAddAds, promotionAdIds_ScheduleAddAds, adEngines_ScheduleAddAds);
 
-		// scheduleAddAd
-		final Integer customerID_ScheduleAddAd = 12;
-		final Integer promotionID_ScheduleAddAd = 62;
-		final Integer promotionAdID_ScheduleAddAd = 218;
-		final List<String> adEngines_ScheduleAddAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.scheduleAddAd(customerID_ScheduleAddAd, promotionID_ScheduleAddAd, promotionAdID_ScheduleAddAd, adEngines_ScheduleAddAd);
-			
-		// AddAd
-		final Integer promotionID_AddAd = 62;
-		final Integer promotionAdID_AddAd = 218;
-		final List<String> adEngines_AddAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.AddAd(promotionID_AddAd, promotionAdID_AddAd, adEngines_AddAd);
-
-		// scheduleDeleteAd
-		final Integer customerID_scheduleDeleteAd = 12;
-		final Integer promotionID_scheduleDeleteAd = 62;
-		final Integer promotionAdID_scheduleDeleteAd = 218;
-		final List<String> adEngines_scheduleDeleteAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.scheduleDeleteAd(customerID_scheduleDeleteAd, promotionID_scheduleDeleteAd, promotionAdID_scheduleDeleteAd, adEngines_scheduleDeleteAd);
-
-		// DeleteAd
-		final Integer promotionID_DeleteAd = 62;
-		final Integer promotionAdID_DeleteAd = 218;
-		final List<String> adEngines_DeleteAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.DeleteAd(promotionID_DeleteAd, promotionAdID_DeleteAd, adEngines_DeleteAd);
+		// AddAds
+		final Integer promotionID_AddAds = 62;
+		final List<Integer> promotionAdIs_AddAds = Arrays.asList(218);
+		final List<String> adEngines_AddAds = Arrays.asList(AdEngine.Google.name());
+		client.AddAds(promotionID_AddAds, promotionAdIs_AddAds, adEngines_AddAds);
 		
-		// scheduleUpdateAd
-		final Integer customerID_scheduleUpdateAd = 12;
-		final Integer promotionID_scheduleUpdateAd = 62;
-		final Integer promotionAdID_scheduleUpdateAd = 218;
-		final List<String> adEngines_scheduleUpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.scheduleUpdateAd(customerID_scheduleUpdateAd, promotionID_scheduleUpdateAd, promotionAdID_scheduleUpdateAd, adEngines_scheduleUpdateAd);
+		// scheduleDeleteAds
+		final Integer customerID_scheduleDeleteAds = 12;
+		final Integer promotionID_scheduleDeleteAds = 62;
+		final List<Integer> promotionAdIds_scheduleDeleteAds = Arrays.asList(218);
+		final List<String> adEngines_scheduleDeleteAds = Arrays.asList(AdEngine.Google.name());
+		client.scheduleDeleteAds(customerID_scheduleDeleteAds, promotionID_scheduleDeleteAds, promotionAdIds_scheduleDeleteAds, adEngines_scheduleDeleteAds);
 
-		// UpdateAd
-		final Integer promotionID_UpdateAd = 62;
-		final Integer promotionAdID_UpdateAd = 218;
-		final List<String> adEngines_UpdateAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.UpdateAd(promotionID_UpdateAd, promotionAdID_UpdateAd, adEngines_UpdateAd);
+		// DeleteAds
+		final Integer promotionID_DeleteAds = 62;
+		final List<Integer> promotionAdIds_DeleteAds = Arrays.asList(218);
+		final List<String> adEngines_DeleteAds = Arrays.asList(AdEngine.Google.name());
+		client.DeleteAds(promotionID_DeleteAds, promotionAdIds_DeleteAds, adEngines_DeleteAds);
+	
+		// scheduleUpdateAds
+		final Integer customerID_scheduleUpdateAds = 12;
+		final Integer promotionID_scheduleUpdateAds = 62;
+		final List<Integer> promotionAdIds_scheduleUpdateAds = Arrays.asList(218);
+		final List<String> adEngines_scheduleUpdateAds = Arrays.asList(AdEngine.Google.name());
+		client.scheduleUpdateAds(customerID_scheduleUpdateAds, promotionID_scheduleUpdateAds, promotionAdIds_scheduleUpdateAds, adEngines_scheduleUpdateAds);
+		
+		// UpdateAds
+		final Integer promotionID_UpdateAds = 62;
+		final List<Integer> promotionAdIds_UpdateAds = Arrays.asList(218);
+		final List<String> adEngines_UpdateAds = Arrays.asList(AdEngine.Google.name());
+		client.UpdateAds(promotionID_UpdateAds, promotionAdIds_UpdateAds, adEngines_UpdateAds);
 
 		// scheduleUpdateGeoTargeting
 		final Integer customerID_scheduleUpdateGeoTargeting = 12;
 		final Integer promotionID_scheduleUpdateGeoTargeting = 62;
-		final List<String> adEngines_scheduleUpdateGeoTargeting = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_scheduleUpdateGeoTargeting = Arrays.asList(AdEngine.Google.name());
 		client.scheduleUpdateGeoTargeting(customerID_scheduleUpdateGeoTargeting, promotionID_scheduleUpdateGeoTargeting, adEngines_scheduleUpdateGeoTargeting);
 
 		// UpdateGeoTargeting
 		final Integer promotionID_UpdateGeoTargeting = 62;
-		final List<String> adEngines_UpdateGeoTargeting = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_UpdateGeoTargeting = Arrays.asList(AdEngine.Google.name());
 		client.UpdateGeoTargeting(promotionID_UpdateGeoTargeting, adEngines_UpdateGeoTargeting);
 		
 		// scheduleChangePromotionStartDate
 		final Integer customerID_scheduleChangePromotionStartDate = 12;
 		final Integer promotionID_scheduleChangePromotionStartDate = 62;
 		final java.util.Date newStartDate_scheduleChangePromotionStartDate = new java.util.Date();
-		final List<String> adEngines_scheduleChangePromotionStartDate = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_scheduleChangePromotionStartDate = Arrays.asList(AdEngine.Google.name());
 		client.scheduleChangePromotionStartDate(customerID_scheduleChangePromotionStartDate, promotionID_scheduleChangePromotionStartDate, newStartDate_scheduleChangePromotionStartDate, adEngines_scheduleChangePromotionStartDate);
 
 		// ChangePromotionStartDate
 		final Integer promotionID_ChangePromotionStartDate = 62;
 		final java.util.Date newStartDate_ChangePromotionStartDate = new java.util.Date();
-		final List<String> adEngines_ChangePromotionStartDate = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_ChangePromotionStartDate = Arrays.asList(AdEngine.Google.name());
 		client.ChangePromotionStartDate(promotionID_ChangePromotionStartDate, newStartDate_ChangePromotionStartDate, adEngines_ChangePromotionStartDate);
 
 		// scheduleUpdateBudget
 		final Integer customerID_scheduleUpdateBudget = 12;
 		final Integer promotionID_scheduleUpdateBudget = 62;
-		final Double changeInBudget_scheduleUpdateBudget = -5.25;
-		final List<String> adEngines_scheduleUpdateBudget = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final Double changeInBudget_scheduleUpdateBudget = -16.75;
+		final List<String> adEngines_scheduleUpdateBudget = Arrays.asList(AdEngine.Google.name());
 		client.scheduleUpdateBudget(customerID_scheduleUpdateBudget, promotionID_scheduleUpdateBudget, changeInBudget_scheduleUpdateBudget, adEngines_scheduleUpdateBudget);
 
 		// UpdateBudget
 		final Integer promotionID_UpdateBudget = 62;
 		final Double changeInBudget_UpdateBudget = -5.25;
-		final List<String> adEngines_UpdateBudget = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_UpdateBudget = Arrays.asList(AdEngine.Google.name());
 		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
 
 		// schedulePausePromotion
 		final Integer customerID_schedulePausePromotion = 12;
 		final Integer promotionID_schedulePausePromotion = 62;
-		final List<String> adEngines_schedulePausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_schedulePausePromotion = Arrays.asList(AdEngine.Google.name());
 		client.schedulePausePromotion(customerID_schedulePausePromotion, promotionID_schedulePausePromotion, adEngines_schedulePausePromotion);
-
+		
 		// schedulePausePromotion
 		final Integer promotionID_PausePromotion = 62;
-		final List<String> adEngines_PausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_PausePromotion = Arrays.asList(AdEngine.Google.name());
 		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
 	
 		// scheduleAddPromotionToAdEngine
@@ -134,65 +135,66 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer customerID_AddPromotionToAdEngine = 12;
 		final Integer productGroupID_AddPromotionToAdEngine = 76;
 		final Integer promotionID_AddPromotionToAdEngine = 62;
-		final ArrayList<String> adEngines_AddPromotionToAdEngine = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.Google.name()}));
+		final ArrayList<String> adEngines_AddPromotionToAdEngine = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine, productGroupID_AddPromotionToAdEngine, promotionID_AddPromotionToAdEngine, adEngines_AddPromotionToAdEngine);
 
-		// scheduleDeleteKeyword
-		final Integer customerID_scheduleDeleteKeyword = 12;
-		final Integer promotionID_scheduleDeleteKeyword = 62;
-		final String keyword_scheduleDeleteKeyword = "SomeKeyword123";
-		final List<String> adEngines_scheduleDeleteKeyword = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.scheduleDeleteKeyword(customerID_scheduleDeleteKeyword, promotionID_scheduleDeleteKeyword, keyword_scheduleDeleteKeyword, adEngines_scheduleDeleteKeyword);
+		// scheduleDeleteKeywords
+		final Integer customerID_scheduleDeleteKeywords = 12;
+		final Integer promotionID_scheduleDeleteKeywords = 62;
+		final List<Integer> keywordIds_scheduleDeleteKeywords = Arrays.asList(12095);
+		final List<String> adEngines_scheduleDeleteKeywords = Arrays.asList(AdEngine.Google.name());
+		client.scheduleDeleteKeywords(customerID_scheduleDeleteKeywords,  promotionID_scheduleDeleteKeywords, keywordIds_scheduleDeleteKeywords, adEngines_scheduleDeleteKeywords);
 
-		// DeleteKeyword
-		final Integer promotionID_DeleteKeyword = 62;
-		final String keyword_DeleteKeyword = "SomeKeyword123";
-		final List<String> adEngines_DeleteKeyword = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.DeleteKeyword(promotionID_DeleteKeyword, keyword_DeleteKeyword, adEngines_DeleteKeyword);
+		// DeleteKeywords
+		final Integer promotionID_DeleteKeywords = 62;
+		final List<Integer> keywordIds_DeleteKeywords = Arrays.asList(37);
+		final List<String> adEngines_DeleteKeywords = Arrays.asList(AdEngine.Google.name());
+		client.DeleteKeywords(promotionID_DeleteKeywords, keywordIds_DeleteKeywords, adEngines_DeleteKeywords);
 
-		// scheduleRefreshSiteLinksForAd
-		final Integer customerID_scheduleRefreshSiteLinksForAd = 12;
-		final Integer promotionID_scheduleRefreshSiteLinksForAd = 62;
-		final Integer promotionAdID_scheduleRefreshSiteLinksForAd = 218;
-		final List<String> adEngines_scheduleRefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.scheduleRefreshSiteLinksForAd(customerID_scheduleRefreshSiteLinksForAd, promotionID_scheduleRefreshSiteLinksForAd, promotionAdID_scheduleRefreshSiteLinksForAd, adEngines_scheduleRefreshSiteLinksForAd);
-
-		// RefreshSiteLinksForAd
-		final Integer promotionID_RefreshSiteLinksForAd = 62;
-		final Integer promotionAdID_RefreshSiteLinksForAd = 218;
-		final List<String> adEngines_RefreshSiteLinksForAd = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.RefreshSiteLinksForAd(promotionID_RefreshSiteLinksForAd, promotionAdID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
-
-		// schedulePauseProductGroup
-		final Integer customerID_schedulePauseProductGroup = 12;
-		final Integer productGroupID_schedulePauseProductGroup = 76;
-		final List<String> adEngines_schedulePauseProductGroup = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.schedulePauseProductGroup(customerID_schedulePauseProductGroup, productGroupID_schedulePauseProductGroup, adEngines_schedulePauseProductGroup);
+		// scheduleRefreshSiteLinks
+		final Integer customerID_scheduleRefreshSiteLinks = 12;
+		final Integer promotionID_scheduleRefreshSiteLinks = 62;
+		final List<String> adEngines_scheduleRefreshSiteLinks = Arrays.asList(AdEngine.Google.name());
+		client.scheduleRefreshSiteLinks(customerID_scheduleRefreshSiteLinks, promotionID_scheduleRefreshSiteLinks, adEngines_scheduleRefreshSiteLinks);
 		
-		// PauseProductGroup
-		final Integer productGroupID_PauseProductGroup = 76;
-		final List<String> adEngines_PauseProductGroup = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.PauseProductGroup(productGroupID_PauseProductGroup, adEngines_PauseProductGroup);		
+		// RefreshSiteLinks
+		final Integer promotionID_RefreshSiteLinksForAd = 62;
+		final List<String> adEngines_RefreshSiteLinksForAd = Arrays.asList(AdEngine.Google.name());
+		client.RefreshSiteLinks(promotionID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
+*/			
+		// schedulePauseProductGroups
+		final Integer customerID_schedulePauseProductGroups = 12;
+		final List<Integer> productGroupIds_schedulePauseProductGroups = Arrays.asList(76);
+		final List<String> adEngines_schedulePauseProductGroups = Arrays.asList(AdEngine.Google.name());
+		client.schedulePauseProductGroups(customerID_schedulePauseProductGroups, productGroupIds_schedulePauseProductGroups, adEngines_schedulePauseProductGroups);
+		/*		
+		// PauseProductGroups
+		final List<Integer> productGroupIds_PauseProductGroups = Arrays.asList(76);
+		final List<String> adEngines_PauseProductGroups = Arrays.asList(AdEngine.Google.name());
+		client.PauseProductGroups(productGroupIds_PauseProductGroups, adEngines_PauseProductGroups);		
 
 		// scheduleUnpausePromotion
 		final Integer customerID_scheduleUnpausePromotion = 12;
 		final Integer promotionID_scheduleUnpausePromotion = 62;
-		final List<String> adEngines_scheduleUnpausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
+		final List<String> adEngines_scheduleUnpausePromotion = Arrays.asList(AdEngine.Google.name());
 		client.scheduleUnpausePromotion(customerID_scheduleUnpausePromotion, promotionID_scheduleUnpausePromotion, adEngines_scheduleUnpausePromotion);
-		
+
 		// UnpausePromotion
 		final Integer promotionID_UnpausePromotion = 62;
-		final List<String> adEngines_UnpausePromotion = Arrays.asList(new String[]{AdEngine.Google.name()});
-		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);		
+		final List<String> adEngines_UnpausePromotion = Arrays.asList(AdEngine.Google.name());
+		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);
+		*/		
 	}
 	
-	public Boolean scheduleAddAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) 
+	@Override
+	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) 
 	{
-		final String methodName = "scheduleAddAd";
+		final String methodName = "scheduleAddAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String promotionAdIdsStr = gson.toJson(promotionAdIds, List.class);		
+		jsonHash.put("promotionAdIds", promotionAdIdsStr);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -210,12 +212,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public void AddAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	@Override
+	public void AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
-		final String methodName = "AddAd";
+		final String methodName = "AddAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -228,13 +232,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public Boolean scheduleDeleteAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)  
+	@Override
+	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)
 	{
-		final String methodName = "scheduleDeleteAd";
+		final String methodName = "scheduleDeleteAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID", Integer.toString(customerID));
-		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));		
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);
+		jsonHash.put("promotionAdIds", promotionAdIdsString);			
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -252,12 +258,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 
-	public void DeleteAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	@Override
+	public void DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
-		final String methodName = "DeleteAd";
+		final String methodName = "DeleteAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));		
+		final String promotionAdIdsStr = gson.toJson(promotionAdIds, List.class);		
+		jsonHash.put("promotionAdIds", promotionAdIdsStr);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -270,13 +278,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public Boolean scheduleUpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)  
+	@Override
+	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)  
 	{
-		final String methodName = "scheduleUpdateAd";
+		final String methodName = "scheduleUpdateAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -294,12 +304,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public void UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception 
+	@Override
+	public void UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception 
 	{
-		final String methodName = "UpdateAd";
+		final String methodName = "UpdateAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
+		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);
+		jsonHash.put("promotionAdIds", promotionAdIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -312,6 +324,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public Boolean scheduleUpdateGeoTargeting(Integer customerID, Integer PromotionID, List<String> adEngines)  
 	{
 		final String methodName = "scheduleUpdateGeoTargeting";
@@ -335,11 +348,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateGeoTargeting";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("PromotionID", Integer.toString(PromotionID));
+		jsonHash.put("promotionID", Integer.toString(PromotionID));
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -352,6 +366,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public Boolean scheduleChangePromotionStartDate(Integer customerID, Integer promotionID, java.util.Date newStartDate, List<String> adEngines)  
 	{
 		final String methodName = "scheduleChangePromotionStartDate";
@@ -377,6 +392,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "ChangePromotionStartDate";
@@ -396,6 +412,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<String> adEngines)  
 	{
 		final String methodName = "scheduleUpdateBudget";
@@ -420,6 +437,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateBudget";
@@ -438,6 +456,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 		
+	@Override
 	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines)  
 	{
 		final String methodName = "schedulePausePromotion";
@@ -461,6 +480,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void PausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "PausePromotion";
@@ -478,6 +498,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<String> adEngines)  
 	{
 		final String methodName = "scheduleUnpausePromotion";
@@ -501,6 +522,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UnpausePromotion";
@@ -518,13 +540,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public Boolean scheduleDeleteKeyword(Integer customerID, Integer promotionID, String keyword, List<String> adEngines)  
+	@Override
+	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds , List<String> adEngines)  
 	{
-		final String methodName = "scheduleDeleteKeyword";
+		final String methodName = "scheduleDeleteKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID",Integer.toString(customerID));
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("keyword", keyword);
+		final String keywordIdsStr = gson.toJson(keywordIds, List.class);
+		jsonHash.put("keywordIds", keywordIdsStr);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -542,12 +566,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 
-	public void DeleteKeyword(Integer promotionID, String keyword, List<String> adEngines) throws Exception 
+	@Override
+	public void DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception 
 	{
-		final String methodName = "DeleteKeyword";
+		final String methodName = "DeleteKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("keyword", keyword);
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);
+		jsonHash.put("keywordIds", keywordIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -560,13 +586,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 		
-	public Boolean scheduleRefreshSiteLinksForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)  
+	@Override
+	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<String> adEngines)  
 	{
-		final String methodName = "scheduleRefreshSiteLinksForAd";
+		final String methodName = "scheduleRefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID",Integer.toString(customerID));
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -584,12 +610,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public void RefreshSiteLinksForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception 
+	@Override
+	public void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception 
 	{
-		final String methodName = "RefreshSiteLinksForAd";
+		final String methodName = "RefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		jsonHash.put("promotionAdID", Integer.toString(promotionAdID));
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -602,12 +628,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public Boolean schedulePauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines)  
+	@Override
+	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<String> adEngines)  
 	{
-		final String methodName = "schedulePauseProductGroup";
+		final String methodName = "schedulePauseProductGroups";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID",Integer.toString(customerID));
-		jsonHash.put("productGroupID", Integer.toString(productGroupID));		
+		jsonHash.put("productGroupIds", gson.toJson(productGroupIds, List.class));		
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -625,11 +652,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
-	public void PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
+	@Override
+	public void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
 	{
-		final String methodName = "PauseProductGroup";
-		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("productGroupID", Integer.toString(productGroupID));		
+		final String methodName = "PauseProductGroups";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		final String productGroupIdsStr = gson.toJson(productGroupIds, List.class);		
+		jsonHash.put("productGroupIds", productGroupIdsStr);		
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
@@ -642,6 +671,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) 
 	{
 		final String methodName = "scheduleAddPromotionToAdEngine";
@@ -666,6 +696,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 	
+	@Override
 	public void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
 		final String methodName = "AddPromotionToAdEngine";
@@ -685,6 +716,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 	}
 
+	@Override
 	public void ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
 		final String methodName = "ExecuteBidProcess";
@@ -726,7 +758,55 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// do nothing		
+		// TODO Auto-generated method stub
+		
 	}
 
+	@Override
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID,
+			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID,
+			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	
 }

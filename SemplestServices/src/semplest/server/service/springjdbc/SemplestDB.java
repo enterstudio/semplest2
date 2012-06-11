@@ -1,15 +1,21 @@
 package semplest.server.service.springjdbc;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -25,6 +31,8 @@ import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
+import semplest.server.protocol.google.GoogleUpdateAdRequest;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
@@ -41,14 +49,33 @@ import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywords
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
-
+	
+	public static final String SQL_SET_AD_ID_FOR_AD_GROUP = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) " +
+	        											    "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
+	
+	public static final String SQL_MARK_AD_DELETED = "update  PromotionAds " +
+													    "set  IsDeleted = 1, " +
+															 "DeletedDate = ? " +
+													   "from  PromotionAds p, " +
+															 "AdvertisingEngineAds a " +
+													  "where  p.PromotionAdsPK = a.PromotionAdsFK " +
+														"and  a.AdvertisingEngineAdPK = ?";
+	
+	public static final String SQL_UPDATE_AD_ENGINE_AD_ID = "update   AdvertisingEngineAds " + 	
+															   "set	  AdvertisingEngineAdPK = ? " +  	
+														      "from	  AdvertisingEngineAds aea, " +  
+														  		     "AdvertisingEngine e " + 
+														     "where	  aea.PromotionAdsFK = ? " + 
+														       "and   aea.AdvertisingEngineAdPK = ? " + 
+														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
+														  	   "and   e.AdvertisingEngine = ?";
 	/*
 	 * Configuration
 	 */
 	public static HashMap<String,Object> loadConfigurationData() throws Exception
 	{
-		String strSQL = "select * from Configuration";
-		List res = jdbcTemplate.queryForList(strSQL);
+		final String strSQL = "select * from Configuration";
+		final List<Map<String, Object>> res = jdbcTemplate.queryForList(strSQL);
 		if (res != null)
 		{
 			return (HashMap<String,Object>) res.get(0);
@@ -59,9 +86,6 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
-	/*
-	 * Configuration
-	 */
 	public static List<Integer> getPromotionIdsForProductGroup(final Integer ProductGroupID) throws Exception
 	{
 		final String strSQL = "select PromotionPK from Promotion where ProductGroupFK = ?";
@@ -72,7 +96,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Customer
 	 */
-	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper(CustomerObj.class);
+	private static final RowMapper<CustomerObj> CustomerObjMapper = new BeanPropertyRowMapper<CustomerObj>(CustomerObj.class);
 
 	public static List<CustomerObj> getAllCustomers() throws Exception
 	{
@@ -316,7 +340,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper(BidElement.class);
+	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper<BidElement>(BidElement.class);
 
 	public static List<BidElement> getLatestBids(int promotionID, String searchEngine) throws Exception
 	{
@@ -528,7 +552,7 @@ public class SemplestDB extends BaseDB
 	 * ; return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword,
 	 * adEngine, startDateSQL, endDateSQL }, trafficEstDataObjMapper); } }
 	 */
-	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper(BudgetObject.class);
+	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper<BudgetObject>(BudgetObject.class);
 
 	public static BudgetObject getBudget(int promotionID) throws Exception
 	{
@@ -606,7 +630,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper(ReportObject.class);
+	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper<ReportObject>(ReportObject.class);
 
 	public static List<ReportObject> getReportData(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
 			throws Exception
@@ -662,7 +686,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<TargetedDailyBudget> targetedDailyBudgetMapper = new BeanPropertyRowMapper(TargetedDailyBudget.class);
+	private static final RowMapper<TargetedDailyBudget> targetedDailyBudgetMapper = new BeanPropertyRowMapper<TargetedDailyBudget>(TargetedDailyBudget.class);
 
 	public static TargetedDailyBudget getLatestTargetedDailyBudget(int promotionID, String adEngine) throws Exception
 	{
@@ -735,7 +759,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * Account calls
 	 */
-	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper(AdEngineID.class);
+	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper<AdEngineID>(AdEngineID.class);
 
 	public static AdEngineID getAdEngineID(Integer promotionID, String adEngine) throws Exception
 	{
@@ -759,8 +783,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper(
-			AdvertisingEnginePromotionObj.class);
+	private static final RowMapper<AdvertisingEnginePromotionObj> advertisingEnginePromotionObjMapper = new BeanPropertyRowMapper<AdvertisingEnginePromotionObj>(AdvertisingEnginePromotionObj.class);
 
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(Long advertisingEngineAccountID) throws Exception
 	{
@@ -873,10 +896,92 @@ public class SemplestDB extends BaseDB
 	}
 	
 	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
+	{		
+		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
+	}
+	
+	public static Map<Long, Integer> getDeletedAdIdRowCountMap(final List<Long> deletedAdIds, int[] rowCounts)
 	{
-		String strSQL = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) " +
-				        "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
-		return jdbcTemplate.update(strSQL, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
+		final Map<Long, Integer> deletedAdIdRowCountMap = new HashMap<Long, Integer>();
+		for (int i = 0; i < rowCounts.length; ++i)
+		{
+			final int rowCount = rowCounts[i];
+			final Long deletedAdId = deletedAdIds.get(i);
+			deletedAdIdRowCountMap.put(deletedAdId, rowCount);
+		}
+		return deletedAdIdRowCountMap;
+	}
+	
+	public static Map<Entry<GoogleUpdateAdRequest, Long>, Integer> getOldNewAdIdRowCountMap(final List<Entry<GoogleUpdateAdRequest, Long>> updateRequestToNewAdIdList, int[] rowCounts)
+	{
+		final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> idPairMap = new HashMap<Entry<GoogleUpdateAdRequest, Long>, Integer>();
+		for (int i = 0; i < rowCounts.length; ++i)
+		{
+			final int rowCount = rowCounts[i];
+			final Entry<GoogleUpdateAdRequest, Long> updateRequestNewIdPair = updateRequestToNewAdIdList.get(i);
+			idPairMap.put(updateRequestNewIdPair, rowCount);
+		}
+		return idPairMap;
+	}
+	
+	public static Map<GoogleAdIdSemplestAdIdPair, Integer> getIdPairRowCountMap(final List<GoogleAdIdSemplestAdIdPair> idPairs, int[] rowCounts)
+	{
+		final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap = new HashMap<GoogleAdIdSemplestAdIdPair, Integer>();
+		for (int i = 0; i < rowCounts.length; ++i)
+		{
+			final int rowCount = rowCounts[i];
+			final GoogleAdIdSemplestAdIdPair idPair = idPairs.get(i);
+			idPairRowCountMap.put(idPair, rowCount);
+		}
+		return idPairRowCountMap;
+	}
+	
+	public static Map<GoogleAdIdSemplestAdIdPair, Integer> setAdIDForAdGroupBulk(final List<GoogleAdIdSemplestAdIdPair> idPairs, final String advertisingEngine) throws Exception
+	{	
+		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_SET_AD_ID_FOR_AD_GROUP,
+ 											             new BatchPreparedStatementSetter() 
+														 {
+											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
+											              	{
+												                ps.setLong(1, idPairs.get(i).getGoogleAdId());
+												                ps.setInt(2, idPairs.get(i).getSemplestAdId());
+												                ps.setString(3, advertisingEngine);
+											              	}	
+											              
+											              	public int getBatchSize() 
+											              	{
+											              		return idPairs.size();
+											              	}
+											             });
+		return getIdPairRowCountMap(idPairs, rowCounts);
+	}
+	
+	public static Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<GoogleUpdateAdRequest, Long> oldToNewAdIdMap, final String advertisingEngine) throws Exception
+	{
+		final Set<Entry<GoogleUpdateAdRequest, Long>> entries = oldToNewAdIdMap.entrySet();
+		final List<Entry<GoogleUpdateAdRequest, Long>> entryList = new ArrayList<Entry<GoogleUpdateAdRequest, Long>>(entries);
+		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_UPDATE_AD_ENGINE_AD_ID,
+ 											             new BatchPreparedStatementSetter() 
+														 {
+											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
+											              	{
+											              		final Entry<GoogleUpdateAdRequest, Long> entry = entryList.get(i);
+											              		final GoogleUpdateAdRequest updateRequest = entry.getKey();											              		
+											              		final Long newAdID = entry.getValue();	
+											              		final Integer promotionAdId = updateRequest.getPromotionAdID();
+											              		final Long oldAdID = updateRequest.getAdId();
+												                ps.setLong(1, newAdID);
+												                ps.setInt(2, promotionAdId);
+												                ps.setLong(3, oldAdID);
+												                ps.setString(4, advertisingEngine);
+											              	}	
+											              
+											              	public int getBatchSize() 
+											              	{
+											              		return oldToNewAdIdMap.size();
+											              	}
+											             });
+		return getOldNewAdIdRowCountMap(entryList, rowCounts);
 	}
 	
 	public static Integer updateAdIDForAdGroup(Long newAdvertisingEngineAdPK, Long oldAdvertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
@@ -904,6 +1009,25 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(strSQL, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
 	}
 	
+	public static Map<Long, Integer> markPromotionAdDeletedBulk(final java.util.Date date, final List<Long> deletedAdIds) throws Exception
+	{	
+		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_MARK_AD_DELETED,
+ 											             new BatchPreparedStatementSetter() 
+														 {
+											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
+											              	{
+												                ps.setTimestamp(1, new Timestamp(date.getTime()));
+												                ps.setLong(2, deletedAdIds.get(i));
+											              	}	
+											              
+											              	public int getBatchSize() 
+											              	{
+											              		return deletedAdIds.size();
+											              	}
+											             });
+		return getDeletedAdIdRowCountMap(deletedAdIds, rowCounts);
+	}
+	
 	public static Integer markPromotionAdDeleted(Integer promotionAdsPK, java.util.Date deletedDate) throws Exception
 	{
 		final String strSQL = "update   PromotionAds " + 
@@ -918,8 +1042,7 @@ public class SemplestDB extends BaseDB
 	{
 		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
 
-		return jdbcTemplate.update(strSQL, new Object[]
-		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
+		return jdbcTemplate.update(strSQL, new Object[]{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
 
 	}
 	
@@ -927,10 +1050,10 @@ public class SemplestDB extends BaseDB
 		
 		try
 		{
-			StackTraceElement[] ste = e.getStackTrace();
-			StackTraceElement err = ste[ste.length-1];		
-			String errorClass = err.getClassName();
-			StringBuilder sb = new StringBuilder();
+		StackTraceElement[] ste = e.getStackTrace();
+		StackTraceElement err = ste[ste.length-1];		
+		String errorClass = err.getClassName();
+		StringBuilder sb = new StringBuilder();
 			if(ste.length > 5){
 				//if the nested error is too long, record only the first 5 and the last one
 				for(int i = 0; i < 5; i++){
@@ -940,16 +1063,16 @@ public class SemplestDB extends BaseDB
 				sb.append(ste[ste.length-1].getFileName() + ":" + ste[ste.length-1].getLineNumber() + ";");
 			}
 			else{
-				for(StackTraceElement s : ste){
-					sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
-				}
+		for(StackTraceElement s : ste){
+			sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
+		}
 			}
 			String errDetails = sb.toString();
-			
-			String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
-					"VALUES (?, ?, ?, ?, ?)";
-			
-			jdbcTemplate.update(sql, new Object[]
+		
+		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
+				"VALUES (?, ?, ?, ?, ?)";
+		
+		jdbcTemplate.update(sql, new Object[]
 					{errorSource, errorClass, e.getMessage(), errDetails, new java.util.Date()});
 		}
 		catch (Exception e1)

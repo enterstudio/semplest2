@@ -10,11 +10,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
+import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
@@ -29,7 +32,13 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
+import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
+import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
+import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
@@ -44,6 +53,7 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
+import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 import semplest.util.SemplestUtils;
 
@@ -93,7 +103,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				google.setGeoTarget("2387614989", 88453391L, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
 						geoObj.getZip());
 				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
-				
+			
 			}
 			
 			/*
@@ -151,7 +161,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String AddPromotionToAdEngine(String json) throws Exception
 	{
 		logger.debug("call  AddPromotionToAdEngine(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Integer customerID = Integer.parseInt(data.get("customerID"));
 		Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
@@ -170,8 +180,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// 3. Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE
 			// 4. Create Ads - AdWordsService.V201109.ADGROUP_AD_SERVICE
 			// 5. Set GeoTargets - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE
-			// 6. Add Negative Keywords - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE
-			// 7. Add Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE
+			// 6. Set Negative Keywords - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE
+			// 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE
 			// 8. Service call - semplest.service.bidding.BidGeneratorService#setBidsInitial
 			// 9. Schedule OnGoingBidding  
 		 */
@@ -270,34 +280,51 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 	}
 	
-	public String DeleteKeyword(String json) throws Exception
+	public String DeleteKeywords(String json) throws Exception
 	{
-		logger.debug("call DeleteKeyword(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		logger.debug("call DeleteKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
-		final String keyword = data.get("keyword");
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		DeleteKeyword(PromotionID, keyword, adEngines);
+		final List<Integer> keywordIds = gson.fromJson(data.get("keywordIds"), SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		DeleteKeywords(PromotionID, keywordIds, adEngines);
 		return gson.toJson(true);
 	}
 	
-	@Override
-	public void DeleteKeyword(Integer promotionID, String keyword, List<String> adEngines) throws Exception
+	public static List<String> getKeywords(final List<KeywordProbabilityObject> keywordProbabilities, List<Integer> keywordIds)
 	{
-		logger.info("Will try to Delete Keyword [" + keyword + "] for PromotionID [" + promotionID + "] and AdEngines [" + adEngines + "]");
+		final List<String> keywords = new ArrayList<String>();
+		for (final KeywordProbabilityObject keywordProbability : keywordProbabilities)
+		{
+			final Integer keywordPK = keywordProbability.getKeywordPK();
+			if (keywordIds.contains(keywordPK))
+			{
+				final String keyword = keywordProbability.getKeyword();
+				keywords.add(keyword);	
+			}
+		}
+		return keywords;
+	}
+	
+	@Override
+	public void DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
 		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP(); 
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				logger.info("Will try to Delete Keyword [" + keyword + "] within Google Adwords for AccountID [" + accountId + "], AdGroupID [" + adGroupID + "]");
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				googleAdwordsService.deleteKeyWordFromAdGroup(accountId, adGroupID, keyword);		
+				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
+				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
+				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+				googleAdwordsService.deleteKeyWords(accountId, adGroupID, keywords);		
 			}
 			else
 			{
@@ -308,15 +335,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}			
 		if (!errorMap.isEmpty())
 		{
-			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Delete Keyword [" + keyword + "] for PromotionID [" + promotionID + "] and AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
 	}
 
-	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine,
-			List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine, List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
 	{
 		int TEST = 0;
 		AddBidSP addKeywordBidSP = new AddBidSP();
@@ -370,9 +395,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return remainingBudgetDaysMap;
 	}
+	
+	public static void backfillAdEngineAdID(final List<AdsObject> ads, final Map<GoogleAddAdRequest, Long> requestToAdEngineAdIdMap)
+	{
+		for (final AdsObject ad : ads)
+		{
+			final Integer promotionAdID = ad.getPromotionAdsPK();
+			final String headline = ad.getAdTitle();
+			final String description1 = ad.getAdTextLine1();
+			final String description2 = ad.getAdTextLine2();
+			final GoogleAddAdRequest textRequestKey = new GoogleAddAdRequest(promotionAdID, headline, description1, description2);
+			final Long adEngineAdID = requestToAdEngineAdIdMap.get(textRequestKey);
+			ad.setAdEngineAdID(adEngineAdID);
+		}
+	}
 
-	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, String adEngine, AdGroupStatus status,
-			GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
+	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, String adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
 	{
 
 		AdgroupData adGrpData = new AdgroupData();
@@ -384,26 +422,29 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();			
 			adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid);
 			adGrpData.setAdGroupID(adGroupID);
+			final String displayURL = promotionData.getDisplayURL();
+			final String url = promotionData.getLandingPageURL();
+			final List<GoogleAddAdRequest> textRequests = new ArrayList<GoogleAddAdRequest>();
 			for (AdsObject ad : adList)
-			{
-				Thread.sleep(1000);				
-				Long adID = google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdTextLine1(), ad.getAdTextLine2(),
-						promotionData.getLandingPageURL(), promotionData.getLandingPageURL());
-				ad.setAdEngineAdID(adID);
-				logger.info("Added Ad Copy. Title=" + ad.getAdTitle());
+			{			
+				final Integer promotionAdID = ad.getPromotionAdsPK();
+				final String headline = ad.getAdTitle();
+				final String description1 = ad.getAdTextLine1();
+				final String description2 = ad.getAdTextLine2();				
+				final GoogleAddAdRequest textRequest = new GoogleAddAdRequest(promotionAdID, headline, description1, description2);
+				textRequests.add(textRequest);				
 			}
+			final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, textRequests);
+			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
+			backfillAdEngineAdID(adList, requestToGoogleAdIdMap);
 			adGrpData.setAds(adList);
-			// AD GEOTARGET HERE
-			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
+			final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 			for (GeoTargetObject geoObj : geoObjList)
 			{
 				Thread.sleep(1000);				
-				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
-						geoObj.getZip());
-				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
-				
+				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),geoObj.getZip());
+				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());				
 			}
-
 		}
 		return adGrpData;
 	}
@@ -532,7 +573,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String ExecuteBidProcess(String json) throws Exception
 	{
 		logger.debug("call ExecuteBidProcess(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
 		ExecuteBidProcess(promotionID, adEngineList);
@@ -616,9 +657,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String UpdateGeoTargeting(String json) throws Exception
 	{
 		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		final Integer PromotionID = Integer.parseInt(data.get("PromotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		UpdateGeoTargeting(PromotionID, adEngines);
 		return gson.toJson(true);
 	}
@@ -626,11 +667,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String scheduleUpdateGeoTargeting(String json) throws Exception
 	{
 		logger.debug("call scheduleUpdateGeoTargeting(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String adEnginesString = data.get("adEngines");
-		final List<String> adEngines = gson.fromJson(adEnginesString, List.class);		
+		final List<String> adEngines = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);		
 		final Boolean res = scheduleUpdateGeoTargeting(customerID, promotionID, adEngines);
 		return gson.toJson(res);
 	}
@@ -697,9 +738,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String UnpausePromotion(String json) throws Exception
 	{
 		logger.debug("call UnpausePromotion(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		UnpausePromotion(PromotionID, adEngines);
 		return gson.toJson(true);
 	}
@@ -715,13 +756,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String schedulePausePromotion(String json) throws Exception
 	{
 		logger.debug("call schedulePausePromotion(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = schedulePausePromotion(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
+	
 	
 	@Override
 	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines)
@@ -750,9 +792,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String PausePromotion(String json) throws Exception
 	{
 		logger.debug("call PausePromotion(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, HashMap.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		PausePromotion(PromotionID, adEngines);
 		return gson.toJson(true);
 	}
@@ -765,23 +807,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
 	}
 	
-	public String PauseProductGroup(String json) throws Exception
+	public String PauseProductGroups(String json) throws Exception
 	{
-		logger.debug("call PauseProductGroup(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, HashMap.class);
-		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		PauseProductGroup(productGroupID, adEngines);
+		logger.debug("call PauseProductGroups(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String productGroupIdsString = data.get("productGroupIds");
+		final List<Integer> productGroupIds = gson.fromJson(productGroupIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		PauseProductGroups(productGroupIds, adEngines);
 		return gson.toJson(true);
 	}
-	
+		
 	@Override
-	public void PauseProductGroup(Integer productGroupID, List<String> adEngines) throws Exception
+	public void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Pause ProductGroup [" + productGroupID + "] for AdEngines [" + adEngines+ "])");
-		final List<Integer> promotionIds = SemplestDB.getPromotionIdsForProductGroup(productGroupID);
-		final String promotionIdsEasyReadableString = SemplestUtils.getEasilyReadableString(promotionIds);
-		logger.info("Found the following Promotion IDs for which the Campaigns we'll need to Pause:\n" + promotionIdsEasyReadableString);	
+		logger.info("Will try to Pause ProductGroups for ProductGroupIDs [" + productGroupIds + "] for AdEngines [" + adEngines+ "])");
+		final List<Integer> promotionIds = new ArrayList<Integer>();
+		for (final Integer productGroupID : productGroupIds)
+		{
+			final List<Integer> promotionIdsForProductGroup = SemplestDB.getPromotionIdsForProductGroup(productGroupID);
+			promotionIds.addAll(promotionIdsForProductGroup);
+		}		
+		logger.info("From the ProductGroupIDs [" + productGroupIds + "] found the associated PromotionIDs for which the Campaigns we'll need to Pause:\n" + SemplestUtils.getEasilyReadableString(promotionIds));	
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
 	}
 		
@@ -853,41 +900,43 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return adsFound;
 	}
 	
-	public List<AdsObject> getAdsForPromotionAdID(final List<AdsObject> ads, final Integer promotionAdID)
+	public List<AdsObject> getAdsForPromotionAdID(final List<AdsObject> ads, Integer promotionAdID)
 	{
 		final List<AdsObject> adsFound = new ArrayList<AdsObject>();
 		for (final AdsObject ad : ads)
 		{
-			if (ad.getPromotionAdsPK().intValue() == promotionAdID.intValue())
+			final Integer adPromotionAdID = ad.getPromotionAdsPK();
+			if (adPromotionAdID.intValue() == promotionAdID.intValue())
 			{
 				adsFound.add(ad);
 			}
 		}
 		return adsFound;
 	}
-	
-	public String scheduleAddAd(String json) throws Exception
+		
+	public String scheduleAddAds(String json) throws Exception
 	{
-		logger.debug("call scheduleAddAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call scheduleAddAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final String promotionAdIdsString = data.get("promotionAdIds");		
+		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
 		final String adEnginesString = data.get("adEngines");
-		final List<String> adEngines = gson.fromJson(adEnginesString, List.class);		
-		final Boolean res = scheduleAddAd(customerID, promotionID, promotionAdID, adEngines);
+		final List<String> adEngines = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);		
+		final Boolean res = scheduleAddAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
 	
 	@Override
-	public Boolean scheduleAddAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)
+	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)
 	{
 		try 
 		{
-			logger.info("Will try to schedule task for Adding Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Adding Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String scheduleNamePostfix = "AddAd";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddAdTask(customerID, promotionID, promotionAdID, adEngines, scheduleNamePostfix);
+			final String scheduleNamePostfix = "AddAds";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddAdsTask(customerID, promotionID, promotionAdIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -898,71 +947,132 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
 	
-	public String AddAd(String json) throws Exception
+	public String AddAds(String json) throws Exception
 	{
-		logger.debug("call AddAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call AddAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		AddAd(promotionID, promotionAdID, adEngines);
+		final String promotionAdIdsString = data.get("promotionAdIds");		
+		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AddAds(promotionID, promotionAdIds, adEngines);
 		return gson.toJson(true);
 	}
 	
-	@Override
-	public void AddAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public List<GoogleAdIdSemplestAdIdPair> getIdPairs(Map<GoogleAddAdRequest, Long> requestToGoogleIdMap)
 	{
-		logger.info("Will try to Add Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		final List<GoogleAdIdSemplestAdIdPair> idPairs = new ArrayList<GoogleAdIdSemplestAdIdPair>();
+		final Set<Entry<GoogleAddAdRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
+		for (final Entry<GoogleAddAdRequest, Long> entry : entrySet)
+		{
+			final GoogleAddAdRequest request = entry.getKey();
+			final Integer semplestAdId = request.getPromotionAdID();
+			final Long googleAdId = entry.getValue();
+			final GoogleAdIdSemplestAdIdPair idPair = new GoogleAdIdSemplestAdIdPair(googleAdId, semplestAdId);
+			idPairs.add(idPair);
+		}
+		return idPairs;
+	}
+	
+	public Map<Entry<GoogleUpdateAdRequest, Long>, Integer> getUpdateRequestNewIdToRowCountMapWithBadRows(final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap)
+	{
+		final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRows = new HashMap<Entry<GoogleUpdateAdRequest, Long>, Integer>();
+		final Set<Entry<Entry<GoogleUpdateAdRequest, Long>, Integer>> entrySet = updateRequestNewIdToRowCountMap.entrySet();
+		for (final Entry<Entry<GoogleUpdateAdRequest, Long>, Integer> entry : entrySet)
+		{
+			final Integer rowCount = entry.getValue();
+			if (rowCount != 1)
+			{
+				final Entry<GoogleUpdateAdRequest, Long> updateRequestToNewIdMapping = entry.getKey();
+				updateRequestNewIdToRowCountMapWithBadRows.put(updateRequestToNewIdMapping, rowCount);
+			}
+		}
+		return updateRequestNewIdToRowCountMapWithBadRows;
+	}
+	
+	public Map<Long, Integer> getDeletedAdIdRowCountMapWithBadRowCounts(final Map<Long, Integer> deletedAdIdRowCountMap)
+	{
+		final Map<Long, Integer> idPaidRowCountMapWithBadRowCounts = new HashMap<Long, Integer>();
+		final Set<Entry<Long, Integer>> entrySet = deletedAdIdRowCountMap.entrySet();
+		for (final Entry<Long, Integer> entry : entrySet)
+		{
+			final Integer rowCount = entry.getValue();
+			if (rowCount != 1)
+			{
+				final Long deletedAdId = entry.getKey();
+				idPaidRowCountMapWithBadRowCounts.put(deletedAdId, rowCount);
+			}
+		}
+		return idPaidRowCountMapWithBadRowCounts;
+	}
+	
+	public Map<GoogleAdIdSemplestAdIdPair, Integer> getIdPairRowCountMapWithBadRowCounts(final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap)
+	{
+		final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMapWithBadRowCounts = new HashMap<GoogleAdIdSemplestAdIdPair, Integer>();
+		final Set<Entry<GoogleAdIdSemplestAdIdPair, Integer>> entrySet = idPairRowCountMap.entrySet();
+		for (final Entry<GoogleAdIdSemplestAdIdPair, Integer> entry : entrySet)
+		{
+			final Integer rowCount = entry.getValue();
+			if (rowCount != 1)
+			{
+				final GoogleAdIdSemplestAdIdPair idPair = entry.getKey();
+				idPairRowCountMapWithBadRowCounts.put(idPair, rowCount);
+			}
+		}
+		return idPairRowCountMapWithBadRowCounts;
+	}
+	
+	@Override
+	public void AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Add Ads for PromotionID [" + promotionID + "], " + promotionAdIds.size() + " PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 				getPromoDataSP.execute(promotionID);
 				final List<AdsObject> ads = getPromoDataSP.getAds();				
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final List<AdsObject> adsForPromotionID = getAdsForPromotionAdID(ads, promotionAdID);						
-				if (!adsForPromotionID.isEmpty())
+				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
+				final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+				final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
+				final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL()); 
+				final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
+				for (final Integer promotionAdID : promotionAdIds)
 				{
-					Collections.sort(adsForPromotionID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-					final AdsObject ad = adsForPromotionID.get(0);
-					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
-					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-					final String headline = ad.getAdTitle();
-					final String description1 = ad.getAdTextLine1();
-					final String description2 = ad.getAdTextLine2();
-					final String displayURL = promotion.getDisplayURL(); 
-					final String url = promotion.getLandingPageURL();
-					final Long googleAdID = googleAdwordsService.addTextAd(accountID, adGroupID, headline, description1, description2, displayURL, url);
-					if (googleAdID == null || googleAdID == 0)
+					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+					if (!adsForPromotionAdID.isEmpty())
 					{
-						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to create the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].  This means there was a problem creating the ad within Google AdWords.";
-						logger.error(errMsg);
-						errorMap.put(adEngine, errMsg);
-					}
-					else
-					{
-						logger.info("Google Ad ID returned after creating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0: [" + googleAdID + "].  This means the ad was created successfully within Google AdWords.");
-						final int rowCount = SemplestDB.setAdIDForAdGroup(googleAdID, adEngine, promotionAdID);
-						if (rowCount != 1)
-						{
-							logger.warn("Num or rows added when adding SemplestPromotionAdsPk<->GoogleAdID mapping for PromotionAdID [" + promotionAdID + "], GoogleAdID [" + googleAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
-						}
+						Collections.sort(adsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+						final AdsObject ad = adsForPromotionAdID.get(0);						
+						final String headline = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
+						final String description1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
+						final String description2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());						
+						final GoogleAddAdRequest addAdRequest = new GoogleAddAdRequest(promotionAdID, headline, description1, description2);
+						addAdTextRequests.add(addAdRequest);						
 					}
 				}
-				else
+				final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, addAdTextRequests);
+				logger.info("Generated " + addAdTextRequests.size() + " individual requests within a single GoogleAddAdsRequest from " + promotionAdIds.size() + " PromotionAdIds");
+				final Map<GoogleAddAdRequest, Long> requestToGoogleIdMap = googleAdwordsService.addTextAds(request);
+				logger.info("Created " + requestToGoogleIdMap.size() + " known Ads in Google that are associated with " + addAdTextRequests.size() + " original requests");
+				final String easilyReadableRequestToGoogleIdMap = SemplestUtils.getEasilyReadableString(requestToGoogleIdMap);				
+				logger.info("Results from operation:\n" + easilyReadableRequestToGoogleIdMap);
+				final List<GoogleAdIdSemplestAdIdPair> idPairs = getIdPairs(requestToGoogleIdMap); 
+				final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap = SemplestDB.setAdIDForAdGroupBulk(idPairs, adEngine);
+				final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMapWithBadRowCounts = getIdPairRowCountMapWithBadRowCounts(idPairRowCountMap);
+				if (!idPairRowCountMapWithBadRowCounts.isEmpty())
 				{
-					final String errMsg = "Could not find Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
-					logger.error(errMsg);
-					errorMap.put(adEngine, errMsg);
-				}								
+					logger.warn("Problems updating db with the following GoogleAdID<->SemplestAdID pairs because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(idPairRowCountMapWithBadRowCounts));	
+				}											
 			}
 			else
 			{
@@ -974,33 +1084,34 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Add Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}				
 	}
 	
-	public String scheduleDeleteAd(String json) throws Exception
+	public String scheduleDeleteAds(String json) throws Exception
 	{
-		logger.debug("call scheduleDeleteAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call scheduleDeleteAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);		
-		final Boolean res = scheduleDeleteAd(customerID, promotionID, promotionAdID, adEngines);
+		final String promotionAdIdsString = data.get("promotionAdIds");
+		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);		
+		final Boolean res = scheduleDeleteAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
 	
 	@Override
-	public Boolean scheduleDeleteAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)
 	{
 		try 
 		{
-			logger.info("Will try to schedule task for Deleting Ad for CUstomer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Deleting Ad for CUstomer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String deleteAdPostFix = "DeleteAd";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteAdEngineAdTask(customerID, promotionID, promotionAdID, adEngines, deleteAdPostFix);
+			final String deleteAdPostFix = "DeleteAds";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteAdEngineAdTask(customerID, promotionID, promotionAdIds, adEngines, deleteAdPostFix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -1014,79 +1125,90 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Integer rowCount = SemplestDB.markPromotionAdDeleted(promotionID, new Date());
 			if (rowCount != 1)
 			{
-				logger.warn("Num of Promotions marked deleted for PromotionAdID [" + promotionAdID + "] should be 1 but was [" + rowCount + "]");
+				logger.warn("Num of Promotions marked deleted for PromotionAdID [" + promotionAdIds + "] should be 1 but was [" + rowCount + "]");
 			}
 			return true;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}	
 	}
 	
-	public String DeleteAd(String json) throws Exception
+	public String DeleteAds(String json) throws Exception
 	{
-		logger.debug("call DeleteAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call DeleteAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		DeleteAd(promotionID, promotionAdID, adEngines);
+		final String promotionAdIdsString = data.get("promotionAdIds");
+		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		DeleteAds(promotionID, promotionAdIds, adEngines);
 		return gson.toJson(true);
+	}
+	
+	public List<Long> getAdIds(final List<AdsObject> ads)
+	{
+		final List<Long> adIds = new ArrayList<Long>();
+		for (final AdsObject ad : ads)
+		{
+			final Long adEnginerID = ad.getAdEngineAdID();
+			adIds.add(adEnginerID);
+		}
+		return adIds;
 	}
 
 	@Override
-	public void DeleteAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public void DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Delete Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		logger.info("Will try to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);								
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
+		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
 		final List<AdsObject> ads = getPromoDataSP.getAds();
-		final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
-		final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);
-		logger.info("Found " + nonDeletedAdsForPromotionAdID + " non-deleted Ads out of " + adsForPromotionAdID.size() + " total Ads in DB");
+		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
+		for (final Integer promotionAdID : promotionAdIds)
+		{
+			final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+			final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);			
+			//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
+			Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+			if (!nonDeletedAdsForPromotionAdID.isEmpty())
+			{
+				final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);		
+				nonDeletedAdsForPromotionAdIds.add(ad);
+			}
+		}
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();				
-				if (!nonDeletedAdsForPromotionAdID.isEmpty())
-				{
-					//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
-					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-					final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);					
-					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-					final Long semplestGoogleAdID = ad.getAdEngineAdID();
-					final Long googleAdID = googleAdwordsService.deleteAD(accountID, adGroupID, semplestGoogleAdID);
-					if (googleAdID == null || googleAdID == 0)
+				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
+				{										
+					final int numAdsToDelete = nonDeletedAdsForPromotionAdIds.size();
+					logger.info("Will try to delete " + numAdsToDelete + " Ads");
+					List<Long> adIds = getAdIds(nonDeletedAdsForPromotionAdIds);					
+					final List<Long> deletedAdIds = googleAdwordsService.deleteAds(accountID, adGroupID, adIds);
+					final int numDeletedAds = deletedAdIds.size();
+					if (numAdsToDelete != numDeletedAds)
 					{
-						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to delete the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "].  This means there was a problem creating the ad within Google AdWords.";
-						logger.error(errMsg);
-						errorMap.put(adEngine, errMsg);
+						logger.warn("# of ads we expected to delete [" + numAdsToDelete+ "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "]");
 					}
-					else if (!googleAdID.equals(semplestGoogleAdID))
-					{
-						final String errMsg = "Google Ad ID returned from Google AdWords after trying to delete the Ad [" + googleAdID + "] does not equal the SemplestGoogleAdID [" + semplestGoogleAdID + "].  Maybe the wrong Google Ad was deleted?  Other params used in the delete call: PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "].";
-						logger.error(errMsg);
-						errorMap.put(adEngine, errMsg);
-					}
-					else
-					{
-						logger.info("Google Ad ID returned after deleting the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is the same as the SemplestGoogleAdID [" + semplestGoogleAdID + "] that we expected to delete: [" + googleAdID + "].  This means the ad was deleted successfully within Google AdWords.");
-						final int rowCount = SemplestDB.markPromotionAdDeleted(promotionAdID, new Date());
-						if (rowCount != 1)
-						{
-							logger.warn("Num of Promotions marked deleted for PromotionAdID [" + promotionAdID + "] should be 1 but was [" + rowCount + "]");
-						}
+					final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedAdIds);				
+					final Map<Long, Integer> deletedAdIdRowCountMapWithBadRowCounts = getDeletedAdIdRowCountMapWithBadRowCounts(deletedAdIdRowCountMap);
+					if (!deletedAdIdRowCountMapWithBadRowCounts.isEmpty())
+					{						
+						logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
 					}
 				}
 				else
 				{
-					final String errMsg = "Could not find non-deleted Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}								
@@ -1101,27 +1223,26 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Add Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}		
 	}
 	
-	public String RefreshSiteLinksForAd(String json) throws Exception
+	public String RefreshSiteLinks(String json) throws Exception
 	{
-		logger.debug("call RefreshSiteLinksForAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call RefreshSiteLinks(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		RefreshSiteLinksForAd(promotionID, promotionAdID, adEngines);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		RefreshSiteLinks(promotionID, adEngines);
 		return gson.toJson(true);
 	}
 
 	@Override
-	public void RefreshSiteLinksForAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Refresh SiteLinks associated with PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+		logger.info("Will try to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
@@ -1131,18 +1252,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				getPromoDataSP.execute(promotionID);
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-				final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
 				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
 				getSiteLinksForPromotionSP.execute(promotionID);
-				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
-				final String siteLinksEasilyReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
-				logger.info("Found the following SiteLinks in Semplest DB:\n" + siteLinksEasilyReadableString);
+				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();	
 				final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Boolean processedSuccessully = googleAdwordsService.refreshSiteLinkForCampaign(accountID, campaignId, googleSiteLinks);
+				final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(accountID, campaignID, googleSiteLinks);				
+				logger.info("Generated the following request to update Google SiteLinks: " + request.toStringPretty());				
+				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+				final Boolean processedSuccessully = googleAdwordsService.refreshSiteLinks(request);
 				if (!processedSuccessully)
 				{
-					final String errMsg = "Problem refreshing SiteLinks within Campaign [" + campaignId + "] for AccountID [" + accountID + "]";
+					final String errMsg = "Problem refreshing SiteLinks within Campaign [" + campaignID + "] for AccountID [" + accountID + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}						
@@ -1157,34 +1278,35 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Refresh SiteLinks associated with PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}	
 	}
 	
-	public String scheduleUpdateAd(String json) throws Exception
+	public String scheduleUpdateAds(String json) throws Exception
 	{
-		logger.debug("call scheduleUpdateAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call scheduleUpdateAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
+		final String promotionAdIdsString = data.get("promotionAdIds");
+		List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
 		final String adEnginesString = data.get("adEngines");
-		final List<String> adEngines = gson.fromJson(adEnginesString, List.class);		
-		final Boolean res = scheduleUpdateAd(customerID, promotionID, promotionAdID, adEngines);
+		final List<String> adEngines = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);		
+		final Boolean res = scheduleUpdateAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
 		
 	@Override
-	public Boolean scheduleUpdateAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines) 
+	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) 
 	{
 		try 
 		{
-			logger.info("Will try to schedule task for Adding Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Adding Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], promotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String scheduleNamePostfix = "UpdateAd";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddAdTask(customerID, promotionID, promotionAdID, adEngines, scheduleNamePostfix);
+			final String scheduleNamePostfix = "UpdateAds";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateAdsTask(customerID, promotionID, promotionAdIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -1195,77 +1317,95 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Update Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}	
 	}
 	
-	public String UpdateAd(String json) throws Exception
+	public String UpdateAds(String json) throws Exception
 	{
-		logger.debug("call UpdateAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call UpdateAds(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		UpdateAd(promotionID, promotionAdID, adEngines);
+		final String promotionAdIdsString = data.get("promotionAdIds");
+		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		UpdateAds(promotionID, promotionAdIds, adEngines);
 		return gson.toJson(true);
+	}	
+	
+	public static List<GoogleUpdateAdRequest> getUpdateRequests(final String newDisplayUrl, final String newUrl, final List<AdsObject> ads)	
+	{
+		final List<GoogleUpdateAdRequest> updateRequests = new ArrayList<GoogleUpdateAdRequest>();
+		for (final AdsObject ad : ads)
+		{			
+			final Long adId = ad.getAdEngineAdID();
+			final String newHeadline = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
+			final String newDescription1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
+			final String newDescription2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
+			final Integer promotionAdID = ad.getPromotionAdsPK();
+			final GoogleUpdateAdRequest updateRequest = new GoogleUpdateAdRequest(adId, newHeadline, newDescription1, newDescription2, newDisplayUrl, newUrl, promotionAdID);
+			updateRequests.add(updateRequest);
+		}
+		return updateRequests;
 	}
 
 	@Override
-	public void UpdateAd(Integer promotionID, Integer promotionAdID, List<String> adEngines) throws Exception
+	public void UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Update Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEndinges [" + adEngines + "]");
+		logger.info("Will try to Update Ad for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountID = SemplestUtils.getTrimmedNonNullString("" + promotion.getAdvertisingEngineAccountPK());				
+		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL()); 
+		final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
+		final List<AdsObject> ads = getPromoDataSP.getAds();
+		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
+		for (final Integer promotionAdID : promotionAdIds)
+		{
+			final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+			final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);			
+			//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
+			Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+			if (!nonDeletedAdsForPromotionAdID.isEmpty())
+			{
+				final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);		
+				nonDeletedAdsForPromotionAdIds.add(ad);
+			}
+		}
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final List<AdsObject> ads = getPromoDataSP.getAds();
-				final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);				
-				final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);
-				logger.info("Found " + nonDeletedAdsForPromotionAdID + " non-deleted Ads out of " + adsForPromotionAdID.size() + " total Ads in DB");				
-				if (!nonDeletedAdsForPromotionAdID.isEmpty())
+				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
 				{
-					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-					final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);					
-					final Long semplestGoogleAdID = ad.getAdEngineAdID();
-					final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
-					final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-					final String headline = ad.getAdTitle();
-					final String description1 = ad.getAdTextLine1();
-					final String description2 = ad.getAdTextLine2();
-					final String displayURL = promotion.getDisplayURL(); 
-					final String url = promotion.getLandingPageURL();
-					final Long googleAdID = googleAdwordsService.updateAD(accountID, adGroupID, semplestGoogleAdID, headline, description1, description2, displayURL, url);
-					if (googleAdID == null || googleAdID == 0)
+					final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
+					final List<GoogleUpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
+					final int numUpdateRequests = updateRequests.size();
+					logger.info("Will try to update " + numUpdateRequests + " Ads in Google");
+					final GoogleUpdateAdsRequest request = new GoogleUpdateAdsRequest(accountID, adGroupID, updateRequests);
+					final Map<GoogleUpdateAdRequest, Long> requestToNewAdIdMap = googleAdwordsService.updateAds(request);
+					final int numAdsUpdated = requestToNewAdIdMap.size();
+					logger.info("# of Ads updated: " + numAdsUpdated);
+					if (numUpdateRequests != numAdsUpdated)
 					{
-						final String errMsg = "Got null Google Ad ID from Google AdWords after trying to update the Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].  This means there was a problem updating the ad within Google AdWords.";
-						logger.error(errMsg);
-						errorMap.put(adEngine, errMsg);
+						logger.warn("# of ads we expected to update [" + numUpdateRequests + "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
 					}
-					else if (googleAdID.equals(semplestGoogleAdID))
-					{
-						final String errMsg = "Google Ad ID returned from Google AdWords after trying to update the Ad for GoogleAdID [" + googleAdID + "] equals the SemplestGoogleAdID [" + semplestGoogleAdID + "].  This is not expected.  Update consists of creatae new ad and deleting the old ad.  If the 2 are the same, then the NEW Ad ID is the same as the OLD, but it should be different.  Other params used in the update call: PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "], SemplestGoogleAdID [" + semplestGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "].";
-						logger.error(errMsg);
-						errorMap.put(adEngine, errMsg);
+					final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);				
+					final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
+					if (!updateRequestNewIdToRowCountMapWithBadRowCounts.isEmpty())
+					{						
+						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
-					else
-					{
-						logger.info("Google Ad ID returned after updating the ad in Google for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], GoogleAccountID [" + accountID + "], AdGroupID [" + adGroupID + "] is neither null nor 0 and is different from the SemplestGoogleAdID [" + semplestGoogleAdID + "] as we expect since the update is a delete of old ad and create of new ad: [" + googleAdID + "].  This means the ad was 'updated' successfully within Google AdWords.");
-						final int rowCount = SemplestDB.updateAdIDForAdGroup(googleAdID, semplestGoogleAdID, adEngine, promotionAdID);
-						if (rowCount != 1)
-						{
-							logger.warn("Num or rows updated when updating SemplestPromotionAdsPk<->GoogleAdID mapping for NewGoogleAdID [" + googleAdID + "], OldGoogleAdID [" + semplestGoogleAdID + "], PromotionAdID [" + promotionAdID + "], AdEngine [" + adEngine + "] should be 1, but was [" + rowCount + "]");
-						}
-					}
+
+					
 				}
 				else
 				{
-					final String errMsg = "Could not find Ad in database for PromotionID [" + promotionID + "] and PromotionAdID [" + promotionAdID + "]";
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}								
@@ -1280,7 +1420,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Update Ad for PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Update Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}		
@@ -1289,10 +1429,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String UpdateBudget(String json) throws Exception
 	{
 		logger.debug("call UpdateBudget(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final Double changeInBudget = Double.parseDouble(data.get("changeInBudget"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		UpdateBudget(promotionID, changeInBudget, adEngines);
 		return gson.toJson(true);
 	}
@@ -1350,12 +1490,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String scheduleChangePromotionStartDate(String json) throws Exception
 	{
 		logger.debug("call scheduleChangePromotionStartDate(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String newStartDateString = data.get("newStartDate");	
 		final java.util.Date newStartDate = SemplestUtils.DATE_FORMAT_YYYYMMDD.parse(newStartDateString);
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleChangePromotionStartDate(customerID, promotionID, newStartDate, adEngines);
 		return gson.toJson(result);
 	}
@@ -1365,10 +1505,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try 
 		{
-			logger.info("Will try to schedule task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], New Start Date [" + newStartDate + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "ChangePromotionStartDate";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateGeoTargetingTask(customerID, promotionID, adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createChangePromotionStartDateTask(customerID, promotionID, newStartDate, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -1387,11 +1527,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String ChangePromotionStartDate(String json) throws Exception
 	{
 		logger.debug("call ChangePromotionStartDate(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String newStartDateString = data.get("newStartDate");	
 		final java.util.Date newStartDate = SemplestUtils.DATE_FORMAT_YYYYMMDD.parse(newStartDateString);
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		ChangePromotionStartDate(promotionID, newStartDate, adEngines);
 		return gson.toJson(true);
 	}
@@ -1451,7 +1591,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String scheduleAddPromotionToAdEngine(String json) throws Exception
 	{
 		logger.debug("call scheduleAddPromotionToAdEngine(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
@@ -1487,11 +1627,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String scheduleUpdateBudget(String json) throws Exception
 	{
 		logger.debug("call scheduleUpdateBudget(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final Double changeInBudget = Double.parseDouble(data.get("changeInBudget"));	
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleUpdateBudget(customerID, promotionID, changeInBudget, adEngines);
 		return gson.toJson(result);
 	}
@@ -1523,10 +1663,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public String scheduleUnpausePromotion(String json) throws Exception
 	{
 		logger.debug("call scheduleUnpausePromotion(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleUnpausePromotion(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
@@ -1555,27 +1695,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 	}
 	
-	public String scheduleDeleteKeyword(String json) throws Exception
+	public String scheduleDeleteKeywords(String json) throws Exception
 	{
-		logger.debug("call scheduleDeleteKeyword(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call scheduleDeleteKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final String keyword = data.get("keyword");
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		final Boolean result = scheduleDeleteKeyword(customerID, promotionID, keyword, adEngines);
+		final String keywordsString = data.get("keywordIds");
+		final List<Integer> keywordIds = gson.fromJson(keywordsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final Boolean result = scheduleDeleteKeywords(customerID, promotionID, keywordIds, adEngines);
 		return gson.toJson(result);
 	}
 
 	@Override
-	public Boolean scheduleDeleteKeyword(Integer customerID, Integer promotionID, String keyword, List<String> adEngines)
+	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
 	{
 		try 
 		{
-			logger.info("Will try to schedule task to Delete Keyword for Customer [" + customerID + "], PromotionID [" + promotionID + "], Keyword [" + keyword + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Delete Keyword for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String scheduleNamePostfix = "DeleteKeyword";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteKeywordTask(customerID, promotionID, keyword, adEngines, scheduleNamePostfix);
+			final String scheduleNamePostfix = "DeleteKeywords";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteKeywordTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -1586,32 +1727,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Keyword for Customer [" + customerID + "], PromotionID [" + promotionID + "], Keyword [" + keyword + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Delete Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
 	
-	public String scheduleRefreshSiteLinksForAd(String json) throws Exception
+	public String scheduleRefreshSiteLinks(String json) throws Exception
 	{
-		logger.debug("call scheduleRefreshSiteLinksForAd(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		logger.debug("call scheduleRefreshSiteLinks(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));		
-		final Integer promotionAdID = Integer.parseInt(data.get("promotionAdID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		final Boolean result = scheduleRefreshSiteLinksForAd(customerID, promotionID, promotionAdID, adEngines);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final Boolean result = scheduleRefreshSiteLinks(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
 
 	@Override
-	public Boolean scheduleRefreshSiteLinksForAd(Integer customerID, Integer promotionID, Integer promotionAdID, List<String> adEngines)
+	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<String> adEngines)
 	{
 		try 
 		{
-			logger.info("Will try to schedule task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String scheduleNamePostfix = "RefreshSiteLinksForAd";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createRefreshSiteLinksForAdTask(customerID, promotionID, promotionAdID, adEngines, scheduleNamePostfix);
+			final String scheduleNamePostfix = "RefreshSiteLinks";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createRefreshSiteLinksForAdTask(customerID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
@@ -1622,42 +1762,88 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
 	
-	public String schedulePauseProductGroup(String json) throws Exception
+	public String schedulePauseProductGroups(String json) throws Exception
 	{
 		logger.debug("call schedulePauseProductGroup(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
-		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));		
-		final List<String> adEngines = gson.fromJson(data.get("adEngines"), List.class);
-		final Boolean result = schedulePauseProductGroup(customerID, productGroupID, adEngines);
+		final String productGroupIdsString = data.get("productGroupIds");
+		final List<Integer> productGroupIds = gson.fromJson(productGroupIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);		
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final Boolean result = schedulePauseProductGroups(customerID, productGroupIds, adEngines);
 		return gson.toJson(result);
 	}
-
+	
 	@Override
-	public Boolean schedulePauseProductGroup(Integer customerID, Integer productGroupID, List<String> adEngines)
+	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<String> adEngines)
 	{
 		try 
 		{
-			logger.info("Will try to schedule task to Pause ProductGroup for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Pause ProductGroup for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final String scheduleNamePostfix = "PauseProductGroup";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupID, adEngines, scheduleNamePostfix);
+			final String scheduleNamePostfix = "PauseProductGroups";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
-			// TODO: is this the right way to name the schedule for pausing productGroup?  Can't use a single promotionID since there would be multiple
-			final String scheduleName = "ProductGroup" + productGroupID + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, productGroupID, null);
+			final String scheduleName = "ProductGroups[" + productGroupIds + "]_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Pause ProductGroup for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
+	}
+
+	@Override
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID,
+			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID,
+			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

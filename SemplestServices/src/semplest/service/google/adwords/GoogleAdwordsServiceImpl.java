@@ -1,10 +1,8 @@
 package semplest.service.google.adwords;
 
 import java.rmi.RemoteException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,6 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
@@ -30,8 +30,13 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
+import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
@@ -49,6 +54,7 @@ import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupAdOperation;
 import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
+import com.google.api.adwords.v201109.cm.AdGroupAdStatus;
 import com.google.api.adwords.v201109.cm.AdGroupBidLandscape;
 import com.google.api.adwords.v201109.cm.AdGroupBidLandscapePage;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
@@ -82,7 +88,6 @@ import com.google.api.adwords.v201109.cm.Criterion;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscape;
 import com.google.api.adwords.v201109.cm.CriterionBidLandscapePage;
 import com.google.api.adwords.v201109.cm.CriterionType;
-import com.google.api.adwords.v201109.cm.CriterionUse;
 import com.google.api.adwords.v201109.cm.DataServiceInterface;
 import com.google.api.adwords.v201109.cm.DateRange;
 import com.google.api.adwords.v201109.cm.Keyword;
@@ -116,7 +121,6 @@ import com.google.api.adwords.v201109.o.Attribute;
 import com.google.api.adwords.v201109.o.AttributeType;
 import com.google.api.adwords.v201109.o.AverageTargetedMonthlySearchesSearchParameter;
 import com.google.api.adwords.v201109.o.CampaignEstimateRequest;
-import com.google.api.adwords.v201109.o.CategoryProductsAndServicesSearchParameter;
 import com.google.api.adwords.v201109.o.CriterionAttribute;
 import com.google.api.adwords.v201109.o.DoubleAttribute;
 import com.google.api.adwords.v201109.o.ExcludedKeywordSearchParameter;
@@ -210,7 +214,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			cal.add(Calendar.DAY_OF_MONTH, -5);
 			Long api = g.getSpentAPIUnitsPerAccountID(accountID,cal.getTime(),new
 					java.util.Date());
-			
+
 			System.out.println("API COST=" + api);
 			/*
 			final String accountID = "54100";
@@ -449,7 +453,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getSpentAPIUnitsPerAccountID(String json) throws Exception
 	{
 		logger.debug("call getSpentAPIUnitsPerAccountID(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class); // protocolJson.getHashMapFromJson(json);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING); // protocolJson.getHashMapFromJson(json);
 		Long accountID = Long.parseLong(data.get("accountID"));
 		Long unitsSpent = getSpentAPIUnitsPerAccountID(accountID, gson.fromJson(data.get("startDate"), java.util.Date.class), gson.fromJson(data.get("endDate"), java.util.Date.class));
 		// convert result to Json String
@@ -516,10 +520,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String CreateOneAccountService(String json) throws Exception
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class); // protocolJson.getHashMapFromJson(json);
-		Account account = CreateOneAccountService(data.get("currencyCode"), data.get("dateTimeZone"), data.get("companyName"),
-				data.get("descriptiveName"));
-		// convert result to Json String
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING); // protocolJson.getHashMapFromJson(json);
+		Account account = CreateOneAccountService(data.get("currencyCode"), data.get("dateTimeZone"), data.get("companyName"), data.get("descriptiveName"));
 		return gson.toJson(account);
 	}
 
@@ -639,12 +641,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String AddAdGroup(String json) throws Exception
 	{
 		logger.debug("call AddAdGroup" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		Long defaultMicroBid = Long.parseLong(data.get("defaultMicroBid"));
-		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")),
-				defaultMicroBid);
-		// convert result to Json String
+		Long adGroupID = AddAdGroup(data.get("accountID"), campaignID, data.get("AdGroupName"), AdGroupStatus.fromString(data.get("status")), defaultMicroBid);
 		return gson.toJson(adGroupID);
 	}
 
@@ -700,19 +700,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 
-	public String addTextAd(String json) throws Exception
+	public String addTextAds(String json) throws Exception
 	{
-		logger.debug("call addTextAd (" + json + ")");		
-		final Map<String, String> data = gson.fromJson(json, Map.class);
-		final String accountID = data.get("accountID");
-		final Long addGroupID = Long.parseLong(data.get("addGroupID"));
-		final String headline = data.get("headline");
-		final String description1 = data.get("description1");
-		final String description2 = data.get("description2");
-		final String displayURL = data.get("displayURL");
-		final String url = data.get("url");
-		final Long res = addTextAd(accountID, addGroupID, headline, description1, description2, displayURL, url);
-		return gson.toJson(res);
+		logger.debug("call addTextAds (" + json + ")");		
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String requestString = data.get("request");		
+		final GoogleAddAdsRequest request = gson.fromJson(requestString, GoogleAddAdsRequest.class);
+		final Map<GoogleAddAdRequest, Long> response = addTextAds(request);
+		return gson.toJson(response);
 	}
 	
 	public static AdGroupAdOperation getAddAdOperation(Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
@@ -731,7 +726,25 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		textAdGroupAdOperation.setOperator(Operator.ADD);
 		return textAdGroupAdOperation;
 	}
-
+	
+	public GoogleAddAdRequest getTextRequestForGoogleAd(final TextAd ad, final List<GoogleAddAdRequest> textRequests)
+	{
+		final String adHeadline = ad.getHeadline();
+		final String adDescription1 = ad.getDescription1();
+		final String adDescription2 = ad.getDescription2();
+		for (final GoogleAddAdRequest textRequest : textRequests)
+		{
+			final String textRequestHeadline = textRequest.getHeadline();
+			final String textRequestDescription1 = textRequest.getDescription1();
+			final String textRequestDescription2 = textRequest.getDescription2();
+			if (adHeadline.equals(textRequestHeadline) && adDescription1.equals(textRequestDescription1) && adDescription2.equals(textRequestDescription2))
+			{
+				return textRequest;
+			}
+		}
+		return null;
+	}
+	
 	/*
 	 * Ads can show, including spaces, 25 characters for the title, 70
 	 * characters for the ad text and 35 characters for a Display URL (or
@@ -739,38 +752,75 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	 * characters). NEED to Break up 35/Desc1, 35 Desc2
 	 */
 	@Override
-	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url)
+	public final Map<GoogleAddAdRequest, Long> addTextAds(final GoogleAddAdsRequest request)
 			throws Exception
 	{
-		//headline = "Exp123123123"; // for testing
-		logger.info("Will try to add Text Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
+		logger.info("Will try to add Text Ads:\n" + request.toStringPretty());
+		final String accountID = request.getAccountID();
+		final Long adGroupID = request.getAdGroupID();
+		final String displayURL = request.getDisplayURL();
+		final String url = request.getDisplayURL();
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-			final AdGroupAdOperation adGroupAdOperation = getAddAdOperation(adGroupID, headline, description1, description2, displayURL, url);
-			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{adGroupAdOperation};
+			final List<AdGroupAdOperation> operationList = new ArrayList<AdGroupAdOperation>();
+			final List<GoogleAddAdRequest> textRequests = request.getAddAdTextRequests();
+			for (final GoogleAddAdRequest textRequest : textRequests)
+			{
+				final String headline = textRequest.getHeadline();
+				final String description1 = textRequest.getDescription1();
+				final String description2 = textRequest.getDescription2();
+				final AdGroupAdOperation adGroupAdOperation = getAddAdOperation(adGroupID, headline, description1, description2, displayURL, url);
+				operationList.add(adGroupAdOperation);
+			}			
+			final AdGroupAdOperation[] operations = operationList.toArray(new AdGroupAdOperation[operationList.size()]);
 			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
 			if (result != null && result.getValue() != null)
 			{
-				return result.getValue()[0].getAd().getId();
+				final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = new HashMap<GoogleAddAdRequest, Long>();
+				final AdGroupAd[] adGroupAds = result.getValue();
+				for (final AdGroupAd adGroupAd : adGroupAds)
+				{
+					final Ad ad = adGroupAd.getAd();
+					if (ad instanceof TextAd)
+					{
+						final TextAd textAd = (TextAd)ad;
+						final GoogleAddAdRequest textRequestForGoogleAd = getTextRequestForGoogleAd(textAd, textRequests);	
+						if (textRequestForGoogleAd == null)
+						{
+							logger.error("Could not find the original AddAd request associated with the Ad that was created in Google.  This is not expected.");							
+						}				
+						else
+						{
+							final Long googleAdID = textAd.getId();
+							requestToGoogleAdIdMap.put(textRequestForGoogleAd, googleAdID);
+						}
+					}					
+					else
+					{
+						logger.warn("Found a GoogleAd within results that is not instanceof TextAd but [" + ad.getClass().getName() + "]");
+					}
+				}
+				logger.info("Generated " + requestToGoogleAdIdMap.size() + " mappings between Original Semplest Ad Requests <-> Google Ad Ids");
+				return requestToGoogleAdIdMap;
 			}
 			else
 			{
-				return null;
+				throw new Exception("Problem adding ads for the following request because the result received from Google operation is empty: [" + request + "]");
 			}
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
+			throw new Exception("Problem adding ads for request [" + request + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]: " + e.dumpToString(), e);
+			throw new Exception("Problem adding ads for request [" + request + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception("Problem adding ad text for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
+			throw new Exception("Problem adding ads for request [" + request + "]", e);
 		}
 
 	}
@@ -778,7 +828,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getAllAdGroupCriteria(String json) throws Exception
 	{
 		logger.debug("call getAllAdGroupCriteria(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		AdGroupCriterion[] res = getAllAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
 		// convert result to Json String
@@ -845,11 +895,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getAllBiddableAdGroupCriteria(String json) throws Exception
 	{
 		logger.debug("call getAllBiddableAdGroupCriteria(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-
 		KeywordDataObject[] res = getAllBiddableAdGroupCriteria(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
-		// convert result to Json String
 		return gson.toJson(res);
 	}
 
@@ -904,7 +952,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getAllAdGroupKeywords(String json) throws Exception
 	{
 		logger.debug("call getAllAdGroupKeywords(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 
 		String[] res = getAllAdGroupKeywords(data.get("accountID"), adGroupID, Boolean.valueOf(data.get("ActiveOnly")));
@@ -930,14 +978,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return null;
 	}
 
-	public String deleteAD(String json) throws Exception
+	public String deleteAds(String json) throws Exception
 	{
-		logger.debug("call deleteAd(String json) [" + json + "]");
-		Map<String, String> data = gson.fromJson(json, Map.class);
-		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		Long AdID = Long.parseLong(data.get("AdID"));
-		Long googleAdID = deleteAD(data.get("accountID"), adGroupID, AdID);
-		return gson.toJson(googleAdID);
+		logger.debug("call deleteAds(String json) [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String accountID = data.get("accountID");
+		final Long adGroupID = Long.parseLong(data.get("adGroupID"));
+		final String adIdsString = data.get("adIds");
+		final List<Long> adIds = gson.fromJson(adIdsString, SemplestUtils.TYPE_LIST_OF_LONGS);
+		final List<Long> deletedAdIds = deleteAds(accountID, adGroupID, adIds);
+		return gson.toJson(deletedAdIds);
 	}
 	
 	public AdGroupAdOperation getRemoveAdOperation(Long adGroupID, Long AdID)
@@ -952,52 +1002,72 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		operation.setOperator(Operator.REMOVE);
 		return operation;
 	}
+	
+	public List<AdGroupAdOperation> getRemoveAdGroupAdOperations(Long adGroupID, List<Long> adIds)
+	{
+		final List<AdGroupAdOperation> operations = new ArrayList<AdGroupAdOperation>();
+		for (final Long adId : adIds)
+		{
+			final AdGroupAdOperation operation = getRemoveAdOperation(adGroupID, adId);
+			operations.add(operation);
+		}
+		return operations;
+	}
 
 	@Override
-	public Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
+	public List<Long> deleteAds(String accountID, Long adGroupID, List<Long> adIds) throws Exception
 	{
-		logger.info("Will try to delete ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]");
+		logger.info("Will try to delete ads in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdIds [" + adIds + "]");
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-			final AdGroupAdOperation removeAdOperation = getRemoveAdOperation(adGroupID, AdID);
-			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{removeAdOperation};
-			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
+			final List<AdGroupAdOperation> operationList = getRemoveAdGroupAdOperations(adGroupID, adIds);
+			final AdGroupAdOperation[] operations = operationList.toArray(new AdGroupAdOperation[operationList.size()]);
+			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);
+			final List<Long> deletedAdIds = new ArrayList<Long>();
 			if (result != null && result.getValue() != null)
 			{
 				final AdGroupAd[] adGroupAdArray = result.getValue();
-				final AdGroupAd adGroupAdReturned = adGroupAdArray[0];
-				final Ad returnedAd = adGroupAdReturned.getAd();
-				final Long returnedAdID = returnedAd.getId();
-				return returnedAdID;
+				for (final AdGroupAd adGroupAdReturned : adGroupAdArray)
+				{
+					final Ad returnedAd = adGroupAdReturned.getAd();
+					final Long returnedAdID = returnedAd.getId();
+					deletedAdIds.add(returnedAdID);
+				}				
 			}
-			else
+			if (deletedAdIds.size() == adIds.size())
 			{
-				return null;
-			}			
+				logger.info("Deleted all " + deletedAdIds.size() + " Ads as expected");	
+			}				
+			else
+			{				
+				Collections.sort(adIds);
+				Collections.sort(deletedAdIds);
+				logger.warn("Deleted " + deletedAdIds.size() + " Ads, though expected to delete " + adIds.size() + " Ads:\nExpected to delete AdIDs: [" + adIds + "]\nActually deleted AdIds: [" + deletedAdIds + "]");
+			}
+			return deletedAdIds;
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]", e);
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdIds [" + adIds + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]: " + e.dumpToString(), e);
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdIds [" + adIds + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdID [" + AdID + "]", e);
+			throw new Exception("Problem deleting Google AdWords Ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], AdIds [" + adIds + "]", e);
 		}
 	}
 
 	public String deleteAdGroup(String json) throws Exception
 	{
 		logger.debug("call deleteAdGroup(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Boolean del = deleteAdGroup(data.get("accountID"), adGroupID);
-		// convert result to Json String
 		return gson.toJson(del);
 	}
 
@@ -1045,59 +1115,174 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 
-	public String updateAD(String json) throws Exception
+	public String updateAds(String json) throws Exception
 	{
-		logger.debug("call updateAD(String json)" + json);
-		Map<String, String> data = gson.fromJson(json, HashMap.class);
-		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		Long AdID = Long.parseLong(data.get("AdID"));
-		Long result = updateAD(data.get("accountID"), adGroupID, AdID, data.get("headline"), data.get("description1"), data.get("description2"), data.get("displayURL"), data.get("url"));
-		return gson.toJson(result);
+		logger.debug("call updateAds(String json)" + json);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String requestString = data.get("request");
+		final GoogleUpdateAdsRequest request = gson.fromJson(requestString, GoogleUpdateAdsRequest.class);
+		final Map<GoogleUpdateAdRequest, Long> response = updateAds(request);
+		return gson.toJson(response);
+	}
+	
+	public static List<AdGroupAdOperation> getAddAdGroupAdOperations(final Long adGroupID, final List<GoogleUpdateAdRequest> updateRequests)
+	{
+		final List<AdGroupAdOperation> operations = new ArrayList<AdGroupAdOperation>();
+		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		{
+			final String newHeadline = updateRequest.getNewHeadline();
+			final String newDescription1 = updateRequest.getNewDescription1();
+			final String newDescription2 = updateRequest.getNewDescription2();
+			final String newDisplayURL = updateRequest.getNewDisplayURL();
+			final String newURL = updateRequest.getNewUrl();
+			final AdGroupAdOperation addNewAdOperation = getAddAdOperation(adGroupID, newHeadline, newDescription1, newDescription2, newDisplayURL, newURL);
+			operations.add(addNewAdOperation);
+		}
+		return operations;
+	}
+	
+	public List<Long> getAdIds(final List<GoogleUpdateAdRequest> updateRequests)
+	{
+		final List<Long> adIds = new ArrayList<Long>();
+		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		{
+			final Long adId = updateRequest.getAdId();
+			adIds.add(adId);
+		}
+		return adIds;
+	}
+	
+	public GoogleUpdateAdRequest findMatchingRequest(final List<GoogleUpdateAdRequest> updateRequests, final TextAd textAd)
+	{
+		final String adDescription1 = textAd.getDescription1();
+		final String adDescription2 = textAd.getDescription2();
+		final String adHeadline = textAd.getHeadline();
+		//final String displayUrl = textAd.getDisplayUrl();
+		final String url = textAd.getUrl();
+		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		{
+			final String requestedNewDescription1 = updateRequest.getNewDescription1();
+			final String requestedNewDescription2 = updateRequest.getNewDescription2();
+			final String requestedHeadline = updateRequest.getNewHeadline();
+			//final String requestedDisplayUrl = updateRequest.getNewDisplayURL();
+			final String requestedUrl = updateRequest.getNewUrl();			
+			if (adDescription1.equals(requestedNewDescription1) && 
+				adDescription2.equals(requestedNewDescription2) && 
+				adHeadline.equals(requestedHeadline) && 
+				//displayUrl.equals(requestedDisplayUrl) && 
+				url.equals(requestedUrl))
+			{
+				return updateRequest;
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * Only status of an ad can be updated.  So in order to accommodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
 	 */
 	@Override
-	public Long updateAD(String accountID, Long adGroupID, Long oldGoogleAdID, String headline, String description1, String description2, String displayURL, String url) throws Exception
-	{	
-		logger.info("Will try to update ad in Goole Adwords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], OldGoogleAdID [" + oldGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], DisplayURL [" + displayURL + "], URL [" + url + "]");
+	public Map<GoogleUpdateAdRequest, Long> updateAds(final GoogleUpdateAdsRequest request) throws Exception
+	{			
 		try
 		{
+			final List<GoogleUpdateAdRequest> updateRequests = request.getUpdateRequests();
+			logger.info("Will try to update ads in Goole Adwords for request [" + request + "] which contains " + updateRequests.size() + " update requests");
+			final Map<GoogleUpdateAdRequest, Long> requestToNewAdIdMap = new HashMap<GoogleUpdateAdRequest, Long>();
+			final String accountID = request.getAccountID();
+			final Long adGroupID = request.getAdGroupID();
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
-			final AdGroupAdOperation addNewAdOperation = getAddAdOperation(adGroupID, headline, description1, description2, displayURL, url);
-			final AdGroupAdOperation removeOldAdOperation = getRemoveAdOperation(adGroupID, oldGoogleAdID);
-			final AdGroupAdOperation[] operations = new AdGroupAdOperation[]{addNewAdOperation, removeOldAdOperation};
+			final AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);			
+			final List<AdGroupAdOperation> addOperations = getAddAdGroupAdOperations(adGroupID, updateRequests);
+			final List<Long> adIds = getAdIds(updateRequests);
+			final List<AdGroupAdOperation> removeOperations = getRemoveAdGroupAdOperations(adGroupID, adIds);
+			final List<AdGroupAdOperation> addAndRemoveOperations = new ArrayList<AdGroupAdOperation>();
+			addAndRemoveOperations.addAll(addOperations);
+			addAndRemoveOperations.addAll(removeOperations);
+			final AdGroupAdOperation[] operations = addAndRemoveOperations.toArray(new AdGroupAdOperation[addAndRemoveOperations.size()]);
 			final AdGroupAdReturnValue result = adGroupAdService.mutate(operations);			
 			if (result != null && result.getValue() != null)
 			{
 				final AdGroupAd[] adGroupAdArray = result.getValue();
 				for (final AdGroupAd adGroupAd : adGroupAdArray)
-				{
-					final Ad returnedAd = adGroupAd.getAd();				
-					final Long returnedAdID = returnedAd.getId();
-					if (returnedAdID != oldGoogleAdID)
+				{					
+					final Ad returnedAd = adGroupAd.getAd();
+					final AdGroupAdStatus returnedAdStatus = adGroupAd.getStatus();					
+					if (returnedAd instanceof TextAd && returnedAdStatus == AdGroupAdStatus.ENABLED)
 					{
-						return returnedAdID;	
-					}					
-				}				
-				throw new Exception("Couldn't find the GoogleAdID for the newly-created Ad as part of the UpdateAd operation which deleted old version and creates new version");
+						final Long newAdID = returnedAd.getId();
+						final TextAd textAd = (TextAd)returnedAd;
+						final GoogleUpdateAdRequest matchingRequest = findMatchingRequest(updateRequests, textAd);
+						if (matchingRequest == null)
+						{							
+							logger.warn("Could not find matching request for Google Text Ad [" + (textAd == null ? "null" : SemplestUtils.getTextAdString(textAd) + ", status=[" + returnedAdStatus + "]"));
+						}
+						else
+						{
+							requestToNewAdIdMap.put(matchingRequest, newAdID);
+						}
+					}							
+				}			
+				logger.info("Generated " + requestToNewAdIdMap.size() + " mappings of Original Request <-> New Ad ID");
+				return requestToNewAdIdMap;
 			}
 			else
 			{
-				throw new Exception("The result returned from Google is empty, which means the operations wasn't executed");
+				throw new Exception("The result returned from Google is empty, which means the UpdateAds operations weren't executed");
 			}	
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Problem updating ad for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], GoogleAdId [" + oldGoogleAdID + "], Headline [" + headline + "], Description1 [" + description1 + "], Description2 [" + description2 + "], displayURL [" + displayURL + "], URL [" + url + "]", e);
+			throw new Exception("Problem Updating Ads in Google for request [" + request + "]", e);
 		}
 	}
 	
-	@Override
-	public Boolean deleteKeyWordFromAdGroup(String accountID, Long adGroupID, String keyword) throws Exception
+	public static Map<String, Long> getKeywordToIdMap(final List<String> keywords, final AdGroupCriterion[] adGroupCriterions)
 	{
+		final Map<String, Long> keywordToIdMap = new HashMap<String, Long>();
+		for (final AdGroupCriterion adGroupCriterion : adGroupCriterions)
+		{
+			final Criterion criterion = adGroupCriterion.getCriterion();
+			if (criterion.getType() == CriterionType.KEYWORD)
+			{
+				final Keyword keywordCriterion = (Keyword)criterion;
+				final String keywordCriterionText = keywordCriterion.getText();
+				if (keywords.contains(keywordCriterionText))
+				{
+					final Long keywordID = keywordCriterion.getId();
+					keywordToIdMap.put(keywordCriterionText, keywordID);
+				}
+			}
+		}
+		return keywordToIdMap;
+	}
+	
+	public static List<AdGroupCriterionOperation> getRemoveKeywordOperations(final Long adGroupID, final Map<String, Long> keywordToIdMap)
+	{
+		final List<AdGroupCriterionOperation> operations = new ArrayList<AdGroupCriterionOperation>();
+		final Set<Entry<String, Long>> entrySet = keywordToIdMap.entrySet();
+		for (final Entry<String, Long> entry : entrySet)
+		{
+			final String keyword = entry.getKey();
+			final Long keywordID = entry.getValue();
+			final Keyword keywrd = new Keyword();
+			keywrd.setText(keyword);
+			keywrd.setId(keywordID);
+			final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
+			keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
+			keywordBiddableAdGroupCriterion.setCriterion(keywrd);
+			final AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
+			keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);
+			keywordAdGroupCriterionOperation.setOperator(Operator.REMOVE);
+			operations.add(keywordAdGroupCriterionOperation);
+		}
+		return operations;
+	}
+	
+	@Override
+	public Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception
+	{
+		logger.info("Will try to delete these " + keywords.size() + " Keywords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "]: [" + keywords + "]");
 		try
 		{			
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -1105,92 +1290,61 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupCriterion[] adGroupCriterions = getAllAdGroupCriteria(accountID, adGroupID, false);
 			if (adGroupCriterions == null)
 			{
-				final String errMsg = "Problem deleting keyword [" + keyword + "] for Account [" + accountID + "] and AdGroup [" + adGroupID + "] because found no AdGroupCriterions for that AdGroup";
-				logger.info(errMsg);
-				throw new Exception(errMsg);
+				logger.info("Problem deleting Keywords for Account [" + accountID + "] and AdGroup [" + adGroupID + "] because found no AdGroupCriterions for that AdGroup");
+				return false;
 			}
-			logger.info("Will look through " + adGroupCriterions.length + " AdGroupCriterions for the ID of the Keyword which we're trying to delete [" + keyword + "]");
-			Long keywordID = 0L;
-			for (int i = 0; i < adGroupCriterions.length; ++i)
+			logger.info("Will look through " + adGroupCriterions.length + " AdGroupCriterions for the Ids of the Keywords which we're trying to delete");
+			final Map<String, Long> keywordToIdMap = getKeywordToIdMap(keywords, adGroupCriterions);
+			logger.info("Out of " + keywords.size() + " keywords that we're trying to delete, found " + keywordToIdMap.size() + " in Google");
+			if (keywordToIdMap.isEmpty())
 			{
-				final AdGroupCriterion adGroupCriterion = adGroupCriterions[i];				
-				final Criterion criterion = adGroupCriterion.getCriterion();
-				if (criterion.getType() == CriterionType.KEYWORD)
+				logger.info("Found no keywords in google do delete as per the request for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "], Keywords [" + keywords + "]");
+				return true;
+			}
+			final List<AdGroupCriterionOperation> removeKeywordOperations = getRemoveKeywordOperations(adGroupID, keywordToIdMap);
+			final AdGroupCriterionOperation[] operations = removeKeywordOperations.toArray(new AdGroupCriterionOperation[removeKeywordOperations.size()]);
+			final AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);
+			if (result != null && result.getValue() != null)
+			{
+				final AdGroupCriterion[] returnedAdGroupCriterions = result.getValue();
+				final List<Long> returnedKeywordIds = new ArrayList<Long>();
+				for (final AdGroupCriterion returnedAdGroupCriterion : returnedAdGroupCriterions)
 				{
-					final Keyword keywordCriterion = (Keyword)criterion;
-					final String keywordCriterionText = keywordCriterion.getText();
-					if (keyword.equals(keywordCriterionText))
+					if (returnedAdGroupCriterion instanceof BiddableAdGroupCriterion)
 					{
-						keywordID = keywordCriterion.getId();
+						final Criterion returnedCriterion = returnedAdGroupCriterion.getCriterion();
+						if (returnedCriterion instanceof Keyword)
+						{
+							final Keyword returnedKeyword = (Keyword)returnedCriterion;
+							final Long returnedKeywordID = returnedKeyword.getId();
+							returnedKeywordIds.add(returnedKeywordID);
+						}
 					}
 				}
-			}
-			if (keywordID == 0L)
-			{
-				final String errMsg = "Problem deleting keyword [" + keyword + "] for Account [" + accountID + "] and AdGroup [" + adGroupID + "] because the keyword is not found in Google";
-				logger.error(errMsg);
-				throw new Exception(errMsg);
-			}
-			logger.info("Google keyword ID for keyword [" + keyword + "] is [" + keywordID + "]");
-			
-			final Keyword keywrd = new Keyword();
-			keywrd.setText(keyword);
-			keywrd.setId(keywordID);
-			//keywrd.setMatchType(matchType);
-			final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
-			keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
-			keywordBiddableAdGroupCriterion.setCriterion(keywrd);
-			/*
-			ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
-			Money money = new Money();
-			money.setMicroAmount(microBidAmount);
-			bid.setMaxCpc(new Bid(money));
-			keywordBiddableAdGroupCriterion.setBids(bid);
-			*/
-			final AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
-			keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);
-			keywordAdGroupCriterionOperation.setOperator(Operator.REMOVE);
-			final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]{keywordAdGroupCriterionOperation};
-			final AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);
-			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
-			{/*
-				BiddableAdGroupCriterion res = (BiddableAdGroupCriterion) result.getValue(0);
-				KeywordDataObject bidRes = new KeywordDataObject();
-				if (res.getQualityInfo() != null)
-				{
-					bidRes.setQualityScore(res.getQualityInfo().getQualityScore());
-				}
-				if (res.getFirstPageCpc() != null)
-				{
-					bidRes.setFirstPageCpc(res.getFirstPageCpc().getAmount().getMicroAmount());
-				}
-				bidRes.setBidID(res.getCriterion().getId());
-				bidRes.setApprovalStatus(res.getApprovalStatus().getValue());
-				bidRes.setKeyword(keyword);
-				bidRes.setMatchType(matchType.getValue());
-				bidRes.setMicroBidAmount(((ManualCPCAdGroupCriterionBids) res.getBids()).getMaxCpc().getAmount().getMicroAmount());*/
+				logger.info("Deleted " + returnedKeywordIds.size() + " keywords out of the " + keywordToIdMap.size() + " that we could delete (total requested to be deleted originally is " + keywords.size() + ")");
 				return true;
 			}
 			else
 			{
+				logger.info("Problem deleting Keywords for AccountID [" + accountID + "] and AdGroupID [" + adGroupID + "] because the operations returned no results");
 				return false;
 			}
 		}
 		catch (ServiceException e)
 		{
-			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]";
+			final String errMsg = "Problem deleting Keywords for AdGroupID [" + adGroupID + "] and AccountID [" + accountID + "]";
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 		catch (ApiException e)
 		{
-			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]: " + e.dumpToString();
+			final String errMsg = "Problem deleting Keywords for AdGroupID [" + adGroupID + "] and AccountID [" + accountID + "]: " + e.dumpToString();
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 		catch (RemoteException e)
 		{
-			final String errMsg = "Problem deleting Keyword [" + keyword + "] from Google AdGroup [" + adGroupID + "] for Google Account [" + accountID + "]";
+			final String errMsg = "Problem deleting Keywords for AdGroupID [" + adGroupID + "] and AccountID [" + accountID + "]";
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
@@ -1199,7 +1353,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String addKeyWordToAdGroup(String json) throws Exception
 	{
 		logger.debug("call addKeyWordToAdGroup" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
 		KeywordDataObject res = addKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), microBidAmount);
@@ -1708,7 +1862,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String setBidForKeyWord(String json) throws Exception
 	{
 		logger.debug("call setBidForKeyWord" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		Long microBidAmount = Long.parseLong(data.get("microBidAmount"));
@@ -1790,12 +1944,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String addNegativeKeyWordToAdGroup(String json) throws Exception
 	{
 		logger.debug("call addKeyWordToAdGroup" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		KeywordDataObject res = addNegativeKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"),
-				KeywordMatchType.fromString(data.get("matchType")));
-
-		// convert result to Json String
+		KeywordDataObject res = addNegativeKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")));
 		return gson.toJson(res);
 	}
 	@Override
@@ -1861,7 +2012,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String CreateOneCampaignForAccount(String json) throws Exception
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 
 		// MicroAmount
 		Campaign campaign = CreateOneCampaignForAccount(data.get("accountID"), data.get("campaignName"),
@@ -1949,7 +2100,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getAdGroupsByCampaignId(String json) throws Exception
 	{
 		logger.debug("call getCampaignsByAccountId" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		GoogleAdGroupObject[] res = getAdGroupsByCampaignId(data.get("accountID"), campaignID, Boolean.valueOf(data.get("includeDeleted")));
 		// convert result to Json String
@@ -2038,7 +2189,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String deleteCampaign(String json) throws Exception
 	{
 		logger.debug("call deleteCampaign" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		Boolean res = deleteCampaign(data.get("accountID"), campaignID);
 		// convert result to Json String
@@ -2139,9 +2290,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String changeCampaignStatus(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus" + json);
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final String campaignIdsString = data.get("campaignIds");
-		final List<Long> campaignIds = gson.fromJson(campaignIdsString, List.class);
+		final List<Long> campaignIds = gson.fromJson(campaignIdsString, SemplestUtils.TYPE_LIST_OF_LONGS);
 		final String accountID = data.get("accountID");
 		final CampaignStatus status = CampaignStatus.fromString(data.get("status"));
 		final Boolean res = changeCampaignsStatus(accountID, campaignIds, status);
@@ -2208,7 +2359,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String changeCampaignBudget(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus(String json): [" + json + "]");
-		final Map<String, String> data = gson.fromJson(json, Map.class);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final String accountID = data.get("accountID");
 		final Long campaignID = Long.parseLong(data.get("campaignID"));
 		final Long microBudgetAmount = Long.valueOf(data.get("microBudgetAmount"));
@@ -2282,7 +2433,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getCampaignsByAccountId(String json) throws Exception
 	{
 		logger.debug("call getCampaignsByAccountId" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		ArrayList<HashMap<String, String>> res = getCampaignsByAccountId(data.get("accountID"), Boolean.valueOf(data.get("includeDeleted")));
 		// convert result to Json String
 		return gson.toJson(res);
@@ -2347,7 +2498,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String UpdateCampaignName(String json) throws Exception
 	{
 		logger.debug("call UpdateCampaignName" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		Boolean res = UpdateCampaignName(data.get("accountID"), campaignID, data.get("newName"));
 		// convert result to Json String
@@ -2403,9 +2554,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String GetRelatedKeywords(String json) throws Exception
 	{
 		logger.debug("call GetRelatedKeywords" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		GoogleRelatedKeywordObject res = GetRelatedKeywords(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")),
-				Integer.parseInt(data.get("numberResults")));
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		GoogleRelatedKeywordObject res = GetRelatedKeywords(data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")), Integer.parseInt(data.get("numberResults")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
@@ -2483,9 +2633,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String GetRelatedKeywordsForURL(String json) throws Exception
 	{
 		logger.debug("call GetRelatedKeywords" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		GoogleRelatedKeywordObject res = GetRelatedKeywordsForURL(data.get("url"), data.get("keyword"),
-				KeywordMatchType.fromString(data.get("matchType")), Integer.parseInt(data.get("numberResults")));
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		GoogleRelatedKeywordObject res = GetRelatedKeywordsForURL(data.get("url"), data.get("keyword"),KeywordMatchType.fromString(data.get("matchType")), Integer.parseInt(data.get("numberResults")));
 		// convert result to Json String
 		return gson.toJson(res);
 	}
@@ -2567,7 +2716,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getTrafficEstimationForOneKeyword(String json) throws Exception
 	{
 		logger.debug("call getTrafficEstimationForOneKeyword" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		HashMap<String, Long> KeywordWithBid = gson.fromJson(data.get("KeywordWithBid"), HashMap.class);
 		Long campaignID = Long.parseLong(data.get("campaignID"));
 		// String accountID, Long campaignID, KeywordMatchType matchType,
@@ -2687,7 +2836,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getBidLandscapeForKeyword(String json) throws Exception
 	{
 		logger.debug("call  getBidLandscapeForKeyword" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long keywordID = Long.parseLong(data.get("keywordID"));
 		BidSimulatorObject[] res = getBidLandscapeForKeyword(data.get("accountID"), adGroupID, keywordID);
@@ -2767,7 +2916,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getBidLandscapeForAdgroup(String json) throws Exception
 	{
 		logger.debug("call  getBidLandscapeForAdgroup" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		BidSimulatorObject[] res = getBidLandscapeForAdgroup(data.get("accountID"), adGroupID);
 		// convert result to Json String
@@ -2840,7 +2989,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String getReportForAccount(String json) throws Exception
 	{
 		logger.debug("call  getReportForAccount" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);		
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);		
 		ReportObject[] res = getReportForAccount(data.get("accountID"), data.get("startDate"), data.get("endDate"));
 		// convert result to Json String
 		return gson.toJson(res);
@@ -2927,7 +3076,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public String setGeoTarget(String json) throws Exception
 	{
 		logger.debug("call CreateOneAccountService(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long campaignId = Long.parseLong(data.get("campaignId"));
 		Double latitude = Double.parseDouble(data.get("latitude"));
 		Double longitude = Double.parseDouble(data.get("longitude"));
@@ -2966,7 +3115,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public void updateDefaultBid(String json) throws Exception
 	{
 		logger.debug("call updateDefaultBid(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Long adGroupID = Long.parseLong(data.get("adGroupID"));
 		Long microBid = Long.parseLong(data.get("microBid"));
 		updateDefaultBid(data.get("accountID"), adGroupID, microBid);
@@ -3257,19 +3406,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Boolean refreshSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
+	public Boolean refreshSiteLinks(final GoogleRefreshSiteLinksRequest request) throws Exception
 	{
-		final String siteLinksReadableString = SemplestUtils.getEasilyReadableString(siteLinks);
-		logger.info("Will try to Refresh SiteLinks for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "] with the following:\n" + siteLinksReadableString);
+		logger.info("Will try to Refresh SiteLinks for " + request.toStringPretty());
+		final String accountID = request.getAccountID();
+		final Long campaignID = request.getCampaignID();
 		final List<SitelinksExtension> activeSitelinksExtensions = GetSitelinkExtensions(accountID, campaignID, CampaignAdExtensionStatus.ACTIVE);
 		final List<Long> existingActiveSitelinkIds = getIds(activeSitelinksExtensions);
-		logger.info("Existing Active SiteLink Ids which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");		
-		final List<CampaignAdExtensionOperation> removeOperationList = getRemoveSiteLinksOperations(campaignID, existingActiveSitelinkIds);
+		logger.info("Existing Active SiteLink Ids for AccountID [" + accountID + "] and CampaignID [" + campaignID + "] which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");		
+		final List<CampaignAdExtensionOperation> removeOperationList = getRemoveSiteLinksOperations(campaignID, existingActiveSitelinkIds);		
+		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
 		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(campaignID, siteLinks);
 		final List<CampaignAdExtensionOperation> combinedOperations = new ArrayList<CampaignAdExtensionOperation>();
 		if (removeOperationList.isEmpty())
 		{
-			logger.info("No active SiteLinks found in Google, so won't remove any old SiteLinks");
+			logger.info("No active SiteLinks found in Google for AccountID [" + accountID + "] and CampaignID [" + campaignID + "], so won't remove any old SiteLinks");
 		}
 		else
 		{
@@ -3301,12 +3452,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				final AdExtension adExtention = campaignAdExtensionResult.getAdExtension();
 				final Long adExtentionId = adExtention.getId();
 				final String adExtensionType = adExtention.getAdExtensionType();
-				logger.info("Current status for SiteLink Extension for CampaignID [" + campaignAdExtensionCampaignId + "], AdExtensionID [" + adExtentionId + "], AdExtensionType [" + adExtensionType + "]: [" + campaignAdExtensionStatus + "]");
+				logger.info("After the operation, current status for SiteLink Extension for CampaignID [" + campaignAdExtensionCampaignId + "], AdExtensionID [" + adExtentionId + "], AdExtensionType [" + adExtensionType + "]: [" + campaignAdExtensionStatus + "]");
 			}
 		}
 		else
 		{
-			final String errMsg = "Problem adding the following SiteLinks to Google for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]: [" + siteLinks + "]";
+			final String errMsg = "Problem refreshing SiteLinks for request [" + request + "]";
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}

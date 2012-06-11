@@ -27,9 +27,9 @@ public class GetSiteLinksForPromotionSP extends StoredProcedure
 		compile();
 	}
 
-	public void execute(Integer promotionAdsID)
+	public void execute(Integer promotionID)
 	{
-		results = super.execute(new Object[] {promotionAdsID});
+		results = super.execute(new Object[] {promotionID});
 	}
 	
 	public List<SiteLink> getSiteLinks()

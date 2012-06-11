@@ -3,6 +3,7 @@ package semplest.services.client.interfaces;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
@@ -12,8 +13,13 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
+import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupCriterion;
@@ -32,39 +38,39 @@ import com.google.api.adwords.v201109.mcm.Account;
 public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 {
 	//management console (mcm)
-	public abstract Account CreateOneAccountService(String currencyCode, String dateTimeZone,String companyName, String descriptiveName) throws Exception;
+	Account CreateOneAccountService(String currencyCode, String dateTimeZone,String companyName, String descriptiveName) throws Exception;
 	//Campaign Data Management (cm)
-	public abstract Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception;
-	public abstract Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
-	public abstract Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception;
-	public abstract Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;
-	public abstract ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
-	public abstract Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
-	public abstract Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
-	public abstract Boolean ChangeCampaignStartDate(String accountID, Long campaignID, java.util.Date newStartDate) throws Exception;
+	Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period, Long microBudgetAmount) throws Exception;
+	Boolean deleteCampaign(String accountID, Long campaignID) throws Exception;
+	Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception;
+	Boolean changeCampaignBudget(String accountID, Long campaignID, Long microBudgetAmount) throws Exception;
+	ArrayList<HashMap<String, String>> getCampaignsByAccountId(String accountID, Boolean includeDeleted) throws Exception;
+	Boolean UpdateCampaignName(String accountID, Long campaignID, String newName) throws Exception;
+	Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception;
+	Boolean ChangeCampaignStartDate(String accountID, Long campaignID, java.util.Date newStartDate) throws Exception;
 	
-	public abstract Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
-	public abstract Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL, String url) throws Exception;
-	public abstract GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
-	public abstract Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception;
-	public abstract Long updateAD(String accountID, Long adGroupID, Long AdID,String headline, String description1, String description2, String displayURL, String url) throws Exception;
-	public abstract Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
+	Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
+	Map<GoogleAddAdRequest, Long> addTextAds(GoogleAddAdsRequest request) throws Exception;
+	GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
+	List<Long> deleteAds(String accountID, Long adGroupID, List<Long> adIds) throws Exception;
+	Map<GoogleUpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception;
+	Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
 	
-	public abstract Boolean refreshSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception;
+	Boolean refreshSiteLinks(GoogleRefreshSiteLinksRequest request) throws Exception;	
 	
-	public abstract GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
-	public abstract GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
-	public abstract String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
-	public abstract KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
-	public abstract KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
-	public abstract Boolean deleteKeyWordFromAdGroup(String accountID, Long adGroupID, String keyword) throws Exception;
-	public abstract KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception;
-	public abstract KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
-	public abstract TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID,Long campaignID, KeywordMatchType matchType, HashMap<String, Long> KeywordWithBid) throws Exception;
-	public abstract BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception;
-	public abstract BidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception;
+	GoogleRelatedKeywordObject GetRelatedKeywords(String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
+	GoogleRelatedKeywordObject GetRelatedKeywordsForURL(String url,String keyword, KeywordMatchType matchType, int numberResults) throws Exception;
+	String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
+	KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
+	KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
+	Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception;
+	KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception;
+	KeywordDataObject setBidForKeyWord(String accountID, Long keywordID, Long adGroupID, Long microBidAmount) throws Exception;
+	TrafficEstimatorObject getTrafficEstimationForKeywords(String accountID,Long campaignID, KeywordMatchType matchType, HashMap<String, Long> KeywordWithBid) throws Exception;
+	BidSimulatorObject[] getBidLandscapeForKeyword(String accountID, Long adGroupID, Long keywordID) throws Exception;
+	BidSimulatorObject[] getBidLandscapeForAdgroup(String accountID, Long adGroupID) throws Exception;
 	
-	public abstract AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId, Boolean ActiveOnly) throws Exception;
+	AdGroupCriterion[] getAllAdGroupCriteria(String customerId, Long adGroupId, Boolean ActiveOnly) throws Exception;
 	
 	void updateDefaultBid(String accountID, Long adGroupID, Long microBid) throws Exception; 
 
@@ -73,25 +79,25 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	//optimization (o)
 	
 	//Account Management API Usage
-	public abstract void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception;
-	public abstract String[] getClientAccounts() throws Exception;
-	public abstract Budget[] getAccountBudgets(String customerId) throws Exception;
-	public abstract void updateAccountBudget(Budget budgetForUpdate, Long microBudgetAmount, String customerId, String orderId) throws Exception;
-	public abstract AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception;
+	void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception;
+	String[] getClientAccounts() throws Exception;
+	Budget[] getAccountBudgets(String customerId) throws Exception;
+	void updateAccountBudget(Budget budgetForUpdate, Long microBudgetAmount, String customerId, String orderId) throws Exception;
+	AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception;
 
 	
 	
 	//public AccountInfo getAccountInfo(String customerId) throws Exception;
-	public abstract void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
-	public abstract void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
+	void addAccountBudget(DateTimeFloored start, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
+	void updateAccountBudgetCannotChangeTheStartDateOfTheCurrentBudget(Budget budgetForUpdate, DateTimeCeiling end, Long microBudgetAmount, String string) throws Exception;
 	//Utility
 	
 	//Report
-	public abstract ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
+	ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
 
 	// GeoTargeting
-	public abstract Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
-	public abstract Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;
+	Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
+	Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;
 	 
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

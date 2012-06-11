@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
@@ -15,8 +16,12 @@ import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleAddAdRequest;
+import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.server.protocol.google.GoogleSiteLink;
+import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
@@ -301,23 +306,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "AddAdGroup", json,timeoutMS);
 		return gson.fromJson(returnData, Long.class);
 	}
-	@Override
-	public Long addTextAd(String accountID, Long adGroupID, String headline, String description1, String description2, String displayURL,
-			String url) throws Exception
-	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID);
-		jsonHash.put("addGroupID", String.valueOf(adGroupID));
-		jsonHash.put("headline", headline);
-		jsonHash.put("description1", description1);
-		jsonHash.put("description2", description2);
-		jsonHash.put("displayURL", displayURL);
-		jsonHash.put("url", url);
-		String json = protocolJson.createJSONHashmap(jsonHash);
-
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "addTextAd", json,timeoutMS);
-		return gson.fromJson(returnData, Long.class);
-	}
+	
 	@Override
 	public void addAccountBudget(Long microBudgetAmount, String customerId, String orderId) throws Exception
 	{
@@ -404,17 +393,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public Long deleteAD(String accountID, Long adGroupID, Long AdID) throws Exception
-	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID);
-		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("AdID", String.valueOf(AdID));
-		String json = protocolJson.createJSONHashmap(jsonHash);
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "deleteAD", json,timeoutMS);
-		return gson.fromJson(returnData, Long.class);
-	}
+	
 	@Override
 	public Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception
 	{
@@ -453,24 +432,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "GetRelatedKeywordsForURL", json,timeoutMS);
 		return gson.fromJson(returnData, GoogleRelatedKeywordObject.class);
 	}
-	@Override
-	public Long updateAD(String accountID, Long adGroupID, Long AdID, String headline, String description1, String description2,
-			String displayURL, String url) throws Exception
-	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID);
-		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("AdID", String.valueOf(AdID));
-		jsonHash.put("headline", headline);
-		jsonHash.put("description1", description1);
-		jsonHash.put("description2", description2);
-		jsonHash.put("displayURL", displayURL);
-		jsonHash.put("url", url);
-		String json = protocolJson.createJSONHashmap(jsonHash);
-		String returnData = runMethod(baseurl,SERVICEOFFERED, " updateAD", json,timeoutMS);
-		return gson.fromJson(returnData, Long.class);
-	}
-	
+		
 	@Override
 	public Boolean changeCampaignsStatus(String accountID, List<Long> campaignIds, CampaignStatus status) throws Exception
 	{
@@ -687,13 +649,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Boolean refreshSiteLinkForCampaign(String accountID, Long campaignID, List<GoogleSiteLink> siteLinks) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Boolean ChangeCampaignStartDate(String accountID, Long campaignID, Date newStartDate) throws Exception
 	{
 		// TODO Auto-generated method stub
@@ -701,13 +656,39 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Boolean deleteKeyWordFromAdGroup(String accountID, Long adGroupID, String keyword) throws Exception
+	public Map<GoogleAddAdRequest, Long> addTextAds(GoogleAddAdsRequest request) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	
+	@Override
+	public List<Long> deleteAds(String accountID, Long adGroupID, List<Long> adIds) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<GoogleUpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean refreshSiteLinks(GoogleRefreshSiteLinksRequest request) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	
 
