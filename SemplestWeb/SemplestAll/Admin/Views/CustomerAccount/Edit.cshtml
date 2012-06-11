@@ -39,6 +39,15 @@ Edit Customer Account:
     <label>
         Super Parent Name:<input type="text" /></label> <br />*@
 
+         <div class="editor-label">
+            <label>
+                Role</label>
+        </div>
+        <div class="editor-field">
+            @Html.DropDownListFor(r => r.SelectedRoleID, Model.Roles)
+        </div>
+
+
     <label>
         Parent Name: @Html.DropDownListFor(r => r.SelectedParentID , Model.Parents  )
         </label> <br />
@@ -205,6 +214,16 @@ Edit Customer Account:
         @Html.ValidationMessageFor(model => model.CustomerAccount.UserPassword)
     </div>
 
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.internalID  )
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.internalID , new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.internalID  )
+    </div>
+
+
     <br />
     <br />
     <br />
@@ -222,6 +241,25 @@ Edit Customer Account:
     @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes )
    
     </div>
+
+
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.PercentMedia )
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.PercentMedia, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.PercentMedia )
+    </div>
+
+    <div class="editor-label">
+            @Html.LabelFor(model => model.CustomerAccount.ServiceFee )
+    </div>
+    <div class="editor-field">
+        @Html.TextBoxFor(model => model.CustomerAccount.ServiceFee, new { @class = "k-textbox" })
+        @Html.ValidationMessageFor(model => model.CustomerAccount.ServiceFee )
+    </div>
+
 
 
    
