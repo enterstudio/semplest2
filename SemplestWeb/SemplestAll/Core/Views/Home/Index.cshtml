@@ -5,7 +5,7 @@
 @section Title{
     My Account
 }
-@section Links{
+@*@section Links{
     <div >
         <input type="button" class="k-button k-state-btnerror rounded" value="My Account" id="btnMyAccount" />
         <input type="button" class="k-button rounded" value="Ad Setup" id="btnAdSetup" />
@@ -18,7 +18,7 @@
     <div id="panelbar-images">
     </div>
 <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
-}
+}*@
 <h4>Quick Stats</h4>
 <a href="">@Model.LaunchedCampaigns</a> Clients have launched a campaign<br />
 <a href="">@Model.StartedCampaignsNotLaunched</a> Clients have started a campaign but not launched<br />
@@ -43,6 +43,10 @@ View All Product Groups
        <tr><td>Service Fee</td><td>Per Ad Group</td><td>35.00%</td><td>C Card</td><td>04-01-2012</td><td>07-31-2099</td><td>Max. $300</td></tr>
 </table>
 
+<br />
+@Html.ActionLink("Add New Product Group Name", "AddProductGroupName",null, new { @class = "addnewproductgroupname" })
+<br />
+
 <p><b>Reporting</b></p>
 
 <p>All live campaigns to date</p>
@@ -65,3 +69,34 @@ View All Product Groups
         return false;
     });
 </script>
+
+
+
+<div style="display:none;">
+<form name="hiddenButton" id="hiddenButton" action="AddProductGroupName" method="post">
+
+Add a new product group name:
+
+@Html.TextBox("newproductgroupname")
+
+<br /><input type="button" id="btnAdd"  value="Add" class="k-button"/><input type="button" id="btnCancel"  value="Cancel" class="k-button"/></form>
+</div>
+
+<script language="javascript" >    $(document).ready(function () {
+
+        $(".addnewproductgroupname").click(function (event) {
+            $.blockUI(({ message: $('#hiddenButton') }));
+            event.preventDefault();
+        });
+
+        $("#btnAdd").click(function (event) {
+            $("#hiddenButton").submit();
+        });
+
+        $("#btnCancel").click(function (event) {
+            $.unblockUI();
+        });
+
+    });
+</script>
+
