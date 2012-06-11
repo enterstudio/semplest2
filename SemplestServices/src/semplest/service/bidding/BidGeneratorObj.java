@@ -623,7 +623,7 @@ public class BidGeneratorObj {
 	private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Exception{
 		
 		// declare the variables
-		TrafficEstimatorObject o;
+		TrafficEstimatorObject o, o2;
 		int k;
 
 		// get info for the first page CPC point
@@ -640,6 +640,7 @@ public class BidGeneratorObj {
 			try {
 				logger.info("Fetching traffic estimator data for Point 1");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+				o2 = o;
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -698,6 +699,7 @@ public class BidGeneratorObj {
 			try {
 				logger.info("Fetching traffic estimator data for Point 2");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+				o2.addGoogleTrafficEstimatorObject(o, KeywordMatchType.EXACT.toString());
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -768,6 +770,7 @@ public class BidGeneratorObj {
 				try {
 					logger.info("Fetching traffic estimator data for Point "+(j+1));
 					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+					o2.addGoogleTrafficEstimatorObject(o, KeywordMatchType.EXACT.toString());
 					break;
 				} catch (Exception e) {
 					if (k<=maxRetry) {
@@ -828,7 +831,7 @@ public class BidGeneratorObj {
 		
 		logger.info("Number of final competitive keywords: "+compKeywords.size());
 		
-		return o;
+		return o2;
 	}
 
 	
