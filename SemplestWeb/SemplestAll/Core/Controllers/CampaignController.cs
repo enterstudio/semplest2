@@ -105,7 +105,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    model = (CampaignSetupModel)Session["CampaignSetupModel"];
+                    //model = (CampaignSetupModel)Session["CampaignSetupModel"];
                     model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
@@ -388,7 +388,7 @@ namespace Semplest.Core.Controllers
             addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
             Session["NegativeKeywords"] = model.NegativeKeywords;
             Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
-
+            //SemplestDataService.CheckForNegativeKeywords(model.NegativeKeywords);
             //SemplestDataService ds = new SemplestDataService();
             //int userid = 1;
             //CampaignSetupModel fullmodel = 

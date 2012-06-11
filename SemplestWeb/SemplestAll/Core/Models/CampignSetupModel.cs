@@ -109,7 +109,7 @@ namespace Semplest.Core.Models
                 AdvertisingEngines = entities.AdvertisingEngines.Select(t => new AdEngineSelectModel { Id = t.AdvertisingEnginePK, Name = t.AdvertisingEngine1, ImageUrl = filePath + t.LogoURL }).ToList();
                 AdEnginesSelectedList = AdvertisingEngines;
             }
-            AdEnginesList = new List<string>();
+            AdEnginesList = new List<int>();
         }
 
         public Configuration Configuration { get; set; }
@@ -124,7 +124,7 @@ namespace Semplest.Core.Models
         public string EndDate { get; set; }
         [Required(ErrorMessage = "Pleaes select at least one Search Engine")]
         [CheckBoxAtleaseOneChecked]
-        public List<string> AdEnginesList { get; set; }
+        public List<int> AdEnginesList { get; set; }
         public List<AdEngineSelectModel> AdEnginesSelectedList { get; set; }
         public List<AdEngineSelectModel> AdvertisingEngines { get; set; }
         public bool Google { get; set; }

@@ -169,7 +169,7 @@ namespace Semplest.Core.Services
                 {
                     var aesm = new AdEngineSelectModel { Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
                     model.ProductGroup.AdEnginesSelectedList.Add(aesm);
-                    model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEngine1);
+                    model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEnginePK);
                 }
 
                 // set URL
@@ -364,7 +364,7 @@ namespace Semplest.Core.Services
                 dbcontext.PromotionAdEngineSelecteds.DeleteObject(adsel);
             }
 
-            foreach (string aes in model.ProductGroup.AdEnginesList)
+            foreach (int aes in model.ProductGroup.AdEnginesList)
             {
                 int adengineid = Convert.ToInt32(aes);
                 var proAdEng = dbcontext.AdvertisingEngines.FirstOrDefault(m => m.AdvertisingEnginePK == adengineid);
@@ -541,6 +541,11 @@ namespace Semplest.Core.Services
                     negativeKeywords.Where(key => k.Contains(key.ToUpper() + " ")).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(" " + key.ToUpper())).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(" " + key.ToUpper() + " ")).Count() > 0);
+        }
+
+        public static void CheckForNegativeKeywords(List<string> negativeKeywords)
+        {
+ 
         }
 
         private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
