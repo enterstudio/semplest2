@@ -105,20 +105,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //var addsStoreModel = (AddsStoreModel) Session["AddsStoreModel"];
-                    //if (addsStoreModel != null)
-                    //{
-                    //    foreach (var ad in addsStoreModel.Ads)
-                    //    {
-                    //        var admodel = model.AdModelProp.Ads.FirstOrDefault(t => t.AdTitle == ad.AdTitle);
-                    //        if (admodel != null)
-                    //        {
-                    //            admodel.SiteLinks = ad.SiteLinks;
-                    //        }
-                    //    }
-                    //}
-
-                    //model.AdModelProp.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
+                    model = (CampaignSetupModel)Session["CampaignSetupModel"];
                     model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
@@ -133,7 +120,7 @@ namespace Semplest.Core.Controllers
                     var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
                     Logger.Write(logEnty);
 
-                    SemplestDataService ds = new SemplestDataService();
+                    var ds = new SemplestDataService();
                     ds.SaveProductGroupAndCampaign(userid, model);
 
                     msg =
@@ -352,14 +339,8 @@ namespace Semplest.Core.Controllers
 
         public ActionResult AdditionalLinks()
         {
-            //if (Session["AdTitle"] == null)
-            //    Session.Add("AdTitle", model);
-            //else
-            //    Session["AdTitle"] = model;
-            //var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
             var campaignModel = Session["CampaignSetupModel"];
             return PartialView(campaignModel);
-            //return PartialView(model);
         }
 
 
@@ -391,21 +372,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            //model.AdTitle = (string)Session["AdTitle"];
-            //if (Session["AddsStoreModel"] == null)
-            //{
-            //    Session.Add("AddsStoreModel", new AddsStoreModel { Ads = new List<PromotionAd> { model } });
-            //}
-            //else
-            //{
-            //    var addsStoreModel = (AddsStoreModel)Session["AddsStoreModel"];
-            //    var promotionAd = addsStoreModel.Ads.FirstOrDefault(t => t.AdTitle.Equals(model.AdTitle));
-            //    if (promotionAd != null)
-            //        promotionAd.SiteLinks = model.SiteLinks.Where(t => !t.Delete).ToList();
-            //    else
-            //        addsStoreModel.Ads.Add(model);
-            //    Session["AddsStoreModel"] = addsStoreModel;
-            //}
+            Session["CampaignSetupModel"] = model;
             return Json("AdditionalLinks");
         }
 

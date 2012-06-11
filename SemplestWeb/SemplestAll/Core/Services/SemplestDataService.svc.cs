@@ -123,6 +123,9 @@ namespace Semplest.Core.Services
                         // save negative keywords
                         SaveNegativeKeywords(promo, model, dbcontext);
 
+                        // save site links
+                        AddSiteLinksToPromotion(promo, model);
+
                         // promotion ads
                         AddPromotionAdsToPromotion(promo, model);
 
@@ -337,8 +340,15 @@ namespace Semplest.Core.Services
                 dbcontext.PromotionAds.DeleteObject(pad);
             }
 
+            // update sitelink; delet first and add them
+            foreach (var slink in updatePromotion.SiteLinks.ToList())
+            {
+                dbcontext.SiteLinks.DeleteObject(slink);
+            }
+
             SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
             AddGeoTargetingToPromotion(updatePromotion, model);
+            AddSiteLinksToPromotion(updatePromotion, model);
             SaveNegativeKeywords(updatePromotion, model, dbcontext);
             AddPromotionAdsToPromotion(updatePromotion, model);
         }
@@ -400,6 +410,20 @@ namespace Semplest.Core.Services
                         promo.GeoTargetings.Add(geotarget);
                     }
                 }
+            }
+        }
+
+        private  void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model)
+        {
+            foreach (var sitelink in model.SiteLinks)
+            {
+                var slink = new SiteLink
+                                {
+                                    LinkText = sitelink.LinkText,
+                                    LinkURL = sitelink.LinkURL,
+                                    PromotionFK = promo.PromotionPK
+                                };
+                promo.SiteLinks.Add(slink);
             }
         }
 

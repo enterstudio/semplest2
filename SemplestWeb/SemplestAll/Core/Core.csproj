@@ -228,7 +228,7 @@
     <Content Include="Scripts\conditional-validation.js" />
     <Content Include="Scripts\images\layers.png" />
     <Content Include="Scripts\images\marker-shadow.png" />
-    <Content Include="Scripts\images\marker.png" />
+    <Content Include="Scripts\images\marker-icon.png" />
     <Content Include="Scripts\images\popup-close.png" />
     <Content Include="Scripts\images\zoom-in.png" />
     <Content Include="Scripts\images\zoom-out.png" />
