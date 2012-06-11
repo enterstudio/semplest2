@@ -28,7 +28,7 @@ BEGIN TRY
 	END;
 	--get general info
 	
-	select k.Keyword, pka.IsTargetGoogle, pka.IsTargetMSN, pka.IsActive, pka.IsDeleted, pka.IsNegative, pka.SemplestProbability
+	select pka.KeywordFK, k.Keyword, pka.IsTargetGoogle, pka.IsTargetMSN, pka.IsActive, pka.IsDeleted, pka.IsNegative, pka.SemplestProbability
 	from Promotion p 
 	inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK
 	inner join Keyword k on k.KeywordPK = pka.KeywordFK
