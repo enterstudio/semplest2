@@ -209,6 +209,8 @@ namespace Semplest.Core.Models
         [DisplayName("Security Answer")]
         public string SecurityAnswer { get; set; }
 
+        [DisplayName("Customer Internal ID")]
+        public string internalID { get; set; }
 
         public int UserPK { get; set; }
     }
