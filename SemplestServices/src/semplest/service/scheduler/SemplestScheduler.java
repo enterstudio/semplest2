@@ -2,6 +2,7 @@ package semplest.service.scheduler;
 
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
@@ -103,7 +104,8 @@ public class SemplestScheduler extends Thread
 							
 							
 							scheduleRunning = true;
-							Boolean result = runSchedule(runData);
+							Boolean result = runSchedule(runData);													
+							
 							
 							logger.debug("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
 							logger.debug("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
@@ -373,6 +375,8 @@ public class SemplestScheduler extends Thread
 		// Serialize Each Schedule For Now
 		try
 		{
+			//Test_Nan: log some test data to the TestData table in the database
+			SemplestErrorHandler.logTest(new Date(), "scheduler", "runSchedule", runData.toString(), null);
 
 			if (!this.getNextScheduleToRun().equals(runData))
 			{
@@ -440,6 +444,9 @@ public class SemplestScheduler extends Thread
 						previousTaskOutput = taskRunner.RunTask(taskObj.getMethodName(),taskObj.getParameters(), null, previousTaskOutput);
 						TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 						taskRunner = null;
+						
+						//Test_Nan: log some test data to the TestData table in the database
+						SemplestErrorHandler.logTest(new Date(), "scheduler", "runScheduledTasks", taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters(), null);
 					}
 					//TODO: send email for successfully executed schedule	
 				}
@@ -459,6 +466,9 @@ public class SemplestScheduler extends Thread
 			else
 			{
 				System.out.println("No tasks found");
+				
+				//Test_Nan: log some test data to the TestData table in the database
+				SemplestErrorHandler.logTest(new Date(), "scheduler", "runScheduledTasks", "No tasks found", null);
 			}
 			return true;
 		}
@@ -483,6 +493,9 @@ public class SemplestScheduler extends Thread
 			newschedule.setScheduleID(nextJob.getScheduleFK());
 			newschedule.setTimeToRunInMS(nextJob.getExecutionStartTime().getTime());
 			this.receiveSchedulerRecord(newschedule);
+			
+			//Test_Nan: log some test data to the TestData table in the database
+			SemplestErrorHandler.logTest(new Date(), "scheduler", "getNextJobToExecute", nextJob.toString(), null);
 		}
 	}
 	

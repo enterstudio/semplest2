@@ -39,7 +39,11 @@ public class SchedulerRecord
 	{
 		this.scheduleJobID = scheduleJobID;
 	}
-
-	
+	@Override
+	public String toString() {
+		return "SchedulerRecord [scheduleJobID=" + scheduleJobID
+				+ ", scheduleID=" + scheduleID + ", timeToRunInMS="
+				+ timeToRunInMS + ", IsDelete=" + IsDelete + "]";
+	}
 	
 }
