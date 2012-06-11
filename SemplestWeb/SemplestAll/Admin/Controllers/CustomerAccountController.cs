@@ -112,8 +112,10 @@ namespace Semplest.Admin.Controllers
                    StateID = sc.StateAbbrPK,
                    CustomerNote = (n.Note == null ? null : n.Note),
                    isActive = u.IsActive,
-                   selectedBillTypeid = c.BillTypeFK
-                   
+                   selectedBillTypeid = c.BillTypeFK,
+                   internalID=c.InternalCustomerId,
+                   PercentMedia = c.PercentOfMedia,
+                    ServiceFee = c.ServiceFee 
                };
 
             //viewmodel2 might not be needed
@@ -285,6 +287,9 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
+            if (selectedrep.ToList().FirstOrDefault() == null)
+                x.SelectedRepID = -1;
+            else
             x.SelectedRepID = selectedrep.ToList().FirstOrDefault().employeePK;
 
             //x.Reps=allreps.Select(r=>new SelectListItem 
@@ -294,6 +299,11 @@ namespace Semplest.Admin.Controllers
             //            });
 
             //workaround below (same as for state dropdown but with lists, in order to get over the error i get above) ; need to refactor later!!
+            List<SelectListItem> slina = new List<SelectListItem>();
+            slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
+
             List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
             List<SelectListItem> sl1 = new List<SelectListItem>();
             foreach (EmployeeCustomerAssociaitionModel s in ll1)
@@ -303,7 +313,7 @@ namespace Semplest.Admin.Controllers
                 mylistitem.Value = s.employeePK.ToString();
                 sl1.Add(mylistitem);
             }
-            x.Reps = sl1;
+            x.Reps = sl1.Union(slina);
 
 
 
@@ -313,7 +323,10 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
 
             //x.SelectedSalesPersonID = viewModel2.Select(r => r.employeePK).FirstOrDefault();
-            x.SelectedSalesPersonID = selectedsales.ToList().First().employeePK;
+            if (selectedsales.ToList().FirstOrDefault()== null)
+                x.SelectedSalesPersonID = -1;
+            else
+                x.SelectedSalesPersonID = selectedsales.ToList().First().employeePK;
             //x.SalesPersons = allreps.Select(r => new SelectListItem
             //{
             //    //Value = r.EmployeeUserPK.ToString(),
@@ -330,7 +343,7 @@ namespace Semplest.Admin.Controllers
                 mylistitem.Value = s.employeePK.ToString();
                 sl2.Add(mylistitem);
             }
-            x.SalesPersons = sl2;
+            x.SalesPersons = sl2.Union(slina);
 
             //   var allparents = (from a in dbcontext.Customers select a).ToList();
 
@@ -511,6 +524,10 @@ namespace Semplest.Admin.Controllers
                 });
 
 
+                List<SelectListItem> slina = new List<SelectListItem>();
+                slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
 
                 List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
                 List<SelectListItem> sl1 = new List<SelectListItem>();
@@ -521,7 +538,11 @@ namespace Semplest.Admin.Controllers
                     mylistitem.Value = s.employeePK.ToString();
                     sl1.Add(mylistitem);
                 }
-                m.Reps= sl1;
+
+
+                m.Reps= sl1.Union(slina);
+
+                
 
 
 
@@ -534,7 +555,7 @@ namespace Semplest.Admin.Controllers
                     mylistitem.Value = s.employeePK.ToString();
                     sl2.Add(mylistitem);
                 }
-                m.SalesPersons = sl2;
+                m.SalesPersons = sl2.Union(slina);
 
 
 
@@ -596,6 +617,9 @@ namespace Semplest.Admin.Controllers
 
             customer.Name = m.CustomerAccount.Customer;
             customer.BillTypeFK = m.SelectedBillTypeID;
+            customer.PercentOfMedia = m.CustomerAccount.PercentMedia;
+            customer.InternalCustomerId = m.CustomerAccount.internalID;
+            customer.ServiceFee = m.CustomerAccount.ServiceFee;
 
             address.Address1 = m.CustomerAccount.Address1;
             address.Address2 = m.CustomerAccount.Address2;
@@ -634,23 +658,50 @@ namespace Semplest.Admin.Controllers
 
             //rep.ToList().First().EmployeePK = m.SelectedRepID;
             //sales.ToList().First().EmployeePK = m.SelectedSalesPersonID;
-
-            var employeesales = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == sales.ToList().First().EmployeePK);
-            employeesales.EmployeeFK = m.SelectedSalesPersonID;
-
             var credentials = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.CustomerAccount.UserPK);
             credentials.Username = m.CustomerAccount.UserID;
             credentials.Password = m.CustomerAccount.UserPassword;
 
+            var employeesales = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == (sales.ToList().FirstOrDefault()==null?-1: sales.ToList().FirstOrDefault().EmployeePK) );
+            if (employeesales == null && m.SelectedSalesPersonID !=-1)
+            {
+                //add one
+                var addemployeesales=new EmployeeCustomerAssociation {  CustomerFK=m.CustomerAccount.AccountNumber  , EmployeeFK = m.SelectedSalesPersonID  };
+                dbcontext.EmployeeCustomerAssociations.AddObject(addemployeesales);
+            }
+            else if (employeesales != null && m.SelectedSalesPersonID == -1)
+            { 
+                //remove
+                dbcontext.EmployeeCustomerAssociations.DeleteObject(employeesales);
+            }
+            else if (employeesales != null  && m.SelectedSalesPersonID != -1)
+            {
+                employeesales.EmployeeFK = m.SelectedSalesPersonID;
+                UpdateModel(employeesales);
+            }
+            
+            var employeerep = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == (rep.ToList().FirstOrDefault()==null?-1: rep.ToList().FirstOrDefault().EmployeePK) );
+            if (employeerep == null && m.SelectedRepID !=-1)
+            {
+                //add one
+                var addemployeerep =new EmployeeCustomerAssociation {  CustomerFK=m.CustomerAccount.AccountNumber  , EmployeeFK = m.SelectedRepID };
+                dbcontext.EmployeeCustomerAssociations.AddObject(addemployeerep);
+
+            }
+            else if (employeerep != null && m.SelectedRepID == -1)
+                {
+                    //remove
+                    dbcontext.EmployeeCustomerAssociations.DeleteObject(employeerep);
+                }
+        else if (employeerep != null  && m.SelectedRepID  != -1)
+                {
+                    employeerep.EmployeeFK = m.SelectedRepID;
+                    UpdateModel(employeerep);
+                }
 
 
-            var employeerep = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK == m.CustomerAccount.AccountNumber && p.EmployeeFK == rep.ToList().First().EmployeePK);
-            employeerep.EmployeeFK = m.SelectedRepID;
+            
 
-
-
-            UpdateModel(employeerep);
-            UpdateModel(employeesales);
             //var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.CustomerFK  == customer.CustomerPK && p.EmployeeFK==1);
 
             //employeecustomerassociation.
@@ -690,15 +741,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Add()
         {
 
-
-
             SemplestEntities dbcontext = new SemplestEntities();
-
-
-
-           
-
-
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -815,6 +858,10 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             x.SelectedRepID = -1; //viewModel2.Select(r => r.employeePK).FirstOrDefault();
 
+            List<SelectListItem> slina = new List<SelectListItem>();
+            slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
             //x.Reps=allreps.Select(r=>new SelectListItem 
             //            {
             //                Value=r.employeePK.ToString() ,
@@ -831,7 +878,7 @@ namespace Semplest.Admin.Controllers
                 mylistitem.Value = s.employeePK.ToString();
                 sl1.Add(mylistitem);
             }
-            x.Reps = sl1;
+            x.Reps = sl1.Union(slina);
 
 
 
@@ -856,7 +903,7 @@ namespace Semplest.Admin.Controllers
                 mylistitem.Value = s.employeePK.ToString();
                 sl2.Add(mylistitem);
             }
-            x.SalesPersons = sl2;
+            x.SalesPersons = sl2.Union(slina);
             
             x.CustomerAccount = new CustomerAccount();
             x.CustomerAccount.UserPassword = Semplest.SharedResources.Helpers.RandomPassword.Generate(8,10);
@@ -988,6 +1035,10 @@ namespace Semplest.Admin.Controllers
                       });
 
 
+                      List<SelectListItem> slina = new List<SelectListItem>();
+                      slina.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
 
                       List<EmployeeCustomerAssociaitionModel> ll1 = allreps.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList(); ;
                       List<SelectListItem> sl1 = new List<SelectListItem>();
@@ -998,7 +1049,7 @@ namespace Semplest.Admin.Controllers
                           mylistitem.Value = s.employeePK.ToString();
                           sl1.Add(mylistitem);
                       }
-                      m.Reps = sl1;
+                      m.Reps = sl1.Union(slina);
 
 
                       List<EmployeeCustomerAssociaitionModel> ll2 = allsalespersons.OrderBy(r => r.LastName).ThenBy(r => r.FirstName).ToList();
@@ -1010,7 +1061,7 @@ namespace Semplest.Admin.Controllers
                           mylistitem.Value = s.employeePK.ToString();
                           sl2.Add(mylistitem);
                       }
-                      m.SalesPersons = sl2;
+                      m.SalesPersons = sl2.Union(slina);
                       return View(m);
                   }
 
@@ -1029,7 +1080,10 @@ namespace Semplest.Admin.Controllers
                             {
                                 Name = m.CustomerAccount.Customer,
                                 BillTypeFK = m.SelectedBillTypeID,
-                                ProductGroupCycleType = pgct
+                                ProductGroupCycleType = pgct,
+                                 PercentOfMedia=m.CustomerAccount.PercentMedia,
+                                 ServiceFee= m.CustomerAccount.ServiceFee,
+                                  InternalCustomerId= m.CustomerAccount.internalID 
                             };
                 dbcontext.Customers.AddObject(c);
 
@@ -1088,10 +1142,20 @@ namespace Semplest.Admin.Controllers
                 var cn = new CustomerNote {Customer = c, Note = m.CustomerAccount.CustomerNote};
                 dbcontext.CustomerNotes.AddObject(cn);
 
-                var addrep = new EmployeeCustomerAssociation {Customer = c, EmployeeFK = m.SelectedRepID};
-                dbcontext.EmployeeCustomerAssociations.AddObject(addrep);
-                var addsales = new EmployeeCustomerAssociation {Customer = c, EmployeeFK = m.SelectedSalesPersonID};
-                dbcontext.EmployeeCustomerAssociations.AddObject(addsales);
+                
+                //don't add if not assigned
+                if (m.SelectedRepID != -1)
+                {
+                    var addrep = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedRepID };
+                    dbcontext.EmployeeCustomerAssociations.AddObject(addrep);
+                }
+                
+                //don't add if not assigned
+                if (m.SelectedSalesPersonID != -1)
+                {
+                    var addsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedSalesPersonID };
+                    dbcontext.EmployeeCustomerAssociations.AddObject(addsales);
+                }
 
                 CustomerHierarchy ch = null;
                 if (m.SelectedParentID == -1) //set parent
