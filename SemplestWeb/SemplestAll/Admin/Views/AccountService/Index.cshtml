@@ -13,6 +13,33 @@ Account Service
 @section Links{
     @Html.Partial("TopMenu")
 }
+@{
+    
+    string rep;
+    string sales;
+    if (Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep") != null)
+    {   
+        rep = Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep").FirstName.ToString() + " " + Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Rep").LastName.ToString();
+    }
+        
+    else
+    {
+        rep = "Not Assigned";
+    }
+    
+    
+    
+    if (Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales")!=null )
+         {
+             sales = Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").FirstName.ToString() + " " + Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").LastName.ToString();
+         }
+    else
+         {
+             sales = "Not Assigned";
+         }
+ 
+    }
+
 @using (Html.BeginForm("Index"))
 {
 
@@ -28,9 +55,12 @@ Account Service
 @Model.AccountServiceModel.Email<br />
 </h3>
 
+    
+    
 <h3>
-<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o=>o.EmployeeType=="Rep").FirstName @Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o=>o.EmployeeType=="Rep").LastName"/></label><br />
-<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").FirstName @Model.EmployeeCustomerAssociaitionModel.FirstOrDefault(o => o.EmployeeType == "Sales").LastName" /></label><br />
+
+<label>Rep Name: <input type="text" name="repname" disabled="true"  value="@rep"/></label><br />
+<label>Salesperson: <input type="text" name="salesperson" disabled="true" value="@sales" /></label><br />
 <label>Parent: <input type="text" name="parent" disabled="true" value="@Model.ParentName.ToString()"/></label><br />
 @*<label>Super Parent: <input type="text" name="superparent" disabled="true"/></label><br />*@
 </h3>
@@ -38,8 +68,8 @@ Account Service
 <br />
 <br />
     <ul style="display: block" class="kendo-nav">
-    <li>@Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber})</li>
-    <li>@Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber})</li>
+    <li>@Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })</li>
+    <li>@Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber })</li>
     <li><br /></li>
     <li><h2>Account Actions</h2></li>
     <li><a href="#">Impresonate</a></li>
@@ -49,7 +79,7 @@ Account Service
     <li><a href="#">Issue Refund</a> </li>
     
 
-    @if (Model.ParentName.ToLower()=="self".ToLower())
+    @if (Model.ParentName.ToLower() == "self".ToLower())
     {
     <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })</li>
     }
