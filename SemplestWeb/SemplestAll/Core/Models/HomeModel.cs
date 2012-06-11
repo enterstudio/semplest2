@@ -4,12 +4,18 @@ using SemplestModel;
 
 namespace Semplest.Core.Models
 {
-    public class HomeModelParent
+    public class HomeModelParent : ModelBase
     {
+        public HomeModelParent()
+        {
+            using (var entities = new SemplestEntities())
+                Configuration = entities.Configurations.FirstOrDefault();
+        }
+
         public int LaunchedCampaigns;
         public int StartedCampaignsNotLaunched;
         public int ClientsNotLoggedIn;
-        public IEnumerable<AdvertisingEngine> AdvertisingEngines ;
+        public IEnumerable<AdvertisingEngine> AdvertisingEngines;
     }
 
     public class HomeModelChild : ModelBase
@@ -21,7 +27,7 @@ namespace Semplest.Core.Models
             CampaignSetup = new CampaignSetupModel();
             CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
         }
-    
+
         public ICollection<Promotion> LiveAdvertising;
         public ICollection<Promotion> UnfinishedAdvertising;
         public ICollection<ProductGroup> ProductGroups;
@@ -65,9 +71,10 @@ namespace Semplest.Core.Models
             }
         }
         string _Text;
-        public string Text { 
+        public string Text
+        {
             get { return ReplacePlaceHolders(_Text); }
-            set { _Text = value; } 
+            set { _Text = value; }
         }
         public string Title { get; set; }
 
@@ -79,5 +86,5 @@ namespace Semplest.Core.Models
         }
     }
 
-    public enum StaticPages { About, FAQ, Contact, PrivacyPolicy, TermsAndConditions}
+    public enum StaticPages { About, FAQ, Contact, PrivacyPolicy, TermsAndConditions }
 }
