@@ -17,7 +17,6 @@ import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleUpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 
