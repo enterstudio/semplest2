@@ -160,7 +160,7 @@ namespace Semplest.Core.Models
         [DisplayName("First Name")]
         public string FirstName { get; set; }
 
-        [DisplayName("First Initial")]
+        [DisplayName("Middle Initial")]
         public string MiddleInitial { get; set; }
 
         [Required]
