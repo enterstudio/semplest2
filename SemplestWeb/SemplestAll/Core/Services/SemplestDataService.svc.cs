@@ -9,6 +9,8 @@ using SemplestModel;
 using System.Data.Objects;
 using System.Data;
 using System.Data.SqlClient;
+using Semplest.SharedResources.Services;
+using System.Diagnostics;
 
 namespace Semplest.Core.Services
 {
@@ -497,19 +499,20 @@ namespace Semplest.Core.Services
             stationIds.Columns.Add("SemplestProbability", typeof(float));
             stationIds.Columns.Add("IsTargetMSN", typeof(Boolean));
             stationIds.Columns.Add("IsTargetGoogle", typeof(Boolean));
-            foreach (var kpo in model.AllKeywordProbabilityObjects)
+            foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
             {
-                kpo.isDeleted = IsNegativeKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords);
+                kpo.isDeleted = IsDeletedKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords);
                 DataRow dr = stationIds.NewRow();
                 dr["Keyword"] = kpo.keyword.Trim();
                 dr["IsActive"] = "true";
                 dr["IsDeleted"] = kpo.isDeleted;
-                dr["IsNegative"] = "false";
+                dr["IsNegative"] = IsNegativeKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords); ;
                 dr["SemplestProbability"] = kpo.semplestProbability;
                 dr["IsTargetMSN"] = kpo.isTargetMSN;
                 dr["IsTargetGoogle"] = kpo.isTargetGoogle;
                 stationIds.Rows.Add(dr);
             }
+            
             SqlParameter parameter = new SqlParameter("kwa", stationIds);
             parameter.SqlDbType = SqlDbType.Structured;
             parameter.TypeName = "PromotionKeywordTableType";
@@ -534,13 +537,18 @@ namespace Semplest.Core.Services
             }
         }
 
-        private static bool IsNegativeKeyword(string keyword, List<string> negativeKeywords)
+        private static bool IsDeletedKeyword(string keyword, List<string> negativeKeywords)
         {
             string k = keyword.ToUpper();
             return (negativeKeywords.Where(key => k.Contains(key.ToUpper())).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(key.ToUpper() + " ")).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(" " + key.ToUpper())).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(" " + key.ToUpper() + " ")).Count() > 0);
+        }
+
+        private static bool IsNegativeKeyword(string keyword, List<string> negativeKeywords)
+        {
+            return negativeKeywords.Where(key => keyword.ToUpper().Contains(key.ToUpper())).Count() > 0;
         }
 
         public static void CheckForNegativeKeywords(List<string> negativeKeywords)
