@@ -33,14 +33,14 @@ public class ScalabilityTests {
 			*/
 			
 			//Test Keyword
-			/*
+			///*
 			frequency = 2;
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
 			Thread.sleep(10);
 			executor.execute(new KeywordTestThread(frequency));
-			*/
+			//*/
 			
 			//Test Memory Leak
 			/*

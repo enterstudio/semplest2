@@ -33,7 +33,7 @@ public class KeywordServiceTest {
 		}
 	}
 	
-	public int Test_KeywordService1(){
+	public int Test_KeywordService_Impl(){
 		errorCounter = 0;
 		
 		System.out.println("####################################################################################");
@@ -114,7 +114,7 @@ public class KeywordServiceTest {
 		return errorCounter;
 	}
 	
-	public int Test_KeywordService2(){
+	public int Test_KeywordService_Client(){
 		errorCounter = 0;
 		
 		System.out.println("####################################################################################");

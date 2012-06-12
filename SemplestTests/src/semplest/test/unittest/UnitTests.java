@@ -102,20 +102,20 @@ public class UnitTests {
 			Boolean useSandbox = (Boolean) configDB.configData.get("AdwordsUseSandbox");
 			if(useSandbox){
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
-				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Standalone();
+				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Impl();
 				//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
 			}		
 			
 			
 			//Test Keyword Service		
 			KeywordServiceTest keywordServiceTest = new KeywordServiceTest();
-			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService1();  //Impl
-			numKeywordServiceError = keywordServiceTest.Test_KeywordService2();  //client
+			//numKeywordStandaloneError = keywordServiceTest.Test_KeywordService_Impl();  //Impl
+			numKeywordServiceError = keywordServiceTest.Test_KeywordService_Client();  //client
 			
 			
 			//Test Bidding Service		
 			BiddingServiceTest biddingServiceTest = new BiddingServiceTest();
-			numBiddingServiceError = biddingServiceTest.Test_BiddingService2();  //Client
+			numBiddingServiceError = biddingServiceTest.Test_BiddingService_Client();  //Client
 			
 			
 			//Test Scheduler

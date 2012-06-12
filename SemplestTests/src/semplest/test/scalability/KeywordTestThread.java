@@ -110,10 +110,16 @@ public class KeywordTestThread implements Runnable {
 					writer.append(String.valueOf(res.size()));					
 					
 					ArrayList<String> selectCateg = new ArrayList<String>();
+					
+					//select 5 categories
+					selectCateg.add(res.get(1));
+					selectCateg.add(res.get(2));
+					selectCateg.add(res.get(3));
+					selectCateg.add(res.get(4));
 					selectCateg.add(res.get(5));
 					
 					writer.append(',');
-					writer.append(res.get(5));
+					writer.append(res.get(1) + "; " + res.get(2) + "; " + res.get(3) + "; " + res.get(4) + "; " + res.get(5));
 					writer.append(',');
 					writer.flush();
 					

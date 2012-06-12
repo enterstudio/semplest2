@@ -6,7 +6,7 @@ public class BiddingServiceTest {
 
 	private int errorCounter = 0;
 	
-	public int Test_BiddingService2(){
+	public int Test_BiddingService_Client(){
 		errorCounter = 0;
 		
 		System.out.println("####################################################################################");
