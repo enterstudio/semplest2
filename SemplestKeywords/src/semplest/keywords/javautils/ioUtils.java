@@ -19,7 +19,7 @@ import java.io.PrintStream;
 import java.nio.charset.Charset;
 
 public class ioUtils {
-  
+
   // returns nth line of file (indexed from 0) as string
   public static String readLine(String file, int n){
     try {
@@ -84,7 +84,7 @@ public class ioUtils {
     } catch ( Exception e ){ e.printStackTrace();}
     return arraybuf; 
   }
-  
+
   // same as readfile but only returns columns 
   public static ArrayList<String[]> readCols(String file ){
     ArrayList<String[]> arraybuf = new ArrayList<String[]>();
@@ -94,7 +94,7 @@ public class ioUtils {
             Charset.forName("UTF-8")));
       String line;
       while ((line = br.readLine()) != null)
-          arraybuf.add( line.split("\\s+" ));
+        arraybuf.add( line.split("\\s+" ));
     } catch ( Exception e ){ e.printStackTrace();}
     return arraybuf; 
   }
@@ -130,7 +130,7 @@ public class ioUtils {
     } catch ( Exception e ){ e.printStackTrace();}
     return map; 
   }
-  
+
   // same as readFileIndex but picks out a column in the file (indexed from 0)
   public static HashMap<String,Integer> readFileIndex(String file, int col){
     HashMap<String,Integer> map = new HashMap<String,Integer>();
@@ -149,7 +149,7 @@ public class ioUtils {
     } catch ( Exception e ){ e.printStackTrace();}
     return map; 
   }
-  
+
   // Returns the dmoz descriptions as a Map<category><description> 
   static HashMap<String,String> readDescs( String f){
     HashMap<String,String> map = new HashMap<String,String>();
@@ -166,7 +166,7 @@ public class ioUtils {
     }
     return map;
   }
-  
+
   // Returns the dmoz wordcounts as a Map<category><counts> 
   static HashMap<String,String> readWcounts( String f){
     HashMap<String,String> map = new HashMap<String,String>();
@@ -207,6 +207,28 @@ public class ioUtils {
     }
     return map;
   }
+  // Returns the first n dmoz wordcounts as a Map<category, Map<word,count>> 
+  static HashMap<String,HashMap<String,Integer>> readWcs( String f, int n ){
+    HashMap<String,HashMap<String,Integer>> map = 
+      new HashMap<String,HashMap<String,Integer>>();
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      int count = 0;
+      while(( line =  r.readLine()) != null && count < n){
+        String[] cols = line.split("\\s+");
+        if( cols.length >= 2 ){
+          String tail = mkString( 
+              java.util.Arrays.copyOfRange( cols, 1, cols.length)," ");
+          map.put( cols[0].split(":")[0], toWc( tail ) );
+        }
+        count++;
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
+  }
   //-------------------------------------------------- 
   // Convert an array of strings to one string.
   // Put the 'separator' string between each element.
@@ -238,21 +260,21 @@ public class ioUtils {
 
   //Returns the lines of a file as a HashMap with the key as the category of the line
   public static HashMap<String,String> file2Hash(String f){
-	  HashMap<String,String> map = new HashMap<String,String>();
-	    try {
-	      BufferedReader r = new BufferedReader(new FileReader(f));
-	      String line;
-	      while(( line =  r.readLine()) != null ){
-	        String[] cols = line.split(":");
-	        if( cols.length >= 2 ){
-	        	cols[0] = cols[0].replaceAll("\\s+", "");
-	        	map.put( cols[0].trim(), line );
-	        }
-	      }
-	    } catch (Exception e) {
-	      e.printStackTrace();
-	    }
-	    return map;
+    HashMap<String,String> map = new HashMap<String,String>();
+    try {
+      BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      while(( line =  r.readLine()) != null ){
+        String[] cols = line.split(":");
+        if( cols.length >= 2 ){
+          cols[0] = cols[0].replaceAll("\\s+", "");
+          map.put( cols[0].trim(), line );
+        }
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+    return map;
   }
 
 
@@ -367,7 +389,7 @@ public class ioUtils {
   public static HashMap<String,Integer> docWordMap(String line){
     String[] tokens = line.split("\\s+");
     if( tokens.length < 2) return null; 
-    
+
     // words
     HashMap<String,Integer> map = new HashMap<String,Integer>();
     for(int i = 1; i < tokens.length; i++){
@@ -390,7 +412,7 @@ public class ioUtils {
   public static String docWords(String line){
     String[] tokens = line.split("\\s+");
     if( tokens.length < 2) return null; 
-    
+
     // words
     HashMap<String,Integer> map = new HashMap<String,Integer>();
     String words = "";
@@ -457,31 +479,32 @@ public class ioUtils {
     arraybuf.add( words ); 
     return arraybuf;
   }
-  
-  
-  //Split a line and return and ArrayList of all the elements in the line with format
+
+
+  //Split a line and return and ArrayList of all the elements 
+  // in the line with format
   // element:count (only returns "element", not "count")
   public static ArrayList<String> line2ArrayList(String line){
-	  String[] tokens = line.split("\\s+");
-	  ArrayList<String> elem = new ArrayList<String>();
-	  for(int i=0; i<tokens.length;i++){
-		  elem.add(tokens[i].split(":")[0]);
-	  }
-	  return elem;
+    String[] tokens = line.split("\\s+");
+    ArrayList<String> elem = new ArrayList<String>();
+    for(int i=0; i<tokens.length;i++){
+      elem.add(tokens[i].split(":")[0]);
+    }
+    return elem;
   }
-  
+
   //Reads a file and
   //return a Hashmap<Sring nameCategory, ArrayList wordsIncategory>
   public static HashMap<String, ArrayList<String>> file2WordMap(String filePath){
-	  ArrayList<String> lines = readFile( filePath );
-	  String categname;
-	  HashMap<String, ArrayList<String>> wordMap= new HashMap<String, ArrayList<String>>();
-      for( String line : lines ){
-      	ArrayList<String> tokens = line2ArrayList( line );
-      	categname=tokens.remove(0);
-      	wordMap.put(categname, tokens);
-      }
-      return wordMap;
+    ArrayList<String> lines = readFile( filePath );
+    String categname;
+    HashMap<String, ArrayList<String>> wordMap= new HashMap<String, ArrayList<String>>();
+    for( String line : lines ){
+      ArrayList<String> tokens = line2ArrayList( line );
+      categname=tokens.remove(0);
+      wordMap.put(categname, tokens);
+    }
+    return wordMap;
   }
   // doc vector of malletized line
   public static String docIdM(String line ){
@@ -500,80 +523,85 @@ public class ioUtils {
       docv[ dictUtils.dicti.get( tokens[i] )]++;
     return docv;
   }
-  
-  public static void reStemmingFile(String inputPath, String outputPath) throws IOException{
-	  BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
-      String line;
-      PrintStream stdout = System.out;
-      System.setOut(new PrintStream(new File(outputPath)));
-      String newWord;
-      while ((line = br.readLine()) != null){ 
-        String[] words = line.split("\\s+");
-        for(String word : words){
-        	newWord = dictUtils.getStemWord(dictUtils.getRoot(word));
-        	if(newWord != null)
-        		System.out.print(newWord+" ");
-        	else
-        		System.out.print(word+" ");
-        }
-        System.out.print("\n");
+
+  public static void reStemmingFile(String inputPath, String outputPath) 
+    throws IOException{
+    BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
+    String line;
+    PrintStream stdout = System.out;
+    System.setOut(new PrintStream(new File(outputPath)));
+    String newWord;
+    while ((line = br.readLine()) != null){ 
+      String[] words = line.split("\\s+");
+      for(String word : words){
+        newWord = dictUtils.getStemWord(dictUtils.getRoot(word));
+        if(newWord != null)
+          System.out.print(newWord+" ");
+        else
+          System.out.print(word+" ");
       }
-      System.setOut(stdout);
+      System.out.print("\n");
+    }
+    System.setOut(stdout);
   }
-  
-  public static void reStemmingFileMultiWord(String inputPath, String outputPath) throws IOException{
-	  BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
-      String line;
-      PrintStream stdout = System.out;
-      System.setOut(new PrintStream(new File(outputPath)));
-      String newWord;
-      dictUtils dict = new  dictUtils();
-      while ((line = br.readLine()) != null){ 
-        String[] words = line.split("\\s+");
-        for(String word : words){
-        	String[] multiword = word.split(":");
-        	String[] split = multiword[0].split("\\+");
-        	int i=0;
-        	for(i=0; i<split.length-1; i++){
-        		newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
-            	if(newWord != null)
-            		System.out.print(newWord+"+");
-            	else
-            		System.out.print(split[i]+"+");
-        	}
-        	newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
-        	if(newWord != null)
-        		System.out.print(newWord);
-        	else
-        		System.out.print(split[i]);
-        	System.out.print(":"+multiword[1]+" ");
+
+  public static void reStemmingFileMultiWord(String inputPath, 
+      String outputPath) throws IOException{
+    BufferedReader br = new BufferedReader(new FileReader( inputPath )); 
+    String line;
+    PrintStream stdout = System.out;
+    System.setOut(new PrintStream(new File(outputPath)));
+    String newWord;
+    dictUtils dict = new  dictUtils();
+    while ((line = br.readLine()) != null){ 
+      String[] words = line.split("\\s+");
+      for(String word : words){
+        String[] multiword = word.split(":");
+        String[] split = multiword[0].split("\\+");
+        int i=0;
+        for(i=0; i<split.length-1; i++){
+          newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
+          if(newWord != null)
+            System.out.print(newWord+"+");
+          else
+            System.out.print(split[i]+"+");
         }
-        System.out.print("\n");
+        newWord = dict.getStemWord(dictUtils.getRoot(split[i]));
+        if(newWord != null)
+          System.out.print(newWord);
+        else
+          System.out.print(split[i]);
+        System.out.print(":"+multiword[1]+" ");
       }
-      System.setOut(stdout);
+      System.out.print("\n");
+    }
+    System.setOut(stdout);
   }
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-	 /*
+  /*
     String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
     String h = "top/sports/equestrian/breeds/spanish_horses";
     HashMap<String,String> wcs = readWcounts(f);
     System.out.println( wcs.get( h ));
-    */
-	  try{
-		  //ioUtils.reStemmingFile("/semplest/data/dmoz/all.descs","/semplest/data/dmoz/all.v2.descs");
-		  String[] nGramsSubC = {"arts","business","computers","games","health","home","news","recreation","reference","science","shopping","society","sports"};
-		  String baseMultiWPath = "/semplest/data/dmoz/multiwords/";
-		  for (int i=0; i< nGramsSubC.length; i++){
-				String biPathout = baseMultiWPath+nGramsSubC[i]+".v2.txt.2";
-				String biPathin = baseMultiWPath+nGramsSubC[i]+".txt.2";
-				 System.out.println("Generating "+biPathout);
-				 ioUtils.reStemmingFileMultiWord(biPathin, biPathout);
-		  }
-		  
-	  }catch ( Exception e){
-		  System.out.println(e);
-	  }
+  */
+    try{
+      //ioUtils.reStemmingFile("/semplest/data/dmoz/all.descs",
+      // "/semplest/data/dmoz/all.v2.descs");
+      String[] nGramsSubC = {"arts","business","computers","games","health",
+        "home","news","recreation","reference","science","shopping","society",
+        "sports"};
+      String baseMultiWPath = "/semplest/data/dmoz/multiwords/";
+      for (int i=0; i< nGramsSubC.length; i++){
+        String biPathout = baseMultiWPath+nGramsSubC[i]+".v2.txt.2";
+        String biPathin = baseMultiWPath+nGramsSubC[i]+".txt.2";
+        System.out.println("Generating "+biPathout);
+        ioUtils.reStemmingFileMultiWord(biPathin, biPathout);
+      }
+
+    }catch ( Exception e){
+      System.out.println(e);
+    }
   }
 }
