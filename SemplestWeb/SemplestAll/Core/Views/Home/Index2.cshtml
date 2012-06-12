@@ -7,16 +7,16 @@
         <td style="width: 300px;">
             <fieldset style="padding: 0; border-width: 1px; width: 250px">
                 <legend><b>Account Actions</b></legend>
-               <div style="padding: 5px">
-               <button class="k-button" id="btnCreatAd">
-                   <span class="k-icon k-add"></span>Create Advertising</button>
-                   </div>
+                <div style="padding: 5px">
+                    <button class="k-button" id="btnCreatAd">
+                        <span class="k-icon k-add"></span>Create Advertising</button>
+                </div>
             </fieldset>
             <br />
             <h3 style="margin-bottom: 0px;">
                 Live Advertising
             </h3>
-            <label style="color:grey;width: 270px; text-align:left;margin-top:-3px">
+            <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary, click to edit
             </label>
             <div style="width: 320px; height: 150px; overflow: auto">
@@ -41,10 +41,10 @@
                                 <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
                                 </td>
                             }
-                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
                             </td>
                             <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
-                                </td>
+                            </td>
                         </tr>    
                             }
                         }
@@ -54,7 +54,7 @@
             <br />
             <h3 style="margin-bottom: 0px;">
                 Unfinished Advertising</h3>
-                 <label style="color:grey;width: 270px; text-align:left;margin-top:-3px">
+            <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary, click to edit
             </label>
             <div style="width: 320px; height: 300px; overflow: auto">
@@ -69,15 +69,17 @@
                             <td style="width: 150px;">
                                 @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
                             </td>
-                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })</td>
-                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK})</td>
+                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
+                            </td>
                         </tr>
                             }
                         }
                     }
                 </table>
             </div>
-            <div style="display: none;">
+            <div id="RemovePromotionWindow">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
                 </div>
@@ -86,7 +88,7 @@
                 <input type="hidden" id="promotionId" name="promotionId" />
                 </form>
             </div>
-            <div style="display: none;">
+            <div id="PausePromotionWindow">
                 <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
                 <div class="questionP">
                 </div>
@@ -95,7 +97,7 @@
                 <input type="hidden" id="promotionIdP" name="promotionIdP" />
                 </form>
             </div>
-            <div style="display: none;">
+            <div id="ResumePromotionWindow">
                 <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
                 <div class="questionR">
                 </div>
@@ -104,7 +106,7 @@
                 <input type="hidden" id="promotionIdR" name="promotionIdR" />
                 </form>
             </div>
-            <div style="display: none;">
+            <div id="EndPromotionWindow">
                 <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
                 <div class="questionE">
                 </div>
@@ -113,15 +115,36 @@
                 <input type="hidden" id="promotionIdE" name="promotionIdE" />
                 </form>
             </div>
-
             <script type="text/javascript">
                 $('#loading').hide();
+                var removePromotionWindow = $('#RemovePromotionWindow').kendoWindow({
+                    resizable: false,
+                    title: "Remove Promotion"
+                }).data("kendoWindow");
+                var pausePromotionWindow = $('#PausePromotionWindow').kendoWindow({
+                    resizable: false,
+                    title: "Pause Promotion"
+                }).data("kendoWindow");
+                var resumePromotionWindow = $('#ResumePromotionWindow').kendoWindow({
+                    resizable: false,
+                    title: "Resume Promotion"
+                }).data("kendoWindow");
+                var endPromotionWindow = $('#EndPromotionWindow').kendoWindow({
+                    resizable: false,
+                    title: "End Promotion"
+                }).data("kendoWindow");
                 $(document).ready(function () {
                     $('#loading').hide();
+
+                    removePromotionWindow.close();
+                    pausePromotionWindow.close();
+                    resumePromotionWindow.close();
+                    endPromotionWindow.close();
                     $(".deletead").click(function (event) {
                         $('#promotionId').val(event.target.id);
-                        $('.question').html("Are you sure you want to delete " + event.target.name + "?");
-                        $.blockUI(({ message: $('#hiddenButton') }));
+                        $('.question').html("<br/>Are you sure you want to delete " + event.target.name + "?<br/><br/>");
+                        removePromotionWindow.center();
+                        removePromotionWindow.open();
                         event.preventDefault();
                     });
 
@@ -135,13 +158,14 @@
                     });
 
                     $("#btnCancel").click(function (event) {
-                        $.unblockUI();
+                        removePromotionWindow.close();
                     });
 
                     $(".pausead").click(function (event) {
                         $('#promotionIdP').val(event.target.id);
-                        $('.questionP').html("Are you sure you want to pause " + event.target.name + "?");
-                        $.blockUI(({ message: $('#hiddenPause') }));
+                        $('.questionP').html("<br/>Are you sure you want to pause " + event.target.name + "?<br/><br/>");
+                        pausePromotionWindow.center();
+                        pausePromotionWindow.open();
                         event.preventDefault();
                     });
 
@@ -150,30 +174,32 @@
                     });
 
                     $("#btnCancelP").click(function (event) {
-                        $.unblockUI();
+                        pausePromotionWindow.close();
                     });
 
 
 
                     $(".resumead").click(function (event) {
                         $('#promotionIdR').val(event.target.id);
-                        $('.questionR').html("Are you sure you want to resume " + event.target.name + "?");
-                        $.blockUI(({ message: $('#hiddenResume') }));
+                        $('.questionR').html("<br/>Are you sure you want to resume " + event.target.name + "?<br/><br/>");
+                        resumePromotionWindow.center();
+                        resumePromotionWindow.open();
                         event.preventDefault();
                     });
-                  
+
                     $("#btnOkR").click(function (event) {
                         $("#hiddenResume").submit();
                     });
 
                     $("#btnCancelR").click(function (event) {
-                        $.unblockUI();
+                        resumePromotionWindow.close();
                     });
 
                     $(".endad").click(function (event) {
                         $('#promotionIdE').val(event.target.id);
-                        $('.questionE').html("Are you sure you want to End this Live Advertising?");
-                        $.blockUI(({ message: $('#hiddenEnd') }));
+                        $('.questionE').html("<br/>Are you sure you want to End this Live Advertising?<br/><br/>");
+                        endPromotionWindow.center();
+                        endPromotionWindow.open();
                         event.preventDefault();
                     });
 
@@ -182,7 +208,7 @@
                     });
 
                     $("#btnCancelE").click(function (event) {
-                        $.unblockUI();
+                        endPromotionWindow.close();
                     });
 
                     $('.preview').mouseover(function (e) {
@@ -203,12 +229,12 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; height:100%;width:500px;">
+        <td style="vertical-align: top; height: 100%; width: 500px;">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
             </div>
-            <div id="preview" style="vertical-align: top;height:100%;width: 460px; overflow: auto"/>
+            <div id="preview" style="vertical-align: top; height: 100%; width: 460px; overflow: auto" />
         </td>
     </tr>
 </table>
