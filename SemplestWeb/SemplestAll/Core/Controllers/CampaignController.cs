@@ -78,6 +78,8 @@ namespace Semplest.Core.Controllers
 
             //var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
+            if(campaignSetupModel.AdModelProp.Addresses.Count == 0)
+                campaignSetupModel.AdModelProp.Addresses.Add(new GeoTargeting());
             // set sitelinks in session
             //Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
             Session["SiteLinks"] = campaignSetupModel.SiteLinks;

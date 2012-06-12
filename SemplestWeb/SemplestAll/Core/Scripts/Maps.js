@@ -15,10 +15,14 @@ function showOptionsURL(type, address, city, state, zip) {
         location.state = $("#AdModelProp_Addresses_0__StateCodeFK option:selected").text();
         location.zip = $('#AdModelProp_Addresses_0__Zip').val();
     } else {
-        location.address = this.$.find("input[id='" + address + "']")[0].value;
-        location.city = this.$.find("input[id='" + city + "']")[0].value;
-        location.state = this.$.find("select[id='" + state + "'] option:selected")[0].innerText;
-        location.zip = this.$.find("input[id='" + zip + "']")[0].value;
+        if (this.$.find("input[id='" + address + "']")[0] != null)
+            location.address = this.$.find("input[id='" + address + "']")[0].value;
+        if (this.$.find("input[id='" + city + "']")[0] != null)
+            location.city = this.$.find("input[id='" + city + "']")[0].value;
+        if (this.$.find("input[id='" + state + "']")[0] != null)
+            location.state = this.$.find("select[id='" + state + "'] option:selected")[0].innerText;
+        if (this.$.find("input[id='" + zip + "']")[0] != null)
+            location.zip = this.$.find("input[id='" + zip + "']")[0].value;
     }
     var thumbMaps = 'true';
     var maxResults = 1;
@@ -75,10 +79,10 @@ function renderOptions(response) {
     if (outFormat == "json") {
         var locations = response.results[0].locations;
         var location = locations[0];
-       
-       
+
+
         var localIndex = index.toString().indexOf('AdModelProp') > -1 ? index.split('_')[1] : index;
-        if (localIndex >0) {
+        if (localIndex > 0) {
             map = new L.Map('map_' + localIndex, { zoomControl: false, doubleClickZoom: false, attributionControl: false });
         } else {
             map = new L.Map('map', { zoomControl: false, doubleClickZoom: false, attributionControl: false, trackResize: false });
