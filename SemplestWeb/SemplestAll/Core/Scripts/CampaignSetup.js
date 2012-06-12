@@ -2,6 +2,14 @@
 $(document).ready(function () {
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
+    $('.street').live("keypress", function (e) {
+        if (e.keyCode == 10 || e.keyCode == 13)
+            e.preventDefault();
+    });
+    $('.state').live("keypress", function (e) {
+        if (e.keyCode == 10 || e.keyCode == 13)
+            e.preventDefault();
+    });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
     budjet.wrapper.find(".k-link")
