@@ -126,9 +126,11 @@ public class GoogleReportTools {
 	public ReportObject[] getKeywordReportObjects(String firstDay, String lastDay) throws Exception{
 		ReportObject[] reps = google.getReportForAccount(accountId.toString(), firstDay, lastDay);
 		ArrayList<ReportObject> repList = new ArrayList<ReportObject>();
-		for(ReportObject rep : reps){
-			if(rep.getCampaignID().longValue() == campaignId.longValue()){
-				repList.add(rep);
+		if(reps!=null){
+			for(ReportObject rep : reps){
+				if(rep.getCampaignID().longValue() == campaignId.longValue()){
+					repList.add(rep);
+				}
 			}
 		}
 		return repList.toArray(new ReportObject[]{});
