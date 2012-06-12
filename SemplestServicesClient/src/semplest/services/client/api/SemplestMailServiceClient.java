@@ -2,6 +2,7 @@ package semplest.services.client.api;
 
 import java.util.HashMap;
 
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -25,7 +26,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		try
 		{
 			SemplestMailServiceClient client = new SemplestMailServiceClient("http://VMDEVJAVA1:9898/semplest");
-			Boolean ret = client.SendEmail("Test", "mberg@semplest.com", "mitch@semplest.com", "Hello there");
+			Boolean ret = client.SendEmail("Test", "mberg@semplest.com", "mitch@semplest.com", "Hello there", ProtocolEnum.EmailType.PlanText.name());
 		}
 		catch (Exception e)
 		{
@@ -56,13 +57,14 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 	}
 
 	@Override
-	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt) throws Exception
+	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt, String msgType) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("subject", subject);
 		jsonHash.put("from", from);
 		jsonHash.put("recipient", recipient);
 		jsonHash.put("msgTxt", msgTxt);
+		jsonHash.put("msgTxt", msgType);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "SendEmail", json, timeoutMS);

@@ -15,7 +15,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
-import semplest.server.protocol.ProtocolEnum;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
@@ -37,11 +36,12 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		String from = data.get("from");
 		String recipient = data.get("recipient");
 		String msgTxt = data.get("msgTxt");
-		Boolean res = SendEmail(subject, from, recipient, msgTxt);
+		String msgType = data.get("msgType");
+		Boolean res = SendEmail(subject, from, recipient, msgTxt, msgType);
 		return gson.toJson(res);
 	}
 	@Override
-	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt) throws Exception
+	public Boolean SendEmail(String subject, String from, String recipient, String msgTxt, String msgType) throws Exception
 	{
 		logger.debug("SendMail" + "- subject:" + subject +"; from: " + from + "; recipient: " + recipient + "; msgTxt: " + msgTxt);
 		if (sessionObj.getSession() == null)
@@ -55,7 +55,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		msg.setSubject(subject);
 		// create and fill the text message part
 		MimeBodyPart mbp1 = new MimeBodyPart();
-		mbp1.setText(msgTxt);
+		mbp1.setContent(msgTxt, msgType);
 		// create the Multipart and add its parts to it
 		Multipart mp = new MimeMultipart();
 		mp.addBodyPart(mbp1);
