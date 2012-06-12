@@ -25,6 +25,22 @@ public class ProtocolEnum
 	/*
 	 * ENUMS
 	 */
+	public static enum EmailType
+	{
+		PlanText("text/plain"), HTML("text/html");
+		private String val;
+
+		public String getEmailValue()
+		{
+			return val;
+		}
+
+		private EmailType(String value)
+		{
+			val = value;
+		}
+
+	}
 	public static enum ScheduleFrequency
 	{
 		Now, Daily, Weekly, Monthly, TenMinutes;
