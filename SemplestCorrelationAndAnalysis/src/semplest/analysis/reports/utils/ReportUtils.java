@@ -14,6 +14,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import semplest.server.protocol.adengine.ReportObject;
 
@@ -32,6 +33,16 @@ public class ReportUtils {
 	    return obj;
 	}
 	
+	public static HashMap<String, ArrayList<ReportObject>> compareDataGoogleMsn(ReportObject[] reports){
+		HashMap<String, ArrayList<ReportObject>> hashMap =  new HashMap<String, ArrayList<ReportObject>>();
+		for(ReportObject rep : reports){
+			if(hashMap.containsKey(rep.getKeyword())){
+				hashMap.get(rep.getKeyword());
+			}
+		}
+		
+		return hashMap;
+	}
 	public static ArrayList<Double> createbids(double start, double end, double step){
 		ArrayList<Double> bids = new ArrayList<Double>();
 		Double bid = start;
