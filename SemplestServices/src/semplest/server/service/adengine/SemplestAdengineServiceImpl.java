@@ -134,7 +134,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -175,6 +174,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throws Exception
 	{		
 		/*
+		 	TODO: break up this method into separate steps as per below
+		 	 
 			// 1. Create Account - AdWordsService.V201109.CREATE_ACCOUNT_SERVICE
 			// 2. Create Campaign - AdWordsService.V201109.CAMPAIGN_SERVICE
 			// 3. Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE
@@ -365,8 +366,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// int PromotionPK, Long KeywordAdEngineID, String Keyword,
 				// Integer MicroBidAmount, String BidType, String
 				// AdvertisingEngine, Boolean IsNegative
-				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), 
-						keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
+				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				logger.info("Add Keyword " + keywordDataObj.getKeyword() + " to " + promotionID.toString());
 				Thread.sleep(500); // Wait for google
 				//*****TEST
@@ -913,7 +913,176 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return adsFound;
 	}
-		
+	
+	public String scheduleAddNegativeKeywords(String json) throws Exception
+	{
+		logger.info("call scheduleAddNegativeKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");		
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
+		final String adEnginesString = data.get("adEngines");
+		final List<String> adEngines = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);		
+		final Boolean res = scheduleAddNegativeKeywords(customerID, promotionID, keywordIdRemoveOppositePairs, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		try 
+		{
+			logger.info("Will try to schedule task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
+			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final String scheduleNamePostfix = "AddNegativeKeywords";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddNegativeKeywordsTask(customerID, promotionID, keywordIdRemoveOppositePairs, adEngines, scheduleNamePostfix);
+			listOfTasks.add(task);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(promotionID);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			return taskScheduleSuccessful;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem scheduling task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]", e);
+			return false;
+		}
+	}
+	
+	public Map<KeywordProbabilityObject, Boolean> getKeywordProbabilityToRemoveOppositeMap(final List<KeywordProbabilityObject> keywordProbabilities, final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs)
+	{
+		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = new HashMap<KeywordProbabilityObject, Boolean>();
+		for (final KeywordProbabilityObject currentKeywordProbability : keywordProbabilities)
+		{
+			final Integer currentKeywordId = currentKeywordProbability.getKeywordPK();			
+			for (final KeywordIdRemoveOppositePair pair : keywordIdRemoveOppositePairs)
+			{
+				final Integer pairKeywordId = pair.getKeywordId();
+				if (currentKeywordId.intValue() == pairKeywordId.intValue())
+				{
+					final Boolean removeOpposite = pair.getRemoveOpposite();
+					keywordToRemoveOppositeMap.put(currentKeywordProbability, removeOpposite);
+				}
+			}
+		}
+		return keywordToRemoveOppositeMap;
+	}
+	
+	public String AddNegativeKeywords(String json) throws Exception
+	{
+		logger.debug("call AddNegativeKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");		
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AddNegativeKeywords(promotionID, keywordIdRemoveOppositePairs, adEngines);
+		return gson.toJson(true);
+	}
+
+	@Override
+	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);			
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
+		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
+		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll, keywordIdRemoveOppositePairs);		
+		if (keywordToRemoveOppositeMap.size() != keywordIdRemoveOppositePairs.size())
+		{
+			logger.warn("# of keywords we'll work on as was found in db " + keywordToRemoveOppositeMap.size() + " is NOT the same as # of keywords requested to be worked on " + keywordIdRemoveOppositePairs.size());
+		}
+		else
+		{
+			logger.info("As expected, we'll work on " + keywordToRemoveOppositeMap.size() + " keywords which is the same as " + keywordIdRemoveOppositePairs.size() + " requested to be worked on");	
+		}		
+		final String esbServerUrl = (String)SemplestConfiguration.configData.get("ESBWebServerURL");
+		final String esbServerTimeout = getTimeoutMS();
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbServerUrl, esbServerTimeout);
+		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, new ArrayList<String>(adEngines));		
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{							
+				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
+				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
+				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
+				final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+				final Boolean processedSuccessfully = google.addUpdateKeywords(accountID, campaignID, adGroupID, keywordToRemoveOppositeMap, keywordMatchType, null);
+				if (processedSuccessfully)
+				{
+					logger.info("Processed successfully");
+				}
+				else
+				{
+					errorMap.put(adEngine, "Problem doing Add/Update Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "]");
+				}
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Adding Keywords (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (!errorMap.isEmpty())
+		{
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
+			final String errMsg = "Summary of errors:\n" + errorMapEasilyReadableString;
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}	
+	}
+	
+	public String scheduleAddKeywords(String json) throws Exception
+	{
+		logger.debug("call scheduleAddKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));		
+		final String keywordIdsString = data.get("keywordIds");		
+		final List<Integer> keywordIds = gson.fromJson(keywordIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final String adEnginesString = data.get("adEngines");
+		final List<String> adEngines = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);		
+		final Boolean res = scheduleAddKeywords(customerID, promotionID, keywordIds, adEngines);
+		return gson.toJson(res);
+	}
+	
+	@Override
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		try 
+		{
+			logger.info("Will try to schedule task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
+			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final String scheduleNamePostfix = "AddKeywords";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddKeywordsTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
+			listOfTasks.add(task);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(promotionID);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			return taskScheduleSuccessful;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem scheduling task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
+			return false;
+		}
+	}
+			
 	public String scheduleAddAds(String json) throws Exception
 	{
 		logger.debug("call scheduleAddAds(String json): [" + json + "]");
@@ -950,6 +1119,82 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error("Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
+	}
+	
+	public String AddKeywords(String json) throws Exception
+	{
+		logger.debug("call AddKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String keywordIdsString = data.get("keywordIds");		
+		final List<Integer> keywordIds = gson.fromJson(keywordIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AddKeywords(promotionID, keywordIds, adEngines);
+		return gson.toJson(true);
+	}
+	
+	public List<KeywordProbabilityObject> getFilteredKeywordProbabilities(final List<KeywordProbabilityObject> keywordProbabilities, final List<Integer> keywordIds)
+	{
+		final List<KeywordProbabilityObject> filteredKeywordProbabilities = new ArrayList<KeywordProbabilityObject>();
+		for (final KeywordProbabilityObject currentKeywordProbability : keywordProbabilities)
+		{
+			final Integer currentKeywordId = currentKeywordProbability.getKeywordPK();
+			if (keywordIds.contains(currentKeywordId))
+			{
+				filteredKeywordProbabilities.add(currentKeywordProbability);
+			}
+		}
+		return filteredKeywordProbabilities;
+	}
+	
+	@Override
+	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);			
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
+		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
+		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
+		final List<KeywordProbabilityObject> keywordProbabilitiesForIds = getFilteredKeywordProbabilities(keywordProbabilitiesAll, keywordIds);
+		if (keywordProbabilitiesForIds.size() != keywordIds.size())
+		{
+			logger.warn("# of keywords found " + keywordProbabilitiesForIds.size() + " is NOT the same as # of keywords Ids " + keywordIds.size() + " requested to add.");
+		}
+		else
+		{
+			logger.info("As expected, found " + keywordProbabilitiesForIds.size() + " keywords for " + keywordIds.size() + " ids");	
+		}		
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
+		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, new ArrayList<String>(adEngines));		
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{							
+				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
+				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
+				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
+				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, keywordMatchType, null);										
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Adding Keywords (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (!errorMap.isEmpty())
+		{
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
+			final String errMsg = "Summary of errors:\n" + errorMapEasilyReadableString;
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}			
 	}
 	
 	public String AddAds(String json) throws Exception
@@ -1798,36 +2043,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error("Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
-	}
-
-	@Override
-	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID,
-			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override

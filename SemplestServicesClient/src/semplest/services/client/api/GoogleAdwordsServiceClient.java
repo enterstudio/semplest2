@@ -13,6 +13,7 @@ import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.BidSimulatorObject;
+import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
@@ -685,6 +686,15 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID,
+			Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount)
+			throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

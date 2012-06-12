@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
+import semplest.server.protocol.KeywordIdRemoveOppositePair;
+
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
 
@@ -19,6 +21,7 @@ public final class SemplestUtils
 	public static final Type TYPE_LIST_OF_INTEGERS = new TypeToken<List<Integer>>(){}.getType();
 	public static final Type TYPE_LIST_OF_LONGS = new TypeToken<List<Long>>(){}.getType();
 	public static final Type TYPE_MAP_OF_STRING_TO_STRING = new TypeToken<Map<String, String>>(){}.getType();
+	public static final Type TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS = new TypeToken<List<KeywordIdRemoveOppositePair>>(){}.getType();
 	
 	public static final String getTextAdString(final TextAd textAd)
 	{

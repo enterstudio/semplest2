@@ -2,6 +2,7 @@ package semplest.service.chaseorbitalgateway;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -564,6 +565,20 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			ret.setAmountRedeemedNoDecimal(String.valueOf(Amount));
 		}
 		return ret;
+	}
+
+	@Override
+	public List<GatewayReturnObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

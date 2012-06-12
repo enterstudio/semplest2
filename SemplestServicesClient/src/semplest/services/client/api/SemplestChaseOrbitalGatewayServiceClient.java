@@ -3,6 +3,7 @@ package semplest.services.client.api;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -135,6 +136,20 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 		final GatewayReturnObject gatewayReturnObject =  gson.fromJson(returnData, GatewayReturnObject.class);
 		logger.info("GatewayReturnObject generated from the Final JSON: [" + gatewayReturnObject + "]");
 		return gatewayReturnObject;
+	}
+
+	@Override
+	public List<GatewayReturnObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

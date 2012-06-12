@@ -31,6 +31,17 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
 	void UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
 	
+	Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<String> adEngines);
+	void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception;
+	
+	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<String> adEngines);
+	void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception;
+	
+	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
+	
+	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList);	
+	void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception;
+	
 	Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines);
 	void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception;
 	
@@ -42,17 +53,7 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines);
 	void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines) throws Exception;
-		
-	Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<String> adEngines);
-	void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception;
 	
-	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<String> adEngines);
-	void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception;
-	
-	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
-	
-	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList);	
-	void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception;
 	
 	void ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
 }

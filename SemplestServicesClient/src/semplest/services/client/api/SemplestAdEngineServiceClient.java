@@ -161,13 +161,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_RefreshSiteLinksForAd = 62;
 		final List<String> adEngines_RefreshSiteLinksForAd = Arrays.asList(AdEngine.Google.name());
 		client.RefreshSiteLinks(promotionID_RefreshSiteLinksForAd, adEngines_RefreshSiteLinksForAd);
-*/			
+	
 		// schedulePauseProductGroups
 		final Integer customerID_schedulePauseProductGroups = 12;
 		final List<Integer> productGroupIds_schedulePauseProductGroups = Arrays.asList(76);
 		final List<String> adEngines_schedulePauseProductGroups = Arrays.asList(AdEngine.Google.name());
 		client.schedulePauseProductGroups(customerID_schedulePauseProductGroups, productGroupIds_schedulePauseProductGroups, adEngines_schedulePauseProductGroups);
-		/*		
+				
 		// PauseProductGroups
 		final List<Integer> productGroupIds_PauseProductGroups = Arrays.asList(76);
 		final List<String> adEngines_PauseProductGroups = Arrays.asList(AdEngine.Google.name());
@@ -183,7 +183,134 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_UnpausePromotion = 62;
 		final List<String> adEngines_UnpausePromotion = Arrays.asList(AdEngine.Google.name());
 		client.UnpausePromotion(promotionID_UnpausePromotion, adEngines_UnpausePromotion);
-		*/		
+		
+		// scheduleUnpausePromotion
+		final Integer customerID_scheduleAddKeywords = 12;
+		final Integer promotionID_scheduleAddKeywords = 62;
+		final List<Integer> keywordIds_scheduleAddKeywords = Arrays.asList(12241, 12242);
+		final List<String> adEngines_scheduleAddKeywords = Arrays.asList(AdEngine.Google.name());
+		client.scheduleAddKeywords(customerID_scheduleAddKeywords, promotionID_scheduleAddKeywords, keywordIds_scheduleAddKeywords, adEngines_scheduleAddKeywords);
+
+		// UnpausePromotion
+		final Integer promotionID_AddKeywords = 62;
+		final List<String> adEngines_AddKeywords = Arrays.asList(AdEngine.Google.name());
+		final List<Integer> keywordIds_AddKeywords = Arrays.asList(12241, 12242);
+		client.AddKeywords(promotionID_AddKeywords, keywordIds_AddKeywords, adEngines_AddKeywords);
+*/
+		// scheduleAddNegativeKeywords
+		final Integer customerID_scheduleAddNegativeKeywords = 12;
+		final Integer promotionID_scheduleAddNegativeKeywords = 62;
+		final KeywordIdRemoveOppositePair pair1_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
+		final KeywordIdRemoveOppositePair pair2_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords = new ArrayList<KeywordIdRemoveOppositePair>();
+		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair1_scheduleAddNegativeKeywords);
+		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
+		final List<String> adEngines_scheduleAddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
+		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);
+/*
+		// AddNegativeKeywords
+		final Integer promotionID_AddNegativeKeywords = 62;
+		final KeywordIdRemoveOppositePair pair1_AddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
+		final KeywordIdRemoveOppositePair pair2_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs_AddNegativeKeywords = new ArrayList<KeywordIdRemoveOppositePair>();
+		keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair1_AddNegativeKeywords);
+		keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
+		final List<String> adEngines_AddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
+		client.AddNegativeKeywords(promotionID_AddNegativeKeywords, keywordIdRemoveOppositePairs_AddNegativeKeywords, adEngines_AddNegativeKeywords);
+*/
+	}
+	
+	@Override
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	{
+		final String methodName = "scheduleAddNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdRemoveOppositePairsStr = gson.toJson(keywordIdRemoveOppositePairs, List.class);		
+		jsonHash.put("keywordIdRemoveOppositePairs", keywordIdRemoveOppositePairsStr);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing scheduleAddKeywords operation", e);
+			return false;
+		}
+	}
+
+	@Override
+	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+			throws Exception
+	{
+		final String methodName = "AddNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdRemoveOppositePairsString = gson.toJson(keywordIdRemoveOppositePairs, List.class);
+		jsonHash.put("keywordIdRemoveOppositePairs", keywordIdRemoveOppositePairsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
+		if (!processedSuccessully)
+		{
+			throw new Exception(methodName + " failed");
+		}
+	}
+	
+	@Override
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		final String methodName = "scheduleAddKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdsStr = gson.toJson(keywordIds, List.class);		
+		jsonHash.put("keywordIds", keywordIdsStr);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing scheduleAddKeywords operation", e);
+			return false;
+		}
+	}
+
+	@Override
+	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		final String methodName = "AddKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);
+		jsonHash.put("keywordIds", keywordIdsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
+		if (!processedSuccessully)
+		{
+			throw new Exception(methodName + " failed");
+		}
 	}
 	
 	@Override
@@ -762,36 +889,10 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		
 	}
 
-	@Override
-	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID,
-			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
+	
+	
+	
+	
 	@Override
 	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID,
 			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)

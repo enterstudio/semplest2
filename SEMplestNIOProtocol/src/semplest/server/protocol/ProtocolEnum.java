@@ -163,6 +163,8 @@ public class ProtocolEnum
 		AddPromotionToAdEngine("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		ExecuteBidProcess("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		AddAds("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		AddNegativeKeywords("semplest.services.client.api.SemplestAdEngineServiceClient"),
+		AddKeywords("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		UpdateAds("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		DeleteAd("semplest.services.client.api.SemplestAdEngineServiceClient"),
 		UpdateGeoTargeting("semplest.services.client.api.SemplestAdEngineServiceClient"),

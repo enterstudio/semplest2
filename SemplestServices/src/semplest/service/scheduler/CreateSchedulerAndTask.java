@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import com.google.gson.Gson;
 import com.microsoft.adcenter.v8.ReportAggregation;
 
+import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
@@ -269,6 +270,40 @@ public class CreateSchedulerAndTask
 		jsonHash.put("promotionID", Integer.toString(promotionID));
 		final String promotionAdIdsString = gson.toJson(promotionAdIds, List.class);		
 		jsonHash.put("promotionAdIds", promotionAdIdsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		task.setParameters(json);
+		return task;
+	}
+	
+	public static SemplestSchedulerTaskObject createAddNegativeKeywordsTask(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines, String scheduleNamePostfix)
+	{
+		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddNegativeKeywords.getClientServiceNameValue());
+		task.setMethodName(scheduleNamePostfix);
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdRemoveOppositePairsString = gson.toJson(keywordIdRemoveOppositePairs, List.class);		
+		jsonHash.put("keywordIdRemoveOppositePairs", keywordIdRemoveOppositePairsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		task.setParameters(json);
+		return task;
+	}
+	
+	public static SemplestSchedulerTaskObject createAddKeywordsTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
+	{
+		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddKeywords.getClientServiceNameValue());
+		task.setMethodName(scheduleNamePostfix);
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);		
+		jsonHash.put("keywordIds", keywordIdsString);
 		final String adEnginesStr = gson.toJson(adEngines, List.class);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
