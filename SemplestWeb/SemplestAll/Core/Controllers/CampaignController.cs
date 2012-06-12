@@ -375,7 +375,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks;
+            Session["SiteLinks"] = model.SiteLinks.Where(t=> !t.Delete).ToList();
             return Json("AdditionalLinks");
         }
 
