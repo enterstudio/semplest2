@@ -15,8 +15,8 @@ public class Test {
 	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		
-		ReportObject[] reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/data/dailyReportObjects/PiperHallTest/20120531/20120531_GoogleReport.robj");
-		ReportUtils.saveReportDataCSV(reps, "/semplest/data/dailyReportObjects/PiperHallTest/20120531/20120531_GoogleReport");
+		ReportObject[] reps = (ReportObject[]) ReportUtils.loadSerializedObject("/semplest/data/dailyReportObjects/PiperHallTest/20120525/20120525_MSNReport.robj");
+		ReportUtils.saveReportDataCSV(reps, "/semplest/data/dailyReportObjects/PiperHallTest/20120525/20120525_MSNReport");
 
 	}
 
