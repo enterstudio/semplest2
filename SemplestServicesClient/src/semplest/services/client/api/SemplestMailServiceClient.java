@@ -13,7 +13,7 @@ import com.google.gson.Gson;
 public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://172.18.9.26:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -64,7 +64,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		jsonHash.put("from", from);
 		jsonHash.put("recipient", recipient);
 		jsonHash.put("msgTxt", msgTxt);
-		jsonHash.put("msgTxt", msgType);
+		jsonHash.put("msgType", msgType);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "SendEmail", json, timeoutMS);
