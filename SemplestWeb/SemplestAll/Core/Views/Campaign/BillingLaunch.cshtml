@@ -49,7 +49,8 @@
         display: inline-block;
         font-weight: bold;
     }
-    .addnewcard {
+    .addnewcard
+    {
         margin-left: 10px;
     }
 </style>
@@ -84,24 +85,24 @@
                 Total Credit Card Charge</label>
         </li>
         <li>
-            <input type="text" class="k-inputlabel" id="budget" value="$@budget.ToString("n2")" readonly="readonly" style="width:60px; text-align:right;"/>
-            <input type="text" class="k-inputlabel" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="width: 70px; margin-left: 105px;text-align:right;"/>
-            <input type="text" class="k-inputlabel" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly"  style=" width: 75px; margin-left: 110px;text-align:right;"/>
-            <input type="text" class="k-inputlabel" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="width:85px; margin-left: 120px;text-align:right;"/>
+            <input type="text" class="k-input" id="budget" value="$@budget.ToString("n2")" readonly="readonly" style="width:60px; text-align:right;"/>
+            <input type="text" class="k-input" id="Semplestcharge" value="$@semplestcharge.ToString("n2")" readonly="readonly" style="width: 70px; margin-left: 105px;text-align:right;"/>
+            <input type="text" class="k-input" id="txttotalMedia" value="$@mediaspend.ToString("n2")"  readonly="readonly"  style=" width: 75px; margin-left: 110px;text-align:right;"/>
+            <input type="text" class="k-input" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="width:85px; margin-left: 120px;text-align:right;"/>
         </li>
         <li>
-            <input type="checkbox" /><label style="margin-left: 5px; color:grey">I have read the
+            <input type="checkbox" /><label style="margin-left: 5px;">I have read the
             </label>
-            @Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home") <label style="margin-left: 5px; color:grey">and agree that as long as my advertising are live,</label>
+            <a>Terms and Conditions</a> and agree that as long as my advertising are live,
             <br />
-            <label style="margin-left: 18px;color:grey">
+            <label style="margin-left: 18px;">
                 I will be billed the amount above on a monthly basis</label>
         </li>
         <li>
-            <div style="text-align: center;">
-                <button class="k-button" id="editadproduct" type="button" style="margin-top: 4px;">
+            <div style="text-align: center">
+                <button class="k-button" id="editadproduct" type="button">
                     <span class="k-back k-icon"></span>EDIT</button>
-                <button class="k-button" id="getLaunchAdProduct" style="font-size: 14px;" type="submit" name="Command" value="LaunchAdProduct">
+                <button class="k-button" id="getLaunchAdProduct" type="submit" name="Command" value="LaunchAdProduct">
                     <span class="k-update k-icon"></span>LAUNCH ADVERTISING</button>
             </div>
         </li>
@@ -114,7 +115,13 @@
 <div style="height: 190px; overflow: auto; width: 100%; margin-top: 0px;">
     @Html.Partial("Preview", @Model)
 </div>
-<div style="display: none;">
+<style>
+    .creditCardlabel
+    {
+        min-width: 100px;
+    }
+</style>
+<div id="creditCardWindow">
     <form name="hiddenButton" id="hiddenButton" action="AddNewCard" method="post">
     <div class="table">
         <ul class="accept">
@@ -125,80 +132,85 @@
                 IEnumerable<SelectListItem> sleyr = new SelectList(new[] { "-Select One-", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" }, "-Select One-");
                 
             }
-            <div class="editor-label">
-                @Html.Label("CardType", "Card Type")
-            </div>
-            <div class="editor-field">
-                @Html.DropDownList("CardType", slct)
-            </div>
-            <div class="editor-label">
-                @Html.Label("CardNumber", "Card Number")
-            </div>
-            <div class="editor-field">
+            <li>
+                <label class="creditCardlabel">
+                    Card Type</label>
+                @Html.DropDownList("CardType", slct, new { @id = "creditcatdType" })
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Card Number</label>
                 @Html.TextBox("CardNumber", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("ExpirationDate", "Card Type")
-            </div>
-            <div class="editor-field">
-                @Html.DropDownList("ExpirationDate", slemo)
-                @Html.DropDownList("ExpirationDate", sleyr)
-            </div>
-            <div class="editor-label">
-                @Html.Label("CVCCode", "CVC Code")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Expiry Date</label>
+                @Html.DropDownList("ExpirationDate", slemo, new { @id = "creditcardMonth" })
+                @Html.DropDownList("ExpirationDate", sleyr, new { @id = "creditcardYear" })
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    CVV</label>
                 @Html.TextBox("CVCCpde", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("FirstName", "First Name")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    First Name</label>
                 @Html.TextBox("FirstName", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("LastName", "Last Name")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Last Name</label>
                 @Html.TextBox("LastName", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("Address", "Address")
-            </div>
-            <div class="editor-field">
-                @Html.TextBox("Address", null, new { @class = "k-textbox" })
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Address</label>
                 @Html.TextBox("Address2", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("City", "City/Town")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                </label>
+                @Html.TextBox("Address2", null, new { @class = "k-textbox" })
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    City / Town</label>
                 @Html.TextBox("City", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("Zip", "Zip")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Zip</label>
                 @Html.TextBox("Zip", null, new { @class = "k-textbox" })
-            </div>
-            <div class="editor-label">
-                @Html.Label("Phone", "Phone Number")
-            </div>
-            <div class="editor-field">
+            </li>
+            <li>
+                <label class="creditCardlabel">
+                    Phone Number</label>
                 @Html.TextBox("Phone", null, new { @class = "k-textbox" })
-            </div>
-            @*  <li><img src="@Url.Content("~/Content/cardslogo.jpg")"</li>*@
-            <input type="button" id="btnAdd" value="Add" class="k-button" /><input type="button"
-                id="btnCancel" value="Cancel" class="k-button" />
+            </li>
+            <li>
+                <div style="text-align: center">
+                    <input type="button" id="btnAdd" value="Add" class="k-button" />
+                    <input type="button" id="btnCancel" value="Cancel" class="k-button" style="margin-left: 10px;" />
+                </div>
+            </li>
         </ul>
     </div>
     @*@Html.TextBox("newproductgroupname")*@
     </form>
 </div>
-<script language="javascript">    $(document).ready(function () {
-
+<script language="javascript">
+    $(document).ready(function () {
+        var creditCardWindow = $('#creditCardWindow').kendoWindow({
+            modal: true,
+            resizable: false,
+            title: "Credit Card"
+        }).data("kendoWindow");
+        creditCardWindow.close();
         $(".addnewcard").click(function (event) {
-            $.blockUI(({ message: $('#hiddenButton') }));
+            //$.blockUI(({ message: $('#hiddenButton') }));
+            creditCardWindow.center();
+            creditCardWindow.open();
             event.preventDefault();
         });
 
@@ -213,6 +225,9 @@
     });
 </script>
 <script type="text/javascript">
+    $('#creditcatdType').kendoDropDownList();
+    $('#creditcardMonth').kendoDropDownList();
+    $('#creditcardYear').kendoDropDownList();
     $('#dropDownRange').kendoDropDownList();
     $('#dropDownCreditCard').kendoDropDownList();
 
