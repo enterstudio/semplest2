@@ -79,7 +79,8 @@ namespace Semplest.Core.Controllers
             //var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
-            Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+            //Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+            Session["SiteLinks"] = campaignSetupModel.SiteLinks;
             // set negative keywords in session
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
@@ -105,7 +106,7 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    //model = (CampaignSetupModel)Session["CampaignSetupModel"];
+                    model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
                     model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
@@ -339,7 +340,9 @@ namespace Semplest.Core.Controllers
 
         public ActionResult AdditionalLinks()
         {
-            var campaignModel = Session["CampaignSetupModel"];
+            var siteLInks = (List<SiteLink>)Session["SiteLinks"];
+            var campaignModel = (CampaignSetupModel)Session["CampaignSetupModel"];
+            campaignModel.SiteLinks = siteLInks;
             return PartialView(campaignModel);
         }
 
@@ -372,7 +375,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["CampaignSetupModel"] = model;
+            Session["SiteLinks"] = model.SiteLinks;
             return Json("AdditionalLinks");
         }
 

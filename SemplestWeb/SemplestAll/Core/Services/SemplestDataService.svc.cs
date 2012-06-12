@@ -190,6 +190,9 @@ namespace Semplest.Core.Services
                 // set islaunched
                 model.IsLaunched = promo.IsLaunched;
                 model.IsCompleted = promo.IsCompleted;
+
+                // set sitelinks
+                model.SiteLinks = promo.SiteLinks.ToList();
             }
             var cnt = model.AdModelProp.NegativeKeywords.Count();
             for (var i = 0; i < cnt; i++)
