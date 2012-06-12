@@ -790,3 +790,9 @@ hr
     margin-left: 85px; width: 400px;height: 160px;
     display: block;
 }
+
+.k-window .k-header {
+    background-color: #ADC76E;
+    color: #fff;
+}
+
