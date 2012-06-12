@@ -64,6 +64,7 @@ import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
+import com.microsoft.adcenter.v8.BudgetLimitType;
 
 public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInterface
 {
@@ -222,18 +223,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
+				//Create Campaign
 				final Double budget = (Double) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingBudgetInCycle");
 				final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");				
 				final Long campaignID = createCampaign(String.valueOf(accountID), PromotionID, customerID, advertisingEngine, budget, getPromoDataSP, daysLeft); 
 				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
+				//Create Ad group and Ads
 				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
 				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
+				//Keywords
 				final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false, (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
 				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, KeywordMatchType.fromString(SemplestMatchType.getSearchEngineMatchType(adEngineInitialData.getSemplestMatchType(), advertisingEngine)), null);
+				//Set initial bidding
 				final BudgetObject budgetData = new BudgetObject();
 				budgetData.setRemainingBudgetInCycle(budget);
 				budgetData.setRemainingDays(daysLeft);
 				bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
+				//Schedule ongoing bidding
 				final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
 				cal.setTime(new Date());
 				cal.add(Calendar.DAY_OF_MONTH, 1);
@@ -446,6 +452,33 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());				
 			}
 		}
+		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
+		{
+			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			adGroupID = msn.createAdGroup(Long.valueOf(accountID), campaignID);
+			adGrpData.setAdGroupID(adGroupID);
+			/*
+			for (AdsObject ad : adList)
+			{
+				Thread.sleep(1000);				
+				Long adID = google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdTextLine1(), ad.getAdTextLine2(),
+						promotionData.getLandingPageURL(), promotionData.getLandingPageURL());
+				ad.setAdEngineAdID(adID);
+				logger.info("Added Ad Copy. Title=" + ad.getAdTitle());
+			}
+			adGrpData.setAds(adList);
+			// AD GEOTARGET HERE
+			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
+			for (GeoTargetObject geoObj : geoObjList)
+			{
+				Thread.sleep(1000);				
+				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
+						geoObj.getZip());
+				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
+				
+			}
+			*/
+		}
 		return adGrpData;
 	}
 
@@ -500,13 +533,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// get the promotion name/ campaign name, Budget period,
 			Long microbudgetAmount = calculateDailyMicroBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
 			Campaign campaign = google.CreateOneCampaignForAccount(accountID, getPromoDataSP.getPromotionData().getPromotionName(), // + System.currentTimeMillis(),
-					CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, microbudgetAmount);
+					com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, microbudgetAmount);
 			return campaign.getId();
 		}
 
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
 		{
-			return null;
+			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			double dailybudgetAmount = calculateDailyBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
+			Long campaignID = msn.createCampaign(Long.valueOf(accountID), getPromoDataSP.getPromotionData().getPromotionName(), BudgetLimitType.DailyBudgetStandard, dailybudgetAmount , monthlyBudgetAmount.doubleValue(), com.microsoft.adcenter.v8.CampaignStatus.Active);
+			return campaignID;
 		}
 		else
 		{
@@ -524,6 +560,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// calculate
 		BigDecimal bd = new BigDecimal(daily);
 		return (bd.longValue() * 10000L);
+	}
+	private Double calculateDailyBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
+	{
+		Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
+		return daily;
 	}
 
 	private Long createAdEngineAccount(String adEngine, String companyName) throws Exception
