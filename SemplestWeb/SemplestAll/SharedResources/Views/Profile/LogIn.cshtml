@@ -1,38 +1,22 @@
 ﻿@model Semplest.SharedResources.Models.ProfileModel
 @{
-    Layout = "~/Views/Home/_Layout.cshtml";
+    Layout = "~/Views/Shared/_LogInLayout.cshtml";
     ViewBag.Title = "LogOn";
 }
 @using (Html.BeginForm())
 {
-    <div id="url"></div>
     <div id="tickets">
-        <h3>
-            Welcome</h3>
+        <h3 style="margin-left: 20px;margin-top: 5px; color: grey">
+            Welcome!</h3>
             <ul>
                 <li>
-
                     @Html.LabelFor(t => t.UserName, new { @class = "required"})
-                    @if (Model.LoggedInSucceeded)
-                    {
-                        @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox", @readonly = true })
-                    }
-                    else
-                    { 
-                        @Html.TextBoxFor(m => m.UserName, new { @class = "k-textbox"})
-                    }
+                    @(Model.LoggedInSucceeded ? Html.TextBoxFor(m => m.UserName, new {@class = "k-textbox", @readonly = true}) : Html.TextBoxFor(m => m.UserName, new {@class = "k-textbox"}))
                     @Html.ValidationMessageFor(m => m.UserName)
                 </li>
                 <li>
                     @Html.LabelFor(t => t.Password1, new { @class = "required" })
-                    @if (Model.LoggedInSucceeded)
-                    {
-                        @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox", @readonly = true, @value = "********"  })
-                    }
-                    else 
-                    {
-                        @Html.PasswordFor(m => m.Password1, new { @class = "k-textbox" })
-                    }
+                    @(Model.LoggedInSucceeded ? Html.PasswordFor(m => m.Password1, new {@class = "k-textbox", @readonly = true, @value = "********"}) : Html.PasswordFor(m => m.Password1, new {@class = "k-textbox"}))
                     @Html.ValidationMessageFor(m => m.Password1) 
                 </li>
                 <li class="accept">
@@ -69,7 +53,7 @@
     #tickets h3
     {
         font-weight: bold;
-        font-size: 1.4em;
+        font-size: 2em;
     }
     
     #tickets ul
@@ -96,6 +80,7 @@
     .required
     {
         font-weight: bold;
+        margin-right: 5px;
     }
     
     .accept, .status
@@ -117,4 +102,3 @@
         margin-left: 6px;
     }
 </style>
-
