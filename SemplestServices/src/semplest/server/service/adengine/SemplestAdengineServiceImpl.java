@@ -112,7 +112,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
-			String scheduleName = "Test_OnGoingBidding";
+			String scheduleName = "Test_OnGoingBidding2";
 			// Schedule for next day at the same time
 			
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
