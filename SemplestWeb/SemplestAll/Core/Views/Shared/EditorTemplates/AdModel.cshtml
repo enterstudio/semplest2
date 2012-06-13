@@ -18,7 +18,7 @@
                                 @Html.EditorFor(t => t.Addresses)
                             </div>
                             <div style="text-align: left; margin-left: 75px; margin-top: -30px;">
-                                @Html.LinkToAddNestedForm("Add Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
+                                @Html.LinkToAddNestedForm("Additional Business Location", "#addresses", ".address", "AdModelProp.Addresses", typeof(SemplestModel.GeoTargeting), "AdModelProp")
                             </div>
                         </td>
                     </tr>
@@ -46,7 +46,7 @@
                             @Html.ValidationMessageFor(t => t.LandingUrl)
                         </td>
                         <td>
-                            <span style=" margin-left: 5px;">This url is your landing page</span>
+                            <span style=" margin-left: 5px;" class="grey-text">This url is your landing page</span>
                         </td>
                     </tr>
                     <tr style="height: 35px;">
@@ -59,7 +59,7 @@
 @*                            @Html.TextBoxFor(m => m.DisplayUrl, new { disabled = true, @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
                             @Html.ValidationMessageFor(t => t.DisplayUrl)
 *@                        </td>
-                        <td> <span style=" margin-left: 5px;">This url will appears in all of your ads</span>
+                        <td> <span style=" margin-left: 5px;" class="grey-text">This url will appears in all of your ads</span>
                         </td>
                     </tr>
                     <tr style="height: 35px;">

@@ -3,7 +3,6 @@
 @model SemplestModel.PromotionAd
 <div class="ads">
     <fieldset style="padding-bottom: 15px;">
-        <legend>Ad #</legend>
         <div class="content">
             <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
                 <li>@Html.HiddenFor(t => t.PromotionAdsPK)
@@ -12,7 +11,7 @@
                             ?</a></label>
                     @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
                     @Html.ValidationMessageFor(t => t.AdTitle)
-                    <label class="hint">
+                    <label class="hint grey-text">
                         25 characters max.</label>
                 </li>
                 <li>
@@ -20,10 +19,10 @@
                         Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  tabindex="-1" >
                             ?</a></label>
                     @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
-                    <label class="hint">
+                    <label class="hint grey-text">
                         35 characters max.</label>
                     @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAdDescrition hint alpha", @maxlength = 35 })
-                    <label class="hint">
+                    <label class="hint grey-text">
                         35 characters max.</label>
                 </li>
                 <li>
@@ -59,7 +58,7 @@
     var template = kendo.template($("#template").html());
 
     $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
-        id: "1",
+        id: "@Html.Raw(Model.SerailNo.ToString())",
         title: $("#AdModelProp_Url").val(),
         twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
         content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
@@ -71,7 +70,7 @@
     var viewModel = kendo.observable({
         listener: function (e) {
             $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
-                id: "1",
+                id: "@Html.Raw(Model.SerailNo.ToString())",
                 title: $("#AdModelProp_Url").val(),
                 twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
                 content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),

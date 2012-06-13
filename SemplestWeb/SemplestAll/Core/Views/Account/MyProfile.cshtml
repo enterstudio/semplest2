@@ -43,7 +43,7 @@ My Profile
     }
     .zip {
         width: 70px;
-         border-color: grey;
+         border-color: transparent;
         background-color: #fff;
         color: #777;
         -moz-border-radius: 0;
@@ -62,7 +62,7 @@ My Profile
     }
     .firstinitial {
         width: 25px;
-         border-color: grey;
+         border-color: transparent;
         background-color: #fff;
         color: #777;
         -moz-border-radius: 0;
@@ -147,8 +147,8 @@ My Profile
                 @Html.ValidationMessageFor(model => model.UserID)
             </li>
             <li>
-                @Html.LabelFor(model => model, new { @class = "k-label" })
-                <input class="k-textbox extraspace" data-val="true" data-val-required="The Password field is required." id="UserPassword" name="UserPassword" type="password" value=@Model.UserPassword  />
+                @Html.LabelFor(model => model.UserPassword, new { @class = "k-label" })
+                <input class="k-textbox" data-val="true" data-val-required="The Password field is required." id="UserPassword" name="UserPassword" type="password" value=@Model.UserPassword  />
                 @Html.ValidationMessageFor(model => model.UserPassword)
             </li>
 

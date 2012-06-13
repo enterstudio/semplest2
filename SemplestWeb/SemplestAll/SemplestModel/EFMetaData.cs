@@ -111,6 +111,8 @@ namespace SemplestModel
 
         }
         public bool Delete { get; set; }
+
+        public int SerailNo { get; set; }
     }
 
     public class SEMCustomerDetailMetaData
