@@ -10,5 +10,4 @@
     $("#helpbutton9").cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
     $("#helpbutton10").cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
     $("#helpbutton11").cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
-    $("#helpbutton12").cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
 });
