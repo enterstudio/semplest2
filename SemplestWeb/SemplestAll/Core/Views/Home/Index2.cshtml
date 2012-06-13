@@ -80,7 +80,7 @@
                     }
                 </table>
             </div>
-            <div id="RemovePromotionWindow">
+            <div id="RemovePromotionWindow" style="display:none">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
                 </div>
@@ -89,7 +89,7 @@
                 <input type="hidden" id="promotionId" name="promotionId" />
                 </form>
             </div>
-            <div id="PausePromotionWindow">
+            <div id="PausePromotionWindow" style="display:none">
                 <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
                 <div class="questionP">
                 </div>
@@ -98,7 +98,7 @@
                 <input type="hidden" id="promotionIdP" name="promotionIdP" />
                 </form>
             </div>
-            <div id="ResumePromotionWindow">
+            <div id="ResumePromotionWindow" style="display:none">
                 <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
                 <div class="questionR">
                 </div>
@@ -107,7 +107,7 @@
                 <input type="hidden" id="promotionIdR" name="promotionIdR" />
                 </form>
             </div>
-            <div id="EndPromotionWindow">
+            <div id="EndPromotionWindow" style="display:none">
                 <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
                 <div class="questionE">
                 </div>
@@ -118,32 +118,21 @@
             </div>
             <script type="text/javascript">
                 $('#loading').hide();
-                var removePromotionWindow = $('#RemovePromotionWindow').kendoWindow({
-                    resizable: false,
-                    title: "Remove Promotion"
-                }).data("kendoWindow");
-                var pausePromotionWindow = $('#PausePromotionWindow').kendoWindow({
-                    resizable: false,
-                    title: "Pause Promotion"
-                }).data("kendoWindow");
-                var resumePromotionWindow = $('#ResumePromotionWindow').kendoWindow({
-                    resizable: false,
-                    title: "Resume Promotion"
-                }).data("kendoWindow");
-                var endPromotionWindow = $('#EndPromotionWindow').kendoWindow({
-                    resizable: false,
-                    title: "End Promotion"
-                }).data("kendoWindow");
+
+
+
+
                 $(document).ready(function () {
                     $('#loading').hide();
-
-                    removePromotionWindow.close();
-                    pausePromotionWindow.close();
-                    resumePromotionWindow.close();
-                    endPromotionWindow.close();
                     $(".deletead").click(function (event) {
                         $('#promotionId').val(event.target.id);
                         $('.question').html("<br/>Are you sure you want to delete " + event.target.name + "?<br/><br/>");
+                        var removePromotionWindow = $('#RemovePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Remove Promotion"
+                        }).data("kendoWindow");
+                        $('#RemovePromotionWindow').show();
                         removePromotionWindow.center();
                         removePromotionWindow.open();
                         event.preventDefault();
@@ -153,18 +142,25 @@
                         location.href = '../Campaign/CampaignSetup';
                     });
 
-
                     $("#btnAdd").click(function (event) {
                         $("#hiddenButton").submit();
                     });
 
                     $("#btnCancel").click(function (event) {
+                        var removePromotionWindow = $('#RemovePromotionWindow').data("kendoWindow");
+                        $('#RemovePromotionWindow').hide();
                         removePromotionWindow.close();
                     });
 
                     $(".pausead").click(function (event) {
                         $('#promotionIdP').val(event.target.id);
                         $('.questionP').html("<br/>Are you sure you want to pause " + event.target.name + "?<br/><br/>");
+                        var pausePromotionWindow = $('#PausePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Pause Promotion"
+                        }).data("kendoWindow");
+                        $('#PausePromotionWindow').show();
                         pausePromotionWindow.center();
                         pausePromotionWindow.open();
                         event.preventDefault();
@@ -175,6 +171,8 @@
                     });
 
                     $("#btnCancelP").click(function (event) {
+                        var pausePromotionWindow = $('#PausePromotionWindow').data("kendoWindow");
+                        $('#PausePromotionWindow').hide();
                         pausePromotionWindow.close();
                     });
 
@@ -183,6 +181,12 @@
                     $(".resumead").click(function (event) {
                         $('#promotionIdR').val(event.target.id);
                         $('.questionR').html("<br/>Are you sure you want to resume " + event.target.name + "?<br/><br/>");
+                        var resumePromotionWindow = $('#ResumePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Resume Promotion"
+                        }).data("kendoWindow");
+                        $('#ResumePromotionWindow').show();
                         resumePromotionWindow.center();
                         resumePromotionWindow.open();
                         event.preventDefault();
@@ -193,12 +197,20 @@
                     });
 
                     $("#btnCancelR").click(function (event) {
+                        var resumePromotionWindow = $('#ResumePromotionWindow').data("kendoWindow");
+                        $('#ResumePromotionWindow').hide();
                         resumePromotionWindow.close();
                     });
 
                     $(".endad").click(function (event) {
                         $('#promotionIdE').val(event.target.id);
                         $('.questionE').html("<br/>Are you sure you want to End this Live Advertising?<br/><br/>");
+                        var endPromotionWindow = $('#EndPromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "End Promotion"
+                        }).data("kendoWindow");
+                        $('#EndPromotionWindow').show();
                         endPromotionWindow.center();
                         endPromotionWindow.open();
                         event.preventDefault();
@@ -209,6 +221,8 @@
                     });
 
                     $("#btnCancelE").click(function (event) {
+                        var endPromotionWindow = $('#EndPromotionWindow').data("kendoWindow");
+                        $('#EndPromotionWindow').hide();
                         endPromotionWindow.close();
                     });
 
@@ -239,3 +253,4 @@
         </td>
     </tr>
 </table>
+

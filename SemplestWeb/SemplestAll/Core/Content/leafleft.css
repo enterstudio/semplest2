@@ -795,4 +795,13 @@ hr
     background-color: #ADC76E;
     color: #fff;
 }
-
+.k-button:focus
+{
+    border-color: #e6e6e6;
+    background-color: #fff;
+    color: grey;
+}
+.k-panelbar > .k-item > .k-link, .k-panel > .k-item > .k-link, .k-panelbar .k-panel, .k-panelbar .k-content
+{
+    border-color: #000;
+}

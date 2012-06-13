@@ -95,17 +95,27 @@
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
 
     function OnBegin() {
-
-        $.blockUI({ message: $('#displayBox'), css: {
-            top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
-            left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
-            width: $('#displayBox')[0].naturalWidth + 'px',
-            border: '0px solid #aaa'
+        var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
+        if (urlStr == $('#displayBox').attr('src')) {
+            $.blockUI({ message: '<div><img src ="' + urlStr + '" /><div style="text-align:center"><button class="k-button" id="btnCongrats">Ok</button></div></div>', css: {
+                top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                width: $('#displayBox')[0].naturalWidth + 'px',
+                border: '0px solid #aaa'
+            }
+            });
         }
-        });
+        else
+            $.blockUI({ message: $('#displayBox'), css: {
+                top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                width: $('#displayBox')[0].naturalWidth + 'px',
+                border: '0px solid #aaa'
+            }
+            });
     }
 
-    $('#displayBox').click(function () {
+    $('#btnCongrats').live("click", function () {
         $.unblockUI();
     });
     function OnSuccess(id) {
@@ -159,4 +169,3 @@
 <script src="@Url.Content("~/Scripts/CampaignSetup.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>
 <script src="@Url.Content("~/Scripts/QuestionMarkHelp.js")" type="text/javascript"> </script>
-​

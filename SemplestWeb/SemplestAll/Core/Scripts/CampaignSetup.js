@@ -10,6 +10,15 @@ $(document).ready(function () {
         if (e.keyCode == 10 || e.keyCode == 13)
             e.preventDefault();
     });
+    $('#AdModelProp_LandingUrl').live("keyup", function (e) {
+        var originalValue = $('#AdModelProp_LandingUrl').val();
+        var index = originalValue.indexOf('http://');
+        if (index >= 0) {
+            $('#displayUrl').val($('#AdModelProp_LandingUrl').val().substring(index + 7));
+        }
+        else
+            $('#displayUrl').val($('#AdModelProp_LandingUrl').val());
+    });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
     budjet.wrapper.find(".k-link")
