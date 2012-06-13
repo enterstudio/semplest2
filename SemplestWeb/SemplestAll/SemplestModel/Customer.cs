@@ -100,6 +100,24 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual Nullable<decimal> CreditLimit
+        {
+            get;
+            set;
+        }
+    
+        public virtual bool PromotionFeeOverride
+        {
+            get;
+            set;
+        }
+    
+        public virtual Nullable<decimal> PromotionFeeAmount
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

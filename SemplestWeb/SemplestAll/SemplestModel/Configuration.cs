@@ -606,6 +606,12 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual Nullable<decimal> AdwordsAPICostPer1000
+        {
+            get;
+            set;
+        }
 
         #endregion
     }
