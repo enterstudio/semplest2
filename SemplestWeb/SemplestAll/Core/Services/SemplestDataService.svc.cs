@@ -17,7 +17,7 @@ namespace Semplest.Core.Services
     public class SemplestDataService : DataService<SemplestEntities>
     {
         private static bool _savedCampaign;
-        public  SemplestDataService()
+        public SemplestDataService()
         {
             _savedCampaign = false;
         }
@@ -105,13 +105,13 @@ namespace Semplest.Core.Services
                     {
                         // create product group
                         var prodgroup = new ProductGroup
-                                            {
-                                                ProductGroupName = model.ProductGroup.ProductGroupName,
-                                                IsActive = true,
-                                                CustomerFK = custfk,
-                                                StartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
-                                                EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
-                                            };
+                        {
+                            ProductGroupName = model.ProductGroup.ProductGroupName,
+                            IsActive = true,
+                            CustomerFK = custfk,
+                            StartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
+                            EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate) ? (DateTime?)null : Convert.ToDateTime(model.ProductGroup.EndDate)
+                        };
 
                         // create promotion
                         var promo = CreatePromotionFromModel(model, dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount);
@@ -418,16 +418,16 @@ namespace Semplest.Core.Services
             }
         }
 
-        private  void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model)
+        private void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model)
         {
             foreach (var sitelink in model.SiteLinks)
             {
                 var slink = new SiteLink
-                                {
-                                    LinkText = sitelink.LinkText,
-                                    LinkURL = sitelink.LinkURL,
-                                    PromotionFK = promo.PromotionPK
-                                };
+                {
+                    LinkText = sitelink.LinkText,
+                    LinkURL = sitelink.LinkURL,
+                    PromotionFK = promo.PromotionPK
+                };
                 promo.SiteLinks.Add(slink);
             }
         }
@@ -485,14 +485,14 @@ namespace Semplest.Core.Services
                     dbcontext.SaveChanges();
                 }
             }
-        
-        
-        
-        
-        
-}
 
-        public static void SaveKeywords(int promotionId, CampaignSetupModel model)
+
+
+
+
+        }
+
+        public static void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords, string productGroupName, string promotionName)
         {
             DataTable stationIds = new DataTable();
             stationIds.Columns.Add("Keyword", typeof(string));
@@ -502,18 +502,19 @@ namespace Semplest.Core.Services
             stationIds.Columns.Add("SemplestProbability", typeof(float));
             stationIds.Columns.Add("IsTargetMSN", typeof(Boolean));
             stationIds.Columns.Add("IsTargetGoogle", typeof(Boolean));
-            foreach (KeywordProbabilityObject kpo in model.AllKeywordProbabilityObjects)
+            foreach (KeywordProbabilityObject kpo in kpos)
             {
-                kpo.isDeleted = IsDeletedKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords);
+                kpo.isDeleted = IsDeletedKeyword(kpo.keyword.Trim(), negativeKeywords);
                 DataRow dr = stationIds.NewRow();
                 dr["Keyword"] = kpo.keyword.Trim();
                 dr["IsActive"] = "true";
                 dr["IsDeleted"] = kpo.isDeleted;
-                dr["IsNegative"] = IsNegativeKeyword(kpo.keyword.Trim(), model.AdModelProp.NegativeKeywords); ;
+                dr["IsNegative"] = IsNegativeKeyword(kpo.keyword.Trim(), negativeKeywords); ;
                 dr["SemplestProbability"] = kpo.semplestProbability;
                 dr["IsTargetMSN"] = kpo.isTargetMSN;
                 dr["IsTargetGoogle"] = kpo.isTargetGoogle;
                 stationIds.Rows.Add(dr);
+                //Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + kpo.keyword + "',1,0,1,0,0)");
             }
             
             SqlParameter parameter = new SqlParameter("kwa", stationIds);
@@ -530,10 +531,10 @@ namespace Semplest.Core.Services
                 var results = dbcontext.ExecuteStoreCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
 
                 int userid = ((Credential)System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
-                var pkas = dbcontext.Users.Where(key => key.UserPK == userid).First().Customer.ProductGroups.Where(key => key.ProductGroupName == model.ProductGroup.ProductGroupName).First().Promotions.Where(key => key.PromotionName == model.ProductGroup.ProductPromotionName).First().PromotionKeywordAssociations;
+                var pkas = dbcontext.Users.Where(key => key.UserPK == userid).First().Customer.ProductGroups.Where(key => key.ProductGroupName == productGroupName).First().Promotions.Where(key => key.PromotionName == promotionName).First().PromotionKeywordAssociations;
                 foreach (PromotionKeywordAssociation pka in pkas)
                 {
-                    var qry = model.AllKeywordProbabilityObjects.Where(key => key.keyword == pka.Keyword.Keyword1);
+                    var qry = kpos.Where(key => key.keyword == pka.Keyword.Keyword1);
                     if (qry.Any())
                         qry.First().id = pka.Keyword.KeywordPK;
                 }
@@ -554,86 +555,30 @@ namespace Semplest.Core.Services
             return negativeKeywords.Where(key => keyword.ToUpper().Contains(key.ToUpper())).Count() > 0;
         }
 
-        public static void CheckForNegativeKeywords(List<string> negativeKeywords)
-        {
- 
-        }
-
         private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {
-            if (model.AdModelProp.NegativeKeywords != null)
+            IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK);
+            List<KeywordProbabilityObject> kpos = new List<KeywordProbabilityObject>();
+            KeywordProbabilityObject kpo;
+            foreach (PromotionKeywordAssociation pka in qry)
             {
-                foreach (var negKeyword in model.AdModelProp.NegativeKeywords)
+                kpo = new KeywordProbabilityObject();
+                kpo.keyword = pka.Keyword.Keyword1;
+                kpo.semplestProbability=pka.SemplestProbability ==null ? 0 : pka.SemplestProbability .Value;
+                kpo.isTargetMSN = pka.IsTargetMSN;
+                kpo.isTargetGoogle = pka.IsTargetGoogle;
+                kpos.Add(kpo);
+            }
+            foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
+            {
+                if (!qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).Any())
                 {
-                    var keyword = negKeyword.Trim();
-                    var queryKeyword = dbcontext.Keywords.Where(c => c.Keyword1 == keyword);
-                    if (queryKeyword.Any())
-                    {
-                        var keywordId = queryKeyword.First().KeywordPK;
-                        queryKeyword.First().EditedDate = DateTime.Now;
-                        if (dbcontext.PromotionKeywordAssociations != null)
-                        {
-                            var queryPka = dbcontext.PromotionKeywordAssociations.Where(c => c.PromotionFK == promo.PromotionPK && c.KeywordFK == keywordId);
-                            if (!queryPka.Any())
-                            {
-                                dbcontext.PromotionKeywordAssociations.AddObject(
-                                    new PromotionKeywordAssociation
-                                        {
-                                            PromotionFK = promo.PromotionPK,
-                                            KeywordFK = keywordId,
-                                            CreatedDate = DateTime.Now,
-                                            IsActive = true,
-                                            IsDeleted = false,
-                                            IsNegative = true,
-                                            SemplestProbability = 0,
-                                            IsTargetMSN = false,
-                                            IsTargetGoogle = false
-                                        });
-
-                                //dbcontext.SaveChanges();
-
-                            }
-                            else
-                            {
-                                var pka = queryPka.First();
-                                pka.IsNegative = true;
-
-                                //dbcontext.SaveChanges();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        dbcontext.Keywords.AddObject(new Keyword {Keyword1 = keyword, CreatedDate = DateTime.Now});
-                        var changes = dbcontext.SaveChanges();
-
-                        if (changes > 0)
-                        {
-                            var queryK = dbcontext.Keywords.Where(c => c.Keyword1 == keyword);
-                            if (queryK.Any())
-                            {
-                                var keywordId = queryK.First().KeywordPK;
-
-                                dbcontext.PromotionKeywordAssociations.AddObject(new PromotionKeywordAssociation
-                                                                             {
-                                                                                 PromotionFK = promo.PromotionPK,
-                                                                                 KeywordFK = keywordId,
-                                                                                 CreatedDate = DateTime.Now,
-                                                                                 IsActive = true,
-                                                                                 IsDeleted = false,
-                                                                                 IsNegative = true,
-                                                                                 SemplestProbability = 0,
-                                                                                 IsTargetMSN = false,
-                                                                                 IsTargetGoogle = false
-                                                                             });
-                            }
-
-                        }
-
-                    //dbcontext.SaveChanges();
-                    }
+                    kpo = new KeywordProbabilityObject();
+                    kpo.keyword = negativeKeyword;
+                    kpos.Add(kpo);
                 }
             }
+            SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
         }
 
         public static string GetStateNameFromCode(int stateCode)
@@ -655,7 +600,7 @@ namespace Semplest.Core.Services
 
         }
 
-        public  static bool IsPromotionLaunched(int promoId)
+        public static bool IsPromotionLaunched(int promoId)
         {
             using (var db = new SemplestEntities())
             {
@@ -687,7 +632,7 @@ namespace Semplest.Core.Services
             using (var dbcontext = new SemplestEntities())
             {
                 foreach (int keywordId in keywordIds)
-                    dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).Where(key => key.PromotionFK==promoId).First().IsDeleted = true;
+                    dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).Where(key => key.PromotionFK == promoId).First().IsDeleted = true;
                 dbcontext.SaveChanges();
             }
         }
