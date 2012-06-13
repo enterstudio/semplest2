@@ -405,7 +405,21 @@ namespace Semplest.Admin.Controllers
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex.TargetSite);
+                                //Console.WriteLine(ex.TargetSite);
+                                SemplestEntities _dbContext = new SemplestEntities();
+                                SemplestModel.Error er = new SemplestModel.Error();
+                                er.ErrorMessage = ex.Message+"  \r\n "+ex.InnerException  +"  \r\n "+ex.StackTrace +"  \r\n "+ex.Source+"  \r\n "+ex.TargetSite;
+                                //filterContext.RequestContext.HttpContext.Session
+                                //if (HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] == null)
+                                //    er.UsersFK = 1;
+                                //else
+                                //    er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
+                                er.CreatedDate = DateTime.Now;
+                                _dbContext.Errors.AddObject(er);
+                                _dbContext.SaveChanges();
+                                
+                                var scw = new ServiceClientWrapper();
+                                scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
                             }
                         }//endforeach
 
@@ -416,6 +430,21 @@ namespace Semplest.Admin.Controllers
                 catch (Exception ex)
                 {
                     importstatus = "An error has occured. Please check the file for errors and try again..";
+                    //Console.WriteLine(ex.TargetSite);
+                    SemplestEntities _dbContext = new SemplestEntities();
+                    SemplestModel.Error er = new SemplestModel.Error();
+                    er.ErrorMessage = ex.Message + "  \r\n " + ex.InnerException + "  \r\n " + ex.StackTrace + "  \r\n " + ex.Source + "  \r\n " + ex.TargetSite;
+                    //filterContext.RequestContext.HttpContext.Session
+                    //if (HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] == null)
+                    //    er.UsersFK = 1;
+                    //else
+                    //    er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
+                    er.CreatedDate = DateTime.Now;
+                    _dbContext.Errors.AddObject(er);
+                    _dbContext.SaveChanges();
+                    var scw = new ServiceClientWrapper();
+                    scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
+
                 }
 
 
