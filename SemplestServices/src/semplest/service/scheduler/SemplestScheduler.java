@@ -466,17 +466,22 @@ public class SemplestScheduler extends Thread
 					SemplestErrorHandler.logToDatabase(e);
 					//TODO: send email is successful = false
 				}				 
-				//Update results to the DB and add next Job if necessary
-				logger.debug("getNextJobToExecute after running job = " + scheduleJobPK);
-				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
+				
 			}
 			else
 			{
-				System.out.println("No tasks found");
-				
+				logger.error("No tasks found");
+				TaskOutput errorOutput = new TaskOutput();
+				errorOutput.setIsSuccessful(false);
+				errorOutput.setErrorMessage("No tasks found");
+				previousTaskOutput = errorOutput;
 				//Test_Nan: log some test data to the TestData table in the database
 				SemplestErrorHandler.logTest(new Date(), "scheduler", "runScheduledTasks", "No tasks found", null);
 			}
+			//Update results to the DB and add next Job if necessary
+			logger.debug("getNextJobToExecute after running job = " + scheduleJobPK);
+			getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
+			
 			return true;
 		}
 		catch (Exception e)
