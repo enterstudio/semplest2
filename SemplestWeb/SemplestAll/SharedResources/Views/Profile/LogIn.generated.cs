@@ -57,6 +57,7 @@ namespace SharedResources.Views.Profile
 
 #line default
 #line hidden
+                WriteLiteral("<div id=\"url\"></div>\r\n");
                 WriteLiteral("    <div id=\"tickets\">\r\n        <h3 style=\"margin-left: 20px;margin-top: 5px; col" +
                 "or: grey\">\r\n            Welcome!</h3>\r\n            <ul>\r\n                <li>\r\n " +
                 "                   ");

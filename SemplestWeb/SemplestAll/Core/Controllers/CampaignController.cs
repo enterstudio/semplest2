@@ -252,7 +252,7 @@ namespace Semplest.Core.Controllers
         {
             var locData = (ThreadData) data;
             //var ds = new SemplestDataService();
-            SemplestDataService.SaveKeywords(locData._promoId, locData._model);
+            //SemplestDataService.SaveKeywords(locData._promoId, locData._model);
         }
 
         private class ThreadData
