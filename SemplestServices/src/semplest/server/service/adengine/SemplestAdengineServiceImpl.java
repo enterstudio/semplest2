@@ -72,9 +72,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Gson gson = new Gson();
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
-	
-	private final static String ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
-
+	private static String ESBWebServerURL = null;
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
 	// CustomerID = 2 State Farm coffee machine promotionID = 4
@@ -163,6 +161,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			object.wait();
 		}
+		
+		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 
 	}
 
