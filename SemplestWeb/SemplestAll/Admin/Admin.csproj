@@ -288,9 +288,6 @@
     <Content Include="Views\CustomerAccount\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Home\_Layout.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="Views\AccountService\CustomerImport.cshtml" />
   </ItemGroup>
   <ItemGroup>

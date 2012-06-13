@@ -805,3 +805,13 @@ hr
 {
     border-color: #000;
 }
+.k-button.selected {
+    background-color: #87A44A;
+    color: #fff;
+    width: 60px;
+}
+.k-button.unselected {
+    background-color: #D7E8B1;
+    color: #fff;
+     width: 60px;
+}

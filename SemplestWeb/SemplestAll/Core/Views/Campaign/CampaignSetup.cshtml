@@ -25,9 +25,12 @@
 @section SectionNav{
     <div id="examplesThemeChooser">
         Step 1 of 3
-        <input type="button" class="k-button k-state-btnerror rounded" value="1" id="btnOne" />
-        <input type="button" class="k-button rounded" value="2" id="btnTwo" />
-        <input type="button" class="k-button rounded" value="3" id="btnThree" />
+        <button type="button" class="k-button selected" id="btnOne">
+            1</button>
+        <button type="button" class="k-button unselected" id="btnTwo">
+            2</button>
+        <button type="button" class="k-button unselected" id="btnThree">
+            3</button>
     </div>
 }
 <div>
@@ -52,37 +55,65 @@
             <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
             <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
+            <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <img id="displayBox" style="display: none" />
         }
     </div>
 </div>
 <script type="text/javascript">
-
-    var onActivate = function () {
+     if ($('#currentMode').val() == "True") {
+         $("#btnOne").removeClass('unselected');
+         $("#btnTwo").removeClass('unselected');
+         $("#btnThree").removeClass('unselected');
+         $("#btnOne").addClass('selected');
+         $("#btnTwo").addClass('selected');
+         $("#btnThree").addClass('selected');
+     }
+     var onActivate = function () {
         switch (tabStrip.select().text()) {
-            case "Define Product":
-                $("input[type='button']#btnOne").addClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
-            case "Create Ads":
-                for (var map in mapArray) {
-                    L.Util.requestAnimFrame(mapArray[map].invalidateSize, mapArray[map], !1, mapArray[map]._container);
-                }
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").addClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
-            case 'Additional Click Through Links("SiteLinks")':
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").addClass('k-state-btnerror');
-                break;
-            case "Negative Keywords":
-                $("input[type='button']#btnOne").removeClass('k-state-btnerror');
-                $("input[type='button']#btnTwo").removeClass('k-state-btnerror');
-                $("input[type='button']#btnThree").removeClass('k-state-btnerror');
-                break;
+        case "Create Ads":
+            for (var map in mapArray) {
+                L.Util.requestAnimFrame(mapArray[map].invalidateSize, mapArray[map], !1, mapArray[map]._container);
+            }
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").removeClass('selected');
+                $("#btnThree").removeClass('selected');
+                $("#btnTwo").addClass('unselected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "Define Product":
+        case 'Additional Click Through Links("SiteLinks")':
+        case "Negative Keywords":
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").removeClass('selected');
+                $("#btnThree").removeClass('selected');
+                $("#btnTwo").addClass('unselected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "Categories":
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").addClass('selected');
+                $("#btnTwo").removeClass('unselected');
+                $("#btnThree").removeClass('selected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "BillingLaunch":
+        case "View Keywords":
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").removeClass('unselected');
+                $("#btnTwo").removeClass('unselected');
+                $("#btnThree").removeClass('unselected');
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").addClass('selected');
+                $("#btnThree").addClass('selected');
+            }
+            break;
         }
     };
 
@@ -98,20 +129,20 @@
         var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
         if (urlStr == $('#displayBox').attr('src')) {
             $.blockUI({ message: '<div><img src ="' + urlStr + '" /><div style="text-align:center"><button class="k-button" id="btnCongrats">Ok</button></div></div>', css: {
-                top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
-                left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
-                width: $('#displayBox')[0].naturalWidth + 'px',
-                border: '0px solid #aaa'
-            }
+                    top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                    left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                    width: $('#displayBox')[0].naturalWidth + 'px',
+                    border: '0px solid #aaa'
+                }
             });
         }
         else
             $.blockUI({ message: $('#displayBox'), css: {
-                top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
-                left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
-                width: $('#displayBox')[0].naturalWidth + 'px',
-                border: '0px solid #aaa'
-            }
+                    top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                    left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                    width: $('#displayBox')[0].naturalWidth + 'px',
+                    border: '0px solid #aaa'
+                }
             });
     }
 

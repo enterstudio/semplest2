@@ -187,7 +187,6 @@
     <Content Include="Content\cardslogo.jpg" />
     <Content Include="Content\congratulations.jpg" />
     <Content Include="Content\CreateYourAds.png" />
-    <Content Include="Content\example.css" />
     <Content Include="Content\formStyle.css" />
     <Content Include="Content\images\layers.png" />
     <Content Include="Content\images\marker-shadow.png" />
@@ -368,9 +367,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Campaign\Preview.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Home\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\jquery.cluetip.css" />
