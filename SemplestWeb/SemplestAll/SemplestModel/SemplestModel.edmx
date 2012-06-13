@@ -609,6 +609,7 @@
           <Property Name="DisplayTargetCPCLevel" Type="bit" Nullable="false" />
           <Property Name="ServiceESBPingWaitMS" Type="int" />
           <Property Name="AdwordsBillingAccount" Type="varchar" MaxLength="20" />
+          <Property Name="AdwordsAPICostPer1000" Type="money" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -658,6 +659,9 @@
           <Property Name="ServiceFee" Type="money" Nullable="false" />
           <Property Name="PercentOfMedia" Type="money" Nullable="false" />
           <Property Name="InternalCustomerId" Type="varchar" MaxLength="50" />
+          <Property Name="CreditLimit" Type="money" />
+          <Property Name="PromotionFeeOverride" Type="bit" Nullable="false" />
+          <Property Name="PromotionFeeAmount" Type="money" />
         </EntityType>
         <EntityType Name="CustomerAddressAssociation">
           <Key>
@@ -2319,12 +2323,6 @@
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
-        <!--Errors Found During Generation:
-      warning 6005: The function 'sp_UpdateKeywords' has a parameter 'kwa' at parameter index 0 that has a data type 'table type' which is not supported. The function was excluded.
-      
-      <Function Name="sp_UpdateKeywords" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-        <Parameter Name="PromotionId" Type="int" Mode="In" />
-      </Function>-->
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -2915,6 +2913,7 @@
           <Property Type="Boolean" Name="DisplayTargetCPCLevel" Nullable="false" />
           <Property Type="Int32" Name="ServiceESBPingWaitMS" />
           <Property Type="String" Name="AdwordsBillingAccount" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="AdwordsAPICostPer1000" Precision="19" Scale="4" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2984,6 +2983,9 @@
           <NavigationProperty Name="Schedules" Relationship="SemplestModel.REL_Customer_Schedule_3" FromRole="Customer" ToRole="Schedule" />
           <NavigationProperty Name="WebContents" Relationship="SemplestModel.REL_Customer_WebContent_1" FromRole="Customer" ToRole="WebContent" />
           <NavigationProperty Name="Users" Relationship="SemplestModel.UserCustomer_rel" FromRole="Customer" ToRole="User" />
+          <Property Type="Decimal" Name="CreditLimit" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="PromotionFeeOverride" Nullable="false" />
+          <Property Type="Decimal" Name="PromotionFeeAmount" Precision="19" Scale="4" />
         </EntityType>
         <EntityType Name="CustomerAddressAssociation">
           <Key>
@@ -4657,6 +4659,7 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="AdwordsAPICostPer1000" ColumnName="AdwordsAPICostPer1000" />
                 <ScalarProperty Name="AdwordsBillingAccount" ColumnName="AdwordsBillingAccount" />
                 <ScalarProperty Name="ServiceESBPingWaitMS" ColumnName="ServiceESBPingWaitMS" />
                 <ScalarProperty Name="DisplayTargetCPCLevel" ColumnName="DisplayTargetCPCLevel" />
@@ -4798,6 +4801,9 @@
           <EntitySetMapping Name="Customers">
             <EntityTypeMapping TypeName="SemplestModel.Customer">
               <MappingFragment StoreEntitySet="Customer">
+                <ScalarProperty Name="PromotionFeeAmount" ColumnName="PromotionFeeAmount" />
+                <ScalarProperty Name="PromotionFeeOverride" ColumnName="PromotionFeeOverride" />
+                <ScalarProperty Name="CreditLimit" ColumnName="CreditLimit" />
                 <ScalarProperty Name="InternalCustomerId" ColumnName="InternalCustomerId" />
                 <ScalarProperty Name="PercentOfMedia" ColumnName="PercentOfMedia" />
                 <ScalarProperty Name="ServiceFee" ColumnName="ServiceFee" />
