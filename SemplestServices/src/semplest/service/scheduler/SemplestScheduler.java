@@ -443,8 +443,16 @@ public class SemplestScheduler extends Thread
 						TaskOutputData.put(String.valueOf(taskObj.getTaskExecutionOrder()), previousTaskOutput);
 						taskRunner = null;
 						
-						//Test_Nan: log some test data to the TestData table in the database
-						SemplestErrorHandler.logTest(new Date(), "scheduler", "runScheduledTasks", taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters(), null);
+						try
+						{
+							//Test_Nan: log some test data to the TestData table in the database
+							SemplestErrorHandler.logTest(new Date(), "scheduler", "runScheduledTasks", taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters(), null);
+						}
+						catch (Exception e)
+						{
+							logger.error("SemplestErrorHandler " + e.getMessage(), e);
+							e.printStackTrace();
+						}
 					}
 					//TODO: send email for successfully executed schedule	
 				}

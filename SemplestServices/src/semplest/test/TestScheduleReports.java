@@ -35,7 +35,7 @@ public class TestScheduleReports
 			SemplestString ss = new SemplestString();
 			SemplestSchedulerTaskObject reportTask1 = CreateSchedulerAndTask.getGoogleReportTask(ss.toSemplestString("2188810777"));
 			listOfTasks.add(reportTask1);
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "GoogleReportScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://VMDEVJAVA1:9898/semplest",listOfTasks, "GoogleReportScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			
 		}
 		catch (Exception e)

@@ -349,7 +349,7 @@ public class CreateSchedulerAndTask
 	 * method creates a new schedule and associated the tasks, add a new job to the database and run it
 	 * THIS NEEDS TO BE IN TRANACTION*******
 	 */
-	public static Boolean createScheduleAndRun(List<SemplestSchedulerTaskObject> tasks, String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, 
+	public static Boolean createScheduleAndRun(String ESBUrl, List<SemplestSchedulerTaskObject> tasks, String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, 
 			Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
 		if (tasks == null  || tasks.size() == 0)
@@ -371,7 +371,7 @@ public class CreateSchedulerAndTask
 			throw new Exception ("Unable to create job for Schedule " + ScheduleName + " scheduleID=" + scheduleID);
 		}
 		//run the schedule
-		SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(null);
+		SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(ESBUrl);
 		Boolean res = client.NewSchedule(jobID,scheduleID, StartTime, false);
 		return res;
 	}

@@ -72,6 +72,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Gson gson = new Gson();
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
+	
+	private final static String ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -121,7 +123,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList);
 			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
 			//adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
 			
 			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
@@ -192,7 +194,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// 8. Service call - semplest.service.bidding.BidGeneratorService#setBidsInitial
 			// 9. Schedule OnGoingBidding  
 		 */
-		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
 		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		final Map<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
@@ -274,7 +276,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngineList);
 		listOfTasks.add(executeOngoinBiddingTask);
-		CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
+		CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
 		//*****TEST
 		//CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, promotionID, null, null, null);
 	}
@@ -689,7 +691,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
 		Integer res = updateBudgetSP.execute(PromotionID,  promoObj.getPromotionStartDate(), new Date());
 		// Call bidding service to split the budget
-		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"),getTimeoutMS());
+		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL,getTimeoutMS());
 		// setup the budget for each ad engine
 		HashMap<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
 		//call setBidsUpdate
@@ -741,7 +743,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -830,7 +832,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -993,7 +995,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1056,9 +1058,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			logger.info("As expected, we'll work on " + keywordToRemoveOppositeMap.size() + " keywords which is the same as " + keywordIdRemoveOppositePairs.size() + " requested to be worked on");	
 		}		
-		final String esbServerUrl = (String)SemplestConfiguration.configData.get("ESBWebServerURL");
 		final String esbServerTimeout = getTimeoutMS();
-		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(esbServerUrl, esbServerTimeout);
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, esbServerTimeout);
 		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, new ArrayList<String>(adEngines));		
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
@@ -1124,7 +1125,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1162,7 +1163,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1413,7 +1414,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();			
 			final String scheduleName = promotion.getPromotionName() + "_" + deleteAdPostFix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			if (!taskScheduleSuccessful)
 			{
 				return false;
@@ -1608,7 +1609,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1810,7 +1811,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1910,7 +1911,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1946,7 +1947,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -1981,7 +1982,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -2018,7 +2019,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -2053,7 +2054,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
@@ -2086,7 +2087,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final String scheduleName = "ProductGroups[" + productGroupIds + "]_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
