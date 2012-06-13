@@ -8,6 +8,7 @@ using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using LinqKit;
 using System.Data.Objects;
+using Semplest.SharedResources.Services;
 //using System.Web.Security;
 
 
@@ -164,6 +165,7 @@ namespace Semplest.Admin.Controllers
 
             var allparents =
                 from c in dbcontext.Customers
+                join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
                 select c;
 
 
@@ -346,6 +348,7 @@ namespace Semplest.Admin.Controllers
             x.SalesPersons = sl2.Union(slina);
 
             //   var allparents = (from a in dbcontext.Customers select a).ToList();
+
 
             //////////////////////////////////
             //// for parent dropdown
@@ -560,9 +563,10 @@ namespace Semplest.Admin.Controllers
 
 
 
-                var allparents =
-                                from c in dbcontext.Customers
-                                select c;
+              var allparents =
+              from c in dbcontext.Customers
+              join chi in dbcontext.CustomerHierarchies.Where(p=>p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
+              select c;
 
 
 
@@ -809,21 +813,23 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             //for parents dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            var allparents = (from a in dbcontext.Customers select a).ToList();
+            //var allparents = (from a in dbcontext.Customers select a).ToList();
+            var allparents =
+              from c in dbcontext.Customers
+              join chi in dbcontext.CustomerHierarchies.Where(p=>p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
+              select c;
 
             List<SelectListItem> sli = new List<SelectListItem>();
-
-
             sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Parent »»" });
-            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
-
-            //x.SelectedParentID = -1;
-            x.SelectedParentID = 0;
-            x.Parents = allparents.Select(r => new SelectListItem
+            sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User »»" });
+            x.Parents = allparents.ToList().Select(r => new SelectListItem
             {
                 Value = r.CustomerPK.ToString(),
                 Text = r.Name.ToString()
             }).Union(sli);
+
+
+
 
 
 
@@ -915,7 +921,7 @@ namespace Semplest.Admin.Controllers
 
 
         [HttpPost]
-        public ActionResult Add(CustomerAccountWithEmployeeModel m, string command )
+        public ActionResult Add(CustomerAccountWithEmployeeModel m, string command, FormCollection fc )
         {
             
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
@@ -991,7 +997,10 @@ namespace Semplest.Admin.Controllers
                                             };
 
 
-                      var allparents = (from a in dbcontext.Customers select a).ToList();
+                      var allparents =
+              from c in dbcontext.Customers
+              join chi in dbcontext.CustomerHierarchies.Where(p => p.CustomerParentFK == null) on c.CustomerPK equals chi.CustomerFK
+              select c;
 
                       List<SelectListItem> sli = new List<SelectListItem>();
 
@@ -1103,8 +1112,6 @@ namespace Semplest.Admin.Controllers
                 dbcontext.UserRolesAssociations.AddObject(ura);
 
 
-
-
                 //
                 var cr = new Credential
                              {
@@ -1174,6 +1181,40 @@ namespace Semplest.Admin.Controllers
                     dbcontext.CustomerHierarchies.AddObject(ch);
                 }
                 dbcontext.SaveChanges();
+
+                /////////////////////////////////////////////////////////////////////////////
+                /////
+
+                if (fc["sendcustomeremail"] != null)
+                {
+
+                    var emailtemplate = (from et in dbcontext.EmailTemplates
+                                         where et.EmailTemplatePK.Equals(13)
+                                         select et).FirstOrDefault();
+
+                    var parentdetails = from usr in dbcontext.Users
+                                        join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
+                                        where usr.CustomerFK == m.SelectedParentID
+                                        select new { usr.CustomerFK, usr.Email, cus.Name };
+
+                    //send mail //revisit
+                    string from = parentdetails.FirstOrDefault().Email;
+                    string to = u.Email;
+                    string body = emailtemplate.EmailBody;
+                    string subject = emailtemplate.EmailSubject;
+                    body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
+                    body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
+                    body = body.Replace("[FAQs]", "http://faq");
+                    body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
+                    body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
+                    body = body.Replace("[INSERT LINK]", "http://encrypto");
+
+                    //SendEmail
+                    bool sent = false;
+                    ServiceClientWrapper scw = new ServiceClientWrapper();
+                    sent = scw.SendEmail(subject, from, to, body);
+
+                }
 
             }
             catch (Exception ex)
