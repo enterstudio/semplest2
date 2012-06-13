@@ -22,7 +22,7 @@ public class catUtils {
 
   //-----------------------------------------------------------------
   // Translating dmoz categories to semplest categories
-  // Note: s == decode( code( s )) is not alwyas true (depends on map file)
+  // Note: s == decode( code( s )) is not always true (depends on map file)
   private static final Logger logger = Logger.getLogger(catUtils.class);
   HashMap<String,String> smap;        // Map from dmoz to semplest cats
   HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
@@ -106,7 +106,7 @@ public class catUtils {
   public static String parent( String cat ){ return init( cat );}
 
   //----------------------------------------
-  // Operations on pairstriplets of categories
+  // Operations on pairs/triplets of categories
 
   // common ancestor
   //  top/recreation/pets/parrots and top/recreation/pets/dogs/breeds/ 
