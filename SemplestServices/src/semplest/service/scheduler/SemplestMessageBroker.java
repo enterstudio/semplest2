@@ -17,10 +17,12 @@ public class SemplestMessageBroker extends Thread
 	private SemplestScheduler scheduler = null;
 	private static final Logger logger = Logger.getLogger(SemplestMessageBroker.class);
 	private BlockingQueue<SchedulerRecord> messageQueue = new LinkedBlockingQueue<SchedulerRecord>();
+	final private Object lock;
 
 	public SemplestMessageBroker(Object synchLock, SemplestScheduler scheduler)
 	{
 		this.scheduler = scheduler;
+		lock = synchLock;
 	}
 
 	public void run()
@@ -55,7 +57,10 @@ public class SemplestMessageBroker extends Thread
 				// newschedule.setTimeToRunInMS(MMddYYYYHHMMSS.parse(newschedule.getTimeToRunInMS()).getTime());
 				// send to message processor
 				logger.debug("messageProcessor.receiveSchedulerRecord(newschedule)");
-				scheduler.receiveSchedulerRecord(newschedule);
+				synchronized (lock)
+				{
+					scheduler.receiveSchedulerRecord(newschedule);
+				}
 			}
 		}
 		catch (Exception e)

@@ -459,6 +459,7 @@ public class SemplestScheduler extends Thread
 					//TODO: send email is successful = false
 				}				 
 				//Update results to the DB and add next Job if necessary
+				logger.debug("getNextJobToExecute after running job = " + scheduleJobPK);
 				getNextJobToExecute(scheduleJobPK, previousTaskOutput.getIsSuccessful(), previousTaskOutput.getErrorMessage());
 			}
 			else
@@ -490,10 +491,13 @@ public class SemplestScheduler extends Thread
 			newschedule.setIsDelete(false);
 			newschedule.setScheduleID(nextJob.getScheduleFK());
 			newschedule.setTimeToRunInMS(nextJob.getExecutionStartTime().getTime());
-			this.receiveSchedulerRecord(newschedule);
 			
 			//Test_Nan: log some test data to the TestData table in the database
 			SemplestErrorHandler.logTest(new Date(), "scheduler", "getNextJobToExecute", nextJob.toString(), null);
+			synchronized (lock)
+			{
+				this.receiveSchedulerRecord(newschedule);
+			}
 		}
 		else
 		{
