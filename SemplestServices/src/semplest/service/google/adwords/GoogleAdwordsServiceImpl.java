@@ -482,8 +482,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			String end = "";
 			if (startDate != null && endDate != null)
 			{
-				start = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(startDate);
-				end = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(endDate);
+				start = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(startDate);
+				end = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(endDate);
 			}
 			else
 			{
@@ -502,14 +502,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException se)
 		{
+			logger.error(se);
 			throw new Exception(se);
 		}
 		catch (ApiException e)
 		{
+			logger.error(e);
 			throw new Exception(e.dumpToString());
 		}
 		catch (RemoteException e)
 		{
+			logger.error(e);
 			throw new Exception(e);
 		}
 

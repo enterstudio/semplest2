@@ -82,7 +82,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		try
 		{
 
-			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			
 			
 			/*
 			 * GetKeywordForAdEngineSP getKeywords = new
@@ -94,6 +94,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
 			 * : false); keywordList.size();
 			 */
+			/*
 			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(60);
 			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
@@ -106,19 +107,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
 			
 			}
+			*/
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			
-			/*
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
-			String scheduleName = "ReceptionHalls_OnGoingBidding";
+			String scheduleName = "Test_OnGoingBidding";
 			// Schedule for next day at the same time
-			cal.setTime(new Date());
-			cal.add(Calendar.DAY_OF_MONTH, 1);
-			Date startTime = cal.getTime();
+			
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
-			*/
+			
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList);
+			listOfTasks.add(executeOngoinBiddingTask);
+			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			//adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
+			
 			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			//adEng.initializeService(null);
 			//Thread.sleep(1000);

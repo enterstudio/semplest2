@@ -435,7 +435,7 @@ public class SemplestScheduler extends Thread
 					for (int i = 0; i < listofTasks.size(); i++)
 					{
 						TaskRunnerObj taskObj = listofTasks.get(i);
-						System.out.println(taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
+						logger.debug("Running Task: " + taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
 						Class taskClass = Class.forName(taskObj.getServiceName());
 						Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
 						SchedulerTaskRunnerInterface taskRunner =  (SchedulerTaskRunnerInterface) taskConstructor.newInstance(new Object[] {url});
