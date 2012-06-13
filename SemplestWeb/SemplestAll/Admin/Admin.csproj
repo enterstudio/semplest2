@@ -155,6 +155,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\jquery.cluetip.css" />
+    <Content Include="Content\kendo.common.min.css" />
+    <Content Include="Content\kendo.dataviz.min.css" />
+    <Content Include="Content\kendo.metro.min.css" />
+    <Content Include="Content\leafleft.css" />
     <Content Include="Content\Metro\editor.png" />
     <Content Include="Content\Metro\imagebrowser.png" />
     <Content Include="Content\Metro\loading-image.gif" />
@@ -193,8 +198,7 @@
     <Content Include="Content\themes\base\jquery.ui.theme.css" />
     <Content Include="Dynamic Expressions.html" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
+    <Content Include="Scripts\jquery-1.7.2.min.js" />
     <Content Include="Scripts\jquery-ui.js" />
     <Content Include="Scripts\jquery-ui.min.js" />
     <Content Include="Scripts\jquery.maskedinput-1.3.js" />
