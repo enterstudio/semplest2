@@ -30,12 +30,49 @@
                 Ad Copy</h3>
         </li>
         <li>
-            <label style="width: 68px">
-                URL <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
-                    ?</a></label>
-            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
-            @Html.ValidationMessageFor(t => t.Url)
-            <span>This url will appears in all of your ads</span> </li>
+            <fieldset style="padding-bottom: 10px">
+                <legend>
+                    <label style="width: 68px">
+                        URLs <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
+                            ?</a></label></legend>
+                <table>
+                    <tr style="height: 35px;">
+                        <td>
+                            <label style="font-weight: bold;width: 68px; margin-left: 5px;">
+                            Landing</label>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.Url)
+                        </td>
+                        <td>
+                            <span style=" margin-left: 5px;">This url your landing page</span>
+                        </td>
+                    </tr>
+                    <tr style="height: 35px;">
+                        <td>
+                            <label style="font-weight: bold;width: 68px; margin-left: 5px;">
+                                Display</label>
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.Url)
+                        </td>
+                        <td> <span style=" margin-left: 5px;">This url will appears in all of your ads</span>
+                        </td>
+                    </tr>
+                    <tr style="height: 35px;">
+                        <td></td>
+                        <td>
+                            <button type="button" class="additionalLinks k-button">
+                    <span class="k-add k-icon"></span>Add additional click through options</button>
+                <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
+                    ?</a>
+                        </td>
+                    </tr>
+                </table>
+            </fieldset>
+        </li>
         <li>
             <div id="ads">
                 @Html.EditorFor(t => t.Ads)
@@ -44,15 +81,11 @@
         <li>
             <div style="margin-left: 77px;">
                 @Html.LinkToAddNestedForm("Create Another Ad", "#ads", ".ads", "AdModelProp.Ads", typeof(SemplestModel.PromotionAd), "AdModelProp")
-            
                 <button class="k-button" id="negativeKeyWords" type="button" style="margin-left: 55px">
                     <span class="k-add k-icon"></span>Negative Keywords</button>
                 <a href ="#" class="help-button" id="helpbutton11" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]11"  tabindex="-1" >
                     ? </a>
-                <button type="button" class="additionalLinks k-button" style="margin-left: 10px">
-                    <span class="k-add k-icon"></span>Add additional click through options</button>
-                <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
-                    ?</a>
+                
             </div>
         </li>
         <li class="options">
