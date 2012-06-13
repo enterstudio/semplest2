@@ -1304,6 +1304,75 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 	
 	@Override
+	public Boolean deleteNegativeKeywords(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType) throws Exception
+	{
+		logger.info("Will try to Delete these " + keywords.size() + " Negative Keywords for AccountID [" + accountID + "], CampaignID [" + campaignID + "], MatchType [" + matchType + "]: [" + keywords + "]");
+		try
+		{			
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final Map<String, Long> negativeKeywordsToCriterionIdMap = getAllNegativeKeywordsToCriterionIdMap(accountID, campaignID, matchType);
+			final Set<Entry<String, Long>> negativeKeywordToCriterionIdEntrySet = negativeKeywordsToCriterionIdMap.entrySet();
+			final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+			for (final Entry<String, Long> entry : negativeKeywordToCriterionIdEntrySet)
+			{
+				final String criterionKeyword = entry.getKey();
+				if (keywords.contains(criterionKeyword))
+				{
+					final Long criterionId = entry.getValue();				
+					final CampaignCriterionOperation operation = getNegativeKeywordRemoveOperation(campaignID, criterionId);
+					operations.add(operation);
+				}				
+			}
+			logger.info("Generated " + operations.size() + " Operations to Delete Negative Keywords");
+			if (operations.isEmpty())
+			{
+				logger.warn("Nothing to delete");
+				return true;
+			}
+			final CampaignCriterionOperation[] negativeKeywordOperations = operations.toArray(new CampaignCriterionOperation[operations.size()]);
+			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+			final CampaignCriterionReturnValue result = campaignCriterionService.mutate(negativeKeywordOperations);
+			if (result != null && result.getValue() != null)
+			{
+				final CampaignCriterion[] campaignCriterions = result.getValue();
+				final int numNegativeKeywordResults = campaignCriterions.length;
+				if (numNegativeKeywordResults != operations.size())
+				{
+					logger.warn("# of NegativeKeyword Results [" + numNegativeKeywordResults + "] is NOT equal to the # we expected [" + operations.size() + "]");
+				}
+				else
+				{
+					logger.warn("As expected, # of NegativeKeyword Results [" + numNegativeKeywordResults + "] is equal to the # we expected [" + operations.size() + "]");					
+				}
+				return true;
+			}
+			else
+			{
+				logger.error("No results returned from Google when executing Delete NegativeKeyword operations.  This is NOT expected.");
+				return false;
+			}
+		}
+		catch (ServiceException e)
+		{
+			final String errMsg = "Problem Deleting Negative Keywords for AccountID [" + accountID + "], CampaignID [" + campaignID + "], MatchType [" + matchType + "], and Keywords [" + keywords + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (ApiException e)
+		{
+			final String errMsg = "Problem Deleting Negative Keywords for AccountID [" + accountID + "], CampaignID [" + campaignID + "], MatchType [" + matchType + "], and Keywords [" + keywords + "]: " + e.dumpToString();
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		catch (RemoteException e)
+		{
+			final String errMsg = "Problem Deleting Negative Keywords for AccountID [" + accountID + "], CampaignID [" + campaignID + "], MatchType [" + matchType + "], and Keywords [" + keywords + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
+	
+	@Override
 	public Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception
 	{
 		logger.info("Will try to delete these " + keywords.size() + " Keywords for AccountID [" + accountID + "], AdGroupID [" + adGroupID + "]: [" + keywords + "]");
@@ -2589,7 +2658,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Map<String, Long> getAllNegativeKeywordsToCriterionIdMap(String accountID, Long campaignId, KeywordMatchType matchType) throws Exception
 	{
 		final Map<String, Long> negativeKeywordsToCriterionIdMap = new HashMap<String, Long>();
-		final CampaignCriterion[] campaignCriterions = getAllCampaignCriterions(accountID, campaignId);
+		final CampaignCriterion[] campaignCriterions = getAllCampaignCriterions(accountID, campaignId);		
 		for (final CampaignCriterion campaignCriterion : campaignCriterions)
 		{
 			if (campaignCriterion instanceof NegativeCampaignCriterion)
@@ -2609,6 +2678,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 			}
 		}
+		logger.info("Out of " + campaignCriterions.length + " CampaignCriterions in Google for AccountID [" + accountID + "] and CampaignID [" + campaignId + "], found " + negativeKeywordsToCriterionIdMap.size() + " Negative Keywords");
 		return negativeKeywordsToCriterionIdMap;
 	}
 	

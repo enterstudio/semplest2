@@ -51,8 +51,8 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines);
 	void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines) throws Exception;
 	
-	Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines);
-	void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines) throws Exception;
+	Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines);
+	void DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception;
 		
 	Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
 }

@@ -226,6 +226,23 @@ public class CreateSchedulerAndTask
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		task.setParameters(json);
 		return task;
+	}
+	
+	public static SemplestSchedulerTaskObject createDeleteNegativeKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
+	{
+		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
+		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteKeyword.getClientServiceNameValue());
+		task.setMethodName(scheduleNamePostfix);
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));		
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);		
+		jsonHash.put("keywordIds", keywordIdsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines",adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		task.setParameters(json);
+		return task;
 	}	
 	
 	public static SemplestSchedulerTaskObject createDeleteKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)

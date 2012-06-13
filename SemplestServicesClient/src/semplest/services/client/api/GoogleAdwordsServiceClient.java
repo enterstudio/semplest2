@@ -700,6 +700,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		return null;
 	}
 
+	@Override
+	public Boolean deleteNegativeKeywords(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 
 }

@@ -63,6 +63,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	String[] getAllAdGroupKeywords(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 		
 	Boolean addUpdateKeywords(String accountID, Long campaignID, Long adGroupID, Map<KeywordProbabilityObject, Boolean> keywordProbabilityToRemoveOppositeMap, KeywordMatchType matchType, Long microBidAmount) throws Exception;
+	Boolean deleteNegativeKeywords(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType) throws Exception;
 	KeywordDataObject[] getAllBiddableAdGroupCriteria(String accountID, Long adGroupID, Boolean ActiveOnly) throws Exception;
 	KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount) throws Exception;
 	Boolean deleteKeyWords(String accountID, Long adGroupID, List<String> keywords) throws Exception;
@@ -99,7 +100,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 
 	// GeoTargeting
 	Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
-	Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;
+	Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;	
 	 
 	/*
 	 * LEFT OUT GoogleCloudReportService and GoogleCloudBulkMutateService

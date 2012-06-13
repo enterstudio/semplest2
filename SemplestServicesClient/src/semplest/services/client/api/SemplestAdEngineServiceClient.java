@@ -63,7 +63,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<Integer> promotionAdIds_DeleteAds = Arrays.asList(218);
 		final List<String> adEngines_DeleteAds = Arrays.asList(AdEngine.Google.name());
 		client.DeleteAds(promotionID_DeleteAds, promotionAdIds_DeleteAds, adEngines_DeleteAds);
-	
+
 		// scheduleUpdateAds
 		final Integer customerID_scheduleUpdateAds = 12;
 		final Integer promotionID_scheduleUpdateAds = 62;
@@ -197,7 +197,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_AddKeywords = Arrays.asList(AdEngine.Google.name());
 		final List<Integer> keywordIds_AddKeywords = Arrays.asList(12241, 12242);
 		client.AddKeywords(promotionID_AddKeywords, keywordIds_AddKeywords, adEngines_AddKeywords);
-*/
+
 		// scheduleAddNegativeKeywords
 		final Integer customerID_scheduleAddNegativeKeywords = 12;
 		final Integer promotionID_scheduleAddNegativeKeywords = 62;
@@ -208,7 +208,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
 		final List<String> adEngines_scheduleAddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);
-/*
+
 		// AddNegativeKeywords
 		final Integer promotionID_AddNegativeKeywords = 62;
 		final KeywordIdRemoveOppositePair pair1_AddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
@@ -224,6 +224,66 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final ArrayList<String> adEngines_ExecuteBidProcess = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
 		client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
 */		
+		
+		// scheduleUnpausePromotion
+		final Integer customerID_scheduleDeleteNegativeKeywords = 12;
+		final Integer promotionID_scheduleDeleteNegativeKeywords = 62;
+		final List<Integer> keywordIds_scheduleDeleteNegativeKeywords = Arrays.asList(12241, 12242);
+		final List<String> adEngines_scheduleDeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
+		client.scheduleDeleteNegativeKeywords(customerID_scheduleDeleteNegativeKeywords, promotionID_scheduleDeleteNegativeKeywords, keywordIds_scheduleDeleteNegativeKeywords, adEngines_scheduleDeleteNegativeKeywords);
+/*
+		// UnpausePromotion
+		final Integer promotionID_DeleteNegativeKeywords = 62;
+		final List<String> adEngines_DeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
+		final List<Integer> keywordIds_DeleteNegativeKeywords = Arrays.asList(12241, 12242);
+		client.DeleteNegativeKeywords(promotionID_DeleteNegativeKeywords, keywordIds_DeleteNegativeKeywords, adEngines_DeleteNegativeKeywords);
+	*/
+	}
+	
+	@Override
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		final String methodName = "scheduleDeleteNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("customerID", Integer.toString(customerID));
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdsStr = gson.toJson(keywordIds, List.class);		
+		jsonHash.put("keywordIds", keywordIdsStr);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
+		}
+	}
+
+	@Override
+	public void DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	{
+		final String methodName = "DeleteNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String keywordIdsString = gson.toJson(keywordIds, List.class);
+		jsonHash.put("keywordIds", keywordIdsString);
+		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("adEngines", adEnginesStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
+		if (!processedSuccessully)
+		{
+			throw new Exception(methodName + " failed");
+		}
 	}
 	
 	@Override
@@ -247,7 +307,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing scheduleAddNegativeKeywords operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -294,7 +354,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing scheduleAddKeywords operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -340,7 +400,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -386,7 +446,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -432,7 +492,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -476,7 +536,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -520,7 +580,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -565,7 +625,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -608,7 +668,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -650,7 +710,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -694,7 +754,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -738,7 +798,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -780,7 +840,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -824,7 +884,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -867,7 +927,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing operation", e);
+			logger.error("Problem performing " + methodName, e);
 			return false;
 		}
 	}
@@ -918,26 +978,5 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// TODO Auto-generated method stub
 		
 	}
-
-	
-	
-	
-	
-	@Override
-	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID,
-			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
-
 	
 }

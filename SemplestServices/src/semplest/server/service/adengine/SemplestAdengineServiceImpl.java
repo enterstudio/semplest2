@@ -295,6 +295,99 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 	}
 	
+	public String scheduleDeleteNegativeKeywords(String json) throws Exception
+	{
+		logger.debug("call scheduleDeleteNegativeKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String keywordIdRemoveOppositePairsString = data.get("keywordIds");
+		final List<Integer> keywordIds = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final Boolean result = scheduleDeleteNegativeKeywords(customerID, promotionID, keywordIds, adEngines);
+		return gson.toJson(result);
+	}
+
+	@Override
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	{
+		try 
+		{
+			logger.info("Will try to schedule task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "]");
+			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final String scheduleNamePostfix = "DeleteNegativeKeywords";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteNegativeKeywordTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
+			listOfTasks.add(task);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(promotionID);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			return taskScheduleSuccessful;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem scheduling task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
+			return false;
+		}
+	}
+	
+	public String DeleteNegativeKeywords(String json) throws Exception
+	{
+		logger.debug("call DeleteNegativeKeywords(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final List<Integer> keywordIds = gson.fromJson(data.get("keywordIds"), SemplestUtils.TYPE_LIST_OF_INTEGERS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		DeleteNegativeKeywords(promotionID, keywordIds, adEngines);
+		return gson.toJson(true);
+	}
+	
+
+	@Override
+	public void DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+			throws Exception
+	{
+		logger.info("Will try to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
+		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP(); 
+		final Map<String, String> errorMap = new HashMap<String, String>();
+		final String esbServerTimeout = getTimeoutMS();
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, esbServerTimeout);
+		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, new ArrayList<String>(adEngines));
+		for (final String adEngine : adEngines)
+		{
+			if (AdEngine.Google.name().equals(adEngine))
+			{
+				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
+				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
+				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);				
+				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
+				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
+				logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size() + " KeywordProbabilities that were found in database");
+				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+				googleAdwordsService.deleteNegativeKeywords(accountId, campaignId, keywords, keywordMatchType);		
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Deleting Negative Keywords (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}						
+		}			
+		if (!errorMap.isEmpty())
+		{
+			final String errMsg = "Summary of errors when trying to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}
+	}
+	
 	public String DeleteKeywords(String json) throws Exception
 	{
 		logger.debug("call DeleteKeywords(String json): [" + json + "]");
@@ -2098,20 +2191,5 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 	}
 
-	@Override
-	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID,
-			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		
-	}
 
 }
