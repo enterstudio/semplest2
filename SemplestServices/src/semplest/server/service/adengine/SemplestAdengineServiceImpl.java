@@ -622,12 +622,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
-		ExecuteBidProcess(promotionID, adEngineList);
-		return gson.toJson(true);
+		final Boolean processedSuccessfully = ExecuteBidProcess(promotionID, adEngineList);
+		if (!processedSuccessfully)
+		{
+			logger.error("Problem running ExecuteBidProcess with json [" + json + "]");
+		}
+		return gson.toJson(processedSuccessfully);
 	}
 
 	@Override
-	public void ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(PromotionID);
@@ -698,6 +702,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			budgetData.setRemainingDays(daysLeft);
 			bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
 		}
+		return true;
 	}
 
 	public String UpdateGeoTargeting(String json) throws Exception
