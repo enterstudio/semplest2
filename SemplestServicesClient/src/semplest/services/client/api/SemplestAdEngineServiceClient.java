@@ -35,7 +35,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static void main(String[] args) throws Exception
 	{
 		BasicConfigurator.configure();
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(null);		
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJAVA1:9898/semplest");		
 /*
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
@@ -198,7 +198,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		client.AddKeywords(promotionID_AddKeywords, keywordIds_AddKeywords, adEngines_AddKeywords);
 */
 		// scheduleAddNegativeKeywords
-		final Integer customerID_scheduleAddNegativeKeywords = 12;
+		/*final Integer customerID_scheduleAddNegativeKeywords = 12;
 		final Integer promotionID_scheduleAddNegativeKeywords = 62;
 		final KeywordIdRemoveOppositePair pair1_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
 		final KeywordIdRemoveOppositePair pair2_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
@@ -206,7 +206,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair1_scheduleAddNegativeKeywords);
 		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
 		final List<String> adEngines_scheduleAddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
-		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);
+		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);*/
 /*
 		// AddNegativeKeywords
 		final Integer promotionID_AddNegativeKeywords = 62;
@@ -218,6 +218,10 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_AddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		client.AddNegativeKeywords(promotionID_AddNegativeKeywords, keywordIdRemoveOppositePairs_AddNegativeKeywords, adEngines_AddNegativeKeywords);
 */
+		// ExecuteBidProcess
+		final Integer promotionID_ExecuteBidProcess = 62;
+		final ArrayList<String> adEngines_ExecuteBidProcess = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
+		client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
 	}
 	
 	@Override
@@ -844,7 +848,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
 		final String methodName = "ExecuteBidProcess";
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
@@ -857,8 +861,9 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Boolean processedSuccessfully = gson.fromJson(returnData, Boolean.class);
 		if (!processedSuccessfully)
 		{
-			throw new Exception("Problem performing [" + methodName + "]");
-		}		
+			logger.error("Problem performing [" + methodName + "]");
+		}
+		return processedSuccessfully;
 	}	
 	
 	public SemplestAdEngineServiceClient(String baseurl)
