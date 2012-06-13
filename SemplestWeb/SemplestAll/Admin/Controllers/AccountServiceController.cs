@@ -12,6 +12,7 @@ using System.Data;
 using System.Data.OleDb;
 using FileHelpers;
 using System.Transactions;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Admin.Controllers
 {
@@ -157,9 +158,20 @@ namespace Semplest.Admin.Controllers
                 Text = r.BillType1.ToString()
             });
 
-            x.ParentID = id;
 
+            //for roles dropdown
+            /////////////////////////////////////////////////////////////////////////////////
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+
+            x.Roles = roles.Select(r => new SelectListItem
+            {
+                Value = r.RolePK.ToString(),
+                Text = r.RoleName.ToString()
+            });
+
+            x.ParentID = id;
             return View(x);
+
         }
 
 
@@ -173,11 +185,12 @@ namespace Semplest.Admin.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult Upload(HttpPostedFileBase uploadFile, CustomerImport imp)
+        public ActionResult Upload(HttpPostedFileBase uploadFile, CustomerImport imp, FormCollection fc)
         {
             string importstatus;
             importstatus  = "The import was the successful..";
             SemplestEntities dbcontext = new SemplestEntities();
+            
 
             {
 
@@ -206,18 +219,9 @@ namespace Semplest.Admin.Controllers
                                 //Console.WriteLine(err.ExceptionInfo.ToString());
                             }
 
-                        if (customersimported.Count() < 1) throw new Exception();
+                        if (customersimported.Count() < 1) throw new Exception("No customers could be imported from csv file");
                         ///////////
                         ///////////
-                        ///////
-                        ///////
-                        ///////
-
-
-                        //IEnumerable<CustomerAccount> custs;
-
-                        //List<CustomerAccount> customers;
-
 
 
                         foreach (CustomerImportData cust in customersimported)
@@ -281,6 +285,7 @@ namespace Semplest.Admin.Controllers
                         /////
                         */
 
+                            m.internalID = cust.InternalCustomerID;
                             m.Address1 = cust.ContactAddressLine1;
                             m.Address2 = cust.ContactAddressLine2;
                             m.City = cust.ContactCity;
@@ -296,7 +301,11 @@ namespace Semplest.Admin.Controllers
                             m.Zip = cust.ContactZip;
                             m.isActive = true;
 
-                            
+
+                            var emailtemplate = (from et in dbcontext.EmailTemplates
+                                                 where et.EmailTemplatePK.Equals(13)
+                                                 select et).FirstOrDefault();
+                                                        
                             try
                             {
                                 var existing = (from ex in dbcontext.Customers
@@ -322,11 +331,6 @@ namespace Semplest.Admin.Controllers
                                 };
                                 dbcontext.Users.AddObject(u);
 
-                                
-
-
-
-                                //
                                 var cr = new Credential { User = u, UsersFK = u.UserPK, Username = m.UserID, Password = m.UserPassword };
                                 dbcontext.Credentials.AddObject(cr);
 
@@ -348,24 +352,56 @@ namespace Semplest.Admin.Controllers
                                 var cn = new CustomerNote { Customer = c, Note = m.CustomerNote };
                                 dbcontext.CustomerNotes.AddObject(cn);
 
+                                var r = dbcontext.Roles.First(p => p.RolePK == imp.SelectedRoleID);
+                                var ura = new UserRolesAssociation { Role = r, User = u };
+                                dbcontext.UserRolesAssociations.AddObject(ura);
 
                                 //default to the parent's rep and salesperson
 
                                 var parentrepandsales = (from prs in dbcontext.EmployeeCustomerAssociations
                                                          where prs.CustomerFK.Equals(imp.ParentID)
                                                          select prs).ToList();
-
                                 foreach (EmployeeCustomerAssociation eca in parentrepandsales)
                                 {
                                     var addrepandsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = eca.EmployeeFK };
                                     dbcontext.EmployeeCustomerAssociations.AddObject(addrepandsales);
                                 }
 
+                                //add child to parent in customerhierarchy
                                 var ch = new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = imp.ParentID };
                                 dbcontext.CustomerHierarchies.AddObject(ch);
-                                
-
                                 dbcontext.SaveChanges();
+
+                                if (fc["sendcustomeremail"] != null)
+                                {
+
+                                    ///////////////////////////////////////////////////////////////
+                                    //FOR SENDING OUT EMAILS
+                                    /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
+
+                                    var parentdetails = from usr in dbcontext.Users
+                                                        join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
+                                                        where usr.CustomerFK == imp.ParentID
+                                                        select new { usr.CustomerFK, usr.Email, cus.Name };
+
+                                    //send mail //revisit
+                                    string from = parentdetails.FirstOrDefault().Email;
+                                    string to = u.Email;
+                                    string body = emailtemplate.EmailBody;
+                                    string subject = emailtemplate.EmailSubject;
+                                    body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
+                                    body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
+                                    body = body.Replace("[FAQs]", "http://faq");
+                                    body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
+                                    body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
+                                    body = body.Replace("[INSERT LINK]", "http://encrypto");
+
+                                    //SendEmail
+                                    bool sent = false;
+                                    ServiceClientWrapper scw = new ServiceClientWrapper();
+                                    sent = scw.SendEmail(subject, from, to, body);
+                                }
+                                                            
                             }
                             catch (Exception ex)
                             {
@@ -383,7 +419,26 @@ namespace Semplest.Admin.Controllers
                 }
 
 
-               
+                /*
+                 
+                 *   public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("subject", subject);
+            jsonHash.Add("from", from);
+            jsonHash.Add("recipient", recipient);
+            jsonHash.Add("msgTxt", msgTxt);
+            string jsonstr = JsonConvert.SerializeObject(jsonHash);
+            string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            string boolResult = dict.Values.First();
+            return Convert.ToBoolean(boolResult);
+        }
+                 
+                 */
+
+
+
                 //scope.Complete();
             }
 
