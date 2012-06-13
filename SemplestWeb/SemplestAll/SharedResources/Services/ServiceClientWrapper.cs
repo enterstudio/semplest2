@@ -177,6 +177,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("from", from);
             jsonHash.Add("recipient", recipient);
             jsonHash.Add("msgTxt", msgTxt);
+            jsonHash.Add("msgType", "text/html"); //"text/plain
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
             string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
