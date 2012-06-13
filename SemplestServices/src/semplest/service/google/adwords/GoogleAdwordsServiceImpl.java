@@ -16,6 +16,7 @@ import java.util.Set;
 
 import javax.xml.rpc.ServiceException;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -197,6 +198,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		// Log SOAP XML request and response.
 		try
 		{
+			//BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
 			SemplestConfiguration configDB = new SemplestConfiguration(object);
@@ -207,16 +209,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				object.wait();
 			}
 			
-			
+			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 15)), new Date());
+			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(), new Date());
+			System.out.println("Spend: " + spend);
 
-			Long accountID = 2387614989L;
+			/*Long accountID = 2387614989L;
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_MONTH, -5);
 			Long api = g.getSpentAPIUnitsPerAccountID(accountID,cal.getTime(),new
 					java.util.Date());
 
-			System.out.println("API COST=" + api);
+			System.out.println("API COST=" + api);*/
 			/*
 			final String accountID = "54100";
 			final Long adGroupID = 3066031127L;
@@ -243,9 +248,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// System.out.println("id=" + id);
 			
 			//String url = "www.summithillsfloristnj.com";
-			String[] keywords = new String[]
+			/*String[] keywords = new String[]
 					{"wedding dresses", "bridesmaids dresses", "mother of the bride dresses", "flower girl dresses",
-					"wedding accessories", "engagement rings", "wedding rings", "tuxedos", "wedding invitations", "wedding registry"};
+					"wedding accessories", "engagement rings", "wedding rings", "tuxedos", "wedding invitations", "wedding registry"};*/
 			//{ "wedding flowers", "flower centerpieces", "floral shop", "flower arrangement", "arrange flower" };
 			
 			
@@ -445,7 +450,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
+			logger.error("Problem", e);
 			e.printStackTrace();
 		}
 
@@ -469,7 +474,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Long getSpentAPIUnitsPerAccountID(Long accountID, java.util.Date startDate, java.util.Date endDate) throws Exception
 	{
 		try
-		{
+		{			
+			AdWordsServiceLogger.log();
+			logger.info("AdWordsServiceLogger.log() called");
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the INFO_SERVICe.
 
@@ -482,8 +489,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			String end = "";
 			if (startDate != null && endDate != null)
 			{
-				start = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(startDate);
-				end = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(endDate);
+				
+				start = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(startDate);
+				end = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(endDate);
 			}
 			else
 			{
@@ -503,17 +511,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		catch (ServiceException se)
 		{
 			logger.error(se);
-			throw new Exception(se);
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", se);
 		}
 		catch (ApiException e)
 		{
 			logger.error(e);
-			throw new Exception(e.dumpToString());
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
 			logger.error(e);
-			throw new Exception(e);
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", e);
 		}
 
 	}
