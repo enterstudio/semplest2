@@ -155,10 +155,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\example.css" />
-    <Content Include="Content\kendo.common.min.css" />
-    <Content Include="Content\kendo.dataviz.min.css" />
-    <Content Include="Content\kendo.metro.min.css" />
     <Content Include="Content\Metro\editor.png" />
     <Content Include="Content\Metro\imagebrowser.png" />
     <Content Include="Content\Metro\loading-image.gif" />
