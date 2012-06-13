@@ -154,6 +154,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		 * Read in the Config Data from DB into HashMap<key, Object>
 		 * SemplestConfiguation.configData
 		 */
+		logger.info("InitializeService");
 		Object object = new Object();
 		SemplestConfiguration configDB = new SemplestConfiguration(object);
 		Thread configThread = new Thread(configDB);
