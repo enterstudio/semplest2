@@ -116,7 +116,7 @@ public class TextUtils {
   }
 
   //--
-  public Boolean isValidUrl( String url ){
+  public static Boolean isValidUrl( String url ){
     try {
       java.net.URLConnection conn = (new java.net.URL( url )).openConnection();
       conn.setConnectTimeout( 1000 );
@@ -164,7 +164,8 @@ public class TextUtils {
   }
 
   // Return strings from a url 
-  public static String HTMLText( String url ){
+  public static String HTMLText( String url ) throws Exception {
+    if( ! isValidUrl( url )) throw new Exception("Invalid Url: " + url ); 
     String outs = "";
 
     StringBean sb = new StringBean();
@@ -305,12 +306,12 @@ public class TextUtils {
     // Get the object of DataInputStream
     DataInputStream in = new DataInputStream(fstream);
     BufferedReader br = new BufferedReader(new InputStreamReader(in));
-    String data="";
+    String data = "";
     String strLine;
     //Read File Line By Line
     while ((strLine = br.readLine()) != null)   {
       // Print the content on the console
-      data=data+strLine;
+      data = data+strLine;
     }
     //Close the input stream
     in.close();
@@ -318,31 +319,31 @@ public class TextUtils {
   }
 
   public static void getUniqueKeywords(String[] filepaths, String outputfile) throws IOException{
-	  ArrayList<String> kw = new ArrayList<String>();
-	  PrintStream out = new PrintStream(new FileOutputStream(outputfile));
-	  for(String path : filepaths){	
-		  	FileInputStream fstream = new FileInputStream(path);
-		    DataInputStream in = new DataInputStream(fstream);
-		    // Get the object of DataInputStream
-		    BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		    String strLine;
+    ArrayList<String> kw = new ArrayList<String>();
+    PrintStream out = new PrintStream(new FileOutputStream(outputfile));
+    for(String path : filepaths){	
+      FileInputStream fstream = new FileInputStream(path);
+      DataInputStream in = new DataInputStream(fstream);
+      // Get the object of DataInputStream
+      BufferedReader br = new BufferedReader(new InputStreamReader(in));
+      String strLine;
 
-		   
-		    //Read File Line By Line
-		    while ((strLine = br.readLine()) != null)   {
-		    	String word = strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "");
-		    	// Print the content on the console
-		    	if(!kw.contains(word)){
-			    	out.println(word);
-			    	kw.add(word);
-		    	}
-		    }		    
-		    //Close the input stream
-		    in.close();
-	  }
-	  	
+
+      //Read File Line By Line
+      while ((strLine = br.readLine()) != null)   {
+        String word = strLine.replaceAll("\\s+$", "").replaceAll("^\\s+", "");
+        // Print the content on the console
+        if(!kw.contains(word)){
+          out.println(word);
+          kw.add(word);
+        }
+      }		    
+      //Close the input stream
+      in.close();
+    }
+
   }
-   
+
   public static void changeKeywordMatchtoExact(String filepath) throws IOException{
     FileInputStream fstream = new FileInputStream(filepath);
     DataInputStream in = new DataInputStream(fstream);
@@ -409,7 +410,7 @@ public class TextUtils {
   }
 
   // Synonyms from words.bighugelabs.com
-  public static String getSynonyms( String word ){
+  public static String getSynonyms( String word ) throws Exception {
     final String prefix = "http://words.bighugelabs.com/api/2/";
     final String apikey = "febc1a7d186b265748dac5331d603093/";
     final String url = prefix + apikey + word + "/";
@@ -435,6 +436,7 @@ public class TextUtils {
   }
 
   //-------------------------------------------------------------
-  public static void main (String[] args){
+  public static void main (String[] args) throws Exception {
+    System.out.println( HTMLText( args[0] ));
   }
 }
