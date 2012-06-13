@@ -88,7 +88,9 @@ namespace Semplest.Core.Models
         public string NegativeKeywordsText { get; set; }
         [Required(ErrorMessage = "Url is Required...")]
         //[RegularExpression(@"(http://|)(www\.)?([^\.]+)\.(\w{2}|(com|net|org|edu|int|mil|gov|arpa|biz|aero|name|coop|info|pro|museum))$",ErrorMessage = "url should be in this format http://www.semplest.com")]
-        public string Url { get; set; }
+        public string LandingUrl { get; set; }
+        // display url limit 35 characters
+        public string DisplayUrl { get; set; }
     }
 
     public class AdEngineSelectModel

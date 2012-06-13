@@ -32,7 +32,7 @@ namespace Semplest.Core.Models.Repositories
 
             // get categories or classifications
             var categories = scw.GetCategories(null, model.ProductGroup.ProductPromotionName,
-                                        model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url);
+                                        model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.LandingUrl);
 
             // create categories list that will be displayed in a multiselect list box
             if (categories != null && categories.Count > 0)
@@ -78,7 +78,7 @@ namespace Semplest.Core.Models.Repositories
             // get keywords from the web service
             //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
             var keywords = scw.GetKeywords(catList, null, SerializeAdEnginesSelectedToStringArray(model).ToArray(), model.ProductGroup.ProductPromotionName,
-                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, SerializeToGeoTargetObjectArray(model).ToArray(), null);
+                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.LandingUrl, SerializeToGeoTargetObjectArray(model).ToArray(), null);
 
            
             if (keywords != null && keywords.Length > 0)
@@ -179,7 +179,7 @@ namespace Semplest.Core.Models.Repositories
             // get keywords from the web service
             //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
             var keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
-                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.Url, null);
+                                            model.ProductGroup.Words, adtitletextList.ToArray(), model.AdModelProp.LandingUrl, null);
             if (keywords != null && keywords.Count > 0)
             {
                 foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key }))

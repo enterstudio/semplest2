@@ -42,11 +42,11 @@
                             Landing</label>
                         </td>
                         <td>
-                            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
-                            @Html.ValidationMessageFor(t => t.Url)
+                            @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.LandingUrl)
                         </td>
                         <td>
-                            <span style=" margin-left: 5px;">This url your landing page</span>
+                            <span style=" margin-left: 5px;">This url is your landing page</span>
                         </td>
                     </tr>
                     <tr style="height: 35px;">
@@ -55,9 +55,10 @@
                                 Display</label>
                         </td>
                         <td>
-                            @Html.TextBoxFor(m => m.Url, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
-                            @Html.ValidationMessageFor(t => t.Url)
-                        </td>
+                            <input type="text" id="displayUrl" name="displayUrl" class="k-textbox k-textboxAd1" disabled="disabled"/>
+@*                            @Html.TextBoxFor(m => m.DisplayUrl, new { disabled = true, @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.ValidationMessageFor(t => t.DisplayUrl)
+*@                        </td>
                         <td> <span style=" margin-left: 5px;">This url will appears in all of your ads</span>
                         </td>
                     </tr>
