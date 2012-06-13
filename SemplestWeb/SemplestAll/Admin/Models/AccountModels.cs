@@ -286,6 +286,16 @@ namespace Semplest.Admin.Models
 
         [DisplayName("Bill Type")]
         public IEnumerable<SelectListItem> BillTypes { get; set; }
+
+
+
+        public int SelectedRoleID { get; set; }
+
+        [DisplayName("Role")]
+        public IEnumerable<SelectListItem> Roles { get; set; }
+				
+
+
     }
 
     public class CustomerAccountWithEmployeeModel
