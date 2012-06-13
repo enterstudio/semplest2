@@ -210,6 +210,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\kendo.all.min.js" />
     <Content Include="Scripts\PanelBar.js" />
+    <Content Include="uploads\imagesCAORJKDS.jpg" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -237,7 +238,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

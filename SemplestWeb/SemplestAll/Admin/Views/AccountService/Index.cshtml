@@ -79,7 +79,7 @@ Account Service
     <li><a href="#">Issue Refund</a> </li>
     
 
-    @if (Model.ParentName.ToLower() == "self".ToLower())
+    @if (Model.ParentName.ToLower() == "parent".ToLower())
     {
     <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })</li>
     }
