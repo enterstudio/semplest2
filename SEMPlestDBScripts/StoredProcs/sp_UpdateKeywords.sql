@@ -1,16 +1,19 @@
 USE [semplest]
 GO
-/****** Object:  StoredProcedure [dbo].[sp_UpdateKeywords]    Script Date: 06/09/2012 13:32:43 ******/
+
+/****** Object:  StoredProcedure [dbo].[sp_UpdateKeywords]    Script Date: 06/13/2012 17:41:17 ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Andre'
 -- Create date: 6/7/2012
 -- Description:	update to keywords and keyword associations
 -- =============================================
-ALTER PROCEDURE [dbo].[sp_UpdateKeywords] 
+CREATE PROCEDURE [dbo].[sp_UpdateKeywords] 
 	-- Add the parameters for the stored procedure here
 	@kwa dbo.PromotionKeywordTableType READONLY,
 	@PromotionId int
@@ -18,7 +21,7 @@ AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	SET NOCOUNT OFF;
+	SET NOCOUNT ON;
 	INSERT INTO Keyword (KeyWord)(
 	select keyword
 					from 
@@ -35,7 +38,11 @@ BEGIN
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
 						from @kwa kwa  
-						INNER JOIN keyword k ON kwa.keyword = k.keyword)  n)
+						INNER JOIN keyword k ON kwa.keyword = k.keyword and IsNegative <> 1)  n)
 												
 	SELECT @@ROWCOUNT
 END
+
+GO
+
+
