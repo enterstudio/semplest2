@@ -53,7 +53,6 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines);
 	void DeleteNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines) throws Exception;
-	
-	
+		
 	Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
 }

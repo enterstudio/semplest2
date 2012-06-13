@@ -35,7 +35,8 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static void main(String[] args) throws Exception
 	{
 		BasicConfigurator.configure();
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJAVA1:9898/semplest");		
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMDEVJAVA1:9898/semplest");
+		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJAVA1:9999/semplest");
 /*
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
@@ -198,15 +199,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		client.AddKeywords(promotionID_AddKeywords, keywordIds_AddKeywords, adEngines_AddKeywords);
 */
 		// scheduleAddNegativeKeywords
-		/*final Integer customerID_scheduleAddNegativeKeywords = 12;
+		final Integer customerID_scheduleAddNegativeKeywords = 12;
 		final Integer promotionID_scheduleAddNegativeKeywords = 62;
-		final KeywordIdRemoveOppositePair pair1_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
+		final KeywordIdRemoveOppositePair pair1_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, false);
 		final KeywordIdRemoveOppositePair pair2_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
 		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords = new ArrayList<KeywordIdRemoveOppositePair>();
 		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair1_scheduleAddNegativeKeywords);
 		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
 		final List<String> adEngines_scheduleAddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
-		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);*/
+		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);
 /*
 		// AddNegativeKeywords
 		final Integer promotionID_AddNegativeKeywords = 62;
@@ -217,11 +218,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
 		final List<String> adEngines_AddNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		client.AddNegativeKeywords(promotionID_AddNegativeKeywords, keywordIdRemoveOppositePairs_AddNegativeKeywords, adEngines_AddNegativeKeywords);
-*/
+
 		// ExecuteBidProcess
 		final Integer promotionID_ExecuteBidProcess = 62;
 		final ArrayList<String> adEngines_ExecuteBidProcess = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
 		client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
+*/		
 	}
 	
 	@Override
@@ -245,7 +247,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem performing scheduleAddKeywords operation", e);
+			logger.error("Problem performing scheduleAddNegativeKeywords operation", e);
 			return false;
 		}
 	}
@@ -844,6 +846,29 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		if (!processedSuccessully)
 		{
 			throw new Exception(methodName + " failed");
+		}
+	}
+	
+	
+	public Boolean scheduleExecuteBidProcess(Integer promotionID, ArrayList<String> adEngineList)  
+	{
+		final String methodName = "scheduleAddPromotionToAdEngine";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
+		jsonHash.put("adEngineList",adEngineListStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");		
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing operation", e);
+			return false;
 		}
 	}
 

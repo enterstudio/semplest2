@@ -109,12 +109,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			*/
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
-			
+
 			ArrayList<String> adEngList = new ArrayList<String>();
 			adEngList.add("Google");
 			String scheduleName = "Test_OnGoingBidding2";
 			// Schedule for next day at the same time
-			
+
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
@@ -161,7 +161,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			object.wait();
 		}
-		
+
 		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 
 	}
