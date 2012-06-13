@@ -619,7 +619,7 @@ namespace Semplest.Admin.Controllers
             x.EmployeeSetup = viewModel.FirstOrDefault();
             
 
-            return View(x);
+            return PartialView(x);
             //return RedirectToAction("Index");
         }
 
