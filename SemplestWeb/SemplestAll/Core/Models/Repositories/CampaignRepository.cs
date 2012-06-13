@@ -85,7 +85,7 @@ namespace Semplest.Core.Models.Repositories
             {
                 
                 model.AllKeywordProbabilityObjects.AddRange(keywords);
-                SemplestDataService.SaveKeywords(promoId, model);
+                SemplestDataService.SaveKeywords(promoId, model.AllKeywordProbabilityObjects, model.AdModelProp.NegativeKeywords, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
                 foreach (var kwm in model.AllKeywordProbabilityObjects.Where(key => key.isDeleted == false).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.keyword, Id = key.id }))
                 {
                     model.AllKeywords.Add(kwm);
