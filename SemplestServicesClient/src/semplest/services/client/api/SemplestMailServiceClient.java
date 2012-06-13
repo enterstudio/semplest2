@@ -80,4 +80,11 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
+
+	@Override
+	public Boolean scheduleSendEmail(String subject, String from, String recipient, String msgTxt, String msgType) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

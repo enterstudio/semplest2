@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.TaskOutput;
-import semplest.server.service.SEMplestService;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -114,9 +113,7 @@ public class SemplestScheduler extends Thread
 
 							if (result != null)
 							{
-								// write result to DB
-								logger.debug("*****Write Result to DB for : ScheduleJobID=" + runData.getScheduleJobID());
-								//****SetScheduleOrderDataComplete(Integer.parseInt(runData.getScheduleOrderID()),Integer.parseInt(runData.getScheduleID()), result.booleanValue(), Integer.parseInt(runData.getUserID()));
+								logger.debug("removeScheduleToRun : ScheduleJobID=" + runData.getScheduleJobID());
 								// remove the schedule and report the result
 								synchronized (lock)
 								{
@@ -139,6 +136,7 @@ public class SemplestScheduler extends Thread
 
 			catch (InterruptedException ie)
 			{
+				logger.error(ie);
 				SemplestErrorHandler.logToDatabase(ie);
 			}
 			catch (Exception e)
@@ -279,7 +277,7 @@ public class SemplestScheduler extends Thread
 				for (int i = 0; i < recordMessageList.size(); i++)
 				{
 					String timetorun = MMddYYYYHHMMSS.format(new java.util.Date(recordMessageList.get(i).getTimeToRunInMS()));
-					logger.debug("recordMessageList(" + i + ")=" + recordMessageList.get(i).getScheduleID() + " Time to Run: " + timetorun);
+					logger.debug("recordMessageList(" + i + ")=" + recordMessageList.get(i).getScheduleJobID() + ":" + recordMessageList.get(i).getScheduleID() + " Time to Run: " + timetorun);
 				}
 
 			}
@@ -474,7 +472,7 @@ public class SemplestScheduler extends Thread
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
+			logger.error("runScheduledTasks:" + e.getMessage());
 			e.printStackTrace();
 			SemplestErrorHandler.logToDatabase(e);
 			return false;
@@ -496,6 +494,10 @@ public class SemplestScheduler extends Thread
 			
 			//Test_Nan: log some test data to the TestData table in the database
 			SemplestErrorHandler.logTest(new Date(), "scheduler", "getNextJobToExecute", nextJob.toString(), null);
+		}
+		else
+		{
+			logger.debug("Get Next Job to Run returned null");
 		}
 	}
 	

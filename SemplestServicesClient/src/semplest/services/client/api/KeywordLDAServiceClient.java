@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://172.18.9.26:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://vmdevjava1:9898/semplest";  //VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -29,7 +29,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			boolean flag = true;
+			boolean flag = false;
 			while(flag){
 				System.out.println("**************DEV MACHINE 1*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
@@ -50,12 +50,14 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 						"rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
-				System.out.println("keywords took " + sec + " seconds");
-				Thread.sleep(3000);
+				System.out.println("keywords took " + sec + " seconds.  Number keywords=" +  kw.length);
+				
+			
 				
 				
 					String kaux=kw[0].getKeyword();
-					System.out.println(kaux+" "+kw[0].getSemplestProbability());		
+					System.out.println(kaux+" "+kw[0].getSemplestProbability());
+					Thread.sleep(3000);
 	
 			}
 			while(!flag){
@@ -79,12 +81,12 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 						"peanut butter", "peanut butter", null, "http://peanutbutterlovers.com/", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
-				System.out.println("keywords took " + sec + " seconds");
-				Thread.sleep(3000);
+				System.out.println("keywords took " + sec + " seconds.  Number keywords=" +  kw.length);
+				
 				
 				String kaux=kw[0].getKeyword();
 				System.out.println(kaux+" "+kw[0].getSemplestProbability());
-		
+				Thread.sleep(3000);
 
 			}
 		

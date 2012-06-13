@@ -104,4 +104,10 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		t.start();
 		logger.info("Started Session thread...");
 	}
+	@Override
+	public Boolean scheduleSendEmail(String subject, String from, String recipient, String msgTxt, String msgType) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
