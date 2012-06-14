@@ -171,15 +171,15 @@ namespace Semplest.SharedResources.Services
             }
         }
 
-        public bool schedulePromotion(string customerId, string promoId, string[] adds, bool shouldResume)
+        public bool schedulePromotion(int customerId, int promoId, string[] adds, bool shouldResume)
         {
             string returnData = string.Empty;
             bool retVal;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("customerID", customerId);
-                jsonHash.Add("promotionID", promoId);
+                jsonHash.Add("customerID", customerId.ToString());
+                jsonHash.Add("promotionID", promoId.ToString());
                 string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
                 jsonHash.Add("adEngines", jsonAdds);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
