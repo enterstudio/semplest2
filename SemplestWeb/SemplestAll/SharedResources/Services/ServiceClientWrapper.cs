@@ -174,6 +174,7 @@ namespace Semplest.SharedResources.Services
         public bool schedulePromotion(string customerId, string promoId, string[] adds, bool shouldResume)
         {
             string returnData = string.Empty;
+            bool retVal;
             try
             {
                 var jsonHash = new Dictionary<string, string>();
@@ -203,9 +204,9 @@ namespace Semplest.SharedResources.Services
                 string jsonstrlist = lis[0];
                 if (jsonstrlist == "Service Timeout")
                 {
-
                     throw new Exception("Service Timeout for schedulePausePromotion");
                 }
+                retVal = bool.Parse(lis[0]);
             }
             catch
             {
@@ -214,7 +215,7 @@ namespace Semplest.SharedResources.Services
                 else
                     throw new Exception(returnData);
             }
-            return false;
+            return retVal;
         }
 
 
