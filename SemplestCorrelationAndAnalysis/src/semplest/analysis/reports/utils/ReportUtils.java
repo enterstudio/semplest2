@@ -33,11 +33,18 @@ public class ReportUtils {
 	    return obj;
 	}
 	
-	public static HashMap<String, ArrayList<ReportObject>> compareDataGoogleMsn(ReportObject[] reports){
+	public static HashMap<String, ArrayList<ReportObject>> compareDataGoogleMsn(ReportObject[] reports, String matchType){
+		//Groups the report objects per keywords of a particular match Type
 		HashMap<String, ArrayList<ReportObject>> hashMap =  new HashMap<String, ArrayList<ReportObject>>();
 		for(ReportObject rep : reports){
-			if(hashMap.containsKey(rep.getKeyword())){
-				hashMap.get(rep.getKeyword());
+			if(rep.getBidMatchType().equalsIgnoreCase(matchType)){
+				if(hashMap.containsKey(rep.getKeyword())){
+					hashMap.get(rep.getKeyword()).add(rep);
+				}else{
+					ArrayList<ReportObject> newArray = new ArrayList<ReportObject>();
+					newArray.add(rep);
+					hashMap.put(rep.getKeyword(), newArray);
+				}
 			}
 		}
 		
