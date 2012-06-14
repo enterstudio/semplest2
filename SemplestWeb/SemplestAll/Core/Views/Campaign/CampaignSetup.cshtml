@@ -188,7 +188,16 @@
             tabStrip.select(otherTab);
         }
         else {
-            if (id != "")
+            if (id.name == "Keywords") {
+                //alert('in id.name');
+                $('#KeywordCount').html(id.count);
+                tab = tabStrip.select();
+                var otherTab1 = tab.prev();
+                tabStrip.remove(tab);
+                tabStrip.select(otherTab1);
+                //test(id);
+            }
+            if (id != "" && id.name != "Keywords")
                 alert(id);
         }
 
