@@ -134,6 +134,7 @@ namespace Semplest.Admin.Models
         public string Email { get; set; }
         public string BillType { get; set; }
         public bool  isActive { get; set; }
+        public int PromotionCount { get; set; }
 
         //no credit table in the database --> need to add these
         //no rep, salesperson  

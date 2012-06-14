@@ -56,6 +56,20 @@ namespace Semplest.Admin.Controllers
                    BillType = b.BillType1,
                    isActive = u.IsActive
                };
+            //var p = dbcontext.Customers.Where(key => key.CustomerPK == id).Where
+
+            var viewModel3 =
+                       from c in dbcontext.Customers
+                       join pg in dbcontext.ProductGroups on c.CustomerPK equals pg.CustomerFK
+                       join p in dbcontext.Promotions on pg.ProductGroupPK equals p.ProductGroupFK
+                        where(c.CustomerPK == id) 
+                        where(p.IsLaunched == true)
+                        where (p.IsPaused == false)
+                        where (p.IsCompleted == false)
+                        select c;
+            
+            
+
 
             var viewModel2 =
                 from e in dbcontext.Employees
@@ -76,6 +90,7 @@ namespace Semplest.Admin.Controllers
 
 
             AccountServiceWithEmployeeModel x = new AccountServiceWithEmployeeModel();
+            
             var parent =
          from ch in dbcontext.CustomerHierarchies
          where (ch.CustomerFK == id)
@@ -113,7 +128,7 @@ namespace Semplest.Admin.Controllers
 
 
 
-
+            x.AccountServiceModel.PromotionCount = viewModel3.Count();
 
 
             //from u in dbcontext.Users
@@ -480,7 +495,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult DisableUser(int id)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            dbContext.Users.Where(key => key.UserPK== id).First().IsActive = false;
+            dbContext.Customers.Where(key => key.CustomerPK == id).First().Users.First().IsActive = false;
             dbContext.SaveChanges();
             Dictionary<string, object> d = new Dictionary<string, object>();
             d.Add("id", id);
@@ -490,7 +505,33 @@ namespace Semplest.Admin.Controllers
         public ActionResult EnableUser(int id)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            dbContext.Users.Where(key => key.UserPK == id).First().IsActive = true;
+
+            dbContext.Customers.Where(key => key.CustomerPK==id).First().Users.First().IsActive= true;
+            dbContext.SaveChanges();
+            Dictionary<string, object> d = new Dictionary<string, object>();
+            d.Add("id", id);
+            return RedirectToAction("Index", new System.Web.Routing.RouteValueDictionary(d));
+        }
+
+        [HttpPost]
+        public ActionResult PausePromotions(int id)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            ServiceClientWrapper sw = new ServiceClientWrapper();
+            foreach (ProductGroup pg in dbContext.Customers.Where(key => key.CustomerPK == id).First().ProductGroups)
+            {
+                foreach (Promotion p in pg.Promotions)
+                {
+                    if(p.IsLaunched && !p.IsPaused && (!p.IsCompleted))
+                    {
+                        List<string> adEngines = new List<string>();
+                        foreach(PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                            adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+                        p.IsPaused = sw.schedulePromotion(id, p.PromotionPK, adEngines.ToArray(), false);
+                    }
+                }
+            }
+
             dbContext.SaveChanges();
             Dictionary<string, object> d = new Dictionary<string, object>();
             d.Add("id", id);

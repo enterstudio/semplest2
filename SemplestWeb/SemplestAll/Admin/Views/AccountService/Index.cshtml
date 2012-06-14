@@ -96,6 +96,10 @@ Account Service
                                 <fieldset style="width: 500px">
                                     <legend>Account Actions</legend>
                                     <div style="margin: 10px">
+                                    @if (Model.AccountServiceModel.isActive)
+                                    {@Html.ActionLink("Disable", "", "", new { @class = "disableuser" }) }
+                                    else
+                                    { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
                                         @Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })
                                         @Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber })
                                         <a href="#">Impresonate</a> <a href="#">Issue Refund</a>
@@ -110,7 +114,8 @@ Account Service
                                 <fieldset style="margin-left: 20px">
                                     <legend>Live Advertising</legend>
                                     <div style="margin: 10px">
-                                        @Html.ActionLink("Disable", null, null, new { @class = "disableuser" }) @Html.ActionLink("Enable", null, null, new { @class = "enableuser" }) <a href="#">Pause</a>
+                                        @Html.ActionLink("Restart", null, null, new { @class = "disableuser" }) 
+                                        @Html.ActionLink("Pause", null, null, new { @class = "pauseuser" })
                                     </div>
                                 </fieldset>
                             </td>
@@ -135,7 +140,7 @@ Account Service
                     <input type="button" id="btnOkDisableUser" value="OK" class="k-button" />
                     <input type="button" id="btnCancelDisableUser" value="Cancel" class="k-button" />
                 </div>
-                <input type="hidden" id="id" name="id" value="75" />
+                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
                 </form>
             </div>
 
@@ -149,9 +154,26 @@ Account Service
                     <input type="button" id="btnOkEnableUser" value="OK" class="k-button" />
                     <input type="button" id="btnCancelEnableUser" value="Cancel" class="k-button" />
                 </div>
-                <input type="hidden" id="id" name="id" value="75" />
+                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
                 </form>
             </div>
+
+
+
+
+            <div id="PausePromotionsWindow" style="display:none">
+                <form name="hiddenPausePromotions" id="hiddenPausePromotions" action="../PausePromotions" method="post">
+                <div class="questionPause">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkPausePromotions" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelPausePromotions" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+                </form>
+            </div>
+
+
 
 <script type="text/javascript">    $(".disableuser").click(function (event) {
         $('#userId').val(event.target.id);
@@ -168,6 +190,7 @@ Account Service
     });
     $("#btnOkDisableUser").click(function (event) {
         $("#hiddenDisabled").submit();
+        event.preventDefault();
     });
 
     $("#btnCancelDisableUser").click(function (event) {
@@ -175,9 +198,6 @@ Account Service
         $('#DisableUserWindow').hide();
         endPromotionWindow.close();
     });
-
-
-
     $(".enableuser").click(function (event) {
         $('#id').val(event.target.id);
         $('.questionR').html("<br/>Are you sure you want to enable this account?<br/><br/>");
@@ -193,7 +213,9 @@ Account Service
     });
 
     $("#btnOkEnableUser").click(function (event) {
+    
         $("#hiddenEnable").submit();
+        event.preventDefault();
     });
 
     $("#btnCancelEnableUser").click(function (event) {
@@ -201,4 +223,29 @@ Account Service
         $('#EnableUserWindow').hide();
         resumePromotionWindow.close();
     });
-</script>​
+
+
+    $(".pauseuser").click(function (event) {
+        $('.questionPause').html("<br/>You are about to pause @Model.AccountServiceModel.PromotionCount.ToString() promotions are you sure?<br/><br/>");
+        var endPromotionWindow = $('#PausePromotionsWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Pause Promotions"
+        }).data("kendoWindow");
+        $('#PausePromotionsWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkPausePromotions").click(function (event) {
+        $("#hiddenPausePromotions").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelPausePromotions").click(function (event) {
+        var endPromotionWindow = $('#PausePromotionsWindow').data("kendoWindow");
+        $('#PausePromotionsWindow').hide();
+        endPromotionWindow.close();
+    });
+
+</script>​
