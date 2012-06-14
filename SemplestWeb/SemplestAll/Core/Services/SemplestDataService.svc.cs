@@ -557,7 +557,7 @@ namespace Semplest.Core.Services
 
         private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
         {
-            IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK);
+            IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
             List<KeywordProbabilityObject> kpos = new List<KeywordProbabilityObject>();
             KeywordProbabilityObject kpo;
             foreach (PromotionKeywordAssociation pka in qry)
