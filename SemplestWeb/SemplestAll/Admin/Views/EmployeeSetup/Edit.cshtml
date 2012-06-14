@@ -45,6 +45,8 @@ Edit Employee:
 </style>
 @using (Html.BeginForm("Edit"))
 {
+    @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
+
     <div id="productGroupModel">
         <div class="configuration">
             <ul class="options">
