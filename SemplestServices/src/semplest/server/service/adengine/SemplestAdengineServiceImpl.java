@@ -40,10 +40,12 @@ import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.GoogleUpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
+import semplest.server.service.springjdbc.storedproc.GetAdEngineAccountSP;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.GetKeywordForAdEngineSP;
 import semplest.server.service.springjdbc.storedproc.GetSiteLinksForPromotionSP;
@@ -60,7 +62,6 @@ import semplest.util.SemplestUtils;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
 import com.google.api.adwords.v201109.cm.BudgetBudgetPeriod;
 import com.google.api.adwords.v201109.cm.Campaign;
-import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
@@ -210,9 +211,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				throw new Exception(advertisingEngine + " Not Found");
 			}
-			final List<Map<String, Object>> AdEngineAccoutRow = SemplestDB.getAdEngineAccount(customerID, advertisingEngine);
-			companyName = (String) AdEngineAccoutRow.get(0).get("CustomerName");
-			if (AdEngineAccoutRow.get(0).get("AccountID") == null)
+			GetAdEngineAccountSP getAdEngineAccount = new  GetAdEngineAccountSP();
+			AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
+			companyName = AdEngineAccoutRow.getCustomerName();
+			if (AdEngineAccoutRow.getAccountID() == null)
 			{
 				
 				accountID = createAdEngineAccount(advertisingEngine, companyName);
@@ -221,7 +223,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else
 			{
-				accountID = (Long) AdEngineAccoutRow.get(0).get("AccountID");
+				accountID = AdEngineAccoutRow.getAccountID();
 				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			final AdvertisingEnginePromotionObj promotionDataList = SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);

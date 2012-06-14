@@ -24,6 +24,7 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.keyword.KeywordMatchingType;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -41,6 +42,9 @@ import semplest.server.protocol.google.GoogleUpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.PromotionObj;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
+import semplest.server.service.springjdbc.storedproc.UpdateAdEngineAPIChargeSP;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.util.SemplestUtils;
 
@@ -210,9 +214,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 15)), new Date());
+			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(60);
+			PromotionObj promoObj = getPromoDataSP.getPromotionData();
+			Long cumulativeUnitsUsedFromStart = test.getSpentAPIUnitsPerAccountID(promoObj.getAdvertisingEngineAccountPK(), promoObj.getPromotionStartDate(), new Date());
+			if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
+			{
+				UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
+				Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), ProtocolEnum.AdEngine.Google.name(), cumulativeUnitsUsedFromStart);
+				logger.info("Added additional API Cost of " + newCost + " to Google Account " + promoObj.getAdvertisingEngineAccountPK());
+			}
+			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 15)), new Date());
 			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(), new Date());
-			System.out.println("Spend: " + spend);
+			//System.out.println("Spend: " + spend);
 			
 			/*Long accountID = 2387614989L;
 			GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();

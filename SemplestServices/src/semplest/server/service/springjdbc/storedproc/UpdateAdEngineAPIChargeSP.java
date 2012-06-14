@@ -18,7 +18,7 @@ public class UpdateAdEngineAPIChargeSP  extends StoredProcedure
 	{
 		super(BaseDB.jdbcTemplate.getDataSource(), SPROC_NAME);
 		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.BIGINT));
-		declareParameter(new SqlParameter("AdvertisingEngine", Types.TIMESTAMP));
+		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("CumulativeAPIUnits", Types.BIGINT));
 		declareParameter(new SqlOutParameter("cost", Types.DOUBLE));
 		compile();

@@ -832,6 +832,7 @@ public class SemplestDB extends BaseDB
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
+	/*
 	public static List<Map<String, Object>> getAdEngineAccount(int customerID, String adEngine) throws Exception
 	{
 		String strSQL = "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
@@ -853,6 +854,7 @@ public class SemplestDB extends BaseDB
 		}
 
 	}
+	*/
 
 	public static Integer addAdEngineAccountID(int customerID, Long accountID, String adEngine) throws Exception
 	{

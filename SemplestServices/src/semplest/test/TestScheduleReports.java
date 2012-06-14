@@ -2,7 +2,6 @@ package semplest.test;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -10,7 +9,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
-import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.AdEngineAccountObj;
+import semplest.server.service.springjdbc.storedproc.GetAdEngineAccountSP;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 
 
@@ -28,7 +28,8 @@ public class TestScheduleReports
 			BasicConfigurator.configure();
 
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			List ll= SemplestDB.getAdEngineAccount(2, "Google");
+			GetAdEngineAccountSP getAdEngineAccount = new  GetAdEngineAccountSP();
+			 AdEngineAccountObj ll= getAdEngineAccount.execute(2, "Google");
 			//Test Scheduler
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			

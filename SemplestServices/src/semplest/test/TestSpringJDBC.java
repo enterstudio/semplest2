@@ -7,7 +7,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.adengine.AdEngineID;
+import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.GetAdEngineAccountSP;
 
 
 public class TestSpringJDBC
@@ -28,6 +30,9 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			GetAdEngineAccountSP sp = new  GetAdEngineAccountSP();
+			AdEngineAccountObj r = sp.execute(12, "MSN"); 
+			
 			
 			AdEngineID a = SemplestDB.getAdEngineID(62, "Google");
 			a.getAccountID();
