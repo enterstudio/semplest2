@@ -11,7 +11,21 @@ import org.junit.Test;
 
 public class TestSemplestUtils
 {
-
+	@Test
+	public void testGetRandomAllowedChars()
+	{
+		Assert.assertEquals(4, SemplestUtils.getRandomAllowedChars(4, SemplestUtils.ALLOWED_CHARS).length());
+	}
+	
+	@Test
+	public void testGetStringOfSpecifiedLength()
+	{
+		Assert.assertEquals("abcdefg", SemplestUtils.getStringOfSpecifiedLength("abcdefg", 3, 10));
+		Assert.assertEquals("abcdefg", SemplestUtils.getStringOfSpecifiedLength("abcdefg", 7, 7));
+		Assert.assertEquals(8, SemplestUtils.getStringOfSpecifiedLength("abcdefg", 8, 10).length());
+		Assert.assertEquals("abcd", SemplestUtils.getStringOfSpecifiedLength("abcdefg", 2, 4));
+	}
+	
 	@Test
 	public void testGetEasilyReadableString_ListNull()
 	{
@@ -69,5 +83,29 @@ public class TestSemplestUtils
 		final String expectedResult = "1: First Key -> First Value" + SemplestUtils.LINE_SEPARATOR + "2: Second Key -> Second Value";
 		Assert.assertEquals(expectedResult, actualResult);
 	}
+	
+	@Test
+	public void testStripNonAlphaNumericChars_Empty()
+	{
+		Assert.assertEquals("", SemplestUtils.sanitizeString(""));
+	}
 
+	@Test
+	public void testStripNonAlphaNumericChars_Null()
+	{
+		Assert.assertEquals("", SemplestUtils.sanitizeString(null));
+	}
+	
+	@Test
+	public void testStripNonAlphaNumericChars_Spaces()
+	{
+		Assert.assertEquals("", SemplestUtils.sanitizeString("    "));
+	}
+	
+	@Test
+	public void testStripNonAlphaNumericChars()
+	{
+		Assert.assertEquals("-Q12--q-w-YU----a-B-C---DEf-------g----h-y--IU----", SemplestUtils.sanitizeString("  *Q12^ q_w-YU~`)(a*B&C ^%DEf$#@!<>?g,./'h;y:|IU]}[{  "));
+	}
+	
 }

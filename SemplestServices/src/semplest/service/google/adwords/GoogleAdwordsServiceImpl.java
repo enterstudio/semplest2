@@ -1341,7 +1341,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (operations.isEmpty())
 			{
 				logger.warn("Nothing to delete");
-				return true;
+				return false;
 			}
 			final CampaignCriterionOperation[] negativeKeywordOperations = operations.toArray(new CampaignCriterionOperation[operations.size()]);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
@@ -2139,7 +2139,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Campaign campaign = new Campaign();
-			campaign.setName(campaignName);
+			final String campaignNameLegalLength = SemplestUtils.getLegalUserName(campaignName);			
+			campaign.setName(campaignNameLegalLength);
 			if (campaignStatus == null)
 			{
 				campaignStatus = CampaignStatus.PAUSED;

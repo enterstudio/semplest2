@@ -180,7 +180,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
 			throws Exception
 	{		
 		/*
@@ -215,16 +215,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
 			companyName = AdEngineAccoutRow.getCustomerName();
 			if (AdEngineAccoutRow.getAccountID() == null)
-			{
-				
+			{				
 				accountID = createAdEngineAccount(advertisingEngine, companyName);
 				SemplestDB.addAdEngineAccountID(customerID, accountID, advertisingEngine);
-				logger.debug("Created Account for " + companyName + ":" + String.valueOf(accountID));
+				logger.info("Created Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			else
 			{
 				accountID = AdEngineAccoutRow.getAccountID();
-				logger.debug("Found Account for " + companyName + ":" + String.valueOf(accountID));
+				logger.info("Found Account for " + companyName + ":" + String.valueOf(accountID));
 			}
 			final AdvertisingEnginePromotionObj promotionDataList = SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);
 			if (promotionDataList != null)
@@ -257,6 +256,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				scheduleOngoingBidding(scheduleName, PromotionID, adEngineList, startTime);
 			}
 		}
+		return true;
 	}
 	
 	private String getTimeoutMS()
@@ -347,7 +347,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	
 
 	@Override
-	public void DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	public Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
 			throws Exception
 	{
 		logger.info("Will try to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
@@ -388,6 +388,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
+		return true;
 	}
 	
 	public String DeleteKeywords(String json) throws Exception
@@ -417,7 +418,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
@@ -449,6 +450,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
+		return true;
 	}
 
 	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine, List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
@@ -706,7 +708,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else
 		{
-			throw new Exception(adEngine + " Not found to create account");
+			throw new Exception("AdEngine [" + adEngine + "] not setup to create accounts (at least not yet)");
 		}
 
 	}
@@ -850,7 +852,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void UpdateGeoTargeting(Integer promotionID, List<String> adEngines) throws Exception
+	public Boolean UpdateGeoTargeting(Integer promotionID, List<String> adEngines) throws Exception
 	{
 		logger.info("call UpdateGeoTargeting(" + promotionID + ", " + adEngines + ")");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
@@ -882,6 +884,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}	
+		return true;
 	}
 	
 	public String UnpausePromotion(String json) throws Exception
@@ -895,11 +898,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception
+	public Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
 		final List<Integer> promotionIds = new ArrayList<Integer>();
 		promotionIds.add(promotionID);
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.ACTIVE);
+		return true;
 	}
 	
 	public String schedulePausePromotion(String json) throws Exception
@@ -949,11 +953,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
+	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception
 	{
 		final List<Integer> promotionIds = new ArrayList<Integer>();
 		promotionIds.add(promotionID);
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
+		return true;
 	}
 	
 	public String PauseProductGroups(String json) throws Exception
@@ -968,7 +973,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 		
 	@Override
-	public void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
+	public Boolean PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Pause ProductGroups for ProductGroupIDs [" + productGroupIds + "] for AdEngines [" + adEngines+ "])");
 		final List<Integer> promotionIds = new ArrayList<Integer>();
@@ -979,6 +984,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}		
 		logger.info("From the ProductGroupIDs [" + productGroupIds + "] found the associated PromotionIDs for which the Campaigns we'll need to Pause:\n" + SemplestUtils.getEasilyReadableString(promotionIds));	
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
+		return true;
 	}
 		
 	public void ChangePromotionsStatus(List<Integer> promotionIds, List<String> adEngines, SemplestCampaignStatus newStatus) throws Exception
@@ -1133,7 +1139,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
 			throws Exception
 	{
 		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
@@ -1191,6 +1197,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}	
+		return true;
 	}
 	
 	public String scheduleAddKeywords(String json) throws Exception
@@ -1296,7 +1303,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
@@ -1342,7 +1349,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String errMsg = "Summary of errors:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
-		}			
+		}
+		return true;
 	}
 	
 	public String AddAds(String json) throws Exception
@@ -1421,7 +1429,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 	
 	@Override
-	public void AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Add Ads for PromotionID [" + promotionID + "], " + promotionAdIds.size() + " PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1480,7 +1488,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String errMsg = "Summary of errors:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
-		}				
+		}
+		return true;
 	}
 	
 	public String scheduleDeleteAds(String json) throws Exception
@@ -1553,7 +1562,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1619,7 +1628,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String errMsg = "Summary of errors when trying to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
-		}		
+		}	
+		return true;
 	}
 	
 	public String RefreshSiteLinks(String json) throws Exception
@@ -1633,7 +1643,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception
+	public Boolean RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1675,6 +1685,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}	
+		return true;
 	}
 	
 	public String scheduleUpdateAds(String json) throws Exception
@@ -1744,7 +1755,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Update Ad for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1817,6 +1828,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}		
+		return true;
 	}
 	
 	public String UpdateBudget(String json) throws Exception
@@ -1831,7 +1843,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudget + "] for AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1878,6 +1890,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
+		return true;
 	}
 	
 	public String scheduleChangePromotionStartDate(String json) throws Exception
@@ -1930,7 +1943,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public void ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
+	public Boolean ChangePromotionStartDate(Integer promotionID, Date newStartDate, List<String> adEngines) throws Exception
 	{
 		logger.info("Will try to change StartDate for PromotionID [" + promotionID + "] to  [" + newStartDate + "] for AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
@@ -1966,6 +1979,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
+		return true;
 	}
 	
 	public List<GoogleSiteLink> getGoogleSiteLinks(final List<SiteLink> siteLinks) 

@@ -41,7 +41,7 @@ public class MsnCloudException extends Exception {
 		super(string);
 	}
 	
-	public MsnCloudException(String string, NumberFormatException e) {
+	public MsnCloudException(String string, Exception e) {
 		super(string, e);
 	}
 	

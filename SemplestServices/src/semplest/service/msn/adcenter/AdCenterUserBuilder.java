@@ -1,5 +1,7 @@
 package semplest.service.msn.adcenter;
 
+import semplest.util.SemplestUtils;
+
 import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
 import com.microsoft.adcenter.api.customermanagement.Entities.ContactInfo;
 import com.microsoft.adcenter.api.customermanagement.Entities.LCID;
@@ -23,7 +25,8 @@ public class AdCenterUserBuilder {
 	private ApplicationType customerAppScope;
 	
 	AdCenterUserBuilder(String userName, String password, String firstName, String lastName, String middleInitial, String jobTitle, LCID languageLCID, String secretAnswer, SecretQuestion secretQuestion, ContactInfo contactInfo, Long userId, Long customerId, ApplicationType customerAppScope) {
-		this._userName = userName;
+		final String legalLengthUserName = SemplestUtils.getLegalUserName(userName);
+		this._userName = legalLengthUserName;
 		this._password = password;
 		this._firstName = firstName;
 		this._lastName = lastName;
@@ -91,7 +94,7 @@ public class AdCenterUserBuilder {
 	}
 	
 	public User build() {
-		User user = new User();
+		User user = new User();	
 		user.setUserName(_userName);
 		user.setPassword(_password);
 		user.setName(new PersonName(_firstName, _lastName, _middleInitial));

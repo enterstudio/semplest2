@@ -22,7 +22,7 @@ import com.google.gson.reflect.TypeToken;
 public class SemplestBiddingServiceClient extends ServiceRun implements SemplestBiddingInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
 	private static String DEFAULTBIDTIMEOUT = "3600000";
 	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();

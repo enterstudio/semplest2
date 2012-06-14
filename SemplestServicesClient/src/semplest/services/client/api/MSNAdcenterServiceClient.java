@@ -1,7 +1,5 @@
 package semplest.services.client.api;
 
-import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +9,6 @@ import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.joda.time.DateTime;
 
-import semplest.other.KeywordEstimate;
-import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
@@ -26,11 +22,9 @@ import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 
 import com.google.gson.Gson;
-import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
-import com.microsoft.adcenter.v8.ApiFaultDetail;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
@@ -1323,21 +1317,6 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		return ret;
 	}
 
-	@Override
-	public KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public KeywordEstimate[] getKeywordEstimateByBids(Long accountId, String[] keywords, double[] broadMatchBids, double[] exactMatchBids,
-			double[] phraseMatchBids) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
 	@Override
 	public void initializeService(String input) throws Exception
 	{

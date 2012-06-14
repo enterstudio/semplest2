@@ -49,6 +49,8 @@ import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
+import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.api.adwords.lib.AuthToken;
@@ -77,9 +79,9 @@ import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
 
-public class MsnCloudServiceImpl implements semplest.services.client.interfaces.MsnAdcenterServiceInterface //MsnCloudService
+public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnCloudService
 {
-	private static final Logger LOG = Logger.getLogger(MsnCloudServiceImpl.class);
+	private static final Logger log = Logger.getLogger(MsnCloudServiceImpl.class);
 
 	/**
 	 * Public methods in this class should throw only 2 kinds of exceptions:
@@ -92,15 +94,13 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 
 	private final static long NO_CUSTOMER_ID = Long.MIN_VALUE;
 
-	public static final int DEFAULT_TIMEOUT = 80000; // 80 seconds. See
-														// setTimeout :P
+	public static final int DEFAULT_TIMEOUT = 80000; 
 	private NameServiceUniqueMsn uniqueMsnNameService = new NameServiceUniqueMsnPsuedoRandom();
 	private AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
 	private int timeoutMillis = DEFAULT_TIMEOUT;
 	private TimeServer timeServer = new TimeServerImpl();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
-	//private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
 	
 	private static String separator = "#";
@@ -235,16 +235,15 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 	public MsnManagementIds createAccount(SemplestString name) throws MsnCloudException
 	{
 		Customer customer = aNew().adCenterCustomer().withCustomerName(name.getSemplestString()).build();
-		User user = aNew().adCenterUser().withUserName(name.getSemplestString()).build();
+		final String legalLengthName = SemplestUtils.getLegalUserName(name.getSemplestString());
+		User user = aNew().adCenterUser().withUserName(legalLengthName).build();
 		Account account = aNew().adCenterAccount().withAccountName(name.getSemplestString()).build();
-
 		try
 		{
-			ICustomerManagementService customerManagementService = getCustomerManagementService();
-			SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(new SignupCustomerRequest(customer, user,
-					account, adCenterCredentials.getParentCustomerID(), ApplicationType.Advertiser));
-			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),
-					(long) signupCustomerResponse.getUserId());
+			final ICustomerManagementService customerManagementService = getCustomerManagementService();
+			final SignupCustomerRequest request = new SignupCustomerRequest(customer, user, account, adCenterCredentials.getParentCustomerID(), ApplicationType.Advertiser);
+			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);
+			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),(long) signupCustomerResponse.getUserId());
 		}
 		catch (AdApiFaultDetail e)
 		{
@@ -252,11 +251,12 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		}
 		catch (ApiFault e)
 		{
+			logger.info("Problem creating account in MSN", e);
 			throw new MsnCloudException(e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating MSN account for Name [" + name + "]", e);
 		}
 	}
 	
@@ -2315,9 +2315,9 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			}
 			endMonthAndYear.setMonth(endMonth);
 			endMonthAndYear.setYear(endYear);
-			LOG.info("Start month and year: " +
+			log.info("Start month and year: " +
 					    startMonth.getMonth() + "-" + startMonth.getYear());
-			LOG.info("End month and year: " + endMonth + "-" + endYear);
+			log.info("End month and year: " + endMonth + "-" + endYear);
 			
 			// set the fields in the search request
 			req.setKeywords(keywords);
@@ -2327,14 +2327,14 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			req.setEndMonthAndYear(endMonthAndYear);
 			
 			// pass the request and get a response
-			LOG.info("Passing request for search counts.");
+			log.info("Passing request for search counts.");
 			GetHistoricalSearchCountResponse res =
 				aiSvc.getHistoricalSearchCount(req);
 			KeywordSearchCount[] searchCounts = res.getKeywordSearchCounts();
-			LOG.info("Received search count from MSN.");
+			log.info("Received search count from MSN.");
 			
 			if(searchCounts==null){
-				LOG.info("Received null search count array from MSN");
+				log.info("Received null search count array from MSN");
 			}
 			
 			// now get the data we need for each keyword
@@ -2408,7 +2408,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			req.setMaxSuggestionsPerKeyword(maxRecs);
 			
 			// pass the request and get a response
-			LOG.info("Passing request for keyword suggestions");
+			log.info("Passing request for keyword suggestions");
 			SuggestKeywordsFromExistingKeywordsResponse res =
 				aiSvc.suggestKeywordsFromExistingKeywords(req);
 			KeywordSuggestion[] kwRecs = res.getKeywordSuggestions();
@@ -2424,7 +2424,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 					continue;
 				}
 	            int nSuggestions = kwAndConfs.length;
-	            LOG.info("Got " + nSuggestions + " suggestions for " + keyword);
+	            log.info("Got " + nSuggestions + " suggestions for " + keyword);
 	            if (nSuggestions == 0) {
 	            	continue;
 	            }
@@ -2951,7 +2951,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			s.append(String.format("\tErrorCode: %s\n", fault.getErrors()[i].getErrorCode()));
 			s.append(String.format("\tCode: %s\n", fault.getErrors()[i].getCode()));
 		}
-		LOG.error(s.toString());
+		log.error(s.toString());
 	}
 
 	private void printApiFaultDetail(ApiFaultDetail fault)
@@ -2979,7 +2979,7 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 			s.append(String.format("\tErrorCode: %s\n", fault.getBatchErrors()[i].getErrorCode()));
 			s.append(String.format("\tCode: %s\n", fault.getBatchErrors()[i].getCode()));
 		}
-		LOG.error(s.toString());
+		log.error(s.toString());
 	}
 
 	// ==================================
@@ -3097,22 +3097,6 @@ public class MsnCloudServiceImpl implements semplest.services.client.interfaces.
 		{
 			throw new RuntimeException(e);
 		}
-	}
-
-	@Override
-	public KeywordEstimate getKeywordEstimateByBid(Long accountId, String keyword, double broadMatchBid, double exactMatchBid, double phraseMatchBid)
-			throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public KeywordEstimate[] getKeywordEstimateByBids(Long accountId, String[] keywords, double[] broadMatchBids, double[] exactMatchBids,
-			double[] phraseMatchBids) throws Exception
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override

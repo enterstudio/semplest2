@@ -223,7 +223,6 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_ExecuteBidProcess = 62;
 		final ArrayList<String> adEngines_ExecuteBidProcess = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
 		client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
-*/		
 		
 		// scheduleUnpausePromotion
 		final Integer customerID_scheduleDeleteNegativeKeywords = 12;
@@ -231,13 +230,27 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<Integer> keywordIds_scheduleDeleteNegativeKeywords = Arrays.asList(12241, 12242);
 		final List<String> adEngines_scheduleDeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		client.scheduleDeleteNegativeKeywords(customerID_scheduleDeleteNegativeKeywords, promotionID_scheduleDeleteNegativeKeywords, keywordIds_scheduleDeleteNegativeKeywords, adEngines_scheduleDeleteNegativeKeywords);
-/*
+
 		// UnpausePromotion
 		final Integer promotionID_DeleteNegativeKeywords = 62;
 		final List<String> adEngines_DeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		final List<Integer> keywordIds_DeleteNegativeKeywords = Arrays.asList(12241, 12242);
 		client.DeleteNegativeKeywords(promotionID_DeleteNegativeKeywords, keywordIds_DeleteNegativeKeywords, adEngines_DeleteNegativeKeywords);
-	*/
+
+		// scheduleAddPromotionToAdEngine - MSN
+		final Integer customerID_scheduleAddPromotionToAdEngineMSN = 12;
+		final Integer productGroupID_scheduleAddPromotionToAdEngineMSN = 76;
+		final Integer promotionID_scheduleAddPromotionToAdEngineMSN = 62;
+		final ArrayList<String> adEngines_scheduleAddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.MSN.name()}));
+		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngineMSN, productGroupID_scheduleAddPromotionToAdEngineMSN, promotionID_scheduleAddPromotionToAdEngineMSN, adEngines_scheduleAddPromotionToAdEngineMSN);
+*/	
+		// AddPromotionToAdEngine - MSN
+		final Integer customerID_AddPromotionToAdEngineMSN = 12;
+		final Integer productGroupID_AddPromotionToAdEngineMSN = 76;
+		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
+		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
+		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
+
 	}
 	
 	@Override
@@ -267,7 +280,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
 	{
 		final String methodName = "DeleteNegativeKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -278,11 +291,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -313,7 +331,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
 			throws Exception
 	{
 		final String methodName = "AddNegativeKeywords";
@@ -325,11 +343,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -360,7 +383,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
 	{
 		final String methodName = "AddKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -371,11 +394,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -406,7 +434,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
 		final String methodName = "AddAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -417,11 +445,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -452,7 +485,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
 	{
 		final String methodName = "DeleteAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -463,11 +496,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -498,7 +536,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception 
+	public Boolean UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
@@ -509,11 +547,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -542,7 +585,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception 
+	public Boolean UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateGeoTargeting";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -551,11 +594,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -586,7 +634,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception 
+	public Boolean ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "ChangePromotionStartDate";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -597,11 +645,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -631,7 +684,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception 
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateBudget";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();	
@@ -641,11 +694,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 		
@@ -674,7 +732,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void PausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "PausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -683,11 +741,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -716,7 +779,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "UnpausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -725,11 +788,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines",adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -760,7 +828,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public void DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception 
+	public Boolean DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "DeleteKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -771,11 +839,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 		
@@ -804,7 +877,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception 
 	{
 		final String methodName = "RefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -813,11 +886,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -846,7 +924,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
+	public Boolean PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
 	{
 		final String methodName = "PauseProductGroups";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
@@ -856,11 +934,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
@@ -890,7 +973,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public void AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception
 	{
 		final String methodName = "AddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -901,11 +984,16 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("adEngineList",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
-		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		final Boolean processedSuccessully = gson.fromJson(returnData, Boolean.class);
-		if (!processedSuccessully)
+		try
 		{
-			throw new Exception(methodName + " failed");
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final Boolean result = gson.fromJson(returnData, Boolean.class);
+			return result;
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem performing " + methodName, e);
+			return false;
 		}
 	}
 	
