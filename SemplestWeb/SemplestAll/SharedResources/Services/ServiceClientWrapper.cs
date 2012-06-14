@@ -170,6 +170,55 @@ namespace Semplest.SharedResources.Services
             }
         }
 
+        public bool schedulePromotion(string customerId, string promoId, string[] adds, bool shouldResume)
+        {
+            string returnData = string.Empty;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("customerID", customerId);
+                jsonHash.Add("promotionID", promoId);
+                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+                jsonHash.Add("adEngines", jsonAdds);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+                returnData = string.Empty;
+                try
+                {
+                    if (shouldResume)
+                        returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "scheduleUnpausePromotion", jsonstr, "0");
+                    else
+                        returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "schedulePausePromotion", jsonstr, "0");
+                }
+                catch (Exception ex)
+                {
+                    string errmsg = ex.Message;
+                    throw;
+                }
+                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                if (jsonstrlist == "Service Timeout")
+                {
+
+                    throw new Exception("Service Timeout for schedulePausePromotion");
+                }
+                Console.WriteLine(jsonstrlist);
+                Console.ReadLine();
+            }
+            catch
+            {
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
+            }
+            return false;
+        }
+
+
         public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
         {
             var jsonHash = new Dictionary<string, string>();
