@@ -476,8 +476,23 @@ namespace Semplest.Admin.Controllers
             res.Importresult = importstatus;
             return RedirectToAction("CustomerImportResult", "AccountService",   res );
         }
-      
 
+        public ActionResult DisableUser(int userId)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Users.Where(key => key.UserPK== userId).First().IsActive = false;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult EnableUser(FormCollection fc)
+        {
+            int userId = 1;
+            SemplestEntities dbContext = new SemplestEntities();
+            dbContext.Users.Where(key => key.UserPK == userId).First().IsActive = true;
+            dbContext.SaveChanges();
+            return RedirectToAction("Index");
+        }
 
         [IgnoreFirst(1)] 
         [DelimitedRecord(",")]
