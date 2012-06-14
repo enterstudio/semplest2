@@ -546,6 +546,8 @@ namespace Semplest.Core.Services
 
         private static bool IsDeletedKeyword(string keyword, List<string> negativeKeywords)
         {
+            if (negativeKeywords == null)
+                return false;
             string k = keyword.ToUpper();
             return (negativeKeywords.Where(key => k.Contains(key.ToUpper())).Count() > 0 ||
                     negativeKeywords.Where(key => k.Contains(key.ToUpper() + " ")).Count() > 0 ||
