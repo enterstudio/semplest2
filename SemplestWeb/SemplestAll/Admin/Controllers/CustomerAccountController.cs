@@ -1271,7 +1271,7 @@ namespace Semplest.Admin.Controllers
             x.CustomerAccount = viewModel.Single(c => c.AccountNumber == id);
 
 
-            return View(x);
+            return PartialView(x);
             //return RedirectToAction("Index");
         }
 
