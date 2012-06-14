@@ -78,6 +78,11 @@ namespace Semplest.Core.Controllers
 
             //var ds = new SemplestDataService();
             var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
+
+            // for ads
+            var i = 1;
+            campaignSetupModel.AdModelProp.Ads.ForEach(t => t.SerailNo = i++);
+
             if(campaignSetupModel.AdModelProp.Addresses.Count == 0)
                 campaignSetupModel.AdModelProp.Addresses.Add(new GeoTargeting());
             // set sitelinks in session
@@ -437,9 +442,10 @@ namespace Semplest.Core.Controllers
             SemplestDataService.SetKeywordsDeleted(model.KeywordIds, promoId);
             CampaignSetupModel sessionModel = (CampaignSetupModel)Session["CampaignSetupModel"];
             sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
+            model.BillingLaunch.KeywordsCount = sessionModel.AllKeywords.Count();
             Session["CampaignSetupModel"] = sessionModel;
-            model = sessionModel;
-            return Json("Keywords");
+            //model = sessionModel;
+            return Json(new { count = model.BillingLaunch.KeywordsCount, name = "Keywords" });
         }
 
         public ActionResult BillingLaunch(CampaignSetupModel model)
