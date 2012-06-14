@@ -10,6 +10,7 @@ namespace Semplest.SharedResources.Services
 {
     public class ServiceClientWrapper
     {
+        private static string ADENGINESERVICE = "semplest.server.service.adengine.SemplestAdengineService";
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
         private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
         private static String _baseURLTest = "http://VMJAVA1:9898/semplest";
@@ -186,9 +187,9 @@ namespace Semplest.SharedResources.Services
                 try
                 {
                     if (shouldResume)
-                        returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "scheduleUnpausePromotion", jsonstr, "0");
+                        returnData = runMethod(_baseURLTest, ADENGINESERVICE, "scheduleUnpausePromotion", jsonstr, timeoutMS);
                     else
-                        returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "schedulePausePromotion", jsonstr, "0");
+                        returnData = runMethod(_baseURLTest, ADENGINESERVICE, "schedulePausePromotion", jsonstr, timeoutMS);
                 }
                 catch (Exception ex)
                 {
@@ -205,8 +206,6 @@ namespace Semplest.SharedResources.Services
 
                     throw new Exception("Service Timeout for schedulePausePromotion");
                 }
-                Console.WriteLine(jsonstrlist);
-                Console.ReadLine();
             }
             catch
             {
