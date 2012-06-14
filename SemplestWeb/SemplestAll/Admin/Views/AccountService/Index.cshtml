@@ -110,7 +110,7 @@ Account Service
                                 <fieldset style="margin-left: 20px">
                                     <legend>Live Advertising</legend>
                                     <div style="margin: 10px">
-                                        <a href="#">Disable</a> <a href="#">Enable</a> <a href="#">Pause</a>
+                                        @Html.ActionLink("Disable", null, null, new { @class = "disableuser" }) @Html.ActionLink("Enable", null, null, new { @class = "enableuser" }) <a href="#">Pause</a>
                                     </div>
                                 </fieldset>
                             </td>
@@ -126,4 +126,79 @@ Account Service
         </div>
     </div>
 }
-​
+
+<div id="DisableUserWindow" style="display:none">
+                <form name="hiddenDisabledName" id="hiddenDisabled" action="../DisableUser" method="post">
+                <div class="questionE">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkDisableUser" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelDisableUser" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="id" name="id" value="75" />
+                </form>
+            </div>
+
+        
+    
+              <div id="EnableUserWindow" style="display:none">
+                <form name="hiddenEnableName" id="hiddenEnable" action="../EnableUser" method="post">
+                <div class="questionR">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkEnableUser" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelEnableUser" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="id" name="id" value="75" />
+                </form>
+            </div>
+
+<script type="text/javascript">    $(".disableuser").click(function (event) {
+        $('#userId').val(event.target.id);
+        $('.questionE').html("<br/>Are you sure you want to disable this account?<br/><br/>");
+        var endPromotionWindow = $('#DisableUserWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Disable User"
+        }).data("kendoWindow");
+        $('#DisableUserWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkDisableUser").click(function (event) {
+        $("#hiddenDisabled").submit();
+    });
+
+    $("#btnCancelDisableUser").click(function (event) {
+        var endPromotionWindow = $('#DisableUserWindow').data("kendoWindow");
+        $('#DisableUserWindow').hide();
+        endPromotionWindow.close();
+    });
+
+
+
+    $(".enableuser").click(function (event) {
+        $('#id').val(event.target.id);
+        $('.questionR').html("<br/>Are you sure you want to enable this account?<br/><br/>");
+        var resumePromotionWindow = $('#EnableUserWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Enable Account"
+        }).data("kendoWindow");
+        $('#EnableUserWindow').show();
+        resumePromotionWindow.center();
+        resumePromotionWindow.open();
+        event.preventDefault();
+    });
+
+    $("#btnOkEnableUser").click(function (event) {
+        $("#hiddenEnable").submit();
+    });
+
+    $("#btnCancelEnableUser").click(function (event) {
+        var resumePromotionWindow = $('#EnableUserWindow').data("kendoWindow");
+        $('#EnableUserWindow').hide();
+        resumePromotionWindow.close();
+    });
+</script>​

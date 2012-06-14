@@ -476,22 +476,25 @@ namespace Semplest.Admin.Controllers
             res.Importresult = importstatus;
             return RedirectToAction("CustomerImportResult", "AccountService",   res );
         }
-
-        public ActionResult DisableUser(int userId)
+        [HttpPost]
+        public ActionResult DisableUser(int id)
         {
             SemplestEntities dbContext = new SemplestEntities();
-            dbContext.Users.Where(key => key.UserPK== userId).First().IsActive = false;
+            dbContext.Users.Where(key => key.UserPK== id).First().IsActive = false;
             dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            Dictionary<string, object> d = new Dictionary<string, object>();
+            d.Add("id", id);
+            return RedirectToAction("Index", new System.Web.Routing.RouteValueDictionary(d));
         }
-
-        public ActionResult EnableUser(FormCollection fc)
+        [HttpPost]
+        public ActionResult EnableUser(int id)
         {
-            int userId = 1;
             SemplestEntities dbContext = new SemplestEntities();
-            dbContext.Users.Where(key => key.UserPK == userId).First().IsActive = true;
+            dbContext.Users.Where(key => key.UserPK == id).First().IsActive = true;
             dbContext.SaveChanges();
-            return RedirectToAction("Index");
+            Dictionary<string, object> d = new Dictionary<string, object>();
+            d.Add("id", id);
+            return RedirectToAction("Index", new System.Web.Routing.RouteValueDictionary(d));
         }
 
         [IgnoreFirst(1)] 
