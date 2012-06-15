@@ -116,10 +116,13 @@ namespace Semplest.Admin.Controllers
                    selectedBillTypeid = c.BillTypeFK,
                    internalID=c.InternalCustomerId,
                    PercentMedia = c.PercentOfMedia,
-                    ServiceFee = c.ServiceFee 
+                    ServiceFee = c.ServiceFee ,
+                     CreditLimit=c.CreditLimit,
+                     PromotionFeeAmount=c.PromotionFeeAmount ,
+                     PromotionFeeOverride = c.PromotionFeeOverride 
                };
 
-            //viewmodel2 might not be needed
+            
             var viewModel2 =
                 from e in dbcontext.Employees
                 join eca in dbcontext.EmployeeCustomerAssociations on e.EmployeePK equals eca.EmployeeFK
@@ -436,33 +439,28 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Edit(CustomerAccountWithEmployeeModel m, string command)
         {
-            if (command.ToLower() == "cancel") return RedirectToAction("Index");
-            //if (command.ToLower() == "delete") return  RedirectToAction("delete");
-            if (command.ToLower() == "delete") return RedirectToAction("Delete", new {id=m.CustomerAccount.AccountNumber});
-
-
-            //for delete
-            //<li> @Html.RouteLink("Delete Customer", new { Controller = "CustomerAccount", action = "Delete", id = Model.CustomerAccount.AccountNumber  }) </li>
-
             //for cancel just redirect to main page
+            if (command.ToLower() == "cancel") return RedirectToAction("Index");
+            
+            if (command.ToLower() == "delete") return RedirectToAction("Delete", new {id=m.CustomerAccount.AccountNumber});
 
             SemplestEntities dbcontext = new SemplestEntities();
 
             
-
-
             //check if userid has been taken by other users
 
                   var userIDSs = from c in dbcontext.Credentials
                         where c.Username.Equals(m.CustomerAccount.UserID) && !c.UsersFK.Equals(m.CustomerAccount.UserPK)
                         select c;
+
                   if (userIDSs.Count() > 0)
                       ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
 
 
-
             if (!ModelState.IsValid)
             {
+                #region needs to repopulate lists to get the same view again
+
                 //repopulate 
 
                 /////////////////////////////////////////////////////////////////////////////////
@@ -595,6 +593,7 @@ namespace Semplest.Admin.Controllers
                     Text = r.BillType1.ToString()
                 });
 
+                #endregion
                 return View(m);
             }
 
@@ -624,6 +623,11 @@ namespace Semplest.Admin.Controllers
             customer.PercentOfMedia = m.CustomerAccount.PercentMedia;
             customer.InternalCustomerId = m.CustomerAccount.internalID;
             customer.ServiceFee = m.CustomerAccount.ServiceFee;
+            customer.PromotionFeeAmount = m.CustomerAccount.PromotionFeeAmount;
+            customer.PromotionFeeOverride = m.CustomerAccount.PromotionFeeOverride;
+            customer.CreditLimit = m.CustomerAccount.CreditLimit;
+
+
 
             address.Address1 = m.CustomerAccount.Address1;
             address.Address2 = m.CustomerAccount.Address2;
@@ -934,17 +938,17 @@ namespace Semplest.Admin.Controllers
 
             //check if userid has been taken by other users
 
-                  var userIDSs = from c in dbcontext.Credentials
+            var userIDSs = from c in dbcontext.Credentials
                         where c.Username.Equals(m.CustomerAccount.UserID) 
                         select c;
-                  if (userIDSs.Count() > 0)
+            if (userIDSs.Count() > 0)
                       ModelState.AddModelError("CustomerAccount.UserID", "This UserID is already taken!!");
 
-
+               
                   if (!ModelState.IsValid)
                   {
                       //repopulate 
-
+                   #region needs to repopulate lists to get the same view again
 
                       var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
 
@@ -1009,8 +1013,8 @@ namespace Semplest.Admin.Controllers
                       sli.Add(new SelectListItem { Value = (0).ToString(), Text = "«« Single User   »»" });
 
                       //x.SelectedParentID = -1;
-                     
-                      m.Parents = allparents.Select(r => new SelectListItem
+
+                      m.Parents = allparents.ToList().Select(r => new SelectListItem
                       {
                           Value = r.CustomerPK.ToString(),
                           Text = r.Name.ToString()
@@ -1071,10 +1075,11 @@ namespace Semplest.Admin.Controllers
                           sl2.Add(mylistitem);
                       }
                       m.SalesPersons = sl2.Union(slina);
-                      return View(m);
+                      return View(m);     
+   #endregion
                   }
 
-
+             
 
             try
             {
@@ -1086,14 +1091,18 @@ namespace Semplest.Admin.Controllers
                 ProductGroupCycleType pgct = dbcontext.ProductGroupCycleTypes.First(p => p.ProductGroupCycleType1 == "Product Group Cycle 30");
 
                 var c = new Customer
-                            {
+                            { 
                                 Name = m.CustomerAccount.Customer,
                                 BillTypeFK = m.SelectedBillTypeID,
                                 ProductGroupCycleType = pgct,
                                  PercentOfMedia=m.CustomerAccount.PercentMedia,
                                  ServiceFee= m.CustomerAccount.ServiceFee,
-                                  InternalCustomerId= m.CustomerAccount.internalID 
+                                  InternalCustomerId= m.CustomerAccount.internalID,
+                                PromotionFeeAmount = m.CustomerAccount.PromotionFeeAmount,
+                                CreditLimit=m.CustomerAccount.CreditLimit,
+                                PromotionFeeOverride=m.CustomerAccount.PromotionFeeOverride 
                             };
+
                 dbcontext.Customers.AddObject(c);
 
                 var u = new User
@@ -1114,7 +1123,7 @@ namespace Semplest.Admin.Controllers
 
                 //
                 var cr = new Credential
-                             {
+                             { 
                                  User = u,
                                  UsersFK = u.UserPK,
                                  Username = m.CustomerAccount.UserID,
@@ -1183,36 +1192,95 @@ namespace Semplest.Admin.Controllers
                 dbcontext.SaveChanges();
 
                 /////////////////////////////////////////////////////////////////////////////
-                /////
+                ///// sending of emails
 
                 if (fc["sendcustomeremail"] != null)
                 {
 
-                    var emailtemplate = (from et in dbcontext.EmailTemplates
-                                         where et.EmailTemplatePK.Equals(13)
-                                         select et).FirstOrDefault();
+                    string from, to, body, subject;
 
-                    var parentdetails = from usr in dbcontext.Users
-                                        join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
-                                        where usr.CustomerFK == m.SelectedParentID
-                                        select new { usr.CustomerFK, usr.Email, cus.Name };
+                    //send email to child customers
+                    //if  child customer
+                    if (m.SelectedParentID >0)
+                    {
+                        var emailtemplate = (from et in dbcontext.EmailTemplates
+                                             where et.EmailTemplatePK.Equals(13)
+                                             select et).FirstOrDefault();
 
-                    //send mail //revisit
-                    string from = parentdetails.FirstOrDefault().Email;
-                    string to = u.Email;
-                    string body = emailtemplate.EmailBody;
-                    string subject = emailtemplate.EmailSubject;
-                    body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
-                    body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
-                    body = body.Replace("[FAQs]", "http://faq");
-                    body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
-                    body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
-                    body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        var parentdetails = from usr in dbcontext.Users
+                                            join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
+                                            where usr.CustomerFK == m.SelectedParentID
+                                            select new { usr.CustomerFK, usr.Email, cus.Name };
 
+                        //send mail //revisit
+                        from = "accounts@semplest.com";
+                        to = u.Email;
+                        body = emailtemplate.EmailBody;
+                        subject = emailtemplate.EmailSubject;
+                        body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
+                        body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
+                        body = body.Replace("[FAQs]", "http://faq");
+                        body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
+                        body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
+                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        bool sent = false;
+                        ServiceClientWrapper scw = new ServiceClientWrapper();
+                        sent = scw.SendEmail(subject, from, to, body);
+                    }
+
+
+                    if (m.SelectedParentID == -1) ///set parent
+                    {
+
+                        var emailtemplate = (from et in dbcontext.EmailTemplates
+                                             where et.EmailTemplatePK.Equals(14)
+                                             select et).FirstOrDefault();
+
+                        
+                        //send mail //revisit
+                        from = "accounts@semplest.com";
+                        to = u.Email;
+                        body = emailtemplate.EmailBody;
+                        subject = emailtemplate.EmailSubject;
+                        
+
+                        
+                        body = body.Replace("[ParentCustomerName]", c.Name.FirstOrDefault().ToString());
+                        body = body.Replace("[ParentCustomerUserID]", cr.Username.ToString());
+                        body = body.Replace("[ParentCustomerPassword]", cr.Password.ToString());
+                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        body = body.Replace("[DefaultEmailContactUS]", dbcontext.Configurations.First().DefaultEmailContactUs.ToString());
+                        bool sent = false;
+                        ServiceClientWrapper scw = new ServiceClientWrapper();
+                        sent = scw.SendEmail(subject, from, to, body);
+                    }
+
+
+
+                    
+                    if (m.SelectedParentID ==0) // non child parent customer - self
+                    {
+
+                        var emailtemplate = (from et in dbcontext.EmailTemplates
+                                             where et.EmailTemplatePK.Equals(25)
+                                             select et).FirstOrDefault();
+
+
+                        //send mail //revisit
+                        from = "accounts@semplest.com";
+                        to = u.Email;
+                        body = emailtemplate.EmailBody;
+                        subject = emailtemplate.EmailSubject;
+                        body = body.Replace("[NonParentCustomer]", u.FirstName.ToString() + " " + u.LastName.ToString());
+                        body = body.Replace("[NonParentCustomerUserID]", cr.Username.ToString());
+                        body = body.Replace("[NonParentCustomerPassword]", cr.Password.ToString());
+                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        bool sent = false;
+                        ServiceClientWrapper scw = new ServiceClientWrapper();
+                        sent = scw.SendEmail(subject, from, to, body);
+                    }
                     //SendEmail
-                    bool sent = false;
-                    ServiceClientWrapper scw = new ServiceClientWrapper();
-                    sent = scw.SendEmail(subject, from, to, body);
+
 
                 }
 
