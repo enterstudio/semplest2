@@ -148,7 +148,7 @@ public class vsUtils {
     HashMap<String,Integer> cc = cCombine( wcs, rv );
     long end = System.currentTimeMillis();
 
-    // print the top 10 words (by count) and the time it took to combine 
+    // print the top 50 words (by count) and the time it took to combine 
     pWc(ngramFile, cc, 50 );
     System.out.println( "Combining " +wcs.size()+ " cats took " +(end-start)+ "ms");
   }
