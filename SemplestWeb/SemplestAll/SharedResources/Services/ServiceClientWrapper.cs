@@ -232,6 +232,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("adEngineList", jsonAdds);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
+
                 returnData = string.Empty;
                 try
                 {
@@ -264,6 +265,71 @@ namespace Semplest.SharedResources.Services
 
         }
 
+        
+
+        //
+        //GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY) throws Exception;
+
+
+        public bool CreateProfile(CustomerObject customerObject, string creditCardNumber, string ExpireDateMMYY)
+        {
+            string returnData = string.Empty;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                
+                jsonHash.Add("creditCardNumber", creditCardNumber);
+                jsonHash.Add("ExpireDateMMYY", ExpireDateMMYY);
+                
+                //jsonHash.Add("customerObject", customerObject);
+                
+                string jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.Indented);
+                jsonHash.Add("customerObject", jsonAdds);
+
+
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+                returnData = string.Empty;
+                try
+                {
+                    returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "CreateProfile", jsonstr, "0");
+               }
+                catch (Exception ex)
+                {
+                    string errmsg = ex.Message;
+                    throw;
+                }
+                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                if (jsonstrlist == "Service Timeout")
+                {
+
+                    throw new Exception("Service Timeout for schedulePausePromotion");
+                }
+                Console.WriteLine(jsonstrlist);
+                Console.ReadLine();
+            }
+            catch
+            {
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
+            }
+            return false;
+        }
+
+
+
+        //
+        //
+
+
+
+
         public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
         {
             var jsonHash = new Dictionary<string, string>();
@@ -271,7 +337,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("from", from);
             jsonHash.Add("recipient", recipient);
             jsonHash.Add("msgTxt", msgTxt);
-            jsonHash.Add("msgType", "text/html"); //"text/plain
+            jsonHash.Add("msgType", "text/html; charset=utf-8;"); //"text/plain
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
             string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
@@ -381,4 +447,18 @@ namespace Semplest.SharedResources.Services
         public bool isDeleted { get; set; }
     }
 
+
+
+    public class CustomerObject
+    {
+        public String FirstName { get;set; }
+        public String LastName { get; set; }
+        public String Address1 { get; set; }
+        public String Address2 { get; set; }
+        public String City { get; set; }
+        public String StateAbbr { get; set; }
+        public String ZipCode { get; set; }
+        public String Email { get; set; }
+        public String Phone { get; set; }
+    }
 }
