@@ -23,12 +23,13 @@ public class vsUtils {
 
   private static final int UNIT = 1000;    // The unit-vector length
 
-  // - static interface -----------------------------------------------------------
+  // - static interface -------------------------------------------------------
+  // length of the vector (L2 norm)
+  public static Integer cLen( HashMap<String,Integer> wc){
+    return (int) Math.round( Math.sqrt( sSquares( wc ) ) ); }
   // normalize vector to UNIT length (L2 norm) 
   public static Double cNorm( HashMap<String,Integer> wc){
     return ( UNIT * 1.0 / Math.max( Math.sqrt( sSquares( wc ) ), 1.0 ));}
-  public static Integer cLen( HashMap<String,Integer> wc){
-    return (int) Math.round( Math.sqrt( sSquares( wc ) ) ); }
   public static HashMap<String,Integer> cNormalize( HashMap<String,Integer>  wc){
     HashMap<String,Integer> omap = new HashMap<String,Integer>();
     Double w = cNorm( wc );
