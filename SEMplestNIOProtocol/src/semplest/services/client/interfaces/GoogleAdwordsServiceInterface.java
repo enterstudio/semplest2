@@ -18,7 +18,7 @@ import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 
 import com.google.api.adwords.v201109.cm.AdGroupAd;
@@ -53,7 +53,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	Map<GoogleAddAdRequest, Long> addTextAds(GoogleAddAdsRequest request) throws Exception;
 	GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
 	List<Long> deleteAds(String accountID, Long adGroupID, List<Long> adIds) throws Exception;
-	Map<GoogleUpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception;
+	Map<UpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception;
 	Boolean deleteAdGroup(String accountID, Long adGroupID) throws Exception;
 	
 	Boolean refreshSiteLinks(GoogleRefreshSiteLinksRequest request) throws Exception;	

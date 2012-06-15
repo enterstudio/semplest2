@@ -1,6 +1,6 @@
 package semplest.server.protocol.google;
 
-public class GoogleUpdateAdRequest
+public class UpdateAdRequest
 {
 	private final Long adId;
 	private final String newHeadline;
@@ -10,7 +10,7 @@ public class GoogleUpdateAdRequest
 	private final String newUrl;
 	private final Integer promotionAdID;
 	
-	public GoogleUpdateAdRequest(Long adId, String newHeadline, String newDescription1, String newDescription2, String newDisplayURL, String newUrl, Integer promotionAdID)
+	public UpdateAdRequest(Long adId, String newHeadline, String newDescription1, String newDescription2, String newDisplayURL, String newUrl, Integer promotionAdID)
 	{
 		this.adId = adId;
 		this.newHeadline = newHeadline;
@@ -80,7 +80,7 @@ public class GoogleUpdateAdRequest
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GoogleUpdateAdRequest other = (GoogleUpdateAdRequest) obj;
+		UpdateAdRequest other = (UpdateAdRequest) obj;
 		if (adId == null)
 		{
 			if (other.adId != null)

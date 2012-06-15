@@ -153,4 +153,15 @@ public final class SemplestUtils
 		return sb.toString();
 	}
 	
+	public static String IsNullReturnBlank(String s)
+	{
+		if (s == null)
+		{
+			return "";
+		}
+		else
+		{
+			return s;
+		}
+	}
 }

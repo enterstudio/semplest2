@@ -32,7 +32,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
-import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
@@ -914,13 +914,13 @@ public class SemplestDB extends BaseDB
 		return deletedAdIdRowCountMap;
 	}
 	
-	public static Map<Entry<GoogleUpdateAdRequest, Long>, Integer> getOldNewAdIdRowCountMap(final List<Entry<GoogleUpdateAdRequest, Long>> updateRequestToNewAdIdList, int[] rowCounts)
+	public static Map<Entry<UpdateAdRequest, Long>, Integer> getOldNewAdIdRowCountMap(final List<Entry<UpdateAdRequest, Long>> updateRequestToNewAdIdList, int[] rowCounts)
 	{
-		final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> idPairMap = new HashMap<Entry<GoogleUpdateAdRequest, Long>, Integer>();
+		final Map<Entry<UpdateAdRequest, Long>, Integer> idPairMap = new HashMap<Entry<UpdateAdRequest, Long>, Integer>();
 		for (int i = 0; i < rowCounts.length; ++i)
 		{
 			final int rowCount = rowCounts[i];
-			final Entry<GoogleUpdateAdRequest, Long> updateRequestNewIdPair = updateRequestToNewAdIdList.get(i);
+			final Entry<UpdateAdRequest, Long> updateRequestNewIdPair = updateRequestToNewAdIdList.get(i);
 			idPairMap.put(updateRequestNewIdPair, rowCount);
 		}
 		return idPairMap;
@@ -958,17 +958,17 @@ public class SemplestDB extends BaseDB
 		return getIdPairRowCountMap(idPairs, rowCounts);
 	}
 	
-	public static Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<GoogleUpdateAdRequest, Long> oldToNewAdIdMap, final String advertisingEngine) throws Exception
+	public static Map<Entry<UpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<UpdateAdRequest, Long> oldToNewAdIdMap, final String advertisingEngine) throws Exception
 	{
-		final Set<Entry<GoogleUpdateAdRequest, Long>> entries = oldToNewAdIdMap.entrySet();
-		final List<Entry<GoogleUpdateAdRequest, Long>> entryList = new ArrayList<Entry<GoogleUpdateAdRequest, Long>>(entries);
+		final Set<Entry<UpdateAdRequest, Long>> entries = oldToNewAdIdMap.entrySet();
+		final List<Entry<UpdateAdRequest, Long>> entryList = new ArrayList<Entry<UpdateAdRequest, Long>>(entries);
 		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_UPDATE_AD_ENGINE_AD_ID,
  											             new BatchPreparedStatementSetter() 
 														 {
 											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
 											              	{
-											              		final Entry<GoogleUpdateAdRequest, Long> entry = entryList.get(i);
-											              		final GoogleUpdateAdRequest updateRequest = entry.getKey();											              		
+											              		final Entry<UpdateAdRequest, Long> entry = entryList.get(i);
+											              		final UpdateAdRequest updateRequest = entry.getKey();											              		
 											              		final Long newAdID = entry.getValue();	
 											              		final Integer promotionAdId = updateRequest.getPromotionAdID();
 											              		final Long oldAdID = updateRequest.getAdId();

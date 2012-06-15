@@ -21,7 +21,6 @@ import java.util.zip.ZipInputStream;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
-import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.AdPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.HistoricalSearchCount;
@@ -35,8 +34,6 @@ import org.joda.time.DateTime;
 
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
-import semplest.other.KeywordEstimate;
-import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.TimeServer;
@@ -45,6 +42,8 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.google.UpdateAdRequest;
+import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
@@ -53,18 +52,14 @@ import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.google.api.adwords.lib.AuthToken;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
-import com.microsoft.adcenter.api.customermanagement.CustomerManagementService;
 import com.microsoft.adcenter.api.customermanagement.CustomerManagementServiceLocator;
 import com.microsoft.adcenter.api.customermanagement.GetAccountRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountResponse;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoResponse;
-import com.microsoft.adcenter.api.customermanagement.GetCustomerRequest;
-import com.microsoft.adcenter.api.customermanagement.GetCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.GetCustomersInfoRequest;
 import com.microsoft.adcenter.api.customermanagement.GetCustomersInfoResponse;
 import com.microsoft.adcenter.api.customermanagement.ICustomerManagementService;
@@ -1258,6 +1253,23 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		return gson.toJson(0);
 	}
 
+	public Map<UpdateAdRequest, Long> updateAllAdById(GoogleUpdateAdsRequest request) throws ApiFaultDetail, AdApiFaultDetail, RemoteException
+	{
+		Long accountID = Long.valueOf(request.getAccountID());
+		Long adGroupID = request.getAdGroupID();
+		List<UpdateAdRequest>  adList = request.getUpdateRequests();
+		
+		//result
+		Map<UpdateAdRequest, Long> requestToNewAdIdMap = new HashMap<UpdateAdRequest, Long>();
+		//go through ads and call update
+		for (UpdateAdRequest ad : adList)
+		{
+			String adText = SemplestUtils.IsNullReturnBlank(ad.getNewDescription1()) + " " + SemplestUtils.IsNullReturnBlank(ad.getNewDescription2());
+			updateAdById(accountID, adGroupID, ad.getAdId(), ad.getNewHeadline(), adText.trim() , ad.getNewDisplayURL(),ad.getNewUrl());
+			requestToNewAdIdMap.put(ad, ad.getAdId());
+		}
+		return requestToNewAdIdMap;
+	}
 	@Override
 	public void updateAdById(Long accountId, Long adGroupId, long adId, String title, String text, String displayUrl, String destinationUrl)
 			throws RemoteException, ApiFaultDetail, AdApiFaultDetail

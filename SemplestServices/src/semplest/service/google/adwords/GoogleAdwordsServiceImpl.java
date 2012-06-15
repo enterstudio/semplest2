@@ -38,7 +38,7 @@ import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
-import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
@@ -1159,14 +1159,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final String requestString = data.get("request");
 		final GoogleUpdateAdsRequest request = gson.fromJson(requestString, GoogleUpdateAdsRequest.class);
-		final Map<GoogleUpdateAdRequest, Long> response = updateAds(request);
+		final Map<UpdateAdRequest, Long> response = updateAds(request);
 		return gson.toJson(response);
 	}
 	
-	public static List<AdGroupAdOperation> getAddAdGroupAdOperations(final Long adGroupID, final List<GoogleUpdateAdRequest> updateRequests)
+	public static List<AdGroupAdOperation> getAddAdGroupAdOperations(final Long adGroupID, final List<UpdateAdRequest> updateRequests)
 	{
 		final List<AdGroupAdOperation> operations = new ArrayList<AdGroupAdOperation>();
-		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		for (final UpdateAdRequest updateRequest : updateRequests)
 		{
 			final String newHeadline = updateRequest.getNewHeadline();
 			final String newDescription1 = updateRequest.getNewDescription1();
@@ -1179,10 +1179,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operations;
 	}
 	
-	public List<Long> getAdIds(final List<GoogleUpdateAdRequest> updateRequests)
+	public List<Long> getAdIds(final List<UpdateAdRequest> updateRequests)
 	{
 		final List<Long> adIds = new ArrayList<Long>();
-		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		for (final UpdateAdRequest updateRequest : updateRequests)
 		{
 			final Long adId = updateRequest.getAdId();
 			adIds.add(adId);
@@ -1190,14 +1190,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return adIds;
 	}
 	
-	public GoogleUpdateAdRequest findMatchingRequest(final List<GoogleUpdateAdRequest> updateRequests, final TextAd textAd)
+	public UpdateAdRequest findMatchingRequest(final List<UpdateAdRequest> updateRequests, final TextAd textAd)
 	{
 		final String adDescription1 = textAd.getDescription1();
 		final String adDescription2 = textAd.getDescription2();
 		final String adHeadline = textAd.getHeadline();
 		//final String displayUrl = textAd.getDisplayUrl();
 		final String url = textAd.getUrl();
-		for (final GoogleUpdateAdRequest updateRequest : updateRequests)
+		for (final UpdateAdRequest updateRequest : updateRequests)
 		{
 			final String requestedNewDescription1 = updateRequest.getNewDescription1();
 			final String requestedNewDescription2 = updateRequest.getNewDescription2();
@@ -1220,13 +1220,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	 * Only status of an ad can be updated.  So in order to accommodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
 	 */
 	@Override
-	public Map<GoogleUpdateAdRequest, Long> updateAds(final GoogleUpdateAdsRequest request) throws Exception
+	public Map<UpdateAdRequest, Long> updateAds(final GoogleUpdateAdsRequest request) throws Exception
 	{			
 		try
 		{
-			final List<GoogleUpdateAdRequest> updateRequests = request.getUpdateRequests();
+			final List<UpdateAdRequest> updateRequests = request.getUpdateRequests();
 			logger.info("Will try to update ads in Goole Adwords for request [" + request + "] which contains " + updateRequests.size() + " update requests");
-			final Map<GoogleUpdateAdRequest, Long> requestToNewAdIdMap = new HashMap<GoogleUpdateAdRequest, Long>();
+			final Map<UpdateAdRequest, Long> requestToNewAdIdMap = new HashMap<UpdateAdRequest, Long>();
 			final String accountID = request.getAccountID();
 			final Long adGroupID = request.getAdGroupID();
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -1250,7 +1250,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					{
 						final Long newAdID = returnedAd.getId();
 						final TextAd textAd = (TextAd)returnedAd;
-						final GoogleUpdateAdRequest matchingRequest = findMatchingRequest(updateRequests, textAd);
+						final UpdateAdRequest matchingRequest = findMatchingRequest(updateRequests, textAd);
 						if (matchingRequest == null)
 						{							
 							logger.warn("Could not find matching request for Google Text Ad [" + (textAd == null ? "null" : SemplestUtils.getTextAdString(textAd) + ", status=[" + returnedAdStatus + "]"));

@@ -21,7 +21,7 @@ import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
-import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
@@ -671,7 +671,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Map<GoogleUpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception
+	public Map<UpdateAdRequest, Long> updateAds(GoogleUpdateAdsRequest request) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

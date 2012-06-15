@@ -37,7 +37,7 @@ import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
-import semplest.server.protocol.google.GoogleUpdateAdRequest;
+import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.GoogleUpdateAdsRequest;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
@@ -56,6 +56,7 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
+import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 import semplest.util.SemplestUtils;
 
@@ -1380,16 +1381,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return idPairs;
 	}
 	
-	public Map<Entry<GoogleUpdateAdRequest, Long>, Integer> getUpdateRequestNewIdToRowCountMapWithBadRows(final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap)
+	public Map<Entry<UpdateAdRequest, Long>, Integer> getUpdateRequestNewIdToRowCountMapWithBadRows(final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap)
 	{
-		final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRows = new HashMap<Entry<GoogleUpdateAdRequest, Long>, Integer>();
-		final Set<Entry<Entry<GoogleUpdateAdRequest, Long>, Integer>> entrySet = updateRequestNewIdToRowCountMap.entrySet();
-		for (final Entry<Entry<GoogleUpdateAdRequest, Long>, Integer> entry : entrySet)
+		final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRows = new HashMap<Entry<UpdateAdRequest, Long>, Integer>();
+		final Set<Entry<Entry<UpdateAdRequest, Long>, Integer>> entrySet = updateRequestNewIdToRowCountMap.entrySet();
+		for (final Entry<Entry<UpdateAdRequest, Long>, Integer> entry : entrySet)
 		{
 			final Integer rowCount = entry.getValue();
 			if (rowCount != 1)
 			{
-				final Entry<GoogleUpdateAdRequest, Long> updateRequestToNewIdMapping = entry.getKey();
+				final Entry<UpdateAdRequest, Long> updateRequestToNewIdMapping = entry.getKey();
 				updateRequestNewIdToRowCountMapWithBadRows.put(updateRequestToNewIdMapping, rowCount);
 			}
 		}
@@ -1738,9 +1739,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return gson.toJson(true);
 	}	
 	
-	public static List<GoogleUpdateAdRequest> getUpdateRequests(final String newDisplayUrl, final String newUrl, final List<AdsObject> ads)	
+	public static List<UpdateAdRequest> getUpdateRequests(final String newDisplayUrl, final String newUrl, final List<AdsObject> ads)	
 	{
-		final List<GoogleUpdateAdRequest> updateRequests = new ArrayList<GoogleUpdateAdRequest>();
+		final List<UpdateAdRequest> updateRequests = new ArrayList<UpdateAdRequest>();
 		for (final AdsObject ad : ads)
 		{			
 			final Long adId = ad.getAdEngineAdID();
@@ -1748,7 +1749,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String newDescription1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
 			final String newDescription2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
 			final Integer promotionAdID = ad.getPromotionAdsPK();
-			final GoogleUpdateAdRequest updateRequest = new GoogleUpdateAdRequest(adId, newHeadline, newDescription1, newDescription2, newDisplayUrl, newUrl, promotionAdID);
+			final UpdateAdRequest updateRequest = new UpdateAdRequest(adId, newHeadline, newDescription1, newDescription2, newDisplayUrl, newUrl, promotionAdID);
 			updateRequests.add(updateRequest);
 		}
 		return updateRequests;
@@ -1787,24 +1788,49 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
 				{
 					final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-					final List<GoogleUpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
+					final List<UpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
 					final int numUpdateRequests = updateRequests.size();
 					logger.info("Will try to update " + numUpdateRequests + " Ads in Google");
 					final GoogleUpdateAdsRequest request = new GoogleUpdateAdsRequest(accountID, adGroupID, updateRequests);
-					final Map<GoogleUpdateAdRequest, Long> requestToNewAdIdMap = googleAdwordsService.updateAds(request);
+					final Map<UpdateAdRequest, Long> requestToNewAdIdMap = googleAdwordsService.updateAds(request);
 					final int numAdsUpdated = requestToNewAdIdMap.size();
 					logger.info("# of Ads updated: " + numAdsUpdated);
 					if (numUpdateRequests != numAdsUpdated)
 					{
 						logger.warn("# of ads we expected to update [" + numUpdateRequests + "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
 					}
-					final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);				
-					final Map<Entry<GoogleUpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);				
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
 					if (!updateRequestNewIdToRowCountMapWithBadRowCounts.isEmpty())
 					{						
 						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
 
+					
+				}
+				else if (AdEngine.MSN.name().equals(adEngine))
+				{
+					logger.info("Updating Ads on MSN for PromotionID = " + promotionID);
+					MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					final List<UpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
+					final int numUpdateRequests = updateRequests.size();
+					logger.info("Will try to update " + numUpdateRequests + " Ads inMSN");
+					//create object for all AdUpdates
+					final GoogleUpdateAdsRequest request = new GoogleUpdateAdsRequest(accountID, adGroupID, updateRequests);
+					
+					Map<UpdateAdRequest, Long> requestToNewAdIdMap = msn.updateAllAdById(request);
+					final int numAdsUpdated = requestToNewAdIdMap.size();
+					logger.info("# of Ads updated: " + numAdsUpdated);
+					if (numUpdateRequests != numAdsUpdated)
+					{
+						logger.warn("# of ads we expected to update [" + numUpdateRequests + "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
+					}
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);				
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
+					if (!updateRequestNewIdToRowCountMapWithBadRowCounts.isEmpty())
+					{						
+						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
+					}
 					
 				}
 				else

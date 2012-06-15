@@ -8,9 +8,9 @@ public class GoogleUpdateAdsRequest
 {
 	private final String accountID;
 	private final Long adGroupID;
-	private final List<GoogleUpdateAdRequest> updateRequests;
+	private final List<UpdateAdRequest> updateRequests;
 	
-	public GoogleUpdateAdsRequest(String accountID, Long adGroupID, List<GoogleUpdateAdRequest> updateRequests)
+	public GoogleUpdateAdsRequest(String accountID, Long adGroupID, List<UpdateAdRequest> updateRequests)
 	{
 		this.accountID = accountID;
 		this.adGroupID = adGroupID;
@@ -27,7 +27,7 @@ public class GoogleUpdateAdsRequest
 		return adGroupID;
 	}
 
-	public List<GoogleUpdateAdRequest> getUpdateRequests()
+	public List<UpdateAdRequest> getUpdateRequests()
 	{
 		return updateRequests;
 	}
