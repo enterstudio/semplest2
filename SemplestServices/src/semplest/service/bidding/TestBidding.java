@@ -1,13 +1,19 @@
 package semplest.service.bidding;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.bidding.estimation.EstimatorData;
 import semplest.server.protocol.ProtocolEnum;
@@ -17,7 +23,10 @@ import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -33,7 +42,7 @@ public class TestBidding {
 
 
 	//private static Gson gson = new Gson();
-	private static final Logger logger = Logger.getLogger(BidGeneratorObj.class);
+	private static final Logger logger = Logger.getLogger(TestBidding.class);
 
 
 
@@ -51,6 +60,21 @@ public class TestBidding {
 	private Long stepFirst;// = 100000L; 
 	private Long stepSecond;// = 600000L;
 	private Long stepRest;// = 800000L;
+
+
+	public void setGoogleAccountID(String googleAccountID) {
+		this.googleAccountID = googleAccountID;
+	}
+
+
+	public void setCampaignID(Long campaignID) {
+		this.campaignID = campaignID;
+	}
+
+
+	public void setAdGroupID(Long adGroupID) {
+		this.adGroupID = adGroupID;
+	}
 
 
 	private String googleAccountID = null;
@@ -166,46 +190,46 @@ public class TestBidding {
 
 
 	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
-
+		
 		/* ******************************************************************************************* */
 		// declarations
 		int k;
 		TrafficEstimatorObject o = null, o2 = null;
 
 		logger.info("setBidsInitial called for ad engine "+searchEngine);
-
+		
 		/* ******************************************************************************************* */
 		// 0. Check if Ad engine name is valid
 		if (!AdEngine.existsAdEngine(searchEngine)){
 			throw new Exception("Ad engine "+ searchEngine + " Not Found");
 		}
+		
+		
+//		/* ******************************************************************************************* */
+//		// 1. Database call: get campaign specific IDs	
+//		try{ 
+//			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
+//			if (searchEngine.equalsIgnoreCase(google)){
+//				googleAccountID = String.valueOf(adEngineInfo.getAccountID());
+//			} else if(searchEngine.equalsIgnoreCase(msn)){
+//				msnAccountID = adEngineInfo.getAccountID();
+//			} else {
+//				throw new Exception("Ad engine type "+searchEngine+" is not yet implemented!!");
+//			}
+//			campaignID = adEngineInfo.getCampaignID();
+//			adGroupID = adEngineInfo.getAdGroupID();
+//		} catch (Exception e) {
+//			//e.printStackTrace();
+//			logger.error("Failed to get AdEngineID from the database. "+e.getMessage());
+//			throw new Exception("Failed to get AdEngineID from the database. "+e.getMessage());
+//		}
+//		
+//		logger.info("Got campaign related IDs from the database" + " Google Account" + googleAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
 
-
-		/* ******************************************************************************************* */
-		// 1. Database call: get campaign specific IDs	
-		try{ 
-			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine); 
-			if (searchEngine.equalsIgnoreCase(google)){
-				googleAccountID = String.valueOf(adEngineInfo.getAccountID());
-			} else if(searchEngine.equalsIgnoreCase(msn)){
-				msnAccountID = adEngineInfo.getAccountID();
-			} else {
-				throw new Exception("Ad engine type "+searchEngine+" is not yet implemented!!");
-			}
-			campaignID = adEngineInfo.getCampaignID();
-			adGroupID = adEngineInfo.getAdGroupID();
-		} catch (Exception e) {
-			//e.printStackTrace();
-			logger.error("Failed to get AdEngineID from the database. "+e.getMessage());
-			throw new Exception("Failed to get AdEngineID from the database. "+e.getMessage());
-		}
-
-		logger.info("Got campaign related IDs from the database" + " Google Account" + googleAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
-
-
-
-
-
+		
+		
+		
+		
 		/* ******************************************************************************************* */
 		// 2. Database call: get remaining days and budget
 		// now get it as function argument
@@ -214,8 +238,8 @@ public class TestBidding {
 		Integer remDays = budgetData.getRemainingDays();
 		double targetDailyBudget = (remBudget/remDays)*7; // use weekly budget as target daily budget
 
-
-
+		
+		
 		/* ******************************************************************************************* */
 		// 3. [google] API call: get adgroup criterion for all keywords
 		if(searchEngine.equalsIgnoreCase(google)){
@@ -238,18 +262,18 @@ public class TestBidding {
 					}
 				} // try-catch
 			} // while(true)
-
+			
 			for(KeywordDataObject b: keywordDataObjs){
 				wordIDMap.put(b.getKeyword(),b.getBidID());
 			}
-
+			
 			logger.info("Got biddable adgroup criterion from Google.");
 		} // if(searchEngine.equalsIgnoreCase(google))
+		
 
-
-
-
-
+		
+		
+		
 		/* ******************************************************************************************* */
 		// 4. [google] Decide competitive, non-competitive and no-info
 		if(searchEngine.equalsIgnoreCase(google)){
@@ -262,6 +286,7 @@ public class TestBidding {
 					// logger.info((i+1)+": "+keywordDataObj.getKeyword()+": "+
 					//		keywordDataObj.getFirstPageCpc()*1e-6 + ": " + keywordDataObj.getQualityScore());
 					firstPageCPCMap.put(keywordDataObj.getKeyword(), new Long(keywordDataObj.getFirstPageCpc()));
+					//firstPageCPCMap.put(keywordDataObj.getKeyword(), new Long(1000000));
 					qualityScoreMap.put(keywordDataObj.getKeyword(), new Double(Math.pow(keywordDataObj.getQualityScore(),1)));
 					if(keywordDataObj.isIsEligibleForShowing()) {
 						compKeywords.add(keywordDataObj.getKeyword());
@@ -270,23 +295,24 @@ public class TestBidding {
 					} 
 				} // if(keywordDataObj.getFirstPageCpc()==null)
 			} // for(int i=0; i<keywordDataObjs.length; i++)
-
+			
 			logger.info("Decided competitive keywords");
 		} // if(searchEngine.equalsIgnoreCase(google))
-
-
-
+		
+		
+		
 		/* ******************************************************************************************* */
 		// 5. SE API call: get traffic estimator data
-
-		/* *************************************** */
+		
+                       /* *************************************** */
 		//    a. [google] only competitive keywords
 		//        i. some keywords are pushed back to non-competitive category if
 		//           information available is not useful
-
+		
 		if(searchEngine.equalsIgnoreCase(google)){
 			if (compKeywords.size()>0) {
 				try {
+					logger.info("Attenpting to get traffic estimator info.");
 					o = getTrafficEstimatorDataForGoogle();
 				} catch (Exception e) {
 					//e.printStackTrace();
@@ -298,306 +324,385 @@ public class TestBidding {
 				logger.info("No traffic estimator data to be fetched.");
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
-
-		/* *************************************** */
+		
+		                /* *************************************** */
 		//    b. [msn] for all keywords and compute firstPage CPC from the data
-
+		
 		if(searchEngine.equalsIgnoreCase(msn)){
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
-
-
-
-
-
-
-
-		/* ******************************************************************************************* */
-		// 6. [google] Compute bids for competitive keywords
-
-		// TODO: bidOptimizer to be added
-		// for the time being put all keywords to the category of keywords not selected by optimizer
-
-		// imp: consider the case that compKeywords is empty
-
-		for(String s : compKeywords){
-			notSelectedKeywords.add(s);
+		
+		
+		/*
+		
+		// begin temporary code to display traffic estimator data
+		TrafficEstimatorObject te = o;
+		
+		String [] keywords = te.getListOfKeywords();
+		HashSet<String> keywordSet = new HashSet<String>();
+		for(String s : keywords){
+			//System.out.println(s);
+			keywordSet.add(s);
 		}
-		compKeywords.clear();
-
-		// logger.info("Computed bids for competitive keywords.");
-		logger.info("No competitive keywords.");
-
-
-
-		/* ******************************************************************************************* */
-		// 7. [google] Compute bids for competitive keywords which optimizer didn't select
-		//    a. Bid $0.5 above firstPage CPC if below $3.00	
-		if (notSelectedKeywords.size()>0) {
-			for(String s : notSelectedKeywords){
-				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
-			}
-			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
-		}
-
-
-		/* ******************************************************************************************* */
-		// 8. Compute bits for all other keywords with firstPage CPC
-		if (nonCompKeywords.size()>0) {
-			for(String s : nonCompKeywords){
-				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
-			}
-			logger.info("Computed bids for rest of the keywords with first page cpc.");
-		}
-
-		/* ******************************************************************************************* */
-		// 9. For the rest of keywords without firstPage CPC leave out for bidding with default bid 
-
-		if(noInfoKeywords.size()>0) {
-			for(String s : noInfoKeywords){
-				wordBidMap.put(s,null); // bid using default bid
-			}
-			logger.info("Left the remaining keywords for default bidding");
-		}
-
-
-
-
-		/* ******************************************************************************************* */
-		// 10. Use traffic estimator to compute average CPC based on these bids and use that as default bid for the campaign
-		//    a. [google] use only competitive (both used and unused by optimizer) keywords
-		//    b. [msn] use all keywords
-
-
-		// defaultMicroBid = 1000000L;
-		Long totalDailyCost = 0L;
-		Float totalDailyClick = 0F;
-
-		if(searchEngine.equalsIgnoreCase(google)){
-			try{
-				o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
-						KeywordMatchType.EXACT,	wordBidMap);
-			} catch (Exception e) {
-				logger.error("Failed to get Google traffic estimator data. "+e.getMessage());
-				//e.printStackTrace();
-				throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage());
-			}
-			if (o2!=null) {
-				String[] words = o2.getListOfKeywords();
-				for (int i=0; i < words.length; i++)
-				{
-					HashMap<Long, TrafficEstimatorObject.BidData> points = o2.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
-					Iterator<Long> bidIT = points.keySet().iterator();
-					while(bidIT.hasNext())
-					{
-						Long abid= bidIT.next();
-						totalDailyClick += (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2;
-						totalDailyCost += (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/2;
-					}
-				}
-				if(totalDailyClick>0.01){
-					defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
-					defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
+	
+		HashMap<String, HashMap<String, HashMap<Long, BidData>>> bidDataMap = te.getBidDataMap();
+		
+		for(String s : keywordSet){
+			HashMap<String, HashMap<Long, BidData>> bidData = bidDataMap.get(s);
+			Set<String> matchTypeSet = bidData.keySet();
+			System.out.print(s+": ");
+			for (String mt : matchTypeSet){
+				System.out.print(mt+" ");
+				HashMap<Long, BidData> wordBidData = bidData.get(mt); 
+				Set<Long> bidSet = wordBidData.keySet();
+				for (Long bid : bidSet){
+					System.out.print(bid+":"+wordBidData.get(bid).getMaxAveCPC()+" ");
 				}
 			}
-
-		} // if(searchEngine.equalsIgnoreCase(google))
-
-		logger.info("Computed expected cpc and set default bid at "+defaultMicroBid);
-
-		/* ******************************************************************************************* */
-		// 11. [google] Database call: write adgroup criterion
-		if(keywordDataObjs!=null && keywordDataObjs.length>0) {
-			if(searchEngine.equalsIgnoreCase(google)){
-				try {
-					SemplestDB.storeKeywordDataObjects(promotionID, google,
-							new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
-				} catch (Exception e) {
-					logger.error("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
-					//e.printStackTrace();
-					throw new Exception("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
-				}
-			} // if(searchEngine.equalsIgnoreCase(google))
-
-			logger.info("Stored adgroup criterion data to database for Google");
+			System.out.println("");
 		}
+		
+		// end temporary code to display traffic estimator data
+		*/
+		
+		
+		/* ********* Serialization for development ********* */
+	
 
-
-		/* ******************************************************************************************* */
-		// 12. Database call: write traffic estimator data
-		if(searchEngine.equalsIgnoreCase(google)){
-			if(o!=null) {
-				try {
-					SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
-				} catch (Exception e) {
-					logger.error("Failed to write traffic estimator data "+e.getMessage());
-					//e.printStackTrace();
-					throw new Exception("Failed to write traffic estimator data "+e.getMessage());
-				}
-				logger.info("Stored traffic estimator data to database");
-			} else {
-				logger.info("No traffic estimator data to write to the database");
-			}
-		} // if(searchEngine.equalsIgnoreCase(google))
-
-		if(searchEngine.equalsIgnoreCase(msn)){
-			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase(msn))
-
-
-
-
-
-		/* ******************************************************************************************* */
-		// 13. Database call: write default bid for campaign
-		// remember to update the bids for the words with default bid with database
-
-
-		if(defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine)) {
-			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
-			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+		/*
+		
+		try	{
+					
+			
+			FileOutputStream fileOut;
+			ObjectOutputStream out;
+			
+			fileOut = new FileOutputStream("//fs3/Semplest/subhojit/TrafficEstimatorData/SummitHillsKWTool/BiddableCritarion.txt");
+			out =  new ObjectOutputStream(fileOut);
+			out.writeObject(keywordDataObjs);
+			out.close();
+			fileOut.close();
+			
+			fileOut = new FileOutputStream("//fs3/Semplest/subhojit/TrafficEstimatorData/SummitHillsKWTool/Traffic.txt");
+			out =  new ObjectOutputStream(fileOut);
+			out.writeObject(o);
+			out.close();
+			fileOut.close();
+			
+		} catch(IOException i) {
+			i.printStackTrace();
 		}
-
-		logger.info("Stroed default bid "+ defaultMicroBid +" to databse and requested for updating all bids for keywords with default bid.");
-
-
-
-
-		/* ******************************************************************************************* */
-		// 14. Database call: write bid, matchType, competition status
-		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
-
-		String competitiveType="";
-		String matchType = ProtocolEnum.SemplestMatchType.Exact.name(); 
-		Boolean isActive = true;
-		Boolean isNegative = false;
-
-		Iterator<String> keyIT = wordBidMap.keySet().iterator();
-		while(keyIT.hasNext())
-		{
-			String word = keyIT.next();
-			if (compKeywords.contains(word)){
-				competitiveType = ProtocolEnum.SemplestCompetitionType.Comp.name();
-			} else if (notSelectedKeywords.contains(word)){
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NotSelected.name();
-			} else if (nonCompKeywords.contains(word)){
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NonComp.name();
-			} else if(noInfoKeywords.contains(word)){
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo.name();
-			} else {
-				throw new Exception("Unknown competition type. Internal error in bidding service!");
-			}
-			bidsMatchType.add(new BidElement(word, wordIDMap.get(word), 
-					(wordBidMap.get(word)==null) ? defaultMicroBid : wordBidMap.get(word), 
-							matchType, competitiveType, wordBidMap.get(word)==null, isActive, isNegative)); 
-		}
-
-
-		try{
-			if (bidsMatchType.size()>0) {
-				SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
-				logger.info("Stroed bid data to the databse for "+bidsMatchType.size()+" keywords.");
-			} else {
-				logger.info("No bid data to write to the databse");
-			}
-		} catch (Exception e) {
-			logger.error("ERROR: Unable to store bid data to the database. "+e.getMessage());
-			//e.printStackTrace();
-			throw new Exception("Failed to store bid data to the database. "+e.getMessage());
-		}
-
-
-
-
-
-		/* ******************************************************************************************* */
-		// 15. Database call: write targeted daily budget etc
-		try{
-			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
-			logger.info("Stroed targeted daily budget data to the databse");
-		} catch (Exception e) {
-			logger.error("ERROR: Unable to store targeted daily budget data to the database. "+e.getMessage());
-			//e.printStackTrace();
-			throw new Exception("Failed to store targeted daily budget data to the database ."+e.getMessage());
-		}
-
-
-
-
-		/* ******************************************************************************************* */
-		// 16. SE API call: Update matchType, bid for keywords
-		if(searchEngine.equalsIgnoreCase(google)){
-			keyIT = wordBidMap.keySet().iterator();
-			while(keyIT.hasNext())
-			{
-				String word = keyIT.next();
-				k=0;
-				while(true) {
-					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
-					try {
-						clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
-						logger.info("Updated bid for keyword "+word+" via Google API with bid value "+wordBidMap.get(word));
-						break;
-					} catch (Exception e) {
-						if (k<=maxRetry) {
-							//e.printStackTrace();
-							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
-							k++;				
-						} else {
-							e.printStackTrace();
-							logger.error("Failed to update bids for keyword "+word+" "+e.getMessage());
-							throw new Exception("Failed to update bids for keyword "+word+" "+e.getMessage());
-						}
-					} // try-catch
-				} // while(true) 
-			}
-		} // if(searchEngine.equalsIgnoreCase(google))
-
-		if(searchEngine.equalsIgnoreCase(msn)){
-			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase(msn))
-
-		logger.info("Updated bids and match type for keywords via the search engine API.");
-
-
-
-
-
-		/* ******************************************************************************************* */
-		// 17. SE API call: Update default bid for campaign
-		if(searchEngine.equalsIgnoreCase(google)){
-			k=0;
-			while(true) {
-				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
-				try {
-					clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
-					break;
-				} catch (Exception e) {
-					if (k<=maxRetry) {
-						//e.printStackTrace();
-						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
-						k++;				
-					} else {
-						//e.printStackTrace();
-						logger.error("Failed to update default microBid via Google API. "+e.getMessage());
-						throw new Exception("Failed to update default microBid via Google API. "+e.getMessage());
-					}
-				} // try-catch
-			} // while(true) 
-		}
-		logger.info("Updated the default bid via search engine API.");
-
-
-
+		*/
+		
+		
+		
+		
+		
+		
+//		
+//		/* ******************************************************************************************* */
+//		// 6. [google] Compute bids for competitive keywords
+//		
+//		// TODO: bidOptimizer to be added
+//		// for the time being put all keywords to the category of keywords not selected by optimizer
+//		
+//		// imp: consider the case that compKeywords is empty
+//		
+//		for(String s : compKeywords){
+//			notSelectedKeywords.add(s);
+//		}
+//		compKeywords.clear();
+//		
+//		// logger.info("Computed bids for competitive keywords.");
+//		logger.info("No competitive keywords.");
+//		
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 7. [google] Compute bids for competitive keywords which optimizer didn't select
+//		//    a. Bid $0.5 above firstPage CPC if below $3.00	
+//		if (notSelectedKeywords.size()>0) {
+//			for(String s : notSelectedKeywords){
+//				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+//			}
+//			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
+//		}
+//				
+//		
+//		/* ******************************************************************************************* */
+//		// 8. Compute bits for all other keywords with firstPage CPC
+//		if (nonCompKeywords.size()>0) {
+//			for(String s : nonCompKeywords){
+//				wordBidMap.put(s,Math.min(firstPageCPCMap.get(s)+stepAboveFpCPC,maxMicroBid));
+//			}
+//			logger.info("Computed bids for rest of the keywords with first page cpc.");
+//		}
+//		
+//		/* ******************************************************************************************* */
+//		// 9. For the rest of keywords without firstPage CPC leave out for bidding with default bid 
+//		
+//		if(noInfoKeywords.size()>0) {
+//			for(String s : noInfoKeywords){
+//				wordBidMap.put(s,null); // bid using default bid
+//			}
+//			logger.info("Left the remaining keywords for default bidding");
+//		}
+//		
+//		
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 10. Use traffic estimator to compute average CPC based on these bids and use that as default bid for the campaign
+//		//    a. [google] use only competitive (both used and unused by optimizer) keywords
+//		//    b. [msn] use all keywords
+//		
+//		
+//		// defaultMicroBid = 1000000L;
+//		Long totalDailyCost = 0L;
+//		Float totalDailyClick = 0F;
+//		
+//		if(searchEngine.equalsIgnoreCase(google)){
+//			try{
+//				o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
+//						KeywordMatchType.EXACT,	wordBidMap);
+//			} catch (Exception e) {
+//				logger.error("Failed to get Google traffic estimator data. "+e.getMessage());
+//				//e.printStackTrace();
+//				throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage());
+//			}
+//			if (o2!=null) {
+//				String[] words = o2.getListOfKeywords();
+//				for (int i=0; i < words.length; i++)
+//				{
+//					HashMap<Long, TrafficEstimatorObject.BidData> points = o2.getMapOfPoints(words[i],KeywordMatchType.EXACT.getValue());
+//					Iterator<Long> bidIT = points.keySet().iterator();
+//					while(bidIT.hasNext())
+//					{
+//						Long abid= bidIT.next();
+//						totalDailyClick += (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay())/2;
+//						totalDailyCost += (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/2;
+//					}
+//				}
+//				if(totalDailyClick>0.01){
+//					defaultMicroBid = (((Long) new Double(totalDailyCost.doubleValue()/totalDailyClick).longValue())/10000L)*10000L;
+//					defaultMicroBid = Math.min(defaultMicroBid, maxDefaultMicroBid);
+//				}
+//			}
+//			
+//		} // if(searchEngine.equalsIgnoreCase(google))
+//		
+//		logger.info("Computed expected cpc and set default bid at "+defaultMicroBid);
+//		
+//		/* ******************************************************************************************* */
+//		// 11. [google] Database call: write adgroup criterion
+//		if(keywordDataObjs!=null && keywordDataObjs.length>0) {
+//			if(searchEngine.equalsIgnoreCase(google)){
+//				try {
+//					SemplestDB.storeKeywordDataObjects(promotionID, google,
+//							new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+//				} catch (Exception e) {
+//					logger.error("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
+//					//e.printStackTrace();
+//					throw new Exception("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
+//				}
+//			} // if(searchEngine.equalsIgnoreCase(google))
+//
+//			logger.info("Stored adgroup criterion data to database for Google");
+//		}
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 12. Database call: write traffic estimator data
+//		if(searchEngine.equalsIgnoreCase(google)){
+//			if(o!=null) {
+//				try {
+//				SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+//				} catch (Exception e) {
+//					logger.error("Failed to write traffic estimator data "+e.getMessage());
+//					//e.printStackTrace();
+//					throw new Exception("Failed to write traffic estimator data "+e.getMessage());
+//				}
+//				logger.info("Stored traffic estimator data to database");
+//			} else {
+//				logger.info("No traffic estimator data to write to the database");
+//			}
+//		} // if(searchEngine.equalsIgnoreCase(google))
+//		
+//		if(searchEngine.equalsIgnoreCase(msn)){
+//			throw new Exception("Method not implemented for MSN yet!!");
+//		} // if(searchEngine.equalsIgnoreCase(msn))
+//		
+//
+//		
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 13. Database call: write default bid for campaign
+//		// remember to update the bids for the words with default bid with database
+//		
+//		
+//		if(defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine)) {
+//			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
+//			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+//		}
+//		
+//		logger.info("Stroed default bid "+ defaultMicroBid +" to databse and requested for updating all bids for keywords with default bid.");
+//		
+//		
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 14. Database call: write bid, matchType, competition status
+//		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
+//		
+//		String competitiveType="";
+//		String matchType = ProtocolEnum.SemplestMatchType.Exact.name(); 
+//		Boolean isActive = true;
+//		Boolean isNegative = false;
+//		
+//		Iterator<String> keyIT = wordBidMap.keySet().iterator();
+//		while(keyIT.hasNext())
+//		{
+//			// TODO: Add Enum
+//			String word = keyIT.next();
+//			if (compKeywords.contains(word)){
+//				competitiveType = ProtocolEnum.SemplestCompetitionType.Comp.name();
+//			} else if (notSelectedKeywords.contains(word)){
+//				competitiveType = ProtocolEnum.SemplestCompetitionType.NotSelected.name();
+//			} else if (nonCompKeywords.contains(word)){
+//				competitiveType = ProtocolEnum.SemplestCompetitionType.NonComp.name();
+//			} else if(noInfoKeywords.contains(word)){
+//				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo.name();
+//			} else {
+//				throw new Exception("Unknown competition type. Internal error in bidding service!");
+//			}
+//			bidsMatchType.add(new BidElement(word, wordIDMap.get(word), 
+//					(wordBidMap.get(word)==null) ? defaultMicroBid : wordBidMap.get(word), 
+//					matchType, competitiveType, wordBidMap.get(word)==null, isActive, isNegative)); 
+//		}
+//		
+//		
+//		try{
+//			if (bidsMatchType.size()>0) {
+//			SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
+//			logger.info("Stroed bid data to the databse for "+bidsMatchType.size()+" keywords.");
+//			} else {
+//				logger.info("No bid data to write to the databse");
+//			}
+//		} catch (Exception e) {
+//			logger.error("ERROR: Unable to store bid data to the database. "+e.getMessage());
+//			//e.printStackTrace();
+//			throw new Exception("Failed to store bid data to the database. "+e.getMessage());
+//		}
+//		
+//		
+//		
+//
+//		
+//		/* ******************************************************************************************* */
+//		// 15. Database call: write targeted daily budget etc
+//		try{
+//			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
+//			logger.info("Stroed targeted daily budget data to the databse");
+//		} catch (Exception e) {
+//			logger.error("ERROR: Unable to store targeted daily budget data to the database. "+e.getMessage());
+//			//e.printStackTrace();
+//			throw new Exception("Failed to store targeted daily budget data to the database ."+e.getMessage());
+//		}
+//
+//		
+//
+//		
+//		/* ******************************************************************************************* */
+//		// 16. SE API call: Update matchType, bid for keywords
+//		if(searchEngine.equalsIgnoreCase(google)){
+//			keyIT = wordBidMap.keySet().iterator();
+//			while(keyIT.hasNext())
+//			{
+//				String word = keyIT.next();
+//				k=0;
+//				while(true) {
+//					Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+//					try {
+//						clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID,wordBidMap.get(word));
+//						logger.info("Updated bid for keyword "+word+" via Google API with bid value "+wordBidMap.get(word));
+//						break;
+//					} catch (Exception e) {
+//						if (k<=maxRetry) {
+//							//e.printStackTrace();
+//							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+//							k++;				
+//						} else {
+//							e.printStackTrace();
+//							logger.error("Failed to update bids for keyword "+word+" "+e.getMessage());
+//							throw new Exception("Failed to update bids for keyword "+word+" "+e.getMessage());
+//						}
+//					} // try-catch
+//				} // while(true) 
+//			}
+//		} // if(searchEngine.equalsIgnoreCase(google))
+//		
+//		if(searchEngine.equalsIgnoreCase(msn)){
+//			throw new Exception("Method not implemented for MSN yet!!");
+//		} // if(searchEngine.equalsIgnoreCase(msn))
+//		
+//		logger.info("Updated bids and match type for keywords via the search engine API.");
+//
+//		
+//		
+//		
+//		
+//		/* ******************************************************************************************* */
+//		// 17. SE API call: Update default bid for campaign
+//		if(searchEngine.equalsIgnoreCase(google)){
+//			k=0;
+//			while(true) {
+//				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
+//				try {
+//					clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+//					break;
+//				} catch (Exception e) {
+//					if (k<=maxRetry) {
+//						//e.printStackTrace();
+//						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+//						k++;				
+//					} else {
+//						//e.printStackTrace();
+//						logger.error("Failed to update default microBid via Google API. "+e.getMessage());
+//						throw new Exception("Failed to update default microBid via Google API. "+e.getMessage());
+//					}
+//				} // try-catch
+//			} // while(true) 
+//		}
+//		logger.info("Updated the default bid via search engine API.");
+		
+		
+		
 		return new Boolean(true);
-
+		
 	} // setBidsInitial()
+	
+	
 
 
-private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Exception{
+
+
+	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+		
+		logger.info("setBidsUpdate called. presently not doing anything!!");
+		// throw new Exception("setBidsUpdate not yet implemented!!");	
+		
+		return new Boolean(true);
+	} // setBidsUpdate()
+
+	
+	
+
+	
+	private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Exception{
 		
 		// declare the variables
-		TrafficEstimatorObject o;
+		TrafficEstimatorObject o, o2;
 		int k;
 
 		// get info for the first page CPC point
@@ -614,6 +719,7 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 			try {
 				logger.info("Fetching traffic estimator data for Point 1");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+				o2 = o;
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -672,6 +778,7 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 			try {
 				logger.info("Fetching traffic estimator data for Point 2");
 				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+				o2.addGoogleTrafficEstimatorObject(o, KeywordMatchType.EXACT.toString());
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
@@ -742,6 +849,7 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 				try {
 					logger.info("Fetching traffic estimator data for Point "+(j+1));
 					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
+					o2.addGoogleTrafficEstimatorObject(o, KeywordMatchType.EXACT.toString());
 					break;
 				} catch (Exception e) {
 					if (k<=maxRetry) {
@@ -802,7 +910,7 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 		
 		logger.info("Number of final competitive keywords: "+compKeywords.size());
 		
-		return o;
+		return o2;
 	}
 
 	
@@ -833,6 +941,7 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 							Thread.sleep(sleepPeriod+k*sleepBackOffTime);
 							logger.info("Calling Google API for traffic estimator data.");
 							o2 = clientGoogle.getTrafficEstimationForKeywords(accountID, campaignID, matchType, newKeywordWithBid);
+							logger.info("Returned from Google API call.");
 						}
 						break;
 					} catch (Exception e) {
@@ -851,8 +960,10 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 				if(firstLoop || o==null){
 					o=o2;
 					firstLoop=false;
+					logger.info("First loop for this bid point.");
 				} else {
 					o.addGoogleTrafficEstimatorObject(o2,KeywordMatchType.EXACT.getValue());
+					logger.info("Added data for this bid point.");
 				}
 			} // if(i/500==0) 
 		} // while(it.hasNext())
@@ -863,10 +974,123 @@ private TrafficEstimatorObject getTrafficEstimatorDataForGoogle() throws Excepti
 	}
 
 
-
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		try{ 
+			
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object) {
+				object.wait();
+			}
+			
+			
+			
+//			String accountID = "2188810777"; // small campaign : 100 words
+//			String accountID = "9544523876";
+//			String accountID = "1283163526"; // large capmaign : 1500 words
+			
+//			String accountID = "4764852610"; // teststudiobloom;
+//			String accountID = "9036397375"; // bethflowers
+//			String accountID = "6870692153"; // piperhall
+			
+//			String accountID = "1851386728"; // ParkWinters
+			
+			
+			/*
+			
+			String accountID = "2387614989"; // test campaign by mitch for bidding 
+			
+			
+			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 
+
+			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
+			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
+			System.out.println(campaignID);
+
+			GoogleAdGroupObject[] adGroups = null;
+
+			try {
+				adGroups = client.getAdGroupsByCampaignId(accountID, campaignID, false);
+				for (int i=0; i< adGroups.length; i++)
+					System.out.println(adGroups[i].getAdGroupName()+": "+adGroups[i].getAdGroupID());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			Long adGroupID = adGroups[0].getAdGroupID();
+			
+			
+			TestBidding bidObject = new TestBidding();
+			
+			
+			Integer promotionID = new Integer(60); 
+			//Integer promotionID = new Integer(71); 
+			String searchEngine = "Google";
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(75.0);
+			budgetData.setRemainingDays(31);
+			
+			bidObject.setAdGroupID(adGroupID);
+			bidObject.setGoogleAccountID(accountID);
+			bidObject.setCampaignID(campaignID);
+			
+			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			
+			*/
+			
+			Integer promotionID = new Integer(60);
+			String searchEngine = "Google";
+			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+			System.out.println("Account ID: "+ adEngineInfo.getAccountID() + ", campaign ID: " 
+					+ adEngineInfo.getCampaignID() +",adgroup ID: "+ adEngineInfo.getAdGroupID());
+			
+			
+			// To Mitch: Only alter anything below it. Please do not alter anything above it.
+			
+			
+			List<TrafficEstimatorDataObject> teList = SemplestDB.getLatestTrafficEstimator(promotionID, searchEngine);
+			System.out.println("Number of entries retrieved: "+teList.size());
+			HashSet<String> words = new HashSet<String>();
+			for(TrafficEstimatorDataObject te : teList){
+				if(words.contains(te.getKeyword())) {
+					System.out.println("Repeat word: "+te.getKeyword());
+				} else {
+					words.add(te.getKeyword());
+				}
+				//System.out.println(te.getKeyword()+te.getMicroBid());
+
+			}
+			
+			
+			/*
+			// Latest bids
+			List<BidElement> bids = SemplestDB.getLatestBids(promotionID, searchEngine);
+			for(BidElement bid : bids){
+				System.out.println(bid.getKeyword()+": "+bid.getMicroBidAmount());
+			}
+			*/
+			
+			/*
+			// fp CPC, quality scores etc
+			List<KeywordDataObject> kwDataList = SemplestDB.getLatestBiddableAdGroupCriteria(promotionID, searchEngine);
+			System.out.println("Number of entries retrieved: "+kwDataList.size());
+			for(KeywordDataObject kwDataObj : kwDataList){
+				//if(kwDataObj.getFirstPageCpc()!=null){ 
+					System.out.println(kwDataObj.getKeyword()+": "+kwDataObj.getFirstPageCpc());
+				//}
+			}
+			*/
+			
+
+
+			
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }
