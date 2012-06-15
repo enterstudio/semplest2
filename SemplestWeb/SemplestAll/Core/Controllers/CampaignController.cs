@@ -14,6 +14,7 @@ using Semplest.Core.Services;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using System.Configuration;
+using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Controllers
 {
@@ -460,6 +461,19 @@ namespace Semplest.Core.Controllers
         {
             model = (CampaignSetupModel) Session["CampaignSetupModel"];
             return PartialView(model);
+        }
+
+        [HttpPost]
+        public JsonResult LaunchPromotion()
+        {
+            ServiceClientWrapper sw = new ServiceClientWrapper();
+            SemplestEntities dbContext = new SemplestEntities();
+            List<string> adEngines = new List<string>();
+            Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == 75).First();
+            foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+            bool retval = sw.scheduleAddPromotionToAdEngine(51, p.ProductGroupFK, p.PromotionPK, adEngines.ToArray());
+            return Json("edfd"); 
         }
 
         [HttpPost]

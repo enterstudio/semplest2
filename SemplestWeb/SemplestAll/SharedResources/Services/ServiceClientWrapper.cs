@@ -218,6 +218,51 @@ namespace Semplest.SharedResources.Services
             return retVal;
         }
 
+        public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId, string[] adEngineList)
+        {
+            string returnData = string.Empty;
+            bool retVal;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("customerID", customerID.ToString());
+                jsonHash.Add("productGroupID", productGroupId.ToString());
+                jsonHash.Add("PromotionID", promoId.ToString());
+                string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
+                jsonHash.Add("adEngineList", jsonAdds);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+
+                returnData = string.Empty;
+                try
+                {
+                    returnData = runMethod(_baseURLTest, ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr, timeoutMS);
+                }
+                catch (Exception ex)
+                {
+                    string errmsg = ex.Message;
+                    throw;
+                }
+                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                if (jsonstrlist == "Service Timeout")
+                {
+                    throw new Exception("Service Timeout for schedulePausePromotion");
+                }
+                retVal = bool.Parse(lis[0]);
+            }
+            catch
+            {
+                if (string.IsNullOrEmpty(returnData))
+                    throw;
+                else
+                    throw new Exception(returnData);
+            }
+            return retVal;
+
+        }
 
         public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
         {
