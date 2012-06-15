@@ -89,32 +89,11 @@ public class vsUtils {
     return tm;
   }
   public static String[] topWords( HashMap<String,Integer> wc, Integer n){
-    Set<Map.Entry<String,Integer>> rv = take( sortMap( wc ), n );
+    Set<Map.Entry<String,Integer>> rv = jUtils.take( sortMap( wc ), n );
     Set<String> s = new HashSet<String>();
     for( Map.Entry<String,Integer> e: rv )
       s.add( e.getKey() );
     return s.toArray( new String[]{} );
-  }
-  // ----------------------------------
-  public static <K> Set<K> take( Set<K> s, Integer n){
-    Set<K> res = new HashSet<K>(); 
-    int counter = 0;
-    for( K e: s ){
-      if ( counter >= n ) break;
-      res.add( e );
-      counter++;
-    }
-    return res;
-  }
-  public static <K,V> Map<K,V> take( Map<K,V> m, Integer n){
-    Map<K,V> res = new HashMap<K,V>(); 
-    int counter = 0;
-    for( Map.Entry<K,V> e: m.entrySet() ){
-      if ( counter >= n ) break;
-      res.put( e.getKey(), e.getValue());
-      counter++;
-    }
-    return res;
   }
   // - private helpers -----------------------------------------------
   private static Integer sSquares( HashMap<String,Integer> wc ){
