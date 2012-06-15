@@ -1395,6 +1395,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				final com.microsoft.adcenter.v8.Keyword[] msnKeywordsArray = msnKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[msnKeywords.size()]);
 				final long[] newKeywordIds = msn.createKeywords(accountId, adGroupId, msnKeywordsArray);
+				/*
+				TODO: save keyword Ids from MSN in db
+				final AddBidSP addKeywordBidSP = new AddBidSP();				
+				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
+				*/
 			}
 			else					
 			{
