@@ -286,6 +286,8 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "LaunchAdProduct")]
         public ActionResult LaunchAdProduct(CampaignSetupModel model)
         {
+           ServiceClientWrapper sw = new ServiceClientWrapper();
+           List<string> adEngines = new List<string>();
             if (ModelState.IsValid)
             {
                 model = (CampaignSetupModel) Session["CampaignSetupModel"];
@@ -300,7 +302,9 @@ namespace Semplest.Core.Controllers
                 dbContext.Users.First(x => x.UserPK == userid).Customer.ProductGroups.First(
                     x => x.ProductGroupName == model.ProductGroup.ProductGroupName).Promotions.First(
                     p => p.PromotionName == model.ProductGroup.ProductPromotionName);
-            pm.IsLaunched = true;
+            foreach (PromotionAdEngineSelected pades in pm.PromotionAdEngineSelecteds)
+                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+            pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(pm.PromotionPK, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
             var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult"};
@@ -461,19 +465,6 @@ namespace Semplest.Core.Controllers
         {
             model = (CampaignSetupModel) Session["CampaignSetupModel"];
             return PartialView(model);
-        }
-
-        [HttpPost]
-        public JsonResult LaunchPromotion()
-        {
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            SemplestEntities dbContext = new SemplestEntities();
-            List<string> adEngines = new List<string>();
-            Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == 75).First();
-            foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
-                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            bool retval = sw.scheduleAddPromotionToAdEngine(51, p.ProductGroupFK, p.PromotionPK, adEngines.ToArray());
-            return Json("edfd"); 
         }
 
         [HttpPost]
