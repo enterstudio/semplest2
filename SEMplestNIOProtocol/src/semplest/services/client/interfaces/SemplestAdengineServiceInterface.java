@@ -24,10 +24,7 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<String> adEngines);
 	Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception;
-	
-	Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
-	Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
-	
+		
 	Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
 	Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
 	
@@ -55,4 +52,11 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception;
 		
 	Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
+	
+	
+	
+	// done for MSN
+	
+	Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
+	Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
 }

@@ -100,13 +100,33 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	
 	private static String separator = "#";
 
-	public static void main(String[] args)
+	public static void main(String[] args) throws Exception
 	{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		/*
+//  ApplicationToken [], DeveloperToken [6LTW1JCMEKIUX3], UserName [API_SEMplest], Password [1s3mpl3st], CustomerAccountID [7079395]
+//  AddPromotionToAdEngine:{"adEngineList":"[\"MSN\"]","productGroupID":"76","customerID":"12","promotionID":"62"}- null
+		 */
+// Will try to create campaign with AccountID [7079395], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
 		
-		DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
-		DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
+		//final Long accountId = 7079395L;
+		final Long accountId = 1629687L;
+		final String campaignName = "Used Golf Clubsqwqwq";
+		final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
+		final double dailyBudget = 259.25925925925924d;
+		final double monthlyBudget = 10.0;
+		final CampaignStatus campaignStatus = CampaignStatus.Active;
+		
+		final Long campaignId = test.createCampaign(accountId, campaignName, budgetLimitType, dailyBudget, monthlyBudget, campaignStatus);
+		logger.info("Campaign ID created [" + campaignId + "]");
+
+		test.pauseCampaignById(accountId, campaignId);
+		test.updateCampaignBudget(accountId, campaignId, budgetLimitType, dailyBudget, monthlyBudget);
+
+		//DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
+		//DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try{		
+			/*
 			//Pipper Hall
 			Long accountID = 1613923L;
 			Long campaignID = 120123568L;
@@ -229,6 +249,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	@Override
 	public MsnManagementIds createAccount(SemplestString name) throws MsnCloudException
 	{
+		logger.info("Will try to create MSN customer using name [" + name + "]");
 		Customer customer = aNew().adCenterCustomer().withCustomerName(name.getSemplestString()).build();
 		final String legalLengthName = SemplestUtils.getLegalUserName(name.getSemplestString());
 		User user = aNew().adCenterUser().withUserName(legalLengthName).build();
@@ -395,17 +416,20 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	}
 	
 	@Override
-	public Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus)
+	public Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus campaignStatus)
 			throws MsnCloudException
 	{
+		// AdEngine: Will try to create campaign with AccountID [7079395], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
+		// MSN:      Will try to create campaign with AccountID [1629687], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
+		logger.info("Will try to create campaign with AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]");
 		try
 		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			Campaign newCampaign = aNew().campaign().withName(campaignName).with(CampaignStatus)
-					.with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
+			Campaign newCampaign = aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 			AddCampaignsResponse addCampaigns;
 			Campaign[] campaign = new Campaign[1]; campaign[0] = newCampaign;
-			addCampaigns = campaignManagement.addCampaigns(new AddCampaignsRequest((long) accountId, campaign));
+			final AddCampaignsRequest addCampaignsRequest = new AddCampaignsRequest((long) accountId, campaign);
+			addCampaigns = campaignManagement.addCampaigns(addCampaignsRequest);
 			return addCampaigns.getCampaignIds()[0];
 		}
 		catch (AdApiFaultDetail e)
@@ -414,6 +438,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (ApiFaultDetail e)
 		{
+			logger.info("Problem", e);
 			throw new MsnCloudException(e);
 		}
 		catch (RemoteException e)
@@ -3033,20 +3058,27 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		{
 			String namespace = adCenterCredentials.getCampaignManagementNamespace();
 			CampaignManagementServiceLocator campaignManagementServiceLocator = new CampaignManagementServiceLocator();
-			campaignManagementServiceLocator.setBasicHttpBinding_ICampaignManagementServiceEndpointAddress(adCenterCredentials
-					.getCampaignManagementUrl());
-
+			campaignManagementServiceLocator.setBasicHttpBinding_ICampaignManagementServiceEndpointAddress(adCenterCredentials.getCampaignManagementUrl());
 			ICampaignManagementService campaignManagementService = campaignManagementServiceLocator.getBasicHttpBinding_ICampaignManagementService();
 			BasicHttpBinding_ICampaignManagementServiceStub stub = (BasicHttpBinding_ICampaignManagementServiceStub) campaignManagementService;
 			stub.setTimeout(timeoutMillis);
-			stub.setHeader(namespace, "ApplicationToken", "");
-			stub.setHeader(namespace, "DeveloperToken", adCenterCredentials.getDeveloperToken());
-			stub.setHeader(namespace, "UserName", adCenterCredentials.getUserName());
-			stub.setHeader(namespace, "Password", adCenterCredentials.getPassword());
+			
+			final String developerToken = adCenterCredentials.getDeveloperToken();
+			final String userName = adCenterCredentials.getUserName();
+			final String password = adCenterCredentials.getPassword();
+			final String applicationToken = "";
+			
+			logger.info("ApplicationToken [" + applicationToken + "], DeveloperToken [" + developerToken + "], UserName [" + userName + "], Password [" + password + "], CustomerAccountID [" + accountId + "]");
+			
+			stub.setHeader(namespace, "ApplicationToken", applicationToken);
+			stub.setHeader(namespace, "DeveloperToken", developerToken);
+			stub.setHeader(namespace, "UserName", userName);
+			stub.setHeader(namespace, "Password", password);
 			stub.setHeader(namespace, "CustomerAccountId", accountId);
 			if (customerId != NO_CUSTOMER_ID)
 			{
 				stub.setHeader(namespace, "CustomerId", customerId);
+				logger.info("Customer ID [" + customerId + "]");				
 			}
 
 			return campaignManagementService;

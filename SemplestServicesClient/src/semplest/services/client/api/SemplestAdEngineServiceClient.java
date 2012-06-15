@@ -36,7 +36,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		BasicConfigurator.configure();
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMDEVJAVA1:9898/semplest");
-		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJAVA1:9999/semplest");
+		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://172.18.9.26:9898/semplest");
 /*
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
@@ -250,7 +250,6 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
-
 	}
 	
 	@Override

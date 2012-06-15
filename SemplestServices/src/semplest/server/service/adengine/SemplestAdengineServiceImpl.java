@@ -23,6 +23,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.BudgetObject;
@@ -67,6 +68,7 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
 import com.microsoft.adcenter.v8.BudgetLimitType;
+import com.microsoft.adcenter.v8.CampaignStatus;
 
 public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInterface
 {
@@ -119,11 +121,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			
+			/*
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList);
 			listOfTasks.add(executeOngoinBiddingTask);
 			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			*/
+			
+			final Integer customerID = 12;
+			final Integer productGroupID = 76;
+			final Integer PromotionID = 62;
+			final ArrayList<String> adEngineList = new ArrayList<String>();
+			adEngineList.add("MSN");
+			adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
+			
 			//adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
 			
 			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
@@ -647,7 +658,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			double dailybudgetAmount = calculateDailyBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
-			Long campaignID = msn.createCampaign(Long.valueOf(accountID), getPromoDataSP.getPromotionData().getPromotionName(), BudgetLimitType.DailyBudgetStandard, dailybudgetAmount , monthlyBudgetAmount.doubleValue(), com.microsoft.adcenter.v8.CampaignStatus.Active);
+			final Long accountId = Long.valueOf(accountID);
+			final String campaignName = getPromoDataSP.getPromotionData().getPromotionName();
+			final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
+			final double monthlyBudget = monthlyBudgetAmount.doubleValue();
+			final CampaignStatus campaignStatus = com.microsoft.adcenter.v8.CampaignStatus.Active;
+			// About to call CreateCampaign on MSN implementation with AccountID [7079395], campaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudgetAmount [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
+			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailybudgetAmount + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]");
+			Long campaignID = msn.createCampaign(accountId, campaignName, budgetLimitType, dailybudgetAmount, monthlyBudget, campaignStatus);
 			return campaignID;
 		}
 		else
@@ -991,48 +1009,65 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public void ChangePromotionsStatus(List<Integer> promotionIds, List<String> adEngines, SemplestCampaignStatus newStatus) throws Exception
 	{
 		logger.info("Will try to Change Status to [" + newStatus + "] for PromotionIds [" + promotionIds + "] and AdEngines [" + adEngines+ "])");
-		final List<Long> campaignIds = new ArrayList<Long>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		String accountId = null;
+		String googleAccountId = null;
+		Long msnAccountId = null;
+		final List<Long> googleCampaignIds = new ArrayList<Long>();
+		final List<Long> msnCampaignIds = new ArrayList<Long>();
 		for (final Integer promotionId : promotionIds)
 		{
-			getPromoDataSP.execute(promotionId);
-			final PromotionObj promotion = getPromoDataSP.getPromotionData();
-			if (accountId == null)
+			getPromoDataSP.execute(promotionId);		
+			final HashMap<String,AdEngineID> adEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionId);
+			final AdEngineID googleAdEngineData = adEngineDataMap.get(AdEngine.Google.name());
+			if (googleAdEngineData != null)
 			{
-				accountId = "" + promotion.getAdvertisingEngineAccountPK();
+				if (googleAccountId == null)
+				{
+					googleAccountId = "" + googleAdEngineData.getAccountID();
+				}
+				final Long campaignId = googleAdEngineData.getCampaignID();
+				googleCampaignIds.add(campaignId);
 			}
-			final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
-			if (campaignId != null)
+			final AdEngineID msnAdEngineData = adEngineDataMap.get(AdEngine.MSN.name());
+			if (msnAdEngineData != null)
 			{
-				campaignIds.add(campaignId);
+				if (msnAccountId == null)
+				{
+					msnAccountId = msnAdEngineData.getAccountID();
+				}
+				final Long campaignId = msnAdEngineData.getCampaignID();
+				msnCampaignIds.add(campaignId);
 			}
 		}	
-		if (campaignIds.isEmpty())
-		{
-			throw new Exception("No CampaignIDs found for PromotionIDs [" + promotionIds + "]");
-		}
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
-				logger.info("Will try to Change Status of Google Campaigns to [" + newStatus + "] using AccountID [" + accountId + "] and CampaignIds [" + campaignIds + "])");
+				logger.info("Will try to Change Status of Google Campaigns to [" + newStatus + "] using AccountID [" + googleAccountId + "] and CampaignIds [" + googleCampaignIds + "])");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Boolean result = googleAdwordsService.changeCampaignsStatus(accountId, campaignIds, newStatus.getGoogleCampaignStatus());
+				final Boolean result = googleAdwordsService.changeCampaignsStatus(googleAccountId, googleCampaignIds, newStatus.getGoogleCampaignStatus());
 				if (!result)
 				{
-					final String errMsg = "Request to Change Status of Google Campaigns for AccountID [" + accountId + "] and CampaignIds [" + campaignIds + "] failed";
+					final String errMsg = "Request to Change Status of Google Campaigns for AccountID [" + googleAccountId + "] and CampaignIds [" + googleCampaignIds + "] failed";
 					logger.info(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
 			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				for (final Long msnCampaignId : msnCampaignIds)
+				{
+					msn.pauseCampaignById(msnAccountId, msnCampaignId);
+				}								
+			}	
 			else
 			{
 				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Changing Promotion Status (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
-			}						
+			}
 		}			
 		if (!errorMap.isEmpty())
 		{
