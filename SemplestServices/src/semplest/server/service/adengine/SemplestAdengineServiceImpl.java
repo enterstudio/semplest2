@@ -1056,11 +1056,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			else if (AdEngine.MSN.name().equals(adEngine))
 			{
-				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-				for (final Long msnCampaignId : msnCampaignIds)
+				if (newStatus == SemplestCampaignStatus.PAUSED)
 				{
-					msn.pauseCampaignById(msnAccountId, msnCampaignId);
-				}								
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					for (final Long msnCampaignId : msnCampaignIds)
+					{
+						msn.pauseCampaignById(msnAccountId, msnCampaignId);
+					}								
+				}
 			}	
 			else
 			{
