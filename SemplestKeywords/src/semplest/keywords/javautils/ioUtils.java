@@ -195,12 +195,9 @@ public class ioUtils {
       BufferedReader r = new BufferedReader(new FileReader(f));
       String line;
       while(( line =  r.readLine()) != null ){
-        String[] cols = line.split("\\s+");
-        if( cols.length >= 2 ){
-          String tail = mkString( 
-              java.util.Arrays.copyOfRange( cols, 1, cols.length)," ");
-          map.put( cols[0].split(":")[0], toWc( tail ) );
-        }
+        String head = line.substring( 0, Math.max(0,line.indexOf(':'))).trim();
+        String tail = line.substring( line.indexOf(':')+1 ).trim();
+        map.put( head, toWc( tail ) );
       }
     } catch (Exception e) {
       e.printStackTrace();
@@ -216,12 +213,9 @@ public class ioUtils {
       String line;
       int count = 0;
       while(( line =  r.readLine()) != null && count < n){
-        String[] cols = line.split("\\s+");
-        if( cols.length >= 2 ){
-          String tail = mkString( 
-              java.util.Arrays.copyOfRange( cols, 1, cols.length)," ");
-          map.put( cols[0].split(":")[0], toWc( tail ) );
-        }
+        String head = line.substring( 0, Math.max(0,line.indexOf(':'))).trim();
+        String tail = line.substring( line.indexOf(':')+1 ).trim();
+        map.put( head, toWc( tail ) );
         count++;
       }
     } catch (Exception e) {
@@ -580,12 +574,12 @@ public class ioUtils {
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-  /*
-    String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
-    String h = "top/sports/equestrian/breeds/spanish_horses";
-    HashMap<String,String> wcs = readWcounts(f);
-    System.out.println( wcs.get( h ));
-  */
+    /*
+       String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
+       String h = "top/sports/equestrian/breeds/spanish_horses";
+       HashMap<String,String> wcs = readWcounts(f);
+       System.out.println( wcs.get( h ));
+     */
     try{
       //ioUtils.reStemmingFile("/semplest/data/dmoz/all.descs",
       // "/semplest/data/dmoz/all.v2.descs");
