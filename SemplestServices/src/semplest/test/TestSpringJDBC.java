@@ -10,6 +10,7 @@ import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAdEngineAccountSP;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 
 
 public class TestSpringJDBC
@@ -30,8 +31,10 @@ public class TestSpringJDBC
 			is.close();
 			*/
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			GetAdEngineAccountSP sp = new  GetAdEngineAccountSP();
-			AdEngineAccountObj r = sp.execute(12, "MSN"); 
+			GetAllPromotionDataSP sp = new GetAllPromotionDataSP();
+			sp.execute(60);
+			//GetAdEngineAccountSP sp = new  GetAdEngineAccountSP();
+			//AdEngineAccountObj r = sp.execute(12, "MSN"); 
 			
 			
 			AdEngineID a = SemplestDB.getAdEngineID(62, "Google");

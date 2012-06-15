@@ -33,6 +33,7 @@ public class PromotionObj
 	private Long AdvertisingEngineCampaignPK;
 	private Long AdvertisingEngineAdGroupID;
 	private Long AdvertisingEngineAccountPK; 
+	private String AdvertisingEngine;
 	
 	public String getDisplayURL()
 	{
@@ -186,6 +187,7 @@ public class PromotionObj
 	{
 		LandingPageURL = landingPageURL;
 	}
+	
 	public Long getAdvertisingEngineCampaignPK()
 	{
 		return AdvertisingEngineCampaignPK;
@@ -210,6 +212,7 @@ public class PromotionObj
 	{
 		AdvertisingEngineAccountPK = advertisingEngineAccountPK;
 	}
+	
 	@Override
 	public String toString()
 	{
@@ -219,8 +222,16 @@ public class PromotionObj
 				+ PromotionEndDate + ", BudgetCycle=" + BudgetCycle + ", BudgetToAddToNextCycle=" + BudgetToAddToNextCycle + ", CycleStartDate="
 				+ CycleStartDate + ", RemainingBudgetInCycle=" + RemainingBudgetInCycle + ", StartBudgetInCycle=" + StartBudgetInCycle
 				+ ", EditedDate=" + EditedDate + ", isLaunched=" + isLaunched + ", isCompleted=" + isCompleted + ", isPaused=" + isPaused
-				+ ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK=" + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
-				+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + "]";
+				+ ", CreatedDate=" + CreatedDate + ", AdvertisingEngineCampaignPK="; // + AdvertisingEngineCampaignPK + ", AdvertisingEngineAdGroupID="
+				//+ AdvertisingEngineAdGroupID + ", AdvertisingEngineAccountPK=" + AdvertisingEngineAccountPK + "]";
+	}
+	public String getAdvertisingEngine()
+	{
+		return AdvertisingEngine;
+	}
+	public void setAdvertisingEngine(String advertisingEngine)
+	{
+		AdvertisingEngine = advertisingEngine;
 	}
 	
 }
