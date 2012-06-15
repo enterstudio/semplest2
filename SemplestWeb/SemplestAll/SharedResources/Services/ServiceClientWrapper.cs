@@ -227,7 +227,7 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("customerID", customerID.ToString());
                 jsonHash.Add("productGroupID", productGroupId.ToString());
-                jsonHash.Add("PromotionID", promoId.ToString());
+                jsonHash.Add("promotionID", promoId.ToString());
                 string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
                 jsonHash.Add("adEngineList", jsonAdds);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
