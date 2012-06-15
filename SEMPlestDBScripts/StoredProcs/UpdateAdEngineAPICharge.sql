@@ -4,7 +4,7 @@ GO
 
 -- +----------------------------------------------------------------------------------------------------------------+
 -- | Author  - Mitch                                                                                                |
--- | Written - 4/20/2012																							|
+-- | Written - 6/15/2012																							|
 -- | Parms   - 																							|
 -- | Purpose - 						|
 -- +----------------------------------------------------------------------------------------------------------------+
@@ -20,7 +20,7 @@ CREATE PROCEDURE dbo.UpdateAdEngineAPICharge
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @CurrentCumulativeAPIUnits bigint, @APICostPer1000 money, @charge money
+	DECLARE @ErrMsg VARCHAR(250), @RecordedAPIUnits bigint, @APICostPer1000 money, @newAUnitToAdd Bigint, @charge money
 
 	--validate data
 	IF NOT EXISTS (select 1 from AdvertisingEngineAccount a where a.AdvertisingEngineAccountPK = @AdvertisingEngineAccountID)
@@ -33,20 +33,23 @@ BEGIN TRY
 		SELECT @ErrMsg = 'The Advertising Engine was not found.'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;
-	set @CurrentCumulativeAPIUnits = 0
+	set @RecordedAPIUnits = 0
 	set @cost = 0
 	--check to see if paid anything to date
 	if exists (select * from AdvertisingEngineAPICharge api where api.AdvertisingEngineAccountFK = @AdvertisingEngineAccountID)
 	begin
-		select @CurrentCumulativeAPIUnits = SUM(api.APIUnits) from AdvertisingEngineAPICharge api 
+		select @RecordedAPIUnits = SUM(api.APIUnits) from AdvertisingEngineAPICharge api 
 			where api.AdvertisingEngineAccountFK = @AdvertisingEngineAccountID
 	End 
-	if (@CumulativeAPIUnits < @CurrentCumulativeAPIUnits)
+	--Calculate new units to add to DB
+	set @newAUnitToAdd = @CumulativeAPIUnits - @RecordedAPIUnits
+	--cannot be less than 0
+	if (@newAUnitToAdd < 0)
 	BEGIN
 		SELECT @ErrMsg = 'The cumulative API Units at AdEngine are less than we have in DB.  This should not Happen???'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END
-	if (@CumulativeAPIUnits > @CurrentCumulativeAPIUnits)
+	if (@newAUnitToAdd > 0)
 	begin
 		--get the API cost from the Config table
 		if (@AdvertisingEngine = 'Google')
@@ -58,12 +61,17 @@ BEGIN TRY
 			SELECT @ErrMsg = 'The Advertising Engine does not have a API Cost per 1000 unit. ABORT'; 
 			RAISERROR (@ErrMsg, 16, 1);
 		END
-		set @charge = ((@CurrentCumulativeAPIUnits - @CumulativeAPIUnits) /1000) * @APICostPer1000
+		set @charge = (@newAUnitToAdd /1000) * @APICostPer1000
 		insert into AdvertisingEngineAPICharge(AdvertisingEngineAccountFK, APIUnits,APICost,CreatedDate)
-			values (@AdvertisingEngineAccountID, (@CurrentCumulativeAPIUnits - @CumulativeAPIUnits),@charge,CURRENT_TIMESTAMP)
+			values (@AdvertisingEngineAccountID, @newAUnitToAdd,@charge,CURRENT_TIMESTAMP)
 	End
+	else
+	BEGIN
+		set @charge = 0
+	END
+	--return result
 	set @cost = @charge
-	
+	return @cost
 			 
 	
 END TRY
