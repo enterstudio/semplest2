@@ -22,12 +22,26 @@ public class vsUtils {
   private static final int UNIT = 1000;    // The unit-vector length
 
   // - static interface -----------------------------------------------------------
-  // normalize to UNIT length (L2 norm) 
+  // normalize vector to UNIT length (L2 norm) 
+  public static Double cNorm( HashMap<String,Integer> wc){
+    return ( UNIT * 1.0 / Math.max( Math.sqrt( sSquares( wc ) ), 1.0 ));}
+  public static Integer cLen( HashMap<String,Integer> wc){
+    return (int) Math.round( Math.sqrt( sSquares( wc ) ) ); }
   public static HashMap<String,Integer> cNormalize( HashMap<String,Integer>  wc){
     HashMap<String,Integer> omap = new HashMap<String,Integer>();
-    Double d = Math.max( Math.sqrt( sSquares( wc ) ), 1 );
+    Double w = cNorm( wc );
     for( Map.Entry<String,Integer> e: wc.entrySet() )
-      omap.put( e.getKey(), (int) Math.round( e.getValue() * UNIT / d ));
+      omap.put( e.getKey(), (int) Math.round( e.getValue() * w ));
+    return omap;
+  }
+  // add a bunch of vectors  
+  public static HashMap<String,Integer> cAdd( HashMap<String, 
+      HashMap<String,Integer>>  wcs){
+    HashMap<String,Integer> omap = new HashMap<String,Integer>();
+    for( Map.Entry<String,HashMap<String,Integer>> wc: wcs.entrySet() ) 
+      for( Map.Entry<String,Integer> e: wc.getValue().entrySet() )
+        omap.put( e.getKey(), (omap.containsKey(e.getKey()) ? 
+            omap.get(e.getKey()) : 0) + e.getValue());  
     return omap;
   }
   // cosine distance between two vectors (word-counts)
@@ -38,6 +52,8 @@ public class vsUtils {
     for( Map.Entry<String,Integer> e: na.entrySet() )
       if( nb.containsKey( e.getKey() ) )
         dotp += e.getValue() * nb.get( e.getKey() );
+    if( dotp > 0 )
+    System.out.println( na.size() + "::" + cLen( na ) + " : " + cLen(nb) );
     return Math.acos( dotp / (UNIT * UNIT * 1.0) );
   }
   // Combine a bunch of vectors (wcs), based on their distance to a reference wc
@@ -46,6 +62,7 @@ public class vsUtils {
     HashMap<String,Double> omap = new HashMap<String,Double>();
     for( Map.Entry<String,HashMap<String,Integer>> wc: wcs.entrySet() ) { 
       Double w = Math.PI/2.0 - cDist( wc.getValue(),rv );  // the weight
+      if( w > 0 ) System.out.println( wc.getKey() + " : " + w );
       HashMap<String,Integer> nwc = cNormalize( wc.getValue() );
       for( Map.Entry<String,Integer> e: nwc.entrySet() )
         if( omap.containsKey( e.getKey() ) )
@@ -93,38 +110,38 @@ public class vsUtils {
     System.out.println();
   }
 
-  //- test ------------------------------------
-  // test helper
-  private static HashMap<String,Integer> makeM(String ms){
+  // wc creators
+  private static HashMap<String,Integer> cWc(String[] words ){
     HashMap<String,Integer> rv = new HashMap<String,Integer>();
-    for( String e: ms.split(","))
-      rv.put( e.split("->")[0], new Integer( e.split("->")[1]));
+    for( String w: words)
+      rv.put( w, (rv.get(w) == null ? 0 : rv.get(w)) + 1 );
     return rv;
   }
+  private static HashMap<String,Integer> cWc(String words ){ 
+    return cWc( words.split("\\s+") );
+  }
+  //- tests ---------------------------------------------------------------
   // ------------
-  private static void test (){
-    HashMap<String,Integer> rv = makeM("a->1,b->1,c->1,d->1");
+  private static void test(){
+    HashMap<String,Integer> rv = cWc("a b c d");
     HashMap<String,HashMap<String,Integer>> cs = 
       new HashMap<String,HashMap<String,Integer>>();
-    cs.put( "a0.5", makeM("a->1,b->1,c->1"));
-    cs.put( "b0.0", makeM("a->1,b->1,c->1,d->1"));
-    cs.put( "c1.0", makeM("c->1,d->1,e->1"));
-    cs.put( "d1.5", makeM("e->1,f->1,g->1"));
-
+    cs.put( "a0.5", cWc("a b c"));
+    cs.put( "b0.0", cWc("a b c d"));
+    cs.put( "c1.0", cWc("c d e"));
+    cs.put( "d1.5", cWc("e f g"));
 
     HashMap<String,Integer> cc = cCombine( cs, rv );
     System.out.println( cc );
   }
 
-  // Combine the first n categories from "news bigrams"
-  private static void newsTest(int n){
-    // read in n categories from news bigrams
-    String file = "/semplest/data/dmoz/multiwords/news.txt.2";
-    HashMap<String,HashMap<String,Integer>> wcs = ioUtils.readWcs( file, n );
-   
+  private static void Test(String ngramFile, String ancestor, String ref){
+    // read in categories from file and pick out those with ancestor
+    HashMap<String,HashMap<String,Integer>> wcs = catUtils.family( 
+        ioUtils.readWcs( ngramFile ), ancestor ); 
+    
     // create a reference word-count
-    HashMap<String,Integer> rv = makeM( "blog+post->1,blog+column->1," + 
-        "recent+blog->1,feature+post->1,student+union->1,men+basketball->1");
+    HashMap<String,Integer> rv = cWc( ref );
 
     // combine them (remember how long it took)
     long start = System.currentTimeMillis();
@@ -132,13 +149,20 @@ public class vsUtils {
     long end = System.currentTimeMillis();
 
     // print the top 10 words (by count) and the time it took to combine 
-    pWc("News"+n, cc, 10 );
-    System.out.println( "Combining " + n + " cats took " + (end-start) + "ms");
+    pWc(ngramFile, cc, 50 );
+    System.out.println( "Combining " +wcs.size()+ " cats took " +(end-start)+ "ms");
   }
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    newsTest( 100 );
+    // String file = "/semplest/data/dmoz/multiwords/news.txt.2";
+    String file = "/semplest/data/dmoz/news/hTest.2.3g";
+    String head = "top/news/media/journalism/journalists";
+    String rwords = "new+york+times real+estate+autos " + 
+        "page+last+updated business+finance+people politics+travel+sports " + 
+        "wall+street+journal read+full+story print+television+radio" + 
+        "front+news+articles new+york+post christian+science+monitor" ;
+    Test( file, head, rwords );
   }
 }
 
