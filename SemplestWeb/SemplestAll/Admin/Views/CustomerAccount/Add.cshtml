@@ -55,6 +55,9 @@ Add Customer Account:
         jQuery(function ($) {
             $("#CustomerAccount_Phone").mask("(999) 999-9999");
             $("#CustomerAccount_MiddleInitial").mask("a");
+            //$("#CustomerAccount_Zip").mask("99999?-9999");
+            
+                                
         });
         $(document).ready(function () {
             $('#CustomerAccount_Email').keyup(function () {
@@ -212,6 +215,22 @@ Add Customer Account:
                                                 @Html.LabelFor(model => model.CustomerAccount.PercentMedia, new { @style = "width:125px;" })
                                                 @Html.TextBoxFor(model => model.CustomerAccount.PercentMedia, new { @class = "k-textbox" })
                                                 @Html.ValidationMessageFor(model => model.CustomerAccount.PercentMedia)
+
+                                                 <br style="line-height: 40px;" />
+
+                                                 @Html.LabelFor(model => model.CustomerAccount.CreditLimit, new { @style = "width:125px;" })
+                                                @Html.TextBoxFor(model => model.CustomerAccount.CreditLimit, new { @class = "k-textbox" })
+                                                @Html.ValidationMessageFor(model => model.CustomerAccount.CreditLimit)
+                                                
+                                                <br style="line-height: 40px;" />
+                                                @Html.LabelFor(model => model.CustomerAccount.PromotionFeeAmount, new { @style = "width:125px;" })
+                                                @Html.TextBoxFor(model => model.CustomerAccount.PromotionFeeAmount, new { @class = "k-textbox" })
+                                                @Html.ValidationMessageFor(model => model.CustomerAccount.PromotionFeeAmount)
+                                                <br style="line-height: 40px;" />
+                                                @Html.CheckBoxFor(model => model.CustomerAccount.PromotionFeeOverride)
+                                                @Html.LabelFor(model => model.CustomerAccount.PromotionFeeOverride, new { @style = "width:125px;" })
+                                                
+                                                
                                             </div>
                                         </fieldset>
                                     </li>
