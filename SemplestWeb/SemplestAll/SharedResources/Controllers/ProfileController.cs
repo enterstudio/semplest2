@@ -52,7 +52,11 @@ namespace Semplest.SharedResources.Controllers
                     }
                     else
                     {
-                        var creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
+                        IQueryable<Credential> creds = null;
+                        if(pm.LoggedInSucceeded)
+                            creds = dbContext.Credentials.Where(c => c.Username == pm.UserName);
+                        else
+                            creds = dbContext.Credentials.Where(c => c.Username == pm.UserName && c.Password == pm.Password1);
 
                         if (creds.Count() == 1)
                         {
