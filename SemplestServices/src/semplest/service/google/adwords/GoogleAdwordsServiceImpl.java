@@ -39,7 +39,7 @@ import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.UpdateAdRequest;
-import semplest.server.protocol.google.GoogleUpdateAdsRequest;
+import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.PromotionObj;
@@ -1158,7 +1158,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.debug("call updateAds(String json)" + json);
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final String requestString = data.get("request");
-		final GoogleUpdateAdsRequest request = gson.fromJson(requestString, GoogleUpdateAdsRequest.class);
+		final UpdateAdsRequestObj request = gson.fromJson(requestString, UpdateAdsRequestObj.class);
 		final Map<UpdateAdRequest, Long> response = updateAds(request);
 		return gson.toJson(response);
 	}
@@ -1220,7 +1220,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	 * Only status of an ad can be updated.  So in order to accommodate changes to other fields, like headline/description/etc, we add the new ad with new params and delete the old ad.
 	 */
 	@Override
-	public Map<UpdateAdRequest, Long> updateAds(final GoogleUpdateAdsRequest request) throws Exception
+	public Map<UpdateAdRequest, Long> updateAds(final UpdateAdsRequestObj request) throws Exception
 	{			
 		try
 		{

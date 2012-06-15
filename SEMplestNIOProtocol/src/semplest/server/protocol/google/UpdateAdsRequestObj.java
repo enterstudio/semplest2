@@ -4,13 +4,13 @@ import java.util.List;
 
 import semplest.util.SemplestUtils;
 
-public class GoogleUpdateAdsRequest
+public class UpdateAdsRequestObj
 {
 	private final String accountID;
 	private final Long adGroupID;
 	private final List<UpdateAdRequest> updateRequests;
 	
-	public GoogleUpdateAdsRequest(String accountID, Long adGroupID, List<UpdateAdRequest> updateRequests)
+	public UpdateAdsRequestObj(String accountID, Long adGroupID, List<UpdateAdRequest> updateRequests)
 	{
 		this.accountID = accountID;
 		this.adGroupID = adGroupID;
@@ -52,7 +52,7 @@ public class GoogleUpdateAdsRequest
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		GoogleUpdateAdsRequest other = (GoogleUpdateAdsRequest) obj;
+		UpdateAdsRequestObj other = (UpdateAdsRequestObj) obj;
 		if (accountID == null)
 		{
 			if (other.accountID != null)

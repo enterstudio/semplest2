@@ -38,7 +38,7 @@ import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.UpdateAdRequest;
-import semplest.server.protocol.google.GoogleUpdateAdsRequest;
+import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
@@ -1791,7 +1791,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final List<UpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
 					final int numUpdateRequests = updateRequests.size();
 					logger.info("Will try to update " + numUpdateRequests + " Ads in Google");
-					final GoogleUpdateAdsRequest request = new GoogleUpdateAdsRequest(accountID, adGroupID, updateRequests);
+					final UpdateAdsRequestObj request = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
 					final Map<UpdateAdRequest, Long> requestToNewAdIdMap = googleAdwordsService.updateAds(request);
 					final int numAdsUpdated = requestToNewAdIdMap.size();
 					logger.info("# of Ads updated: " + numAdsUpdated);
@@ -1816,7 +1816,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final int numUpdateRequests = updateRequests.size();
 					logger.info("Will try to update " + numUpdateRequests + " Ads inMSN");
 					//create object for all AdUpdates
-					final GoogleUpdateAdsRequest request = new GoogleUpdateAdsRequest(accountID, adGroupID, updateRequests);
+					final UpdateAdsRequestObj request = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
 					
 					Map<UpdateAdRequest, Long> requestToNewAdIdMap = msn.updateAllAdById(request);
 					final int numAdsUpdated = requestToNewAdIdMap.size();

@@ -43,7 +43,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.UpdateAdRequest;
-import semplest.server.protocol.google.GoogleUpdateAdsRequest;
+import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
@@ -1253,7 +1253,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		return gson.toJson(0);
 	}
 
-	public Map<UpdateAdRequest, Long> updateAllAdById(GoogleUpdateAdsRequest request) throws ApiFaultDetail, AdApiFaultDetail, RemoteException
+	public Map<UpdateAdRequest, Long> updateAllAdById(UpdateAdsRequestObj request) throws ApiFaultDetail, AdApiFaultDetail, RemoteException
 	{
 		Long accountID = Long.valueOf(request.getAccountID());
 		Long adGroupID = request.getAdGroupID();
