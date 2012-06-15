@@ -26,6 +26,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
@@ -435,19 +436,49 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
-		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP(); 
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
+				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
+				final String accountId = "" + adEngineData.getAccountID();
+				final Long adGroupID = adEngineData.getAdGroupID();
 				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
 				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 				googleAdwordsService.deleteKeyWords(accountId, adGroupID, keywords);		
+			}
+			else if (AdEngine.MSN.name().equals(adEngine)) 
+			{
+				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
+				final Long accountId = adEngineData.getAccountID();
+				final Long adGroupId = adEngineData.getAdGroupID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, false, true);
+				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
+				final List<Long> msnKeywordIds = new ArrayList<Long>();
+				for (final KeywordProbabilityObject keywordProbability : keywordProbabilities)
+				{
+					final String kpText = keywordProbability.getKeyword();
+					for (final BidElement bid : bids)
+					{
+						final String keyword = bid.getKeyword();
+						if (kpText.equals(keyword))
+						{
+							final Long msnKeywordId = bid.getKeywordAdEngineID();
+							msnKeywordIds.add(msnKeywordId);
+						}	
+					}					
+				}
+				final long[] msnKeywordIdArray = new long[msnKeywordIds.size()];
+				for (int i = 0; i < msnKeywordIdArray.length; ++i)
+				{
+					msnKeywordIdArray[i] = msnKeywordIds.get(i);
+				}				
+				msn.deleteKeywordsById(accountId, adGroupId, msnKeywordIdArray);
 			}
 			else
 			{
