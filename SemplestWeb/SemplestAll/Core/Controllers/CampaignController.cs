@@ -57,6 +57,11 @@ namespace Semplest.Core.Controllers
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
             //var campaignSetupModel = new CampaignSetupModel();
+            Session["SiteLinks"] = null;
+            Session["NegativeKeywords"] = null;
+            Session["NegativeKeywordsText"] = null;
+            Session["CampaignSetupModel"] = null;
+            Session["AllCategories"] = null;
             ViewBag.IsLaunched = false;
             ViewBag.IsCompleted = false;
             ViewBag.IsLaunchedAndCompleted = false;
@@ -85,6 +90,9 @@ namespace Semplest.Core.Controllers
 
             if(campaignSetupModel.AdModelProp.Addresses.Count == 0)
                 campaignSetupModel.AdModelProp.Addresses.Add(new GeoTargeting());
+
+            Session["AllCategories"] = null;
+
             // set sitelinks in session
             //Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
             Session["SiteLinks"] = campaignSetupModel.SiteLinks;
