@@ -948,7 +948,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) 
+	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList) 
 	{
 		final String methodName = "scheduleAddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -973,7 +973,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList) throws Exception
 	{
 		final String methodName = "AddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();

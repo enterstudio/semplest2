@@ -36,8 +36,8 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
 	
-	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList);	
-	Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList) throws Exception;
+	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList);	
+	Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList) throws Exception;
 	
 	Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines);
 	Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception;

@@ -186,13 +186,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Integer customerID = Integer.parseInt(data.get("customerID"));
 		Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
+		final List<String> adEngineList = gson.fromJson(data.get("adEngineList"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngineList);
 		return gson.toJson(true);
 	}
 
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, ArrayList<String> adEngineList)
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList)
 			throws Exception
 	{		
 		/*
@@ -209,9 +209,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// 9. Schedule OnGoingBidding  
 		 */
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
-		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngineList);
+		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, new ArrayList<String>(adEngineList));
 		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
-		final Map<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
+		final Map<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, new ArrayList<String>(adEngineList), bidClient);
 		String companyName = null;
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(PromotionID);
@@ -265,7 +265,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				cal.setTime(new Date());
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				final Date startTime = cal.getTime();
-				scheduleOngoingBidding(scheduleName, PromotionID, adEngineList, startTime);
+				scheduleOngoingBidding(scheduleName, PromotionID, new ArrayList<String>(adEngineList), startTime);
 			}
 		}
 		return true;
@@ -2108,13 +2108,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final ArrayList<String> adEngines = gson.fromJson(data.get("adEngines"), ArrayList.class);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleAddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
 
 	@Override
-	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer promotionID, ArrayList<String> adEngines)
+	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer promotionID, List<String> adEngines)
 	{
 		try 
 		{
