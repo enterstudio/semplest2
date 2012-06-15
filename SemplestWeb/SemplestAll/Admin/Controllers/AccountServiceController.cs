@@ -401,7 +401,7 @@ namespace Semplest.Admin.Controllers
                                 {
 
                                     ///////////////////////////////////////////////////////////////
-                                    //FOR SENDING OUT EMAILS
+                                    //FOR SENDING OUT EMAILS to child customers
                                     /// /// /// /// /// /// /// /// /// /// /// /// /// /// /// ///
 
                                     var parentdetails = from usr in dbcontext.Users
@@ -410,7 +410,7 @@ namespace Semplest.Admin.Controllers
                                                         select new { usr.CustomerFK, usr.Email, cus.Name };
 
                                     //send mail //revisit
-                                    string from = parentdetails.FirstOrDefault().Email;
+                                    string from = "accounts@semplest.com";
                                     string to = u.Email;
                                     string body = emailtemplate.EmailBody;
                                     string subject = emailtemplate.EmailSubject;
