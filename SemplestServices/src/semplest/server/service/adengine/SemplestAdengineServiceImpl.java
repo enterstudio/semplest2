@@ -1918,9 +1918,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 				getPromoDataSP.execute(promotionID);
+				final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long campaignID = adEngineData.getCampaignID();
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
 				final Double oldBudgetAmount = promotion.getPromotionBudgetAmount();
 				final Double newBudgetDouble = oldBudgetAmount + changeInBudget;
 				final Double newBudgetDoubleGoogleUnits = newBudgetDouble * SemplestUtils.GOOGLE_MONEY_UNIT;
@@ -1940,8 +1942,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					// TODO: update budget in DB (ask Mitch where to do that)
 				}
 			}
-			else
+			else if (AdEngine.MSN.name().equals(adEngine))
 			{
+				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+				getPromoDataSP.execute(promotionID);
+				final PromotionObj promotion = getPromoDataSP.getPromotionData();
+				final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
+				final Long accountId = adEngineData.getAccountID();
+				final Long campaignId = adEngineData.getCampaignID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final double dailyBudget = promotion.getPromotionBudgetAmount(); // TODO: is this right?
+				final double monthlyBudget = promotion.getStartBudgetInCycle(); // TODO: is this right?
+				msn.updateCampaignBudget(accountId, campaignId, BudgetLimitType.DailyBudgetStandard, dailyBudget, monthlyBudget);
+			}
+			else
+			{				
 				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for updating budgets (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
