@@ -2,8 +2,10 @@ package semplest.server.service.mail;
 
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.mail.Message;
 import javax.mail.Multipart;
@@ -15,7 +17,10 @@ import javax.mail.internet.MimeMultipart;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
 import com.google.gson.Gson;
@@ -26,6 +31,9 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	private static final Logger logger = Logger.getLogger(SemplestMailServiceImpl.class);
 	private static Gson gson = new Gson();
 	private static MailSessionObject sessionObj = null;
+	
+	private String ESBWebServerURL = null;
+	private static AtomicInteger atomic = new AtomicInteger(Integer.MIN_VALUE);
 	
 	
 	public String SendEmail(String json) throws Exception
@@ -99,6 +107,8 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 			object.wait();
 		}
 		//
+		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+		//
 		sessionObj = new MailSessionObject();
 		Thread t = new Thread(sessionObj);
 		t.start();
@@ -107,7 +117,21 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	@Override
 	public Boolean scheduleSendEmail(String subject, String from, String recipient, String msgTxt, String msgType) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		
+		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+		SemplestSchedulerTaskObject mailTask = CreateSchedulerAndTask.getSendMailTask(subject, from, recipient, msgTxt);
+		listOfTasks.add(mailTask);
+		return CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, "EmailSchedule_" + getNextNumber() , new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+	}
+	private static Integer getNextNumber()
+	{
+		if (atomic.get() < Integer.MAX_VALUE)
+		{
+			return atomic.incrementAndGet();
+		}
+		else
+		{
+			return Integer.MIN_VALUE;
+		}
 	}
 }
