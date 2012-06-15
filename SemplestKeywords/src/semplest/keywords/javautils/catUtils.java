@@ -270,7 +270,7 @@ public class catUtils {
     return false;
   }
   // - -----------------------------------
-  // given hashmap (key is category) return only those that 
+  // given hashmap (with category key) return only those that 
   // have given category is parent
   public static <V> HashMap<String,V> family( HashMap<String,V> maps, 
       String head){
