@@ -225,12 +225,14 @@ public class catUtils {
       outs = outs + node + "/";
     return outs.substring(0,outs.length() -1);
   }
+
   //Operations with categories
   //Given a URL, finds it in the dmoz database and returns the categories 
   // were it belong
   public static ArrayList<String> look4URL(String url) throws IOException {
     //Path to the dmoz url file
-    FileInputStream fstream = new FileInputStream("/semplest/data/dmoz/all.urls");
+    FileInputStream fstream 
+      = new FileInputStream("/semplest/data/dmoz/all.urls");
     //String url="-- http://www.laserblazers.com";
     String[] urlparts = url.split("/");
     String mainURL=url;
@@ -267,7 +269,17 @@ public class catUtils {
     }
     return false;
   }
-
+  // - -----------------------------------
+  // given hashmap (key is category) return only those that 
+  // have given category is parent
+  public static <V> HashMap<String,V> family( HashMap<String,V> maps, 
+      String head){
+    HashMap<String,V> omap = new HashMap<String,V>();
+    for( Map.Entry<String,V> e: maps.entrySet() )
+      if( e.getKey().indexOf( head ) == 0 )
+        omap.put( e.getKey(), e.getValue());
+    return omap;
+  }
 
   // ------------
   public static void ctest (){
