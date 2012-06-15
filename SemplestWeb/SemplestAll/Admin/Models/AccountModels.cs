@@ -198,6 +198,12 @@ namespace Semplest.Admin.Models
         [DisplayName("Service Fee")]
         public decimal ServiceFee { get; set; }
 
+
+        public decimal? CreditLimit { get; set; }
+        public bool PromotionFeeOverride { get; set; }
+        public decimal? PromotionFeeAmount { get; set; }
+
+
         [DisplayName("Customer Internal ID")]
         public string internalID {get;set;}
         
