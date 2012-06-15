@@ -24,7 +24,7 @@
 }
 @section SectionNav{
     <div id="examplesThemeChooser">
-        Step 1 of 3
+        Step
         <button type="button" class="k-button selected" id="btnOne">
             1</button>
         <button type="button" class="k-button unselected" id="btnTwo">
@@ -137,13 +137,27 @@
             });
         }
         else
-            $.blockUI({ message: $('#displayBox'), css: {
+            if ($.browser.version > "8.0") {
+            $.blockUI({
+                message: $('#displayBox'),
+                css: {
                     top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
                     left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
                     width: $('#displayBox')[0].naturalWidth + 'px',
                     border: '0px solid #aaa'
                 }
             });
+        } else {
+            $.blockUI({
+                message: $('#displayBox'),
+                css: {
+                    top: ($(window).height() - $('#displayBox')[0].clientHeight) / 2 + 'px',
+                    left: ($(window).width() - $('#displayBox')[0].clientWidth) / 2 + 'px',
+                    width: $('#displayBox')[0].clientWidth + 'px',
+                    border: '0px solid #aaa'
+                }
+            });
+        }
     }
 
     $('#btnCongrats').live("click", function () {

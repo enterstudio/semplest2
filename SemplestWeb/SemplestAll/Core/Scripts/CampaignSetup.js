@@ -30,15 +30,26 @@ $(document).ready(function () {
     var validator = $("#productGroupModel").kendoValidator({
         rules: {
             minreq: function (input) {
-                if (input.is("[name=ProductGroup.Budget]")) {
-
-                    if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
-                        return false;
+                if ($.browser.version > "8.0" && $.browser.msie) {
+                    if (input.is("[name=ProductGroup.Budget]")) {
+                        if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
+                            return false;
+                        }
+                        status.text("").addClass("valid");
+                        return true;
                     }
-                    status.text("").addClass("valid");
                     return true;
                 }
-                return true;
+                else {
+                    if (input.attr("name") == "ProductGroup.Budget") {
+                        if (input.val() < parseInt($('#ProductGroup_Configuration_CustomerMinOrderAmount').val())) {
+                            return false;
+                        }
+                        status.text("").addClass("valid");
+                        return true;
+                    }
+                    return true;
+                }
             }
         },
         messages: {
@@ -61,7 +72,7 @@ $(document).ready(function () {
                 tab = tabStrip.select();
                 tabStrip.enable(tab.next(), true);
                 tabStrip.select(1);
-                
+
             } else {
                 status.text("Oops! There is invalid data in the form.").addClass("invalid");
             }
