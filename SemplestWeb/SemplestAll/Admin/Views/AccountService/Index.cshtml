@@ -114,7 +114,7 @@ Account Service
                                 <fieldset style="margin-left: 20px">
                                     <legend>Live Advertising</legend>
                                     <div style="margin: 10px">
-                                        @Html.ActionLink("Restart", null, null, new { @class = "disableuser" }) 
+                                        @Html.ActionLink("Restart", null, null, new { @class = "restartPromotions" }) 
                                         @Html.ActionLink("Pause", null, null, new { @class = "pauseuser" })
                                     </div>
                                 </fieldset>
@@ -159,8 +159,6 @@ Account Service
             </div>
 
 
-
-
             <div id="PausePromotionsWindow" style="display:none">
                 <form name="hiddenPausePromotions" id="hiddenPausePromotions" action="../PausePromotions" method="post">
                 <div class="questionPause">
@@ -173,7 +171,17 @@ Account Service
                 </form>
             </div>
 
-
+            <div id="RestartPromotionsWindow" style="display:none">
+                <form name="hiddenRestartPromotions" id="hiddenRestartPromotions" action="../RestartPromotions" method="post">
+                <div class="questionRestart">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkRestartPromotions" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelRestartPromotions" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+                </form>
+            </div>
 
 <script type="text/javascript">    $(".disableuser").click(function (event) {
         $('#userId').val(event.target.id);
@@ -226,7 +234,7 @@ Account Service
 
 
     $(".pauseuser").click(function (event) {
-        $('.questionPause').html("<br/>You are about to pause @Model.AccountServiceModel.PromotionCount.ToString() promotions are you sure?<br/><br/>");
+        $('.questionPause').html("<br/>You are about to pause @Model.AccountServiceModel.PromotionPauseCount.ToString() promotions are you sure?<br/><br/>");
         var endPromotionWindow = $('#PausePromotionsWindow').kendoWindow({
             resizable: false,
             modal: true,
@@ -248,4 +256,27 @@ Account Service
         endPromotionWindow.close();
     });
 
+
+    $(".restartPromotions").click(function (event) {
+        $('.questionRestart').html("<br/>You are about to restart @Model.AccountServiceModel.PromotionRestartCount.ToString() promotions are you sure?<br/><br/>");
+        var endPromotionWindow = $('#RestartPromotionsWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Restart Promotions"
+        }).data("kendoWindow");
+        $('#RestartPromotionsWindow').show();
+        endPromotionWindow.center();
+        endPromotionWindow.open();
+        event.preventDefault();
+    });
+    $("#btnOkRestartPromotions").click(function (event) {
+        $("#hiddenRestartPromotions").submit();
+        event.preventDefault();
+    });
+
+    $("#btnCancelRestartPromotions").click(function (event) {
+        var endPromotionWindow = $('#RestartPromotionsWindow').data("kendoWindow");
+        $('#RestartPromotionsWindow').hide();
+        endPromotionWindow.close();
+    });
 </script>​

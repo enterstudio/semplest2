@@ -67,6 +67,16 @@ namespace Semplest.Admin.Controllers
                         where (p.IsPaused == false)
                         where (p.IsCompleted == false)
                         select c;
+
+            var viewModel4 =
+                       from c in dbcontext.Customers
+                       join pg in dbcontext.ProductGroups on c.CustomerPK equals pg.CustomerFK
+                       join p in dbcontext.Promotions on pg.ProductGroupPK equals p.ProductGroupFK
+                        where(c.CustomerPK == id) 
+                        where(p.IsLaunched == true)
+                        where (p.IsPaused == true)
+                        where (p.IsCompleted == false)
+                        select c;
             
             
 
@@ -128,7 +138,8 @@ namespace Semplest.Admin.Controllers
 
 
 
-            x.AccountServiceModel.PromotionCount = viewModel3.Count();
+            x.AccountServiceModel.PromotionPauseCount = viewModel3.Count();
+            x.AccountServiceModel.PromotionRestartCount = viewModel4.Count();
 
 
             //from u in dbcontext.Users
@@ -537,6 +548,33 @@ namespace Semplest.Admin.Controllers
             d.Add("id", id);
             return RedirectToAction("Index", new System.Web.Routing.RouteValueDictionary(d));
         }
+
+        [HttpPost]
+        public ActionResult RestartPromotions(int id)
+        {
+            SemplestEntities dbContext = new SemplestEntities();
+            ServiceClientWrapper sw = new ServiceClientWrapper();
+            foreach (ProductGroup pg in dbContext.Customers.Where(key => key.CustomerPK == id).First().ProductGroups)
+            {
+                foreach (Promotion p in pg.Promotions)
+                {
+                    if (p.IsLaunched && p.IsPaused && (!p.IsCompleted))
+                    {
+                        List<string> adEngines = new List<string>();
+                        foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                            adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+                        p.IsPaused = !sw.schedulePromotion(id, p.PromotionPK, adEngines.ToArray(), true);
+                    }
+                }
+            }
+
+            dbContext.SaveChanges();
+            Dictionary<string, object> d = new Dictionary<string, object>();
+            d.Add("id", id);
+            return RedirectToAction("Index", new System.Web.Routing.RouteValueDictionary(d));
+        }
+
+
 
         [IgnoreFirst(1)] 
         [DelimitedRecord(",")]
