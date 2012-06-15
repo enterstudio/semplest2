@@ -265,6 +265,105 @@ namespace Semplest.SharedResources.Services
 
         }
 
+        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines, bool isAdd)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            jsonAdds = JsonConvert.SerializeObject(promotionAdIds, Formatting.Indented);
+            jsonHash.Add("promotionAdIds", jsonAdds);
+            
+            if (isAdd)
+                return runBooleanMethod(ADENGINESERVICE, "scheduleAddAds", JsonConvert.SerializeObject(jsonHash));
+            else
+                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteAds", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool scheduleUpdateGeoTargeting(int customerID, int promotionID, List<String> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool scheduleChangePromotionStartDate(int customerID, int promotionID, DateTime newStartDate, List<String> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            jsonHash.Add("newStartDate", newStartDate.ToString());
+            return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool scheduleUpdateBudget(int customerID, int promotionID, Double changeInBudget, List<String> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            jsonHash.Add("changeInBudget", changeInBudget.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateBudget", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool scheduleNegativeKeywords(int customerID, int promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines, bool isAdd)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(keywordIdRemoveOppositePairs, Formatting.Indented);
+            jsonHash.Add("keywordIdRemoveOppositePairs", jsonAdds);
+            jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            if (isAdd)
+                return runBooleanMethod(ADENGINESERVICE, "scheduleAddNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
+            else
+                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
+        }
+
+        public bool scheduleRefreshSiteLinksForAd(int customerID, int promotionID, List<String> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            return runBooleanMethod(ADENGINESERVICE, "scheduleRefreshSiteLinksForAd", JsonConvert.SerializeObject(jsonHash));
+        }
+
+
+
+        private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
+        {
+            string returnData = string.Empty;
+            try
+            {
+                returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr, timeoutMS);
+            }
+            catch (Exception ex)
+            {
+                string errmsg = ex.Message;
+                throw;
+            }
+            //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            if (jsonstrlist == "Service Timeout")
+            {
+                throw new Exception("Service Timeout for schedulePausePromotion");
+            }
+            return bool.Parse(lis[0]);
+        }
+
         
 
         //
@@ -460,5 +559,9 @@ namespace Semplest.SharedResources.Services
         public String ZipCode { get; set; }
         public String Email { get; set; }
         public String Phone { get; set; }
+    }
+
+    public class KeywordIdRemoveOppositePair
+    {
     }
 }
