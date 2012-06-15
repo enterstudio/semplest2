@@ -176,12 +176,12 @@ public class UnitTests {
 	private String reportSummary(){
 		StringBuilder sb = new StringBuilder();
         sb.append("Unit test finished with " + numAllErrs + " errors in total." + eol + eol);
-        sb.append("Msn APIs: 		" + numMsnStandaloneError + " errors" + eol);
-        sb.append("Msn Report: 		" + numMsnServiceError + " errors" + eol);
-        sb.append("Google APIs: 		" + numGoogleStandaloneError + " errors" + eol);
-        sb.append("Google Report: 		" + numGoogleServiceError + " errors" + eol);
+        //sb.append("Msn APIs: 		" + numMsnStandaloneError + " errors" + eol);
+        //sb.append("Msn Report: 		" + numMsnServiceError + " errors" + eol);
+        //sb.append("Google APIs: 		" + numGoogleStandaloneError + " errors" + eol);
+        //sb.append("Google Report: 		" + numGoogleServiceError + " errors" + eol);
         sb.append("Keyword Service:	" + numKeywordServiceError + " errors" + eol);
-        sb.append("Bidding Service:	" + numBiddingServiceError + " errors" + eol);
+        //sb.append("Bidding Service:	" + numBiddingServiceError + " errors" + eol);
         //sb.append("Database: 		" + numDatabaseError + " errors" + eol);        
         
         

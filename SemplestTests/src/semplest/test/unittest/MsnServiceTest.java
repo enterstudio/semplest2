@@ -56,7 +56,7 @@ public class MsnServiceTest {
 	
 	public static void main(String args[]){
 		MsnServiceTest t = new MsnServiceTest();
-		t.Test_MsnReport();
+		t.Test_MsnServices_Standalone();
 	}
 	
 	public int Test_MsnReport(){
@@ -175,14 +175,18 @@ public class MsnServiceTest {
 		try{
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createAccount:");
-			SemplestString in = new SemplestString();			
-			in.setSemplestString("semplest_unit_test");
+			SemplestString in = new SemplestString();		
+			in.setSemplestString("lsemplest_unit_test" + System.currentTimeMillis());
 			System.out.println("account name = "+ in.getSemplestString());
 			MsnManagementIds ret = test.createAccount(in);		
 			System.out.println("OK");
 			System.out.println("AccountId = "+ ret.getAccountId());
 			System.out.println("CustomerId = "+ ret.getCustomerId());
 			System.out.println("UserId = "+ ret.getUserId());
+			
+			accountId = ret.getAccountId();
+			customerId = ret.getCustomerId();
+			userId = ret.getUserId();
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -212,7 +216,8 @@ public class MsnServiceTest {
 			System.out.println("#                                                                                  #");
 			System.out.println("####################################################################################");	
 			
-				
+			//Test_createAccount();	
+			
 			//getAccountById			
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getAccountById:");
@@ -238,8 +243,8 @@ public class MsnServiceTest {
 				Double dailyBudget1 = 1.00;
 				Double monthlyBudget1 = 5.00;
 				String campaignName1 = "unit_test_campaign1" + now;
-				System.out.println("campaign name = " + campaignName1);
-				campaignId = test.createCampaign(accountId, campaignName1, BudgetLimitType.DailyBudgetStandard, dailyBudget1, monthlyBudget1, CampaignStatus.Paused);
+				System.out.println("createCampaign(" + accountId + ", " + campaignName1 + ", " + BudgetLimitType.DailyBudgetStandard + ", " + dailyBudget1 + ", " + monthlyBudget1 + ", " + CampaignStatus.Active + ")");
+				campaignId = test.createCampaign(accountId, campaignName1, BudgetLimitType.DailyBudgetStandard, dailyBudget1, monthlyBudget1, CampaignStatus.Active);
 				System.out.println("OK");
 				System.out.println("campaignId = " + campaignId);
 				
@@ -339,7 +344,8 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("deleteCampaignById:");
 			try{
-				Long tmpId = test.createCampaign(accountId, "temp campaign", BudgetLimitType.DailyBudgetStandard, 1.00, 5.00, CampaignStatus.Paused);
+				String tempCampaignName = "temp campaign" + now;
+				Long tmpId = test.createCampaign(accountId, tempCampaignName, BudgetLimitType.DailyBudgetStandard, 1.00, 5.00, CampaignStatus.Paused);
 				System.out.println("created temp campaign " + tmpId + "and now delete it.");
 				test.deleteCampaignById(accountId, tmpId);
 				System.out.println("OK");

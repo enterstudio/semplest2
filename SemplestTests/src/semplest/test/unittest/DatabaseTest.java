@@ -73,7 +73,7 @@ public class DatabaseTest extends BaseDB{
 	public static void main(String[] args){
 		DatabaseTest test = new DatabaseTest();
 		
-		test.Test_ALL();
+		//test.Test_ALL();
 		//test.Test_ReportData();				
 		//test.Test_TrafficEstimatorData();						
 		//test.Test_DefaultBid();		
@@ -373,8 +373,8 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** get Latest Biddable AdGroup Criteria from the database
-			//get_KeywordDataObject(1);			
-			get_KeywordDataObject(2);
+			get_KeywordDataObject(1);			
+			//get_KeywordDataObject(2);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -405,6 +405,7 @@ public class DatabaseTest extends BaseDB{
 					//*** get Latest Biddable AdGroup Criteria from the database
 					List<KeywordDataObject> ret = db.getLatestBiddableAdGroupCriteria(promotionID, AdEngine.Google.name());
 					int i = 0;
+					System.out.println("num of KeywordDataObject=" + ret.size());
 					for(KeywordDataObject kd : ret){
 						System.out.println("#"+i+"----------------------------");
 						System.out.println("keyword = " + kd.getKeyword());
@@ -705,7 +706,7 @@ public class DatabaseTest extends BaseDB{
 				errorHandler(e);
 			}
 			
-			try{
+			/*try{
 				//*** get AdEngine campaign from the database
 				System.out.println("------------------------------------------------------------");
 				System.out.println("getAdEngineAccount:");
@@ -728,7 +729,7 @@ public class DatabaseTest extends BaseDB{
 			catch(Exception e){
 				e.printStackTrace();
 				errorHandler(e);
-			}
+			}*/
 			
 			try{
 				//*** set AdEngine AdGroupID and get CampaignID at AdvertisingEnginePromotion table

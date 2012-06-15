@@ -60,7 +60,7 @@ public class SchedulerServiceTest {
 			//SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #1-email 2", "nan@semplest.com", "nan@semplest.com", "Expected Output: Get two emails immediately.");
 			listOfTasks.add(mailTask1);
 			//listOfTasks.add(mailTask2);
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", listOfTasks, "MailScheduleTest", new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
 		}
 		catch(Exception e){
 			errorHandler(e);
@@ -84,7 +84,7 @@ public class SchedulerServiceTest {
 			//SemplestSchedulerTaskObject mailTask2 = CreateSchedulerAndTask.getSendMailTask("[SchedulerTest]Test Case #2-email 2", "nan@semplest.com", "nan@semplest.com", "now = " + now.toString() + "\nExpected Output: Get two emails every 10 mins.");
 			listOfTasks.add(mailTask1);
 			//listOfTasks.add(mailTask2);			
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "MailScheduleTest", now, null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", listOfTasks, "MailScheduleTest", now, null, ProtocolEnum.ScheduleFrequency.TenMinutes.name(), true, false, null, null, null, null);
 		}
 		catch(Exception e){
 			errorHandler(e);
@@ -99,7 +99,7 @@ public class SchedulerServiceTest {
 			
 			SemplestSchedulerTaskObject case3task = CreateSchedulerAndTask.getTestTask(index);	
 			listOfTasks.add(case3task);			
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "Test#"+index, new Date(), null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);			
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", listOfTasks, "Test#"+index, new Date(), null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);			
 			
 		}
 		catch(Exception e){
@@ -124,7 +124,7 @@ public class SchedulerServiceTest {
 			
 			listOfTasks.add(case4task1);
 			
-			CreateSchedulerAndTask.createScheduleAndRun(listOfTasks, "TestServiceTest", now, null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", listOfTasks, "TestServiceTest", now, null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
 		}
 		catch(Exception e){
 			errorHandler(e);
@@ -149,7 +149,7 @@ public class SchedulerServiceTest {
 			ArrayList<SemplestSchedulerTaskObject> morningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject morningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Morning!", "nan@semplest.com", "nan@semplest.com", "Good Morning! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			morningTask.add(morningMail);				
-			CreateSchedulerAndTask.createScheduleAndRun(morningTask, "SchedulerDailyMorning", morning, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", morningTask, "SchedulerDailyMorning", morning, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			Thread.sleep(5000);
 			
 			//afternoon
@@ -158,7 +158,7 @@ public class SchedulerServiceTest {
 			ArrayList<SemplestSchedulerTaskObject> afternoonTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject afternoonMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Afternoon!", "nan@semplest.com", "nan@semplest.com", "Good Afternoon! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			afternoonTask.add(afternoonMail);				
-			CreateSchedulerAndTask.createScheduleAndRun(afternoonTask, "SchedulerDailyAfternoon", afternoon, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", afternoonTask, "SchedulerDailyAfternoon", afternoon, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			Thread.sleep(5000);
 			
 			//evening
@@ -167,7 +167,7 @@ public class SchedulerServiceTest {
 			ArrayList<SemplestSchedulerTaskObject> eveningTask = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject eveningMail = CreateSchedulerAndTask.getSendMailTask("[Scheduler] test_Good Evening!", "nan@semplest.com", "nan@semplest.com", "Good Evening! I'm doing fine. \n\nBest,\nSemplestScheduler");
 			eveningTask.add(eveningMail);				
-			CreateSchedulerAndTask.createScheduleAndRun(eveningTask, "SchedulerDailyEvening", evening, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun("http://172.18.9.26:9898/semplest", eveningTask, "SchedulerDailyEvening", evening, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, null, null, null, null);
 			
 		}
 		catch(Exception e){
