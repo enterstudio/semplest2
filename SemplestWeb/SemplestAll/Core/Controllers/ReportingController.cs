@@ -41,7 +41,7 @@ namespace Semplest.Core.Controllers
             SemplestEntities dbContext = new SemplestEntities();
             model.AdvertisingEngines = dbContext.AdvertisingEngines;
             model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
-            model.Detail = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword);
+            model.Detail = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword);
             model.Configuration = dbContext.Configurations.FirstOrDefault();
             return View(model);
         }
@@ -49,7 +49,8 @@ namespace Semplest.Core.Controllers
         public ActionResult ReportDetailsGrid()
         {
             var dbContext = new SemplestEntities();
-            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
             List<vwPromotionChartModel> reports = new List<vwPromotionChartModel>();
             foreach (var v in grp)
             {
@@ -61,7 +62,7 @@ namespace Semplest.Core.Controllers
                                         NumberClick = v.Sum(t => t.NumberClick), 
                                         SearchCTR = v.Sum(t => t.NumberClick * 100 / t.NumberImpressions),
                                         CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
-                                        AveragePosition = v.Sum(t => t.AveragePosition),
+                                        AveragePosition = v.Average(t => t.AveragePosition),
                                         IsActive = v.FirstOrDefault().IsActive ? "Live" : "Paused"
                                         }); 
                 }
