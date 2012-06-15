@@ -14,7 +14,7 @@ Edit Employee:
             $("#EmployeeSetup_HireDate").kendoDatePicker();
         });
         jQuery(function ($) {
-
+            $('.k-dropdownlist').kendoDropDownList();
             $("#EmployeeSetup_MiddleInitial").mask("a");
             //         $("#EmployeeSetup_HireDate").mask(("99/99/9999");
         });
@@ -100,7 +100,7 @@ Edit Employee:
                     @Html.ValidationMessageFor(model => model.EmployeeSetup.UserPassword)
         
         @*          @Html.LabelFor(model => model.EmployeeSetup.UserPassword)
-                    @Html.PasswordFor(model => model.EmployeeSetup.UserPassword, new { @class = "k-textbox" })
+                    @Html.TextBoxFor(model => model.EmployeeSetup.UserPassword, new { @class = "k-textbox" })
                     @Html.ValidationMessageFor(model => model.EmployeeSetup.UserPassword)
         *@        
                 </li>

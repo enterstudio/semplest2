@@ -29,46 +29,49 @@ Account Service
 }
 @using (Html.BeginForm("Index"))
 {
-    <div class='container'>
-        <h3>
-            Customer Accounts:</h3>
-    </div> 
-    <div class='container'>
-        <div class='column span-9'>
-            Search :
-            <input type="text" id="usersearch" name="usersearch" class="k-textbox k-search" />
-        </div>
-        <div class='column span-5'>
-            Account #
-            <input type="text" id="accountnumbersearch" name="accountnumbersearch" class="k-textbox k-search1" />
-        </div>
-        <div class='column span-7'>
-            eMail :
-            <input type="text" id="emailsearch" name="emailsearch" class="k-textbox k-search" />
-        </div>
-        <div class='column span-3 last'>
-            <input type="submit" value="Go" class="k-button" />
-        </div>
-    </div> 
-    <div class='container'>
-        <div class='column span-9'>
-            <div style="margin-left: 46px; vertical-align: middle">
-                <input type="radio" name="searchtype" value="Customer" />Customer
-                <input type="radio" name="searchtype" value="LastName" />Last Name
+    <fieldset>
+        <legend style="margin: 5px">
+            <h3>
+                Customer Accounts:</h3>
+        </legend>
+        <div class='container' style="margin-left: 10px">
+            <div class='column span-9'>
+                Search :
+                <input type="text" id="usersearch" name="usersearch" class="k-textbox k-search" />
+            </div>
+            <div class='column span-5'>
+                Account #
+                <input type="text" id="accountnumbersearch" name="accountnumbersearch" class="k-textbox k-search1" />
+            </div>
+            <div class='column span-7'>
+                eMail :
+                <input type="text" id="emailsearch" name="emailsearch" class="k-textbox k-search" />
+            </div>
+            <div class='column span-3 last'>
+                <input type="submit" value="Go" class="k-button" />
             </div>
         </div>
-        <div class='column span-5'>
-        </div>
-        <div class='column span-7'>
-            <div style="margin-left: 200px;width:200px;">
-            @Html.RouteLink("Add New Customer", new { Controller = "CustomerAccount", action = "Add" })
+        <br style="line-height: 35px" />
+        <div class='container'>
+            <div class='column span-9'>
+                <div style="margin-left: 58px; vertical-align: middle">
+                    <input type="radio" name="searchtype" value="Customer" />Customer
+                    <input type="radio" name="searchtype" value="LastName" />Last Name
+                </div>
+            </div>
+            <div class='column span-5'>
+            </div>
+            <div class='column span-7'>
+                <div style="margin-left: 210px; width: 200px;">
+                    @Html.RouteLink("Add New Customer", new { Controller = "CustomerAccount", action = "Add" })
+                </div>
+            </div>
+            <div class='column last span-3'>
             </div>
         </div>
-        <div class='column last span-3'>
-            
-        </div>
-    </div> 
-    
+        <br style="line-height: 20px"/>
+    </fieldset>
+    <br style="line-height: 15px"/>
 }
 @if (TempData["message"] != null)
 {
@@ -82,8 +85,7 @@ Account Service
 }
 else
 { 
-    <div class='container' style="overflow:auto; height:370px; width:800px; ">
-    
+    <div class='container' style="overflow: auto; height: 370px; width: 800px;">
         <table id="gradient-style" summary="Meeting Results">
             <thead>
                 <tr>
@@ -107,7 +109,6 @@ else
             <tfoot>
                 <tr>
                     <td colspan="5">
-                        
                     </td>
                 </tr>
             </tfoot>
@@ -119,7 +120,7 @@ else
                             @Html.RouteLink(item.Customer, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                         </td>
                         <td>
-                            @Html.RouteLink(item.AccountNumber.ToString(), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
+                            @Html.RouteLink(item.AccountNumber.ToString(CultureInfo.InvariantCulture), new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
                         </td>
                         <td>
                             @Html.RouteLink(item.FirstName, new { Controller = "AccountService", action = "Index", id = item.AccountNumber })
@@ -149,5 +150,4 @@ else
     {
         width: 90px;
     }
-   
 </style>

@@ -93,9 +93,9 @@ Account Service
                     <table>
                         <tr>
                             <td>
-                                <fieldset style="width: 500px">
+                                <fieldset style="width: 560px">
                                     <legend>Account Actions</legend>
-                                    <div style="margin: 10px">
+                                    <div style="margin: 5px">
                                     @if (Model.AccountServiceModel.isActive)
                                     {@Html.ActionLink("Disable", "", "", new { @class = "disableuser" }) }
                                     else
@@ -105,7 +105,7 @@ Account Service
                                         <a href="#">Impresonate</a> <a href="#">Issue Refund</a>
                                         @if (Model.ParentName.ToLower() == "This is a parent".ToLower())
                                         {
-                                            <li>@Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })</li>
+                                            @Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })
                                         }
                                     </div>
                                 </fieldset>
