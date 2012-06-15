@@ -1347,10 +1347,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);			
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
-		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-		final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+		final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();		
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
 		final List<KeywordProbabilityObject> keywordProbabilitiesForIds = getFilteredKeywordProbabilities(keywordProbabilitiesAll, keywordIds);
@@ -1368,14 +1366,37 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
-			{							
+			{	
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.MSN.name());
+				final String accountID = "" + adEngineData.getAccountID();				
+				final Long adGroupID = adEngineData.getAdGroupID();
+				final Long campaignID = adEngineData.getCampaignID();				
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
 				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
 				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, keywordMatchType, null);										
 			}
-			else
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
+				final Long accountId = adEngineData.getAccountID();				
+				final Long adGroupId = adEngineData.getAdGroupID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final List<com.microsoft.adcenter.v8.Keyword> msnKeywords = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
+				for (final KeywordProbabilityObject keywordProbabilitiesForId : keywordProbabilitiesForIds)
+				{
+					if (keywordProbabilitiesForId.getIsActive() && keywordProbabilitiesForId.getIsTargetMSN())
+					{
+						final String keywordText = keywordProbabilitiesForId.getKeyword();
+						com.microsoft.adcenter.v8.Keyword k = new com.microsoft.adcenter.v8.Keyword();						
+						k.setText(keywordText);
+					}
+				}
+				final com.microsoft.adcenter.v8.Keyword[] msnKeywordsArray = msnKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[msnKeywords.size()]);
+				final long[] newKeywordIds = msn.createKeywords(accountId, adGroupId, msnKeywordsArray);
+			}
+			else					
 			{
 				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Adding Keywords (at least not yet)";
 				logger.error(errMsg);
