@@ -55,10 +55,9 @@
                                 Display</label>
                         </td>
                         <td>
-                            <input type="text" id="AdModelProp_DisplayUrl" name="AdModelProp.DisplayUrl" class="k-textbox k-textboxAd1"/>
-@*                            @Html.TextBoxFor(m => m.DisplayUrl, new { disabled = true, @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
+                            @Html.TextBoxFor(m => m.DisplayUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
                             @Html.ValidationMessageFor(t => t.DisplayUrl)
-*@                        </td>
+                        </td>
                         <td> <span style=" margin-left: 5px;" class="grey-text">This url will appears in all of your ads</span>
                         </td>
                     </tr>
