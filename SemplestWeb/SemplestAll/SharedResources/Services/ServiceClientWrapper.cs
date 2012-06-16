@@ -302,7 +302,7 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleUpdateBudget(int customerID, int promotionID, Double changeInBudget, List<String> adEngines)
+        public bool scheduleUpdateBudget(int customerID, int promotionID, Decimal changeInBudget, List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
