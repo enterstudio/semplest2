@@ -10,14 +10,24 @@ $(document).ready(function () {
         if (e.keyCode == 10 || e.keyCode == 13)
             e.preventDefault();
     });
+    $('#AdModelProp_LandingUrl').live("keypress", function (e) {
+        if (e.keyCode == 38 || e.keyCode == 39)
+            e.preventDefault();
+    });
+
     $('#AdModelProp_LandingUrl').live("keyup", function (e) {
         var originalValue = $('#AdModelProp_LandingUrl').val();
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
-            $('#displayUrl').val($('#AdModelProp_LandingUrl').val().substring(index + 7));
+            var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
+            $('#displayUrl').val(dispStr);
+            $('#AdModelProp.DisplayUrl').val(dispStr);
         }
-        else
-            $('#displayUrl').val($('#AdModelProp_LandingUrl').val());
+        else {
+            var landStr = $('#AdModelProp_LandingUrl').val();
+            $('#displayUrl').val(landStr);
+            $('#AdModelProp.DisplayUrl').val(landStr);
+        }
     });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
