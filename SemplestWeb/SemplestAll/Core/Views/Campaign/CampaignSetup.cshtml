@@ -72,6 +72,17 @@
         $("#btnTwo").addClass('selected');
         $("#btnThree").addClass('selected');
     }
+    $(document).ready(function () {
+        if ($('#IsLaunched').val() == 'True') {
+            if ($('#IsCompleted').val() == 'True') {
+                disableIsLaunchedCompleted();
+                openAllTabs();
+            } else {
+                disableIsLaunched();
+                openAllTabs();
+            }
+        }
+    });
     var onActivate = function () {
         //        $("#tabstrip").children('.k-content').height($("#tabstrip").outerHeight() - $('ul.k-tabstrip-items').outerHeight());
         $("#tabstrip").children('.k-content').height(600);
