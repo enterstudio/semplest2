@@ -1216,7 +1216,8 @@ namespace Semplest.Admin.Controllers
                         from = "accounts@semplest.com";
                         to = u.Email;
                         body = emailtemplate.EmailBody;
-                        subject = emailtemplate.EmailSubject;
+                        //parent name in subject line
+                        subject = parentdetails.FirstOrDefault().Name + " " +emailtemplate.EmailSubject;
                         body = body.Replace("[ChildCustomerFirstLast]", u.FirstName.ToString() + " " + u.LastName.ToString());
                         body = body.Replace("[ParentCustomerName]", parentdetails.FirstOrDefault().Name.ToString());
                         body = body.Replace("[FAQs]", "http://faq");
