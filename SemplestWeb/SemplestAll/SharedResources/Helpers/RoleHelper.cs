@@ -15,9 +15,9 @@ namespace Semplest.SharedResources.Helpers
             //var db = new SemplestEntities();
             //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 71);
             //return true;
-            var db = new SemplestEntities();
-            httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 12);
-            return true;
+            //var db = new SemplestEntities();
+            //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 12);
+            //return true;
             string userId = string.Empty;
             if (HttpContext.Current.Session["UserId"] != null)
                 userId = HttpContext.Current.Session["UserId"].ToString();
