@@ -116,6 +116,12 @@
     </style>
 </div>
 <script type="text/javascript">
+    $(document).ready(function () {
+        var originalValue = $('#AdModelProp_LandingUrl').val();
+        if (originalValue.length == 0) {
+            $('#AdModelProp_LandingUrl').val('http://');
+        }
+    });
     $('#getCategories').click(function () {
         var urlStr = $('#LogoUrlStr').val() + 'reviewing your input.jpg';
         $('#displayBox').attr('src', urlStr);
