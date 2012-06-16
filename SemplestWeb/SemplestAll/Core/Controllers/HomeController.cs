@@ -235,54 +235,70 @@ namespace SemplestWebApp.Controllers
         [HttpPost]
         public ActionResult RemovePromotion(int promotionId)
         {
-            SemplestEntities dbContext = new SemplestEntities();
-            dbContext.Promotions.Where(x => x.PromotionPK == promotionId).First().IsDeleted = true;
-            dbContext.SaveChanges();
+            try
+            {
+                SemplestEntities dbContext = new SemplestEntities();
+                dbContext.Promotions.Where(x => x.PromotionPK == promotionId).First().IsDeleted = true;
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
             return RedirectToAction("Index2");
         }
 
         [HttpPost]
         public ActionResult PausePromotion(int promotionIdP)
         {
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            SemplestEntities dbContext = new SemplestEntities();
-            List<string> adEngines = new List<string>();
-            Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdP).First();
-            int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
-            foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
-                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            p.IsPaused = sw.schedulePromotion(customerId, promotionIdP, adEngines.ToArray(), false);
-            dbContext.SaveChanges();
+            try
+            {
+                ServiceClientWrapper sw = new ServiceClientWrapper();
+                SemplestEntities dbContext = new SemplestEntities();
+                List<string> adEngines = new List<string>();
+                Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdP).First();
+                int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
+                foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                    adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+                p.IsPaused = sw.schedulePromotion(customerId, promotionIdP, adEngines.ToArray(), false);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
             return RedirectToAction("Index2");
         }
 
         [HttpPost]
         public ActionResult ResumePromotion(int promotionIdR)
         {
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            SemplestEntities dbContext = new SemplestEntities();
-            List<string> adEngines = new List<string>();
-            Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdR).First();
-            int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
-            foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
-                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            p.IsPaused = !sw.schedulePromotion(customerId, promotionIdR, adEngines.ToArray(), false);
-            dbContext.SaveChanges();
+            try
+            {
+                ServiceClientWrapper sw = new ServiceClientWrapper();
+                SemplestEntities dbContext = new SemplestEntities();
+                List<string> adEngines = new List<string>();
+                Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdR).First();
+                int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
+                foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                    adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+                p.IsPaused = !sw.schedulePromotion(customerId, promotionIdR, adEngines.ToArray(), false);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
             return RedirectToAction("Index2");
         }
 
         [HttpPost]
         public ActionResult EndPromotion(int promotionIdE)
         {
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            SemplestEntities dbContext = new SemplestEntities();
-            List<string> adEngines = new List<string>();
-            Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdE).First();
-            int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
-            foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
-                adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            p.IsCompleted = sw.schedulePromotion(customerId, promotionIdE, adEngines.ToArray(), false);
-            dbContext.SaveChanges();
+            try
+            {
+                ServiceClientWrapper sw = new ServiceClientWrapper();
+                SemplestEntities dbContext = new SemplestEntities();
+                List<string> adEngines = new List<string>();
+                Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdE).First();
+                int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
+                foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
+                    adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
+                p.IsCompleted = sw.schedulePromotion(customerId, promotionIdE, adEngines.ToArray(), false);
+                dbContext.SaveChanges();
+            }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
             return RedirectToAction("Index2");
         }
 
