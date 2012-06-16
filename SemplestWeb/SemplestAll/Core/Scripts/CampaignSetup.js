@@ -20,12 +20,12 @@ $(document).ready(function () {
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
             var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
-            $('#displayUrl').val(dispStr);
+            $('#AdModelProp_DisplayUrl').val(dispStr);
             $('#AdModelProp.DisplayUrl').val(dispStr);
         }
         else {
             var landStr = $('#AdModelProp_LandingUrl').val();
-            $('#displayUrl').val(landStr);
+            $('#AdModelProp_DisplayUrl').val(landStr);
             $('#AdModelProp.DisplayUrl').val(landStr);
         }
     });
