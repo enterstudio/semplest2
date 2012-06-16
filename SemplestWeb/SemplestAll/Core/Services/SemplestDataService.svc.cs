@@ -207,6 +207,18 @@ namespace Semplest.Core.Services
                 }
             }
 
+
+            //added by tudor
+            int userid = ((Credential)System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
+            var queryCustFk = from u in dbcontext.Users where u.UserPK == userid select u.CustomerFK;
+            var custobj = from c in dbcontext.Customers where c.CustomerPK == queryCustFk.FirstOrDefault() select new { c.PercentOfMedia, c.PromotionFeeAmount, c.PromotionFeeOverride };
+            model.PercentMedia = custobj.FirstOrDefault().PercentOfMedia;
+            model.PromotionFeeOverRide = custobj.FirstOrDefault().PromotionFeeOverride;
+            model.PromotionFeeOverRideAmount = custobj.FirstOrDefault().PromotionFeeAmount;
+            //
+
+
+
             return model;
         }
 
