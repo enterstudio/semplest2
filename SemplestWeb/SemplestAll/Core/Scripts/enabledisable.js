@@ -32,7 +32,7 @@ function openAllTabs() {
 }
 function enableDisable() {
     if ($('#IsLaunched').val() == 'True') {
-        alert($('#IsCompleted').val());
+        //alert($('#IsCompleted').val());
         if ($('#IsCompleted').val() == 'True') {
             disableIsLaunchedCompleted();
             openAllTabs();
@@ -41,4 +41,9 @@ function enableDisable() {
             openAllTabs();
         }
     }
+}
+function enabledIsLaunched() {
+    $('.k-textbox').removeAttr('disabled');
+    $('.k-dropdownlist').removeAttr('disabled');
+    $('input').removeAttr('disabled');
 }
