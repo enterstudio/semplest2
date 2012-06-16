@@ -91,7 +91,7 @@
             <input type="text" class="k-inputlabel" id="txtCredCharge" value="$@creditcardcharge.ToString("n2")" readonly="readonly" style="width:85px; margin-left: 120px;text-align:right;"/>
         </li>
         <li>
-            <input type="checkbox" /><label style="margin-left: 5px; color:grey;">I have read the
+            <input type="checkbox" id="agreecheckbox"/><label style="margin-left: 5px; color:grey;">I have read the
             </label>
             <a>Terms and Conditions</a> <label style="color:grey;">and agree that as long as my advertising is live,</label>
             <br />
@@ -222,6 +222,13 @@
             $.unblockUI();
         });
 
+        if ($("#agreecheckbox:checked").val()) {
+            $("#getLaunchAdProduct").attr('disabled', false);
+        }
+        else {
+            $("#getLaunchAdProduct").attr('disabled', true);
+        }
+
     });
 </script>
 <script type="text/javascript">
@@ -258,6 +265,15 @@
     $("#getLaunchAdProduct").click(function () {
         var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
         $('#displayBox').attr('src', urlStr);
+    });
+
+    $("#agreecheckbox").click(function () {
+        if ($("#agreecheckbox:checked").val()) {
+            $("#getLaunchAdProduct").attr('disabled', false);
+        }
+        else {
+            $("#getLaunchAdProduct").attr('disabled', true);
+        }
     });
 
     function tabChange1(parameters) {
