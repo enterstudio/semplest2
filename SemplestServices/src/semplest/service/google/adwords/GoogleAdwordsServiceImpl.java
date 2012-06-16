@@ -539,6 +539,64 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 
+	public Long getSpentAPIUnitsPerMethodAndAccountID(Long accountID, String serviceName, String methodName, java.util.Date startDate, java.util.Date endDate) throws Exception
+	{
+		try
+		{
+			AdWordsServiceLogger.log();
+			logger.info("AdWordsServiceLogger.log() called");
+			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+			// Get the INFO_SERVICe.
+
+			InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
+			InfoSelector selector = new InfoSelector();
+			selector.setApiUsageType(ApiUsageType.UNIT_COUNT);
+			selector.setClientCustomerIds(new long[]
+			{ accountID });
+			String start = "";
+			String end = "";
+			if (startDate != null && endDate != null)
+			{
+				start = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(startDate);
+				end = SemplestUtils.DATE_FORMAT_YYYYMMDD.format(endDate);
+			}
+			else
+			{
+				throw new Exception("Date is null");
+			}
+			// selector.setClientEmails(new String[]{email});
+			selector.setDateRange(new DateRange(start, end));
+			//Specify method
+			selector.setServiceName(serviceName);
+			selector.setMethodName(methodName);
+			ApiUsageInfo info = infoService.get(selector);
+			Long res = null;
+			if (info != null && info.getApiUsageRecords() != null && info.getApiUsageRecords().length>0)
+			{
+				res = info.getApiUsageRecords(0).getCost();
+			}
+			return info.getCost();
+
+		}
+		catch (ServiceException se)
+		{
+			logger.error(se);
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", se);
+		}
+		catch (ApiException e)
+		{
+			logger.error(e);
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString(), e);
+		}
+		catch (RemoteException e)
+		{
+			logger.error(e);
+			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", e);
+		}
+
+	}
+	
+	
 	/*
 	 * Account
 	 */
