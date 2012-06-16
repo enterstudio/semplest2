@@ -57,6 +57,8 @@
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
             <input type="hidden" id="LogoUrlStr" value='@System.Configuration.ConfigurationManager.AppSettings["LogoUrl"]'/>
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
+            <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
+            <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
             <img id="displayBox" style="display: none" />
         }
     </div>
