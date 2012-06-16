@@ -782,16 +782,22 @@ hr
     text-indent: .3em;
 }
 
-.map {
-    width: 400px;height: 160px;
+.map
+{
+    width: 400px;
+    height: 160px;
     display: flexbox;
 }
-.mapcontainer {
-    margin-left: 85px; width: 400px;height: 160px;
+.mapcontainer
+{
+    margin-left: 85px;
+    width: 400px;
+    height: 160px;
     display: block;
 }
 
-.k-window .k-header {
+.k-window .k-header
+{
     background-color: #ADC76E;
     color: #fff;
 }
@@ -805,13 +811,52 @@ hr
 {
     border-color: #000;
 }
-.k-button.selected {
+.k-button.selected
+{
     background-color: #87A44A;
     color: #fff;
     width: 60px;
 }
-.k-button.unselected {
+.k-button.unselected
+{
     background-color: #D7E8B1;
     color: #fff;
-     width: 60px;
+    width: 60px;
+}
+.container
+{
+    display: table;
+}
+.tablewrapper
+{
+    position: relative;
+    float: left;
+    left: 0px;
+    margin-bottom: 2px;
+    background-color: #cccccc;
+}
+.left
+{
+    float: left;
+    width: 42%;
+    margin-bottom: 10px;
+}
+.right
+{
+    float: left;
+    width: 54%;
+    margin-left: 4%;
+    margin-bottom: 10px;
+    min-height: 500px;
+}
+.col11
+{
+    background: #242424;
+    float: left;
+    width: 33.33%;
+    text-align: center;
+    height: 30px;
+    vertical-align: middle;
+    font-weight: bold;
+    padding-top: 15px;
 }

@@ -30,3 +30,15 @@ function openAllTabs() {
     }, tabStrip.tabGroup.children("li:last")).select();
    
 }
+function enableDisable() {
+    if ($('#IsLaunched').val() == 'True') {
+        alert($('#IsCompleted').val());
+        if ($('#IsCompleted').val() == 'True') {
+            disableIsLaunchedCompleted();
+            openAllTabs();
+        } else {
+            disableIsLaunched();
+            openAllTabs();
+        }
+    }
+}

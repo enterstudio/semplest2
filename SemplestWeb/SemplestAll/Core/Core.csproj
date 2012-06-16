@@ -212,7 +212,6 @@
     <Content Include="Content\Metro\slider-v.gif" />
     <Content Include="Content\Metro\sprite.png" />
     <Content Include="Content\Metro\wait.gif" />
-    <Content Include="Content\MyStylesProfile.css" />
     <Content Include="Content\report.png" />
     <Content Include="Content\reviewing your input.jpg" />
     <Content Include="Content\SearchEngineMarketingAds.png" />
