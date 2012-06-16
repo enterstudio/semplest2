@@ -117,7 +117,7 @@
     </div>
     <script>
         var height = $(window).height();
-        $('#tablewrapper').height(height - 170);
+        $('#tablewrapper').height(700);
         $.getJSON($('#SideBarUrl').val(), {}, function (data) {
             for (var mainGroup in data) {
                 for (var subitem in data[mainGroup].SubItems) {

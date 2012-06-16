@@ -74,10 +74,11 @@
     }
     $(document).ready(function () {
         enableDisable();
+        $("#tabstrip").children('.k-content').height(650);
     });
     var onActivate = function () {
-        var height = $(window).height();
-        $("#tabstrip").children('.k-content').height(height - 225);
+        //var height = $(window).height();
+        $("#tabstrip").children('.k-content').height(650);
         //        $("#tabstrip").children('.k-content').height($("#tabstrip").outerHeight() - $('ul.k-tabstrip-items').outerHeight());
         switch (tabStrip.select().text()) {
             case "Create Ads":
@@ -224,7 +225,7 @@
             if (id != "" && id.name != "Keywords")
                 alert(id);
         }
-
+        $("#tabstrip").children('.k-content').height(650);
     }
     function OnFailure() {
         $.unblockUI();
