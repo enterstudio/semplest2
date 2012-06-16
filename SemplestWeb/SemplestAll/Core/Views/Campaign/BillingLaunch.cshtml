@@ -5,21 +5,55 @@
 <link href="@Url.Content("~/Content/formStyle.css")" rel="stylesheet" type="text/css" />
 @{ 
     decimal budget, semplestcharge, mediaspend, creditcardcharge;
-
     if (Model.Configuration.SemplestDefaultBudgetMarkUpOrDown == "1")
-    {
+    { //markup
+
         budget = Model.ProductGroup.Budget;
-        semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+
+
+        if (Model.PromotionFeeOverRide)
+        {
+
+            semplestcharge = Model.PromotionFeeOverRideAmount == null ? 0 : Convert.ToDecimal(Model.PromotionFeeOverRideAmount);
+        }
+        else
+        {
+            semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+        }
+
+        // Now add in any % of Media Charge 
+
+        decimal xxx = (budget - semplestcharge) * Model.PercentMedia;
+
+        semplestcharge = semplestcharge + xxx;
         mediaspend = (budget - semplestcharge);
         creditcardcharge = budget;
     }
     else
-    {
+    { //markdown
+
         budget = Model.ProductGroup.Budget;
-        semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+
+
+        if (Model.PromotionFeeOverRide)
+        {
+            semplestcharge = Model.PromotionFeeOverRideAmount == null ? 0 : Convert.ToDecimal(Model.PromotionFeeOverRideAmount);
+        }
+        else
+        {
+            semplestcharge = (Model.Configuration.CustomerDefaultPerCampaignFlatFeeAmount);
+        }
+
+        // Now add in any % of Media Charge 
+
+        decimal xxx = (budget - semplestcharge) * Model.PercentMedia;
+
+        semplestcharge = semplestcharge + xxx;
+
         mediaspend = (budget);
         creditcardcharge = semplestcharge + budget;
     }
+
 }
 <style>
     #tickets h3
