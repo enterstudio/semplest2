@@ -104,7 +104,7 @@ namespace Semplest.Core.Controllers
             campaignSetupModel.ProductGroup.IsEdit = true;
             ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " +
                             campaignSetupModel.ProductGroup.ProductPromotionName;
-
+            campaignSetupModel.IsCompleted = true;
             ViewBag.IsLaunched = campaignSetupModel.IsLaunched;
             ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
             ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
@@ -526,22 +526,22 @@ namespace Semplest.Core.Controllers
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
             //var ds = new SemplestDataService();
-            var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
+            //var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
             // set sitelinks in session
-            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
-                campaignSetupModel.ProductGroup.StartDate =
-                    Convert.ToDateTime(campaignSetupModel.ProductGroup.StartDate).ToString("MM/dd/yyyy");
-            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
-                campaignSetupModel.ProductGroup.EndDate =
-                    Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
-            Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+            //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
+            //    campaignSetupModel.ProductGroup.StartDate =
+            //        Convert.ToDateTime(campaignSetupModel.ProductGroup.StartDate).ToString("MM/dd/yyyy");
+            //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
+            //    campaignSetupModel.ProductGroup.EndDate =
+            //        Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
+            //Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
 
-            // set negative keywords in session
-            Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
-            Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
+            //// set negative keywords in session
+            //Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
+            //Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
-            campaignSetupModel.ProductGroup.IsEdit = true;
-            return PartialView(campaignSetupModel);
+            //campaignSetupModel.ProductGroup.IsEdit = true;
+            return PartialView(new CampaignSetupModel());
         }
 
         [HttpPost]

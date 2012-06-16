@@ -103,7 +103,7 @@
                 </div>
                 <div id="mainWrapInner">
                     <div id="main">
-                        <div id="example">@RenderBody()
+                        <div id="tablewrapper">@RenderBody()
                         </div>
                     </div>
                 </div>
@@ -116,6 +116,8 @@
         </div>
     </div>
     <script>
+        var height = $(window).height();
+        $('#tablewrapper').height(height - 170);
         $.getJSON($('#SideBarUrl').val(), {}, function (data) {
             for (var mainGroup in data) {
                 for (var subitem in data[mainGroup].SubItems) {
@@ -135,17 +137,17 @@
         });
         $("#panelbar-profile").kendoPanelBar({
             dataSource: [
-            {
-                text: "Home",
-                items: [
-                    { text: "Reporting" },
-                    { text: "Billing" },
-                    { text: "Quick Start Guide" },
-                    { text: "FAQs" },
-                    { text: "Contact Us" }
-                ]
-            }
-        ],
+                {
+                    text: "Home",
+                    items: [
+                        { text: "Reporting" },
+                        { text: "Billing" },
+                        { text: "Quick Start Guide" },
+                        { text: "FAQs" },
+                        { text: "Contact Us" }
+                    ]
+                }
+            ],
             expandMode: "single"
         });
     </script>

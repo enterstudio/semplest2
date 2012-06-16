@@ -838,14 +838,13 @@ hr
 .left
 {
     float: left;
-    width: 42%;
+    width: 40%;
     margin-bottom: 10px;
 }
 .right
 {
     float: left;
-    width: 54%;
-    margin-left: 4%;
+    width: 60%;
     margin-bottom: 10px;
     min-height: 500px;
 }
