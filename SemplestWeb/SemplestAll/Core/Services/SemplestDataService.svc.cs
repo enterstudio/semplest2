@@ -177,6 +177,9 @@ namespace Semplest.Core.Services
                 // set URL
                 model.AdModelProp.LandingUrl = promo.LandingPageURL;
 
+                // set display url
+                model.AdModelProp.DisplayUrl = promo.DisplayURL;
+
                 // set geotargetings
                 model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
 
@@ -299,6 +302,7 @@ namespace Semplest.Core.Services
 
                 PromotionName = model.ProductGroup.ProductPromotionName,
                 LandingPageURL = model.AdModelProp.LandingUrl,
+                DisplayURL = model.AdModelProp.DisplayUrl,
                 PromotionDescription = model.ProductGroup.Words,
                 PromotionBudgetAmount = model.ProductGroup.Budget,
                 BudgetCycleFK = GetBudgetCycleId("Monthly"),
@@ -320,6 +324,7 @@ namespace Semplest.Core.Services
         private void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestEntities dbcontext)
         {
             updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
+            updatePromotion.DisplayURL = model.AdModelProp.DisplayUrl;
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
             updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us"));
