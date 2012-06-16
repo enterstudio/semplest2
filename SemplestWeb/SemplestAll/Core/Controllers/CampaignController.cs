@@ -537,7 +537,7 @@ namespace Semplest.Core.Controllers
             Session["NegativeKeywordsText"] = campaignSetupModel.AdModelProp.NegativeKeywordsText;
 
             campaignSetupModel.ProductGroup.IsEdit = true;
-            return PartialView(new CampaignSetupModel());
+            return PartialView(campaignSetupModel);
         }
 
         [HttpPost]
