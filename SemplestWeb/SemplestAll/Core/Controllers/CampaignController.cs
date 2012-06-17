@@ -12,7 +12,6 @@ using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
 using Semplest.Core.Models.Repositories;
-using Semplest.Core.Services;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
 using System.Configuration;
@@ -20,20 +19,6 @@ using Semplest.SharedResources.Services;
 
 namespace Semplest.Core.Controllers
 {
-
-    public class RequireRequestValueAttribute : ActionMethodSelectorAttribute
-    {
-        public RequireRequestValueAttribute(string valueName)
-        {
-            ValueName = valueName;
-        }
-        public override bool IsValidForRequest(ControllerContext controllerContext, MethodInfo methodInfo)
-        {
-            return (controllerContext.HttpContext.Request[ValueName] != null);
-        }
-        public string ValueName { get; private set; }
-    }
-
     [ExceptionHelper]
     [AuthorizeRole]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
@@ -85,7 +70,7 @@ namespace Semplest.Core.Controllers
             //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
             //var ds = new SemplestDataService();
-            var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
+            var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
 
             // for ads
             var i = 1;
@@ -139,8 +124,7 @@ namespace Semplest.Core.Controllers
                     var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
                     Logger.Write(logEnty);
 
-                    var ds = new SemplestDataService();
-                    ds.SaveProductGroupAndCampaign(userid, model);
+                    _campaignRepository.SaveProductGroupAndCampaign(userid, model);
 
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -224,9 +208,9 @@ namespace Semplest.Core.Controllers
                     WriteLog(msg, model);
 
                     //var ds = new SemplestDataService();
-                    var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                     model.ProductGroup.ProductPromotionName);
-                    SemplestDataService.SaveSelectedCategories(promoId, catList);
+                    _campaignRepository.SaveSelectedCategories(promoId, catList);
 
                     msg =
                         "In GetKeywords ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -397,7 +381,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
+            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Remove).ToList();
             return Json("AdditionalLinks");
         }
 
@@ -452,9 +436,9 @@ namespace Semplest.Core.Controllers
         public ActionResult KeyWords(CampaignSetupModel model, FormCollection fc)
         {
             int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-            var promoId = SemplestDataService.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+            var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                 model.ProductGroup.ProductPromotionName);
-            SemplestDataService.SetKeywordsDeleted(model.KeywordIds, promoId);
+            _campaignRepository.SetKeywordsDeleted(model.KeywordIds, promoId);
             CampaignSetupModel sessionModel = (CampaignSetupModel)Session["CampaignSetupModel"];
             sessionModel.AllKeywords.RemoveAll(key => model.KeywordIds.Contains(key.Id));
             model.BillingLaunch.KeywordsCount = sessionModel.AllKeywords.Count();
@@ -487,7 +471,7 @@ namespace Semplest.Core.Controllers
         {
             int userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             //var sds = new SemplestDataService();
-            var vwProductPromotions = SemplestDataService.GetUserWithProductGroupAndPromotions(userid);
+            var vwProductPromotions = _campaignRepository.GetUserWithProductGroupAndPromotions(userid);
             var navBars = new List<NavBar>();
             var productGroupsBar = new NavBar { Name = "Product Groups..", SubItems = new List<NavBar>() };
             foreach (var promotion in vwProductPromotions.GroupBy(t => new { t.ProductGroupPK, t.ProductGroupName }).OrderBy(x => x.Key.ProductGroupName))
@@ -523,8 +507,7 @@ namespace Semplest.Core.Controllers
             var scw = new ServiceClientWrapper();
             scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
-            var ds = new SemplestDataService();
-            var campaignSetupModel = SemplestDataService.GetCampaignSetupModelForPromotionId(promotionId);
+            var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
             //set sitelinks in session
             if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
                 campaignSetupModel.ProductGroup.StartDate =

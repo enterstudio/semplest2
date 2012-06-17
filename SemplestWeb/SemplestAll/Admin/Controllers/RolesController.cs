@@ -41,11 +41,11 @@ namespace Semplest.Admin.Controllers
         {
             // TODO: Add insert logic here
             var ro = new Role {RoleName = f["roleName"].ToString()};
-            _dbContext.Roles.AddObject(ro);
+            _dbContext.Roles.Add(ro);
             _dbContext.SaveChanges();
             foreach (sp_GetRigtsRolesInteraction_Result s in userRights)
             {
-                _dbContext.RolesRightsAssociations.AddObject(AddRoleRightAssociation(s, ro.RolePK));
+                _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, ro.RolePK));
             }
             _dbContext.SaveChanges();
             return RedirectToAction("Index");
@@ -74,7 +74,7 @@ namespace Semplest.Admin.Controllers
                             l.IsVisible = s.IsVisible == null ? false : bool.Parse(s.IsVisible.ToString());
                         }
                     }
-                    else {  _dbContext.RolesRightsAssociations.AddObject(AddRoleRightAssociation(s, id)); }
+                    else {  _dbContext.RolesRightsAssociations.Add(AddRoleRightAssociation(s, id)); }
                 }
                 _dbContext.SaveChanges();
 
@@ -110,7 +110,7 @@ namespace Semplest.Admin.Controllers
                 SemplestEntities dbContext = new SemplestEntities();
                 Role r = dbContext.Roles.Where(x => x.RolePK == id).First();
                 r.RolesRightsAssociations.Clear();
-               dbContext.Roles.DeleteObject(r);
+               dbContext.Roles.Remove(r);
                dbContext.SaveChanges();
                 return RedirectToAction("Index");
             }

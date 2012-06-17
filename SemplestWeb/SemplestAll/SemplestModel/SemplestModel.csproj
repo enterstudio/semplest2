@@ -51,15 +51,232 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Address.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AddressType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdvertisingEngine.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdvertisingEngineAccount.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdvertisingEngineAd.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdvertisingEnginePromotion.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AdvertisingEngineReportData.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BidType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BillType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="BudgetCycle.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Configuration.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Credential.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CreditCardProfile.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CreditCardTransaction.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Customer.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerAddressAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerHierarchy.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerNote.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerPhoneAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="CustomerStyle.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
     <Compile Include="EFMetaData.cs" />
+    <Compile Include="EmailTemplate.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmailType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Employee.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeCustomerAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeePhoneAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="EmployeeType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Error.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Frequency.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="GeoTargeting.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HelpDefinition.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Keyword.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KeywordBid.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KeywordBidData.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="KeywordCategory.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
     <Compile Include="ModelBase.cs" />
+    <Compile Include="Phone.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PhoneType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductGroup.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ProductGroupCycleType.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Promotion.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionAd.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionAdEngineSelected.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionAdengineStatu.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionKeywordAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionPayment.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="PromotionStatu.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Right.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Role.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="RolesRightsAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Schedule.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleJob.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleLog.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ScheduleTaskAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="SEMCustomerDetail.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Semplest.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Semplest.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Semplest.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
     <Compile Include="SemplestModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SemplestModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="SiteLink.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sp_GetRigtsRolesInteraction_Result.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StateCode.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagram.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TargetedDailyBudget.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Task.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TrafficEstimator.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransactionHistory.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRolesAssociation.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
     <Compile Include="Validations\MultifieldRequired.cs" />
+    <Compile Include="vwCreditCardTransactionDetail.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vwGetLivePromotionsForUser.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vwProductPromotion.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="vwPromotionChart.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WebContent.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
+    <Compile Include="WebContentQuestionMarkHelp.cs">
+      <DependentUpon>Semplest.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="SemplestModel.edmx">
@@ -70,6 +287,14 @@
   <ItemGroup>
     <None Include="App.Config" />
     <None Include="packages.config" />
+    <None Include="Semplest.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Semplest.Context.cs</LastGenOutput>
+    </None>
+    <None Include="Semplest.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Semplest.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

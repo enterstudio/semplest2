@@ -149,7 +149,7 @@ namespace SemplestWebApp.Controllers
 
                 if (productgroupexists.Count() > 0) throw new Exception("Duplicate");
 
-                dbContext.ProductGroups.AddObject(new ProductGroup { CustomerFK = c.User.CustomerFK.Value, ProductGroupName = productgroupname, StartDate = DateTime.Now, IsActive = true });
+                dbContext.ProductGroups.Add(new ProductGroup { CustomerFK = c.User.CustomerFK.Value, ProductGroupName = productgroupname, StartDate = DateTime.Now, IsActive = true });
                 dbContext.SaveChanges();
 
             }

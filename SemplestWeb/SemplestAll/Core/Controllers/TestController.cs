@@ -30,7 +30,7 @@ namespace Semplest.Core.Controllers
             {
                 using (var db = new SemplestEntities())
                 {
-                    db.Phones.AddObject(ph);
+                    db.Phones.Add(ph);
                     db.SaveChanges();
                 }
                 return RedirectToAction("Index");

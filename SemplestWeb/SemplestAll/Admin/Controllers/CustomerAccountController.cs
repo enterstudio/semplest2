@@ -442,7 +442,7 @@ namespace Semplest.Admin.Controllers
             //for cancel just redirect to main page
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
             
-            if (command.ToLower() == "delete") return RedirectToAction("Delete", new {id=m.CustomerAccount.AccountNumber});
+            if (command.ToLower() == "delete") return RedirectToAction("Remove", new {id=m.CustomerAccount.AccountNumber});
 
             SemplestEntities dbcontext = new SemplestEntities();
 
@@ -675,12 +675,12 @@ namespace Semplest.Admin.Controllers
             {
                 //add one
                 var addemployeesales=new EmployeeCustomerAssociation {  CustomerFK=m.CustomerAccount.AccountNumber  , EmployeeFK = m.SelectedSalesPersonID  };
-                dbcontext.EmployeeCustomerAssociations.AddObject(addemployeesales);
+                dbcontext.EmployeeCustomerAssociations.Add(addemployeesales);
             }
             else if (employeesales != null && m.SelectedSalesPersonID == -1)
             { 
                 //remove
-                dbcontext.EmployeeCustomerAssociations.DeleteObject(employeesales);
+                dbcontext.EmployeeCustomerAssociations.Remove(employeesales);
             }
             else if (employeesales != null  && m.SelectedSalesPersonID != -1)
             {
@@ -693,13 +693,13 @@ namespace Semplest.Admin.Controllers
             {
                 //add one
                 var addemployeerep =new EmployeeCustomerAssociation {  CustomerFK=m.CustomerAccount.AccountNumber  , EmployeeFK = m.SelectedRepID };
-                dbcontext.EmployeeCustomerAssociations.AddObject(addemployeerep);
+                dbcontext.EmployeeCustomerAssociations.Add(addemployeerep);
 
             }
             else if (employeerep != null && m.SelectedRepID == -1)
                 {
                     //remove
-                    dbcontext.EmployeeCustomerAssociations.DeleteObject(employeerep);
+                    dbcontext.EmployeeCustomerAssociations.Remove(employeerep);
                 }
         else if (employeerep != null  && m.SelectedRepID  != -1)
                 {
@@ -1103,7 +1103,7 @@ namespace Semplest.Admin.Controllers
                                 PromotionFeeOverride=m.CustomerAccount.PromotionFeeOverride 
                             };
 
-                dbcontext.Customers.AddObject(c);
+                dbcontext.Customers.Add(c);
 
                 var u = new User
                             {
@@ -1114,11 +1114,11 @@ namespace Semplest.Admin.Controllers
                                 MiddleInitial = m.CustomerAccount.MiddleInitial,
                                 IsActive = m.CustomerAccount.isActive
                             };
-                dbcontext.Users.AddObject(u);
+                dbcontext.Users.Add(u);
 
                 var r = dbcontext.Roles.First(p => p.RolePK == m.SelectedRoleID);
                 var ura = new UserRolesAssociation { Role = r, User = u };
-                dbcontext.UserRolesAssociations.AddObject(ura);
+                dbcontext.UserRolesAssociations.Add(ura);
 
 
                 //
@@ -1129,15 +1129,15 @@ namespace Semplest.Admin.Controllers
                                  Username = m.CustomerAccount.UserID,
                                  Password = m.CustomerAccount.UserPassword
                              };
-                dbcontext.Credentials.AddObject(cr);
+                dbcontext.Credentials.Add(cr);
 
 
                 PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
                 var ph = new Phone {Phone1 = m.CustomerAccount.Phone, PhoneType = pt};
-                dbcontext.Phones.AddObject(ph);
+                dbcontext.Phones.Add(ph);
 
                 var cpa = new CustomerPhoneAssociation {Customer = c, Phone = ph};
-                dbcontext.CustomerPhoneAssociations.AddObject(cpa);
+                dbcontext.CustomerPhoneAssociations.Add(cpa);
 
                 var sc = dbcontext.StateCodes.First(p => p.StateAbbrPK == m.SelectedStateID);
                 var at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
@@ -1150,44 +1150,44 @@ namespace Semplest.Admin.Controllers
                                 ZipCode = m.CustomerAccount.Zip,
                                 StateCode = sc
                             };
-                dbcontext.Addresses.AddObject(a);
+                dbcontext.Addresses.Add(a);
 
                 var caa = new CustomerAddressAssociation {Address = a, Customer = c, AddressType = at};
-                dbcontext.CustomerAddressAssociations.AddObject(caa);
+                dbcontext.CustomerAddressAssociations.Add(caa);
 
                 var cn = new CustomerNote {Customer = c, Note = m.CustomerAccount.CustomerNote};
-                dbcontext.CustomerNotes.AddObject(cn);
+                dbcontext.CustomerNotes.Add(cn);
 
                 
                 //don't add if not assigned
                 if (m.SelectedRepID != -1)
                 {
                     var addrep = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedRepID };
-                    dbcontext.EmployeeCustomerAssociations.AddObject(addrep);
+                    dbcontext.EmployeeCustomerAssociations.Add(addrep);
                 }
                 
                 //don't add if not assigned
                 if (m.SelectedSalesPersonID != -1)
                 {
                     var addsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = m.SelectedSalesPersonID };
-                    dbcontext.EmployeeCustomerAssociations.AddObject(addsales);
+                    dbcontext.EmployeeCustomerAssociations.Add(addsales);
                 }
 
                 CustomerHierarchy ch = null;
                 if (m.SelectedParentID == -1) //set parent
                 {
                     ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = null};
-                    dbcontext.CustomerHierarchies.AddObject(ch);
+                    dbcontext.CustomerHierarchies.Add(ch);
                 }
                 else if (m.SelectedParentID == 0) //set self -- single user
                 {
                     ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = c.CustomerPK};
-                    dbcontext.CustomerHierarchies.AddObject(ch);
+                    dbcontext.CustomerHierarchies.Add(ch);
                 }
                 else //assign a parent
                 {
                     ch = new CustomerHierarchy {CustomerFK = c.CustomerPK, CustomerParentFK = m.SelectedParentID};
-                    dbcontext.CustomerHierarchies.AddObject(ch);
+                    dbcontext.CustomerHierarchies.Add(ch);
                 }
                 dbcontext.SaveChanges();
 
@@ -1297,7 +1297,7 @@ namespace Semplest.Admin.Controllers
 
 
 
-        public ActionResult Delete(int id)
+        public ActionResult Remove(int id)
         {
 
             SemplestEntities dbcontext = new SemplestEntities();
@@ -1345,7 +1345,7 @@ namespace Semplest.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(CustomerAccountWithEmployeeModel m, string command)
+        public ActionResult Remove(CustomerAccountWithEmployeeModel m, string command)
         {
             SemplestEntities dbcontext = new SemplestEntities();
             //SemplestEntities context = new SemplestEntities();
@@ -1408,9 +1408,9 @@ namespace Semplest.Admin.Controllers
                     var a = address;
                     var cn = customernotes;
 
-                    dbcontext.CustomerAddressAssociations.DeleteObject(caa);
-                    dbcontext.Addresses.DeleteObject(a);
-                    dbcontext.CustomerNotes.DeleteObject(cn);
+                    dbcontext.CustomerAddressAssociations.Remove(caa);
+                    dbcontext.Addresses.Remove(a);
+                    dbcontext.CustomerNotes.Remove(cn);
 
 
                     //EmployeeCustomerAssociation eca = employeecustomerassociation;
@@ -1420,41 +1420,41 @@ namespace Semplest.Admin.Controllers
                     {
                         if (c1.CustomerFK.Equals(m.CustomerAccount.AccountNumber))
                         {
-                            dbcontext.EmployeeCustomerAssociations.DeleteObject(c1);
+                            dbcontext.EmployeeCustomerAssociations.Remove(c1);
                         }
                     }
 
 
                     var c = customer;
-                    dbcontext.Customers.DeleteObject(c);
+                    dbcontext.Customers.Remove(c);
 
                     var cr = credentials;
-                    dbcontext.Credentials.DeleteObject(cr);
+                    dbcontext.Credentials.Remove(cr);
 
                     var u = user;
-                    dbcontext.Users.DeleteObject(u);
+                    dbcontext.Users.Remove(u);
 
                     var cpa = customerphoneassociation;
-                    dbcontext.CustomerPhoneAssociations.DeleteObject(cpa);
+                    dbcontext.CustomerPhoneAssociations.Remove(cpa);
 
                     var ph = phone;
-                    dbcontext.Phones.DeleteObject(ph);
+                    dbcontext.Phones.Remove(ph);
 
 
                     if (customerstyle != null)
                     {
                         var cs = customerstyle;
-                        dbcontext.CustomerStyles.DeleteObject(cs);
+                        dbcontext.CustomerStyles.Remove(cs);
                     }
 
                     if (userrolesassociation != null)
                     {
                         var ura = userrolesassociation;
-                        dbcontext.UserRolesAssociations.DeleteObject(ura);
+                        dbcontext.UserRolesAssociations.Remove(ura);
                     }
 
                     var ch = customerhierarchy;
-                    dbcontext.CustomerHierarchies.DeleteObject(ch);
+                    dbcontext.CustomerHierarchies.Remove(ch);
 
                     dbcontext.SaveChanges();
 

@@ -344,7 +344,7 @@ namespace Semplest.Admin.Controllers
 
                                 //Customer c = dbcontext.Customers.Add(new Customer { Name = m.Customer, BillTypeFK = imp.SelectedBillTypeID, ProductGroupCycleType = pgct, InternalCustomerId = cust.InternalCustomerID });
                                 var c = new Customer { Name = m.Customer, BillTypeFK = imp.SelectedBillTypeID, ProductGroupCycleType = pgct, InternalCustomerId = cust.InternalCustomerID };
-                                dbcontext.Customers.AddObject(c);
+                                dbcontext.Customers.Add(c);
                                 var u = new User
                                 {
                                     Customer = c,
@@ -354,32 +354,32 @@ namespace Semplest.Admin.Controllers
                                     MiddleInitial = m.MiddleInitial,
                                     IsActive = m.isActive
                                 };
-                                dbcontext.Users.AddObject(u);
+                                dbcontext.Users.Add(u);
 
                                 var cr = new Credential { User = u, UsersFK = u.UserPK, Username = m.UserID, Password = m.UserPassword };
-                                dbcontext.Credentials.AddObject(cr);
+                                dbcontext.Credentials.Add(cr);
 
 
                                 PhoneType pt = dbcontext.PhoneTypes.First(p => p.PhoneType1 == "Business"); // --- phone types --- !!!!
                                 Phone ph = new Phone { Phone1 = m.Phone, PhoneType = pt };
-                                dbcontext.Phones.AddObject(ph);
+                                dbcontext.Phones.Add(ph);
                                 
                                 var cpa = new CustomerPhoneAssociation { Customer = c, Phone = ph };
-                                dbcontext.CustomerPhoneAssociations.AddObject(cpa);
+                                dbcontext.CustomerPhoneAssociations.Add(cpa);
 
                                 StateCode sc = dbcontext.StateCodes.First(p => p.StateAbbr == m.State);
                                 AddressType at = dbcontext.AddressTypes.First(p => p.AddressType1 == "H"); // --- address types --- !!!
                                 var a = new Address { Address1 = m.Address1, Address2 = m.Address2, City = m.City, ZipCode = m.Zip, StateCode = sc };
-                                dbcontext.Addresses.AddObject(a);
+                                dbcontext.Addresses.Add(a);
                                 var caa = new CustomerAddressAssociation { Address = a, Customer = c, AddressType = at };
-                                dbcontext.CustomerAddressAssociations.AddObject(caa);
+                                dbcontext.CustomerAddressAssociations.Add(caa);
 
                                 var cn = new CustomerNote { Customer = c, Note = m.CustomerNote };
-                                dbcontext.CustomerNotes.AddObject(cn);
+                                dbcontext.CustomerNotes.Add(cn);
 
                                 var r = dbcontext.Roles.First(p => p.RolePK == imp.SelectedRoleID);
                                 var ura = new UserRolesAssociation { Role = r, User = u };
-                                dbcontext.UserRolesAssociations.AddObject(ura);
+                                dbcontext.UserRolesAssociations.Add(ura);
 
                                 //default to the parent's rep and salesperson
 
@@ -389,12 +389,12 @@ namespace Semplest.Admin.Controllers
                                 foreach (EmployeeCustomerAssociation eca in parentrepandsales)
                                 {
                                     var addrepandsales = new EmployeeCustomerAssociation { Customer = c, EmployeeFK = eca.EmployeeFK };
-                                    dbcontext.EmployeeCustomerAssociations.AddObject(addrepandsales);
+                                    dbcontext.EmployeeCustomerAssociations.Add(addrepandsales);
                                 }
 
                                 //add child to parent in customerhierarchy
                                 var ch = new CustomerHierarchy { CustomerFK = c.CustomerPK, CustomerParentFK = imp.ParentID };
-                                dbcontext.CustomerHierarchies.AddObject(ch);
+                                dbcontext.CustomerHierarchies.Add(ch);
                                 dbcontext.SaveChanges();
 
                                 if (fc["sendcustomeremail"] != null)
@@ -440,7 +440,7 @@ namespace Semplest.Admin.Controllers
                                 //else
                                 //    er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                                 er.CreatedDate = DateTime.Now;
-                                _dbContext.Errors.AddObject(er);
+                                _dbContext.Errors.Add(er);
                                 _dbContext.SaveChanges();
                                 
                                 var scw = new ServiceClientWrapper();
@@ -465,7 +465,7 @@ namespace Semplest.Admin.Controllers
                     //else
                     //    er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                     er.CreatedDate = DateTime.Now;
-                    _dbContext.Errors.AddObject(er);
+                    _dbContext.Errors.Add(er);
                     _dbContext.SaveChanges();
                     var scw = new ServiceClientWrapper();
                     scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);

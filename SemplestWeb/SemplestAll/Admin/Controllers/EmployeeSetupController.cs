@@ -258,7 +258,7 @@ namespace Semplest.Admin.Controllers
             //for cancel redirect to index
 
             //for delete
-            //@Html.RouteLink("Delete Employee", new { Controller = "EmployeeSetup", action = "Delete", id = Model.EmployeeSetup.EmployeePK })
+            //@Html.RouteLink("Remove Employee", new { Controller = "EmployeeSetup", action = "Remove", id = Model.EmployeeSetup.EmployeePK })
 
           SemplestEntities dbcontext = new SemplestEntities();
 
@@ -525,16 +525,16 @@ namespace Semplest.Admin.Controllers
                                 IsRegistered = true //only for admin, force registered=true (Andre)
 
                             };
-                dbcontext.Users.AddObject(u);
+                dbcontext.Users.Add(u);
                 
 
                 var r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
                 var ura = new UserRolesAssociation {Role = r, User = u};
-                dbcontext.UserRolesAssociations.AddObject(ura);
+                dbcontext.UserRolesAssociations.Add(ura);
 
                 var et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
                 var e = new Employee {EmployeeType = et, User = u, HireDate = m.EmployeeSetup.HireDate};
-                dbcontext.Employees.AddObject(e);
+                dbcontext.Employees.Add(e);
                 //Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
 
                 var cr = new Credential
@@ -544,7 +544,7 @@ namespace Semplest.Admin.Controllers
                                  Username = m.EmployeeSetup.UserID,
                                  Password = m.EmployeeSetup.UserPassword
                              };
-                dbcontext.Credentials.AddObject(cr); 
+                dbcontext.Credentials.Add(cr); 
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
@@ -585,7 +585,7 @@ namespace Semplest.Admin.Controllers
         }
 
 
-        public ActionResult Delete(int id)
+        public ActionResult Remove(int id)
         {
 
             SemplestEntities dbcontext = new SemplestEntities();
@@ -624,7 +624,7 @@ namespace Semplest.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Delete(EmployeeSetupWithRolesModel m, string command)
+        public ActionResult Remove(EmployeeSetupWithRolesModel m, string command)
         {
             var dbcontext = new SemplestEntities();
 
@@ -649,10 +649,10 @@ namespace Semplest.Admin.Controllers
 
                 if (employeecustomerassociation != null) throw new Exception("Could not delete employee");
 
-                dbcontext.Users.DeleteObject(user);
-                dbcontext.Employees.DeleteObject(employee);
-                dbcontext.UserRolesAssociations.DeleteObject(userrolesassociation);
-                dbcontext.Credentials.DeleteObject(credential);
+                dbcontext.Users.Remove(user);
+                dbcontext.Employees.Remove(employee);
+                dbcontext.UserRolesAssociations.Remove(userrolesassociation);
+                dbcontext.Credentials.Remove(credential);
 
                 dbcontext.SaveChanges();
                 TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " has been successfully deleted.";
