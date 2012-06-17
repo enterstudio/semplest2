@@ -464,6 +464,7 @@ namespace Semplest.Core.Models.Repositories
 
         public void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk)
         {
+            var configuration = dbcontext.Configurations.First();
             updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
             updatePromotion.DisplayURL = model.AdModelProp.DisplayUrl;
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
@@ -471,8 +472,8 @@ namespace Semplest.Core.Models.Repositories
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us"));
             updatePromotion.CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us"));
             updatePromotion.CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate) ? Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")).AddMonths(1) : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us"));
-            updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
-            updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget - dbcontext.Configurations.First().CustomerDefaultPerCampaignFlatFeeAmount;
+            updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget - configuration.CustomerDefaultPerCampaignFlatFeeAmount;
+            updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget - configuration.CustomerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.EditedDate = DateTime.Now;
 
             try
@@ -515,6 +516,7 @@ namespace Semplest.Core.Models.Repositories
             AddSiteLinksToPromotion(updatePromotion, model, customerFk);
             SaveNegativeKeywords(updatePromotion, model, dbcontext);
             AddPromotionAdsToPromotion(updatePromotion, model, customerFk);
+            dbcontext.SaveChanges();
         }
 
         public void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext)
@@ -548,7 +550,10 @@ namespace Semplest.Core.Models.Repositories
                 }
             }
         }
-
+        public GeoTargeting MapGeoTargeting(GeoTargeting geoTargeting)
+        {
+            return new GeoTargeting();
+        }
         public void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
         {
             if (model.AdModelProp.Addresses != null)
