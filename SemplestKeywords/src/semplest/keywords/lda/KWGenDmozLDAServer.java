@@ -868,11 +868,11 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 		
 			PrintStream stdout = System.out;
-			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywords.txt")));
+			System.setOut(new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/keywordsCrawl2.txt")));
 
 			//System.out.println("\n"+ (n+2)+" word keywords:");
 			for(KeywordProbabilityObject k: kw){
-				String kaux=k.getKeyword();//.replaceAll("wed", "wedding");
+				String kaux=k.getKeyword();
 				System.out.println(kaux);
 			}
 			
