@@ -22,7 +22,8 @@ namespace SemplestModel
         public int KeywordCategoryPK { get; set; }
         
         public int PromotionFK { get; set; }
-        
+
+        [Column("KeywordCategory")]
         public string KeywordCategory1 { get; set; }
 
         [ForeignKey("PromotionFK")]
