@@ -57,7 +57,7 @@
 
     $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
         id: "@Html.Raw(Model.SerailNo.ToString())",
-        title: $("#AdModelProp_Url").val(),
+        title: $("#AdModelProp_DisplayUrl").val(),
         twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
         content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
         content1: $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
@@ -69,7 +69,7 @@
         listener: function (e) {
             $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
                 id: "@Html.Raw(Model.SerailNo.ToString())",
-                title: $("#AdModelProp_Url").val(),
+                title: $("#AdModelProp_DisplayUrl").val(),
                 twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
                 content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
                 content1: $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()

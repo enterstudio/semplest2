@@ -2,263 +2,262 @@
 @section Title{
     My Account (@ViewBag.Title)
 }
-<div class="left">
-    <fieldset style="padding: 0; border-width: 1px; width: 250px">
-        <legend><b>Account Actions</b></legend>
-        <div style="padding: 5px">
-            <button class="k-button" id="btnCreatAd">
-                <span class="k-icon k-add"></span>Create Advertising</button>
-        </div>
-    </fieldset>
-    <br />
-    <h3 style="margin-bottom: 0px;">
-        Live Advertising
-    </h3>
-    <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
-        scroll over to see summary, click to edit
-    </label>
-    <div style="overflow: auto" id="live">
-        <table class="gradient-style" style="width: 300px;">
-            @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-            {
-                foreach (SemplestModel.Promotion p in pg.Promotions)
-                {
-                    if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
+<table>
+    <tr>
+        <td style="width: 300px;">
+            <fieldset style="padding: 0; border-width: 1px; width: 250px">
+                <legend><b>Account Actions</b></legend>
+                <div style="padding: 5px">
+                    <button class="k-button" id="btnCreatAd">
+                        <span class="k-icon k-add"></span>Create Advertising</button>
+                </div>
+            </fieldset>
+            <br />
+            <h3 style="margin-bottom: 0px;">
+                Live Advertising
+            </h3>
+            <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
+                scroll over to see summary, click to edit
+            </label>
+            <div style="width: 320px; height: 150px; overflow: auto">
+                <table class="gradient-style" style="width: 300px;">
+                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
-                <tr>
-                    <td style="width: 150px;">
-                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                    </td>
-                    @if (p.IsPaused)
+                        foreach (SemplestModel.Promotion p in pg.Promotions)
+                        {
+                            if (p.IsLaunched && !p.IsCompleted && !p.IsDeleted)
+                            {
+                        <tr>
+                            <td style="width: 150px;">
+                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                            </td>
+                            @if (p.IsPaused)
+                            {
+                                <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
+                                </td>
+                            }
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
+                            </td>
+                            <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                        </tr>    
+                            }
+                        }
+                    }
+                </table>
+            </div>
+            <br />
+            <h3 style="margin-bottom: 0px;">
+                Unfinished Advertising</h3>
+            <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
+                scroll over to see summary, click to edit
+            </label>
+            <div style="width: 320px; height: 300px; overflow: auto">
+                <table class="gradient-style" style="width: 300px">
+                    @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
-                        <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
-                        </td>
+                        foreach (SemplestModel.Promotion p in pg.Promotions)
+                        {
+                            if (!p.IsLaunched && !p.IsDeleted)
+                            {
+                        <tr>
+                            <td style="width: 150px;">
+                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                            </td>
+                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                            </td>
+                            <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;</td>
+                        </tr>
+                            }
+                        }
                     }
-                    else
-                    {
-                        <td>@Html.ActionLink("Pause", "", "", new { @class = "pausead", id = p.PromotionPK, name = p.PromotionName })
-                        </td>
-                    }
-                    <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
-                    </td>
-                    <td>@Html.ActionLink("End", "", "", new { @class = "endad", id = p.PromotionPK, name = p.PromotionName })
-                    </td>
-                </tr>    
-                    }
-                }
-            }
-        </table>
-    </div>
-    <br />
-    <h3 style="margin-bottom: 0px;">
-        Unfinished Advertising</h3>
-    <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
-        scroll over to see summary, click to edit
-    </label>
-    <div style="overflow: auto" id="unlive">
-        <table class="gradient-style" style="width: 300px">
-            @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
-            {
-                foreach (SemplestModel.Promotion p in pg.Promotions)
-                {
-                    if (!p.IsLaunched && !p.IsDeleted)
-                    {
-                <tr>
-                    <td style="width: 150px;">
-                        @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
-                    </td>
-                    <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
-                    </td>
-                    <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
-                    </td>
-                    <td>
-                        &nbsp;&nbsp;&nbsp;
-                    </td>
-                </tr>
-                    }
-                }
-            }
-        </table>
-    </div>
-    <div id="RemovePromotionWindow" style="display: none">
-        <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
-        <div class="question">
-        </div>
-        <div style="text-align: center">
-            <input type="button" id="btnAdd" value="OK" class="k-button" />
-            <input type="button" id="btnCancel" value="Cancel" class="k-button" />
-        </div>
-        <input type="hidden" id="promotionId" name="promotionId" />
-        </form>
-    </div>
-    <div id="PausePromotionWindow" style="display: none">
-        <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
-        <div class="questionP">
-        </div>
-        <div style="text-align: center">
-            <input type="button" id="btnOkP" value="OK" class="k-button" />
-            <input type="button" id="btnCancelP" value="Cancel" class="k-button" />
-        </div>
-        <input type="hidden" id="promotionIdP" name="promotionIdP" />
-        </form>
-    </div>
-    <div id="ResumePromotionWindow" style="display: none">
-        <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
-        <div class="questionR">
-        </div>
-        <div style="text-align: center">
-            <input type="button" id="btnOkR" value="OK" class="k-button" />
-            <input type="button" id="btnCancelR" value="Cancel" class="k-button" />
-        </div>
-        <input type="hidden" id="promotionIdR" name="promotionIdR" />
-        </form>
-    </div>
-    <div id="EndPromotionWindow" style="display: none">
-        <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
-        <div class="questionE">
-        </div>
-        <div style="text-align: center">
-            <input type="button" id="btnOkE" value="OK" class="k-button" />
-            <input type="button" id="btnCancelE" value="Cancel" class="k-button" />
-        </div>
-        <input type="hidden" id="promotionIdE" name="promotionIdE" />
-        </form>
-    </div>
-    <script type="text/javascript">
-        $('#loading').hide();
-        $(document).ready(function () {
-            $('#loading').hide();
-            $('#preview').height(height - 170);
-            $('.right').height(height - 170);
-            var totalHeight = height - 310;
-            var ten = (totalHeight * 40) / 100;
-            var twenty = (totalHeight * 60) / 100;
-            $('#unlive').height(totalHeight - ten);
-            $('#live').height(totalHeight - twenty);
-            $(".deletead").click(function (event) {
-                $('#promotionId').val(event.target.id);
-                $('.question').html("<br/>Are you sure you want to delete " + event.target.name + "?<br/><br/>");
-                var removePromotionWindow = $('#RemovePromotionWindow').kendoWindow({
-                    resizable: false,
-                    modal: true,
-                    title: "Remove Promotion"
-                }).data("kendoWindow");
-                $('#RemovePromotionWindow').show();
-                removePromotionWindow.center();
-                removePromotionWindow.open();
-                event.preventDefault();
-            });
-
-            $('#btnCreatAd').click(function () {
-                location.href = '../Campaign/CampaignSetup';
-            });
-
-            $("#btnAdd").click(function (event) {
-                $("#hiddenButton").submit();
-            });
-
-            $("#btnCancel").click(function (event) {
-                var removePromotionWindow = $('#RemovePromotionWindow').data("kendoWindow");
-                $('#RemovePromotionWindow').hide();
-                removePromotionWindow.close();
-            });
-
-            $(".pausead").click(function (event) {
-                $('#promotionIdP').val(event.target.id);
-                $('.questionP').html("<br/>Are you sure you want to pause " + event.target.name + "?<br/><br/>");
-                var pausePromotionWindow = $('#PausePromotionWindow').kendoWindow({
-                    resizable: false,
-                    modal: true,
-                    title: "Pause Promotion"
-                }).data("kendoWindow");
-                $('#PausePromotionWindow').show();
-                pausePromotionWindow.center();
-                pausePromotionWindow.open();
-                event.preventDefault();
-            });
-
-            $("#btnOkP").click(function (event) {
-                $("#hiddenPause").submit();
-            });
-
-            $("#btnCancelP").click(function (event) {
-                var pausePromotionWindow = $('#PausePromotionWindow').data("kendoWindow");
-                $('#PausePromotionWindow').hide();
-                pausePromotionWindow.close();
-            });
+                </table>
+            </div>
+            <div id="RemovePromotionWindow" style="display:none">
+                <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
+                <div class="question">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnAdd" value="OK" class="k-button" />
+                    <input type="button" id="btnCancel" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="promotionId" name="promotionId" />
+                </form>
+            </div>
+            <div id="PausePromotionWindow" style="display:none">
+                <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
+                <div class="questionP">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkP" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelP" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="promotionIdP" name="promotionIdP" />
+                </form>
+            </div>
+            <div id="ResumePromotionWindow" style="display:none">
+                <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
+                <div class="questionR">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkR" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelR" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="promotionIdR" name="promotionIdR" />
+                </form>
+            </div>
+            <div id="EndPromotionWindow" style="display:none">
+                <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
+                <div class="questionE">
+                </div>
+                <div style="text-align: center">
+                    <input type="button" id="btnOkE" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelE" value="Cancel" class="k-button" />
+                </div>
+                <input type="hidden" id="promotionIdE" name="promotionIdE" />
+                </form>
+            </div>
+            <script type="text/javascript">
+                $('#loading').hide();
 
 
 
-            $(".resumead").click(function (event) {
-                $('#promotionIdR').val(event.target.id);
-                $('.questionR').html("<br/>Are you sure you want to resume " + event.target.name + "?<br/><br/>");
-                var resumePromotionWindow = $('#ResumePromotionWindow').kendoWindow({
-                    resizable: false,
-                    modal: true,
-                    title: "Resume Promotion"
-                }).data("kendoWindow");
-                $('#ResumePromotionWindow').show();
-                resumePromotionWindow.center();
-                resumePromotionWindow.open();
-                event.preventDefault();
-            });
 
-            $("#btnOkR").click(function (event) {
-                $("#hiddenResume").submit();
-            });
+                $(document).ready(function () {
+                    $('#loading').hide();
+                    $(".deletead").click(function (event) {
+                        $('#promotionId').val(event.target.id);
+                        $('.question').html("<br/>Are you sure you want to delete " + event.target.name + "?<br/><br/>");
+                        var removePromotionWindow = $('#RemovePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Remove Promotion"
+                        }).data("kendoWindow");
+                        $('#RemovePromotionWindow').show();
+                        removePromotionWindow.center();
+                        removePromotionWindow.open();
+                        event.preventDefault();
+                    });
 
-            $("#btnCancelR").click(function (event) {
-                var resumePromotionWindow = $('#ResumePromotionWindow').data("kendoWindow");
-                $('#ResumePromotionWindow').hide();
-                resumePromotionWindow.close();
-            });
+                    $('#btnCreatAd').click(function () {
+                        location.href = '../Campaign/CampaignSetup';
+                    });
 
-            $(".endad").click(function (event) {
-                $('#promotionIdE').val(event.target.id);
-                $('.questionE').html("<br/>Are you sure you want to End this advertising?  Once you click End, you will not be able to edit or re-launch this advertising and it will no longer be active on the search providers.<br/><br/>");
-                var endPromotionWindow = $('#EndPromotionWindow').kendoWindow({
-                    resizable: false,
-                    modal: true,
-                    title: "End Promotion"
-                }).data("kendoWindow");
-                $('#EndPromotionWindow').show();
-                endPromotionWindow.center();
-                endPromotionWindow.open();
-                event.preventDefault();
-            });
+                    $("#btnAdd").click(function (event) {
+                        $("#hiddenButton").submit();
+                    });
 
-            $("#btnOkE").click(function (event) {
-                $("#hiddenEnd").submit();
-            });
+                    $("#btnCancel").click(function (event) {
+                        var removePromotionWindow = $('#RemovePromotionWindow').data("kendoWindow");
+                        $('#RemovePromotionWindow').hide();
+                        removePromotionWindow.close();
+                    });
 
-            $("#btnCancelE").click(function (event) {
-                var endPromotionWindow = $('#EndPromotionWindow').data("kendoWindow");
-                $('#EndPromotionWindow').hide();
-                endPromotionWindow.close();
-            });
+                    $(".pausead").click(function (event) {
+                        $('#promotionIdP').val(event.target.id);
+                        $('.questionP').html("<br/>Are you sure you want to pause " + event.target.name + "?<br/><br/>");
+                        var pausePromotionWindow = $('#PausePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Pause Promotion"
+                        }).data("kendoWindow");
+                        $('#PausePromotionWindow').show();
+                        pausePromotionWindow.center();
+                        pausePromotionWindow.open();
+                        event.preventDefault();
+                    });
 
-            $('.preview').mouseover(function (e) {
-                $('#loading').show();
-                $('#preview').hide();
-                //$.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>'});
-                $('#preview').load('@Url.Action("Preview", "Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
-                    $('#preview').show();
-                    if (status == "error") {
-                        var msg = "Sorry but there was an error: ";
-                        $("#error").html(msg + xhr.status + " " + xhr.statusText);
-                        $('#loading').hide();
-                    }
-                    //$.unblockUI();
+                    $("#btnOkP").click(function (event) {
+                        $("#hiddenPause").submit();
+                    });
+
+                    $("#btnCancelP").click(function (event) {
+                        var pausePromotionWindow = $('#PausePromotionWindow').data("kendoWindow");
+                        $('#PausePromotionWindow').hide();
+                        pausePromotionWindow.close();
+                    });
+
+
+
+                    $(".resumead").click(function (event) {
+                        $('#promotionIdR').val(event.target.id);
+                        $('.questionR').html("<br/>Are you sure you want to resume " + event.target.name + "?<br/><br/>");
+                        var resumePromotionWindow = $('#ResumePromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "Resume Promotion"
+                        }).data("kendoWindow");
+                        $('#ResumePromotionWindow').show();
+                        resumePromotionWindow.center();
+                        resumePromotionWindow.open();
+                        event.preventDefault();
+                    });
+
+                    $("#btnOkR").click(function (event) {
+                        $("#hiddenResume").submit();
+                    });
+
+                    $("#btnCancelR").click(function (event) {
+                        var resumePromotionWindow = $('#ResumePromotionWindow').data("kendoWindow");
+                        $('#ResumePromotionWindow').hide();
+                        resumePromotionWindow.close();
+                    });
+
+                    $(".endad").click(function (event) {
+                        $('#promotionIdE').val(event.target.id);
+                        $('.questionE').html("<br/>Are you sure you want to End this advertising?  Once you click End, you will not be able to edit or re-launch this advertising and it will no longer be active on the search providers.<br/><br/>");
+                        var endPromotionWindow = $('#EndPromotionWindow').kendoWindow({
+                            resizable: false,
+                            modal: true,
+                            title: "End Promotion"
+                        }).data("kendoWindow");
+                        $('#EndPromotionWindow').show();
+                        endPromotionWindow.center();
+                        endPromotionWindow.open();
+                        event.preventDefault();
+                    });
+
+                    $("#btnOkE").click(function (event) {
+                        $("#hiddenEnd").submit();
+                    });
+
+                    $("#btnCancelE").click(function (event) {
+                        var endPromotionWindow = $('#EndPromotionWindow').data("kendoWindow");
+                        $('#EndPromotionWindow').hide();
+                        endPromotionWindow.close();
+                    });
+
+                    $('.preview').mouseover(function (e) {
+                        $('#loading').show();
+                        $('#preview').hide();
+                        //$.blockUI({ message: '<h1><img src="@Url.Content("~/Content/Metro/loading.gif")" /> Just a moment...</h1>'});
+                        $('#preview').load('@Url.Action("Preview", "Campaign")', { promotionId: e.currentTarget.id }, function (response, status, xhr) {
+                            $('#preview').show();
+                            if (status == "error") {
+                                var msg = "Sorry but there was an error: ";
+                                $("#error").html(msg + xhr.status + " " + xhr.statusText);
+                                $('#loading').hide();
+                            }
+                            //$.unblockUI();
+                        });
+                    });
                 });
-            });
-        });
-    </script>
-    <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
-</div>
-<div style="vertical-align: top;" class="right">
-    <div id="loading">
-        <h3 style="margin-left: 22px;">
-            Loading Preview...</h3>
-    </div>
-    <div id="preview" style="vertical-align: top; width: 460px; overflow: auto"></div>
-</div>
+            </script>
+            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+        </td>
+        <td style="vertical-align: top; height: 100%; width: 500px;">
+            <div id='loading'>
+                <h3 style="margin-left: 22px">
+                    Loading Preview...</h3>
+            </div>
+            <div id="preview" style="vertical-align: top; height: 100%; width: 460px; overflow: auto" />
+        </td>
+    </tr>
+</table>

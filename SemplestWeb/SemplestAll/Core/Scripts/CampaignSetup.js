@@ -291,7 +291,7 @@ function addNestedForm(container, counter, ticks, content) {
     if (container == "#ads") {
         $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
             id: nextIndex + 1,
-            title: $("#AdModelProp_Url").val(),
+            title: $("#AdModelProp_DisplayUrl").val(),
             twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
             content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val(),
             content1: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()
@@ -303,7 +303,7 @@ function addNestedForm(container, counter, ticks, content) {
             listener: function (e) {
                 $("#AdModelProp_Ads_" + nextIndex + "__PromotionAdsPK_div").html(template({
                     id: nextIndex + 1,
-                    title: $("#AdModelProp_Url").val(),
+                    title: $("#AdModelProp_DisplayUrl").val(),
                     twitter: $("#AdModelProp_Ads_" + nextIndex + "__AdTitle").val(),
                     content: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine1").val(),
                     content1: $("#AdModelProp_Ads_" + nextIndex + "__AdTextLine2").val()

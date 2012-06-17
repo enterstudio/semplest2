@@ -103,8 +103,9 @@
                 </div>
                 <div id="mainWrapInner">
                     <div id="main">
-                        <div id="tablewrapper">@RenderBody()
-                        </div>
+                       @* <div id="tablewrapper">*@
+                            @RenderBody()
+                        @*</div>*@
                     </div>
                 </div>
             </div>
@@ -116,8 +117,8 @@
         </div>
     </div>
     <script>
-        var height = $(window).height();
-        $('#tablewrapper').height(700);
+//        var height = $(window).height();
+//        $('#tablewrapper').height(height - 170);
         $.getJSON($('#SideBarUrl').val(), {}, function (data) {
             for (var mainGroup in data) {
                 for (var subitem in data[mainGroup].SubItems) {

@@ -1,18 +1,18 @@
 ﻿function disableIsLaunched() {
-    $('.k-textbox').attr('disabled', 'disabled');
-    $('.k-dropdownlist').attr('disabled', 'disabled');
-    $('input').attr('disabled', true);
+//    $('.k-textbox').attr('disabled', 'disabled');
+//    $('.k-dropdownlist').attr('disabled', 'disabled');
+//    $('input').attr('disabled', true);
 }
 function disableIsLaunchedCompleted() {
-    $('.k-textbox').attr('disabled', 'disabled');
-    $('.k-dropdownlist').attr('disabled', 'disabled');
-    $('.k-button').attr('disabled', 'disabled');
-    $('input').attr('disabled', true);
+//    $('.k-textbox').attr('disabled', 'disabled');
+//    $('.k-dropdownlist').attr('disabled', 'disabled');
+//    $('.k-button').attr('disabled', 'disabled');
+//    $('input').attr('disabled', true);
 }
 function enableIsLaunched() {
-    $('.k-textbox').attr('disabled', 'disabled');
-    $('.k-dropdownlist').attr('disabled', 'disabled');
-    $('input').attr('disabled', true);
+//    $('.k-textbox').attr('disabled', 'disabled');
+//    $('.k-dropdownlist').attr('disabled', 'disabled');
+//    $('input').attr('disabled', true);
 }
 function openAllTabs() {
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
@@ -31,19 +31,19 @@ function openAllTabs() {
    
 }
 function enableDisable() {
-    if ($('#IsLaunched').val() == 'True') {
-        //alert($('#IsCompleted').val());
-        if ($('#IsCompleted').val() == 'True') {
-            disableIsLaunchedCompleted();
-            openAllTabs();
-        } else {
-            disableIsLaunched();
-            openAllTabs();
-        }
-    }
+//    if ($('#IsLaunched').val() == 'True') {
+//        //alert($('#IsCompleted').val());
+//        if ($('#IsCompleted').val() == 'True') {
+//            disableIsLaunchedCompleted();
+//            openAllTabs();
+//        } else {
+//            disableIsLaunched();
+//            openAllTabs();
+//        }
+//    }
 }
 function enabledIsLaunched() {
-    $('.k-textbox').removeAttr('disabled');
-    $('.k-dropdownlist').removeAttr('disabled');
-    $('input').removeAttr('disabled');
+//    $('.k-textbox').removeAttr('disabled');
+//    $('.k-dropdownlist').removeAttr('disabled');
+//    $('input').removeAttr('disabled');
 }
