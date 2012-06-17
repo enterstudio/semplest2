@@ -165,6 +165,7 @@
     <Compile Include="Helpers\toDictionary.cs" />
     <Compile Include="Helpers\toProperty.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\BillingModel.cs" />
     <Compile Include="Models\CampignSetupModel.cs" />
     <Compile Include="Models\HomeModel.cs" />
     <Compile Include="Models\ReportIndexModel.cs" />
@@ -382,6 +383,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_LoginLayout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Campaign\Billing.cshtml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

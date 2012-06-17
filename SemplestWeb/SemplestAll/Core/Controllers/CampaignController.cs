@@ -6,6 +6,8 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Reflection;
 using System.Threading;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
 using KendoGridBinder;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.Core.Models;
@@ -50,7 +52,7 @@ namespace Semplest.Core.Controllers
 
             if (command == "") command = "";
 
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
             Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
@@ -89,7 +91,7 @@ namespace Semplest.Core.Controllers
             var i = 1;
             campaignSetupModel.AdModelProp.Ads.ForEach(t => t.SerailNo = i++);
 
-            if(campaignSetupModel.AdModelProp.Addresses.Count == 0)
+            if (campaignSetupModel.AdModelProp.Addresses.Count == 0)
                 campaignSetupModel.AdModelProp.Addresses.Add(new GeoTargeting());
 
             Session["AllCategories"] = null;
@@ -123,18 +125,18 @@ namespace Semplest.Core.Controllers
                 if (ModelState.IsValid)
                 {
                     model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-                    model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
+                    model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
                     // we need save to database the ProductGroup and Promotion information
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                     int userid =
-                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                        ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
 
                     //int userid = 1; // for testing
                     string msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
                     msg = String.Format(msg, model.ProductGroup.ProductGroupName,
                                         model.ProductGroup.ProductPromotionName);
-                    var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
+                    var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
                     Logger.Write(logEnty);
 
                     var ds = new SemplestDataService();
@@ -183,7 +185,7 @@ namespace Semplest.Core.Controllers
         private void WriteLog(string msg, CampaignSetupModel model)
         {
             msg = String.Format(msg, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
             Logger.Write(logEnty);
         }
 
@@ -196,9 +198,9 @@ namespace Semplest.Core.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
-                    model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
-                    model.AdModelProp.NegativeKeywordsText = (string) Session["NegativeKeywordsText"];
+                    model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+                    model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
+                    model.AdModelProp.NegativeKeywordsText = (string)Session["NegativeKeywordsText"];
 
                     if (!model.CategoryIds.Any())
                         return Json("Atleast one Category needs to be selected");
@@ -214,7 +216,7 @@ namespace Semplest.Core.Controllers
                     // save the selected categories here
                     //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
                     int userid =
-                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                        ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
                     //int userid = 1; // for testing
 
                     String msg =
@@ -264,7 +266,7 @@ namespace Semplest.Core.Controllers
 
         public void DoWorkFast(object data)
         {
-            var locData = (ThreadData) data;
+            var locData = (ThreadData)data;
             //var ds = new SemplestDataService();
             //SemplestDataService.SaveKeywords(locData._promoId, locData._model);
         }
@@ -286,18 +288,18 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "LaunchAdProduct")]
         public ActionResult LaunchAdProduct(CampaignSetupModel model)
         {
-           ServiceClientWrapper sw = new ServiceClientWrapper();
-           List<string> adEngines = new List<string>();
+            ServiceClientWrapper sw = new ServiceClientWrapper();
+            List<string> adEngines = new List<string>();
             if (ModelState.IsValid)
             {
-                model = (CampaignSetupModel) Session["CampaignSetupModel"];
+                model = (CampaignSetupModel)Session["CampaignSetupModel"];
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
             var dbContext = new SemplestEntities();
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
             //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
-            var userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var pm =
                 dbContext.Users.First(x => x.UserPK == userid).Customer.ProductGroups.First(
                     x => x.ProductGroupName == model.ProductGroup.ProductGroupName).Promotions.First(
@@ -307,7 +309,7 @@ namespace Semplest.Core.Controllers
             pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(pm.PromotionPK, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
-            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult"};
+            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
             Logger.Write(logEnty);
 
             //return View();
@@ -395,7 +397,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t=> !t.Delete).ToList();
+            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
             return Json("AdditionalLinks");
         }
 
@@ -424,21 +426,21 @@ namespace Semplest.Core.Controllers
         {
             if (Session["NegativeKeywords"] != null)
             {
-                model.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
-                model.NegativeKeywordsText = (string) Session["NegativeKeywordsText"];
+                model.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
+                model.NegativeKeywordsText = (string)Session["NegativeKeywordsText"];
             }
             return PartialView(model);
         }
 
         public ActionResult Categories(CampaignSetupModel model)
         {
-            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
+            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
             return PartialView(model);
         }
 
         public ActionResult KeyWords(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel) Session["CampaignSetupModel"];
+            model = (CampaignSetupModel)Session["CampaignSetupModel"];
             return PartialView(model);
         }
 
@@ -463,7 +465,7 @@ namespace Semplest.Core.Controllers
 
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
-            model = (CampaignSetupModel) Session["CampaignSetupModel"];
+            model = (CampaignSetupModel)Session["CampaignSetupModel"];
             return PartialView(model);
         }
 
@@ -496,7 +498,7 @@ namespace Semplest.Core.Controllers
                     Id = promotion.Key.ProductGroupPK,
                     SubItems = new List<NavBar>()
                 };
-                
+
                 foreach (var prom in promotion.OrderBy(x => x.PromotionName))
                     promotionBar.SubItems.Add(new NavBar
                     {
@@ -530,7 +532,7 @@ namespace Semplest.Core.Controllers
             if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
                 campaignSetupModel.ProductGroup.EndDate =
                     Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
-            Session.Add("AddsStoreModel", new AddsStoreModel {Ads = campaignSetupModel.AdModelProp.Ads.ToList()});
+            Session.Add("AddsStoreModel", new AddsStoreModel { Ads = campaignSetupModel.AdModelProp.Ads.ToList() });
 
             // set negative keywords in session
             Session["NegativeKeywords"] = campaignSetupModel.AdModelProp.NegativeKeywords;
@@ -569,5 +571,27 @@ namespace Semplest.Core.Controllers
             return Content(dbcontext.WebContentQuestionMarkHelps.FirstOrDefault(h => h.WebContentQuestionMarkHelpPK == helpId).Copy);
         }
 
+        public ActionResult Billing()
+        {
+            return View(new BillingModel());
+        }
+        public ActionResult Billing_Read([DataSourceRequest] DataSourceRequest request)
+        {
+            return Json(GetBillingModel().ToDataSourceResult(request));
+            //Select * from vwCreditCardTransacitonDetail where customer.customerID = Session CustomerID order by descending(dbo.CreditCardTransaction.CreatedDate)
+        }
+        private static IEnumerable<BillingModel> GetBillingModel()
+        {
+            var northwind = new SemplestEntities();
+
+            return northwind.vwCreditCardTransactionDetails.Where(t => t.CustomerPK == 1).Select(product => new BillingModel
+            {
+                Amount = product.Amount,
+                ProductGroupName = product.ProductGroupName,
+                PromotionName = product.PromotionName,
+                MediaSpend = product.MediaSpend,
+                SEMplestFee = product.SEMplestFee
+            });
+        }
     }
 }

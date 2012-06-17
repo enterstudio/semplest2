@@ -1,0 +1,28 @@
+﻿@using Kendo.Mvc.UI
+@using Semplest.Core.Models
+@model BillingModel
+@{
+    ViewBag.Title = "Billing";
+}
+@section Title{
+    Billing
+}
+@(Html.Kendo().Grid<BillingModel>()    
+    .Name("Grid")
+    .Columns(columns => {
+        columns.Bound(p => p.Amount).Groupable(false);
+        columns.Bound(p => p.ProductGroupName);
+        columns.Bound(p => p.PromotionName);
+        columns.Bound(p => p.MediaSpend);
+        columns.Bound(p => p.SEMplestFee);
+    })
+    .Pageable()
+    .Sortable()
+    .Scrollable() 
+    .Filterable()
+    .DataSource(dataSource => dataSource
+        .Ajax()
+        .Read(read => read.Action("Billing_Read", "Campaign"))
+     ))
+      
+      

@@ -79,6 +79,12 @@ namespace SemplestModel
             get;
             set;
         }
+    
+        public virtual bool IsRefund
+        {
+            get;
+            set;
+        }
 
         #endregion
         #region Navigation Properties

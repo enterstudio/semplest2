@@ -443,6 +443,12 @@ namespace SemplestModel
             get { return _vwPromotionCharts  ?? (_vwPromotionCharts = CreateObjectSet<vwPromotionChart>("vwPromotionCharts")); }
         }
         private ObjectSet<vwPromotionChart> _vwPromotionCharts;
+    
+        public ObjectSet<vwCreditCardTransactionDetail> vwCreditCardTransactionDetails
+        {
+            get { return _vwCreditCardTransactionDetails  ?? (_vwCreditCardTransactionDetails = CreateObjectSet<vwCreditCardTransactionDetail>("vwCreditCardTransactionDetails")); }
+        }
+        private ObjectSet<vwCreditCardTransactionDetail> _vwCreditCardTransactionDetails;
 
         #endregion
         #region Function Imports

@@ -259,6 +259,9 @@
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
     <Compile Include="Validations\MultifieldRequired.cs" />
+    <Compile Include="vwCreditCardTransactionDetail.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="vwGetLivePromotionsForUser.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

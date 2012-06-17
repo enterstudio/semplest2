@@ -86,6 +86,71 @@
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContentQuestionMarkHelp" EntityType="SemplestModel.Store.WebContentQuestionMarkHelp" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="vwCreditCardTransactionDetail" EntityType="SemplestModel.Store.vwCreditCardTransactionDetail" store:Type="Views" store:Schema="dbo" store:Name="vwCreditCardTransactionDetail">
+            <DefiningQuery>SELECT 
+      [vwCreditCardTransactionDetail].[CreditCardProfilePK] AS [CreditCardProfilePK], 
+      [vwCreditCardTransactionDetail].[CustomerFK] AS [CustomerFK], 
+      [vwCreditCardTransactionDetail].[CustomerRefNum] AS [CustomerRefNum], 
+      [vwCreditCardTransactionDetail].[AuthCode] AS [AuthCode], 
+      [vwCreditCardTransactionDetail].[TxRefNum] AS [TxRefNum], 
+      [vwCreditCardTransactionDetail].[CreditCardTransactionPK] AS [CreditCardTransactionPK], 
+      [vwCreditCardTransactionDetail].[CreditCardProfileFK] AS [CreditCardProfileFK], 
+      [vwCreditCardTransactionDetail].[OrderID] AS [OrderID], 
+      [vwCreditCardTransactionDetail].[Amount] AS [Amount], 
+      [vwCreditCardTransactionDetail].[CreatedDate] AS [CreatedDate], 
+      [vwCreditCardTransactionDetail].[SEMplestFee] AS [SEMplestFee], 
+      [vwCreditCardTransactionDetail].[MediaSpend] AS [MediaSpend], 
+      [vwCreditCardTransactionDetail].[IsRefund] AS [IsRefund], 
+      [vwCreditCardTransactionDetail].[CustomerPK] AS [CustomerPK], 
+      [vwCreditCardTransactionDetail].[Name] AS [Name], 
+      [vwCreditCardTransactionDetail].[TotalTargetCycleBudget] AS [TotalTargetCycleBudget], 
+      [vwCreditCardTransactionDetail].[ProductGroupCycleTypeFK] AS [ProductGroupCycleTypeFK], 
+      [vwCreditCardTransactionDetail].[BillTypeFK] AS [BillTypeFK], 
+      [vwCreditCardTransactionDetail].[ServiceFee] AS [ServiceFee], 
+      [vwCreditCardTransactionDetail].[PercentOfMedia] AS [PercentOfMedia], 
+      [vwCreditCardTransactionDetail].[InternalCustomerId] AS [InternalCustomerId], 
+      [vwCreditCardTransactionDetail].[CreditLimit] AS [CreditLimit], 
+      [vwCreditCardTransactionDetail].[PromotionFeeOverride] AS [PromotionFeeOverride], 
+      [vwCreditCardTransactionDetail].[PromotionFeeAmount] AS [PromotionFeeAmount], 
+      [vwCreditCardTransactionDetail].[ProductGroupPK] AS [ProductGroupPK], 
+      [vwCreditCardTransactionDetail].[StartDate] AS [StartDate], 
+      [vwCreditCardTransactionDetail].[ProductGroupName] AS [ProductGroupName], 
+      [vwCreditCardTransactionDetail].[EndDate] AS [EndDate], 
+      [vwCreditCardTransactionDetail].[IsActive] AS [IsActive], 
+      [vwCreditCardTransactionDetail].[PromotionPK] AS [PromotionPK], 
+      [vwCreditCardTransactionDetail].[ProductGroupFK] AS [ProductGroupFK], 
+      [vwCreditCardTransactionDetail].[PromotionName] AS [PromotionName], 
+      [vwCreditCardTransactionDetail].[PromotionDescription] AS [PromotionDescription], 
+      [vwCreditCardTransactionDetail].[PromotionStartDate] AS [PromotionStartDate], 
+      [vwCreditCardTransactionDetail].[PromotionEndDate] AS [PromotionEndDate], 
+      [vwCreditCardTransactionDetail].[LandingPageURL] AS [LandingPageURL], 
+      [vwCreditCardTransactionDetail].[PromotionBudgetAmount] AS [PromotionBudgetAmount], 
+      [vwCreditCardTransactionDetail].[BudgetCycleFK] AS [BudgetCycleFK], 
+      [vwCreditCardTransactionDetail].[CycleStartDate] AS [CycleStartDate], 
+      [vwCreditCardTransactionDetail].[CycleEndDate] AS [CycleEndDate], 
+      [vwCreditCardTransactionDetail].[StartBudgetInCycle] AS [StartBudgetInCycle], 
+      [vwCreditCardTransactionDetail].[RemainingBudgetInCycle] AS [RemainingBudgetInCycle], 
+      [vwCreditCardTransactionDetail].[BudgetToAddToNextCycle] AS [BudgetToAddToNextCycle], 
+      [vwCreditCardTransactionDetail].[BudgetToAddDate] AS [BudgetToAddDate], 
+      [vwCreditCardTransactionDetail].[IsPaused] AS [IsPaused], 
+      [vwCreditCardTransactionDetail].[IsCompleted] AS [IsCompleted], 
+      [vwCreditCardTransactionDetail].[IsLaunched] AS [IsLaunched], 
+      [vwCreditCardTransactionDetail].[IsDeleted] AS [IsDeleted], 
+      [vwCreditCardTransactionDetail].[TargetCPCLevel] AS [TargetCPCLevel], 
+      [vwCreditCardTransactionDetail].[DisplayURL] AS [DisplayURL], 
+      [vwCreditCardTransactionDetail].[PromotionPaymentPK] AS [PromotionPaymentPK], 
+      [vwCreditCardTransactionDetail].[PromotionFK] AS [PromotionFK], 
+      [vwCreditCardTransactionDetail].[PaymentBudgetToAddDate] AS [PaymentBudgetToAddDate], 
+      [vwCreditCardTransactionDetail].[IsValid] AS [IsValid], 
+      [vwCreditCardTransactionDetail].[CreditCardTransactionFK] AS [CreditCardTransactionFK], 
+      [vwCreditCardTransactionDetail].[AdvertisingEngineAccountPK] AS [AdvertisingEngineAccountPK], 
+      [vwCreditCardTransactionDetail].[AdvertisingEngineFK] AS [AdvertisingEngineFK], 
+      [vwCreditCardTransactionDetail].[AdvertisingEngineAPIChargePK] AS [AdvertisingEngineAPIChargePK], 
+      [vwCreditCardTransactionDetail].[AdvertisingEngineAccountFK] AS [AdvertisingEngineAccountFK], 
+      [vwCreditCardTransactionDetail].[APIUnits] AS [APIUnits], 
+      [vwCreditCardTransactionDetail].[APICost] AS [APICost]
+      FROM [dbo].[vwCreditCardTransactionDetail] AS [vwCreditCardTransactionDetail]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vwGetLivePromotionsForUser" EntityType="SemplestModel.Store.vwGetLivePromotionsForUser" store:Type="Views" store:Schema="dbo" store:Name="vwGetLivePromotionsForUser">
             <DefiningQuery>SELECT 
       [vwGetLivePromotionsForUser].[PromotionPK] AS [PromotionPK], 
@@ -644,6 +709,7 @@
           <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
           <Property Name="SEMplestFee" Type="money" Nullable="false" />
           <Property Name="MediaSpend" Type="money" Nullable="false" />
+          <Property Name="IsRefund" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -1193,6 +1259,119 @@
           <Property Name="CustomerFK" Type="int" />
           <Property Name="Title" Type="varchar" MaxLength="100" />
           <Property Name="Copy" Type="varchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.vwCreditCardTransactionDetail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="vwCreditCardTransactionDetail">
+          <Key>
+            <PropertyRef Name="CreditCardProfilePK" />
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="CustomerRefNum" />
+            <PropertyRef Name="AuthCode" />
+            <PropertyRef Name="TxRefNum" />
+            <PropertyRef Name="CreditCardTransactionPK" />
+            <PropertyRef Name="OrderID" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="CreatedDate" />
+            <PropertyRef Name="SEMplestFee" />
+            <PropertyRef Name="MediaSpend" />
+            <PropertyRef Name="IsRefund" />
+            <PropertyRef Name="CustomerPK" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="TotalTargetCycleBudget" />
+            <PropertyRef Name="ProductGroupCycleTypeFK" />
+            <PropertyRef Name="BillTypeFK" />
+            <PropertyRef Name="ServiceFee" />
+            <PropertyRef Name="PercentOfMedia" />
+            <PropertyRef Name="PromotionFeeOverride" />
+            <PropertyRef Name="ProductGroupPK" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="ProductGroupName" />
+            <PropertyRef Name="IsActive" />
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="ProductGroupFK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="PromotionDescription" />
+            <PropertyRef Name="PromotionStartDate" />
+            <PropertyRef Name="LandingPageURL" />
+            <PropertyRef Name="PromotionBudgetAmount" />
+            <PropertyRef Name="BudgetCycleFK" />
+            <PropertyRef Name="IsPaused" />
+            <PropertyRef Name="IsCompleted" />
+            <PropertyRef Name="IsLaunched" />
+            <PropertyRef Name="IsDeleted" />
+            <PropertyRef Name="PromotionPaymentPK" />
+            <PropertyRef Name="PaymentBudgetToAddDate" />
+            <PropertyRef Name="IsValid" />
+            <PropertyRef Name="AdvertisingEngineAccountPK" />
+            <PropertyRef Name="AdvertisingEngineFK" />
+            <PropertyRef Name="AdvertisingEngineAPIChargePK" />
+            <PropertyRef Name="AdvertisingEngineAccountFK" />
+            <PropertyRef Name="APIUnits" />
+            <PropertyRef Name="APICost" />
+          </Key>
+          <Property Name="CreditCardProfilePK" Type="int" Nullable="false" />
+          <Property Name="CustomerFK" Type="int" Nullable="false" />
+          <Property Name="CustomerRefNum" Type="varchar" Nullable="false" MaxLength="22" />
+          <Property Name="AuthCode" Type="varchar" Nullable="false" MaxLength="6" />
+          <Property Name="TxRefNum" Type="varchar" Nullable="false" MaxLength="40" />
+          <Property Name="CreditCardTransactionPK" Type="int" Nullable="false" />
+          <Property Name="CreditCardProfileFK" Type="int" />
+          <Property Name="OrderID" Type="varchar" Nullable="false" MaxLength="22" />
+          <Property Name="Amount" Type="money" Nullable="false" />
+          <Property Name="CreatedDate" Type="datetime2" Nullable="false" />
+          <Property Name="SEMplestFee" Type="money" Nullable="false" />
+          <Property Name="MediaSpend" Type="money" Nullable="false" />
+          <Property Name="IsRefund" Type="bit" Nullable="false" />
+          <Property Name="CustomerPK" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" Nullable="false" MaxLength="200" />
+          <Property Name="TotalTargetCycleBudget" Type="money" Nullable="false" />
+          <Property Name="ProductGroupCycleTypeFK" Type="int" Nullable="false" />
+          <Property Name="BillTypeFK" Type="int" Nullable="false" />
+          <Property Name="ServiceFee" Type="money" Nullable="false" />
+          <Property Name="PercentOfMedia" Type="money" Nullable="false" />
+          <Property Name="InternalCustomerId" Type="varchar" MaxLength="50" />
+          <Property Name="CreditLimit" Type="money" />
+          <Property Name="PromotionFeeOverride" Type="bit" Nullable="false" />
+          <Property Name="PromotionFeeAmount" Type="money" />
+          <Property Name="ProductGroupPK" Type="int" Nullable="false" />
+          <Property Name="StartDate" Type="datetime2" Nullable="false" />
+          <Property Name="ProductGroupName" Type="nvarchar" Nullable="false" MaxLength="50" />
+          <Property Name="EndDate" Type="datetime2" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+          <Property Name="PromotionPK" Type="int" Nullable="false" />
+          <Property Name="ProductGroupFK" Type="int" Nullable="false" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="PromotionDescription" Type="nvarchar" Nullable="false" MaxLength="2000" />
+          <Property Name="PromotionStartDate" Type="datetime2" Nullable="false" />
+          <Property Name="PromotionEndDate" Type="datetime2" />
+          <Property Name="LandingPageURL" Type="nvarchar" Nullable="false" MaxLength="1024" />
+          <Property Name="PromotionBudgetAmount" Type="money" Nullable="false" />
+          <Property Name="BudgetCycleFK" Type="int" Nullable="false" />
+          <Property Name="CycleStartDate" Type="datetime2" />
+          <Property Name="CycleEndDate" Type="datetime2" />
+          <Property Name="StartBudgetInCycle" Type="money" />
+          <Property Name="RemainingBudgetInCycle" Type="money" />
+          <Property Name="BudgetToAddToNextCycle" Type="money" />
+          <Property Name="BudgetToAddDate" Type="datetime2" />
+          <Property Name="IsPaused" Type="bit" Nullable="false" />
+          <Property Name="IsCompleted" Type="bit" Nullable="false" />
+          <Property Name="IsLaunched" Type="bit" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="TargetCPCLevel" Type="varchar" MaxLength="50" />
+          <Property Name="DisplayURL" Type="nvarchar" MaxLength="35" />
+          <Property Name="PromotionPaymentPK" Type="int" Nullable="false" />
+          <Property Name="PromotionFK" Type="int" />
+          <Property Name="PaymentBudgetToAddDate" Type="datetime2" Nullable="false" />
+          <Property Name="IsValid" Type="bit" Nullable="false" />
+          <Property Name="CreditCardTransactionFK" Type="int" />
+          <Property Name="AdvertisingEngineAccountPK" Type="bigint" Nullable="false" />
+          <Property Name="AdvertisingEngineFK" Type="int" Nullable="false" />
+          <Property Name="AdvertisingEngineAPIChargePK" Type="int" Nullable="false" />
+          <Property Name="AdvertisingEngineAccountFK" Type="bigint" Nullable="false" />
+          <Property Name="APIUnits" Type="bigint" Nullable="false" />
+          <Property Name="APICost" Type="money" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'semplest.dbo.vwGetLivePromotionsForUser' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -2682,6 +2861,7 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
+          <EntitySet Name="vwCreditCardTransactionDetails" EntityType="SemplestModel.vwCreditCardTransactionDetail" />
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -2952,6 +3132,7 @@
           <Property Type="Decimal" Name="MediaSpend" Nullable="false" Precision="19" Scale="4" />
           <NavigationProperty Name="CreditCardProfile" Relationship="SemplestModel.REL_CreditCardProfile_CreditCardTransaction_2" FromRole="CreditCardTransaction" ToRole="CreditCardProfile" />
           <NavigationProperty Name="PromotionPayments" Relationship="SemplestModel.REL_CreditCardTransaction_PromotionPayment_2" FromRole="CreditCardTransaction" ToRole="PromotionPayment" />
+          <Property Type="Boolean" Name="IsRefund" Nullable="false" />
         </EntityType>
         <EntityType Name="Customer">
           <Key>
@@ -4530,6 +4711,116 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="vwCreditCardTransactionDetail">
+          <Key>
+            <PropertyRef Name="CreditCardProfilePK" />
+            <PropertyRef Name="CustomerFK" />
+            <PropertyRef Name="CustomerRefNum" />
+            <PropertyRef Name="AuthCode" />
+            <PropertyRef Name="TxRefNum" />
+            <PropertyRef Name="CreditCardTransactionPK" />
+            <PropertyRef Name="OrderID" />
+            <PropertyRef Name="Amount" />
+            <PropertyRef Name="CreatedDate" />
+            <PropertyRef Name="SEMplestFee" />
+            <PropertyRef Name="MediaSpend" />
+            <PropertyRef Name="IsRefund" />
+            <PropertyRef Name="CustomerPK" />
+            <PropertyRef Name="Name" />
+            <PropertyRef Name="TotalTargetCycleBudget" />
+            <PropertyRef Name="ProductGroupCycleTypeFK" />
+            <PropertyRef Name="BillTypeFK" />
+            <PropertyRef Name="ServiceFee" />
+            <PropertyRef Name="PercentOfMedia" />
+            <PropertyRef Name="PromotionFeeOverride" />
+            <PropertyRef Name="ProductGroupPK" />
+            <PropertyRef Name="StartDate" />
+            <PropertyRef Name="ProductGroupName" />
+            <PropertyRef Name="IsActive" />
+            <PropertyRef Name="PromotionPK" />
+            <PropertyRef Name="ProductGroupFK" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="PromotionDescription" />
+            <PropertyRef Name="PromotionStartDate" />
+            <PropertyRef Name="LandingPageURL" />
+            <PropertyRef Name="PromotionBudgetAmount" />
+            <PropertyRef Name="BudgetCycleFK" />
+            <PropertyRef Name="IsPaused" />
+            <PropertyRef Name="IsCompleted" />
+            <PropertyRef Name="IsLaunched" />
+            <PropertyRef Name="IsDeleted" />
+            <PropertyRef Name="PromotionPaymentPK" />
+            <PropertyRef Name="PaymentBudgetToAddDate" />
+            <PropertyRef Name="IsValid" />
+            <PropertyRef Name="AdvertisingEngineAccountPK" />
+            <PropertyRef Name="AdvertisingEngineFK" />
+            <PropertyRef Name="AdvertisingEngineAPIChargePK" />
+            <PropertyRef Name="AdvertisingEngineAccountFK" />
+            <PropertyRef Name="APIUnits" />
+            <PropertyRef Name="APICost" />
+          </Key>
+          <Property Type="Int32" Name="CreditCardProfilePK" Nullable="false" />
+          <Property Type="Int32" Name="CustomerFK" Nullable="false" />
+          <Property Type="String" Name="CustomerRefNum" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AuthCode" Nullable="false" MaxLength="6" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="TxRefNum" Nullable="false" MaxLength="40" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="CreditCardTransactionPK" Nullable="false" />
+          <Property Type="Int32" Name="CreditCardProfileFK" />
+          <Property Type="String" Name="OrderID" Nullable="false" MaxLength="22" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="Amount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="DateTime" Name="CreatedDate" Nullable="false" />
+          <Property Type="Decimal" Name="SEMplestFee" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="MediaSpend" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="IsRefund" Nullable="false" />
+          <Property Type="Int32" Name="CustomerPK" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="TotalTargetCycleBudget" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="ProductGroupCycleTypeFK" Nullable="false" />
+          <Property Type="Int32" Name="BillTypeFK" Nullable="false" />
+          <Property Type="Decimal" Name="ServiceFee" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="PercentOfMedia" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="String" Name="InternalCustomerId" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="CreditLimit" Precision="19" Scale="4" />
+          <Property Type="Boolean" Name="PromotionFeeOverride" Nullable="false" />
+          <Property Type="Decimal" Name="PromotionFeeAmount" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="ProductGroupPK" Nullable="false" />
+          <Property Type="DateTime" Name="StartDate" Nullable="false" />
+          <Property Type="String" Name="ProductGroupName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="EndDate" />
+          <Property Type="Boolean" Name="IsActive" Nullable="false" />
+          <Property Type="Int32" Name="PromotionPK" Nullable="false" />
+          <Property Type="Int32" Name="ProductGroupFK" Nullable="false" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PromotionDescription" Nullable="false" MaxLength="2000" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="PromotionStartDate" Nullable="false" />
+          <Property Type="DateTime" Name="PromotionEndDate" />
+          <Property Type="String" Name="LandingPageURL" Nullable="false" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="Decimal" Name="PromotionBudgetAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Int32" Name="BudgetCycleFK" Nullable="false" />
+          <Property Type="DateTime" Name="CycleStartDate" />
+          <Property Type="DateTime" Name="CycleEndDate" />
+          <Property Type="Decimal" Name="StartBudgetInCycle" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="RemainingBudgetInCycle" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="BudgetToAddToNextCycle" Precision="19" Scale="4" />
+          <Property Type="DateTime" Name="BudgetToAddDate" />
+          <Property Type="Boolean" Name="IsPaused" Nullable="false" />
+          <Property Type="Boolean" Name="IsCompleted" Nullable="false" />
+          <Property Type="Boolean" Name="IsLaunched" Nullable="false" />
+          <Property Type="Boolean" Name="IsDeleted" Nullable="false" />
+          <Property Type="String" Name="TargetCPCLevel" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="DisplayURL" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="PromotionPaymentPK" Nullable="false" />
+          <Property Type="Int32" Name="PromotionFK" />
+          <Property Type="DateTime" Name="PaymentBudgetToAddDate" Nullable="false" />
+          <Property Type="Boolean" Name="IsValid" Nullable="false" />
+          <Property Type="Int32" Name="CreditCardTransactionFK" />
+          <Property Type="Int64" Name="AdvertisingEngineAccountPK" Nullable="false" />
+          <Property Type="Int32" Name="AdvertisingEngineFK" Nullable="false" />
+          <Property Type="Int32" Name="AdvertisingEngineAPIChargePK" Nullable="false" />
+          <Property Type="Int64" Name="AdvertisingEngineAccountFK" Nullable="false" />
+          <Property Type="Int64" Name="APIUnits" Nullable="false" />
+          <Property Type="Decimal" Name="APICost" Nullable="false" Precision="19" Scale="4" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4788,6 +5079,7 @@
           <EntitySetMapping Name="CreditCardTransactions">
             <EntityTypeMapping TypeName="SemplestModel.CreditCardTransaction">
               <MappingFragment StoreEntitySet="CreditCardTransaction">
+                <ScalarProperty Name="IsRefund" ColumnName="IsRefund" />
                 <ScalarProperty Name="MediaSpend" ColumnName="MediaSpend" />
                 <ScalarProperty Name="SEMplestFee" ColumnName="SEMplestFee" />
                 <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
@@ -5426,6 +5718,73 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="vwCreditCardTransactionDetails">
+            <EntityTypeMapping TypeName="SemplestModel.vwCreditCardTransactionDetail">
+              <MappingFragment StoreEntitySet="vwCreditCardTransactionDetail">
+                <ScalarProperty Name="APICost" ColumnName="APICost" />
+                <ScalarProperty Name="APIUnits" ColumnName="APIUnits" />
+                <ScalarProperty Name="AdvertisingEngineAccountFK" ColumnName="AdvertisingEngineAccountFK" />
+                <ScalarProperty Name="AdvertisingEngineAPIChargePK" ColumnName="AdvertisingEngineAPIChargePK" />
+                <ScalarProperty Name="AdvertisingEngineFK" ColumnName="AdvertisingEngineFK" />
+                <ScalarProperty Name="AdvertisingEngineAccountPK" ColumnName="AdvertisingEngineAccountPK" />
+                <ScalarProperty Name="CreditCardTransactionFK" ColumnName="CreditCardTransactionFK" />
+                <ScalarProperty Name="IsValid" ColumnName="IsValid" />
+                <ScalarProperty Name="PaymentBudgetToAddDate" ColumnName="PaymentBudgetToAddDate" />
+                <ScalarProperty Name="PromotionFK" ColumnName="PromotionFK" />
+                <ScalarProperty Name="PromotionPaymentPK" ColumnName="PromotionPaymentPK" />
+                <ScalarProperty Name="DisplayURL" ColumnName="DisplayURL" />
+                <ScalarProperty Name="TargetCPCLevel" ColumnName="TargetCPCLevel" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="IsLaunched" ColumnName="IsLaunched" />
+                <ScalarProperty Name="IsCompleted" ColumnName="IsCompleted" />
+                <ScalarProperty Name="IsPaused" ColumnName="IsPaused" />
+                <ScalarProperty Name="BudgetToAddDate" ColumnName="BudgetToAddDate" />
+                <ScalarProperty Name="BudgetToAddToNextCycle" ColumnName="BudgetToAddToNextCycle" />
+                <ScalarProperty Name="RemainingBudgetInCycle" ColumnName="RemainingBudgetInCycle" />
+                <ScalarProperty Name="StartBudgetInCycle" ColumnName="StartBudgetInCycle" />
+                <ScalarProperty Name="CycleEndDate" ColumnName="CycleEndDate" />
+                <ScalarProperty Name="CycleStartDate" ColumnName="CycleStartDate" />
+                <ScalarProperty Name="BudgetCycleFK" ColumnName="BudgetCycleFK" />
+                <ScalarProperty Name="PromotionBudgetAmount" ColumnName="PromotionBudgetAmount" />
+                <ScalarProperty Name="LandingPageURL" ColumnName="LandingPageURL" />
+                <ScalarProperty Name="PromotionEndDate" ColumnName="PromotionEndDate" />
+                <ScalarProperty Name="PromotionStartDate" ColumnName="PromotionStartDate" />
+                <ScalarProperty Name="PromotionDescription" ColumnName="PromotionDescription" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="ProductGroupFK" ColumnName="ProductGroupFK" />
+                <ScalarProperty Name="PromotionPK" ColumnName="PromotionPK" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="EndDate" ColumnName="EndDate" />
+                <ScalarProperty Name="ProductGroupName" ColumnName="ProductGroupName" />
+                <ScalarProperty Name="StartDate" ColumnName="StartDate" />
+                <ScalarProperty Name="ProductGroupPK" ColumnName="ProductGroupPK" />
+                <ScalarProperty Name="PromotionFeeAmount" ColumnName="PromotionFeeAmount" />
+                <ScalarProperty Name="PromotionFeeOverride" ColumnName="PromotionFeeOverride" />
+                <ScalarProperty Name="CreditLimit" ColumnName="CreditLimit" />
+                <ScalarProperty Name="InternalCustomerId" ColumnName="InternalCustomerId" />
+                <ScalarProperty Name="PercentOfMedia" ColumnName="PercentOfMedia" />
+                <ScalarProperty Name="ServiceFee" ColumnName="ServiceFee" />
+                <ScalarProperty Name="BillTypeFK" ColumnName="BillTypeFK" />
+                <ScalarProperty Name="ProductGroupCycleTypeFK" ColumnName="ProductGroupCycleTypeFK" />
+                <ScalarProperty Name="TotalTargetCycleBudget" ColumnName="TotalTargetCycleBudget" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="CustomerPK" ColumnName="CustomerPK" />
+                <ScalarProperty Name="IsRefund" ColumnName="IsRefund" />
+                <ScalarProperty Name="MediaSpend" ColumnName="MediaSpend" />
+                <ScalarProperty Name="SEMplestFee" ColumnName="SEMplestFee" />
+                <ScalarProperty Name="CreatedDate" ColumnName="CreatedDate" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="OrderID" ColumnName="OrderID" />
+                <ScalarProperty Name="CreditCardProfileFK" ColumnName="CreditCardProfileFK" />
+                <ScalarProperty Name="CreditCardTransactionPK" ColumnName="CreditCardTransactionPK" />
+                <ScalarProperty Name="TxRefNum" ColumnName="TxRefNum" />
+                <ScalarProperty Name="AuthCode" ColumnName="AuthCode" />
+                <ScalarProperty Name="CustomerRefNum" ColumnName="CustomerRefNum" />
+                <ScalarProperty Name="CustomerFK" ColumnName="CustomerFK" />
+                <ScalarProperty Name="CreditCardProfilePK" ColumnName="CreditCardProfilePK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5703,11 +6062,11 @@
           <ConnectorPoint PointX="16.5" PointY="47.461293945312491" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_CreditCardTransaction_PromotionPayment_2" >
-          <ConnectorPoint PointX="18" PointY="48.811029649038446" />
-          <ConnectorPoint PointX="18.316074434901122" PointY="49.127104083939564" />
-          <ConnectorPoint PointX="18.433925565098878" PointY="49.244955214137327" />
-          <ConnectorPoint PointX="18.5625" PointY="49.373529649038446" />
-          <ConnectorPoint PointX="18.5625" PointY="58.528595377604177" />
+          <ConnectorPoint PointX="18" PointY="49.003331081330131" />
+          <ConnectorPoint PointX="18.316074434901122" PointY="49.319405516231249" />
+          <ConnectorPoint PointX="18.433925565098878" PointY="49.437256646429013" />
+          <ConnectorPoint PointX="18.4375" PointY="49.440831081330131" />
+          <ConnectorPoint PointX="18.4375" PointY="58.528595377604177" />
           <ConnectorPoint PointX="18.75" PointY="58.528595377604177" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.Child_Rel" >
@@ -5792,43 +6151,35 @@
           <ConnectorPoint PointX="12.40625" PointY="50.480286458333353" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_Schedule_3" >
-          <ConnectorPoint PointX="3.343748" PointY="52.393616536458353" />
-          <ConnectorPoint PointX="3.343748" PointY="53.6875" />
-          <ConnectorPoint PointX="3.6666666666666665" PointY="53.6875" />
-          <ConnectorPoint PointX="3.8333333333333335" PointY="53.6875" />
-          <ConnectorPoint PointX="3.8697929166666665" PointY="53.6875" />
-          <ConnectorPoint PointX="4.0364595833333334" PointY="53.6875" />
-          <ConnectorPoint PointX="4.0729191666666669" PointY="53.6875" />
-          <ConnectorPoint PointX="4.2395858333333329" PointY="53.6875" />
-          <ConnectorPoint PointX="4.2760454166666664" PointY="53.6875" />
-          <ConnectorPoint PointX="4.4427120833333325" PointY="53.6875" />
-          <ConnectorPoint PointX="4.791666666666667" PointY="53.6875" />
-          <ConnectorPoint PointX="4.958333333333333" PointY="53.6875" />
-          <ConnectorPoint PointX="7.244791666666667" PointY="53.6875" />
-          <ConnectorPoint PointX="7.411458333333333" PointY="53.6875" />
-          <ConnectorPoint PointX="7.9594531250000058" PointY="53.6875" />
-          <ConnectorPoint PointX="8.1261197916666728" PointY="53.6875" />
-          <ConnectorPoint PointX="10.041666666666666" PointY="53.6875" />
-          <ConnectorPoint PointX="10.208333333333334" PointY="53.6875" />
-          <ConnectorPoint PointX="10.213544166666667" PointY="53.6875" />
-          <ConnectorPoint PointX="10.380210833333335" PointY="53.6875" />
-          <ConnectorPoint PointX="12.119789166666665" PointY="53.6875" />
-          <ConnectorPoint PointX="12.286455833333333" PointY="53.6875" />
-          <ConnectorPoint PointX="12.291666666666666" PointY="53.6875" />
-          <ConnectorPoint PointX="12.458333333333334" PointY="53.6875" />
-          <ConnectorPoint PointX="13.072916666666666" PointY="53.6875" />
-          <ConnectorPoint PointX="13.239583333333334" PointY="53.6875" />
-          <ConnectorPoint PointX="15.25" PointY="53.6875" />
-          <ConnectorPoint PointX="15.25" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="15.916666666666666" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="16.083333333333332" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="16.135416666666668" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="16.458333333333332" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="52.516591796874991" />
-          <ConnectorPoint PointX="18.75" PointY="52.516591796874991" />
+          <ConnectorPoint PointX="3.95312625" PointY="46.375" />
+          <ConnectorPoint PointX="3.95312625" PointY="46.125" />
+          <ConnectorPoint PointX="4.0729191666666669" PointY="46.125" />
+          <ConnectorPoint PointX="4.2395858333333329" PointY="46.125" />
+          <ConnectorPoint PointX="7.072916666666667" PointY="46.125" />
+          <ConnectorPoint PointX="7.239583333333333" PointY="46.125" />
+          <ConnectorPoint PointX="7.791666666666667" PointY="46.125" />
+          <ConnectorPoint PointX="7.958333333333333" PointY="46.125" />
+          <ConnectorPoint PointX="8" PointY="46.125" />
+          <ConnectorPoint PointX="8" PointY="53.734375" />
+          <ConnectorPoint PointX="10.041666666666666" PointY="53.734375" />
+          <ConnectorPoint PointX="10.208333333333334" PointY="53.734375" />
+          <ConnectorPoint PointX="10.213544166666667" PointY="53.734375" />
+          <ConnectorPoint PointX="10.380210833333335" PointY="53.734375" />
+          <ConnectorPoint PointX="12.119789166666665" PointY="53.734375" />
+          <ConnectorPoint PointX="12.286455833333333" PointY="53.734375" />
+          <ConnectorPoint PointX="12.291666666666666" PointY="53.734375" />
+          <ConnectorPoint PointX="12.520833333333334" PointY="53.734375" />
+          <ConnectorPoint PointX="13.072916666666666" PointY="53.734375" />
+          <ConnectorPoint PointX="13.239583333333334" PointY="53.734375" />
+          <ConnectorPoint PointX="15.25" PointY="53.734375" />
+          <ConnectorPoint PointX="15.25" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="15.916666666666666" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="16.083333333333332" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="16.135416666666668" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="16.458333333333332" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="52.391591796874991" />
+          <ConnectorPoint PointX="18.75" PointY="52.391591796874991" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Customer_WebContent_1" >
           <ConnectorPoint PointX="4.3593787499999994" PointY="52.393616536458353" />
@@ -5897,9 +6248,7 @@
         <AssociationConnector Association="SemplestModel.REL_Frequency_Schedule_1" >
           <ConnectorPoint PointX="18" PointY="51.110341796874991" />
           <ConnectorPoint PointX="18.291666666666668" PointY="51.110341796874991" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="51.110341796874991" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="51.110341796874991" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="51.110341796874991" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="51.110341796874991" />
           <ConnectorPoint PointX="18.75" PointY="51.110341796874991" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_GeoTargeting_1" >
@@ -6005,9 +6354,7 @@
           <ConnectorPoint PointX="16.416666666666668" PointY="56.75" />
           <ConnectorPoint PointX="16.583333333333332" PointY="56.75" />
           <ConnectorPoint PointX="18.291666666666668" PointY="56.75" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="56.75" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="56.75" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="56.75" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="56.75" />
           <ConnectorPoint PointX="19.5" PointY="56.75" />
           <ConnectorPoint PointX="19.5" PointY="55.624410807291611" />
         </AssociationConnector>
@@ -6064,16 +6411,14 @@
           <ConnectorPoint PointX="12.625" PointY="58" />
           <ConnectorPoint PointX="15.041666666666666" PointY="58" />
           <ConnectorPoint PointX="15.208333333333334" PointY="58" />
-          <ConnectorPoint PointX="15.375" PointY="58" />
-          <ConnectorPoint PointX="15.375" PointY="56.875" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="58" />
+          <ConnectorPoint PointX="15.416666666666666" PointY="56.875" />
           <ConnectorPoint PointX="15.416666666666666" PointY="56.875" />
           <ConnectorPoint PointX="15.583333333333334" PointY="56.875" />
           <ConnectorPoint PointX="16.416666666666668" PointY="56.875" />
           <ConnectorPoint PointX="16.583333333333332" PointY="56.875" />
           <ConnectorPoint PointX="18.291666666666668" PointY="56.875" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="56.875" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="56.875" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="56.875" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="56.875" />
           <ConnectorPoint PointX="19.1250005" PointY="56.875" />
           <ConnectorPoint PointX="19.1250005" PointY="57.25" />
         </AssociationConnector>
@@ -6082,14 +6427,18 @@
           <ConnectorPoint PointX="12.119789166666665" PointY="56.657323404947917" />
           <ConnectorPoint PointX="12.286455833333333" PointY="56.657323404947917" />
           <ConnectorPoint PointX="12.4375" PointY="56.657323404947917" />
-          <ConnectorPoint PointX="12.4375" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="15.416666666666666" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="15.708333333333334" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="18.291666666666668" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="53.980361328124957" />
-          <ConnectorPoint PointX="18.75" PointY="53.980361328124957" />
+          <ConnectorPoint PointX="12.4375" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="13.072916666666666" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="13.239583333333334" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="13.416666666666666" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="13.583333333333334" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="15.916666666666666" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="16.083333333333332" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="16.135416666666668" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="16.458333333333332" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="18.291666666666668" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="52.175954427083312" />
+          <ConnectorPoint PointX="18.75" PointY="52.175954427083312" />
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Promotion_SiteLinks_1" >
           <ConnectorPoint PointX="11.975769230769233" PointY="62.441630859374982" />
@@ -6153,12 +6502,10 @@
         </AssociationConnector>
         <AssociationConnector Association="SemplestModel.REL_Users_Schedule_5" >
           <ConnectorPoint PointX="6.75" PointY="66.581324369791673" />
-          <ConnectorPoint PointX="7.041666666666667" PointY="66.581324369791673" />
-          <ConnectorPoint PointX="7.208333333333333" PointY="66.581324369791673" />
           <ConnectorPoint PointX="7.25" PointY="66.581324369791673" />
           <ConnectorPoint PointX="7.25" PointY="64" />
-          <ConnectorPoint PointX="10.104166666666666" PointY="64" />
-          <ConnectorPoint PointX="10.380210833333335" PointY="64" />
+          <ConnectorPoint PointX="10.130210833333333" PointY="64" />
+          <ConnectorPoint PointX="10.380210833333333" PointY="64" />
           <ConnectorPoint PointX="12.119789166666665" PointY="64" />
           <ConnectorPoint PointX="12.286455833333333" PointY="64" />
           <ConnectorPoint PointX="12.291666666666666" PointY="64" />
@@ -6170,9 +6517,7 @@
           <ConnectorPoint PointX="15.416666666666666" PointY="55.999410807291611" />
           <ConnectorPoint PointX="15.708333333333334" PointY="55.999410807291611" />
           <ConnectorPoint PointX="18.291666666666668" PointY="55.999410807291611" />
-          <ConnectorPoint PointX="18.458333333333332" PointY="55.999410807291611" />
-          <ConnectorPoint PointX="18.479166666666668" PointY="55.999410807291611" />
-          <ConnectorPoint PointX="18.645833333333332" PointY="55.999410807291611" />
+          <ConnectorPoint PointX="18.520833333333332" PointY="55.999410807291611" />
           <ConnectorPoint PointX="19.093747999999998" PointY="55.999410807291611" />
           <ConnectorPoint PointX="19.093747999999998" PointY="55.624410807291611" />
         </AssociationConnector>
@@ -6203,6 +6548,7 @@
           <ConnectorPoint PointX="11.65625" PointY="67.187246093749991" />
           <ConnectorPoint PointX="11.65625" PointY="66.480286458333353" />
         </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.vwCreditCardTransactionDetail" Width="1.5" PointX="7.375" PointY="7.75" Height="12.749166666666667" />
       </Diagram>
     </Diagrams>
   </Designer>
