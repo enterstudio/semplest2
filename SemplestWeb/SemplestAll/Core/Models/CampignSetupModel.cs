@@ -68,6 +68,9 @@ namespace Semplest.Core.Models
         public bool IsLaunched { get; set; }
         public bool IsCompleted { get; set; }
 
+        public decimal PercentMedia { get; set; }
+        public bool PromotionFeeOverRide { get; set; }
+        public decimal? PromotionFeeOverRideAmount { get; set; }
     }
 
     public class AddsStoreModel
