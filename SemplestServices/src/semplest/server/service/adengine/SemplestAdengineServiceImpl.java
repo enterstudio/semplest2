@@ -366,9 +366,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
-		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP(); 
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		final String esbServerTimeout = getTimeoutMS();
@@ -378,6 +376,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountId = "" + adEngineData.getAccountID();
+				final Long campaignId = adEngineData.getCampaignID();
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
@@ -387,6 +388,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size() + " KeywordProbabilities that were found in database");
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 				googleAdwordsService.deleteNegativeKeywords(accountId, campaignId, keywords, keywordMatchType);		
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final String errMsg = "MSN doesn't support deleting negative keywords directly.  You need to simply call the AddNegativeKeywords with the keywords that should reamins (MSN will delete the rest).";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg); 
 			}
 			else
 			{
@@ -1236,11 +1243,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);			
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
-		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
-		final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+		getPromoDataSP.execute(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();		
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
 		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll, keywordIdRemoveOppositePairs);		
@@ -1260,6 +1265,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{							
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long adGroupID = adEngineData.getAdGroupID();
+				final Long campaignID = adEngineData.getCampaignID();
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
@@ -1274,6 +1283,36 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					errorMap.put(adEngine, "Problem doing Add/Update Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "]");
 				}
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final Long accountID = adEngineData.getAccountID();
+				final Long adGroupID = adEngineData.getAdGroupID();
+				final Long campaignID = adEngineData.getCampaignID();
+				final Set<Entry<KeywordProbabilityObject, Boolean>> entrySet = keywordToRemoveOppositeMap.entrySet();
+				final List<com.microsoft.adcenter.v8.Keyword> regularKeywordsToRemove = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
+				final List<String> negativeKeywordsToAdd = new ArrayList<String>();
+				for (final Entry<KeywordProbabilityObject, Boolean> entry : entrySet)
+				{
+					final KeywordProbabilityObject keywordProbability = entry.getKey();
+					if (keywordProbability.getIsNegative())
+					{
+						final String keywordText = keywordProbability.getKeyword();
+						negativeKeywordsToAdd.add(keywordText);
+						final Boolean removeOpposite = entry.getValue();
+						if (removeOpposite)
+						{
+							final com.microsoft.adcenter.v8.Keyword regularKeywordToRemove = new com.microsoft.adcenter.v8.Keyword();
+							regularKeywordToRemove.setText(keywordText);
+							regularKeywordsToRemove.add(regularKeywordToRemove);
+						}
+					}
+				}	
+				final com.microsoft.adcenter.v8.Keyword[] regularKeywordsArray = regularKeywordsToRemove.toArray(new com.microsoft.adcenter.v8.Keyword[regularKeywordsToRemove.size()]);
+				msn.createKeywords(accountID, adGroupID, regularKeywordsArray);
+				msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
 			}
 			else
 			{
@@ -1808,15 +1847,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("Will try to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{							
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long campaignID = adEngineData.getCampaignID();				
 				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
 				getSiteLinksForPromotionSP.execute(promotionID);
 				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();	
@@ -1922,29 +1962,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineDataMap= getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountID = SemplestUtils.getTrimmedNonNullString("" + promotion.getAdvertisingEngineAccountPK());				
-		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
 		final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL()); 
 		final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
 		final List<AdsObject> ads = getPromoDataSP.getAds();
-		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
-		for (final Integer promotionAdID : promotionAdIds)
-		{
-			final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
-			final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);			
-			//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
-			Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
-			if (!nonDeletedAdsForPromotionAdID.isEmpty())
-			{
-				final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);		
-				nonDeletedAdsForPromotionAdIds.add(ad);
-			}
-		}
+		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();		
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = SemplestUtils.getTrimmedNonNullString("" + adEngineData.getAccountID());				
+				final Long adGroupID = adEngineData.getAdGroupID();
+				for (final Integer promotionAdID : promotionAdIds)
+				{														
+					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+					final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);			
+					//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
+					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					if (!nonDeletedAdsForPromotionAdID.isEmpty())
+					{
+						final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);		
+						nonDeletedAdsForPromotionAdIds.add(ad);
+					}
+				}
 				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
 				{
 					final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
@@ -1965,19 +2007,39 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					{						
 						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
-
-					
+				}				
+				else
+				{
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "] for Google";
+					logger.error(errMsg);
+					errorMap.put(adEngine, errMsg);
+				}								
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = SemplestUtils.getTrimmedNonNullString("" + adEngineData.getAccountID());				
+				final Long adGroupID = adEngineData.getAdGroupID();
+				for (final Integer promotionAdID : promotionAdIds)
+				{														
+					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+					final List<AdsObject> nonDeletedAdsForPromotionAdID = getFilteredAds(adsForPromotionAdID, false);			
+					//TODO: once AdvertisingEngineAds table has constraint such that PromotionFK is unique in the table, remove the sorting code and only deal with 1 item (not List) 
+					Collections.sort(nonDeletedAdsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+					if (!nonDeletedAdsForPromotionAdID.isEmpty())
+					{
+						final AdsObject ad = nonDeletedAdsForPromotionAdID.get(0);		
+						nonDeletedAdsForPromotionAdIds.add(ad);
+					}
 				}
-				else if (AdEngine.MSN.name().equals(adEngine))
+				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
 				{
 					logger.info("Updating Ads on MSN for PromotionID = " + promotionID);
-					MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 					final List<UpdateAdRequest> updateRequests = getUpdateRequests(displayURL, url, nonDeletedAdsForPromotionAdIds);
 					final int numUpdateRequests = updateRequests.size();
 					logger.info("Will try to update " + numUpdateRequests + " Ads inMSN");
-					//create object for all AdUpdates
-					final UpdateAdsRequestObj request = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);
-					
+					final UpdateAdsRequestObj request = new UpdateAdsRequestObj(accountID, adGroupID, updateRequests);					
 					Map<UpdateAdRequest, Long> requestToNewAdIdMap = msn.updateAllAdById(request);
 					final int numAdsUpdated = requestToNewAdIdMap.size();
 					logger.info("# of Ads updated: " + numAdsUpdated);
@@ -1991,14 +2053,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					{						
 						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
-					
-				}
+				}				
 				else
 				{
-					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "]";
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "] for Google";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
-				}								
+				}	
 			}
 			else
 			{
@@ -2149,16 +2210,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("Will try to change StartDate for PromotionID [" + promotionID + "] to  [" + newStartDate + "] for AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);				
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-				final Long campaignID = promotion.getAdvertisingEngineCampaignPK();
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long campaignID = adEngineData.getCampaignID();
 				final Boolean processedSuccessully = googleAdwordsService.ChangeCampaignStartDate(accountID, campaignID, newStartDate);
 				if (!processedSuccessully)
 				{

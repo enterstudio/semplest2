@@ -1445,21 +1445,44 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	}
 	
 	@Override
+	public void setNegativeKeywords(final Long accountId, final Long campaignId, final List<String> negativeKeywords) throws Exception
+	{
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		try
+		{
+			final String[] negativeKeywordsArray = negativeKeywords.toArray(new String[negativeKeywords.size()]);
+			final CampaignNegativeKeywords campaignNegativeKeywords = new CampaignNegativeKeywords(campaignId, negativeKeywordsArray);
+			final CampaignNegativeKeywords[] campaignNegativeKeywordsArray = new CampaignNegativeKeywords[]{campaignNegativeKeywords}; 
+			final SetNegativeKeywordsToCampaignsRequest request = new SetNegativeKeywordsToCampaignsRequest(accountId, campaignNegativeKeywordsArray);
+			final SetNegativeKeywordsToCampaignsResponse response = campaignManagement.setNegativeKeywordsToCampaigns(request);
+		}
+		catch(AdApiFaultDetail e1)
+		{
+			throw new Exception(e1.dumpToString(), e1);			
+		}
+		catch(EditorialApiFaultDetail e2)
+		{
+			throw new Exception(e2.dumpToString(), e2);
+		}
+	}
+	
+	@Override
 	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
 			Bid phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		Keyword keyword = aNew().keyword().withText(text).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid)
-				.withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
+		Keyword keyword = aNew().keyword().withText(text).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid).withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
 		AddKeywordsResponse addKeywords = null;
-		try{
-			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]
-					{ keyword }));
+		try
+		{
+			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]{ keyword }));
 		}
-		catch(AdApiFaultDetail e1){
+		catch(AdApiFaultDetail e1)
+		{
 			throw new RemoteException(e1.dumpToString());			
 		}
-		catch(EditorialApiFaultDetail e2){
+		catch(EditorialApiFaultDetail e2)
+		{
 			throw new RemoteException(e2.dumpToString());
 		}
 		return addKeywords.getKeywordIds()[0];

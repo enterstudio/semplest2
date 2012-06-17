@@ -1,6 +1,7 @@
 package semplest.services.client.interfaces;
 
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,9 +14,11 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
+import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
+import com.microsoft.adcenter.v8.ApiFaultDetail;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
@@ -112,6 +115,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws Exception;
+	void setNegativeKeywords(final Long accountId, final Long campaignId, final List<String> negativeKeywords) throws Exception;
 	
 	// ==================================
 	// Keyword Estimates

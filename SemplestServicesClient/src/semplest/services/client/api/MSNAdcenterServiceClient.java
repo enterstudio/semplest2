@@ -1332,5 +1332,11 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		}
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
+	@Override
+	public void setNegativeKeywords(Long accountId, Long campaignId, List<String> negativeKeywords) throws Exception
+	{
+		// TODO Auto-generated method stub
+		
+	}
 
 }
