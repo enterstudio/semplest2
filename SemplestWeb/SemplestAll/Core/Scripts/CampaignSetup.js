@@ -20,13 +20,24 @@ $(document).ready(function () {
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
             var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
+            if (dispStr.indexOf('/') >= 0) {
+                dispStr = dispStr.substring(0, dispStr.indexOf('/'));
+            }
+            if (dispStr.indexOf('?') >= 0) {
+                dispStr = dispStr.substring(0, dispStr.indexOf('?'));
+            }
             $('#AdModelProp_DisplayUrl').val(dispStr);
-            $('#AdModelProp.DisplayUrl').val(dispStr);
+
         }
         else {
             var landStr = $('#AdModelProp_LandingUrl').val();
+            if (landStr.indexOf('/') >= 0) {
+                landStr = landStr.substring(0, landStr.indexOf('/'));
+            }
+            if (landStr.indexOf('?') >= 0) {
+                landStr = landStr.substring(0, landStr.indexOf('?'));
+            }
             $('#AdModelProp_DisplayUrl').val(landStr);
-            $('#AdModelProp.DisplayUrl').val(landStr);
         }
     });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
