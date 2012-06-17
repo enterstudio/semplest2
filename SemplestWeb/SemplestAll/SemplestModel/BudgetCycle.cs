@@ -14,7 +14,7 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     [KnownType(typeof(Promotion))]
     public partial class BudgetCycle
     {
@@ -22,13 +22,13 @@ namespace SemplestModel
         {
             this.Promotions = new HashSet<Promotion>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int BudgetCyclePK { get; set; }
-        [DataMember]
+        
         public string BudgetCycle1 { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Promotion> Promotions { get; set; }
     }
     

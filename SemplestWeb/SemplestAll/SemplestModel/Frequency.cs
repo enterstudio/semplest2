@@ -14,21 +14,20 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Schedule))]
+    
     public partial class Frequency
     {
         public Frequency()
         {
             this.Schedules = new HashSet<Schedule>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int FrequencyPK { get; set; }
-        [DataMember]
+        
         public string Frequency1 { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Schedule> Schedules { get; set; }
     }
     

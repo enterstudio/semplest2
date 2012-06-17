@@ -26,7 +26,7 @@ namespace Semplest.Core.Models
             AllKeywordProbabilityObjects = new List<KeywordProbabilityObject>();
             SelectedKeywords = new List<KeywordsModel>();
             KeywordIds = new List<int>();
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
             SiteLinks = new List<SiteLink>();
         }
@@ -107,7 +107,7 @@ namespace Semplest.Core.Models
     {
         public ProductGroupModel()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
             {
                 Configuration = entities.Configurations.FirstOrDefault();
                 string filePath = System.Configuration.ConfigurationManager.AppSettings["LogoURL"].ToString();

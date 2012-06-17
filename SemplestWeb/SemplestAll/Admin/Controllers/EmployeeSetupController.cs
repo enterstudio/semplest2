@@ -22,7 +22,7 @@ namespace Semplest.Admin.Controllers
 
         public ActionResult Add()
         {
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
           
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
@@ -87,7 +87,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Index(string search)
         {
             //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             //FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
             //if (search == null) search = "";
             //var filter;
@@ -144,9 +144,9 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(int id)
         {
 
-            
 
-            SemplestEntities dbcontext = new SemplestEntities();
+
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             /*
              select employeePK, EmployeeTypeFK, UserPK, FirstName, LastName, Email, EmployeeTypeID, RolesFK, RoleName, EmployeeType 
                         from Employee e join 
@@ -260,7 +260,7 @@ namespace Semplest.Admin.Controllers
             //for delete
             //@Html.RouteLink("Remove Employee", new { Controller = "EmployeeSetup", action = "Remove", id = Model.EmployeeSetup.EmployeePK })
 
-          SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
 
             //check if userid has been taken by other users
@@ -437,7 +437,7 @@ namespace Semplest.Admin.Controllers
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
 
             //check if userid has been taken by other users
@@ -588,7 +588,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Remove(int id)
         {
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
               from e in dbcontext.Employees
@@ -626,7 +626,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Remove(EmployeeSetupWithRolesModel m, string command)
         {
-            var dbcontext = new SemplestEntities();
+            var dbcontext = new SemplestModel.Semplest();
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
             if (command.ToLower() == "delete") {

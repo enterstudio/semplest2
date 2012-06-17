@@ -20,7 +20,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Index()
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             ReportIndexModel rim = new ReportIndexModel();
             rim.AdvertisingEngines = dbContext.AdvertisingEngines;
             rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
@@ -30,7 +30,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Index(ReportIndexModel model)
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             model.AdvertisingEngines = dbContext.AdvertisingEngines;
             model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
             return RedirectToAction("ReportDetails", model);
@@ -38,7 +38,7 @@ namespace Semplest.Core.Controllers
         public ActionResult ReportDetails(ReportIndexModel model)
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             model.AdvertisingEngines = dbContext.AdvertisingEngines;
             model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
             model.Detail = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword);
@@ -48,7 +48,7 @@ namespace Semplest.Core.Controllers
         
         public ActionResult ReportDetailsGrid()
         {
-            var dbContext = new SemplestEntities();
+            var dbContext = new SemplestModel.Semplest();
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
             var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
             List<vwPromotionChartModel> reports = new List<vwPromotionChartModel>();
@@ -71,7 +71,7 @@ namespace Semplest.Core.Controllers
 
         public ActionResult ReportSummaryGrid()
         {
-            var dbContext = new SemplestEntities();
+            var dbContext = new SemplestModel.Semplest();
             var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == 60).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
             List<vwPromotionChartModel> reports = new List<vwPromotionChartModel>();
             foreach (var v in grp)
@@ -93,7 +93,7 @@ namespace Semplest.Core.Controllers
         public ActionResult ReportChart(ReportIndexModel model)
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             model.AdvertisingEngines = dbContext.AdvertisingEngines;
             model.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;
             model.Configuration = dbContext.Configurations.FirstOrDefault();
@@ -101,7 +101,7 @@ namespace Semplest.Core.Controllers
         }
         public ActionResult ReportGraph(int promotionFk, int advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             promotionFk = 71;
             userid = 60;

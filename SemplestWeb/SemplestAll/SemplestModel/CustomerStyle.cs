@@ -9,21 +9,21 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+    
     public partial class CustomerStyle
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int CustomerFK { get; set; }
-        [DataMember]
+        
         public string CustomerLogo { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
     

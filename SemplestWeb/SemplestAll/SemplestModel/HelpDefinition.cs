@@ -14,12 +14,12 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class HelpDefinition
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int GUIWidgetID { get; set; }
-        [DataMember]
+        
         public string HelpText { get; set; }
     }
     

@@ -9,33 +9,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngine))]
-    [KnownType(typeof(Promotion))]
+
     public partial class TargetedDailyBudget
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int TargetedDailyBudgetPK { get; set; }
-        [DataMember]
+
         public long TargetedDailyMicroBudget { get; set; }
-        [DataMember]
+
         public int TargetedDailyClicks { get; set; }
-        [DataMember]
+
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+
         public int PromotionFK { get; set; }
-        [DataMember]
+
         public int AdvertisingEngineFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("AdvertisingEngineFK")]
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
-    
+
 }

@@ -9,25 +9,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    [Table("vwProductPromotions")]
     public partial class vwProductPromotion
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int ProductGroupPK { get; set; }
-        [DataMember]
+        
         public int CustomerFK { get; set; }
-        [DataMember]
+        
         public string ProductGroupName { get; set; }
-        [DataMember]
+        
         public int PromotionPK { get; set; }
-        [DataMember]
+        
         public string PromotionName { get; set; }
-        [DataMember]
+        
         public int UserPK { get; set; }
     }
     

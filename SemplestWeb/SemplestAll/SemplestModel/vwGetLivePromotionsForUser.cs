@@ -14,22 +14,22 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class vwGetLivePromotionsForUser
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionPK { get; set; }
-        [DataMember]
+        
         public string PromotionName { get; set; }
-        [DataMember]
+        
         public int UserPK { get; set; }
-        [DataMember]
+        
         public bool IsPaused { get; set; }
-        [DataMember]
+        
         public bool IsCompleted { get; set; }
-        [DataMember]
+        
         public bool IsLaunched { get; set; }
-        [DataMember]
+        
         public bool IsDeleted { get; set; }
     }
     

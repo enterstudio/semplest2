@@ -9,29 +9,29 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+    
     public partial class EmailTemplate
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int EmailTemplatePK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CustomerFK { get; set; }
-        [DataMember]
+        
         public string EmailSubject { get; set; }
-        [DataMember]
+        
         public string EmailBody { get; set; }
-        [DataMember]
+        
         public string EmailFrom { get; set; }
-        [DataMember]
+        
         public int EmailTypeFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
     

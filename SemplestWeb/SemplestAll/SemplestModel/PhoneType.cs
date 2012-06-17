@@ -14,21 +14,20 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Phone))]
+    
     public partial class PhoneType
     {
         public PhoneType()
         {
             this.Phones = new HashSet<Phone>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int PhoneTypePK { get; set; }
-        [DataMember]
+        
         public string PhoneType1 { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Phone> Phones { get; set; }
     }
     

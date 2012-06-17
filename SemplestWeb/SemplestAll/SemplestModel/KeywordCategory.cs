@@ -9,23 +9,23 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Promotion))]
+    
     public partial class KeywordCategory
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordCategoryPK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public string KeywordCategory1 { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

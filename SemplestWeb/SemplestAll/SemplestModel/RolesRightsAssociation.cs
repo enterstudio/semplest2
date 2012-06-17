@@ -10,27 +10,26 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Right))]
-    [KnownType(typeof(Role))]
+    
     public partial class RolesRightsAssociation
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int RolesFK { get; set; }
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int RightsFK { get; set; }
-        [DataMember]
+        
         public bool IsVisible { get; set; }
-        [DataMember]
+        
         public bool IsReadonly { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("RightsFK")]
         public virtual Right Right { get; set; }
-        [DataMember]
+        [ForeignKey("RolesFK")]
         public virtual Role Role { get; set; }
     }
     

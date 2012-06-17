@@ -9,30 +9,30 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(PromotionKeywordAssociation))]
+    
     public partial class Keyword
     {
         public Keyword()
         {
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordPK { get; set; }
-        [DataMember]
+        [Column("Keyword")]
         public string Keyword1 { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
     }
     

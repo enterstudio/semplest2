@@ -18,7 +18,7 @@ namespace Semplest.SharedResources.Helpers
             //{
             try
             {
-                SemplestEntities _dbContext = new SemplestEntities();
+                 var _dbContext = new SemplestModel.Semplest();
                 SemplestModel.Error er = new SemplestModel.Error();
                 er.ErrorMessage = filterContext.Exception.ToString();
                 //filterContext.RequestContext.HttpContext.Session
@@ -43,7 +43,7 @@ namespace Semplest.SharedResources.Helpers
         {
                         try
             {
-                SemplestEntities _dbContext = new SemplestEntities();
+                var _dbContext = new SemplestModel.Semplest();
                 SemplestModel.Error er = new SemplestModel.Error();
                 er.ErrorMessage = errorMessage;
                 //filterContext.RequestContext.HttpContext.Session

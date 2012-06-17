@@ -9,18 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngine))]
-    [KnownType(typeof(AdvertisingEngineReportData))]
-    [KnownType(typeof(BidType))]
-    [KnownType(typeof(KeywordBidData))]
-    [KnownType(typeof(TrafficEstimator))]
-    [KnownType(typeof(PromotionKeywordAssociation))]
+    
     public partial class KeywordBid
     {
         public KeywordBid()
@@ -29,45 +24,45 @@ namespace SemplestModel
             this.KeywordBidDatas = new HashSet<KeywordBidData>();
             this.TrafficEstimators = new HashSet<TrafficEstimator>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordBidPK { get; set; }
-        [DataMember]
+        
         public int KeywordFK { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineFK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public System.DateTime StartDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EndDate { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
-        [DataMember]
+        
         public int BidTypeFK { get; set; }
-        [DataMember]
+        
         public int MicroBidAmount { get; set; }
-        [DataMember]
+        
         public Nullable<long> KeywordAdEngineID { get; set; }
-        [DataMember]
+        
         public string CompetitionType { get; set; }
-        [DataMember]
+        
         public bool IsDefaultValue { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("AdvertisingEngineFK")]
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
-        [DataMember]
+        [ForeignKey("BidTypeFK")]
         public virtual BidType BidType { get; set; }
-        [DataMember]
+        
         public virtual ICollection<KeywordBidData> KeywordBidDatas { get; set; }
-        [DataMember]
+        
         public virtual ICollection<TrafficEstimator> TrafficEstimators { get; set; }
-        [DataMember]
+        
         public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
     }
     

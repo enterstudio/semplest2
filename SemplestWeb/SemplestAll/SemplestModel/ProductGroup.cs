@@ -9,15 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
-    [KnownType(typeof(Promotion))]
-    [KnownType(typeof(Schedule))]
+    
     public partial class ProductGroup
     {
         public ProductGroup()
@@ -25,29 +23,29 @@ namespace SemplestModel
             this.Promotions = new HashSet<Promotion>();
             this.Schedules = new HashSet<Schedule>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int ProductGroupPK { get; set; }
-        [DataMember]
+        
         public int CustomerFK { get; set; }
-        [DataMember]
+        
         public string ProductGroupName { get; set; }
-        [DataMember]
+        
         public System.DateTime StartDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EndDate { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
-        [DataMember]
+        
         public System.DateTime CreateDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Promotion> Promotions { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Schedule> Schedules { get; set; }
     }
     

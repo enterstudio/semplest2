@@ -9,39 +9,38 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Schedule))]
-    [KnownType(typeof(ScheduleLog))]
+    
     public partial class ScheduleJob
     {
         public ScheduleJob()
         {
             this.ScheduleLogs = new HashSet<ScheduleLog>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int ScheduleJobPK { get; set; }
-        [DataMember]
+        
         public int ScheduleFK { get; set; }
-        [DataMember]
+        
         public System.DateTime ExecutionStartTime { get; set; }
-        [DataMember]
+        
         public bool IsSuccessful { get; set; }
-        [DataMember]
+        
         public bool IsComplete { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("ScheduleFK")]
         public virtual Schedule Schedule { get; set; }
-        [DataMember]
+        
         public virtual ICollection<ScheduleLog> ScheduleLogs { get; set; }
     }
     

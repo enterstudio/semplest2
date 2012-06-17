@@ -37,11 +37,11 @@ Security
         @Html.ActionLink("Edit", "Edit", new { id = item.RolePK })
         @if(item.UserRolesAssociations.Count() >0)
         {
-            @Html.DisplayText("Delete");
+            @Html.DisplayText("Remove");
         }
         else
         {
-            @Html.ActionLink("Delete", "Delete", new { id = item.RolePK }, new { @class = "delete", id = item.RolePK })
+            @Html.ActionLink("Remove", "Remove", new { id = item.RolePK }, new { @class = "delete", id = item.RolePK })
         }
 
         </td>
@@ -53,7 +53,7 @@ Security
 
 </fieldset>
 <div style="display:none;">
-<form name="hiddenButton" id="hiddenButton" action="Roles/Delete" method="post">Are you sure you want to delete this role?<br /><input type="button" id="btnYes"  value="Yes" class="k-button"/><input type="hidden" id="id" name="id" /><input type="button" id="btnNo"  value="No" class="k-button"/></form>
+<form name="hiddenButton" id="hiddenButton" action="Roles/Remove" method="post">Are you sure you want to delete this role?<br /><input type="button" id="btnYes"  value="Yes" class="k-button"/><input type="hidden" id="id" name="id" /><input type="button" id="btnNo"  value="No" class="k-button"/></form>
 </div>
 
 <script language="javascript">    $(document).ready(function () {

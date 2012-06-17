@@ -14,12 +14,12 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class EmailType
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int EmailTypePK { get; set; }
-        [DataMember]
+        
         public string EmailType1 { get; set; }
     }
     

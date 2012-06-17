@@ -14,28 +14,28 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class SEMCustomerDetail
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int SEMCustomerDetailsPK { get; set; }
-        [DataMember]
+        
         public string FirstName { get; set; }
-        [DataMember]
+        
         public string LastName { get; set; }
-        [DataMember]
+        
         public string Company { get; set; }
-        [DataMember]
+        
         public string Phone { get; set; }
-        [DataMember]
+        
         public string email { get; set; }
-        [DataMember]
+        
         public bool CallMe { get; set; }
-        [DataMember]
+        
         public bool EmailMe { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
     }
     

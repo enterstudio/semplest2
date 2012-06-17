@@ -16,10 +16,10 @@ namespace Semplest.Core.Models.Repositories
         int GetBudgetCycleId(string budgetCycleName);
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
-        void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestEntities dbcontext,
+        void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext,
                                       int customerFk);
 
-        void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext);
+        void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
         void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
         void AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
@@ -31,7 +31,7 @@ namespace Semplest.Core.Models.Repositories
         bool IsDeletedKeyword(string keyword, List<string> negativeKeywords);
 
         bool IsNegativeKeyword(string keyword, List<string> negativeKeywords);
-        void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext);
+        void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         string GetStateNameFromCode(int stateCode);
         List<string> GetAdEngines();
         bool IsPromotionLaunched(int promoId);

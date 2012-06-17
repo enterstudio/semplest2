@@ -9,36 +9,35 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngineAccount))]
-    [KnownType(typeof(Promotion))]
+    
     public partial class AdvertisingEnginePromotion
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public long AdvertisingEngineCampaignPK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public long AdvertisingEngineAccountFK { get; set; }
-        [DataMember]
+        
         public bool IsSearchNetwork { get; set; }
-        [DataMember]
+        
         public bool IsDisplayNetwork { get; set; }
-        [DataMember]
+        
         public decimal AdvertisingEngineBudget { get; set; }
-        [DataMember]
+        
         public int MicroDefaultBid { get; set; }
-        [DataMember]
+        
         public Nullable<long> AdvertisingEngineAdGroupID { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("AdvertisingEngineAccountFK")]
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

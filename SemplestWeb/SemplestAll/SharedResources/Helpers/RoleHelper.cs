@@ -12,11 +12,11 @@ namespace Semplest.SharedResources.Helpers
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
 
-            //var db = new SemplestEntities();
+            //var db = new SemplestModel.Semplest();
             //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 71);
             //return true;
-            //var db = new SemplestEntities();
-            //httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 12);
+            var db = new SemplestModel.Semplest();
+            httpContext.Session[SEMplestConstants.SESSION_USERID] = db.Credentials.First(x => x.UsersFK == 12);
             //return true;
             string userId = string.Empty;
             if (HttpContext.Current.Session["UserId"] != null)

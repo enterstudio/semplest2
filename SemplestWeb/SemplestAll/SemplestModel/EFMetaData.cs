@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web.Mvc;
 using SemplestModel.Validations;
@@ -63,16 +64,18 @@ namespace SemplestModel
     [MetadataType(typeof(GeoTargetingMetaData))]
     public partial class GeoTargeting
     {
+        [NotMapped]
         public List<StateCode> StateCodes
         {
             get
             {
-                var stateCodes = new SemplestEntities().StateCodes.OrderBy(t => t.StateAbbr).ToList();
+                var stateCodes = new SemplestModel.Semplest().StateCodes.OrderBy(t => t.StateAbbr).ToList();
                 stateCodes.Insert(0, new StateCode(){ StateAbbrPK = -2, StateAbbr="--"});
                 return stateCodes;
             }
         }
-        public bool Remove { get; set; }
+        [NotMapped]
+        public bool Delete { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string Address { get; set; }
@@ -86,7 +89,8 @@ namespace SemplestModel
     }
     public partial class SiteLink
     {
-        public bool Remove { get; set; }
+        [NotMapped]
+        public bool Delete { get; set; }
     }
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]
@@ -110,8 +114,9 @@ namespace SemplestModel
             public string AdTextLine2 { get; set; }
 
         }
-        public bool Remove { get; set; }
-
+        [NotMapped]
+        public bool Delete { get; set; }
+        [NotMapped]
         public int SerailNo { get; set; }
     }
 

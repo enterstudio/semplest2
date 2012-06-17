@@ -14,21 +14,20 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+    
     public partial class BillType
     {
         public BillType()
         {
             this.Customers = new HashSet<Customer>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int BillTypePK { get; set; }
-        [DataMember]
+        
         public string BillType1 { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Customer> Customers { get; set; }
     }
     

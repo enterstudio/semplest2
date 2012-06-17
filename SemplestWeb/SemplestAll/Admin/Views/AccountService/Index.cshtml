@@ -101,7 +101,7 @@ Account Service
                                     else
                                     { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
                                         @Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })
-                                        @Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Delete", id = Model.AccountServiceModel.AccountNumber })
+                                        @Html.RouteLink("Remove Account", new { Controller = "CustomerAccount", action = "Remove", id = Model.AccountServiceModel.AccountNumber })
                                         <a href="#">Impresonate</a> <a href="#">Issue Refund</a>
                                         @if (Model.ParentName.ToLower() == "This is a parent".ToLower())
                                         {

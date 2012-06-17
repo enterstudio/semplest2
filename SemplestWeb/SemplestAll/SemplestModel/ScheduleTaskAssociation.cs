@@ -9,26 +9,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Schedule))]
-    [KnownType(typeof(Task))]
+    
     public partial class ScheduleTaskAssociation
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int TaskFK { get; set; }
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int ScheduleFK { get; set; }
-        [DataMember]
+        
         public int TaskExecutionOrder { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("ScheduleFK")]
         public virtual Schedule Schedule { get; set; }
-        [DataMember]
+        [ForeignKey("TaskFK")]
         public virtual Task Task { get; set; }
     }
     

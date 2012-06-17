@@ -14,24 +14,24 @@
 
 //namespace Semplest.Core.Services
 //{
-//    public class SemplestDataService : DataService<SemplestEntities>
+//    public class SemplestDataService : DataService<Semplest>
 //    {
 //        private static bool _savedCampaign;
 //        public SemplestDataService()
 //        {
 //            _savedCampaign = false;
 //        }
-//        private static SemplestEntities _dbcontext;
+//        private static Semplest _dbcontext;
 
 
-//        private static SemplestEntities InitializeContext()
+//        private static Semplest InitializeContext()
 //        {
 //            // we need to check _savedCampaign flag because the _dbcontext is static and campaign is updated 
 //            // to reflect changes we need to create new context
 
 //            if (_dbcontext == null || _savedCampaign == true)
 //            {
-//                _dbcontext = new SemplestEntities();
+//                _dbcontext = new SemplestModel.Semplest();
 //                _savedCampaign = false;
 //            }
 //            return _dbcontext;
@@ -50,7 +50,7 @@
 
 //        public void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                // get the customerfk from userid
 //                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
@@ -141,7 +141,7 @@
 //            }
 //        }
 
-//        static readonly Func<SemplestEntities, int, Promotion> PromotonIdQuery = CompiledQuery.Compile((SemplestEntities nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
+//        static readonly Func<Semplest, int, Promotion> PromotonIdQuery = CompiledQuery.Compile((Semplest nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
 
 //        public static CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
 //        {
@@ -224,7 +224,7 @@
 
 //        public static IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid)
 //        {
-//            var semplestEntities = new SemplestEntities();
+//            var semplestEntities = new SemplestModel.Semplest();
 //            return semplestEntities.vwProductPromotions.Where(t => t.UserPK == userid);
 //        }
 
@@ -236,7 +236,7 @@
 
 //        public List<ProductGroup> GetProductGroupsForUser(int userid)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                // get the customerfk from userid
 //                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
@@ -262,7 +262,7 @@
 
 //        public static int GetPromotionId(int userid, string prodGroupName, string promotionName)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                // get the customerfk from userid
 //                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
@@ -293,7 +293,7 @@
 
 //        private static int GetBudgetCycleId(string budgetCycleName)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                var queryBudgetCycle = dbcontext.BudgetCycles.Where(m => m.BudgetCycle1 == budgetCycleName);
 //                if (queryBudgetCycle.Any())
@@ -333,7 +333,7 @@
 
 //        }
 
-//        private void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestEntities dbcontext, int customerFK)
+//        private void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, Semplest dbcontext, int customerFK)
 //        {
 //            updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
 //            updatePromotion.DisplayURL = model.AdModelProp.DisplayUrl;
@@ -389,7 +389,7 @@
 //            AddPromotionAdsToPromotion(updatePromotion, model, customerFK);
 //        }
 
-//        private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
+//        private void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, Semplest dbcontext)
 //        {
 //            var existingAdenginesSeleccted = dbcontext.PromotionAdEngineSelecteds.Where(m => m.PromotionFK == promo.PromotionPK);
 //            var templist = new List<int>();
@@ -529,7 +529,7 @@
 
 //        public static void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                var query = dbcontext.KeywordCategories.Where(c => c.PromotionFK == promotionId);
 //                if (!query.Any())
@@ -598,7 +598,7 @@
 //                parameter2.SqlDbType = SqlDbType.Int;
 
 //                var parameters = new object[] { parameter, parameter2 };
-//                using (var dbcontext = new SemplestEntities())
+//                using (var dbcontext = new SemplestModel.Semplest())
 //                {
 //                    var results = dbcontext.ExecuteStoreCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
 //                    //set keyword id's back in the model
@@ -630,7 +630,7 @@
 //            return negativeKeywords.Where(key => keyword.ToUpper().Contains(key.ToUpper())).Count() > 0;
 //        }
 
-//        private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestEntities dbcontext)
+//        private static void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, Semplest dbcontext)
 //        {
 //            IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
 //            List<KeywordProbabilityObject> kpos = new List<KeywordProbabilityObject>();
@@ -660,7 +660,7 @@
 //        public static string GetStateNameFromCode(int stateCode)
 //        {
 //            string stateName;
-//            using (var db = new SemplestEntities())
+//            using (var db = new SemplestModel.Semplest())
 //            {
 //                stateName = db.StateCodes.First(m => m.StateAbbrPK == stateCode).StateAbbr;
 //            }
@@ -669,7 +669,7 @@
 
 //        public static List<string> GetAdEngines()
 //        {
-//            using (var db = new SemplestEntities())
+//            using (var db = new SemplestModel.Semplest())
 //            {
 //                return db.AdvertisingEngines.Select(m => m.AdvertisingEngine1).ToList();
 //            }
@@ -678,7 +678,7 @@
 
 //        public static bool IsPromotionLaunched(int promoId)
 //        {
-//            using (var db = new SemplestEntities())
+//            using (var db = new SemplestModel.Semplest())
 //            {
 //                var promo = PromotonIdQuery.Invoke(db, promoId);
 //                return promo.IsLaunched;
@@ -687,7 +687,7 @@
 
 //        public static bool IsPromotionCompleted(int promoId)
 //        {
-//            using (var db = new SemplestEntities())
+//            using (var db = new SemplestModel.Semplest())
 //            {
 //                var promo = PromotonIdQuery.Invoke(db, promoId);
 //                return promo.IsCompleted;
@@ -696,7 +696,7 @@
 
 //        public static bool IsPromotionLaunchedAndCompleted(int promoId)
 //        {
-//            using (var db = new SemplestEntities())
+//            using (var db = new SemplestModel.Semplest())
 //            {
 //                var promo = PromotonIdQuery.Invoke(db, promoId);
 //                return promo.IsCompleted && promo.IsLaunched;
@@ -705,7 +705,7 @@
 
 //        public static void SetKeywordsDeleted(List<int> keywordIds, int promoId)
 //        {
-//            using (var dbcontext = new SemplestEntities())
+//            using (var dbcontext = new SemplestModel.Semplest())
 //            {
 //                foreach (int keywordId in keywordIds)
 //                    dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).Where(key => key.PromotionFK == promoId).First().IsDeleted = true;

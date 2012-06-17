@@ -9,31 +9,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(User))]
+    
     public partial class TransactionHistory
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int TransactionHistoryPK { get; set; }
-        [DataMember]
+        
         public int UserFK { get; set; }
-        [DataMember]
+        
         public System.DateTime TransactionDate { get; set; }
-        [DataMember]
+        
         public string TableName { get; set; }
-        [DataMember]
+        
         public string Field { get; set; }
-        [DataMember]
+        
         public string OldValue { get; set; }
-        [DataMember]
+        
         public string NewValue { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("UserFK")]
         public virtual User User { get; set; }
     }
     

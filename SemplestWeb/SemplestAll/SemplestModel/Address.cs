@@ -9,14 +9,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(CustomerAddressAssociation))]
-    [KnownType(typeof(StateCode))]
+    
     public partial class Address
     {
         public Address()
@@ -24,26 +24,27 @@ namespace SemplestModel
             this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
         }
     
-        [DataMember]
+        
+        [Key]
         public int AddressPK { get; set; }
-        [DataMember]
+        
         public string Address1 { get; set; }
-        [DataMember]
+        
         public string Address2 { get; set; }
-        [DataMember]
+        
         public string City { get; set; }
-        [DataMember]
+        
         public int StateAbbrFK { get; set; }
-        [DataMember]
+        
         public string ZipCode { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
-        [DataMember]
+        [ForeignKey("StateAbbrFK")]
         public virtual StateCode StateCode { get; set; }
     }
     

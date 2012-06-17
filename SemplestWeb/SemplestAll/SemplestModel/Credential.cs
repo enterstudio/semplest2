@@ -9,31 +9,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(User))]
+    
     public partial class Credential
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int CredentialPK { get; set; }
-        [DataMember]
+
         public int UsersFK { get; set; }
-        [DataMember]
+        
         public string Username { get; set; }
-        [DataMember]
+        
         public string Password { get; set; }
-        [DataMember]
+        
         public bool RememberMe { get; set; }
-        [DataMember]
+        
         public string SecurityQuestion { get; set; }
-        [DataMember]
+        
         public string SecurityAnswer { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
     

@@ -172,7 +172,7 @@ namespace Semplest.Core.Controllers
         public ActionResult MyProfile()
         {
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             int userid=((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
             int customerID = dbcontext.Users.Where(r => r.UserPK == userid).First().CustomerFK.GetValueOrDefault(-1);
             
@@ -249,7 +249,7 @@ namespace Semplest.Core.Controllers
 
 
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
 
 

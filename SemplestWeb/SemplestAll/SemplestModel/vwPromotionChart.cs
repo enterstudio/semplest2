@@ -14,34 +14,34 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class vwPromotionChart
     {
-        [DataMember]
+        
         public string Keyword { get; set; }
-        [DataMember]
+        
         public string PromotionName { get; set; }
-        [DataMember]
+        
         public int NumberImpressions { get; set; }
-        [DataMember]
+        
         public int NumberClick { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineFK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public System.DateTime TransactionDate { get; set; }
-        [DataMember]
+        
         public int MicroBidAmount { get; set; }
-        [DataMember]
+        
         public int AveragePosition { get; set; }
-        [DataMember]
+        
         public decimal AverageCPC { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineBidDataPK { get; set; }
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int UserPK { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
     }
     

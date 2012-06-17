@@ -16,7 +16,7 @@ namespace Semplest.Admin.Controllers
     {
         //
         // GET: /Configuration/
-        SemplestEntities _dbContext = new SemplestEntities();
+        SemplestModel.Semplest _dbContext = new SemplestModel.Semplest();
         public ActionResult Index()
         {
             return View(_dbContext.Configurations.First<Configuration>());

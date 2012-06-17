@@ -8,7 +8,7 @@ namespace Semplest.Core.Models
     {
         public HomeModelParent()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
         }
 
@@ -22,7 +22,7 @@ namespace Semplest.Core.Models
     {
         public HomeModelChild()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
             CampaignSetup = new CampaignSetupModel();
             CampaignSetup.AdModelProp.Addresses.FirstOrDefault().StateCodeFK = 0;
@@ -39,7 +39,7 @@ namespace Semplest.Core.Models
     {
         public StaticModel(StaticPages pageType)
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
             {
                 Configuration = entities.Configurations.FirstOrDefault();
                 switch (pageType)

@@ -9,31 +9,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(KeywordBid))]
+    
     public partial class KeywordBidData
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordBidDataPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> QualityScore { get; set; }
-        [DataMember]
+        
         public string ApprovalStatus { get; set; }
-        [DataMember]
+        
         public Nullable<int> FirstPageMicroCPC { get; set; }
-        [DataMember]
+        
         public bool IsEligibleForShowing { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<int> KeywordBidFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("KeywordBidFK")]
         public virtual KeywordBid KeywordBid { get; set; }
     }
     

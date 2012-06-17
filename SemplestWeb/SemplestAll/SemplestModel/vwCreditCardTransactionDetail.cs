@@ -14,130 +14,130 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class vwCreditCardTransactionDetail
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int CreditCardProfilePK { get; set; }
-        [DataMember]
+        
         public int CustomerFK { get; set; }
-        [DataMember]
+        
         public string CustomerRefNum { get; set; }
-        [DataMember]
+        
         public string AuthCode { get; set; }
-        [DataMember]
+        
         public string TxRefNum { get; set; }
-        [DataMember]
+        
         public int CreditCardTransactionPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CreditCardProfileFK { get; set; }
-        [DataMember]
+        
         public string OrderID { get; set; }
-        [DataMember]
+        
         public decimal Amount { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public decimal SEMplestFee { get; set; }
-        [DataMember]
+        
         public decimal MediaSpend { get; set; }
-        [DataMember]
+        
         public bool IsRefund { get; set; }
-        [DataMember]
+        
         public int CustomerPK { get; set; }
-        [DataMember]
+        
         public string Name { get; set; }
-        [DataMember]
+        
         public decimal TotalTargetCycleBudget { get; set; }
-        [DataMember]
+        
         public int ProductGroupCycleTypeFK { get; set; }
-        [DataMember]
+        
         public int BillTypeFK { get; set; }
-        [DataMember]
+        
         public decimal ServiceFee { get; set; }
-        [DataMember]
+        
         public decimal PercentOfMedia { get; set; }
-        [DataMember]
+        
         public string InternalCustomerId { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> CreditLimit { get; set; }
-        [DataMember]
+        
         public bool PromotionFeeOverride { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> PromotionFeeAmount { get; set; }
-        [DataMember]
+        
         public int ProductGroupPK { get; set; }
-        [DataMember]
+        
         public System.DateTime StartDate { get; set; }
-        [DataMember]
+        
         public string ProductGroupName { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EndDate { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
-        [DataMember]
+        
         public int PromotionPK { get; set; }
-        [DataMember]
+        
         public int ProductGroupFK { get; set; }
-        [DataMember]
+        
         public string PromotionName { get; set; }
-        [DataMember]
+        
         public string PromotionDescription { get; set; }
-        [DataMember]
+        
         public System.DateTime PromotionStartDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> PromotionEndDate { get; set; }
-        [DataMember]
+        
         public string LandingPageURL { get; set; }
-        [DataMember]
+        
         public decimal PromotionBudgetAmount { get; set; }
-        [DataMember]
+        
         public int BudgetCycleFK { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> CycleStartDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> CycleEndDate { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> StartBudgetInCycle { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> RemainingBudgetInCycle { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> BudgetToAddDate { get; set; }
-        [DataMember]
+        
         public bool IsPaused { get; set; }
-        [DataMember]
+        
         public bool IsCompleted { get; set; }
-        [DataMember]
+        
         public bool IsLaunched { get; set; }
-        [DataMember]
+        
         public bool IsDeleted { get; set; }
-        [DataMember]
+        
         public string TargetCPCLevel { get; set; }
-        [DataMember]
+        
         public string DisplayURL { get; set; }
-        [DataMember]
+        
         public int PromotionPaymentPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> PromotionFK { get; set; }
-        [DataMember]
+        
         public System.DateTime PaymentBudgetToAddDate { get; set; }
-        [DataMember]
+        
         public bool IsValid { get; set; }
-        [DataMember]
+        
         public Nullable<int> CreditCardTransactionFK { get; set; }
-        [DataMember]
+        
         public long AdvertisingEngineAccountPK { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineFK { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineAPIChargePK { get; set; }
-        [DataMember]
+        
         public long AdvertisingEngineAccountFK { get; set; }
-        [DataMember]
+        
         public long APIUnits { get; set; }
-        [DataMember]
+        
         public decimal APICost { get; set; }
     }
     

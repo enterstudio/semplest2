@@ -9,14 +9,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Address))]
-    [KnownType(typeof(GeoTargeting))]
+    
+    [Table("StateCode")]
     public partial class StateCode
     {
         public StateCode()
@@ -24,15 +24,15 @@ namespace SemplestModel
             this.Addresses = new HashSet<Address>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int StateAbbrPK { get; set; }
-        [DataMember]
+        
         public string StateAbbr { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Address> Addresses { get; set; }
-        [DataMember]
+        
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
     }
     

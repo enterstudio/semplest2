@@ -26,7 +26,7 @@ namespace Semplest.Admin.Controllers
         {
 
             //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
                 from u in dbcontext.Users
@@ -79,7 +79,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(int id)
         {
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
                from u in dbcontext.Users
@@ -424,7 +424,7 @@ namespace Semplest.Admin.Controllers
         //public JsonResult doesUserNameExist(string UserID)
         //{
 
-        //    SemplestEntities dbcontext = new SemplestEntities();
+        //    Semplest dbcontext = new SemplestModel.Semplest();
 
         //    var users = from c in dbcontext.Credentials
         //                where c.Username.Equals(UserID)
@@ -444,7 +444,7 @@ namespace Semplest.Admin.Controllers
             
             if (command.ToLower() == "delete") return RedirectToAction("Remove", new {id=m.CustomerAccount.AccountNumber});
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             
             //check if userid has been taken by other users
@@ -749,7 +749,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Add()
         {
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             /////////////////////////////////////////////////////////////////////////////////
             //for reps dropdown
             /////////////////////////////////////////////////////////////////////////////////
@@ -930,8 +930,8 @@ namespace Semplest.Admin.Controllers
             
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
 
-            
-            SemplestEntities dbcontext = new SemplestEntities();
+
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             
 
@@ -1300,7 +1300,7 @@ namespace Semplest.Admin.Controllers
         public ActionResult Remove(int id)
         {
 
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
                 from u in dbcontext.Users
@@ -1347,8 +1347,8 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult Remove(CustomerAccountWithEmployeeModel m, string command)
         {
-            SemplestEntities dbcontext = new SemplestEntities();
-            //SemplestEntities context = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
+            //Semplest context = new SemplestModel.Semplest();
 
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");

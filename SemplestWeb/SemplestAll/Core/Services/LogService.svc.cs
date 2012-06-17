@@ -5,7 +5,7 @@ using SemplestModel;
 
 namespace SemplestWebApp.Services
 {
-    public class LogService : DataService<SemplestEntities>
+    public class LogService : DataService<SemplestModel.Semplest>
     {
         // This method is called only once to initialize service-wide policies.
         public static void InitializeService(DataServiceConfiguration config)
@@ -19,7 +19,7 @@ namespace SemplestWebApp.Services
 
         public void AddToLog(int activityId, string description, string url, int userId)
         {
-            //var semplest = new SemplestEntities();
+            //var semplest = new SemplestModel.Semplest();
             //semplest.ActivityLog.Add(new ActivityLog
             //{
             //    ActivityDate = DateTime.Now,

@@ -9,15 +9,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngine))]
-    [KnownType(typeof(AdvertisingEnginePromotion))]
-    [KnownType(typeof(Customer))]
+    
     public partial class AdvertisingEngineAccount
     {
         public AdvertisingEngineAccount()
@@ -25,18 +24,18 @@ namespace SemplestModel
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
         }
     
-        [DataMember]
+        [DataMember,Key]
         public long AdvertisingEngineAccountPK { get; set; }
-        [DataMember]
+        
         public int AdvertisingEngineFK { get; set; }
-        [DataMember]
+        
         public int CustomerFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("AdvertisingEngineFK")]
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
-        [DataMember]
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
     

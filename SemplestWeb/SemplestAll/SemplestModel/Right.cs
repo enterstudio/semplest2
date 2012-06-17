@@ -14,23 +14,22 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(RolesRightsAssociation))]
+    
     public partial class Right
     {
         public Right()
         {
             this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int RightsPK { get; set; }
-        [DataMember]
+        
         public string Controller { get; set; }
-        [DataMember]
+        
         public string Label { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
     }
     

@@ -12,7 +12,7 @@ namespace Semplest.SharedResources.Models
     {
         public ProfileModel()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
         }
 

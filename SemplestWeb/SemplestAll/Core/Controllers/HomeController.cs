@@ -21,7 +21,7 @@ namespace SemplestWebApp.Controllers
         {
             return RedirectToAction("Index2", "Home", new HomeModelChild());
             HomeModelParent hm = new HomeModelParent();
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             int userId = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             foreach (ProductGroup pg in dbContext.Users.Where(x => x.UserPK == userId).First().Customer.ProductGroups)
             {
@@ -40,7 +40,7 @@ namespace SemplestWebApp.Controllers
 
         public ActionResult Index2()
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
 
             HomeModelChild child = new HomeModelChild();
@@ -52,7 +52,7 @@ namespace SemplestWebApp.Controllers
         public ActionResult GetLiveProductGroups()
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             return Json(dbContext.vwGetLivePromotionsForUsers.Where(t => t.UserPK == cred.UsersFK), JsonRequestBehavior.AllowGet);
         }
 
@@ -142,7 +142,7 @@ namespace SemplestWebApp.Controllers
                 string productgroupname = fc["newproductgroupname"].ToString().Trim();
                 Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
                 if (productgroupname == null || productgroupname == "") throw new Exception("Blank");
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 var productgroupexists = from pg in dbContext.ProductGroups
                                          where pg.CustomerFK.Equals(c.User.CustomerFK.Value) && pg.ProductGroupName.Equals(productgroupname)
                                          select pg;
@@ -237,7 +237,7 @@ namespace SemplestWebApp.Controllers
         {
             try
             {
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 dbContext.Promotions.Where(x => x.PromotionPK == promotionId).First().IsDeleted = true;
                 dbContext.SaveChanges();
             }
@@ -251,7 +251,7 @@ namespace SemplestWebApp.Controllers
             try
             {
                 ServiceClientWrapper sw = new ServiceClientWrapper();
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 List<string> adEngines = new List<string>();
                 Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdP).First();
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
@@ -270,7 +270,7 @@ namespace SemplestWebApp.Controllers
             try
             {
                 ServiceClientWrapper sw = new ServiceClientWrapper();
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 List<string> adEngines = new List<string>();
                 Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdR).First();
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
@@ -289,7 +289,7 @@ namespace SemplestWebApp.Controllers
             try
             {
                 ServiceClientWrapper sw = new ServiceClientWrapper();
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 List<string> adEngines = new List<string>();
                 Promotion p = dbContext.Promotions.Where(x => x.PromotionPK == promotionIdE).First();
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;

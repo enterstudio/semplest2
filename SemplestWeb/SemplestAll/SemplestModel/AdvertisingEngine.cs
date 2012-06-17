@@ -9,18 +9,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngineAccount))]
-    [KnownType(typeof(AdvertisingEngineAd))]
-    [KnownType(typeof(KeywordBid))]
-    [KnownType(typeof(PromotionAdEngineSelected))]
-    [KnownType(typeof(PromotionAdengineStatu))]
-    [KnownType(typeof(TargetedDailyBudget))]
+    
     public partial class AdvertisingEngine
     {
         public AdvertisingEngine()
@@ -33,24 +29,25 @@ namespace SemplestModel
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
         }
     
-        [DataMember]
+        [DataMember,Key]
         public int AdvertisingEnginePK { get; set; }
-        [DataMember]
+
+        [Column("AdvertisingEngine")]
         public string AdvertisingEngine1 { get; set; }
-        [DataMember]
+        
         public string LogoURL { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
-        [DataMember]
+        
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
-        [DataMember]
+        
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
-        [DataMember]
+        
         public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
-        [DataMember]
+        
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
     }
     

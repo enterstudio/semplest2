@@ -10,18 +10,12 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Credential))]
-    [KnownType(typeof(Customer))]
-    [KnownType(typeof(Employee))]
-    [KnownType(typeof(Error))]
-    [KnownType(typeof(Schedule))]
-    [KnownType(typeof(TransactionHistory))]
-    [KnownType(typeof(UserRolesAssociation))]
+    [Table("Users")]
     public partial class User
     {
         public User()
@@ -33,41 +27,42 @@ namespace SemplestModel
             this.TransactionHistories = new HashSet<TransactionHistory>();
             this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int UserPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CustomerFK { get; set; }
-        [DataMember]
+        
         public string FirstName { get; set; }
-        [DataMember]
+        
         public string LastName { get; set; }
-        [DataMember]
+        
         public string Email { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
-        [DataMember]
+        
         public string MiddleInitial { get; set; }
-        [DataMember]
+        
         public bool IsRegistered { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Credential> Credentials { get; set; }
-        [DataMember]
+        
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Employee> Employees { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Error> Errors { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Schedule> Schedules { get; set; }
-        [DataMember]
+        
         public virtual ICollection<TransactionHistory> TransactionHistories { get; set; }
-        [DataMember]
+        
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }
     

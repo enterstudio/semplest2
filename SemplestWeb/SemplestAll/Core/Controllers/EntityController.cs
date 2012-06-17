@@ -28,7 +28,7 @@ namespace Semplest.Core.Controllers
             //    model.Customers.Add(new Customer());
             //};
 
-            using (var db = new SemplestEntities())
+            using (var db = new SemplestModel.Semplest())
             {
                 try
                 {
@@ -57,7 +57,7 @@ namespace Semplest.Core.Controllers
         {
             try
             {
-                using (var db = new SemplestEntities())
+                using (var db = new SemplestModel.Semplest())
                 {
                     db.BillTypes.Add(billtype);
                     db.SaveChanges();

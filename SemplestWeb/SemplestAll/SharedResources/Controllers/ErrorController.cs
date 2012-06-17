@@ -23,7 +23,7 @@ namespace Semplest.SharedResources.Controllers
 
         public ActionResult Index()
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            var dbContext = new SemplestModel.Semplest();
 //            SortedList<DateTime, ErrorModel> list = new SortedList<DateTime, ErrorModel>();
             List<ErrorModel> list = new List<ErrorModel>();
             List<DateTime> dt = new List<DateTime>();

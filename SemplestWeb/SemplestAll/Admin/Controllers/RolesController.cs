@@ -17,7 +17,7 @@ namespace Semplest.Admin.Controllers
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class RolesController : Controller
     {
-        SemplestEntities _dbContext = new SemplestEntities();
+        SemplestModel.Semplest _dbContext = new SemplestModel.Semplest();
         //
         // GET: /Roles/
 
@@ -31,7 +31,8 @@ namespace Semplest.Admin.Controllers
         public ActionResult Create()
         {
             ViewData["Roles"] = new SelectList(_dbContext.Roles, "RolePK", "RoleName");
-            return View(_dbContext.sp_GetRigtsRolesInteraction(null));
+            return View(new List<sp_GetRigtsRolesInteraction_Result>());
+            //return View(_dbContext.sp_GetRigtsRolesInteraction(null));
         }
 
         //
@@ -56,7 +57,8 @@ namespace Semplest.Admin.Controllers
         public ActionResult Edit(int id)
         {
             ViewBag.RoleName = _dbContext.Roles.Where(x => x.RolePK == id).First().RoleName;
-            return View(_dbContext.sp_GetRigtsRolesInteraction(id));
+            return View(new List<sp_GetRigtsRolesInteraction_Result>());
+            //return View(_dbContext.sp_GetRigtsRolesInteraction(id));
         }
         //
         // POST: /Roles/Edit/5
@@ -107,7 +109,7 @@ namespace Semplest.Admin.Controllers
             try
             {
                 // TODO: Add delete logic here
-                SemplestEntities dbContext = new SemplestEntities();
+                SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 Role r = dbContext.Roles.Where(x => x.RolePK == id).First();
                 r.RolesRightsAssociations.Clear();
                dbContext.Roles.Remove(r);
@@ -156,7 +158,8 @@ namespace Semplest.Admin.Controllers
                 IsVisible = ra.IsVisible,
                 IsReadonly = ra.IsReadonly
             };*/
-            return PartialView("_RolesRightsAssociation", _dbContext.sp_GetRigtsRolesInteraction(role));
+            return PartialView("_RolesRightsAssociation", new List<sp_GetRigtsRolesInteraction_Result>());
+            //return PartialView("_RolesRightsAssociation", _dbContext.sp_GetRigtsRolesInteraction(role));
             //sp_GetRigtsRolesInteraction_Result model = _dbContext.sp_GetRigtsRolesInteraction(role);
 
 

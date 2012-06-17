@@ -28,7 +28,7 @@ namespace Semplest.Core.Controllers
         {
             try
             {
-                using (var db = new SemplestEntities())
+                using (var db = new SemplestModel.Semplest())
                 {
                     db.Phones.Add(ph);
                     db.SaveChanges();

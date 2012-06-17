@@ -9,15 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(CustomerPhoneAssociation))]
-    [KnownType(typeof(EmployeePhoneAssociation))]
-    [KnownType(typeof(PhoneType))]
+    
     public partial class Phone
     {
         public Phone()
@@ -25,25 +23,25 @@ namespace SemplestModel
             this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
             this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int PhonePK { get; set; }
-        [DataMember]
+        
         public string Phone1 { get; set; }
-        [DataMember]
+        
         public string Extension { get; set; }
-        [DataMember]
+        
         public int PhoneTypeFK { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
-        [DataMember]
+        
         public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
-        [DataMember]
+        [ForeignKey("PhoneTypeFK")]
         public virtual PhoneType PhoneType { get; set; }
     }
     

@@ -9,26 +9,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Employee))]
-    [KnownType(typeof(Phone))]
+    
     public partial class EmployeePhoneAssociation
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int PhoneFK { get; set; }
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int EmployeeFK { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("EmployeeFK")]
         public virtual Employee Employee { get; set; }
-        [DataMember]
+        [ForeignKey("PhoneFK")]
         public virtual Phone Phone { get; set; }
     }
     

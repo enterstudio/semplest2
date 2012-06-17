@@ -280,7 +280,7 @@ namespace Semplest.Core.Controllers
                 //SemplestDataService ds = new SemplestDataService();
                 //ds.SaveAd(model);
             }
-            var dbContext = new SemplestEntities();
+            var dbContext = new SemplestModel.Semplest();
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
             //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
             var userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
@@ -381,7 +381,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Remove).ToList();
+            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
             return Json("AdditionalLinks");
         }
 
@@ -509,12 +509,12 @@ namespace Semplest.Core.Controllers
 
             var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
             //set sitelinks in session
-            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
-                campaignSetupModel.ProductGroup.StartDate =
-                    Convert.ToDateTime(campaignSetupModel.ProductGroup.StartDate).ToString("MM/dd/yyyy");
-            if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
-                campaignSetupModel.ProductGroup.EndDate =
-                    Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
+            //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
+            //    campaignSetupModel.ProductGroup.StartDate =
+            //        Convert.ToDateTime(campaignSetupModel.ProductGroup.StartDate).ToString("MM/dd/yyyy");
+            //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.EndDate))
+            //    campaignSetupModel.ProductGroup.EndDate =
+            //        Convert.ToDateTime(campaignSetupModel.ProductGroup.EndDate).ToString("MM/dd/yyyy");
             Session.Add("AddsStoreModel", new AddsStoreModel { Ads = campaignSetupModel.AdModelProp.Ads.ToList() });
 
             // set negative keywords in session
@@ -532,7 +532,7 @@ namespace Semplest.Core.Controllers
             {
                 Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
                 //if (fc["newproductgroupname"].ToString() == null && fc["newproductgroupname"].ToString() == "") throw new Exception();
-                //SemplestEntities dbContext = new SemplestEntities();
+                //Semplest dbContext = new SemplestModel.Semplest();
                 //dbContext.ProductGroups.Add(new ProductGroup { CustomerFK = c.User.CustomerFK.Value, ProductGroupName = fc["newproductgroupname"].ToString(), StartDate = DateTime.Now, IsActive = true });
                 //dbContext.SaveChanges();
 
@@ -549,7 +549,7 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("HelpId")]
         public ActionResult DisplayHelp(int helpId)
         {
-            var dbcontext = new SemplestEntities();
+            var dbcontext = new SemplestModel.Semplest();
 
             return Content(dbcontext.WebContentQuestionMarkHelps.FirstOrDefault(h => h.WebContentQuestionMarkHelpPK == helpId).Copy);
         }
@@ -565,7 +565,7 @@ namespace Semplest.Core.Controllers
         }
         private static IEnumerable<BillingModel> GetBillingModel()
         {
-            var northwind = new SemplestEntities();
+            var northwind = new SemplestModel.Semplest();
 
             return northwind.vwCreditCardTransactionDetails.Where(t => t.CustomerPK == 1).Select(product => new BillingModel
             {

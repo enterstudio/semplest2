@@ -14,12 +14,12 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class PromotionStatu
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionStatusPK { get; set; }
-        [DataMember]
+        
         public string PromotionStatus { get; set; }
     }
     

@@ -43,7 +43,7 @@ namespace Semplest.SharedResources.Controllers
 
                 Session[Semplest.SharedResources.SEMplestConstants.SESSION_LOGINATTEMPTS] = loginHash;
                 bool isAdminLogin = isAdmin == null ? false : true;
-                using (SemplestEntities dbContext = new SemplestEntities())
+                using (var dbContext = new SemplestModel.Semplest())
                 {
                     Credential cred = null;
                     if (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] != null)
@@ -126,7 +126,7 @@ namespace Semplest.SharedResources.Controllers
 
         public ActionResult Verify(string userName, string password)
         {
-            using (SemplestEntities dbContext = new SemplestEntities())
+            using (var dbContext = new SemplestModel.Semplest())
             {
                 var creds = dbContext.Credentials.Where(c => c.Username == userName && c.Password == password);
                 if (creds.Count() == 1)
@@ -163,7 +163,7 @@ namespace Semplest.SharedResources.Controllers
                 string controllerActionName = controllerName + "." + vAction;
                 if (controllerName != myController && !string.IsNullOrEmpty(label))
                 {
-                    using (SemplestEntities dbContext = new SemplestEntities())
+                    using (var dbContext = new SemplestModel.Semplest())
                     {
                         foreach (Right r in dbContext.Rights)
                         {
@@ -177,7 +177,7 @@ namespace Semplest.SharedResources.Controllers
                         {
                             if (!found)
                             {
-                                dbContext.Rights.AddObject(new Right { Controller = controllerActionName, Label = label });
+                                dbContext.Rights.Add(new Right { Controller = controllerActionName, Label = label });
                                 dbContext.SaveChanges();
                             }
                         }

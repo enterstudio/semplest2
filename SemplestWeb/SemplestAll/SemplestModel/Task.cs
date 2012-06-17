@@ -14,25 +14,24 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(ScheduleTaskAssociation))]
+    
     public partial class Task
     {
         public Task()
         {
             this.ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int TaskPK { get; set; }
-        [DataMember]
+        
         public string ServiceName { get; set; }
-        [DataMember]
+        
         public string MethodName { get; set; }
-        [DataMember]
+        
         public string Parameters { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
     }
     

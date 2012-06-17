@@ -10,7 +10,7 @@ namespace Semplest.Core.Models
     {
         public BillingModel()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
         }
         public decimal Amount { get; set; }

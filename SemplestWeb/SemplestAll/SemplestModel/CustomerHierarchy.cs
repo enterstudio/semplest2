@@ -9,28 +9,27 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+
     public partial class CustomerHierarchy
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int CustomerHierarchyPK { get; set; }
-        [DataMember]
+
         public int CustomerFK { get; set; }
-        [DataMember]
+
         public Nullable<int> CustomerParentFK { get; set; }
-        [DataMember]
+
         public System.DateTime CreatedDate { get; set; }
-    
-        [DataMember]
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
-        [DataMember]
+        [ForeignKey("CustomerParentFK")]
         public virtual Customer Customer1 { get; set; }
     }
-    
+
 }

@@ -9,16 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(EmployeeCustomerAssociation))]
-    [KnownType(typeof(EmployeePhoneAssociation))]
-    [KnownType(typeof(EmployeeType))]
-    [KnownType(typeof(User))]
+    
     public partial class Employee
     {
         public Employee()
@@ -26,25 +23,25 @@ namespace SemplestModel
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
             this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int EmployeePK { get; set; }
-        [DataMember]
+        
         public int EmployeeTypeFK { get; set; }
-        [DataMember]
+        
         public int UsersFK { get; set; }
-        [DataMember]
+        
         public Nullable<int> ReportingTo { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> HireDate { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        [DataMember]
+        
         public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
-        [DataMember]
+        [ForeignKey("EmployeeTypeFK")]
         public virtual EmployeeType EmployeeType { get; set; }
-        [DataMember]
+        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
     

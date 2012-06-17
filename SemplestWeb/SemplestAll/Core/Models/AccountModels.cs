@@ -141,7 +141,7 @@ namespace Semplest.Core.Models
     {
         public ChildModel()
         {
-            using (var entities = new SemplestEntities())
+            using (var entities = new SemplestModel.Semplest())
                 Configuration = entities.Configurations.FirstOrDefault();
         }
 

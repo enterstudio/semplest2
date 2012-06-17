@@ -9,31 +9,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Address))]
-    [KnownType(typeof(AddressType))]
-    [KnownType(typeof(Customer))]
+    
     public partial class CustomerAddressAssociation
     {
-        [DataMember]
+        
+        [Column(Order = 1),Key]
         public int AddressFK { get; set; }
-        [DataMember]
+        
+        [Column(Order = 2),Key]
         public int CustomerFK { get; set; }
-        [DataMember]
+        
         public int AddressTypeFK { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("AddressFK")]
         public virtual Address Address { get; set; }
-        [DataMember]
+        [ForeignKey("AddressTypeFK")]
         public virtual AddressType AddressType { get; set; }
-        [DataMember]
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
     

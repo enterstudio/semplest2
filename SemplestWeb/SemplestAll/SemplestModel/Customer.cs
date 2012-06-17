@@ -9,27 +9,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngineAccount))]
-    [KnownType(typeof(BillType))]
-    [KnownType(typeof(CustomerHierarchy))]
-    [KnownType(typeof(ProductGroup))]
-    [KnownType(typeof(CustomerAddressAssociation))]
-    [KnownType(typeof(CustomerPhoneAssociation))]
-    [KnownType(typeof(ProductGroupCycleType))]
-    [KnownType(typeof(WebContentQuestionMarkHelp))]
-    [KnownType(typeof(CustomerNote))]
-    [KnownType(typeof(CustomerStyle))]
-    [KnownType(typeof(EmailTemplate))]
-    [KnownType(typeof(EmployeeCustomerAssociation))]
-    [KnownType(typeof(Schedule))]
-    [KnownType(typeof(WebContent))]
-    [KnownType(typeof(User))]
+    
     public partial class Customer
     {
         public Customer()
@@ -49,64 +36,64 @@ namespace SemplestModel
             this.Users = new HashSet<User>();
         }
     
-        [DataMember]
+        [DataMember,Key]
         public int CustomerPK { get; set; }
-        [DataMember]
+        
         public string Name { get; set; }
-        [DataMember]
+        
         public decimal TotalTargetCycleBudget { get; set; }
-        [DataMember]
+        
         public int ProductGroupCycleTypeFK { get; set; }
-        [DataMember]
+        
         public int BillTypeFK { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
-        [DataMember]
+        
         public decimal ServiceFee { get; set; }
-        [DataMember]
+        
         public decimal PercentOfMedia { get; set; }
-        [DataMember]
+        
         public string InternalCustomerId { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> CreditLimit { get; set; }
-        [DataMember]
+        
         public bool PromotionFeeOverride { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> PromotionFeeAmount { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
-        [DataMember]
+        [ForeignKey("BillTypeFK")]
         public virtual BillType BillType { get; set; }
-        [DataMember]
+        
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies { get; set; }
-        [DataMember]
+        
         public virtual ICollection<ProductGroup> ProductGroups { get; set; }
-        [DataMember]
+        
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
-        [DataMember]
+        
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
-        [DataMember]
+        [ForeignKey("ProductGroupCycleTypeFK")]
         public virtual ProductGroupCycleType ProductGroupCycleType { get; set; }
-        [DataMember]
+        
         public virtual ICollection<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
-        [DataMember]
+        
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies1 { get; set; }
-        [DataMember]
+        
         public virtual ICollection<CustomerNote> CustomerNotes { get; set; }
-        [DataMember]
-        public virtual CustomerStyle CustomerStyle { get; set; }
-        [DataMember]
+        
+        public virtual ICollection<CustomerStyle> CustomerStyle { get; set; }
+        
         public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
-        [DataMember]
+        
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        [DataMember]
+        
         public virtual ICollection<Schedule> Schedules { get; set; }
-        [DataMember]
+        
         public virtual ICollection<WebContent> WebContents { get; set; }
-        [DataMember]
+        
         public virtual ICollection<User> Users { get; set; }
     }
     

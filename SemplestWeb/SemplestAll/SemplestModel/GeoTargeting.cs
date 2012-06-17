@@ -9,38 +9,38 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Promotion))]
-    [KnownType(typeof(StateCode))]
+    
     public partial class GeoTargeting
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int GeoTargetingPK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public string Address { get; set; }
-        [DataMember]
+        
         public string City { get; set; }
-        [DataMember]
+        
         public Nullable<int> StateCodeFK { get; set; }
-        [DataMember]
+        
         public string Zip { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> Longitude { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> Latitude { get; set; }
-        [DataMember]
+        
         public Nullable<decimal> ProximityRadius { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
-        [DataMember]
+        
+        [ForeignKey("StateCodeFK")]
         public virtual StateCode StateCode { get; set; }
     }
     

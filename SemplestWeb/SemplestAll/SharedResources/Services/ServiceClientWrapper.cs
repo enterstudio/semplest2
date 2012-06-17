@@ -18,7 +18,7 @@ namespace Semplest.SharedResources.Services
 
         public ServiceClientWrapper()
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            var dbContext = new SemplestModel.Semplest();
             _baseURLTest = dbContext.Configurations.First().ESBWebServerURL;
         }
 

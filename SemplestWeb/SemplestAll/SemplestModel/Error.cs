@@ -9,33 +9,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(User))]
+    
     public partial class Error
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int ErrorPK { get; set; }
-        [DataMember]
+        
         public string ErrorMessage { get; set; }
-        [DataMember]
+        
         public Nullable<int> ErrorID { get; set; }
-        [DataMember]
+        
         public Nullable<int> UsersFK { get; set; }
-        [DataMember]
+        
         public string ErrorSource { get; set; }
-        [DataMember]
+        
         public string ErrorClass { get; set; }
-        [DataMember]
+        
         public string ErrorDetails { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
     

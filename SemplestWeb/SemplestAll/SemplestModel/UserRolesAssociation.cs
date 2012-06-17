@@ -9,26 +9,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Role))]
-    [KnownType(typeof(User))]
+    
     public partial class UserRolesAssociation
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int UserRolesAssociationPK { get; set; }
-        [DataMember]
+        
         public int UsersFK { get; set; }
-        [DataMember]
+        
         public int RolesFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("RolesFK")]
         public virtual Role Role { get; set; }
-        [DataMember]
+        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
     

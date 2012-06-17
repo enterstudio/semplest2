@@ -9,31 +9,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+    
     public partial class WebContent
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int WebContentPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CustomerFK { get; set; }
-        [DataMember]
+        
         public string FAQ { get; set; }
-        [DataMember]
+        
         public string AboutUs { get; set; }
-        [DataMember]
+        
         public string ContactUs { get; set; }
-        [DataMember]
+        
         public string TermsAndConditions { get; set; }
-        [DataMember]
+        
         public string PrivacyPolicy { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
     

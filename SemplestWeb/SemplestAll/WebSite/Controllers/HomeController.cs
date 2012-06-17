@@ -48,7 +48,7 @@ namespace Semplest.WebSite.Controllers
                 try
                 {
                     model.CreatedDate = DateTime.Now;
-                    using (var dbContext = new SemplestEntities())
+                    using (var dbContext = new SemplestModel.Semplest())
                     {
                         string semEmail = dbContext.Configurations.Select(m => m.DefalutEmailContactMe).FirstOrDefault();
 
@@ -60,7 +60,7 @@ namespace Semplest.WebSite.Controllers
                         {
                             model.Phone = "";
                         }
-                        dbContext.SEMCustomerDetails.AddObject(model);
+                        dbContext.SEMCustomerDetails.Add(model);
                         dbContext.SaveChanges();
 
                         // send email using smtp server

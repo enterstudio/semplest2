@@ -14,23 +14,22 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
+    
     public partial class ProductGroupCycleType
     {
         public ProductGroupCycleType()
         {
             this.Customers = new HashSet<Customer>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int ProductGroupCycleTypePK { get; set; }
-        [DataMember]
+        
         public string ProductGroupCycleType1 { get; set; }
-        [DataMember]
+        
         public int CycleInDays { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<Customer> Customers { get; set; }
     }
     

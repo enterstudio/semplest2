@@ -9,46 +9,44 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Keyword))]
-    [KnownType(typeof(KeywordBid))]
-    [KnownType(typeof(Promotion))]
+    
     public partial class PromotionKeywordAssociation
     {
         public PromotionKeywordAssociation()
         {
             this.KeywordBids = new HashSet<KeywordBid>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int KeywordFK { get; set; }
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public bool IsActive { get; set; }
-        [DataMember]
+        
         public bool IsDeleted { get; set; }
-        [DataMember]
+        
         public bool IsNegative { get; set; }
-        [DataMember]
+        
         public Nullable<double> SemplestProbability { get; set; }
-        [DataMember]
+        
         public bool IsTargetMSN { get; set; }
-        [DataMember]
+        
         public bool IsTargetGoogle { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("KeywordFK")]
         public virtual Keyword Keyword { get; set; }
-        [DataMember]
+        
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

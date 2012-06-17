@@ -9,32 +9,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(CreditCardTransaction))]
-    [KnownType(typeof(Promotion))]
+    
     public partial class PromotionPayment
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionPaymentPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> PromotionFK { get; set; }
-        [DataMember]
+        
         public System.DateTime BudgetToAddDate { get; set; }
-        [DataMember]
+        
         public bool IsValid { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<int> CreditCardTransactionFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CreditCardTransactionFK")]
         public virtual CreditCardTransaction CreditCardTransaction { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

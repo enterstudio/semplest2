@@ -20,7 +20,7 @@ namespace Semplest.Admin.Controllers
         {
 
             //ViewBag.Message = "Welcome to SEMPLEST ADMIN!";
-            //SemplestEntities dbcontext = new SemplestEntities();
+            //Semplest dbcontext = new SemplestModel.Semplest();
 
             ////FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
 
@@ -77,7 +77,7 @@ namespace Semplest.Admin.Controllers
         //public ActionResult GetUsers(string query)
         //{
         //    List<string> users = new List<string>();
-        //    using (SemplestEntities dbContext = new SemplestEntities())
+        //    using (Semplest dbContext = new SemplestModel.Semplest())
         //    {
         //        System.Data.Entity.DbSet dusers = dbContext.Users;
         //        foreach (User du in dusers)

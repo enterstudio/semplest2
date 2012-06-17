@@ -9,25 +9,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Promotion))]
+    [Table("SiteLinks")]
     public partial class SiteLink
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int SiteLInkPK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public string LinkText { get; set; }
-        [DataMember]
+        
         public string LinkURL { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

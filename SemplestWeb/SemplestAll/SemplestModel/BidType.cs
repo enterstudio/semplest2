@@ -14,9 +14,7 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngineReportData))]
-    [KnownType(typeof(KeywordBid))]
+    
     public partial class BidType
     {
         public BidType()
@@ -24,15 +22,15 @@ namespace SemplestModel
             this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
             this.KeywordBids = new HashSet<KeywordBid>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int BidTypePK { get; set; }
-        [DataMember]
+        
         public string BidType1 { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
-        [DataMember]
+        
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
     }
     

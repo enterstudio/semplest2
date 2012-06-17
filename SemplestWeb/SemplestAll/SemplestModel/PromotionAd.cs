@@ -9,14 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(AdvertisingEngineAd))]
-    [KnownType(typeof(Promotion))]
+    [Table("PromotionAds")]
     public partial class PromotionAd
     {
         public PromotionAd()
@@ -24,26 +23,26 @@ namespace SemplestModel
             this.AdvertisingEngineAds = new HashSet<AdvertisingEngineAd>();
         }
     
-        [DataMember]
+        [DataMember,System.ComponentModel.DataAnnotations.Key]
         public int PromotionAdsPK { get; set; }
-        [DataMember]
+        
         public int PromotionFK { get; set; }
-        [DataMember]
+        
         public string AdTitle { get; set; }
-        [DataMember]
+        
         public string AdTextLine1 { get; set; }
-        [DataMember]
+        
         public string AdTextLine2 { get; set; }
-        [DataMember]
+        
         public bool IsDeleted { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> DeletedDate { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
     

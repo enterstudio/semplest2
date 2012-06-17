@@ -9,19 +9,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(Customer))]
-    [KnownType(typeof(Frequency))]
-    [KnownType(typeof(ProductGroup))]
-    [KnownType(typeof(Promotion))]
-    [KnownType(typeof(ScheduleJob))]
-    [KnownType(typeof(ScheduleTaskAssociation))]
-    [KnownType(typeof(User))]
+    
     public partial class Schedule
     {
         public Schedule()
@@ -29,51 +23,51 @@ namespace SemplestModel
             this.ScheduleJobs = new HashSet<ScheduleJob>();
             this.ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int SchedulePK { get; set; }
-        [DataMember]
+        
         public string ScheduleName { get; set; }
-        [DataMember]
+        
         public System.DateTime StartTime { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EndDate { get; set; }
-        [DataMember]
+        
         public int FrequencyFK { get; set; }
-        [DataMember]
+        
         public bool IsEnabled { get; set; }
-        [DataMember]
+        
         public bool IsInactive { get; set; }
-        [DataMember]
+        
         public int CreatedBy { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public int EditedBy { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> EditedDate { get; set; }
-        [DataMember]
+        
         public Nullable<int> PromotionFK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CustomerFK { get; set; }
-        [DataMember]
+        
         public Nullable<int> ProductGroupFK { get; set; }
-        [DataMember]
+        
         public Nullable<int> UsersFK { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
-        [DataMember]
+        [ForeignKey("FrequencyFK")]
         public virtual Frequency Frequency { get; set; }
-        [DataMember]
+        [ForeignKey("ProductGroupFK")]
         public virtual ProductGroup ProductGroup { get; set; }
-        [DataMember]
+        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
-        [DataMember]
+        
         public virtual ICollection<ScheduleJob> ScheduleJobs { get; set; }
-        [DataMember]
+        
         public virtual ICollection<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
-        [DataMember]
+        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
     

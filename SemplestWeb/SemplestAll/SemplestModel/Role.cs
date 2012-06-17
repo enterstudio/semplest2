@@ -14,9 +14,7 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(RolesRightsAssociation))]
-    [KnownType(typeof(UserRolesAssociation))]
+    
     public partial class Role
     {
         public Role()
@@ -24,15 +22,15 @@ namespace SemplestModel
             this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
             this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int RolePK { get; set; }
-        [DataMember]
+        
         public string RoleName { get; set; }
     
-        [DataMember]
+        
         public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
-        [DataMember]
+        
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }
     

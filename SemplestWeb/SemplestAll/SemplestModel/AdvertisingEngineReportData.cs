@@ -9,50 +9,49 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(BidType))]
-    [KnownType(typeof(KeywordBid))]
+    
     public partial class AdvertisingEngineReportData
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public int AdvertisingEngineBidDataPK { get; set; }
-        [DataMember]
+        
         public int KeywordBidFK { get; set; }
-        [DataMember]
+        
         public System.DateTime TransactionDate { get; set; }
-        [DataMember]
+        
         public int MicroBidAmount { get; set; }
-        [DataMember]
+        
         public int NumberImpressions { get; set; }
-        [DataMember]
+        
         public int NumberClick { get; set; }
-        [DataMember]
+        
         public double AveragePosition { get; set; }
-        [DataMember]
+        
         public long AverageCPC { get; set; }
-        [DataMember]
+        
         public Nullable<int> BidTypeFK { get; set; }
-        [DataMember]
+        
         public Nullable<int> QualityScore { get; set; }
-        [DataMember]
+        
         public string ApprovalStatus { get; set; }
-        [DataMember]
+        
         public Nullable<int> FirstPageMicroCPC { get; set; }
-        [DataMember]
+        
         public Nullable<int> MicroCost { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public Nullable<System.DateTime> CostAppliedToPromotionDate { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("BidTypeFK")]
         public virtual BidType BidType { get; set; }
-        [DataMember]
+        [ForeignKey("KeywordBidFK")]
         public virtual KeywordBid KeywordBid { get; set; }
     }
     

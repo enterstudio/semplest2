@@ -26,7 +26,7 @@ namespace Semplest.Admin.Controllers
 
         public ActionResult Index(int id)
         {
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
             var viewModel =
                from u in dbcontext.Users
@@ -166,7 +166,7 @@ namespace Semplest.Admin.Controllers
 
         public ActionResult CustomerImport(int id)
         {
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
 
 
             CustomerImport x = new CustomerImport();
@@ -214,7 +214,7 @@ namespace Semplest.Admin.Controllers
         {
             string importstatus;
             importstatus  = "The import was the successful..";
-            SemplestEntities dbcontext = new SemplestEntities();
+            SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             
 
             {
@@ -431,7 +431,7 @@ namespace Semplest.Admin.Controllers
                             catch (Exception ex)
                             {
                                 //Console.WriteLine(ex.TargetSite);
-                                SemplestEntities _dbContext = new SemplestEntities();
+                                SemplestModel.Semplest _dbContext = new SemplestModel.Semplest();
                                 SemplestModel.Error er = new SemplestModel.Error();
                                 er.ErrorMessage = ex.Message+"  \r\n "+ex.InnerException  +"  \r\n "+ex.StackTrace +"  \r\n "+ex.Source+"  \r\n "+ex.TargetSite;
                                 //filterContext.RequestContext.HttpContext.Session
@@ -456,7 +456,7 @@ namespace Semplest.Admin.Controllers
                 {
                     importstatus = "An error has occured. Please check the file for errors and try again..";
                     //Console.WriteLine(ex.TargetSite);
-                    SemplestEntities _dbContext = new SemplestEntities();
+                    SemplestModel.Semplest _dbContext = new SemplestModel.Semplest();
                     SemplestModel.Error er = new SemplestModel.Error();
                     er.ErrorMessage = ex.Message + "  \r\n " + ex.InnerException + "  \r\n " + ex.StackTrace + "  \r\n " + ex.Source + "  \r\n " + ex.TargetSite;
                     //filterContext.RequestContext.HttpContext.Session
@@ -505,7 +505,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult DisableUser(int id)
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             dbContext.Customers.Where(key => key.CustomerPK == id).First().Users.First().IsActive = false;
             dbContext.SaveChanges();
             Dictionary<string, object> d = new Dictionary<string, object>();
@@ -515,7 +515,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult EnableUser(int id)
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
 
             dbContext.Customers.Where(key => key.CustomerPK==id).First().Users.First().IsActive= true;
             dbContext.SaveChanges();
@@ -527,7 +527,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult PausePromotions(int id)
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             ServiceClientWrapper sw = new ServiceClientWrapper();
             foreach (ProductGroup pg in dbContext.Customers.Where(key => key.CustomerPK == id).First().ProductGroups)
             {
@@ -552,7 +552,7 @@ namespace Semplest.Admin.Controllers
         [HttpPost]
         public ActionResult RestartPromotions(int id)
         {
-            SemplestEntities dbContext = new SemplestEntities();
+            SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             ServiceClientWrapper sw = new ServiceClientWrapper();
             foreach (ProductGroup pg in dbContext.Customers.Where(key => key.CustomerPK == id).First().ProductGroups)
             {

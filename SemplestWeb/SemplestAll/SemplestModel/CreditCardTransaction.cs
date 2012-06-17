@@ -9,41 +9,40 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
-    [KnownType(typeof(CreditCardProfile))]
-    [KnownType(typeof(PromotionPayment))]
+    
     public partial class CreditCardTransaction
     {
         public CreditCardTransaction()
         {
             this.PromotionPayments = new HashSet<PromotionPayment>();
         }
-    
-        [DataMember]
+
+        [System.ComponentModel.DataAnnotations.Key]
         public int CreditCardTransactionPK { get; set; }
-        [DataMember]
+        
         public Nullable<int> CreditCardProfileFK { get; set; }
-        [DataMember]
+        
         public string OrderID { get; set; }
-        [DataMember]
+        
         public decimal Amount { get; set; }
-        [DataMember]
+        
         public System.DateTime CreatedDate { get; set; }
-        [DataMember]
+        
         public decimal SEMplestFee { get; set; }
-        [DataMember]
+        
         public decimal MediaSpend { get; set; }
-        [DataMember]
+        
         public bool IsRefund { get; set; }
-    
-        [DataMember]
+
+        [ForeignKey("CreditCardProfileFK")]
         public virtual CreditCardProfile CreditCardProfile { get; set; }
-        [DataMember]
+        
         public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
     }
     

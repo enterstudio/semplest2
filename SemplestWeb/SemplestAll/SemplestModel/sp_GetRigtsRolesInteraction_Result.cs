@@ -14,20 +14,20 @@ using System.Runtime.Serialization;
 
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    
     public partial class sp_GetRigtsRolesInteraction_Result
     {
-        [DataMember]
+        [System.ComponentModel.DataAnnotations.Key]
         public Nullable<int> RolesFK { get; set; }
-        [DataMember]
+        
         public string Controller { get; set; }
-        [DataMember]
+        
         public string Label { get; set; }
-        [DataMember]
+        
         public Nullable<bool> IsVisible { get; set; }
-        [DataMember]
+        
         public Nullable<bool> IsReadonly { get; set; }
-        [DataMember]
+        
         public int RightsPK { get; set; }
     }
     
