@@ -1,4 +1,4 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 
 import semplest.keywords.javautils.*;
+import semplest.keywords.lda.MalletTopic;
 
 import cc.mallet.types.FeatureVectorSequence.Iterator;
 import cc.mallet.types.InstanceList;

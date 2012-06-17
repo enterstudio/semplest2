@@ -1,6 +1,9 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.*;
+
+import semplest.keywords.lda.MalletTopic;
+
 
 
 public class LDAInferRandRemove {

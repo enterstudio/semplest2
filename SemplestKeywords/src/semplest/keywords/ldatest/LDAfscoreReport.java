@@ -1,7 +1,10 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+
+import semplest.keywords.lda.MalletTopic;
+
 
 public class LDAfscoreReport {
 

@@ -1,4 +1,4 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.*;
 import java.text.SimpleDateFormat;

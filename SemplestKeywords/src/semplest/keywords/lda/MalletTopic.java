@@ -20,7 +20,6 @@ import java.nio.charset.Charset;
 import org.apache.log4j.Logger;
 
 import semplest.keywords.javautils.*;
-import semplest.keywords.lda.MalletThreadObj;
 import semplest.keywords.properties.ProjectProperties;
 
 

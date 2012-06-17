@@ -1,7 +1,8 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
@@ -13,20 +14,24 @@ import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.properties.ProjectProperties;
 
 
-public class KWGenDmozLDAdataTest implements Runnable{
+public class KWGenDmozLDAdataCrawl2 implements Runnable{
 	
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdataTest.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdataCrawl2.class);
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
-	private static String dfile = ProjectProperties.dfile;
-	private static String baseMultiWPath = ProjectProperties.baseMultiWPath;
-	public MultiWordCollect biGrams; //Collection of bigrams for each subcategory sorted by categories
-	public MultiWordCollect triGrams; //Collection of trigrams for each subcategory sorted by categories
-	private static String[] nGramsSubC = ProjectProperties.nGramsSubC;
-	private static String nGramsC = ProjectProperties.nGramsC;
+	private static String dfile; 
+	private static String baseMultiWPath ;
+	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
+	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
+	private static String[] nGramsSubC; 
+	public int numTopics; 
+	public double userInfoWeight; 
+	public int numKeywordsGoogle; 
+	public int numKeywordsMSN; 
 	public static ProjectProperties pr; 
-	public KWGenDmozLDAdataTest() throws IOException {
+	
+	public KWGenDmozLDAdataCrawl2(HashMap<String,Object> configData) throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){
 			String PROPSFILE = "../SemplestServices/bin/system.properties";
@@ -39,7 +44,17 @@ public class KWGenDmozLDAdataTest implements Runnable{
 		dfile = SEMplestService.properties.getProperty("data.dmoz.all.alldesc"); */
 		try
 		{
-			pr=new ProjectProperties();
+			pr=new ProjectProperties(configData);
+			dfile = pr.dfile;
+			baseMultiWPath = pr.baseMultiWPath;
+			nGramsSubC = pr.nGramsSubC;
+			numTopics = pr.numTopics;
+			userInfoWeight = pr.userInfoWeight;
+			numKeywordsGoogle = pr.numKeywordsGoogle;
+			numKeywordsMSN = pr.numKeywordsMSN;
+			//logger.info(pr.dfile+"\n"+pr.baseMultiWPath+"\n"+pr.numTopics);
+			
+		
 			logger.info("create DmozLucene()");
 			dl = new DmozLucene();
 			logger.info("Indexing dmoz description data...");
@@ -47,23 +62,31 @@ public class KWGenDmozLDAdataTest implements Runnable{
 			logger.info("Data indexed!");
 			
 			logger.info("Loading training data...");
+			logger.info("dfile:"+ dfile);
 			TrainingData = ioUtils.file2Hash(dfile);
+			Set<String> keys = TrainingData.keySet();
+		
 			logger.info("Data loaded");
 			
 			logger.info("Loading stem dictionary...");
+			logger.info(ProjectProperties.dictfile);
 			dict = new dictUtils();
 			logger.info("Dictionary loaded");
 			
 			logger.info("Loading Bigrams for each subcategory");
-			String biPath = baseMultiWPath+nGramsC+".txt.2";
-			logger.info("Loading"+biPath);
-			biGrams = new MultiWordCollect(nGramsC,biPath);
-			
+			biGrams= new MultiWordCollect[nGramsSubC.length];
+			for (int i=0; i< nGramsSubC.length; i++){
+				String biPath = baseMultiWPath+nGramsSubC[i]+".2";
+				logger.info("Loading"+biPath);
+				biGrams[i]= new MultiWordCollect(nGramsSubC[i],biPath);
+			}
 			logger.info("Loading Trigrams for each subcategory");
-			String triPath = baseMultiWPath+nGramsC+".txt.3";
-			logger.info("Loading"+triPath);
-			triGrams= new MultiWordCollect(nGramsC,triPath);
-			
+			triGrams= new MultiWordCollect[nGramsSubC.length];
+			for (int i=0; i< nGramsSubC.length; i++){
+				String triPath = baseMultiWPath+nGramsSubC[i]+".3";
+				logger.info("Loading"+triPath);
+				triGrams[i]= new MultiWordCollect(nGramsSubC[i],triPath);
+			}
 		}
 		catch (Exception e)
 		{

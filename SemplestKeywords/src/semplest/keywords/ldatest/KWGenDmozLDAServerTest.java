@@ -1,4 +1,4 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 /**
  * Test version of the keyword generation process
@@ -21,6 +21,7 @@ import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
+import semplest.keywords.lda.MalletTopic;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 

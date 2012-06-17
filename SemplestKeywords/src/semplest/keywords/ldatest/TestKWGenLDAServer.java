@@ -1,4 +1,4 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,6 +12,8 @@ import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.MultiWordCollect;
+import semplest.keywords.lda.KWGenLDAStatus;
+import semplest.keywords.lda.MalletTopic;
 import cc.mallet.types.Alphabet;
 
 

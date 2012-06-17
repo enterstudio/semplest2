@@ -1,6 +1,9 @@
-package semplest.keywords.lda;
+package semplest.keywords.ldatest;
 
 import java.io.File;
+
+import semplest.keywords.lda.MalletTopic;
+
 
 import cc.mallet.types.InstanceList;
 
