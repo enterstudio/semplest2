@@ -75,11 +75,9 @@ namespace SemplestModel
         public bool Delete { get; set; }
         internal sealed class GeoTargetingMetaData
         {
-            public string Address { get; set; }
             public string City { get; set; }
             [TwoFieldRequiredAttribute("City", "StateCodeFK", ErrorMessage = "State Is Required..")]
             public int? StateCodeFK { get; set; }
-            public string Zip { get; set; }
             [TwoFieldRequiredAttribute("Address", "ProximityRadius", ErrorMessage = "Proximity Is Required..")]
             public decimal? ProximityRadius { get; set; }
         }
