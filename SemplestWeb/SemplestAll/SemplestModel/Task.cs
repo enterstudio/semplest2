@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Task
     {
@@ -21,18 +18,12 @@ namespace SemplestModel
         {
             this.ScheduleTaskAssociations = new HashSet<ScheduleTaskAssociation>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int TaskPK { get; set; }
-        
         public string ServiceName { get; set; }
-        
         public string MethodName { get; set; }
-        
         public string Parameters { get; set; }
     
-        
         public virtual ICollection<ScheduleTaskAssociation> ScheduleTaskAssociations { get; set; }
     }
-    
 }

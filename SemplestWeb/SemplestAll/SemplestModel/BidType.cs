@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class BidType
     {
@@ -22,16 +19,11 @@ namespace SemplestModel
             this.AdvertisingEngineReportDatas = new HashSet<AdvertisingEngineReportData>();
             this.KeywordBids = new HashSet<KeywordBid>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int BidTypePK { get; set; }
-        
         public string BidType1 { get; set; }
     
-        
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
-        
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
     }
-    
 }

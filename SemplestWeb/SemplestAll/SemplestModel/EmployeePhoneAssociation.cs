@@ -7,28 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class EmployeePhoneAssociation
     {
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int PhoneFK { get; set; }
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int EmployeeFK { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-
-        [ForeignKey("EmployeeFK")]
+    
         public virtual Employee Employee { get; set; }
-        [ForeignKey("PhoneFK")]
         public virtual Phone Phone { get; set; }
     }
-    
 }

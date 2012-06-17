@@ -7,20 +7,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class EmailType
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int EmailTypePK { get; set; }
-        
         public string EmailType1 { get; set; }
     }
-    
 }

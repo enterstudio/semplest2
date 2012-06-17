@@ -7,52 +7,30 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class AdvertisingEngineReportData
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int AdvertisingEngineBidDataPK { get; set; }
-        
         public int KeywordBidFK { get; set; }
-        
         public System.DateTime TransactionDate { get; set; }
-        
         public int MicroBidAmount { get; set; }
-        
         public int NumberImpressions { get; set; }
-        
         public int NumberClick { get; set; }
-        
         public double AveragePosition { get; set; }
-        
         public long AverageCPC { get; set; }
-        
         public Nullable<int> BidTypeFK { get; set; }
-        
         public Nullable<int> QualityScore { get; set; }
-        
         public string ApprovalStatus { get; set; }
-        
         public Nullable<int> FirstPageMicroCPC { get; set; }
-        
         public Nullable<int> MicroCost { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> CostAppliedToPromotionDate { get; set; }
-
-        [ForeignKey("BidTypeFK")]
+    
         public virtual BidType BidType { get; set; }
-        [ForeignKey("KeywordBidFK")]
         public virtual KeywordBid KeywordBid { get; set; }
     }
-    
 }

@@ -7,34 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class PromotionPayment
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionPaymentPK { get; set; }
-        
         public Nullable<int> PromotionFK { get; set; }
-        
         public System.DateTime BudgetToAddDate { get; set; }
-        
         public bool IsValid { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<int> CreditCardTransactionFK { get; set; }
-
-        [ForeignKey("CreditCardTransactionFK")]
+    
         public virtual CreditCardTransaction CreditCardTransaction { get; set; }
-        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
-    
 }

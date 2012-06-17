@@ -7,33 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
-    [KnownType(typeof(ScheduleJob))]
     public partial class ScheduleLog
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int ScheduleLogPK { get; set; }
-        
         public int ScheduleJobFK { get; set; }
-        
         public System.DateTime DateCreated { get; set; }
-        
         public bool IsSuccessful { get; set; }
-        
         public string ErrorMessage { get; set; }
-        
         public bool IsComplete { get; set; }
-
-        [ForeignKey("ScheduleJobFK")]
+    
         public virtual ScheduleJob ScheduleJob { get; set; }
     }
-    
 }

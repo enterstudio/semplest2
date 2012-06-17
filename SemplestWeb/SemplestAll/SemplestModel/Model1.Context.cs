@@ -7,43 +7,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Objects;
-
 namespace SemplestModel
 {
-    public partial class SemplestEntities : DbContext
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.Infrastructure;
+    using System.Data.Objects;
+    
+    public partial class Semplest : DbContext
     {
-        public SemplestEntities()
-            : this(false) { }
-    
-        public SemplestEntities(bool proxyCreationEnabled)	    
-            : base("name=SemplestEntities")
+        public Semplest()
+            : base("name=Semplest")
         {
-            this.Configuration.ProxyCreationEnabled = proxyCreationEnabled;
         }
     
-        public SemplestEntities(string connectionString)
-          : this(connectionString, false) { }
-    
-        public SemplestEntities(string connectionString, bool proxyCreationEnabled)
-            : base(connectionString)
-        {
-            this.Configuration.ProxyCreationEnabled = proxyCreationEnabled;
-        }	
-    
-        public ObjectContext ObjectContext
-        {
-          get { return ((IObjectContextAdapter)this).ObjectContext; }
-        }
-    
-    	protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             throw new UnintentionalCodeFirstException();
         }
-    	
+    
         public DbSet<Address> Addresses { get; set; }
         public DbSet<AddressType> AddressTypes { get; set; }
         public DbSet<AdvertisingEngine> AdvertisingEngines { get; set; }

@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class BillType
     {
@@ -21,14 +18,10 @@ namespace SemplestModel
         {
             this.Customers = new HashSet<Customer>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int BillTypePK { get; set; }
-        
         public string BillType1 { get; set; }
     
-        
         public virtual ICollection<Customer> Customers { get; set; }
     }
-    
 }

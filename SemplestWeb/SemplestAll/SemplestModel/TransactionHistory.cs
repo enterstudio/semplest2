@@ -7,34 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class TransactionHistory
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int TransactionHistoryPK { get; set; }
-        
         public int UserFK { get; set; }
-        
         public System.DateTime TransactionDate { get; set; }
-        
         public string TableName { get; set; }
-        
         public string Field { get; set; }
-        
         public string OldValue { get; set; }
-        
         public string NewValue { get; set; }
-
-        [ForeignKey("UserFK")]
+    
         public virtual User User { get; set; }
     }
-    
 }

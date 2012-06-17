@@ -7,28 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class UserRolesAssociation
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int UserRolesAssociationPK { get; set; }
-        
         public int UsersFK { get; set; }
-        
         public int RolesFK { get; set; }
-
-        [ForeignKey("RolesFK")]
+    
         public virtual Role Role { get; set; }
-        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
-    
 }

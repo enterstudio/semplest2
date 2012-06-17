@@ -7,29 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
-
+    using System;
+    using System.Collections.Generic;
+    
     public partial class CustomerHierarchy
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int CustomerHierarchyPK { get; set; }
-
         public int CustomerFK { get; set; }
-
         public Nullable<int> CustomerParentFK { get; set; }
-
         public System.DateTime CreatedDate { get; set; }
-        [ForeignKey("CustomerFK")]
+    
         public virtual Customer Customer { get; set; }
-        [ForeignKey("CustomerParentFK")]
         public virtual Customer Customer1 { get; set; }
     }
-
 }

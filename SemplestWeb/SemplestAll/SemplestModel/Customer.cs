@@ -7,15 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Customer
     {
@@ -36,65 +31,35 @@ namespace SemplestModel
             this.Users = new HashSet<User>();
         }
     
-        [DataMember,Key]
         public int CustomerPK { get; set; }
-        
         public string Name { get; set; }
-        
         public decimal TotalTargetCycleBudget { get; set; }
-        
         public int ProductGroupCycleTypeFK { get; set; }
-        
         public int BillTypeFK { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
-        
         public decimal ServiceFee { get; set; }
-        
         public decimal PercentOfMedia { get; set; }
-        
         public string InternalCustomerId { get; set; }
-        
         public Nullable<decimal> CreditLimit { get; set; }
-        
         public bool PromotionFeeOverride { get; set; }
-        
         public Nullable<decimal> PromotionFeeAmount { get; set; }
     
-        
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
-        [ForeignKey("BillTypeFK")]
         public virtual BillType BillType { get; set; }
-        
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies { get; set; }
-        
         public virtual ICollection<ProductGroup> ProductGroups { get; set; }
-        
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
-        
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
-        [ForeignKey("ProductGroupCycleTypeFK")]
         public virtual ProductGroupCycleType ProductGroupCycleType { get; set; }
-        
         public virtual ICollection<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
-        
         public virtual ICollection<CustomerHierarchy> CustomerHierarchies1 { get; set; }
-        
         public virtual ICollection<CustomerNote> CustomerNotes { get; set; }
-        
-        public virtual ICollection<CustomerStyle> CustomerStyle { get; set; }
-        
+        public virtual CustomerStyle CustomerStyle { get; set; }
         public virtual ICollection<EmailTemplate> EmailTemplates { get; set; }
-        
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        
         public virtual ICollection<Schedule> Schedules { get; set; }
-        
         public virtual ICollection<WebContent> WebContents { get; set; }
-        
         public virtual ICollection<User> Users { get; set; }
     }
-    
 }

@@ -7,15 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Address
     {
@@ -24,28 +19,16 @@ namespace SemplestModel
             this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
         }
     
-        
-        [Key]
         public int AddressPK { get; set; }
-        
         public string Address1 { get; set; }
-        
         public string Address2 { get; set; }
-        
         public string City { get; set; }
-        
         public int StateAbbrFK { get; set; }
-        
         public string ZipCode { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
-        [ForeignKey("StateAbbrFK")]
         public virtual StateCode StateCode { get; set; }
     }
-    
 }

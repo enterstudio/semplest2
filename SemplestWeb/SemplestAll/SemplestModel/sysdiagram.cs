@@ -7,26 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
-    [DataContract(IsReference = true)]
+    using System;
+    using System.Collections.Generic;
+    
     public partial class sysdiagram
     {
-        [DataMember]
         public string name { get; set; }
-        [DataMember]
         public int principal_id { get; set; }
-        [DataMember]
         public int diagram_id { get; set; }
-        [DataMember]
         public Nullable<int> version { get; set; }
-        [DataMember]
         public byte[] definition { get; set; }
     }
-    
 }

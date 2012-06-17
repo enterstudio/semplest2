@@ -7,15 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-using System.ComponentModel.DataAnnotations;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class AdvertisingEngine
     {
@@ -29,26 +24,15 @@ namespace SemplestModel
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
         }
     
-        [DataMember,Key]
         public int AdvertisingEnginePK { get; set; }
-
-        [Column("AdvertisingEngine")]
         public string AdvertisingEngine1 { get; set; }
-        
         public string LogoURL { get; set; }
     
-        
         public virtual ICollection<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
-        
         public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
-        
         public virtual ICollection<KeywordBid> KeywordBids { get; set; }
-        
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
-        
         public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
-        
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
     }
-    
 }

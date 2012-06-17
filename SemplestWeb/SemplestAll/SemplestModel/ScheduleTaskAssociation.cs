@@ -7,28 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class ScheduleTaskAssociation
     {
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int TaskFK { get; set; }
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int ScheduleFK { get; set; }
-        
         public int TaskExecutionOrder { get; set; }
-
-        [ForeignKey("ScheduleFK")]
+    
         public virtual Schedule Schedule { get; set; }
-        [ForeignKey("TaskFK")]
         public virtual Task Task { get; set; }
     }
-    
 }

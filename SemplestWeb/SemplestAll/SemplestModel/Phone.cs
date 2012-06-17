@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Phone
     {
@@ -23,26 +19,16 @@ namespace SemplestModel
             this.CustomerPhoneAssociations = new HashSet<CustomerPhoneAssociation>();
             this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int PhonePK { get; set; }
-        
         public string Phone1 { get; set; }
-        
         public string Extension { get; set; }
-        
         public int PhoneTypeFK { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        
         public virtual ICollection<CustomerPhoneAssociation> CustomerPhoneAssociations { get; set; }
-        
         public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
-        [ForeignKey("PhoneTypeFK")]
         public virtual PhoneType PhoneType { get; set; }
     }
-    
 }

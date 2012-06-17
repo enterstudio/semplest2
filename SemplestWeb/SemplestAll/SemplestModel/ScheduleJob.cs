@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class ScheduleJob
     {
@@ -22,26 +18,16 @@ namespace SemplestModel
         {
             this.ScheduleLogs = new HashSet<ScheduleLog>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int ScheduleJobPK { get; set; }
-        
         public int ScheduleFK { get; set; }
-        
         public System.DateTime ExecutionStartTime { get; set; }
-        
         public bool IsSuccessful { get; set; }
-        
         public bool IsComplete { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
-
-        [ForeignKey("ScheduleFK")]
+    
         public virtual Schedule Schedule { get; set; }
-        
         public virtual ICollection<ScheduleLog> ScheduleLogs { get; set; }
     }
-    
 }

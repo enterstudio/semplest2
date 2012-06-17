@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class KeywordBid
     {
@@ -24,46 +20,26 @@ namespace SemplestModel
             this.KeywordBidDatas = new HashSet<KeywordBidData>();
             this.TrafficEstimators = new HashSet<TrafficEstimator>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int KeywordBidPK { get; set; }
-        
         public int KeywordFK { get; set; }
-        
         public int AdvertisingEngineFK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public System.DateTime StartDate { get; set; }
-        
         public Nullable<System.DateTime> EndDate { get; set; }
-        
         public bool IsActive { get; set; }
-        
         public int BidTypeFK { get; set; }
-        
         public int MicroBidAmount { get; set; }
-        
         public Nullable<long> KeywordAdEngineID { get; set; }
-        
         public string CompetitionType { get; set; }
-        
         public bool IsDefaultValue { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-
-        [ForeignKey("AdvertisingEngineFK")]
+    
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        
         public virtual ICollection<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
-        [ForeignKey("BidTypeFK")]
         public virtual BidType BidType { get; set; }
-        
         public virtual ICollection<KeywordBidData> KeywordBidDatas { get; set; }
-        
         public virtual ICollection<TrafficEstimator> TrafficEstimators { get; set; }
-        
         public virtual PromotionKeywordAssociation PromotionKeywordAssociation { get; set; }
     }
-    
 }

@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Employee
     {
@@ -23,26 +19,16 @@ namespace SemplestModel
             this.EmployeeCustomerAssociations = new HashSet<EmployeeCustomerAssociation>();
             this.EmployeePhoneAssociations = new HashSet<EmployeePhoneAssociation>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int EmployeePK { get; set; }
-        
         public int EmployeeTypeFK { get; set; }
-        
         public int UsersFK { get; set; }
-        
         public Nullable<int> ReportingTo { get; set; }
-        
         public Nullable<System.DateTime> HireDate { get; set; }
     
-        
         public virtual ICollection<EmployeeCustomerAssociation> EmployeeCustomerAssociations { get; set; }
-        
         public virtual ICollection<EmployeePhoneAssociation> EmployeePhoneAssociations { get; set; }
-        [ForeignKey("EmployeeTypeFK")]
         public virtual EmployeeType EmployeeType { get; set; }
-        [ForeignKey("UsersFK")]
         public virtual User User { get; set; }
     }
-    
 }

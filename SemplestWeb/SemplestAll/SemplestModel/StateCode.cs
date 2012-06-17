@@ -7,16 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
-    [Table("StateCode")]
     public partial class StateCode
     {
         public StateCode()
@@ -24,16 +19,11 @@ namespace SemplestModel
             this.Addresses = new HashSet<Address>();
             this.GeoTargetings = new HashSet<GeoTargeting>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int StateAbbrPK { get; set; }
-        
         public string StateAbbr { get; set; }
     
-        
         public virtual ICollection<Address> Addresses { get; set; }
-        
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
     }
-    
 }

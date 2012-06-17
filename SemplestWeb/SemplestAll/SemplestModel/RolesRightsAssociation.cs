@@ -7,30 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.ComponentModel.DataAnnotations.Schema;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class RolesRightsAssociation
     {
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 1)]
         public int RolesFK { get; set; }
-        [System.ComponentModel.DataAnnotations.Key,Column(Order = 2)]
         public int RightsFK { get; set; }
-        
         public bool IsVisible { get; set; }
-        
         public bool IsReadonly { get; set; }
-
-        [ForeignKey("RightsFK")]
+    
         public virtual Right Right { get; set; }
-        [ForeignKey("RolesFK")]
         public virtual Role Role { get; set; }
     }
-    
 }

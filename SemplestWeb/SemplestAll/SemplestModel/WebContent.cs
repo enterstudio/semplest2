@@ -7,34 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class WebContent
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int WebContentPK { get; set; }
-        
         public Nullable<int> CustomerFK { get; set; }
-        
         public string FAQ { get; set; }
-        
         public string AboutUs { get; set; }
-        
         public string ContactUs { get; set; }
-        
         public string TermsAndConditions { get; set; }
-        
         public string PrivacyPolicy { get; set; }
-
-        [ForeignKey("CustomerFK")]
+    
         public virtual Customer Customer { get; set; }
     }
-    
 }

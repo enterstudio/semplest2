@@ -7,42 +7,25 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class vwPromotionChart
     {
-        
         public string Keyword { get; set; }
-        
         public string PromotionName { get; set; }
-        
         public int NumberImpressions { get; set; }
-        
         public int NumberClick { get; set; }
-        
         public int AdvertisingEngineFK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public System.DateTime TransactionDate { get; set; }
-        
         public int MicroBidAmount { get; set; }
-        
         public int AveragePosition { get; set; }
-        
         public decimal AverageCPC { get; set; }
-        
         public int AdvertisingEngineBidDataPK { get; set; }
-        [System.ComponentModel.DataAnnotations.Key]
         public int UserPK { get; set; }
-        
         public bool IsActive { get; set; }
     }
-    
 }

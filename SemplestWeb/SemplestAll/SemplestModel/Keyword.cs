@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Keyword
     {
@@ -22,18 +18,12 @@ namespace SemplestModel
         {
             this.PromotionKeywordAssociations = new HashSet<PromotionKeywordAssociation>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int KeywordPK { get; set; }
-        [Column("Keyword")]
         public string Keyword1 { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
     
-        
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
     }
-    
 }

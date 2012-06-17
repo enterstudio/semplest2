@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class CreditCardTransaction
     {
@@ -22,28 +18,17 @@ namespace SemplestModel
         {
             this.PromotionPayments = new HashSet<PromotionPayment>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int CreditCardTransactionPK { get; set; }
-        
         public Nullable<int> CreditCardProfileFK { get; set; }
-        
         public string OrderID { get; set; }
-        
         public decimal Amount { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public decimal SEMplestFee { get; set; }
-        
         public decimal MediaSpend { get; set; }
-        
         public bool IsRefund { get; set; }
-
-        [ForeignKey("CreditCardProfileFK")]
+    
         public virtual CreditCardProfile CreditCardProfile { get; set; }
-        
         public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
     }
-    
 }

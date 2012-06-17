@@ -7,38 +7,23 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class AdvertisingEnginePromotion
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public long AdvertisingEngineCampaignPK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public long AdvertisingEngineAccountFK { get; set; }
-        
         public bool IsSearchNetwork { get; set; }
-        
         public bool IsDisplayNetwork { get; set; }
-        
         public decimal AdvertisingEngineBudget { get; set; }
-        
         public int MicroDefaultBid { get; set; }
-        
         public Nullable<long> AdvertisingEngineAdGroupID { get; set; }
-
-        [ForeignKey("AdvertisingEngineAccountFK")]
+    
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
-        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
-    
 }

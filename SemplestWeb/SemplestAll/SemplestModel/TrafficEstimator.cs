@@ -7,36 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class TrafficEstimator
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int TrafficEstimatorPK { get; set; }
-        
         public Nullable<int> KeywordBidFK { get; set; }
-        
         public int MicroBid { get; set; }
-        
         public double AveMicroCost { get; set; }
-        
         public double AveNumberClicks { get; set; }
-        
         public Nullable<double> AvePosition { get; set; }
-        
         public Nullable<double> AveCPC { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-
-        [ForeignKey("KeywordBidFK")]
+    
         public virtual KeywordBid KeywordBid { get; set; }
     }
-    
 }

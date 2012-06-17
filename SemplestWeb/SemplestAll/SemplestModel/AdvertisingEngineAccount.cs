@@ -7,15 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class AdvertisingEngineAccount
     {
@@ -24,19 +19,12 @@ namespace SemplestModel
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
         }
     
-        [DataMember,Key]
         public long AdvertisingEngineAccountPK { get; set; }
-        
         public int AdvertisingEngineFK { get; set; }
-        
         public int CustomerFK { get; set; }
-
-        [ForeignKey("AdvertisingEngineFK")]
+    
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
-        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
-    
 }

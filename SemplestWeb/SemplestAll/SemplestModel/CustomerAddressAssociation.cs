@@ -7,35 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class CustomerAddressAssociation
     {
-        
-        [Column(Order = 1),Key]
         public int AddressFK { get; set; }
-        
-        [Column(Order = 2),Key]
         public int CustomerFK { get; set; }
-        
         public int AddressTypeFK { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-
-        [ForeignKey("AddressFK")]
+    
         public virtual Address Address { get; set; }
-        [ForeignKey("AddressTypeFK")]
         public virtual AddressType AddressType { get; set; }
-        [ForeignKey("CustomerFK")]
         public virtual Customer Customer { get; set; }
     }
-    
 }

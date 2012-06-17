@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class EmployeeType
     {
@@ -21,14 +18,10 @@ namespace SemplestModel
         {
             this.Employees = new HashSet<Employee>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int EmployeeTypeID { get; set; }
-        
         public string EmployeeType1 { get; set; }
     
-        
         public virtual ICollection<Employee> Employees { get; set; }
     }
-    
 }

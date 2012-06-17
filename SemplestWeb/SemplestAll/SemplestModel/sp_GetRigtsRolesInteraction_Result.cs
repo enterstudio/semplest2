@@ -7,28 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
     
     public partial class sp_GetRigtsRolesInteraction_Result
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public Nullable<int> RolesFK { get; set; }
-        
         public string Controller { get; set; }
-        
         public string Label { get; set; }
-        
         public Nullable<bool> IsVisible { get; set; }
-        
         public Nullable<bool> IsReadonly { get; set; }
-        
         public int RightsPK { get; set; }
     }
-    
 }

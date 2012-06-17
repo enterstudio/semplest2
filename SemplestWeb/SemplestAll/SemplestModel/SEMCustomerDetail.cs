@@ -7,36 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class SEMCustomerDetail
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int SEMCustomerDetailsPK { get; set; }
-        
         public string FirstName { get; set; }
-        
         public string LastName { get; set; }
-        
         public string Company { get; set; }
-        
         public string Phone { get; set; }
-        
         public string email { get; set; }
-        
         public bool CallMe { get; set; }
-        
         public bool EmailMe { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
     }
-    
 }

@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Role
     {
@@ -22,16 +19,11 @@ namespace SemplestModel
             this.RolesRightsAssociations = new HashSet<RolesRightsAssociation>();
             this.UserRolesAssociations = new HashSet<UserRolesAssociation>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int RolePK { get; set; }
-        
         public string RoleName { get; set; }
     
-        
         public virtual ICollection<RolesRightsAssociation> RolesRightsAssociations { get; set; }
-        
         public virtual ICollection<UserRolesAssociation> UserRolesAssociations { get; set; }
     }
-    
 }

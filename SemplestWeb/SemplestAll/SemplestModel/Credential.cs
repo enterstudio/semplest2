@@ -7,34 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Credential
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int CredentialPK { get; set; }
-
         public int UsersFK { get; set; }
-        
         public string Username { get; set; }
-        
         public string Password { get; set; }
-        
         public bool RememberMe { get; set; }
-        
         public string SecurityQuestion { get; set; }
-        
         public string SecurityAnswer { get; set; }
-
-        [ForeignKey("UsersFK")]
+    
         public virtual User User { get; set; }
     }
-    
 }

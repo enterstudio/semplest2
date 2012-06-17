@@ -7,30 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class vwGetLivePromotionsForUser
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionPK { get; set; }
-        
         public string PromotionName { get; set; }
-        
         public int UserPK { get; set; }
-        
         public bool IsPaused { get; set; }
-        
         public bool IsCompleted { get; set; }
-        
         public bool IsLaunched { get; set; }
-        
         public bool IsDeleted { get; set; }
     }
-    
 }

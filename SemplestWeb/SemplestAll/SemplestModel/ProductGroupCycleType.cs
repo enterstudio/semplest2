@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class ProductGroupCycleType
     {
@@ -21,16 +18,11 @@ namespace SemplestModel
         {
             this.Customers = new HashSet<Customer>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int ProductGroupCycleTypePK { get; set; }
-        
         public string ProductGroupCycleType1 { get; set; }
-        
         public int CycleInDays { get; set; }
     
-        
         public virtual ICollection<Customer> Customers { get; set; }
     }
-    
 }

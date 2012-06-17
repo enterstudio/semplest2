@@ -7,34 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class KeywordBidData
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordBidDataPK { get; set; }
-        
         public Nullable<int> QualityScore { get; set; }
-        
         public string ApprovalStatus { get; set; }
-        
         public Nullable<int> FirstPageMicroCPC { get; set; }
-        
         public bool IsEligibleForShowing { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<int> KeywordBidFK { get; set; }
-
-        [ForeignKey("KeywordBidFK")]
+    
         public virtual KeywordBid KeywordBid { get; set; }
     }
-    
 }

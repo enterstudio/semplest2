@@ -7,41 +7,24 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class GeoTargeting
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int GeoTargetingPK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public string Address { get; set; }
-        
         public string City { get; set; }
-        
         public Nullable<int> StateCodeFK { get; set; }
-        
         public string Zip { get; set; }
-        
         public Nullable<decimal> Longitude { get; set; }
-        
         public Nullable<decimal> Latitude { get; set; }
-        
         public Nullable<decimal> ProximityRadius { get; set; }
-
-        [ForeignKey("PromotionFK")]
+    
         public virtual Promotion Promotion { get; set; }
-        
-        [ForeignKey("StateCodeFK")]
         public virtual StateCode StateCode { get; set; }
     }
-    
 }

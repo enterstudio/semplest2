@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class AddressType
     {
@@ -23,13 +19,9 @@ namespace SemplestModel
             this.CustomerAddressAssociations = new HashSet<CustomerAddressAssociation>();
         }
     
-        [DataMember,Key]
         public int AddressTypePK { get; set; }
-        
         public string AddressType1 { get; set; }
     
-        
         public virtual ICollection<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
     }
-    
 }

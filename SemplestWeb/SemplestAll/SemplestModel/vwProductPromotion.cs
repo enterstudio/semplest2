@@ -7,29 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
-    [Table("vwProductPromotions")]
+    using System;
+    using System.Collections.Generic;
+    
     public partial class vwProductPromotion
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int ProductGroupPK { get; set; }
-        
         public int CustomerFK { get; set; }
-        
         public string ProductGroupName { get; set; }
-        
         public int PromotionPK { get; set; }
-        
         public string PromotionName { get; set; }
-        
         public int UserPK { get; set; }
     }
-    
 }

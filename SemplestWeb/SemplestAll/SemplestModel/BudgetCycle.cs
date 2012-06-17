@@ -7,29 +7,21 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
-    [KnownType(typeof(Promotion))]
     public partial class BudgetCycle
     {
         public BudgetCycle()
         {
             this.Promotions = new HashSet<Promotion>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int BudgetCyclePK { get; set; }
-        
         public string BudgetCycle1 { get; set; }
     
-        
         public virtual ICollection<Promotion> Promotions { get; set; }
     }
-    
 }

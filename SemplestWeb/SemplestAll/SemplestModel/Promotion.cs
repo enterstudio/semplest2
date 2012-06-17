@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Promotion
     {
@@ -32,80 +28,43 @@ namespace SemplestModel
             this.SiteLinks = new HashSet<SiteLink>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int PromotionPK { get; set; }
-        
         public int ProductGroupFK { get; set; }
-        
         public string PromotionName { get; set; }
-        
         public string PromotionDescription { get; set; }
-        
         public System.DateTime PromotionStartDate { get; set; }
-        
         public Nullable<System.DateTime> PromotionEndDate { get; set; }
-        
         public string LandingPageURL { get; set; }
-        
         public decimal PromotionBudgetAmount { get; set; }
-        
         public int BudgetCycleFK { get; set; }
-        
         public Nullable<System.DateTime> CycleStartDate { get; set; }
-        
         public Nullable<System.DateTime> CycleEndDate { get; set; }
-        
         public Nullable<decimal> StartBudgetInCycle { get; set; }
-        
         public Nullable<decimal> RemainingBudgetInCycle { get; set; }
-        
         public Nullable<decimal> BudgetToAddToNextCycle { get; set; }
-        
         public Nullable<System.DateTime> BudgetToAddDate { get; set; }
-        
         public bool IsPaused { get; set; }
-        
         public bool IsCompleted { get; set; }
-        
         public bool IsLaunched { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
-        
         public bool IsDeleted { get; set; }
-        
         public string TargetCPCLevel { get; set; }
-        
         public string DisplayURL { get; set; }
     
-        
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
-        [ForeignKey("BudgetCycleFK")]
         public virtual BudgetCycle BudgetCycle { get; set; }
-        
         public virtual ICollection<GeoTargeting> GeoTargetings { get; set; }
-        
         public virtual ICollection<KeywordCategory> KeywordCategories { get; set; }
-        [ForeignKey("ProductGroupFK")]
         public virtual ProductGroup ProductGroup { get; set; }
-        
         public virtual ICollection<PromotionAdEngineSelected> PromotionAdEngineSelecteds { get; set; }
-        
         public virtual ICollection<PromotionAdengineStatu> PromotionAdengineStatus { get; set; }
-        
         public virtual ICollection<PromotionAd> PromotionAds { get; set; }
-        
         public virtual ICollection<PromotionKeywordAssociation> PromotionKeywordAssociations { get; set; }
-        
         public virtual ICollection<PromotionPayment> PromotionPayments { get; set; }
-        
         public virtual ICollection<Schedule> Schedules { get; set; }
-        
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
-        
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
     }
-    
 }

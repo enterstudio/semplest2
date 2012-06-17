@@ -7,27 +7,17 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class KeywordCategory
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int KeywordCategoryPK { get; set; }
-        
         public int PromotionFK { get; set; }
-
-        [Column("KeywordCategory")]
         public string KeywordCategory1 { get; set; }
-
-        [ForeignKey("PromotionFK")]
+    
         public virtual Promotion Promotion { get; set; }
     }
-    
 }

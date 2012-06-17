@@ -7,28 +7,18 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
-    [Table("SiteLinks")]
+    using System;
+    using System.Collections.Generic;
+    
     public partial class SiteLink
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int SiteLInkPK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public string LinkText { get; set; }
-        
         public string LinkURL { get; set; }
-
-        [ForeignKey("PromotionFK")]
+    
         public virtual Promotion Promotion { get; set; }
     }
-    
 }

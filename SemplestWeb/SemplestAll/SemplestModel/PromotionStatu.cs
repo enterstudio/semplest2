@@ -7,20 +7,14 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class PromotionStatu
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionStatusPK { get; set; }
-        
         public string PromotionStatus { get; set; }
     }
-    
 }

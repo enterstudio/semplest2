@@ -7,32 +7,20 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class EmailTemplate
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int EmailTemplatePK { get; set; }
-        
         public Nullable<int> CustomerFK { get; set; }
-        
         public string EmailSubject { get; set; }
-        
         public string EmailBody { get; set; }
-        
         public string EmailFrom { get; set; }
-        
         public int EmailTypeFK { get; set; }
-
-        [ForeignKey("CustomerFK")]
+    
         public virtual Customer Customer { get; set; }
     }
-    
 }

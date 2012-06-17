@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class Frequency
     {
@@ -21,14 +18,10 @@ namespace SemplestModel
         {
             this.Schedules = new HashSet<Schedule>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int FrequencyPK { get; set; }
-        
         public string Frequency1 { get; set; }
     
-        
         public virtual ICollection<Schedule> Schedules { get; set; }
     }
-    
 }

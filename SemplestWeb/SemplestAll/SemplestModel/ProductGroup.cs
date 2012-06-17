@@ -7,14 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class ProductGroup
     {
@@ -23,30 +19,18 @@ namespace SemplestModel
             this.Promotions = new HashSet<Promotion>();
             this.Schedules = new HashSet<Schedule>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int ProductGroupPK { get; set; }
-        
         public int CustomerFK { get; set; }
-        
         public string ProductGroupName { get; set; }
-        
         public System.DateTime StartDate { get; set; }
-        
         public Nullable<System.DateTime> EndDate { get; set; }
-        
         public bool IsActive { get; set; }
-        
         public System.DateTime CreateDate { get; set; }
-        
         public Nullable<System.DateTime> EditedDate { get; set; }
-
-        [ForeignKey("CustomerFK")]
+    
         public virtual Customer Customer { get; set; }
-        
         public virtual ICollection<Promotion> Promotions { get; set; }
-        
         public virtual ICollection<Schedule> Schedules { get; set; }
     }
-    
 }

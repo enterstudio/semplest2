@@ -7,24 +7,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class CustomerStyle
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int CustomerFK { get; set; }
-        
         public string CustomerLogo { get; set; }
-
-        [ForeignKey("CustomerFK")]
+    
         public virtual Customer Customer { get; set; }
     }
-    
 }

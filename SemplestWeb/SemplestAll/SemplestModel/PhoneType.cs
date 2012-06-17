@@ -7,13 +7,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class PhoneType
     {
@@ -21,14 +18,10 @@ namespace SemplestModel
         {
             this.Phones = new HashSet<Phone>();
         }
-
-        [System.ComponentModel.DataAnnotations.Key]
+    
         public int PhoneTypePK { get; set; }
-        
         public string PhoneType1 { get; set; }
     
-        
         public virtual ICollection<Phone> Phones { get; set; }
     }
-    
 }

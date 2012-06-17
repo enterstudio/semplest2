@@ -7,15 +7,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
-    [Table("PromotionAds")]
+    using System;
+    using System.Collections.Generic;
+    
     public partial class PromotionAd
     {
         public PromotionAd()
@@ -23,27 +19,16 @@ namespace SemplestModel
             this.AdvertisingEngineAds = new HashSet<AdvertisingEngineAd>();
         }
     
-        [DataMember,System.ComponentModel.DataAnnotations.Key]
         public int PromotionAdsPK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public string AdTitle { get; set; }
-        
         public string AdTextLine1 { get; set; }
-        
         public string AdTextLine2 { get; set; }
-        
         public bool IsDeleted { get; set; }
-        
         public System.DateTime CreatedDate { get; set; }
-        
         public Nullable<System.DateTime> DeletedDate { get; set; }
     
-        
         public virtual ICollection<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
-        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
-    
 }

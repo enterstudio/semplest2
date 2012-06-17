@@ -7,30 +7,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
-
-
 namespace SemplestModel
 {
+    using System;
+    using System.Collections.Generic;
     
     public partial class PromotionAdengineStatu
     {
-        [System.ComponentModel.DataAnnotations.Key]
         public int PromotionAdengineStatusPK { get; set; }
-        
         public int PromotionFK { get; set; }
-        
         public int PromotionStatusFK { get; set; }
-        
         public int AdvertisingEngineFK { get; set; }
-
-        [ForeignKey("AdvertisingEngineFK")]
+    
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        [ForeignKey("PromotionFK")]
         public virtual Promotion Promotion { get; set; }
     }
-    
 }
