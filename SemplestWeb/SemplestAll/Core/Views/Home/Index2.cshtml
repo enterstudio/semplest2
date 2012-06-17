@@ -4,7 +4,7 @@
 }
 <table>
     <tr>
-        <td style="width: 300px;">
+        <td style="width: 300px; vertical-align: top;">
             <fieldset style="padding: 0; border-width: 1px; width: 250px">
                 <legend><b>Account Actions</b></legend>
                 <div style="padding: 5px">
@@ -19,7 +19,7 @@
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary, click to edit
             </label>
-            <div style="width: 320px; height: 150px; overflow: auto">
+            <div style="width: 320px; height: 200px; overflow: auto">
                 <table class="gradient-style" style="width: 300px;">
                     @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
@@ -57,7 +57,7 @@
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
                 scroll over to see summary, click to edit
             </label>
-            <div style="width: 320px; height: 300px; overflow: auto">
+            <div style="width: 320px; height: 350px; overflow: auto">
                 <table class="gradient-style" style="width: 300px">
                     @foreach (SemplestModel.ProductGroup pg in Model.ProductGroups)
                     {
@@ -252,12 +252,12 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; height: 100%; width: 500px;">
+        <td style="vertical-align: top; height:650px; width: 500px;">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>
             </div>
-            <div id="preview" style="vertical-align: top; height: 100%; width: 460px; overflow: auto" />
+            <div id="preview" style="vertical-align: top; height: 650px; width: 460px; overflow: auto" />
         </td>
     </tr>
 </table>
