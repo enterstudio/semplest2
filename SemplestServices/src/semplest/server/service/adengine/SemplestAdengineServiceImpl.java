@@ -1694,10 +1694,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);								
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountID = "" + promotion.getAdvertisingEngineAccountPK();
-		final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+		getPromoDataSP.execute(promotionID);
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();		
 		final List<AdsObject> ads = getPromoDataSP.getAds();
 		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
 		for (final Integer promotionAdID : promotionAdIds)
@@ -1712,35 +1710,49 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				nonDeletedAdsForPromotionAdIds.add(ad);
 			}
 		}
+		if (nonDeletedAdsForPromotionAdIds.isEmpty())
+		{
+			final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "], so nothing to delete.";
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}
+		final int numAdsToDelete = nonDeletedAdsForPromotionAdIds.size();
+		logger.info("Will try to delete " + numAdsToDelete + " Ads");
+		List<Long> adIds = getAdIds(nonDeletedAdsForPromotionAdIds);
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
-				if (!nonDeletedAdsForPromotionAdIds.isEmpty())
-				{										
-					final int numAdsToDelete = nonDeletedAdsForPromotionAdIds.size();
-					logger.info("Will try to delete " + numAdsToDelete + " Ads");
-					List<Long> adIds = getAdIds(nonDeletedAdsForPromotionAdIds);					
-					final List<Long> deletedAdIds = googleAdwordsService.deleteAds(accountID, adGroupID, adIds);
-					final int numDeletedAds = deletedAdIds.size();
-					if (numAdsToDelete != numDeletedAds)
-					{
-						logger.warn("# of ads we expected to delete [" + numAdsToDelete+ "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "]");
-					}
-					final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedAdIds);				
-					final Map<Long, Integer> deletedAdIdRowCountMapWithBadRowCounts = getDeletedAdIdRowCountMapWithBadRowCounts(deletedAdIdRowCountMap);
-					if (!deletedAdIdRowCountMapWithBadRowCounts.isEmpty())
-					{						
-						logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
-					}
-				}
-				else
+				final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);				
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long adGroupID = adEngineData.getAdGroupID();				
+				final List<Long> deletedAdIds = googleAdwordsService.deleteAds(accountID, adGroupID, adIds);
+				final int numDeletedAds = deletedAdIds.size();
+				if (numAdsToDelete != numDeletedAds)
 				{
-					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "]";
-					logger.error(errMsg);
-					errorMap.put(adEngine, errMsg);
-				}								
+					logger.warn("# of ads we expected to delete [" + numAdsToDelete+ "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "] in Google");
+				}
+				final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedAdIds);				
+				final Map<Long, Integer> deletedAdIdRowCountMapWithBadRowCounts = getDeletedAdIdRowCountMapWithBadRowCounts(deletedAdIdRowCountMap);
+				if (!deletedAdIdRowCountMapWithBadRowCounts.isEmpty())
+				{						
+					logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
+				}										
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);				
+				final Long accountId = adEngineData.getAccountID();
+				final Long adGroupId = adEngineData.getAdGroupID();
+				for (final AdsObject ad : nonDeletedAdsForPromotionAdIds)
+				{
+					final Long msnAdID = ad.getAdEngineAdID();
+					msn.deleteAdById(accountId, adGroupId, msnAdID);
+				}
 			}
 			else
 			{
