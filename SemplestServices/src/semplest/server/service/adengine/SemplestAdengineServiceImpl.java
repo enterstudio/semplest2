@@ -436,7 +436,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
-		final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP(); 
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
@@ -1048,7 +1048,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		for (final Integer promotionId : promotionIds)
 		{
 			getPromoDataSP.execute(promotionId);		
-			final HashMap<String,AdEngineID> adEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionId);
+			final Map<String,AdEngineID> adEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionId);
 			final AdEngineID googleAdEngineData = adEngineDataMap.get(AdEngine.Google.name());
 			if (googleAdEngineData != null)
 			{
@@ -1378,7 +1378,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);			
-		final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final Map<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();		
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
@@ -1529,17 +1529,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("Will try to Add Ads for PromotionID [" + promotionID + "], " + promotionAdIds.size() + " PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		final List<AdsObject> ads = getPromoDataSP.getAds();				
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();
+		final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
-				final List<AdsObject> ads = getPromoDataSP.getAds();				
-				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final String accountID = "" + promotion.getAdvertisingEngineAccountPK();				
-				final Long adGroupID = promotion.getAdvertisingEngineAdGroupID();
+				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountID = "" + promotionAdEngineData.getAccountID();
+				final Long adGroupID = promotionAdEngineData.getAdGroupID();
+				
 				final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
 				final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL()); 
 				final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
@@ -1570,6 +1573,34 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					logger.warn("Problems updating db with the following GoogleAdID<->SemplestAdID pairs because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(idPairRowCountMapWithBadRowCounts));	
 				}											
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
+				final Long accountID = promotionAdEngineData.getAccountID();
+				final Long adGroupID = promotionAdEngineData.getAdGroupID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL()); 
+				final String url = SemplestUtils.getTrimmedNonNullString(promotion.getLandingPageURL());
+				for (final Integer promotionAdID : promotionAdIds)
+				{
+					final List<AdsObject> adsForPromotionAdID = getAdsForPromotionAdID(ads, promotionAdID);
+					if (!adsForPromotionAdID.isEmpty())
+					{
+						Collections.sort(adsForPromotionAdID, AdsObject.AD_ENGINE_AD_ID_COMPARATOR);
+						final AdsObject ad = adsForPromotionAdID.get(0);						
+						final String headline = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
+						final String description1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
+						final String description2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
+						final String combinedText = description1 + description2;  
+						final long msnAdID = msn.createAd(accountID, adGroupID, headline, combinedText, displayURL, url);						
+						final Integer rowCount = SemplestDB.setAdIDForAdGroup(msnAdID, adEngine, promotionAdID);
+						if (rowCount != 1)
+						{
+							logger.warn("Problem updating db with the following MsnAdID<->SemplestAdID pair because rowcount from the update operation is not 1, but is " + rowCount + ": " + msnAdID + "<->" + promotionAdID);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -1975,7 +2006,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 				getPromoDataSP.execute(promotionID);
-				final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final Map<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
 				final String accountID = "" + adEngineData.getAccountID();
 				final Long campaignID = adEngineData.getCampaignID();
@@ -2004,7 +2035,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 				getPromoDataSP.execute(promotionID);
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
-				final HashMap<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final Map<String,AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
 				final Long accountId = adEngineData.getAccountID();
 				final Long campaignId = adEngineData.getCampaignID();

@@ -116,7 +116,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 		}
 	}
 	
-	public HashMap<String,AdEngineID> getPromotionAdEngineID(Integer promotionID)
+	public Map<String,AdEngineID> getPromotionAdEngineID(Integer promotionID)
 	{
 		if (PromotionAdEngineID.containsKey(promotionID))
 		{
