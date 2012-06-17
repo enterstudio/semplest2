@@ -361,11 +361,11 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 								boolean flag=false;
 								String[] prts = gr.split("\\s+");
 								for(int n=0;n<prts.length;n++){
-									String stembase= stemvString( base.getKeyword(), data.dict);
+									String stembase= this.stemvStringNoFilter( base.getKeyword(), data.dict);
 									stembase = stembase.replaceAll("\\s+", "");
-									String stempart = stemvString( prts[n], data.dict);
+									String stempart = this.stemvStringNoFilter( prts[n], data.dict);
 									stempart = stempart.replaceAll("\\s+", "");
-									String stemwrdsi = stemvString( words[i], data.dict);
+									String stemwrdsi = this.stemvStringNoFilter( words[i], data.dict);
 									stemwrdsi = stemwrdsi.replaceAll("\\s+", "");
 									if(!stempart.equals(stemwrdsi) && stembase.contains(stempart)){
 										flag=true;
@@ -468,7 +468,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 						String kwstem = "";
 						boolean flag = true;
 						for(int n=0;n<subWrds.length;n++){
-							String subWstem = this.stemvString( subWrds[n], data.dict).replaceAll("\\s+", "");
+							String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
 							if(!wordMap.containsKey(subWstem) || kwstem.contains(subWstem)){
 								flag=false;
 								break;
@@ -478,7 +478,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 						}
 						if(flag!=false && !multWMap.containsKey(kwrd)){
 								for(int n=0;n<subWrds.length;n++){
-									String subWstem = this.stemvString( subWrds[n], data.dict).replaceAll("\\s+", "");
+									String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
 									wProb=wProb*wordMap.get(subWstem);
 								}
 								multWMap.put(kwrd, wProb);			
