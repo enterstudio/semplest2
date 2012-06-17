@@ -91,7 +91,7 @@ namespace Semplest.Core.Controllers
             campaignSetupModel.ProductGroup.IsEdit = true;
             ViewBag.Title = campaignSetupModel.ProductGroup.ProductGroupName + " " +
                             campaignSetupModel.ProductGroup.ProductPromotionName;
-            campaignSetupModel.IsCompleted = true;
+            //campaignSetupModel.IsCompleted = true;
             ViewBag.IsLaunched = campaignSetupModel.IsLaunched;
             ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
             ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
