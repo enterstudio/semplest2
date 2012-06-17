@@ -72,7 +72,7 @@ namespace SemplestModel
                 return stateCodes;
             }
         }
-        public bool Delete { get; set; }
+        public bool Remove { get; set; }
         internal sealed class GeoTargetingMetaData
         {
             public string Address { get; set; }
@@ -86,7 +86,7 @@ namespace SemplestModel
     }
     public partial class SiteLink
     {
-        public bool Delete { get; set; }
+        public bool Remove { get; set; }
     }
 
     [MetadataType(typeof(SEMCustomerDetailMetaData))]
@@ -110,7 +110,7 @@ namespace SemplestModel
             public string AdTextLine2 { get; set; }
 
         }
-        public bool Delete { get; set; }
+        public bool Remove { get; set; }
 
         public int SerailNo { get; set; }
     }
