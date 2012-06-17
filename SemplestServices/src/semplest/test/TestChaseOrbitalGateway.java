@@ -38,7 +38,9 @@ public class TestChaseOrbitalGateway
 			customerObject.setPhone("5555555555");
 			customerObject.setStateAbbr("NY");
 			customerObject.setZipCode("67676");
-			GatewayReturnObject r = gatew.CreateProfile(customerObject, "4112344112344113", "0912");
+			customerObject.setCreditCardNumber("4112344112344113");
+			customerObject.setExpireDateMMYY("0912");			
+			GatewayReturnObject r = gatew.CreateProfile(customerObject);
 			//ref 1460103
 			logger.info("PROFILE: ID " + r.getCustomerRefNum() + ":" + r.getIsGood() + r.getMessage());
 			logger.info("GatewayReturnObject response (from CreateProfile): " + r.toStringPretty());

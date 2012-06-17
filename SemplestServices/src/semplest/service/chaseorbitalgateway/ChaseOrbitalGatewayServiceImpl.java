@@ -3,6 +3,7 @@ package semplest.service.chaseorbitalgateway;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -11,6 +12,7 @@ import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.ChaseOrbitalGatewayInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 import com.paymentech.orbital.sdk.interfaces.RequestIF;
@@ -74,16 +76,14 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	public String CreateProfile(String json) throws Exception
 	{
 		logger.debug("call CreateProfile(String json)" + json);
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);		
-		final CustomerObject customerObject = gson.fromJson(data.get("customerObject"), CustomerObject.class);		
-		final String creditCardNumber = data.get("creditCardNumber");
-		final String ExpireDateMMYY = data.get("ExpireDateMMYY");		
-		final GatewayReturnObject response = CreateProfile(customerObject, creditCardNumber, ExpireDateMMYY);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);		
+		final CustomerObject customerObject = gson.fromJson(data.get("customerObject"), CustomerObject.class);
+		final GatewayReturnObject response = CreateProfile(customerObject);
 		return gson.toJson(response);
 	}
 
 	@Override
-	public GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY) throws Exception
+	public GatewayReturnObject CreateProfile(CustomerObject customerObject) throws Exception
 	{
 		RequestIF request = null;
 		try
@@ -116,8 +116,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("OrderDefaultDescription", "Profile Create");
 			//Account type credit card
 			request.setFieldValue("CustomerAccountType", "CC");
-			request.setFieldValue("CCAccountNum", creditCardNumber);
-			request.setFieldValue("CCExpireDate", ExpireDateMMYY);
+			request.setFieldValue("CCAccountNum", customerObject.getCreditCardNumber());
+			request.setFieldValue("CCExpireDate", customerObject.getExpireDateMMYY());
 			
 			request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
 
@@ -568,7 +568,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	}
 
 	@Override
-	public List<GatewayReturnObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

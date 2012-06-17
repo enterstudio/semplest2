@@ -10,8 +10,8 @@ import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 
 public interface ChaseOrbitalGatewayInterface extends ServiceInitialize
 {
-	GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY) throws Exception;
-	List<GatewayReturnObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception;
+	GatewayReturnObject CreateProfile(CustomerObject customerObject) throws Exception;
+	List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception;
 	GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception;
 	GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception;
 	GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate) throws Exception;
