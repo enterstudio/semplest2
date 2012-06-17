@@ -907,18 +907,40 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("call UpdateGeoTargeting(" + promotionID + ", " + adEngines + ")");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
-		final String accountId = "" + promotion.getAdvertisingEngineAccountPK();
-		final Long campaignId = promotion.getAdvertisingEngineCampaignPK();
+		final PromotionObj promotion = getPromoDataSP.getPromotionData();		
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{
+				final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
+				final String accountId = "" + promotionAdEngineData.getAccountID();
+				final Long campaignId = promotionAdEngineData.getCampaignID();
 				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId+ "]/Promotion[" + promotionID + "] with the following GeoTargets: [" + geoTargets + "]");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);				
+			}
+			else if (AdEngine.MSN.name().equals(adEngine))
+			{
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				final Map<String,AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
+				final Long accountId = promotionAdEngineData.getAccountID();
+				final Long campaignId = promotionAdEngineData.getCampaignID();
+				for (final GeoTargetObject geoTarget : geoTargets)
+				{
+					final String address = geoTarget.getAddress();
+					final String city = geoTarget.getCity();
+					final String state = geoTarget.getState();
+					final String zip = geoTarget.getZip();
+					final Double radius = geoTarget.getRadius();
+					final Double latitude = geoTarget.getLatitude();
+					final Double longitude = geoTarget.getLongitude();
+					final String country = "US"; // TODO: no country in GeoTarget object.  How to take care of this?
+					msn.setGeoTarget(accountId, campaignId, latitude, longitude, radius, address, city, state, country, zip);
+				}				
 			}
 			else
 			{

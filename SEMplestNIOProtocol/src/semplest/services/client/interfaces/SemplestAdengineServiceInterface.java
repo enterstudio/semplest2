@@ -53,8 +53,6 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 		
 	Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
 	
-	
-	
 	// done for MSN
 	
 	Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
