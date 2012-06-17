@@ -794,7 +794,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		String userInfo1="";
 		BasicConfigurator.configure();
 		while (!userInfo1.equals("exit")){
-			//try{
+			try{
 			logger.info("\nPlease, introduce search terms:");
 			Scanner scanFile = new Scanner(System.in);
 			searchTerm[0] = scanFile.nextLine();
@@ -877,10 +877,10 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 			
 			System.setOut(stdout);
-			/*
+			
 			}catch(Exception e){
 				logger.error(e);
-			}*/
+			}
 		}
 	}
 	/*
