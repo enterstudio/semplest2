@@ -95,7 +95,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			if(description==null || description.length()==0) throw new Exception("No description provided");
 			description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
 	
-			HashMap<String,String> reverseMap = this.createReverseStemMap(description);
+			//HashMap<String,String> reverseMap = this.createReverseStemMap(description);
 			for(int i=0; i< searchEngines.length; i++){
 				for (SearchEngine se : SearchEngine.values()){
 					if(searchEngines[i].equalsIgnoreCase(se.toString())&& !srchE.contains(se))
@@ -148,7 +148,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 						else if(se.toString().equalsIgnoreCase("msn")&& num>=numKw[n])
 							kw.setIsTargetMSN(false);
 					}
-					keywordsList.add(this.backStemming(kw, reverseMap));
+					keywordsList.add(kw);
 					num++;
 				}
 			}
