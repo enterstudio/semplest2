@@ -14,6 +14,11 @@ $(document).ready(function () {
         if (e.keyCode == 38 || e.keyCode == 39)
             e.preventDefault();
     });
+    $('#AdModelProp_DisplayUrl').live("keypress", function (e) {
+        //alert(e.keyCode);
+        if (e.keyCode == 47 || e.keyCode == 63)
+            e.preventDefault();
+    });
 
     $('#AdModelProp_LandingUrl').live("keyup", function (e) {
         var originalValue = $('#AdModelProp_LandingUrl').val();
