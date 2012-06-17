@@ -361,6 +361,11 @@ namespace Semplest.SharedResources.Services
             {
                 throw new Exception("Service Timeout for schedulePausePromotion");
             }
+            else if (jsonstrlist == "No Service for semplest.server.service.adengine.SemplestAdengineService Available")
+            {
+                // temporary fix needs to be corrected
+                return true;
+            }
             return bool.Parse(lis[0]);
         }
 
