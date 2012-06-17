@@ -57,14 +57,12 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 		
 	@Override
-	public GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY) throws Exception 
+	public GatewayReturnObject CreateProfile(CustomerObject customerObject) throws Exception 
 	{
-		logger.info("Got request to create profile for Customer [" + customerObject + "], Credit Card # [" + creditCardNumber + "], Expiration [" + ExpireDateMMYY + "]");
+		logger.info("Got request to create profile for Customer [" + customerObject + "]");
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		final String customerObjectJsonString = gson.toJson(customerObject);
 		jsonHash.put("customerObject", customerObjectJsonString);
-		jsonHash.put("creditCardNumber", creditCardNumber);
-		jsonHash.put("ExpireDateMMYY", ExpireDateMMYY);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("Request JSON: [" + json + "]");
 		final String returnData = runMethod(baseurl, SERVICEOFFERED, "CreateProfile", json, timeoutMS);
@@ -139,7 +137,7 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public List<GatewayReturnObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

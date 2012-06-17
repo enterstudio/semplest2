@@ -44,9 +44,9 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		customerObject.setPhone("5555555555");
 		customerObject.setStateAbbr("NY");
 		customerObject.setZipCode("67676");
-		final String creditCardNumber = "4112344112344113";
-		final String expireDateMMYY = "0912";
-		final GatewayReturnObject gatewayReturnObject = client.CreateProfile(customerObject, creditCardNumber, expireDateMMYY);
+		customerObject.setCreditCardNumber("4112344112344113");
+		customerObject.setExpireDateMMYY("0912");
+		final GatewayReturnObject gatewayReturnObject = client.CreateProfile(customerObject);
 		logger.info("Response from CreateProfile(...): " + gatewayReturnObject.toStringPretty());
 		return gatewayReturnObject;
 	}
