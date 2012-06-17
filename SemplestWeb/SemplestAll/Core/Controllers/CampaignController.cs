@@ -48,7 +48,7 @@ namespace Semplest.Core.Controllers
             Session["SiteLinks"] = null;
             Session["NegativeKeywords"] = null;
             Session["NegativeKeywordsText"] = null;
-            Session["CampaignSetupModel"] = null;
+            Session["CampaignSetupModel"] = cs;
             Session["AllCategories"] = null;
             ViewBag.IsLaunched = false;
             ViewBag.IsCompleted = false;
@@ -348,6 +348,8 @@ namespace Semplest.Core.Controllers
         {
             var siteLInks = (List<SiteLink>)Session["SiteLinks"];
             var campaignModel = (CampaignSetupModel)Session["CampaignSetupModel"];
+            if (siteLInks == null)
+                siteLInks = new List<SiteLink>() { new SiteLink() };
             campaignModel.SiteLinks = siteLInks;
             return PartialView(campaignModel);
         }
