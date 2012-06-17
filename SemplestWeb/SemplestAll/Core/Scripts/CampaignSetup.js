@@ -18,6 +18,11 @@ $(document).ready(function () {
         //alert(e.keyCode);
         if (e.keyCode == 47 || e.keyCode == 63)
             e.preventDefault();
+        var dispStr = $('#AdModelProp_DisplayUrl').val();
+        if (dispStr.length > 35) {
+            dispStr = dispStr.substring(0, 35);
+            $('#AdModelProp_DisplayUrl').val(dispStr);
+        }
     });
 
     $('#AdModelProp_LandingUrl').live("keyup", function (e) {
@@ -32,6 +37,10 @@ $(document).ready(function () {
                 dispStr = dispStr.substring(0, dispStr.indexOf('?'));
             }
             $('#AdModelProp_DisplayUrl').val(dispStr);
+            if (dispStr.length > 35) {
+                dispStr = dispStr.substring(0, 35);
+                $('#AdModelProp_DisplayUrl').val(dispStr);
+            }
 
         }
         else {
@@ -43,6 +52,10 @@ $(document).ready(function () {
                 landStr = landStr.substring(0, landStr.indexOf('?'));
             }
             $('#AdModelProp_DisplayUrl').val(landStr);
+            if (landStr.length > 35) {
+                landStr = landStr.substring(0, 35);
+                $('#AdModelProp_DisplayUrl').val(landStr);
+            }
         }
     });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
