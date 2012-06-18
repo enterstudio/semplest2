@@ -540,10 +540,83 @@ namespace Semplest.Core.Controllers
             try
             {
                 Credential c = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
-                //if (fc["newproductgroupname"].ToString() == null && fc["newproductgroupname"].ToString() == "") throw new Exception();
-                //Semplest dbContext = new SemplestModel.Semplest();
-                //dbContext.ProductGroups.Add(new ProductGroup { CustomerFK = c.User.CustomerFK.Value, ProductGroupName = fc["newproductgroupname"].ToString(), StartDate = DateTime.Now, IsActive = true });
-                //dbContext.SaveChanges();
+
+                
+
+                #region handle form data here....
+                //handle form data
+                if (fc["ExpirationDate"].ToString().Split(',')[0] == "-Select Month-" )
+                { 
+                    //no exp month has been selected
+                }
+                if (fc["ExpirationDate"].ToString().Split(',')[1] == "-Select Year-")
+                { 
+                    //no exp year has been selected
+                }
+                if (fc["CardNumber"].ToString() == "")
+                {
+                    //no card number entered
+                }
+                if (fc["FirstName"].ToString() == "")
+                {
+                    //no FirstName  entered
+                }
+                if (fc["LastName"].ToString() == "")
+                {
+                    //no LastName entered
+                }
+                if (fc["Address"].ToString() == "")
+                {
+                    //no Address entered
+                }
+                if (fc["City"].ToString() == "")
+                {
+                    //no City entered
+                }
+                if (fc["zip"].ToString() == "")
+                {
+                    //no zip entered
+                }
+                if (fc["phone"].ToString() == "")
+                {
+                    //no zip entered
+                }
+                if (fc["email"].ToString() == "")
+                {
+                    //no zip entered
+                }
+
+                #endregion
+
+                //make api call 
+                CustomerObject co = new CustomerObject() {  ExpireDateMMYY = fc["ExpirationDate"].ToString().Split(',')[0].ToString() + fc["ExpirationDate"].ToString().Split(',')[1],
+                                                            creditCardNumber = fc["CardNumber"],
+                                                            FirstName = fc["FirstName"].ToString(),
+                                                            LastName = fc["FirstName"].ToString(),
+                                                            Address1 = fc["Address"].ToString(),
+                                                            City = fc["City"].ToString(),
+                                                            ZipCode = fc["zip"].ToString(),
+                                                            Phone = fc["phone"].ToString(),
+                                                            Email = fc["email"].ToString(),
+                                                             StateAbbr=fc["state"].ToString()};
+
+                ServiceClientWrapper scw=new ServiceClientWrapper();
+                GatewayReturnObject myret = scw.CreateProfile(co);
+                if (myret.Message != "Profile Request Processed") throw new Exception();
+                if (myret.isGood != true) throw new Exception();
+
+                //should we hold on to the customer reference number?
+                int customerreferencenumber = int.Parse(myret.CustomerRefNum.ToString());
+                
+                //return to billinglaunch,
+                //update the card drop down, select the last one added
+
+                //info: to charge card call AuthorizeAndCapture below
+                double amountToCharge=2.0;
+                //GatewayReturnObject myret3 = scw.AuthorizeAndCapture(myret.CustomerRefNum, amountToCharge);
+
+
+
 
             }
             catch (Exception ex)
@@ -551,8 +624,9 @@ namespace Semplest.Core.Controllers
 
             }
 
-            //return RedirectToAction("Index2");
             return View();
+
+
         }
 
         [RequireRequestValue("HelpId")]
