@@ -117,10 +117,12 @@ public class TextUtils {
 
   //--
   public static Boolean isValidUrl( String url ){
+    final int CONNECT_TIMEOUT  = 1000;
+    final int READ_TIMEOUT     = 1000;
     try {
       java.net.URLConnection conn = (new java.net.URL( url )).openConnection();
-      conn.setConnectTimeout( 1000 );
-      conn.setReadTimeout( 1000 );
+      conn.setConnectTimeout( CONNECT_TIMEOUT );
+      conn.setReadTimeout( READ_TIMEOUT );
       java.io.InputStream is = conn.getInputStream();
     } catch (Exception e) {
       e.printStackTrace();
