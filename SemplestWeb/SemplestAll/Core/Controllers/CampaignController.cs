@@ -298,6 +298,7 @@ namespace Semplest.Core.Controllers
             {
                 var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = ex.Message };
                 Logger.Write(logEnty);
+                pm.IsLaunched = true;
             }
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
