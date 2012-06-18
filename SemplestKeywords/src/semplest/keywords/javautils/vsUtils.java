@@ -181,13 +181,12 @@ public class vsUtils {
 
   //-------------------------------------------------------------
   public static void main (String[] args){
-    // String file = "/semplest/data/dmoz/multiwords/news.txt.2";
-    String file = "/semplest/data/dmoz/news/hTest.2.3g";
-    String head = "top/news/media/journalism/journalists";
-    String rngs = "new+york+times real+estate+autos " + 
-        "page+last+updated business+finance+people politics+travel+sports " + 
-        "wall+street+journal read+full+story print+television+radio" + 
-        "front+news+articles new+york+post christian+science+monitor" ;
+    String file = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/shopping.2";
+    String head = "top/shopping/flowers/florists/north_america";
+    String rngs = "wedding+flowers flower+shops birthday+flowers" + 
+        "wedding+bouquets flower+delivery fruit+baskets " + 
+        "valentines+day flower+arrangements flowers+plants red+roses" + 
+        "fresh+flowers single+rose flower+delivery" ;
     String rwords = "new york realestate autos " + 
         "business finance people politics travel sports " + 
         "wallstreet journal television radio" + 
