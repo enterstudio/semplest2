@@ -75,7 +75,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	
 	public String CreateProfile(String json) throws Exception
 	{
-		logger.debug("call CreateProfile(String json)" + json);
+		logger.debug("call CreateProfile(String json) [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);		
 		final CustomerObject customerObject = gson.fromJson(data.get("customerObject"), CustomerObject.class);
 		final GatewayReturnObject response = CreateProfile(customerObject);
@@ -85,6 +85,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public GatewayReturnObject CreateProfile(CustomerObject customerObject) throws Exception
 	{
+		logger.info("Will try to CreateProfile for [" + customerObject + "]");
 		RequestIF request = null;
 		try
 		{
@@ -192,6 +193,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception
 	{
+		logger.info("Will try to AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]");
 		// Create a request object
 		// The request object uses the XML templates along with data we provide
 		// to generate a String representation of the xml request
@@ -221,22 +223,23 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			logger.info("AuthorizeAndCapture Request profile=" + customerProfileRefNumber+ " orderID=" + orderID + " : Amount (No decimal)=" + amountImpliedDecimal);
 			//logger.info("\nAuth with Capture Request:\n" + request.getXML());
 		}
-		catch (InitializationException ie)
+		catch (InitializationException e)
 		{
-			logger.error(ie.getMessage());
-			ie.printStackTrace();
-			throw new Exception("Unable to initialize request object: " + ie.getMessage());
+			final String errMsg = "Problem doing AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
-		catch (FieldNotFoundException fnfe)
+		catch (FieldNotFoundException e)
 		{
-			logger.error(fnfe.getMessage());
-			fnfe.printStackTrace();
-			throw new Exception("Unable to find XML field in template " + fnfe.getMessage());
+			final String errMsg = "Problem doing AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			throw e;
+			final String errMsg = "Problem doing AuthorizeAndCampture for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		//Process Transaction
 		ResponseIF response = null;
@@ -291,7 +294,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 
 	public String UpdateProfileRecurringBilling(String json) throws Exception
 	{
-		logger.debug("call UpdateProfileRecurringBilling(String json)" + json);
+		logger.debug("call UpdateProfileRecurringBilling(String json) [" + json + "]");
 		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final Double recurringAmount = Double.parseDouble(data.get("recurringAmount"));
@@ -304,6 +307,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate) throws Exception
 	{
+		logger.info("Will try to UpdateProfileRecurringBilling for CustomerProfileRefNumber [" + customerProfileRefNumber + "], RecurringAmount [" + recurringAmount + "], StartDate [" + startDate + "]");
 		RequestIF request = null;
 		try
 		{
@@ -485,6 +489,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public GatewayReturnObject refundPayment(String customerProfileRefNumber, Double Amount) throws Exception
 	{
+		logger.info("Will try to RefundPayment for CustomerProfileRefNumber [" + customerProfileRefNumber + "], Amount [" + Amount + "]");
 		RequestIF request = null;
 		try
 		{
