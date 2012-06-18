@@ -489,8 +489,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		try
 		{
-			AdWordsServiceLogger.log();
-			logger.info("AdWordsServiceLogger.log() called");
+			//AdWordsServiceLogger.log();
+			//logger.info("AdWordsServiceLogger.log() called");
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the INFO_SERVICe.
 
@@ -543,8 +543,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		try
 		{
-			AdWordsServiceLogger.log();
-			logger.info("AdWordsServiceLogger.log() called");
+			//AdWordsServiceLogger.log();
+			//logger.info("AdWordsServiceLogger.log() called");
 			AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 			// Get the INFO_SERVICe.
 
@@ -3661,7 +3661,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	 */
 	public Boolean setAccountBudget(String accountID, String billingAccountID, Long initialBudgetAmount) throws Exception
 	{
-		AdWordsServiceLogger.log();
+		//AdWordsServiceLogger.log();
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		//Get the BudgetOrderService
 		BudgetOrderServiceInterface budgetOrderService = user.getService(AdWordsService.V201109_1.BUDGET_ORDER_SERVICE);
