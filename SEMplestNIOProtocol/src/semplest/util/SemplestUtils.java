@@ -12,6 +12,12 @@ import semplest.server.protocol.KeywordIdRemoveOppositePair;
 
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
+import com.microsoft.adcenter.api.customermanagement.Entities.CustomerFinancialStatus;
+import com.microsoft.adcenter.api.customermanagement.Entities.CustomerLifeCycleStatus;
+import com.microsoft.adcenter.api.customermanagement.Entities.Industry;
+import com.microsoft.adcenter.api.customermanagement.Entities.ServiceLevel;
+import com.microsoft.adcenter.api.customermanagement.Entities.User;
 
 public final class SemplestUtils
 {
@@ -90,6 +96,33 @@ public final class SemplestUtils
 	    	}
 	    }
 	    return result.toString();
+	}
+	
+	public static final String getMsnUserString(final User user)
+	{
+		user.get
+		final Long id = customer.getId();
+		final String marketCountry= customer.getMarketCountry();
+		final CustomerFinancialStatus customerFinancialStatus = customer.getCustomerFinancialStatus();
+		final CustomerLifeCycleStatus customerLifeCycleStatus = customer.getCustomerLifeCycleStatus();
+		final Industry industry = customer.getIndustry();
+		final String name = customer.getName();
+		final String number = customer.getNumber();
+		final ServiceLevel serviceLevel = customer.getServiceLevel();
+		return "Customer[id=" + id + ",marketCountry=" + marketCountry + ",customerFinancialStatus=" + customerFinancialStatus + ",customerLifeCycleStatus=" + customerLifeCycleStatus + ",industry=" + industry + ",name=" + name + ",number=" + number + ",serviceLevel=" + serviceLevel +"]";
+	}
+	
+	public static final String getMsnCustomerString(final Customer customer)
+	{
+		final Long id = customer.getId();
+		final String marketCountry= customer.getMarketCountry();
+		final CustomerFinancialStatus customerFinancialStatus = customer.getCustomerFinancialStatus();
+		final CustomerLifeCycleStatus customerLifeCycleStatus = customer.getCustomerLifeCycleStatus();
+		final Industry industry = customer.getIndustry();
+		final String name = customer.getName();
+		final String number = customer.getNumber();
+		final ServiceLevel serviceLevel = customer.getServiceLevel();
+		return "Customer[id=" + id + ",marketCountry=" + marketCountry + ",customerFinancialStatus=" + customerFinancialStatus + ",customerLifeCycleStatus=" + customerLifeCycleStatus + ",industry=" + industry + ",name=" + name + ",number=" + number + ",serviceLevel=" + serviceLevel +"]";
 	}
 	
 	public static final String getTextAdString(final TextAd textAd)
