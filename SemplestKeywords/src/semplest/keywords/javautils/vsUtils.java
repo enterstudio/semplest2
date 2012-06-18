@@ -6,14 +6,15 @@ import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Comparator;
-
-import semplest.keywords.properties.ProjectProperties;
 
 /*
  * Vector Space (vs) tool-box
  * Treats a word-count as a vector in the word-space
- * The basic vector here is a HashMap<String,Integer>
+ * The basic word-count vector here is a HashMap<String,Integer>
  * 
  * Note; To use counts and avoid fractions, the UNIT vector
  * has length = 1000 rather than 1.
@@ -37,7 +38,7 @@ public class vsUtils {
       omap.put( e.getKey(), (int) Math.round( e.getValue() * w ));
     return omap;
   }
-  // add a bunch of vectors  
+  // add together a collection of vectors (wc) 
   public static HashMap<String,Integer> cAdd( HashMap<String, 
       HashMap<String,Integer>>  wcs){
     HashMap<String,Integer> omap = new HashMap<String,Integer>();
@@ -47,21 +48,35 @@ public class vsUtils {
             omap.get(e.getKey()) : 0) + e.getValue());  
     return omap;
   }
-  // cosine distance between two vectors (word-counts)
-  public static Double cDist( HashMap<String,Integer> a, HashMap<String,Integer> b){
-    HashMap<String,Integer> na = cNormalize( a );
-    HashMap<String,Integer> nb = cNormalize( b );
+  // cosine distance between two vectors 
+  // [Note:] we ckeck intersection rather than equality of keywords (as ngram)
+  public static Double cDist( HashMap<String,Integer> a,
+      HashMap<String,Integer> b){
+    HashMap<List<String>,Integer> na = tokenize( cNormalize( a ));
+    HashMap<List<String>,Integer> nb = tokenize( cNormalize( b ));
     Double dotp = 0.0;
-    for( Map.Entry<String,Integer> e: na.entrySet() )
-      if( nb.containsKey( e.getKey() ) )
-        dotp += e.getValue() * nb.get( e.getKey() );
+    for( Map.Entry<List<String>,Integer> ae: na.entrySet() )
+      for( Map.Entry<List<String>,Integer> be: nb.entrySet() ){
+        ae.getKey().retainAll( be.getKey());
+        if( ae.getKey().size() > 0)
+          dotp += ae.getValue() * be.getValue();
+      }
     return Math.acos( dotp / (UNIT * UNIT * 1.0) );
   }
+  private static HashMap<List<String>,Integer> tokenize( 
+      HashMap<String,Integer> m){
+    HashMap<List<String>,Integer> res = new HashMap<List<String>,Integer>();
+    for( Map.Entry<String,Integer> e: m.entrySet() )
+      res.put( new ArrayList( Arrays.asList(e.getKey().split("\\+"))), 
+          e.getValue()); 
+    return res;
+  }
+
   // Combine a bunch of vectors (wcs), based on their distance to a reference wc
   public static HashMap<String,Integer> cCombine( 
-      HashMap<String, HashMap<String,Integer>> wcs, HashMap<String,Integer> rv ){
+      HashMap<String, HashMap<String,Integer>> wcs, HashMap<String,Integer> rv){
     HashMap<String,Double> omap = new HashMap<String,Double>();
-    for( Map.Entry<String,HashMap<String,Integer>> wc: wcs.entrySet() ) { 
+    for( Map.Entry<String,HashMap<String,Integer>> wc: wcs.entrySet() ) {
       Double w = Math.PI/2.0 - cDist( wc.getValue(),rv );  // the weight
       HashMap<String,Integer> nwc = cNormalize( wc.getValue() );
       for( Map.Entry<String,Integer> e: nwc.entrySet() )
@@ -165,11 +180,15 @@ public class vsUtils {
     // String file = "/semplest/data/dmoz/multiwords/news.txt.2";
     String file = "/semplest/data/dmoz/news/hTest.2.3g";
     String head = "top/news/media/journalism/journalists";
-    String rwords = "new+york+times real+estate+autos " + 
+    String rngs = "new+york+times real+estate+autos " + 
         "page+last+updated business+finance+people politics+travel+sports " + 
         "wall+street+journal read+full+story print+television+radio" + 
         "front+news+articles new+york+post christian+science+monitor" ;
-    Test( file, head, rwords );
+    String rwords = "new york realestate autos " + 
+        "business finance people politics travel sports " + 
+        "wallstreet journal television radio" + 
+        "newyork christian science monitor" ;
+    Test( file, head, rngs );
   }
 }
 
