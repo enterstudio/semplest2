@@ -767,33 +767,26 @@ namespace Semplest.Core.Models.Repositories
 
         public void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext)
         {
-            //IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
-            List<KeywordProbabilityObject> kpos = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).Select(t => new KeywordProbabilityObject
-                                                                                                                                                           {
-                                                                                                                                                               keyword = t.Keyword.Keyword1,
-                                                                                                                                                               semplestProbability = t.SemplestProbability == null ? 0 : t.SemplestProbability.Value,
-                                                                                                                                                               isTargetMSN = t.IsTargetMSN,
-                                                                                                                                                               isTargetGoogle = t.IsTargetGoogle
-                                                                                                                                                           }).ToList();
-            //var kpos = new List<KeywordProbabilityObject>();
-            //KeywordProbabilityObject kpo;
-            //foreach (PromotionKeywordAssociation pka in qry)
-            //{
-            //    kpo = new KeywordProbabilityObject
-            //    {
-            //        keyword = pka.Keyword.Keyword1,
-            //        semplestProbability = pka.SemplestProbability == null ? 0 : pka.SemplestProbability.Value,
-            //        isTargetMSN = pka.IsTargetMSN,
-            //        isTargetGoogle = pka.IsTargetGoogle
-            //    };
-            //    kpos.Add(kpo);
-            //}
+            IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
+            var kpos = new List<KeywordProbabilityObject>();
+            KeywordProbabilityObject kpo;
+            foreach (PromotionKeywordAssociation pka in qry)
+            {
+                kpo = new KeywordProbabilityObject
+                {
+                    keyword = pka.Keyword.Keyword1,
+                    semplestProbability = pka.SemplestProbability == null ? 0 : pka.SemplestProbability.Value,
+                    isTargetMSN = pka.IsTargetMSN,
+                    isTargetGoogle = pka.IsTargetGoogle
+                };
+                kpos.Add(kpo);
+            }
             if (model.AdModelProp.NegativeKeywords != null)
                 foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
                 {
-                    if (!kpos.Any(key => key.keyword == negativeKeyword))
+                    if (!qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
                     {
-                        var kpo = new KeywordProbabilityObject { keyword = negativeKeyword };
+                        kpo = new KeywordProbabilityObject { keyword = negativeKeyword };
                         kpos.Add(kpo);
                     }
                 }
