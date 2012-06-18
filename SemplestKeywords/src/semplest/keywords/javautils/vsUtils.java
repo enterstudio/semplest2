@@ -31,7 +31,7 @@ public class vsUtils {
   // normalize vector to UNIT length (L2 norm) 
   public static Double cNorm( HashMap<String,Integer> wc){
     return ( UNIT * 1.0 / Math.max( Math.sqrt( sSquares( wc ) ), 1.0 ));}
-  public static HashMap<String,Integer> cNormalize( HashMap<String,Integer>  wc){
+  public static HashMap<String,Integer> cNormalize(HashMap<String,Integer> wc){
     HashMap<String,Integer> omap = new HashMap<String,Integer>();
     Double w = cNorm( wc );
     for( Map.Entry<String,Integer> e: wc.entrySet() )
@@ -49,7 +49,7 @@ public class vsUtils {
     return omap;
   }
   // cosine distance between two vectors 
-  // [Note:] we ckeck intersection rather than equality of keywords (as ngram)
+  // [Note:] we check intersection rather than equality of keywords (as ngram)
   public static Double cDist( HashMap<String,Integer> a,
       HashMap<String,Integer> b){
     HashMap<List<String>,Integer> na = tokenize( cNormalize( a ));
@@ -63,6 +63,7 @@ public class vsUtils {
       }
     return Math.acos( dotp / (UNIT * UNIT * 1.0) );
   }
+  // break up ngram Hashmap into collection-of-words Hashmap
   private static HashMap<List<String>,Integer> tokenize( 
       HashMap<String,Integer> m){
     HashMap<List<String>,Integer> res = new HashMap<List<String>,Integer>();
@@ -104,6 +105,7 @@ public class vsUtils {
     tm.addAll( wc.entrySet() );
     return tm;
   }
+  // top n words of word-count (based on count)
   public static String[] topWords( HashMap<String,Integer> wc, Integer n){
     Set<Map.Entry<String,Integer>> rv = jUtils.take( sortMap( wc ), n );
     Set<String> s = new HashSet<String>();
@@ -111,6 +113,7 @@ public class vsUtils {
       s.add( e.getKey() );
     return s.toArray( new String[]{} );
   }
+  //------------------------------------------------------------------------
   // - private helpers -----------------------------------------------
   private static Integer sSquares( HashMap<String,Integer> wc ){
     Integer res = 0;
@@ -132,7 +135,7 @@ public class vsUtils {
     System.out.println();
   }
 
-  // wc creators
+  // - wc creator helpers ------------
   private static HashMap<String,Integer> cWc(String[] words ){
     HashMap<String,Integer> rv = new HashMap<String,Integer>();
     for( String w: words)
@@ -142,37 +145,38 @@ public class vsUtils {
   private static HashMap<String,Integer> cWc(String words ){ 
     return cWc( words.split("\\s+") );
   }
+  // ---------------------------------------------------------------------
   //- tests ---------------------------------------------------------------
-  // ------------
   private static void test(){
     HashMap<String,Integer> rv = cWc("a b c d");
     HashMap<String,HashMap<String,Integer>> cs = 
       new HashMap<String,HashMap<String,Integer>>();
-    cs.put( "a0.5", cWc("a b c"));
-    cs.put( "b0.0", cWc("a b c d"));
-    cs.put( "c1.0", cWc("c d e"));
-    cs.put( "d1.5", cWc("e f g"));
+    cs.put( "a0.5", cWc("a+x+y b+z+g c+g+h+u"));
+    cs.put( "b0.0", cWc("a+f b+g c+g+o d+o+h"));
+    cs.put( "c1.0", cWc("c+o d+h e+y"));
+    cs.put( "d1.5", cWc("e+i f+h g+j"));
 
     HashMap<String,Integer> cc = cCombine( cs, rv );
     System.out.println( cc );
   }
 
   private static void Test(String ngramFile, String ancestor, String ref){
-    // read in categories from file and pick out those with ancestor
+    // read in categories from file and pick out those with given ancestor
     HashMap<String,HashMap<String,Integer>> wcs = catUtils.family( 
         ioUtils.readWcs( ngramFile ), ancestor ); 
     
     // create a reference word-count
     HashMap<String,Integer> rv = cWc( ref );
 
-    // combine them (remember how long it took)
+    // combine them (and remember how long it took)
     long start = System.currentTimeMillis();
     HashMap<String,Integer> cc = cCombine( wcs, rv );
     long end = System.currentTimeMillis();
 
     // print the top 50 words (by count) and the time it took to combine 
     System.out.println( ioUtils.mkString( topWords( cc, 50 ), ", ") );
-    System.out.println( "Combining " +wcs.size()+ " cats took " +(end-start)+ "ms");
+    System.out.println( "Combining " +wcs.size()+" cats took "
+        +(end-start)+ "ms");
   }
 
   //-------------------------------------------------------------
