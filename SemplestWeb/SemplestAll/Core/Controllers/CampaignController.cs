@@ -605,16 +605,27 @@ namespace Semplest.Core.Controllers
                 if (myret.Message != "Profile Request Processed") throw new Exception();
                 if (myret.isGood != true) throw new Exception();
 
-                //should we hold on to the customer reference number?
-                int customerreferencenumber = int.Parse(myret.CustomerRefNum.ToString());
-                
+
+                string customerreferencenumber = myret.CustomerRefNum.ToString();
+                var dbContext = new SemplestModel.Semplest();
+                var custid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.Customer.CustomerPK;
+                var trans = dbContext.CreditCardProfiles.Add(new CreditCardProfile() { CustomerFK = custid, CustomerRefNum = customerreferencenumber });
+ 
+
+
                 //return to billinglaunch,
                 //update the card drop down, select the last one added
 
+
+
+
+
+                /////////////////////////////////////////////////////
                 //info: to charge card call AuthorizeAndCapture below
-                double amountToCharge=2.0;
+                //double amountToCharge=2.0;
                 //GatewayReturnObject myret3 = scw.AuthorizeAndCapture(myret.CustomerRefNum, amountToCharge);
 
+               
 
 
 
