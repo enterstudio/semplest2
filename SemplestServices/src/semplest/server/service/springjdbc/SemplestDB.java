@@ -1,5 +1,7 @@
 package semplest.server.service.springjdbc;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -45,6 +47,7 @@ import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.GetBiddableAdGroupCriteriaSP;
 import semplest.server.service.springjdbc.storedproc.GetLatestTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
+import semplest.util.SemplestUtils;
 
 public class SemplestDB extends BaseDB
 {
@@ -1048,31 +1051,24 @@ public class SemplestDB extends BaseDB
 
 	}
 	
-	public static void logError(Exception e, String errorSource){		
-			
+	public static void logError(Exception e, String errorSource)
+	{		
 		try
 		{
-		StackTraceElement[] ste = e.getStackTrace();
-		StackTraceElement err = ste[ste.length-1];		
-		String errorClass = err.getClassName();
-		StringBuilder sb = new StringBuilder();
-		
-		for(StackTraceElement s : ste){
-			sb.append(s.getFileName() + ":" + s.getLineNumber() + "; "); 
-		}
-		String errDetails = sb.toString();
-		
-		String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) " +
-				"VALUES (?, ?, ?, ?, ?)";
-		
-		jdbcTemplate.update(sql, new Object[]
-					{errorSource, errorClass, e.getMessage(), errDetails, new java.util.Date()});
+			final StackTraceElement[] ste = e.getStackTrace();
+			final StackTraceElement err = ste[ste.length-1];		
+			final String errorClass = err.getClassName();
+			final StringWriter sw = new StringWriter();
+			e.printStackTrace(new PrintWriter(sw));
+			final String stackTraceString = sw.toString();
+			final String errDetails = SemplestUtils.getTrimmedNonNullString(stackTraceString);
+			final String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) VALUES (?, ?, ?, ?, ?)";		
+			jdbcTemplate.update(sql, new Object[]{errorSource, errorClass, e.getMessage(), errDetails, new java.util.Date()});
 		}
 		catch (Exception e1)
 		{
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
-			logger.error("logError: " + e.getMessage() , e1);
+			logger.error("logError: " + e1.getMessage() , e1);
 		}
 	}
 
