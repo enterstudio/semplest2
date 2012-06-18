@@ -1046,9 +1046,7 @@ public class SemplestDB extends BaseDB
 			Double AdvertisingEngineBudget) throws Exception
 	{
 		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
-
 		return jdbcTemplate.update(strSQL, new Object[]{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
-
 	}
 	
 	public static void logError(Exception e, String errorSource)
@@ -1062,8 +1060,9 @@ public class SemplestDB extends BaseDB
 			e.printStackTrace(new PrintWriter(sw));
 			final String stackTraceString = sw.toString();
 			final String errDetails = SemplestUtils.getTrimmedNonNullString(stackTraceString);
-			final String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) VALUES (?, ?, ?, ?, ?)";		
-			jdbcTemplate.update(sql, new Object[]{errorSource, errorClass, e.getMessage(), errDetails, new java.util.Date()});
+			final String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) VALUES (?, ?, ?, ?, ?)";
+			final String errMsg = SemplestUtils.getTrimmedNonNullString(e.getMessage());
+			jdbcTemplate.update(sql, new Object[]{errorSource, errorClass, errMsg, errDetails, new java.util.Date()});
 		}
 		catch (Exception e1)
 		{
