@@ -381,64 +381,63 @@ namespace Semplest.SharedResources.Services
 
         
 
+        
+
+
+
         //
-        //GatewayReturnObject CreateProfile(CustomerObject customerObject, String creditCardNumber, String ExpireDateMMYY) throws Exception;
-
-
-        public bool CreateProfile(CustomerObject customerObject, string creditCardNumber, string ExpireDateMMYY)
+        public GatewayReturnObject CreateProfile(CustomerObject customerObject, string creditCardNumber, string ExpireDateMMYY)
         {
-            string returnData = string.Empty;
+            string returnData;
+            GatewayReturnObject ReturnGatewayReturnObject = new GatewayReturnObject();
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                
-                jsonHash.Add("creditCardNumber", creditCardNumber);
                 jsonHash.Add("ExpireDateMMYY", ExpireDateMMYY);
-                
-                //jsonHash.Add("customerObject", customerObject);
-                
-                string jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.Indented);
+                string jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.None);
                 jsonHash.Add("customerObject", jsonAdds);
-
-
-                string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-                returnData = string.Empty;
+                jsonHash.Add("creditCardNumber", creditCardNumber);
+                string jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
                 try
                 {
-                    returnData = runMethod("http://VMJAVA1:9898/semplest", "semplest.service.keywords.lda.KeywordGeneratorService", "CreateProfile", jsonstr, "0");
-               }
+
+                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest", "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService", "CreateProfile", jsonstr, "0");
+                }
                 catch (Exception ex)
                 {
                     string errmsg = ex.Message;
                     throw;
                 }
-                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+
 
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
-                if (jsonstrlist == "Service Timeout")
-                {
 
-                    throw new Exception("Service Timeout for schedulePausePromotion");
-                }
-                Console.WriteLine(jsonstrlist);
-                Console.ReadLine();
+
+
+                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
+
+                ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
+                ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
+                ReturnGatewayReturnObject.isApproved = Convert.ToBoolean(objval["isApproved"]);
+                ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
+                ReturnGatewayReturnObject.Status = objval["Status"];
+                ReturnGatewayReturnObject.Message = objval["Message"];
+                ReturnGatewayReturnObject.CustomerRefNum = objval["CustomerRefNum"];
+
+
             }
             catch
             {
-                if (string.IsNullOrEmpty(returnData))
+                if (ReturnGatewayReturnObject == null)
                     throw;
                 else
-                    throw new Exception(returnData);
+                    throw new Exception();
             }
-            return false;
+            return ReturnGatewayReturnObject;
         }
 
 
-
-        //
         //
 
 
