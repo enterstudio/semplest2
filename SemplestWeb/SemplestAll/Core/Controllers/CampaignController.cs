@@ -290,11 +290,17 @@ namespace Semplest.Core.Controllers
                     p => p.PromotionName == model.ProductGroup.ProductPromotionName);
             foreach (PromotionAdEngineSelected pades in pm.PromotionAdEngineSelecteds)
                 adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-            pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(pm.PromotionPK, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
+            try
+            {
+                pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(pm.PromotionPK, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
+            }
+            catch (Exception ex)
+            {
+                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = ex.Message };
+                Logger.Write(logEnty);
+            }
             dbContext.SaveChanges();
             //return PartialView("KeyWords", model);
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "In LaunchAdProduct ActionResult" };
-            Logger.Write(logEnty);
 
             //return View();
             //return Json("Congratulations, Your Product has Launched!!!");
