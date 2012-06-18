@@ -386,17 +386,18 @@ namespace Semplest.SharedResources.Services
 
 
         //
-        public GatewayReturnObject CreateProfile(CustomerObject customerObject, string creditCardNumber, string ExpireDateMMYY)
+        public GatewayReturnObject CreateProfile(CustomerObject customerObject)
         {
             string returnData;
             GatewayReturnObject ReturnGatewayReturnObject = new GatewayReturnObject();
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("ExpireDateMMYY", ExpireDateMMYY);
+
+
                 string jsonAdds = JsonConvert.SerializeObject(customerObject, Formatting.None);
                 jsonHash.Add("customerObject", jsonAdds);
-                jsonHash.Add("creditCardNumber", creditCardNumber);
+
                 string jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
                 try
                 {
@@ -437,6 +438,56 @@ namespace Semplest.SharedResources.Services
             return ReturnGatewayReturnObject;
         }
 
+        //
+
+        // 
+
+        public GatewayReturnObject AuthorizeAndCapture(string customerProfileRefNumber, double amount)
+        {
+            string returnData;
+            GatewayReturnObject ReturnGatewayReturnObject = new GatewayReturnObject();
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("customerProfileRefNumber", customerProfileRefNumber);
+                jsonHash.Add("Amount", amount.ToString());
+                string jsonstr = JsonConvert.SerializeObject(jsonHash, Formatting.None);
+                try
+                {
+
+                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest", "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService", "AuthorizeAndCapture", jsonstr, "0");
+                }
+                catch (Exception ex)
+                {
+                    string errmsg = ex.Message;
+                    throw;
+                }
+
+
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+
+                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
+
+                ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
+                ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
+                ReturnGatewayReturnObject.isApproved = Convert.ToBoolean(objval["isApproved"]);
+                ReturnGatewayReturnObject.isDeclined = Convert.ToBoolean(objval["isDeclined"]);
+                ReturnGatewayReturnObject.Status = objval["Status"];
+                ReturnGatewayReturnObject.Message = objval["Message"];
+                ReturnGatewayReturnObject.CustomerRefNum = objval["CustomerRefNum"];
+
+
+            }
+            catch
+            {
+                if (ReturnGatewayReturnObject == null)
+                    throw;
+                else
+                    throw new Exception();
+            }
+            return ReturnGatewayReturnObject;
+        }
 
         //
 
@@ -575,6 +626,8 @@ namespace Semplest.SharedResources.Services
         public String ZipCode { get; set; }
         public String Email { get; set; }
         public String Phone { get; set; }
+        public String creditCardNumber { get; set; }
+        public String ExpireDateMMYY { get; set; }
     }
 
 
