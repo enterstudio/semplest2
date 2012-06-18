@@ -610,8 +610,10 @@ namespace Semplest.Core.Controllers
                 var dbContext = new SemplestModel.Semplest();
                 var custid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.Customer.CustomerPK;
                 var trans = dbContext.CreditCardProfiles.Add(new CreditCardProfile() { CustomerFK = custid, CustomerRefNum = customerreferencenumber });
- 
-
+                
+                //to do: add nickname for dropdown so that we can avoid calling the cc api everytime we are on the billinglaunch page
+                //save nickname to creditcardprofiles
+                
 
                 //return to billinglaunch,
                 //update the card drop down, select the last one added
