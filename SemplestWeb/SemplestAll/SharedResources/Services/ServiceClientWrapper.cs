@@ -563,17 +563,44 @@ namespace Semplest.SharedResources.Services
 
 
 
+
+
     public class CustomerObject
-    {
-        public String FirstName { get;set; }
+    { //this object is passed to the semplest CC API service
+        public String FirstName { get; set; }
         public String LastName { get; set; }
         public String Address1 { get; set; }
-        public String Address2 { get; set; }
+        //public String Address2 { get; set; }
         public String City { get; set; }
         public String StateAbbr { get; set; }
         public String ZipCode { get; set; }
         public String Email { get; set; }
         public String Phone { get; set; }
+    }
+
+
+    public class GatewayReturnObject
+    { //this object is received from the semplest CC API service calls
+        public String xmlReturn = null;
+        public Boolean isGood;
+        public Boolean isError;
+        public Boolean isQuickResponse;
+        public Boolean isApproved;
+        public Boolean isDeclined;
+        public String AuthCode;
+        public String TxRefNum;
+        public String ResponseCode;
+        public String Status;
+        public String Message;
+        public String AVSCode;
+        public String CVV2ResponseCode;
+        //New Order
+        public String OrderID = null;
+        public String amountRequestedNoDecimal = null;
+        public String amountRedeemedNoDecimal = null;
+        public String remainingBalanceNoDecimal = null;
+        //Profile
+        public String CustomerRefNum = null;
     }
 
     public class KeywordIdRemoveOppositePair
