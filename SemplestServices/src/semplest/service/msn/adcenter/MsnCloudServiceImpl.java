@@ -249,11 +249,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	@Override
 	public MsnManagementIds createAccount(SemplestString name) throws MsnCloudException
 	{
-		logger.info("Will try to create MSN customer using name [" + name + "]");
-		Customer customer = aNew().adCenterCustomer().withCustomerName(name.getSemplestString()).build();
-		final String legalLengthName = SemplestUtils.getLegalUserName(name.getSemplestString());
-		User user = aNew().adCenterUser().withUserName(legalLengthName).build();
-		Account account = aNew().adCenterAccount().withAccountName(name.getSemplestString()).build();
+		final String legalName = name.getSemplestString();
+		logger.info("Will try to create MSN customer using name [" + legalName + "]");
+		Customer customer = aNew().adCenterCustomer().withCustomerName(legalName).build();
+		User user = aNew().adCenterUser().withUserName(legalName).build();
+		Account account = aNew().adCenterAccount().withAccountName(legalName).build();
 		try
 		{
 			final ICustomerManagementService customerManagementService = getCustomerManagementService();

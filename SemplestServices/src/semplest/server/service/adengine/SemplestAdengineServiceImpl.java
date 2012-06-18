@@ -757,9 +757,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
 		{
 			// assume US dollars US timezone
-			SemplestString company = new SemplestString();
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			company.setSemplestString(companyName + "_Semplest");
+			final String legalUserName = SemplestUtils.getLegalUserName("pqwyuddd_" + companyName + "_Semplest");
+			SemplestString company = new SemplestString();
+			company.setSemplestString(legalUserName);
 			MsnManagementIds id = msn.createAccount(company);
 			return id.getCustomerId();
 		}
