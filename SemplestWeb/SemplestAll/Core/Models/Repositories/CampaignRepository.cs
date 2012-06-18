@@ -514,8 +514,8 @@ namespace Semplest.Core.Models.Repositories
             SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
             AddGeoTargetingToPromotion(updatePromotion, model, customerFk);
             AddSiteLinksToPromotion(updatePromotion, model, customerFk);
-            SaveNegativeKeywords(updatePromotion, model, dbcontext);
             AddPromotionAdsToPromotion(updatePromotion, model, customerFk);
+            SaveNegativeKeywords(updatePromotion, model, dbcontext);
             dbcontext.SaveChanges();
         }
 
