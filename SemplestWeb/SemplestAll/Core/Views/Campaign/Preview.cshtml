@@ -94,10 +94,12 @@
                         </div>
                         <div class="right1" style="width: 300px; overflow: hidden">
                             @{
+                                var idx = 0;
                                 foreach (var ad in @Model.AdModelProp.Ads)
-                                {   
+                                {
+                                    idx += 1;
                                 <h3 style="padding: 5px 0; font-weight: normal; border-bottom: 1px solid #999; width: 50%;">
-                                    Ad 1# Preview
+                                    Ad #@idx.ToString() Preview
                                 </h3>
                                 <ul style="width: 100%; float: left; margin: 0;">
                                     <li style="list-style: none; padding: 5px 0;"><a target="__blank" style="font-weight: bold;
