@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -12,12 +13,24 @@ import semplest.server.protocol.KeywordIdRemoveOppositePair;
 
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.adcenter.api.customermanagement.Entities.Account;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountFinancialStatus;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountLifeCycleStatus;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountType;
+import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
+import com.microsoft.adcenter.api.customermanagement.Entities.CurrencyType;
 import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
 import com.microsoft.adcenter.api.customermanagement.Entities.CustomerFinancialStatus;
 import com.microsoft.adcenter.api.customermanagement.Entities.CustomerLifeCycleStatus;
 import com.microsoft.adcenter.api.customermanagement.Entities.Industry;
+import com.microsoft.adcenter.api.customermanagement.Entities.LCID;
+import com.microsoft.adcenter.api.customermanagement.Entities.LanguageType;
+import com.microsoft.adcenter.api.customermanagement.Entities.PaymentMethodType;
+import com.microsoft.adcenter.api.customermanagement.Entities.PersonName;
+import com.microsoft.adcenter.api.customermanagement.Entities.SecretQuestion;
 import com.microsoft.adcenter.api.customermanagement.Entities.ServiceLevel;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
+import com.microsoft.adcenter.api.customermanagement.Entities.UserLifeCycleStatus;
 
 public final class SemplestUtils
 {
@@ -98,18 +111,46 @@ public final class SemplestUtils
 	    return result.toString();
 	}
 	
+	public static final String getMsnAccountString(final Account account)
+	{
+		final AccountFinancialStatus accountFinancialStatus = account.getAccountFinancialStatus();
+		final AccountLifeCycleStatus accountLifeCycleStatus = account.getAccountLifeCycleStatus();
+		final AccountType accountType = account.getAccountType();
+		final Long billToCustomerId = account.getBillToCustomerId();
+		final String countryCode = account.getCountryCode();
+		final CurrencyType currencyType = account.getCurrencyType();
+		final Long id = account.getId();
+		final LanguageType languageType = account.getLanguage();
+		final Long lastModifiedByUserId = account.getLastModifiedByUserId();
+		final Calendar lastModifiedTime = account.getLastModifiedTime();
+		final String name = account.getName();
+		final String number = account.getNumber();
+		final Long parentCustomerId = account.getParentCustomerId();
+		final Long paymentMethodId = account.getPaymentMethodId();
+		final PaymentMethodType paymentMethodType = account.getPaymentMethodType();
+		final Long primaryUserId = account.getPrimaryUserId();
+		return "Account[id=" + id + ",accountFinancialStatus=" + accountFinancialStatus + ",accountLifeCycleStatus=" + accountLifeCycleStatus + ",accountType=" + accountType + ",billToCustomerId=" + billToCustomerId + 
+				",countryCode=" + countryCode + ",currencyType=" + currencyType + ",languageType=" + languageType + ",lastModifiedByUserId=" + lastModifiedByUserId + ",lastModifiedTime=" + lastModifiedTime + 
+				",name=" + name + ",number=" + number + ",parentCustomerId=" + parentCustomerId + ",paymentMethodId=" + paymentMethodId + ",paymentMethodType=" + paymentMethodType + ",primaryUserId=" + primaryUserId +"]";
+	}
+	
+	
 	public static final String getMsnUserString(final User user)
 	{
-		user.get
-		final Long id = customer.getId();
-		final String marketCountry= customer.getMarketCountry();
-		final CustomerFinancialStatus customerFinancialStatus = customer.getCustomerFinancialStatus();
-		final CustomerLifeCycleStatus customerLifeCycleStatus = customer.getCustomerLifeCycleStatus();
-		final Industry industry = customer.getIndustry();
-		final String name = customer.getName();
-		final String number = customer.getNumber();
-		final ServiceLevel serviceLevel = customer.getServiceLevel();
-		return "Customer[id=" + id + ",marketCountry=" + marketCountry + ",customerFinancialStatus=" + customerFinancialStatus + ",customerLifeCycleStatus=" + customerLifeCycleStatus + ",industry=" + industry + ",name=" + name + ",number=" + number + ",serviceLevel=" + serviceLevel +"]";
+		final ApplicationType applicationType = user.getCustomerAppScope();
+		final Long id = user.getId();
+		final String jobTitle = user.getJobTitle();
+		final LCID lcid = user.getLcid();
+		final PersonName personName = user.getName();
+		final String firstName = personName.getFirstName();
+		final String middleName = personName.getMiddleInitial();
+		final String lastName = personName.getLastName();
+		final String password = user.getPassword();
+		final String secretQuestion = user.getSecretQuestion().getValue();
+		final String secretAnswer = user.getSecretAnswer();		
+		final UserLifeCycleStatus userLifeCycleStatus = user.getUserLifeCycleStatus();
+		final String userName = user.getUserName();
+		return "User[id=" + id + ",applicationType=" + applicationType + ",jobTitle=" + jobTitle + ",lcid=" + lcid + ",firstName=" + firstName + ",middleName=" + middleName + ",lastName=" + lastName + ",password=" + password + ",secretQuestion=" + secretQuestion + ",secretAnswer=" + secretAnswer + ",userLifeCycleStatus=" + userLifeCycleStatus + ",userName=" + userName +"]";
 	}
 	
 	public static final String getMsnCustomerString(final Customer customer)

@@ -109,9 +109,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		 */
 // Will try to create campaign with AccountID [7079395], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
 		
-		//final Long accountId = 7079395L;
-		final Long accountId = 1629687L;
-		final String campaignName = "Used Golf Clubsqwqwq";
+		final Long accountId = 5079787L;
+		//final Long accountId = 1629687L;
+		final String campaignName = "Used Golf Clubsqwqwqq";
 		final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 		final double dailyBudget = 259.25925925925924d;
 		final double monthlyBudget = 10.0;
@@ -257,8 +257,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		try
 		{
 			final ICustomerManagementService customerManagementService = getCustomerManagementService();
-			final SignupCustomerRequest request = new SignupCustomerRequest(customer, user, account, adCenterCredentials.getParentCustomerID(), ApplicationType.Advertiser);
-			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);
+			final long parentCustomerId = adCenterCredentials.getParentCustomerID();
+			final ApplicationType applicationType = ApplicationType.Advertiser;
+			final SignupCustomerRequest request = new SignupCustomerRequest(customer, user, account, parentCustomerId, applicationType);
+			logger.info("Will try to create MSN account using Customer [" + SemplestUtils.getMsnCustomerString(customer) + "], User [" + SemplestUtils.getMsnUserString(user) + "], Account [" + SemplestUtils.getMsnAccountString(account) + "], ParentCustomerID [" + parentCustomerId + "], ApplicationType [" + applicationType + "]");
+			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);			
 			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),(long) signupCustomerResponse.getUserId());
 		}
 		catch (AdApiFaultDetail e)
@@ -419,15 +422,23 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	public Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus campaignStatus)
 			throws MsnCloudException
 	{
-		// AdEngine: Will try to create campaign with AccountID [7079395], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
-		// MSN:      Will try to create campaign with AccountID [1629687], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
+		/*
+		 	Via AdEngine
+		 		 					  Will try to create campaign with AccountID [5079787], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [291.66666666666663], MonthlyBudget [10.0], CampaignStatus [Active]
+				 					  ApplicationToken [], DeveloperToken [6LTW1JCMEKIUX3], UserName [API_SEMplest], Password [1s3mpl3st], CustomerAccountID [5079787]
+			Via MSN directly
+				 					  Will try to create campaign with AccountID [5079787], CampaignName [Used Golf Clubsqwqwqq], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
+									  ApplicationToken [], DeveloperToken [6LTW1JCMEKIUX3], UserName [API_SEMplest], Password [1s3mpl3st], CustomerAccountID [5079787]				
+		 */
+
 		logger.info("Will try to create campaign with AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]");
 		try
 		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 			Campaign newCampaign = aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 			AddCampaignsResponse addCampaigns;
-			Campaign[] campaign = new Campaign[1]; campaign[0] = newCampaign;
+			Campaign[] campaign = new Campaign[1]; 
+			campaign[0] = newCampaign;
 			final AddCampaignsRequest addCampaignsRequest = new AddCampaignsRequest((long) accountId, campaign);
 			addCampaigns = campaignManagement.addCampaigns(addCampaignsRequest);
 			return addCampaigns.getCampaignIds()[0];

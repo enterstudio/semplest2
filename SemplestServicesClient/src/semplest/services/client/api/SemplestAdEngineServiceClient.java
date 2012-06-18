@@ -113,13 +113,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Double changeInBudget_UpdateBudget = -5.25;
 		final List<String> adEngines_UpdateBudget = Arrays.asList(AdEngine.Google.name());
 		client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget, adEngines_UpdateBudget);
-*/
+
 		// schedulePausePromotion
 		final Integer customerID_schedulePausePromotion = 12;
 		final Integer promotionID_schedulePausePromotion = 62;
 		final List<String> adEngines_schedulePausePromotion = Arrays.asList(AdEngine.Google.name());
 		client.schedulePausePromotion(customerID_schedulePausePromotion, promotionID_schedulePausePromotion, adEngines_schedulePausePromotion);
-		/*
+
 		// schedulePausePromotion
 		final Integer promotionID_PausePromotion = 62;
 		final List<String> adEngines_PausePromotion = Arrays.asList(AdEngine.Google.name());
@@ -236,7 +236,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_DeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		final List<Integer> keywordIds_DeleteNegativeKeywords = Arrays.asList(12241, 12242);
 		client.DeleteNegativeKeywords(promotionID_DeleteNegativeKeywords, keywordIds_DeleteNegativeKeywords, adEngines_DeleteNegativeKeywords);
-
+*/	
 		// scheduleAddPromotionToAdEngine - MSN
 		final Integer customerID_scheduleAddPromotionToAdEngineMSN = 12;
 		final Integer productGroupID_scheduleAddPromotionToAdEngineMSN = 76;
@@ -250,7 +250,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
-*/			
+		
 	}
 	
 	@Override

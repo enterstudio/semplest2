@@ -23,4 +23,10 @@ public class SemplestString {
 		return ret;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "SemplestString [semplestString=" + semplestString + "]";
+	}
+	
 }
