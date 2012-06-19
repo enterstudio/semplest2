@@ -21,6 +21,8 @@ namespace Semplest.Core.Controllers
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
             SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
+            IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+            ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
             ReportIndexModel rim = new ReportIndexModel();
             rim.AdvertisingEngines = dbContext.AdvertisingEngines;
             rim.ProductGroups = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK).First().User.Customer.ProductGroups;

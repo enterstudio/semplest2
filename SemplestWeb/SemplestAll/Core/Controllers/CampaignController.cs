@@ -659,6 +659,10 @@ namespace Semplest.Core.Controllers
 
         public ActionResult Billing()
         {
+            Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
+            var dbContext = new SemplestModel.Semplest();
+            IQueryable<Credential> cCred = dbContext.Credentials.Where(x => x.UsersFK == cred.UsersFK);
+            ViewBag.Title = cCred.First().User.FirstName + " " + cCred.First().User.LastName + " - " + cCred.First().User.Customer.Name;
             return View(new BillingModel());
         }
         public ActionResult Billing_Read([DataSourceRequest] DataSourceRequest request)

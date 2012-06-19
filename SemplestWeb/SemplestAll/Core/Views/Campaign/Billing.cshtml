@@ -1,11 +1,9 @@
 ﻿@using Kendo.Mvc.UI
 @using Semplest.Core.Models
 @model BillingModel
-@{
-    ViewBag.Title = "Billing";
-}
+
 @section Title{
-    Billing
+   Billing (@ViewBag.Title)
 }
 @(Html.Kendo().Grid<BillingModel>()    
     .Name("Grid")
