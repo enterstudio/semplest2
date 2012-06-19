@@ -13,27 +13,33 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.PrintStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Set;
 
 import semplest.server.protocol.adengine.ReportObject;
 
 public class ReportUtils {
 	
 	public static void saveSerializedObject(Object obj, String filename) throws IOException{
+		//Save any serializable object into a file
 		ObjectOutput out = new ObjectOutputStream(new FileOutputStream(filename));
 	    out.writeObject(obj);
 	    out.close();
 	}
 	
 	public static Object loadSerializedObject(String filename) throws IOException, ClassNotFoundException{
+		//Loads any serialized object that was saved into a file
 		ObjectInput in = new ObjectInputStream(new FileInputStream(filename));
 		Object obj = in.readObject();
 	    in.close();
 	    return obj;
 	}
 	
-	public static HashMap<String, ArrayList<ReportObject>> compareDataGoogleMsn(ReportObject[] reports, String matchType){
+	public static HashMap<String, ArrayList<ReportObject>> groupReportPerMatchType(ReportObject[] reports, String matchType){
 		//Groups the report objects per keywords of a particular match Type
 		HashMap<String, ArrayList<ReportObject>> hashMap =  new HashMap<String, ArrayList<ReportObject>>();
 		for(ReportObject rep : reports){
@@ -50,7 +56,46 @@ public class ReportUtils {
 		
 		return hashMap;
 	}
+	
+	public static HashMap<String, ArrayList<ReportObject>> groupReportPerDate(ReportObject[] reports){
+		//Groups the report objects per dateGenerated
+		HashMap<String, ArrayList<ReportObject>> hashMap =  new HashMap<String, ArrayList<ReportObject>>();
+		for(ReportObject rep : reports){
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			String date = df.format(rep.getCreatedDate());
+			if(hashMap.containsKey(date)){
+				hashMap.get(date).add(rep);
+			}else{
+				ArrayList<ReportObject> newArray = new ArrayList<ReportObject>();
+				newArray.add(rep);
+				hashMap.put(date, newArray);
+			}
+			
+		}
+		
+		return hashMap;
+	}
+	
+	public static HashMap<String,HashMap<String, ArrayList<ReportObject>>> groupReportPerDateAndKeyword(
+			HashMap<String, ArrayList<ReportObject>> mapReportDaily, String matchType){
+		//Takes in reports aggregated by date and it aggregates them by date and keyword
+		HashMap<String,HashMap<String, ArrayList<ReportObject>>> mapReportDailybyKw = 
+				new HashMap<String,HashMap<String, ArrayList<ReportObject>>>();
+		
+		Set<String> dates = mapReportDaily.keySet();
+		for(String date : dates){
+			ArrayList<ReportObject> repsList = mapReportDaily.get(date);
+			ReportObject[] reps = repsList.toArray(new ReportObject[repsList.size()]);
+			mapReportDailybyKw.put(date, groupReportPerMatchType(reps, matchType));
+		}
+		
+		return mapReportDailybyKw;
+	}
+	
+	
+	
 	public static ArrayList<Double> createbids(double start, double end, double step){
+		//creates an array of bid values specified withing the start-end interval with a specific 'step'
 		ArrayList<Double> bids = new ArrayList<Double>();
 		Double bid = start;
 		
@@ -62,6 +107,7 @@ public class ReportUtils {
 	}
 	
 	public static void saveArrayListString(ArrayList<String> reportLines, String filePath) throws FileNotFoundException{
+		//Save an ArrayList<String> into a file with a line per String
 		PrintStream ps = new PrintStream(new FileOutputStream(new File(filePath)));
 		for(String line : reportLines){
 			ps.println(line);
@@ -69,6 +115,7 @@ public class ReportUtils {
 	}
 	
 	public static void combineFPCPCReports(String inReportPath1, String inReportPath2, String outReportPath) throws IOException{
+		//Combines two FPCPCReports adding information for all keywords
 		ArrayList<String> report1 = ReportUtils.readFile(inReportPath1);
 		ArrayList<String> report2 = ReportUtils.readFile(inReportPath2);
 		ArrayList<String> longestReport;
@@ -111,6 +158,7 @@ public class ReportUtils {
 	}
 	
 	public static ArrayList<ArrayList<String>> trimArrayToMaxLength(ArrayList<String> arrayList, int maxLength){
+		//Trims array lenght to the lenght specified
 		ArrayList<ArrayList<String>> trimArray = new ArrayList<ArrayList<String>>();
 		int indexStart = 0;
 		int indexEnd = maxLength-1;
@@ -127,6 +175,7 @@ public class ReportUtils {
 	}
 	
 	public static ArrayList<String> readFile(String path) throws IOException{
+		//Returns the content of a file as an ArrayList<String> with one element per line
 		ArrayList<String> lines = new ArrayList<String>();
 		ArrayList<String> relevantLines = new ArrayList<String>();
 		FileInputStream fstream = new FileInputStream(path);
@@ -141,6 +190,7 @@ public class ReportUtils {
 	}
 	
 	public static void saveReportDataCSV(ReportObject[] reps, String filePath) throws FileNotFoundException{
+		//takes a report object and save the numerical data into a .csv file
 		PrintStream psData = new PrintStream(new FileOutputStream(new File(filePath+".dat")));
 		PrintStream psKw = new PrintStream(new FileOutputStream(new File(filePath+".kw")));
 		PrintStream psCol = new PrintStream(new FileOutputStream(new File(filePath+".col")));
