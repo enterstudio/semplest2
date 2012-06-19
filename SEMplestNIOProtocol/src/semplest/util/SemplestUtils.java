@@ -31,6 +31,9 @@ import com.microsoft.adcenter.api.customermanagement.Entities.SecretQuestion;
 import com.microsoft.adcenter.api.customermanagement.Entities.ServiceLevel;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Entities.UserLifeCycleStatus;
+import com.microsoft.adcenter.v8.BudgetLimitType;
+import com.microsoft.adcenter.v8.Campaign;
+import com.microsoft.adcenter.v8.CampaignStatus;
 
 public final class SemplestUtils
 {
@@ -109,6 +112,22 @@ public final class SemplestUtils
 	    	}
 	    }
 	    return result.toString();
+	}
+	
+	public static final String getMsnCampaignString(final Campaign campaign)
+	{
+		final BudgetLimitType budgetType = campaign.getBudgetType();
+		final Boolean conversionTrackingEnabled = campaign.getConversionTrackingEnabled();
+		final Double dailyBudget = campaign.getDailyBudget();
+		final Boolean daylightSaving = campaign.getDaylightSaving();
+		final String description = campaign.getDescription();
+		final Long campaignId = campaign.getId();
+		final Double monthlyBudget = campaign.getMonthlyBudget();
+		final String name = campaign.getName();
+		final CampaignStatus campaignStatus = campaign.getStatus();
+		final String timeZone = campaign.getTimeZone();
+		return "Campaign[budgetType [" + budgetType + "], conversionTrackingEnabled [" + conversionTrackingEnabled + "], dailyBudget [" + dailyBudget + "], daylightSaving [" + daylightSaving + "], " +
+				"description [" + description + "], campaignId [" + campaignId + "], monthlyBudget [" + monthlyBudget + "], name [" + name + "], campaignStatus [" + campaignStatus + "], timeZone [" + timeZone + "]]";
 	}
 	
 	public static final String getMsnAccountString(final Account account)

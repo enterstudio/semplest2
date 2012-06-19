@@ -68,6 +68,7 @@ import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
+import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.CampaignStatus;
 
@@ -255,7 +256,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 				//Keywords
 				final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true : false, (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false);
-				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, KeywordMatchType.fromString(SemplestMatchType.getSearchEngineMatchType(adEngineInitialData.getSemplestMatchType(), advertisingEngine)), null);
+				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+				
+				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
 				//Set initial bidding
 				final BudgetObject budgetData = new BudgetObject();
 				budgetData.setRemainingBudgetInCycle(budget);
@@ -503,24 +506,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return true;
 	}
 
-	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine, List<KeywordProbabilityObject> keywordList, KeywordMatchType matchType, Long microBidAmount) throws Exception
+	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount) throws Exception
 	{
+		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount [" + microBidAmount + "], " + keywordList.size() + " Keywords [" + keywordList + "]");
 		int TEST = 0;
 		AddBidSP addKeywordBidSP = new AddBidSP();
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
+			final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
+			final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
 			// assume US dollars US timezone
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			int counter = 0;
 			for (KeywordProbabilityObject keywordObj : keywordList)
 			{
 				KeywordDataObject keywordDataObj = null;
 				if (keywordObj.getIsNegative())
 				{					
-					keywordDataObj = google.addNegativeKeyWordToAdGroup(accountID, campaignID, keywordObj.getKeyword(), matchType);
+					keywordDataObj = google.addNegativeKeyWordToAdGroup(accountID, campaignID, keywordObj.getKeyword(), keywordMatchType);
 				}
 				else
 				{					
-					keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), matchType, microBidAmount);
+					keywordDataObj = google.addKeyWordToAdGroup(accountID, adGroupID, keywordObj.getKeyword(), keywordMatchType, microBidAmount);
 				}
 
 				// Store result in DB including AdEngine KeywordID
@@ -528,14 +535,51 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// Integer MicroBidAmount, String BidType, String
 				// AdvertisingEngine, Boolean IsNegative
 				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
-				logger.info("Add Keyword " + keywordDataObj.getKeyword() + " to " + promotionID.toString());
+				logger.info(++counter + ": added Google Keyword [" + keywordDataObj.getKeyword() + "] to Promotion for ID [" + promotionID + "]");
 				Thread.sleep(500); // Wait for google
 				//*****TEST
 				//TEST++;
 				//if (TEST > 15) return;
 			}
 		}
-
+		else if (AdEngine.MSN.name().equals(adEngine))
+		{
+			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			final Long accId = Long.valueOf(accountID);
+			int counter = 0;
+			for (final KeywordProbabilityObject keyword : keywordList)
+			{
+				final String keywordText = keyword.getKeyword();
+				final Bid bid = new Bid();
+				final Double bidAmount = microBidAmount == null ? null : 1.0 * microBidAmount;
+				bid.setAmount(bidAmount);
+				final long msnKeywordId;
+				final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.valueOf(semplestMatchType);
+				if (semplestMatchTypeEnum == SemplestMatchType.Broad)
+				{
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, null, null, null);	
+				}
+				else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
+				{
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, null, null, bid, null);
+				}
+				else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
+				{
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, null, null, null, bid);
+				}
+				else
+				{
+					throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
+				}
+				final Double microBidAmountForDB = microBidAmount == null ? 0.0 : microBidAmount;
+				addKeywordBidSP.execute(promotionID, msnKeywordId, keywordText, microBidAmountForDB, semplestMatchType, adEngine, false);
+				logger.info(++counter + ": added MSN Keyword [" + keywordText + "] to Promotion for ID [" + promotionID + "]");
+			}			
+		}
+		else
+		{
+			throw new Exception("AdEngine specified [" + adEngine + "] is not valid for Adding Keywords to AdGroup (at least not yet)");
+		}	
 	}
 
 	private HashMap<String, HashMap<String, Object>> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList,
@@ -713,9 +757,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	}
 
-	/*
-	 * 
-	 */
 	private Long calculateDailyMicroBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
 	{
 		Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
@@ -758,11 +799,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			// assume US dollars US timezone
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			final String legalUserName = SemplestUtils.getLegalUserName("pqwyuddd_" + companyName + "_Semplest");
+			//final String legalUserName = SemplestUtils.getLegalUserName(companyName + "_Semplest");
+			
+			// TODO: remove the prefix after testing
+			//final String userName = System.currentTimeMillis() + companyName + "_Semplest";
+			final String userName = companyName + "_Semplest";
 			SemplestString company = new SemplestString();
-			company.setSemplestString(legalUserName);
+			company.setSemplestString(userName);
 			MsnManagementIds id = msn.createAccount(company);
-			return id.getCustomerId();
+			return id.getAccountId();
 		}
 		else
 		{
@@ -1466,9 +1511,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long campaignID = adEngineData.getCampaignID();				
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
-				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
-				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, keywordMatchType, null);										
+				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null);										
 			}
 			else if (AdEngine.MSN.name().equals(adEngine))
 			{
@@ -1552,6 +1595,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 		}
 		return updateRequestNewIdToRowCountMapWithBadRows;
+	}
+	
+	public Map<Integer, Integer> getDeletedAdMappingRowCountMapWithBadRowCounts(final Map<Integer, Integer> deletedAdMappingRowCountMap)
+	{
+		final Map<Integer, Integer> idPaidRowCountMapWithBadRowCounts = new HashMap<Integer, Integer>();
+		final Set<Entry<Integer, Integer>> entrySet = deletedAdMappingRowCountMap.entrySet();
+		for (final Entry<Integer, Integer> entry : entrySet)
+		{
+			final Integer rowCount = entry.getValue();
+			if (rowCount != 1)
+			{
+				final Integer deletedAdId = entry.getKey();
+				idPaidRowCountMapWithBadRowCounts.put(deletedAdId, rowCount);
+			}
+		}
+		return idPaidRowCountMapWithBadRowCounts;
 	}
 	
 	public Map<Long, Integer> getDeletedAdIdRowCountMapWithBadRowCounts(final Map<Long, Integer> deletedAdIdRowCountMap)
@@ -1790,18 +1849,24 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID adEngineData = promotionAdEngineDataMap.get(adEngine);				
 				final String accountID = "" + adEngineData.getAccountID();
 				final Long adGroupID = adEngineData.getAdGroupID();				
-				final List<Long> deletedAdIds = googleAdwordsService.deleteAds(accountID, adGroupID, adIds);
-				final int numDeletedAds = deletedAdIds.size();
+				final List<Long> deletedGoogleAdIds = googleAdwordsService.deleteAds(accountID, adGroupID, adIds);
+				final int numDeletedAds = deletedGoogleAdIds.size();
 				if (numAdsToDelete != numDeletedAds)
 				{
 					logger.warn("# of ads we expected to delete [" + numAdsToDelete+ "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "] in Google");
 				}
-				final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedAdIds);				
+				final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedGoogleAdIds);				
 				final Map<Long, Integer> deletedAdIdRowCountMapWithBadRowCounts = getDeletedAdIdRowCountMapWithBadRowCounts(deletedAdIdRowCountMap);
 				if (!deletedAdIdRowCountMapWithBadRowCounts.isEmpty())
 				{						
 					logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
-				}										
+				}		
+				final Map<Integer, Integer> deletedAdMappingRowCountMap = SemplestDB.deleteAdIDForAdGroupBulk(promotionAdIds, adEngine);
+				final Map<Integer, Integer> deletedAdMappingRowCountMapWithBadRowCounts = getDeletedAdMappingRowCountMapWithBadRowCounts(deletedAdMappingRowCountMap);
+				if (!deletedAdMappingRowCountMapWithBadRowCounts.isEmpty())
+				{						
+					logger.warn("Problems deleting these Google<->Semplest Ad ID mappings because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdMappingRowCountMapWithBadRowCounts));
+				}		
 			}
 			else if (AdEngine.MSN.name().equals(adEngine))
 			{
@@ -1812,8 +1877,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long adGroupId = adEngineData.getAdGroupID();
 				for (final AdsObject ad : nonDeletedAdsForPromotionAdIds)
 				{
-					final Long msnAdID = ad.getAdEngineAdID();
+					final Long msnAdID = ad.getAdEngineAdID();					
 					msn.deleteAdById(accountId, adGroupId, msnAdID);
+					final Integer promotionAdsPK = ad.getPromotionAdsPK();					
+					final Integer rowCountMarkPromotionAdDeleted = SemplestDB.markPromotionAdDeleted(new java.util.Date(), msnAdID);
+					if (rowCountMarkPromotionAdDeleted != 1)
+					{
+						logger.warn("Rowcount returned from db when marking Semplest Ad as IsDeleted for MsnAdId [" + msnAdID + "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountMarkPromotionAdDeleted);
+					}
+					final Integer rowCountDeleteMapping = SemplestDB.deleteAdIDForAdGroup(msnAdID, adEngine, promotionAdsPK);
+					if (rowCountDeleteMapping != 1)
+					{
+						logger.warn("Rowcount returned from db when deleting MSN<->Semplest Ad ID mapping for MsnAdId [" + msnAdID + "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountDeleteMapping);
+					}
 				}
 			}
 			else

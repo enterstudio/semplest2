@@ -80,4 +80,11 @@ public class AdCenterCredentialsSandbox implements AdCenterCredentials {
 	public String getReportingNamespace() {
 		throw new Defect("Unused in Sandbox");
 	}
+
+	@Override
+	public String toString()
+	{
+		return "AdCenterCredentialsSandbox [apiUserName=" + apiUserName + ", apiUserPassword=" + apiUserPassword + ", userAccessKey=" + userAccessKey + "]";
+	}
+	
 }

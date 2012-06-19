@@ -85,4 +85,11 @@ public class AdCenterCredentialsProduction implements AdCenterCredentials {
 	public String getReportingNamespace() {
 		return REPORTING_NAMESPACE;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "AdCenterCredentialsProduction [apiUserName=" + apiUserName + ", apiUserPassword=" + apiUserPassword + ", userAccessKey=" + userAccessKey + "]";
+	}
+	
 }

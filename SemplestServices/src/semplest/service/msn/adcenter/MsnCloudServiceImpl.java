@@ -109,9 +109,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		 */
 // Will try to create campaign with AccountID [7079395], CampaignName [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
 		
-		final Long accountId = 5079787L;
+		final Long accountId = 5079839L;
 		//final Long accountId = 1629687L;
-		final String campaignName = "Used Golf Clubsqwqwqq";
+		final String campaignName = "1223_Used Golf Clubs";
 		final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 		final double dailyBudget = 259.25925925925924d;
 		final double monthlyBudget = 10.0;
@@ -249,7 +249,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	@Override
 	public MsnManagementIds createAccount(SemplestString name) throws MsnCloudException
 	{
-		final String legalName = name.getSemplestString();
+		final String legalName = SemplestUtils.getLegalUserName(name.getSemplestString());
 		logger.info("Will try to create MSN customer using name [" + legalName + "]");
 		Customer customer = aNew().adCenterCustomer().withCustomerName(legalName).build();
 		User user = aNew().adCenterUser().withUserName(legalName).build();
@@ -266,7 +266,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating account for MSN", e);
 		}
 		catch (ApiFault e)
 		{
@@ -275,7 +275,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException("Problem creating MSN account for Name [" + name + "]", e);
+			throw new MsnCloudException("Problem creating MSN account for Name [" + legalName + "]", e);
 		}
 	}
 	
@@ -439,7 +439,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			AddCampaignsResponse addCampaigns;
 			Campaign[] campaign = new Campaign[1]; 
 			campaign[0] = newCampaign;
-			final AddCampaignsRequest addCampaignsRequest = new AddCampaignsRequest((long) accountId, campaign);
+			final AddCampaignsRequest addCampaignsRequest = new AddCampaignsRequest((long) accountId, campaign);						
+			logger.info("About to create Campaign in MSN for AccountID [" + addCampaignsRequest.getAccountId() + "], Campaign [" + SemplestUtils.getMsnCampaignString(newCampaign) + "]");			
 			addCampaigns = campaignManagement.addCampaigns(addCampaignsRequest);
 			return addCampaigns.getCampaignIds()[0];
 		}
@@ -3060,11 +3061,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	{
 		try
 		{
-			String namespace = adCenterCredentials.getCustomerManagementNamespace();
+			String namespace = adCenterCredentials.getCustomerManagementNamespace();			
 			CustomerManagementServiceLocator customerManagementServiceLocator = new CustomerManagementServiceLocator();
-			customerManagementServiceLocator.setBasicHttpBinding_ICustomerManagementServiceEndpointAddress(adCenterCredentials
-					.getCustomerManagementUrl());
-
+			final String customerManagementUrl = adCenterCredentials.getCustomerManagementUrl();			
+			customerManagementServiceLocator.setBasicHttpBinding_ICustomerManagementServiceEndpointAddress(customerManagementUrl);
 			ICustomerManagementService customerManagementService = customerManagementServiceLocator.getBasicHttpBinding_ICustomerManagementService();
 			BasicHttpBinding_ICustomerManagementServiceStub stub = (BasicHttpBinding_ICustomerManagementServiceStub) customerManagementService;
 			stub.setTimeout(timeoutMillis);
@@ -3072,12 +3072,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			stub.setHeader(namespace, "DeveloperToken", adCenterCredentials.getDeveloperToken());
 			stub.setHeader(namespace, "UserName", adCenterCredentials.getUserName());
 			stub.setHeader(namespace, "Password", adCenterCredentials.getPassword());
-
+			logger.info("CustomerManagementService namespace [" + namespace + "], URL [" + customerManagementUrl + "], Credentials [" + adCenterCredentials + "]");
 			return customerManagementService;
 		}
 		catch (ServiceException e)
 		{
-			throw new RuntimeException(e);
+			throw new RuntimeException("Problem creating CustomerManagementService", e);
 		}
 	}
 

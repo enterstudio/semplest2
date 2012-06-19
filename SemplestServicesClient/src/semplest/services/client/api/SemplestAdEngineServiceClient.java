@@ -236,21 +236,21 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<String> adEngines_DeleteNegativeKeywords = Arrays.asList(AdEngine.Google.name());
 		final List<Integer> keywordIds_DeleteNegativeKeywords = Arrays.asList(12241, 12242);
 		client.DeleteNegativeKeywords(promotionID_DeleteNegativeKeywords, keywordIds_DeleteNegativeKeywords, adEngines_DeleteNegativeKeywords);
-*/	
+
 		// scheduleAddPromotionToAdEngine - MSN
 		final Integer customerID_scheduleAddPromotionToAdEngineMSN = 12;
 		final Integer productGroupID_scheduleAddPromotionToAdEngineMSN = 76;
 		final Integer promotionID_scheduleAddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_scheduleAddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.MSN.name()}));
 		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngineMSN, productGroupID_scheduleAddPromotionToAdEngineMSN, promotionID_scheduleAddPromotionToAdEngineMSN, adEngines_scheduleAddPromotionToAdEngineMSN);
-
+*/
 		// AddPromotionToAdEngine - MSN
 		final Integer customerID_AddPromotionToAdEngineMSN = 12;
 		final Integer productGroupID_AddPromotionToAdEngineMSN = 76;
 		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
-		
+/**/		
 	}
 	
 	@Override

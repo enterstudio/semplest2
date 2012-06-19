@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -71,7 +70,14 @@ public class SemplestDB extends BaseDB
 														     "where	  aea.PromotionAdsFK = ? " + 
 														       "and   aea.AdvertisingEngineAdPK = ? " + 
 														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-														  	   "and   e.AdvertisingEngine = ?";
+														  	   "and   e.AdvertisingEngine = ?";										
+	
+	public static final String SQL_DELETE_AD_ENGINE_AD_ID = "delete   AdvertisingEngineAds " + 	  	
+														      "from	  AdvertisingEngineAds aea, " +  
+														  		     "AdvertisingEngine e " + 
+														     "where	  aea.PromotionAdsFK = ? " +  
+														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
+														  	   "and   e.AdvertisingEngine = ?";										
 	/*
 	 * Configuration
 	 */
@@ -904,6 +910,18 @@ public class SemplestDB extends BaseDB
 	{		
 		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
 	}
+		
+	public static Map<Integer, Integer> getDeletedAdMappingCountMap(final List<Integer> deletedAdIds, int[] rowCounts)
+	{
+		final Map<Integer, Integer> deletedAdIdRowCountMap = new HashMap<Integer, Integer>();
+		for (int i = 0; i < rowCounts.length; ++i)
+		{
+			final int rowCount = rowCounts[i];
+			final Integer deletedAdId = deletedAdIds.get(i);
+			deletedAdIdRowCountMap.put(deletedAdId, rowCount);
+		}
+		return deletedAdIdRowCountMap;
+	}
 	
 	public static Map<Long, Integer> getDeletedAdIdRowCountMap(final List<Long> deletedAdIds, int[] rowCounts)
 	{
@@ -991,27 +1009,39 @@ public class SemplestDB extends BaseDB
 	
 	public static Integer updateAdIDForAdGroup(Long newAdvertisingEngineAdPK, Long oldAdvertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		final String strSQL = "update   AdvertisingEngineAds " + 	
-								 "set	AdvertisingEngineAdPK = ? " +  	
-							    "from	AdvertisingEngineAds aea, " +  
-							  		   "AdvertisingEngine e " + 
-							   "where	aea.PromotionAdsFK = ? " + 
-							     "and 	aea.AdvertisingEngineAdPK = ? " + 
-							  	 "and	aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-							  	 "and 	e.AdvertisingEngine = ?";
-		return jdbcTemplate.update(strSQL, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
+		return jdbcTemplate.update(SQL_UPDATE_AD_ENGINE_AD_ID, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
 	}
 	
 	public static Integer deleteAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		final String strSQL = "delete  	AdvertisingEngineAds " + 	
-							    "from	AdvertisingEngineAds aea, " +  
-							  		   "AdvertisingEngine e " + 
-							   "where	aea.PromotionAdsFK = ? " + 
-							     "and 	aea.AdvertisingEngineAdPK = ? " + 
-							  	 "and	aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-							  	 "and 	e.AdvertisingEngine = ?";
-		return jdbcTemplate.update(strSQL, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
+		
+		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
+	}	
+	
+	
+	public static Integer markPromotionAdDeleted(final java.util.Date date, final Long advertisingEngineAdID) throws Exception
+	{	
+		return jdbcTemplate.update(SQL_MARK_AD_DELETED, new Object[]{date, advertisingEngineAdID});
+	}
+	
+	public static  Map<Integer, Integer> deleteAdIDForAdGroupBulk(final List<Integer> promotionAdIds, final String advertisingEngine) throws Exception
+	{
+		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_DELETE_AD_ENGINE_AD_ID,
+									             new BatchPreparedStatementSetter() 
+												 {
+									              	public void setValues(PreparedStatement ps, int i) throws SQLException 
+									              	{
+									              		final Integer promotionAdId = promotionAdIds.get(i);
+										                ps.setInt(1, promotionAdId);
+										                ps.setString(2, advertisingEngine);
+									              	}	
+									              
+									              	public int getBatchSize() 
+									              	{
+									              		return promotionAdIds.size();
+									              	}
+									             });
+		return getDeletedAdMappingCountMap(promotionAdIds, rowCounts);
 	}
 	
 	public static Map<Long, Integer> markPromotionAdDeletedBulk(final java.util.Date date, final List<Long> deletedAdIds) throws Exception

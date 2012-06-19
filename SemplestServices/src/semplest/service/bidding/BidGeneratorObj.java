@@ -311,8 +311,11 @@ public class BidGeneratorObj {
 		                /* *************************************** */
 		//    b. [msn] for all keywords and compute firstPage CPC from the data
 		
-		if(searchEngine.equalsIgnoreCase(msn)){
-			throw new Exception("Method not implemented for MSN yet!!");
+		if(searchEngine.equalsIgnoreCase(msn))
+		{
+			final String errMsg = "Method not implemented for MSN yet!!";
+			logger.error(errMsg);
+			throw new Exception(errMsg);
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
 		
