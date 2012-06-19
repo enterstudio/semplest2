@@ -13,6 +13,7 @@ import semplest.server.protocol.KeywordIdRemoveOppositePair;
 
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
+import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountFinancialStatus;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountLifeCycleStatus;
@@ -51,6 +52,16 @@ public final class SemplestUtils
 	public static final Integer USER_NAME_MIN_LENGTH = 6;
 	public static final Integer USER_NAME_MAX_LENGTH = 20;
 	public static final Random RANDOM = new Random();
+	
+	public static String getMsnCustomerResponseString(SignupCustomerResponse signupCustomerResponse)
+	{
+		final Long accountId = signupCustomerResponse.getAccountId();
+		final String accountNumber = signupCustomerResponse.getAccountNumber();
+		final Long customerId = signupCustomerResponse.getCustomerId();
+		final String customerNumber = signupCustomerResponse.getCustomerNumber();
+		final Long userId = signupCustomerResponse.getUserId();
+		return "SignupCustomerResponse[AccountID [" + accountId + "], AccountNumber [" + accountNumber + "], CustomerID [" + customerId + "], CustomerNumber [" + customerNumber + "], UserID [" + userId + "]]";
+	}
 	
 	public static String getRandomAllowedChars(final int lengthGap, List<Character> allowedChars)
 	{

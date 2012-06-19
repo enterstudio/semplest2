@@ -508,7 +508,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, String adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount) throws Exception
 	{
-		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount [" + microBidAmount + "], " + keywordList.size() + " Keywords [" + keywordList + "]");
+		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount [" + microBidAmount + "], " + keywordList.size() + " Keywords [<not printing because can be way too many to realistically print>]");
 		int TEST = 0;
 		AddBidSP addKeywordBidSP = new AddBidSP();
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
@@ -614,35 +614,49 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ad.setAdEngineAdID(adEngineAdID);
 		}
 	}
+	
+	public static List<AdsObject> getNonDeletedAds(final List<AdsObject> ads)
+	{
+		final List<AdsObject> nonDeletedAds = new ArrayList<AdsObject>();
+		for (final AdsObject ad : ads)
+		{
+			if (!ad.isIsDeleted())
+			{
+				nonDeletedAds.add(ad);
+			}
+		}
+		return nonDeletedAds;
+	}
 
 	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, String adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
 	{
-
+		logger.info("Will try AdGroup and Ads for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdEngine [" + adEngine + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "]");
 		AdgroupData adGrpData = new AdgroupData();
 		List<AdsObject> adList = getPromoDataSP.getAds();
 		PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final String displayURL = promotionData.getDisplayURL();
+		final String url = promotionData.getLandingPageURL();
 		Long adGroupID = null;
+		final List<AdsObject> nonDeletedAds = getNonDeletedAds(adList);
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();			
 			adGroupID = google.AddAdGroup(accountID, campaignID, promotionData.getPromotionName() + "_AdGroup", status, defaultMicroBid);
-			adGrpData.setAdGroupID(adGroupID);
-			final String displayURL = promotionData.getDisplayURL();
-			final String url = promotionData.getLandingPageURL();
-			final List<GoogleAddAdRequest> textRequests = new ArrayList<GoogleAddAdRequest>();
-			for (AdsObject ad : adList)
-			{			
+			adGrpData.setAdGroupID(adGroupID);			
+			final List<GoogleAddAdRequest> textRequests = new ArrayList<GoogleAddAdRequest>();			
+			for (AdsObject ad : nonDeletedAds)
+			{	
 				final Integer promotionAdID = ad.getPromotionAdsPK();
-				final String headline = ad.getAdTitle();
-				final String description1 = ad.getAdTextLine1();
-				final String description2 = ad.getAdTextLine2();				
+				final String headline = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
+				final String description1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
+				final String description2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());				
 				final GoogleAddAdRequest textRequest = new GoogleAddAdRequest(promotionAdID, headline, description1, description2);
-				textRequests.add(textRequest);				
+				textRequests.add(textRequest);
 			}
 			final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, textRequests);
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
-			backfillAdEngineAdID(adList, requestToGoogleAdIdMap);
-			adGrpData.setAds(adList);
+			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
+			adGrpData.setAds(nonDeletedAds);
 			final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 			for (GeoTargetObject geoObj : geoObjList)
 			{
@@ -653,30 +667,24 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
 		{
-			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			adGroupID = msn.createAdGroup(Long.valueOf(accountID), campaignID);
+			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			final Long msnAccountId = Long.valueOf(accountID);
+			adGroupID = msn.createAdGroup(msnAccountId, campaignID);
+			for (AdsObject ad : nonDeletedAds)
+			{	
+				final String title = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
+				final String text1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
+				final String text2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
+				final String text = text1 + text2;
+				final Long msnAdId = msn.createAd(msnAccountId, adGroupID, title, text, displayURL, url);
+				ad.setAdEngineAdID(msnAdId);
+			}			
 			adGrpData.setAdGroupID(adGroupID);
-			/*
-			for (AdsObject ad : adList)
-			{
-				Thread.sleep(1000);				
-				Long adID = google.addTextAd(accountID, adGroupID, ad.getAdTitle(), ad.getAdTextLine1(), ad.getAdTextLine2(),
-						promotionData.getLandingPageURL(), promotionData.getLandingPageURL());
-				ad.setAdEngineAdID(adID);
-				logger.info("Added Ad Copy. Title=" + ad.getAdTitle());
-			}
-			adGrpData.setAds(adList);
-			// AD GEOTARGET HERE
-			List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
-			for (GeoTargetObject geoObj : geoObjList)
-			{
-				Thread.sleep(1000);				
-				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
-						geoObj.getZip());
-				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());
-				
-			}
-			*/
+			adGrpData.setAds(nonDeletedAds);
+		}
+		else
+		{
+			throw new Exception("AdEngine [" + adEngine + "] is not supported for adding AdGroup and Adds");
 		}
 		return adGrpData;
 	}
@@ -802,8 +810,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			//final String legalUserName = SemplestUtils.getLegalUserName(companyName + "_Semplest");
 			
 			// TODO: remove the prefix after testing
-			//final String userName = System.currentTimeMillis() + companyName + "_Semplest";
-			final String userName = companyName + "_Semplest";
+			final String userName = System.currentTimeMillis() + companyName + "_Semplest";
+			//final String userName = companyName + "_Semplest";
 			SemplestString company = new SemplestString();
 			company.setSemplestString(userName);
 			MsnManagementIds id = msn.createAccount(company);

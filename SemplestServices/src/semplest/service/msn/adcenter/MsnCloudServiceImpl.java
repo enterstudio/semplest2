@@ -48,6 +48,7 @@ import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
@@ -262,6 +263,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			final SignupCustomerRequest request = new SignupCustomerRequest(customer, user, account, parentCustomerId, applicationType);
 			logger.info("Will try to create MSN account using Customer [" + SemplestUtils.getMsnCustomerString(customer) + "], User [" + SemplestUtils.getMsnUserString(user) + "], Account [" + SemplestUtils.getMsnAccountString(account) + "], ParentCustomerID [" + parentCustomerId + "], ApplicationType [" + applicationType + "]");
 			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);			
+			final String signupCustomerResponseString = SemplestUtils.getMsnCustomerResponseString(signupCustomerResponse);
+			logger.info("New MSN account created [" + signupCustomerResponseString + "]");
 			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),(long) signupCustomerResponse.getUserId());
 		}
 		catch (AdApiFaultDetail e)
@@ -816,14 +819,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		String nextAdGroupName = uniqueMsnNameService.getNextAdGroupName();
-		AdGroup build = aNew().adGroup().withName(nextAdGroupName).build();
-		AddAdGroupsResponse addAdGroups = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[]
-		{ build }));
-		
+		final AdGroup build = aNew().adGroup().withName(nextAdGroupName).build();
+		final AddAdGroupsResponse addAdGroups = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[]{ build }));		
 		final Long adGroupId = addAdGroups.getAdGroupIds()[0];
-		SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
+		final SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
 		submitAdGroupRequest.setAdGroupId(adGroupId);
-		campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
+		final SubmitAdGroupForApprovalResponse approvalResponse = campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
 		return adGroupId;
 	}
 	
