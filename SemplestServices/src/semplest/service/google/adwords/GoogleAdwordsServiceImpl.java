@@ -57,6 +57,7 @@ import com.google.api.adwords.v201109.cm.Ad;
 import com.google.api.adwords.v201109.cm.AdGroup;
 import com.google.api.adwords.v201109.cm.AdGroupAd;
 import com.google.api.adwords.v201109.cm.AdGroupAdOperation;
+import com.google.api.adwords.v201109.cm.AdGroupAdPage;
 import com.google.api.adwords.v201109.cm.AdGroupAdReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupAdStatus;
@@ -1068,10 +1069,40 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public AdGroupAd[] getAdsByAdGroupId(String customerId, long adGroupId) throws Exception
+	public AdGroupAd[] getAdsByAdGroupId(String accountID, long adGroupId) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		try
+		{
+			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
+			Selector selector = new Selector();
+			selector.setFields(new String[] {"Id", "AdGroupId", "Status"});
+			selector.setOrdering(new OrderBy[]{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
+			Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]{ String.valueOf(adGroupId) });			
+			selector.setPredicates(new Predicate[]{ adGroupIdPredicate, adGroupIdPredicate });
+			
+			AdGroupAdPage page = adGroupAdService.get(selector);
+			if (page.getEntries() != null && page.getEntries().length > 0)
+			{
+				return page.getEntries();
+			}
+			else
+			{
+				return new AdGroupAd[0];
+			}
+		}
+		catch (ServiceException e)
+		{
+			throw new Exception("Problem getting All AdGroupCriteria for AccountID [" + accountID + "], AdGroupID [" + adGroupId + "]", e);
+		}
+		catch (ApiException e)
+		{
+			throw new Exception("Problem getting All AdGroupCriteria for AccountID [" + accountID + "], AdGroupID [" + adGroupId + "]: " + e.dumpToString(), e);
+		}
+		catch (RemoteException e)
+		{
+			throw new Exception("Problem getting All AdGroupCriteria for AccountID [" + accountID + "], AdGroupID [" + adGroupId + "]", e);
+		}
 	}
 
 	public String deleteAds(String json) throws Exception
@@ -2698,7 +2729,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]{"Id", "KeywordText", "KeywordMatchType"});
+			selector.setFields(new String[]{"Id", "KeywordText", "KeywordMatchType", "GeoPoint", "RadiusInUnits", "Address"});
 			final List<Predicate> predicates = new ArrayList<Predicate>();
 			final Predicate adGroupIdPredicate = new Predicate("CampaignId", PredicateOperator.IN, new String[]{campaignId.toString()});
 			predicates.add(adGroupIdPredicate);
@@ -2946,7 +2977,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			// Create selector.
 			Selector selectActiveAndPausedCampaigns = new Selector();
 			selectActiveAndPausedCampaigns.setFields(new String[]
-			{ "Id", "Name", "Status", "Amount" });
+			{ "Id", "Name", "Status", "Amount", "StartDate" });
 			// TODO should only be returning Id, Name and Status from this
 			// method
 			// not Campaign[]
