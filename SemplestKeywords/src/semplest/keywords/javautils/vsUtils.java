@@ -178,7 +178,31 @@ public class vsUtils {
     System.out.println( "Combining " +wcs.size()+" cats took "
         +(end-start)+ "ms");
   }
+  public static String[] generateNgrams(String basePath, String extension,  ArrayList<String> categories, String data, int numKw){
+	    // read in categories from file and pick out those with categories selected
+		  HashMap<String,HashMap<String,Integer>> wcs = new HashMap<String,HashMap<String,Integer>>();
+		  for(String cat : categories){
+			 //Building the nGramsFileName 	
+			 String[] subCat = cat.split("/");
+			 String file = basePath+subCat[1]+extension;
+			 HashMap<String,HashMap<String,Integer>> wcsAux = catUtils.family( 
+					 ioUtils.readWcs( file ), cat); 
+			 wcs.putAll(wcsAux);
+		  }
+	    
+	    // create a reference word-count
+		System.out.println(data.length());
+	    HashMap<String,Integer> rv = cWc( data );
 
+	    // combine them (remember how long it took)
+	    Long start = System.currentTimeMillis();
+	    HashMap<String,Integer> cc = cCombine( wcs, rv );
+	    System.out.println("Combine Categories seconds " + (System.currentTimeMillis()-start));
+	    String [] kw = topWords( cc, numKw );
+
+	    return kw;
+
+}
   //-------------------------------------------------------------
   public static void main (String[] args){
     String file = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/shopping.2";

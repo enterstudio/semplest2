@@ -188,7 +188,7 @@ public class ioUtils {
     return map;
   }
   // Returns the dmoz wordcounts as a Map<category, Map<word,count>> 
-  static HashMap<String,HashMap<String,Integer>> readWcs( String f ){
+  public static HashMap<String,HashMap<String,Integer>> readWcs( String f ){
     HashMap<String,HashMap<String,Integer>> map = 
       new HashMap<String,HashMap<String,Integer>>();
     try {

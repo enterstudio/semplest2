@@ -18,10 +18,11 @@ public class test {
 	 * @throws ParserException 
 	 */
 	public static void main(String[] args) throws ClassNotFoundException, IOException, ParserException {
-		TextUtils.changeKeywordMatchtoExact("/semplest/data/biddingTest/WeddingHair/msnSuggestedKw.txt");
+		//TextUtils.changeKeywordMatchtoExact("/semplest/data/biddingTest/WeddingHair/msnSuggestedKw.txt");
 		//TextUtils.getUniqueKeywords(new String[]{"/semplest/lluis/PiperHallTest/keywords.txt",
 		//		"/semplest/lluis/PiperHallTest/msnSuggestedKw.txt"},"/semplest/lluis/PiperHallTest/total.txt");
-		
+		String cat = "top/business/insurance/unitedstates";
+		System.out.println(catUtils.take(cat, 2));
 	}
 
 
