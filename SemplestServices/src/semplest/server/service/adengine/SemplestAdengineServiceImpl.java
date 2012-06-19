@@ -657,6 +657,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, textRequests);
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
+			logger.info("Added " + requestToGoogleAdIdMap.size() + " Google ads in bulk");
 			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
 			adGrpData.setAds(nonDeletedAds);			
 			google.updateGeoTargets(accountID, campaignID, geoObjList);
@@ -667,6 +668,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long msnAccountId = Long.valueOf(accountID);
 			adGroupID = msn.createAdGroup(msnAccountId, campaignID);
+			int counter = 0;
 			for (AdsObject ad : nonDeletedAds)
 			{	
 				final String title = SemplestUtils.getTrimmedNonNullString(ad.getAdTitle());
@@ -674,6 +676,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String text2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
 				final String text = text1 + text2;
 				final Long msnAdId = msn.createAd(msnAccountId, adGroupID, title, text, displayURL, url);
+				logger.info(++counter + ": got the MSN Ad ID [" + msnAdId + "] after creating this Ad in MSN: [" + ad + "]");
 				ad.setAdEngineAdID(msnAdId);
 			}			
 			adGrpData.setAdGroupID(adGroupID);

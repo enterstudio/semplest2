@@ -3102,9 +3102,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			final String userName = adCenterCredentials.getUserName();
 			final String password = adCenterCredentials.getPassword();
 			final String applicationToken = "";
-			
-			logger.info("ApplicationToken [" + applicationToken + "], DeveloperToken [" + developerToken + "], UserName [" + userName + "], Password [" + password + "], CustomerAccountID [" + accountId + "]");
-			
 			stub.setHeader(namespace, "ApplicationToken", applicationToken);
 			stub.setHeader(namespace, "DeveloperToken", developerToken);
 			stub.setHeader(namespace, "UserName", userName);

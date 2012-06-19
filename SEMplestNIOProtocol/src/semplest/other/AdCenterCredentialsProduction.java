@@ -1,8 +1,10 @@
 package semplest.other;
 
-public class AdCenterCredentialsProduction implements AdCenterCredentials {
-	private static final String URI_PROD = "https://adcenterapi.microsoft.com";
-	
+import org.apache.log4j.Logger;
+
+public class AdCenterCredentialsProduction implements AdCenterCredentials 
+{
+	private static final String URI_PROD = "https://adcenterapi.microsoft.com";	
 	private static final String CAMPAIGN_MANAGEMENT_URL = "https://adcenterapi.microsoft.com/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";
 	private static final String CAMPAIGN_MANAGEMENT_NAMESPACE = "https://adcenter.microsoft.com/v8";
 	public static final String CUSTOMER_MANAGEMENT_URL = "https://sharedservices.adcenterapi.microsoft.com/Api/CustomerManagement/v8/CustomerManagementService.svc?wsdl";
@@ -15,6 +17,13 @@ public class AdCenterCredentialsProduction implements AdCenterCredentials {
 	private final String apiUserName = "API_SEMplest";
 	private final String apiUserPassword = "1s3mpl3st";
 	private final String userAccessKey = "6LTW1JCMEKIUX3";
+	
+	private static final Logger log = Logger.getLogger(AdCenterCredentialsProduction.class);
+	
+	public AdCenterCredentialsProduction()
+	{
+		log.info("Using: " + toString());
+	}
 	
 	@Override
 	public String getUrlBase() {
