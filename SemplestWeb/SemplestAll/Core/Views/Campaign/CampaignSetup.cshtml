@@ -60,6 +60,14 @@
             <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
             <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
             <img id="displayBox" style="display: none" />
+            
+             <div id="InvalidDescriptionWindow" style="display:none; text-align:center; font-weight:bold;"  >
+                <div class="InvalidDescriptionText"></div><br />
+                <div style="text-align: center">
+                    <input type="button" id="btnCancelInvalid" value="OK" class="k-button" />
+                </div>
+            </div>
+            
         }
     </div>
 </div>
@@ -222,11 +230,37 @@
                 tabStrip.select(otherTab1);
                 //test(id);
             }
-            if (id != "" && id.name != "Keywords")
-                alert(id);
+            if (id != "" && id.name != "Keywords") {
+                var arr = id.split('<~>');
+                var stitle, sbody;
+                if (arr.length > 1) {
+                    sbody = arr[1];
+                    stitle = arr[0];
+                }
+                else {
+                    sbody = arr[0];
+                    stitle = "Error";
+                }
+                $('.InvalidDescriptionText').html(sbody);
+                    var pausePromotionWindow = $('#InvalidDescriptionWindow').kendoWindow({
+                        resizable: false,
+                        modal: true,
+                        title: stitle
+                    }).data("kendoWindow");
+                    $('#InvalidDescriptionWindow').show();
+                    pausePromotionWindow.center();
+                    pausePromotionWindow.open();
+                    event.preventDefault();
+             }
         }
         //$("#tabstrip").children('.k-content').height(650);
-    }
+        }
+
+        $("#btnCancelInvalid").click(function (event) {
+            var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
+            $('#InvalidDescriptionWindow').hide();
+            pausePromotionWindow.close();
+        });
     function OnFailure() {
         $.unblockUI();
     }

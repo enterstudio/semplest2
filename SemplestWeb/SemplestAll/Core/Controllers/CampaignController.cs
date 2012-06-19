@@ -162,7 +162,11 @@ namespace Semplest.Core.Controllers
             }
             catch (Exception ex)
             {
-                return Json(ex.ToString());
+                if (ex.Message.Contains("Not a valid description"))
+                    return Json("Invalid Description<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
+                else
+                    return Json(ex.ToString());
+
             }
         }
 
@@ -244,7 +248,10 @@ namespace Semplest.Core.Controllers
             }
             catch (Exception ex)
             {
-                return Content(ex.ToString());
+                if (ex.Message.Contains("Not enough data provided"))
+                    return Json("Invalid words/phrases, URL or ADs<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
+                else
+                    return Json(ex.ToString());
             }
         }
 
