@@ -254,7 +254,7 @@ public class InstallationSetup {
 			properties.load(in);
 			in.close();		
 			
-			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_test";
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_testing";
 			String comment = "Service for Exp. Updated by InstallationSetup (Nan).";
 			writeProps(path, properties, jdbc, comment);
 		}

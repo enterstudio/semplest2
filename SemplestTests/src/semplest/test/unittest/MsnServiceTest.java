@@ -176,7 +176,8 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createAccount:");
 			SemplestString in = new SemplestString();		
-			in.setSemplestString("lsemplest_unit_test" + System.currentTimeMillis());
+			//in.setSemplestString("s_" + System.currentTimeMillis());
+			in.setSemplestString("Kpqwyuddd-Mark-s-Spo");
 			System.out.println("account name = "+ in.getSemplestString());
 			MsnManagementIds ret = test.createAccount(in);		
 			System.out.println("OK");
