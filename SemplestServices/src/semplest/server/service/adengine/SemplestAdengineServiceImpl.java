@@ -71,6 +71,7 @@ import com.google.gson.Gson;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.CampaignStatus;
+import com.microsoft.adcenter.v8.CountryTarget;
 
 public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInterface
 {
@@ -637,6 +638,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final String displayURL = promotionData.getDisplayURL();
 		final String url = promotionData.getLandingPageURL();
 		Long adGroupID = null;
+		final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
 		final List<AdsObject> nonDeletedAds = getNonDeletedAds(adList);
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
@@ -656,14 +658,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, textRequests);
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
 			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
-			adGrpData.setAds(nonDeletedAds);
-			final List<GeoTargetObject> geoObjList = getPromoDataSP.getGeoTargets();
-			for (GeoTargetObject geoObj : geoObjList)
-			{
-				Thread.sleep(1000);				
-				google.setGeoTarget(accountID, campaignID, geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),geoObj.getZip());
-				logger.info("Added GeoTarget. Title=" + geoObj.getAddress());				
-			}
+			adGrpData.setAds(nonDeletedAds);			
+			google.updateGeoTargets(accountID, campaignID, geoObjList);
+			logger.info("Added Google GeoTargets: " + geoObjList);
 		}
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
 		{
@@ -681,6 +678,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}			
 			adGrpData.setAdGroupID(adGroupID);
 			adGrpData.setAds(nonDeletedAds);
+			for (final GeoTargetObject geoTarget : geoObjList)
+			{
+				final Long accountId = Long.valueOf(accountID);
+				Double latitude = geoTarget.getLatitude();
+				Double longitude = geoTarget.getLongitude();
+				Double radius = geoTarget.getRadius();
+				String addr = geoTarget.getAddress();
+				String city = geoTarget.getCity(); 
+				String state = geoTarget.getState();
+				String country = "US";
+				String zip = geoTarget.getZip();
+				msn.setGeoTarget(accountId, campaignID, latitude, longitude, radius, addr, city, state, country, zip);				
+				logger.info("Added MSN GeoTarget: " + geoTarget);
+			}
 		}
 		else
 		{
