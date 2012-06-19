@@ -60,19 +60,38 @@ public class AdengineServiceTest extends BaseDB{
 			
 			/* ********** Start to Test ********** */
 			
-			//Test without going through Scheduler
+			//*** Finished
+			TEST_METHOD method;
 			
-			AddPromotionToAdEngine(TEST_METHOD.generic);  //google, msn, manual verify onGoingBidding and Negative Keywords	
-			//PausePromotion(TEST_METHOD.generic);  //google,msn
-			//UpdateGeoTargeting(TEST_METHOD.generic);  //google,msn
-			//UpdateBudget(TEST_METHOD.generic);  //google,msn
-			//AddAds(TEST_METHOD.generic);  //google,msn
-			//UpdateAds(TEST_METHOD.generic);  //google,msn
-			//DeleteAds(TEST_METHOD.generic);  //google,msn
-			AddKeywords(TEST_METHOD.generic);  //google,msn
-			DeleteKeywords(TEST_METHOD.generic);  //google,msn
+			//Test without going through Scheduler
+			method = TEST_METHOD.generic;
+			
+			AddPromotionToAdEngine(method);  //google, msn, manual verify onGoingBidding and Negative Keywords	
+			//PausePromotion(method);  //google,msn
+			//UpdateGeoTargeting(method);  //google,msn
+			//UpdateBudget(method);  //google,msn
+			//AddAds(method);  //google,msn
+			//UpdateAds(method);  //google,msn
+			//DeleteAds(method);  //google,msn
+			AddKeywords(method);  //google,msn  //-------code fix
+			DeleteKeywords(method);  //google,msn
+			
+			//Test that goes through Scheduler
+			method = TEST_METHOD.scheduled;
+			
+			AddPromotionToAdEngine(method); 	
+			//PausePromotion(method);  
+			//UpdateGeoTargeting(method); 
+			//UpdateBudget(method);  
+			//AddAds(method);  
+			//UpdateAds(method);  
+			//DeleteAds(method);  
+			AddKeywords(method); 
+			DeleteKeywords(method);  
 			
 /*		
+ * In progress:
+ * 
 			RefreshSiteLinks();  //TODO					
 						
 			AddNegativeKeywords();  //TODO
