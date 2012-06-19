@@ -1,7 +1,7 @@
 USE [semplest]
 GO
 
-/****** Object:  StoredProcedure [dbo].[sp_UpdateKeywords]    Script Date: 06/13/2012 17:41:17 ******/
+/****** Object:  StoredProcedure [dbo].[sp_UpdateKeywords]    Script Date: 06/19/2012 00:13:51 ******/
 SET ANSI_NULLS ON
 GO
 
@@ -38,7 +38,7 @@ BEGIN
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
 						from @kwa kwa  
-						INNER JOIN keyword k ON kwa.keyword = k.keyword and IsNegative <> 1)  n)
+						INNER JOIN keyword k ON kwa.keyword = k.keyword WHERE NOT EXISTS(select Keywordfk from PromotionKeywordAssociation where KeywordFK=k.KeywordPK))  n)
 												
 	SELECT @@ROWCOUNT
 END
