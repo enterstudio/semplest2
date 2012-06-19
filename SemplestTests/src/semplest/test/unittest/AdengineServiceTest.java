@@ -30,7 +30,8 @@ import semplest.services.client.api.SemplestAdEngineServiceClient;
 public class AdengineServiceTest extends BaseDB{	
 	
 	private int errorCounter = 0;
-	private int sleepTime = 500;
+	//private int sleepTime = 500;
+	private int sleepTime = 10000;  //when test scheduled methods
 	
 	private String vMsg = "Verification FAILED! ";
 	
@@ -79,15 +80,15 @@ public class AdengineServiceTest extends BaseDB{
 			//Test that goes through Scheduler
 			method = TEST_METHOD.scheduled;
 			
-			AddPromotionToAdEngine(method); 	
-			//PausePromotion(method);  
-			//UpdateGeoTargeting(method); 
-			//UpdateBudget(method);  
-			//AddAds(method);  
-			//UpdateAds(method);  
-			//DeleteAds(method);  
-			AddKeywords(method); 
-			DeleteKeywords(method);  
+/*			AddPromotionToAdEngine(method); 	
+			PausePromotion(method);  
+			UpdateGeoTargeting(method); 
+			UpdateBudget(method);  
+			AddAds(method);  
+			UpdateAds(method);  
+			DeleteAds(method);  */
+			//AddKeywords(method); 
+			//DeleteKeywords(method);  
 			
 /*		
  * In progress:
