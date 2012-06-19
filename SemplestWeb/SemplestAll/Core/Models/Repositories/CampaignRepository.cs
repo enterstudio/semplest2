@@ -167,7 +167,7 @@ namespace Semplest.Core.Models.Repositories
             }
             return model;
         }
-        private bool _savedCampaign;
+        static bool _savedCampaign = false;
         static SemplestModel.Semplest _dbcontext;
         //readonly Func<Semplest, int, Promotion> _promotonIdQuery = CompiledQuery.Compile((Semplest nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
         private SemplestModel.Semplest InitializeContext()
@@ -267,6 +267,9 @@ namespace Semplest.Core.Models.Repositories
 
                         // save negative keywords
                         SaveNegativeKeywords(promo, model, dbcontext);
+
+                        // we need to set this because the _dbcontext is  and campaign is updated so reflect changes we need to create new context
+                        _savedCampaign = true;
                     }
                 }
             }
