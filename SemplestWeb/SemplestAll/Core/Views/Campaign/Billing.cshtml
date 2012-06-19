@@ -10,6 +10,11 @@
 @(Html.Kendo().Grid<BillingModel>()    
     .Name("Grid")
     .Columns(columns => {
+        columns.Bound(p => p.Date);
+        columns.Bound(p => p.Transaction);
+        columns.Bound(p => p.Type);
+        columns.Bound(p => p.ProductGroupName);
+        columns.Bound(p => p.ProductGroupName);
         columns.Bound(p => p.Amount).Groupable(false);
         columns.Bound(p => p.ProductGroupName);
         columns.Bound(p => p.PromotionName);

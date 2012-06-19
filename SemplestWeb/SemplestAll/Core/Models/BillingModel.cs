@@ -18,6 +18,9 @@ namespace Semplest.Core.Models
         public string PromotionName { get; set; }
         public decimal MediaSpend { get; set; }
         public decimal SEMplestFee { get; set; }
+        public DateTime Date { get; set; }
+        public string Transaction { get; set; }
+        public string Type { get; set; }
 
     }
 }

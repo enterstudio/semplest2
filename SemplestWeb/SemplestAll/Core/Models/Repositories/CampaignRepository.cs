@@ -167,7 +167,7 @@ namespace Semplest.Core.Models.Repositories
             }
             return model;
         }
-        static bool _savedCampaign = false;
+        static bool _savedCampaign;
         static SemplestModel.Semplest _dbcontext;
         //readonly Func<Semplest, int, Promotion> _promotonIdQuery = CompiledQuery.Compile((Semplest nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
         private SemplestModel.Semplest InitializeContext()
@@ -822,7 +822,7 @@ namespace Semplest.Core.Models.Repositories
             using (var db = new SemplestModel.Semplest())
             {
                 var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo.IsLaunched;
+                return promo != null && promo.IsLaunched;
             }
         }
 
@@ -831,7 +831,7 @@ namespace Semplest.Core.Models.Repositories
             using (var db = new SemplestModel.Semplest())
             {
                 var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo.IsCompleted;
+                return promo != null && promo.IsCompleted;
             }
         }
 
@@ -840,7 +840,7 @@ namespace Semplest.Core.Models.Repositories
             using (var db = new SemplestModel.Semplest())
             {
                 var promo = db.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
-                return promo.IsCompleted && promo.IsLaunched;
+                return promo != null && (promo.IsCompleted && promo.IsLaunched);
             }
         }
 
