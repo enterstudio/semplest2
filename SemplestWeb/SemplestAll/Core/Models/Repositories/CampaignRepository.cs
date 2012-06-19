@@ -762,6 +762,8 @@ namespace Semplest.Core.Models.Repositories
 
         public bool IsNegativeKeyword(string keyword, List<string> negativeKeywords)
         {
+            if (negativeKeywords == null || String.IsNullOrEmpty(keyword))
+                return false;
             return negativeKeywords.Any(key => keyword.ToUpper().Contains(key.ToUpper()));
         }
 
