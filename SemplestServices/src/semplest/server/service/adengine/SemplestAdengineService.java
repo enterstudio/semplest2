@@ -24,7 +24,7 @@ public class SemplestAdengineService implements ServiceInterface
 		}
 		catch (Exception e)
 		{
-			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
+			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage(), e);
 			e.printStackTrace();
 			throw e;
 		}
