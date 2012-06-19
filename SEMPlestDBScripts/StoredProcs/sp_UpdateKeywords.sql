@@ -38,7 +38,7 @@ BEGIN
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
 						from @kwa kwa  
-						INNER JOIN keyword k ON kwa.keyword = k.keyword WHERE NOT EXISTS(select Keywordfk from PromotionKeywordAssociation where KeywordFK=k.KeywordPK))  n)
+						INNER JOIN keyword k ON kwa.keyword = k.keyword WHERE NOT EXISTS(select Keywordfk from PromotionKeywordAssociation where KeywordFK=k.KeywordPK and promotionfk=@PromotionId))  n)
 												
 	SELECT @@ROWCOUNT
 END
