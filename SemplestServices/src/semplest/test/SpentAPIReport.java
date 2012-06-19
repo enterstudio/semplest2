@@ -40,7 +40,7 @@ public class SpentAPIReport {
 		String methodName;
 		Long methodUnits;
 		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		Date startDate = df.parse("06/06/2012");
+		Date startDate = df.parse("06/16/2012");
 		System.out.println(startDate);
 		System.out.println(new Date());
 		Long totalUnits = google.getSpentAPIUnitsPerAccountID(accountId, startDate, startDate);
