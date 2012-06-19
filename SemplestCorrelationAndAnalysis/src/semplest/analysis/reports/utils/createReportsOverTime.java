@@ -56,13 +56,15 @@ public class createReportsOverTime {
 		double totalGoogleAveCpc, totalGoogleAvePos, totalGoogleAveFPCPC, totalGoogleAveQS;
 		int totalKwWithImpMsn=0, totalKwWithClickMsn=0;
 		int totalKwWithImpGoogle=0, totalKwWithClickGoogle=0;
-		int totalOverlapKwWithImp=0;
-		int totalOverlapKwWithClicks=0;
+		ArrayList<String> totalOverlapKwWithImp = new ArrayList<String>();
+		ArrayList<String>  totalOverlapKwWithClicks = new ArrayList<String>();
 		
 		Set<String> keySet = mapReportMSNTotal.keySet();
 		totalKwWithImpMsn = keySet.size();
 		for(String kw : keySet){
-
+			if(mapReportGoogleTotal.containsKey(kw))
+				totalOverlapKwWithImp.add(kw);
+			
 		}
 		
 	}
