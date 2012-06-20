@@ -656,7 +656,7 @@ public class SemplestDB extends BaseDB
 			if (endDate == null)
 			{
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType,aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
 						+ "from AdvertisingEngineReportData aerd "
 						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
 						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
@@ -672,7 +672,7 @@ public class SemplestDB extends BaseDB
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType,aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
 						+ "from AdvertisingEngineReportData aerd "
 						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
 						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
