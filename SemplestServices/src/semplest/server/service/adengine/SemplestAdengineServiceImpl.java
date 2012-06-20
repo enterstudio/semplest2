@@ -862,11 +862,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
 		/*
-		 * look back 5 days to get the transactions
+		 *  from Yesterday look back 5 days to get the transactions
 		 */
 		
 		Date now = new Date();
 		cal.setTime(now);
+		//get yesterday
+		cal.add(Calendar.DAY_OF_MONTH, -1);
+		Date yesterday = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, -5);
 		for (String adEngine : adEngineList)
 		{
@@ -878,7 +881,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 				try
 				{
-					ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(), YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+					ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(), YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
 					SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
 				}
 				catch (Exception e)
