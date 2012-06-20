@@ -225,6 +225,7 @@ namespace Semplest.SharedResources.Services
 
         public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId, string[] adEngineList)
         {
+            return true;
             string returnData = string.Empty;
             bool retVal;
             try
