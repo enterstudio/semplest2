@@ -37,11 +37,11 @@ Security
         @Html.ActionLink("Edit", "Edit", new { id = item.RolePK })
         @if(item.UserRolesAssociations.Count() >0)
         {
-            @Html.DisplayText("Remove");
+            @Html.DisplayText("Delete");
         }
         else
         {
-            @Html.ActionLink("Remove", "Remove", new { id = item.RolePK }, new { @class = "delete", id = item.RolePK })
+            @Html.ActionLink("Delete", "Delete", new { id = item.RolePK }, new { @class = "delete", id = item.RolePK })
         }
 
         </td>

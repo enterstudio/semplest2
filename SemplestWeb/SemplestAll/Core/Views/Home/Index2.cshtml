@@ -69,7 +69,7 @@
                             <td style="width: 150px;">
                                 @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
                             </td>
-                            <td>@Html.ActionLink("Remove", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
+                            <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
                             </td>
                             <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
                             </td>
