@@ -1527,7 +1527,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google.name().equals(adEngine))
 			{	
-				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.MSN.name());
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
 				final String accountID = "" + adEngineData.getAccountID();				
 				final Long adGroupID = adEngineData.getAdGroupID();
 				final Long campaignID = adEngineData.getCampaignID();				
@@ -1536,8 +1536,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				addKeywordsToAdGroup(accountID, campaignID, promotionID, adGroupID, adEngine, keywordProbabilitiesForIds, semplestMatchType, null);										
 			}
 			else if (AdEngine.MSN.name().equals(adEngine))
-			{
-				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.Google.name());
+			{				
+				final AdEngineID adEngineData = promotionAdEngineData.get(AdEngine.MSN.name());
 				final Long accountId = adEngineData.getAccountID();				
 				final Long adGroupId = adEngineData.getAdGroupID();
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
