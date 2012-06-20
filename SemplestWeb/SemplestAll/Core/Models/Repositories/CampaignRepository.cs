@@ -717,7 +717,7 @@ namespace Semplest.Core.Models.Repositories
                 dr["IsTargetMSN"] = kpo.isTargetMSN;
                 dr["IsTargetGoogle"] = kpo.isTargetGoogle;
                 stationIds.Rows.Add(dr);
-                //Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + kpo.keyword + "',1,0,1,0,0)");
+                //System.Diagnostics.Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + kpo.keyword + "',1,0,1,0,0)");
             }
             if (stationIds.Rows.Count > 0)
             {
@@ -767,7 +767,7 @@ namespace Semplest.Core.Models.Repositories
         {
             if (negativeKeywords == null || String.IsNullOrEmpty(keyword))
                 return false;
-            return negativeKeywords.Any(key => keyword.ToUpper().Contains(key.ToUpper()));
+            return negativeKeywords.Any(key => keyword.ToUpper().Equals(key.ToUpper()));
         }
 
         public void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext)
