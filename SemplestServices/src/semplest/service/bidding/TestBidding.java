@@ -1,7 +1,11 @@
 package semplest.service.bidding;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -988,7 +992,17 @@ public class TestBidding {
 			
 			
 			
-//			String accountID = "2188810777"; // small campaign : 100 words
+			String accountID = "2188810777"; // small campaign : 100 words
+			//campaignID: 77290470
+			//adGroupIDs:
+			//Bids_Alex: 3887444670
+			//Bids_Subhojit: 3887444790
+			//Keyword Tool Generated words: 3703543830
+			//Test Broad Match: 3217107030
+			//Wedding Flowers: 3074331030
+			
+			
+			
 //			String accountID = "9544523876";
 //			String accountID = "1283163526"; // large capmaign : 1500 words
 			
@@ -999,13 +1013,14 @@ public class TestBidding {
 //			String accountID = "1851386728"; // ParkWinters
 			
 			
-			/*
 			
-			String accountID = "2387614989"; // test campaign by mitch for bidding 
+			
+			//String accountID = "2387614989"; // test campaign by mitch for bidding 
 			
 			
 			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 
+			/*
 
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
@@ -1022,7 +1037,74 @@ public class TestBidding {
 			}
 
 			Long adGroupID = adGroups[0].getAdGroupID();
+			*/
 			
+			/*
+			
+			long Bids_AlexID = 3887444670L;
+			long Bids_SubhojitID = 3887444790L;
+			
+			HashMap<String,Integer> wordIdxMap = new HashMap<String,Integer>();
+			ArrayList<Double> bidList = new ArrayList<Double>();
+			ArrayList<String> wordList = new ArrayList<String>();
+			
+			try{
+				// Open the file that is the first 
+				// command line parameter
+				FileInputStream fstream = new FileInputStream("//fs3/Semplest/subhojit/TrafficEstimatorData/SummitHillsKWTool/wordsWithTEData.txt");
+				// Get the object of DataInputStream
+				DataInputStream in = new DataInputStream(fstream);
+				BufferedReader br = new BufferedReader(new InputStreamReader(in));
+				String strLine;
+				//Read File Line By Line
+				int i=0;
+				while ((strLine = br.readLine()) != null)   {
+					// Print the content on the console
+					//System.out.println (strLine);
+					wordIdxMap.put(strLine, i);
+					wordList.add(strLine);
+					i++;
+				}
+				//Close the input stream
+				in.close();
+				
+				
+				fstream = new FileInputStream("//fs3/Semplest/subhojit/BiddingOctave/optimization/bids_subhojit.txt");
+				// Get the object of DataInputStream
+				in = new DataInputStream(fstream);
+				br = new BufferedReader(new InputStreamReader(in));
+				//Read File Line By Line
+				i=0;
+				while ((strLine = br.readLine()) != null)   {
+					// Print the content on the console
+					//System.out.println (strLine);
+					bidList.add(Double.valueOf(strLine));
+				}
+				//Close the input stream
+				in.close();
+				
+				Long adGroupID = Bids_SubhojitID;
+				KeywordDataObject[] keywordDataObjs = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
+				for(KeywordDataObject b: keywordDataObjs){
+					String word = b.getKeyword();
+					Long wordID = b.getBidID();
+					if(wordIdxMap.containsKey(word)){
+						client.setBidForKeyWord(accountID, wordID, adGroupID, ((new Double(1e6*bidList.get(wordIdxMap.get(word)))).longValue())/10000L*10000L);
+					} else {
+						System.out.println("No bid for the word "+word+" was not found. Must be an error!!");
+					}
+				}
+				
+				
+				
+			}catch (Exception e){//Catch exception if any
+				e.printStackTrace();
+			}
+			
+			*/
+			
+			
+			/*
 			
 			TestBidding bidObject = new TestBidding();
 			
@@ -1042,6 +1124,7 @@ public class TestBidding {
 			
 			*/
 			
+			/*
 			Integer promotionID = new Integer(60);
 			String searchEngine = "Google";
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
@@ -1056,14 +1139,19 @@ public class TestBidding {
 			System.out.println("Number of entries retrieved: "+teList.size());
 			HashSet<String> words = new HashSet<String>();
 			for(TrafficEstimatorDataObject te : teList){
+				
 				if(words.contains(te.getKeyword())) {
 					System.out.println("Repeat word: "+te.getKeyword());
 				} else {
 					words.add(te.getKeyword());
 				}
-				//System.out.println(te.getKeyword()+te.getMicroBid());
+				
+				if(te.getKeyword().equals("menu wedding")) {
+					System.out.println(te.getKeyword()+": "+te.getMicroBid()+" "+te.getAveCPC());
+				}
 
 			}
+			*/
 			
 			
 			/*
