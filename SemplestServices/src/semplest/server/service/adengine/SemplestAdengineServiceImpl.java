@@ -189,7 +189,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Integer customerID = Integer.parseInt(data.get("customerID"));
 		Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngineList = gson.fromJson(data.get("adEngineList"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<String> adEngineList = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngineList);
 		return gson.toJson(true);
 	}
@@ -846,7 +846,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.debug("call ExecuteBidProcess(String json)" + json);
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngineList"), ArrayList.class);
+		ArrayList<String> adEngineList = gson.fromJson(data.get("adEngines"), ArrayList.class);
 		final Boolean processedSuccessfully = ExecuteBidProcess(promotionID, adEngineList);
 		if (!processedSuccessfully)
 		{

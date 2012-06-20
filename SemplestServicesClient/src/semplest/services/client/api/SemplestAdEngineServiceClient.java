@@ -956,7 +956,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		jsonHash.put("productGroupID", Integer.toString(productGroupID));
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
 		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
-		jsonHash.put("adEngineList",adEngineListStr);
+		jsonHash.put("adEngines",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
 		try
@@ -1004,7 +1004,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", Integer.toString(promotionID));
 		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
-		jsonHash.put("adEngineList",adEngineListStr);
+		jsonHash.put("adEngines",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
 		try
@@ -1027,7 +1027,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
 		String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
-		jsonHash.put("adEngineList",adEngineListStr);
+		jsonHash.put("adEngines",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
