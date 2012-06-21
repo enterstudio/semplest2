@@ -570,7 +570,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// Integer MicroBidAmount, String BidType, String
 				// AdvertisingEngine, Boolean IsNegative
 				logger.info(++counter + ": will try to save in db Google Keyword for GoogleID [" + keywordDataObj.getBidID() + "], Text [" + keywordObj.getKeyword() + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
+				final Long microBidAmt = keywordDataObj.getMicroBidAmount();
+				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();    
+				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				Thread.sleep(1000); // Wait for google
 				// *****TEST
 				// TEST++;
