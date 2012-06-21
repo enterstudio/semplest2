@@ -2512,7 +2512,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngineList"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngine"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleAddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
