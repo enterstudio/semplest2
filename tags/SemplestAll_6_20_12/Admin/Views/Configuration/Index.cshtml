@@ -1,0 +1,137 @@
+﻿@model SemplestModel.Configuration
+@{
+    ViewBag.Title = "Edit";
+}
+@section Title{
+System Defaults
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+<p>
+    @Html.ActionLink("System Defaults", "../Configuration") |
+    @Html.ActionLink("Security", "../Roles")
+</p>
+<script src="@Url.Content("~/Scripts/jquery.validate.min.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/jquery.validate.unobtrusive.min.js")" type="text/javascript"></script>
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+    <div class="configuration1">
+        <ul class="options">
+            <li >
+                @Html.LabelFor(model => model.CustomerMinOrderAmount, new { @class = "configlabel" })
+                @Html.TextBoxFor(model => model.CustomerMinOrderAmount, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.CustomerMinOrderAmount)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.CustomerDefaultMonthlyFlatFeeAmount)
+                @Html.TextBoxFor(model => model.CustomerDefaultMonthlyFlatFeeAmount, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.CustomerDefaultMonthlyFlatFeeAmount)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount)
+                @Html.TextBoxFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.CustomerDefaultPerCampaignFlatFeeAmount)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount)
+                @Html.EditorFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.CustomerDefaultPerAdGroupFlatFeeAmount)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultMediaComissionPercentage)
+                @Html.TextBoxFor(model => model.DefaultMediaComissionPercentage, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultMediaComissionPercentage)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultSalesPersonCommissionPercentage)
+                @Html.TextBoxFor(model => model.DefaultSalesPersonCommissionPercentage, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultSalesPersonCommissionPercentage)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.MinSalespersonCommissionPercentage)
+                @Html.TextBoxFor(model => model.MinSalespersonCommissionPercentage, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.MinSalespersonCommissionPercentage)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.MaxSalespersonCommissionPercentage)
+                @Html.TextBoxFor(model => model.MaxSalespersonCommissionPercentage, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.MaxSalespersonCommissionPercentage)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultSemplestBannerImageUrl)
+                @Html.TextBoxFor(model => model.DefaultSemplestBannerImageUrl, new { @class = "k-textbox" }))
+                @Html.ValidationMessageFor(model => model.DefaultSemplestBannerImageUrl)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultSemplestStyleSheetUrl)
+                @Html.TextBoxFor(model => model.DefaultSemplestStyleSheetUrl, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultSemplestStyleSheetUrl)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.MaxNumberOfSitelinks)
+                @Html.TextBoxFor(model => model.MaxNumberOfSitelinks, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.MaxNumberOfSitelinks)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultEmailContactUs)
+                @Html.TextBoxFor(model => model.DefaultEmailContactUs, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultEmailContactUs)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefalutEmailContactMe)
+                @Html.TextBoxFor(model => model.DefalutEmailContactMe, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefalutEmailContactMe)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultProductGroupName)
+                @Html.TextBoxFor(model => model.DefaultProductGroupName, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultProductGroupName)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DefaultProductPromotionName)
+                @Html.TextBoxFor(model => model.DefaultProductPromotionName, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.DefaultProductPromotionName)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.SamplestDevelopmentEmail)
+                @Html.TextBoxFor(model => model.SamplestDevelopmentEmail, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.SamplestDevelopmentEmail)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
+                @Html.TextBoxFor(model => model.SemplestDefaultBudgetMarkUpOrDown, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.SemplestDefaultBudgetMarkUpOrDown)
+                (1=Mark Down 2=Mark Up)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.BillingDaysOffset)
+                @Html.TextBoxFor(model => model.BillingDaysOffset, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.BillingDaysOffset)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.OnErrorEmail)
+                @Html.TextBoxFor(model => model.OnErrorEmail, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.OnErrorEmail)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.ESBWebServerURL)
+                @Html.TextBoxFor(model => model.ESBWebServerURL, new { @class = "k-textbox" })
+                @Html.ValidationMessageFor(model => model.ESBWebServerURL)
+            </li>
+            <li >
+                @Html.LabelFor(model => model.DisplayTargetCPCLevel)
+                @Html.CheckBoxFor(model => model.DisplayTargetCPCLevel)
+                @Html.ValidationMessageFor(model => model.DisplayTargetCPCLevel)
+            </li>
+            <li>
+                <input type="submit" value="Save" class="k-button" />
+                <input type="submit" value="Cancel" class="k-button" />
+            </li>
+        </ul>
+    </div>
+}

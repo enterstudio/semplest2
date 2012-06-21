@@ -1,0 +1,60 @@
+﻿@using System.Configuration
+@model Semplest.Core.Models.CampaignSetupModel
+<style>
+    .spacing
+    {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+    .options1
+    {
+        border-color: #fff;
+        border-width: 0.3em;
+        border-style: inset;
+        height: 345px;
+        width: 700px;
+        overflow-x: auto;
+    }
+</style>
+<div class="configuration">
+    <h3>
+        How Would you Classify Your Product? <a href ="#" class="help-button" id="helpbutton12" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]12 "  tabindex="0" >
+            ?</a></h3>
+    <div class="options">
+        @if (Model != null && Model.AllCategories != null)
+        {
+            
+            
+@*@Html.ListBoxFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { Multiple = "multiple", style = "height:125px;width:700px;overflow-x:auto" });*@
+            
+            <div style="height: 345px; width: 700px; overflow-x: auto">
+                @Html.CheckBoxListFor(m => m.CategoryIds, new MultiSelectList(Model.AllCategories, "Id", "Name", Model.CategoryIds), new { @class = "spacing" }, 2)
+            </div>
+        }
+    </div>
+    <div class="options">
+        <br />
+        <hr />
+        <div style="text-align: center">
+            <button class="k-button" id="backCat" type="button">
+                <span class="k-back k-icon"></span>back</button>
+            <button class="k-button" id="getKeywords" type="submit" name="Command" value="GetKeywords">
+                <span class="k-update k-icon"></span>Save And Continue</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $('#backCat').click(function () {
+        var nextItem = tabStrip.select().prev();
+        if (nextItem.length)
+            tabStrip.select(nextItem);
+        else
+            tabStrip.select(tabStrip.tabGroup.children().first());
+
+    });
+    $('#getKeywords').click(function () {
+        var urlStr = $('#LogoUrlStr').val() + 'maximizing your results.jpg';
+        $('#displayBox').attr('src', urlStr);
+    });
+    $('#helpbutton12').cluetip({ arrows: true, sticky: true, cluetipClass: 'jtip', closePosition: 'title', activation: 'click', cursor: 'pointer' });
+</script>

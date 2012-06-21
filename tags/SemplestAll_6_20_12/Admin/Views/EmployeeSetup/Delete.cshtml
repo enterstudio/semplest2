@@ -1,0 +1,14 @@
+﻿@model Semplest.Admin.Models.EmployeeSetupWithRolesModel
+@using (Html.BeginForm("Delete"))
+{
+    @Html.HiddenFor(model => model.EmployeeSetup.UserPK)
+    @Html.HiddenFor(model => model.EmployeeSetup.FirstName)
+    @Html.HiddenFor(model => model.EmployeeSetup.LastName)
+
+    <h2>
+        Delete Employee @Html.DisplayFor(model => model.EmployeeSetup.FirstName) @Html.DisplayFor(model => model.EmployeeSetup.LastName)
+        (@Html.DisplayFor(model => model.EmployeeSetup.Email))?</h2>
+    <br />
+    <input type="submit" name="command" value="Delete" class="k-button" />
+    <input type="submit" name="command" value="Cancel" class="k-button" />    
+}

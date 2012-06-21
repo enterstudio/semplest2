@@ -1,0 +1,97 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="@Url.Content("~/Content/leafleft.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/jquery.cluetip.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.UiBlock.js")" type="text/javascript"> </script>
+    <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"> </script>
+</head>
+<body>
+    <div id="wrapper">
+        <div id="header">
+            <div class="floatWrap">
+                <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
+                <ul class="kendo-nav">
+                    <li>@Html.ActionLink("About Us", "About", "Home")</li>
+                    <li>@Html.ActionLink("FAQs", "FAQ", "Home")</li>
+                    <li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+                    <li>@Html.ActionLink("Log Off", "LogIn", "Profile")</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class='centerWrap floatWrap widgetOverview' id="mainWrap">
+                <div id="exampleTitleHeader" style="height: 30px;">
+                    <label style="font-size: 16px; font-weight:bold; margin-top: 5px;">
+                        Log In</label>
+                </div>
+                <div id="mainWrapInner">
+                    <div id="main">
+                        <div id="example" style="height:470px">@RenderBody()
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="footer">
+            <div class="centerWrap">
+                <table width="100%" style="height: 40px; font-weight: bold;">
+                    <tr>
+                        <td>
+                            Copyright &copy; 2012 SEMplest
+                        </td>
+                        <td>@Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home")
+                        </td>
+                        <td style="text-align: -webkit-right;">@Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home")
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+            for (var mainGroup in data) {
+                for (var subitem in data[mainGroup].SubItems) {
+                    var items = [];
+                    for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
+                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, url: data[mainGroup].SubItems[subitem].SubItems[subitem1].Url });
+                    }
+                }
+            }
+        });
+        var panelBar = $("#panelbar-images").kendoPanelBar({
+            expandMode: "single"
+        }).data("kendoPanelBar");
+        var treeview = $("#treeview").kendoTreeView().data("kendoTreeView");
+        $("#panelbar-images").on("click", ".k-in", function (e) {
+            treeview.toggle($(e.target).closest(".k-item"));
+        });
+        $("#panelbar-profile").kendoPanelBar({
+            dataSource: [
+            {
+                text: "Home",
+                items: [
+                    { text: "Reporting" },
+                    { text: "Billing" },
+                    { text: "Quick Start Guide" },
+                    { text: "FAQs" },
+                    { text: "Contact Us" }
+                ]
+            }
+        ],
+            expandMode: "single"
+        });
+    </script>
+</body>
+</html>

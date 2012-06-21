@@ -1,0 +1,83 @@
+﻿@using Semplest.Core.Helpers
+@using Semplest.SharedResources.Helpers
+@model SemplestModel.PromotionAd
+<div class="ads">
+    <fieldset style="padding-bottom: 15px;">
+        <div class="content">
+            <ul class="options" id="@Html.ClientIdFor(t => t.PromotionAdsPK)_ul">
+                <li>@Html.HiddenFor(t => t.PromotionAdsPK)
+                    <label style="min-width: 65px">
+                        Title <a href ="#" class="help-button" id="helpbutton8" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]8"  tabindex="-1" >
+                            ?</a></label>
+                    @Html.TextBoxFor(m => m.AdTitle, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Title", @maxlength = 25 })
+                    @Html.ValidationMessageFor(t => t.AdTitle)
+                    <label class="hint grey-text">
+                        25 characters max.</label>
+                </li>
+                <li>
+                    <label style="vertical-align: top; min-width: 65px">
+                        Ad Copy <a href ="#" class="help-button" id="helpbutton9" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]9"  tabindex="-1" >
+                            ?</a></label>
+                    @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
+                    <label class="hint grey-text">
+                        35 characters max.</label>
+                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAdDescrition hint alpha", @maxlength = 35 })
+                    <label class="hint grey-text">
+                        35 characters max.</label>
+                </li>
+                <li>
+                    <div style="display: inline-block; vert-align: top; overflow: hidden; width: 600px;margin-left: 75px">
+                        @Html.LinkToRemoveNestedForm("Delete Ad", "div.ads", "input.mark-for-delete")
+                        
+                        @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="content2">
+            <div class="example">
+                <div class="k-header product-view">
+                    <div id="@Html.ClientIdFor(t => t.PromotionAdsPK)_div" style="margin-top: 5px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<script type="text/x-kendo-template" id="template">
+    <h3>Ad \\##= id # Preview </h3>
+    <ul class="fieldlist">
+    <li><a   target="__blank" style="font-weight:bold;color:blue;text-decoration:underline">#= twitter #</a></li>
+    <li ><a style="color:green;" target="__blank">#= title #</a></li>
+    <li>#= content #</li>
+    <li>#= content1 #</li>
+    </ul>
+</script>
+<script>
+    var template = kendo.template($("#template").html());
+
+    $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
+        id: "@Html.Raw(Model.SerailNo.ToString())",
+        title: $("#AdModelProp_DisplayUrl").val(),
+        twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
+        content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
+        content1: $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
+    }));
+    $("#@Html.ClientIdFor(t => t.AdTitle)").attr("data-bind", "events: { change: listener}");
+    $("#@Html.ClientIdFor(t => t.AdTextLine1)").attr("data-bind", "events: { change: listener}");
+    $("#@Html.ClientIdFor(t => t.AdTextLine2)").attr("data-bind", "events: { change: listener}");
+    var viewModel = kendo.observable({
+        listener: function (e) {
+            $("#@Html.ClientIdFor(t => t.PromotionAdsPK)_div").html(template({
+                id: "@Html.Raw(Model.SerailNo.ToString())",
+                title: $("#AdModelProp_DisplayUrl").val(),
+                twitter: $("#@Html.ClientIdFor(t => t.AdTitle)").val(),
+                content: $("#@Html.ClientIdFor(t => t.AdTextLine1)").val(),
+                content1: $("#@Html.ClientIdFor(t => t.AdTextLine2)").val()
+            }));
+        }
+    });
+    kendo.bind($("#@Html.ClientIdFor(t => t.PromotionAdsPK)_ul"), viewModel);
+    
+</script>
+<script src="@Url.Content("~/Scripts/AdditionalLinks.js")" type="text/javascript"> </script>

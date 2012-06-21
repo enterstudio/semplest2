@@ -1,0 +1,104 @@
+﻿@model Semplest.SharedResources.Models.ProfileModel
+@{
+    Layout = "~/Views/Shared/_LogInLayout.cshtml";
+    ViewBag.Title = "LogOn";
+}
+@using (Html.BeginForm())
+{<div id="url"></div>
+    <div id="tickets">
+        <h3 style="margin-left: 20px;margin-top: 5px; color: grey">
+            Welcome!</h3>
+            <ul>
+                <li>
+                    @Html.LabelFor(t => t.UserName, new { @class = "required"})
+                    @(Model.LoggedInSucceeded ? Html.TextBoxFor(m => m.UserName, new {@class = "k-textbox", @readonly = true}) : Html.TextBoxFor(m => m.UserName, new {@class = "k-textbox"}))
+                    @Html.ValidationMessageFor(m => m.UserName)
+                </li>
+                <li>
+                    @Html.LabelFor(t => t.Password1, new { @class = "required" })
+                    @(Model.LoggedInSucceeded ? Html.PasswordFor(m => m.Password1, new {@class = "k-textbox", @readonly = true, @value = "********"}) : Html.PasswordFor(m => m.Password1, new {@class = "k-textbox"}))
+                    @Html.ValidationMessageFor(m => m.Password1) 
+                </li>
+                <li class="accept">
+                    @Html.HiddenFor(m => m.IsRegistered)
+                    @Html.HiddenFor(m => m.LoggedInSucceeded)</li>
+                <li class="accept">
+                    <button class="k-button" type="submit" id="btnSubmit">
+                        Log On</button>
+                </li>
+               
+                    @if (!Model.LoggedInSucceeded)
+                    {          
+                        <li class="status">
+                            @Model.LoginFailedMessage
+                        </li>
+                    }
+                    else if (!Model.IsRegistered)
+                    {
+                       @Html.Partial("_Password", Model)
+                    }
+            </ul>
+    </div>
+}
+<style scoped>
+    .k-textbox
+    {
+        width: 11.8em;
+    }
+    
+    #tickets
+    {
+    }
+    
+    #tickets h3
+    {
+        font-weight: bold;
+        font-size: 2em;
+    }
+    
+    #tickets ul
+    {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+    #tickets li
+    {
+        margin: 10px 0 0 0;
+        text-align: center;
+    }
+    
+    label
+    {
+        display: inline-block;
+        text-align: right;
+        width: 120px;
+        margin-left: -50px;
+    }
+    
+    .required
+    {
+        font-weight: bold;
+        margin-right: 5px;
+    }
+    
+    .accept, .status
+    {
+        text-align: center;
+    }
+    
+    .valid
+    {
+        color: green;
+    }
+    
+    .invalid
+    {
+        color: red;
+    }
+    span.k-tooltip
+    {
+        margin-left: 6px;
+    }
+</style>

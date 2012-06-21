@@ -1,0 +1,50 @@
+﻿@model Semplest.Admin.Models.CustomerImport 
+           
+           
+@{
+    ViewBag.Title = "Customer Import";
+}
+@section Title{
+Customer Import
+}
+@section Navbar{
+    <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"></script>
+}
+@section Links{
+    @Html.Partial("TopMenu")
+}
+
+@using (Html.BeginForm("Upload","AccountService",FormMethod.Post , new { enctype = "multipart/form-data" } ))
+{
+    <label>Upload file</label>
+    <input name="uploadFile" type="file" />
+    
+    <h3>Billing:</h3>
+    <br />
+   @Html.HiddenFor(m=>m.ParentID)
+
+    
+        <div class="editor-label">
+    @Html.LabelFor(model => model.Roles)
+            
+    </div>
+    <div class="editor-field">
+    @Html.DropDownListFor(r => r.SelectedRoleID , Model.Roles)
+    </div>
+
+       
+                                         
+    <div class="editor-label">
+    @Html.LabelFor(model => model.BillTypes)
+            
+    </div>
+    <div class="editor-field">
+    @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes)
+    </div>
+    
+    <div>  <input type="checkbox" name="sendcustomeremail"   checked="checked"/>Send Customer Email<br /></div>
+    
+    
+    <input type="submit" value="UploadFile" title="Upload File" />
+    
+}

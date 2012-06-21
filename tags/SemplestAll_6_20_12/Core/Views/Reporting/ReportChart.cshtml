@@ -1,0 +1,86 @@
+﻿
+@model Semplest.Core.Models.ReportIndexModel
+@{
+    ViewBag.Title = "ReportDetails";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        createChart();
+        function createChart() {
+            $("#chart").kendoChart({
+                theme: 'metro',
+                dataSource: {
+                    transport: {
+                        read: {
+                            url: '@Url.Action("ReportGraph")',
+                            data: {
+                                promotionFk: $("#PromotionFK").val(),
+                                advertisingEngineFk: $("#EngineFK").val(),
+                                startDate: $("#StartDate").val(),
+                                endDate: $("#EndDate").val()
+                            }
+                        }, error: function (e) {
+                            alert(e.xhr.responseText);
+                        }
+                    },
+                    change: function (e) {
+                        var totalitems = e.sender.total();
+                        $('#chart').css('width', totalitems * 50);
+                    },
+                    sort: {
+                        field: "Date",
+                        dir: "asc"
+                    }
+                },
+                title: {
+                    text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + ""
+                    , position: "left"
+                },
+                legend: {
+                    position: "top"
+                },
+                series:
+                        [{
+                            field: "Impressions",
+                            name: "Impressions",
+                            type: "column"
+                        }, {
+                            field: "Clicks",
+                            name: "Clicks",
+                            type: "line"
+                        }],
+                categoryAxis: {
+                    field: "Date"
+                },
+                valueAxis: [{
+                    labels: {
+                        format: "{0:N0}"
+                    },
+                    majorUnit: 2000
+                },
+                {
+                    labels: {
+                        format: "{0:N0}"
+                    },
+                    majorUnit: 2000
+                }],
+                tooltip: {
+                    visible: true,
+                    format: "{0:N0}"
+                }
+            });
+        }
+    });
+</script>
+<div class="chart-wrapper" style="margin: auto; overflow: auto; height: 270px">
+    <div id="chart" style=" height: 250px">
+    </div>
+</div>
+@Html.HiddenFor(t => t.PromotionFK)
+@Html.HiddenFor(t => t.EngineFK)
+@Html.HiddenFor(t => t.PromotionName)
+@Html.HiddenFor(t => t.SearchEngineName)
+@Html.HiddenFor(t => t.StartDate)
+@Html.HiddenFor(t => t.EndDate)
+@Html.HiddenFor(t => t.Start)
+@Html.HiddenFor(t => t.End)

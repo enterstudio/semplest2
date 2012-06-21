@@ -1,0 +1,171 @@
+﻿@model Semplest.Core.Models.ReportIndexModel
+
+@section Title{
+Reporting (@ViewBag.Title)}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var reportTreeView = $("#reportTreeView").kendoTreeView({
+            template: kendo.template($("#treeview-template").html()),
+            checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()), select: onSelect
+        }).data("kendoTreeView");
+        $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+            for (var mainGroup in data) {
+                for (var subitem in data[mainGroup].SubItems) {
+                    var items = [];
+                    for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
+                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, Id: data[mainGroup].SubItems[subitem].SubItems[subitem1].Id });
+                    }
+                    reportTreeView.append({ text: data[mainGroup].SubItems[subitem].Name, items: items });
+                }
+            }
+        });
+        function startChange() {
+            var startDate = start.value();
+
+            if (startDate) {
+                startDate = new Date(startDate);
+                startDate.setDate(startDate.getDate() + 1);
+                end.min(startDate);
+            }
+        }
+        function onSelect(e) {
+            var checkboxes = $(e.node).find(":checkbox");
+            if (checkboxes.length > 0) {
+                $(checkboxes[0]).prop('checked', 'checked');
+            }
+
+            //HINT: you can get the node text this way as well
+            var nodeText = e.node.outerText;
+        }
+        function endChange() {
+            var endDate = end.value();
+
+            if (endDate) {
+                endDate = new Date(endDate);
+                endDate.setDate(endDate.getDate() - 1);
+                start.max(endDate);
+            }
+        }
+
+        var start = $("#StartDate").kendoDatePicker({
+            change: startChange
+        }).data("kendoDatePicker");
+
+        var end = $("#EndDate").kendoDatePicker({
+            change: endChange
+        }).data("kendoDatePicker");
+
+        start.max(end.value());
+        end.min(start.value());
+    });
+    function showSerializedData() {
+        var serializedData = $("#reportTreeView input").serialize()
+                        .replace(/%5B/g, "[")
+                        .replace(/%5D/g, "]")
+                        .replace(/&/g, "&amp;");
+
+        $("#checked-nodes").html(serializedData);
+    }
+    $(document).on("click", ".delete-link", function () {
+        var treeview = $("#treeview").data("kendoTreeView");
+        treeview.remove($(this).closest(".k-item"));
+        showSerializedData();
+    });
+    $(document).on("click", ".k-in", function (e) {
+        treeview.toggle($(e.target).closest(".k-item"));
+    });
+    $(document).on("click", ".checkbox", function (e) {
+        $('#PromotionFK').val(e.currentTarget.id);
+        $('#PromotionName').val(e.currentTarget.parentElement.parentElement.innerText);
+    });
+    $(document).on("click", ".engnieBox", function (e) {
+        $('#EngineFK').val(e.currentTarget.id);
+        $('#SearchEngineName').val(e.currentTarget.parentElement.parentElement.innerText);
+    });
+</script>
+<script id="treeview-template" type="text/kendo-ui-template">
+            #= item.text #
+            # if (!item.items) { #
+                <a class='delete-link' href='\#'></a>
+            # } #
+</script>
+<script id="treeview-checkbox-template" type="text/kendo-ui-template">
+            # var name = "checkedFiles[" + item.Id + "]"; #
+            # var id = item.Id ; #
+            <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
+            <!-- <input type="hidden" name="#= name #" value="false" /> -->
+            <input type="checkbox" id= "#= id #" name="#= name #" class="checkbox" value="true" />
+</script>
+@using (Html.BeginForm())
+{
+    <div style="padding: 10px;">
+        <div class="table">
+            <ul>
+                <li><strong>1# Please select a product group for which you would like to view reports.</strong><br/>
+                    <strong style="margin-left: 16px">Selecting more than one product group will provide you a report with combined data.</strong>
+                </li>
+                <li>
+                    <table>
+                        <tr>
+                            <td>
+                                <div style="height: 476px; width: 250px; border:gray solid 1px; " class="k-treeview">
+                                    <ul id="reportTreeView" style="margin: 5px;">
+                                    </ul>
+                                </div>
+                            </td>
+                            <td style="vertical-align: top">
+                                <div style="margin-left: 10px;">
+                                    <div style="border:gray solid 1px;">
+                                        <div style="margin: 5px;">
+                                        <strong>2# Please select a search engine for which you would like to view reports. Selecting
+                                            more than one engine will provide you a report with combined data.</strong>
+                                        @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+                                        {
+                                            <br />
+                                            @Html.CheckBox("ps.PromotionPK",true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                                            <img src="@Url.Content("~/Content/" + item.LogoURL)" style="vertical-align: middle;" />
+                                        }
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <br />
+                                    <div style="margin-left: 5px;border:gray solid 1px;">
+                                        <div style="margin: 5px;">
+                                            <strong>#3 Please Select Date Range</strong>
+                                            <br />
+                                            <div class="table" style="margin: 5px;">
+                                                <ul>
+                                                    <li>Start date
+                                                        @Html.TextBoxFor(t => t.StartDate)
+                                                        <span style="margin-left: 30px">End date</span>
+                                                        @Html.TextBoxFor(t => t.EndDate)
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <br/>
+                                    <div style="text-align: center">
+                                        <input type="submit" id="btnOne" value="Get Report" class="k-button" />
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    @Html.HiddenFor(t => t.PromotionFK)
+    @Html.HiddenFor(t => t.EngineFK)
+    @Html.HiddenFor(t => t.PromotionName)
+    @Html.HiddenFor(t => t.SearchEngineName)
+    <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+}
