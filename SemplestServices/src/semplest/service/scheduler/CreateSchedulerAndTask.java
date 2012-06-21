@@ -127,7 +127,7 @@ public class CreateSchedulerAndTask
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID",Integer.toString(promotionID));
 		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
-		jsonHash.put("adEngineList",adEngineListStr);
+		jsonHash.put("adEngines",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		taskObj.setParameters(json);
 		//
