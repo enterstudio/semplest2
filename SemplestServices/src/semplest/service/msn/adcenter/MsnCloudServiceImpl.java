@@ -1,7 +1,5 @@
 package semplest.service.msn.adcenter;
 
-import static semplest.service.msn.adcenter.MsnDomainObjects.aNew;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,9 +66,23 @@ import com.microsoft.adcenter.api.customermanagement.SignupCustomerRequest;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountInfo;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountLifeCycleStatus;
+import com.microsoft.adcenter.api.customermanagement.Entities.AccountType;
+import com.microsoft.adcenter.api.customermanagement.Entities.Address;
+import com.microsoft.adcenter.api.customermanagement.Entities.AdvertiserAccount;
 import com.microsoft.adcenter.api.customermanagement.Entities.ApplicationType;
+import com.microsoft.adcenter.api.customermanagement.Entities.ContactInfo;
+import com.microsoft.adcenter.api.customermanagement.Entities.CurrencyType;
 import com.microsoft.adcenter.api.customermanagement.Entities.Customer;
 import com.microsoft.adcenter.api.customermanagement.Entities.CustomerInfo;
+import com.microsoft.adcenter.api.customermanagement.Entities.EmailFormat;
+import com.microsoft.adcenter.api.customermanagement.Entities.Industry;
+import com.microsoft.adcenter.api.customermanagement.Entities.LCID;
+import com.microsoft.adcenter.api.customermanagement.Entities.LanguageType;
+import com.microsoft.adcenter.api.customermanagement.Entities.PaymentMethodType;
+import com.microsoft.adcenter.api.customermanagement.Entities.PersonName;
+import com.microsoft.adcenter.api.customermanagement.Entities.SecretQuestion;
+import com.microsoft.adcenter.api.customermanagement.Entities.TimeZoneType;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
@@ -190,7 +202,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			*/
 			
 		}
-		catch(Exception e){
+		catch(Exception e)
+		{
 			e.printStackTrace();
 		}
 	}
@@ -237,12 +250,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		logger.debug("call createAccount(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		MsnManagementIds ret = null;
-		try {
+		try 
+		{
 			SemplestString in = new SemplestString();
 			in.setSemplestString(data.get("name"));
 			ret = createAccount(in);
-		} catch (MsnCloudException e) {
-			throw new Exception(e);
+		} 
+		catch (MsnCloudException e) 
+		{
+			throw new Exception("Problem creating account for JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	} 
@@ -252,19 +268,76 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	{
 		final String legalName = SemplestUtils.getLegalUserName(name.getSemplestString());
 		logger.info("Will try to create MSN customer using name [" + legalName + "]");
-		Customer customer = aNew().adCenterCustomer().withCustomerName(legalName).build();
-		User user = aNew().adCenterUser().withUserName(legalName).build();
-		Account account = aNew().adCenterAccount().withAccountName(legalName).build();
+
+		final Address address = new Address();
+		address.setLine1("195 Broadway");
+		address.setLine2("Floor 24");
+		address.setLine3(null);
+		address.setLine4(null);
+		address.setCity("New York");
+		address.setCountryCode("US");
+		address.setStateOrProvince("NY");
+		address.setPostalCode("10007");
+		address.setId(null);
+		
+		final ContactInfo contactInfo = new ContactInfo();
+		contactInfo.setAddress(address);
+		contactInfo.setContactByPhone(null);
+		contactInfo.setContactByPostalMail(null);
+		contactInfo.setEmail("msn@semplest.com");
+		contactInfo.setPhone1("123-456-7890");
+		contactInfo.setId(null);
+		contactInfo.setEmailFormat(EmailFormat.Html);
+		contactInfo.setPhone2("123-456-7891");
+		contactInfo.setFax("123-456-7892");
+		contactInfo.setHomePhone("123-456-7893");
+		contactInfo.setMobile("123-456-7894");
+		
+		final SecretQuestion secretQuestion = SecretQuestion.FavoriteMovie;
+		
+		final PersonName personName = new PersonName("first name", "last name", null);
+		
+		final Customer customer = new Customer();
+		customer.setName(legalName);		
+		customer.setCustomerAddress(address);
+		customer.setIndustry(Industry.Other);
+		customer.setMarketCountry("US");
+		customer.setMarketLanguage(LanguageType.English);
+
+		final User user = new User();		
+		user.setName(personName);		
+		user.setContactInfo(contactInfo);
+		user.setCustomerAppScope(ApplicationType.Advertiser);
+		user.setCustomerId(null);
+		user.setPassword("password");		
+		user.setSecretQuestion(secretQuestion);
+		user.setSecretAnswer("Star Wars");
+		user.setUserName(legalName);		
+		user.setJobTitle(null);
+		user.setId(null);
+		user.setLcid(LCID.EnglishUS);
+
+		final AdvertiserAccount account = new AdvertiserAccount();
+		account.setId(null);
+		account.setName(legalName);
+		account.setNumber(null);
+		account.setAccountLifeCycleStatus(AccountLifeCycleStatus.Active);
+		account.setLanguage(LanguageType.English);
+		account.setPaymentMethodType(PaymentMethodType.Invoice);
+		account.setCurrencyType(CurrencyType.USDollar);						
+		account.setCountryCode("US");
+		account.setTimeZone(TimeZoneType.EasternTimeUSCanada);
+		account.setAccountType(AccountType.Advertiser);
+
 		try
 		{
 			final ICustomerManagementService customerManagementService = getCustomerManagementService();
 			final long parentCustomerId = adCenterCredentials.getParentCustomerID();
 			final ApplicationType applicationType = ApplicationType.Advertiser;
 			final SignupCustomerRequest request = new SignupCustomerRequest(customer, user, account, parentCustomerId, applicationType);
-			logger.info("Will try to create MSN account using Customer [" + SemplestUtils.getMsnCustomerString(customer) + "], User [" + SemplestUtils.getMsnUserString(user) + "], Account [" + SemplestUtils.getMsnAccountString(account) + "], ParentCustomerID [" + parentCustomerId + "], ApplicationType [" + applicationType + "]");
+			logger.info("Will try to create MSN account using:\n\tCustomer: [" + SemplestUtils.getMsnCustomerString(customer) + "]\n\tUser: [" + SemplestUtils.getMsnUserString(user) + "]\n\tAccount: [" + SemplestUtils.getMsnAccountString(account) + "]\n\tParentCustomerID: [" + parentCustomerId + "],\n\tApplicationType: [" + applicationType + "]");
 			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);			
-			final String signupCustomerResponseString = SemplestUtils.getMsnCustomerResponseString(signupCustomerResponse);
-			logger.info("New MSN account created [" + signupCustomerResponseString + "]");
+			logger.info("New MSN account created [" + SemplestUtils.getMsnCustomerResponseString(signupCustomerResponse) + "]");
 			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),(long) signupCustomerResponse.getUserId());
 		}
 		catch (AdApiFaultDetail e)
@@ -286,10 +359,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	{	
 		logger.debug("call getAccountIDs(String json)" + json);
 		HashMap<String,Double> ret = null;
-		try {
+		try 
+		{
 			ret = getAccountIDs();
-		} catch (MsnCloudException e) {
-			throw new Exception(e);
+		} catch (MsnCloudException e) 
+		{
+			throw new Exception("Problem getting Account IDs for JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	} 
@@ -317,15 +392,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Customer ID for Name [" + name + "]", e);
 		}
 		catch (ApiFault e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Customer ID for Name [" + name + "]", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Customer ID for Name [" + name + "]", e);
 		}
 	}
 	
@@ -349,15 +424,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account IDs", e);
 		}
 		catch (ApiFault e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account IDs", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account IDs", e);
 		}
 	}
 	public String getAccountById(String json) throws Exception
@@ -365,10 +440,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		logger.debug("call getAccountById(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Account ret = null;
-		try {
+		try 
+		{
 			ret = getAccountById(new Long(data.get("accountId")));
-		} catch (MsnCloudException e) {
-			throw new Exception(e);
+		} 
+		catch (MsnCloudException e) 
+		{
+			throw new Exception("Problem getting Account by ID using JSON [" + json + "]", e);
 		}
 		return gson.toJson(new MsnAccountObject(ret));
 	} 
@@ -385,15 +463,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account by ID [" + accountId + "]", e);
 		}
 		catch (ApiFault e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account by ID [" + accountId + "]", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem getting Account by ID [" + accountId + "]", e);
 		}
 	}
 
@@ -405,7 +483,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	
 	public String createCampaign(String json) throws Exception
 	{	
-		logger.debug("call createCampaign(String json)" + json);
+		logger.debug("call createCampaign(String json) [" + json + "]");
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Long ret = null;
 		try {
@@ -415,8 +493,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 					Double.valueOf(data.get("dailyBudget")),  
 					Double.valueOf(data.get("monthlyBudget")),
 					CampaignStatus.fromString(data.get("CampaignStatus")));
-		} catch (MsnCloudException e) {
-			throw new Exception(e);
+		} 
+		catch (MsnCloudException e) 
+		{
+			throw new Exception("Problem creating Campaign using JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	}
@@ -436,11 +516,29 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 
 		logger.info("Will try to create campaign with AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]");
 		try
-		{
-			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			Campaign newCampaign = aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
-			AddCampaignsResponse addCampaigns;
-			Campaign[] campaign = new Campaign[1]; 
+		{			
+			
+			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		
+			//return new CampaignBuilder(BudgetLimitType.MonthlyBudgetSpendUntilDepleted, false, null, null, true, "Clothing products for winter", null, 5000.00, "Winter clothing", null, null, null, );
+			//Campaign newCampaign = MsnDomainObjects.aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
+			
+			
+			final Campaign newCampaign = new Campaign();
+			newCampaign.setBudgetType(BudgetLimitType.MonthlyBudgetSpendUntilDepleted);
+			newCampaign.setConversionTrackingEnabled(true);
+			newCampaign.setDailyBudget(dailyBudget);
+			newCampaign.setDaylightSaving(true);
+			newCampaign.setDescription(campaignName);
+			newCampaign.setId(null);			
+			newCampaign.setMonthlyBudget(monthlyBudget);
+			newCampaign.setName(campaignName);
+			newCampaign.setStatus(campaignStatus);
+			newCampaign.setTimeZone("EasternTimeUSCanada");
+	
+			
+			final AddCampaignsResponse addCampaigns;
+			final Campaign[] campaign = new Campaign[1]; 
 			campaign[0] = newCampaign;
 			final AddCampaignsRequest addCampaignsRequest = new AddCampaignsRequest((long) accountId, campaign);						
 			logger.info("About to create Campaign in MSN for AccountID [" + addCampaignsRequest.getAccountId() + "], Campaign [" + SemplestUtils.getMsnCampaignString(newCampaign) + "]");			
@@ -449,16 +547,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating Campaign using AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]", e);
 		}
 		catch (ApiFaultDetail e)
 		{
-			logger.info("Problem", e);
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating Campaign using AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating Campaign using AccountID [" + accountId + "], CampaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudget [" + dailyBudget + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus [" + campaignStatus + "]", e);
 		}
 	}
 
@@ -467,10 +564,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		logger.debug("call getCampaignById(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Campaign ret = null;
-		try {
+		try 
+		{
 			ret = getCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
-		} catch (RemoteException e) {
-			throw new Exception(e);
+		} 
+		catch (RemoteException e) 
+		{
+			throw new Exception("Problem getting Campaign by ID using JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	}
@@ -479,16 +579,18 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	public Campaign getCampaignById(Long accountId, Long campaignId) throws RemoteException
 	{
 		GetCampaignsByIdsResponse campaignsById = null;
-		try{
+		try
+		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-			campaignsById = campaignManagement.getCampaignsByIds(new GetCampaignsByIdsRequest((long) accountId, new long[]
-					{ campaignId }));
+			campaignsById = campaignManagement.getCampaignsByIds(new GetCampaignsByIdsRequest((long) accountId, new long[]{ campaignId }));
 		}
-		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
+		catch(AdApiFaultDetail e1)
+		{
+			throw new RemoteException("Problem getting Campaign by ID using AccountID [" + accountId + "], CampaignID [" + campaignId + "]", e1);			
 		}
-		catch(ApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
+		catch(ApiFaultDetail e2)
+		{
+			throw new RemoteException("Problem getting Campaign by ID using AccountID [" + accountId + "], CampaignID [" + campaignId + "]", e2);
 		}
 		return campaignsById.getCampaigns()[0];
 	}
@@ -498,10 +600,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		logger.debug("call getCampaignsByAccountId(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Campaign[] ret = null;
-		try {
+		try 
+		{
 			ret = getCampaignsByAccountId(new Long(data.get("accountId")));
-		} catch (RemoteException e) {
-			throw new Exception(e);
+		} 
+		catch (RemoteException e) 
+		{
+			throw new Exception("Problem getting Campaigns by Account ID using JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	}
@@ -510,15 +615,18 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	public Campaign[] getCampaignsByAccountId(Long accountId) throws RemoteException
 	{
 		GetCampaignsByAccountIdResponse campaigns = null;
-		try{
+		try
+		{
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 			campaigns = campaignManagement.getCampaignsByAccountId(new GetCampaignsByAccountIdRequest((long) accountId));
 		}
-		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
+		catch(AdApiFaultDetail e1)
+		{
+			throw new RemoteException("Problem getting Campaigns by Account ID [" + accountId + "]", e1);			
 		}
-		catch(ApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
+		catch(ApiFaultDetail e2)
+		{
+			throw new RemoteException("Problem getting Campaigns by Account ID [" + accountId + "]", e2);
 		}
 		return campaigns.getCampaigns();
 	}
@@ -527,10 +635,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	{	
 		logger.debug("call pauseCampaignById(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
-		try {
+		try 
+		{
 			pauseCampaignById(new Long(data.get("accountId")), new Long(data.get("campaignId")));
-		} catch (RemoteException e) {
-			throw new Exception(e);
+		} 
+		catch (RemoteException e) 
+		{
+			throw new Exception("Problem Pausing Campaign by ID using JSON [" + json + "]", e);
 		}
 		return gson.toJson(0);  //return 0 if successful
 	}
@@ -817,11 +928,28 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	@Override
 	public long createAdGroup(Long accountId, Long campaignId) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		String nextAdGroupName = uniqueMsnNameService.getNextAdGroupName();
-		final AdGroup build = aNew().adGroup().withName(nextAdGroupName).build();
-		final AddAdGroupsResponse addAdGroups = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[]{ build }));		
-		final Long adGroupId = addAdGroups.getAdGroupIds()[0];
+		logger.info("Will try to Create MSN AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]");		
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		final String nextAdGroupName = uniqueMsnNameService.getNextAdGroupName();
+		
+		final PublisherCountry publisherCountry = new PublisherCountry("US", true);
+		final PublisherCountry[] publisherCountries = new PublisherCountry[] {publisherCountry};
+		
+		final AdGroup adGroup = new AdGroup();
+		adGroup.setAdDistribution(new String[]{"Search"});
+		adGroup.setBiddingModel(BiddingModel.Keyword);
+		adGroup.setLanguage("English");
+		adGroup.setName(nextAdGroupName);
+		adGroup.setPricingModel(PricingModel.Cpc);
+		adGroup.setPublisherCountries(publisherCountries);
+		adGroup.setNetwork(Network.OwnedAndOperatedAndSyndicatedSearch);
+		
+		logger.info("About to create MSN AdGroup: " + SemplestUtils.getMsnAdGroupString(adGroup));
+		
+		final AddAdGroupsResponse addAdGroupsResponse = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[]{adGroup}));
+		final long[] adGroupIds = addAdGroupsResponse.getAdGroupIds();
+		logger.info("Got " + adGroupIds.length + " AdGroup Ids from MSN: [" + SemplestUtils.getStringForArray(adGroupIds) + "]");
+		final Long adGroupId = adGroupIds[0];
 		final SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
 		submitAdGroupRequest.setAdGroupId(adGroupId);
 		final SubmitAdGroupForApprovalResponse approvalResponse = campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
@@ -830,7 +958,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	
 	@Override
 	public Boolean updateAdGroupDefaultBids(Long accountId, Long campaignId, Long adGroupId, 
-			Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws AdApiFaultDetail, ApiFaultDetail, RemoteException{
+			Double exactMatchBid, Double phraseMatchBid, Double broadMatchBid) throws AdApiFaultDetail, ApiFaultDetail, RemoteException
+	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		GetAdGroupsByCampaignIdRequest adGroupReq = new GetAdGroupsByCampaignIdRequest();
 		adGroupReq.setCampaignId(campaignId);
@@ -840,7 +969,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		Bid exactMBid = new Bid(exactMatchBid);
 		Bid phraseMBid = new Bid(phraseMatchBid);
 		
-		for(int i=0; i<adGroups.length; i++){
+		for(int i=0; i<adGroups.length; i++)
+		{
 			adGroups[i].setBroadMatchBid(broadMBid);
 			adGroups[i].setExactMatchBid(exactMBid);
 			adGroups[i].setPhraseMatchBid(phraseMBid);
@@ -1180,6 +1310,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	public long createAd(Long accountId, Long adGroupId, String title, String text, String displayUrl, String destinationUrl) throws RemoteException,
 			ApiFaultDetail, AdApiFaultDetail
 	{
+		logger.info("Will try to Create MSN Ad using AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Title [" + title + "], Text [" + text + "], DisplayURL [" + displayUrl + "], destinationURL [" + destinationUrl + "]");
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		TextAd ad = new TextAd();
 		ad.setText(text);
@@ -1190,15 +1321,17 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		// TextAd ad =
 		// aNew().textAd().withTitle(title).withText(text).withDisplayUrl(displayUrl).withDestinationUrl(destinationUrl).build();
 		AddAdsResponse addAds = null;
-		try{
-			addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[]
-					{ ad }));
+		try
+		{
+			addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[]{ ad }));
 		}
-		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
+		catch(AdApiFaultDetail e1)
+		{
+			throw new RemoteException(e1.dumpToString(), e1);			
 		}
-		catch(EditorialApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
+		catch(EditorialApiFaultDetail e2)
+		{
+			throw new RemoteException(e2.dumpToString(), e2);
 		}
 		return addAds.getAdIds()[0];
 	}
@@ -1483,22 +1616,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
 			Bid phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		Keyword keyword = aNew().keyword().withText(text).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid).withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
-		AddKeywordsResponse addKeywords = null;
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		final Keyword keyword = new Keyword();
+		keyword.setText(text);
+		keyword.setBroadMatchBid(broadMatchBid);
+		keyword.setContentMatchBid(contentMatchBid);
+		keyword.setExactMatchBid(exactMatchBid);
+		keyword.setPhraseMatchBid(phraseMatchBid);
 		try
 		{
-			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]{ keyword }));
+			final AddKeywordsResponse addKeywordsResponse = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]{ keyword }));
+			return addKeywordsResponse.getKeywordIds()[0];
 		}
 		catch(AdApiFaultDetail e1)
 		{
-			throw new RemoteException(e1.dumpToString());			
+			throw new RemoteException(e1.dumpToString(), e1);			
 		}
 		catch(EditorialApiFaultDetail e2)
 		{
-			throw new RemoteException(e2.dumpToString());
-		}
-		return addKeywords.getKeywordIds()[0];
+			throw new RemoteException(e2.dumpToString(), e2);
+		}		
 	}
 	
 	public String createKeywords(String json) throws Exception
@@ -1522,30 +1659,22 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		return gson.toJson(ret);
 	}
 
-	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail,
-			AdApiFaultDetail
+	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		int length = keywords.length;
-		Keyword[] keywordsMsn = new Keyword[length];
-		for (int i = 0; i < length; i++)
+		try
 		{
-			Keyword msnSemKeyword = keywords[i];
-			keywordsMsn[i] = aNew().keyword().withText(msnSemKeyword.getText()).withBroadMatchBid(msnSemKeyword.getBroadMatchBid())
-					.withContentMatchBid(msnSemKeyword.getContentMatchBid()).withExactMatchBid(msnSemKeyword.getExactMatchBid())
-					.withPhraseMatchBid(msnSemKeyword.getPhraseMatchBid()).build();
+			final AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywords));
+			return addKeywords.getKeywordIds();
 		}
-		AddKeywordsResponse addKeywords = null;
-		try{
-			addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywordsMsn));
+		catch(AdApiFaultDetail e1)
+		{
+			throw new RemoteException(e1.dumpToString(), e1);			
 		}
-		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
-		}
-		catch(EditorialApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
-		}
-		return addKeywords.getKeywordIds();
+		catch(EditorialApiFaultDetail e2)
+		{
+			throw new RemoteException(e2.dumpToString(), e2);
+		}		
 	}
 
 	public String getKeywordById(String json) throws Exception
@@ -1723,13 +1852,18 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 	private Keyword makeKeywordFromArrays(int index, long[] keywordId, Bid[] broadMatchBidArr, Bid[] contentMatchBidArr, Bid[] exactMatchBidArr,
 			Bid[] phraseMatchBidArr)
 	{
-		long id = keywordId[index];
-		Bid broadMatchBid = (broadMatchBidArr == null ? null : broadMatchBidArr[index]);
-		Bid contentMatchBid = (contentMatchBidArr == null ? null : contentMatchBidArr[index]);
-		Bid exactMatchBid = (exactMatchBidArr == null ? null : exactMatchBidArr[index]);
-		Bid phraseMatchBid = (phraseMatchBidArr == null ? null : phraseMatchBidArr[index]);
-		return aNew().keyword().withText(null).with(id).withBroadMatchBid(broadMatchBid).withContentMatchBid(contentMatchBid)
-				.withExactMatchBid(exactMatchBid).withPhraseMatchBid(phraseMatchBid).build();
+		final long id = keywordId[index];
+		final Bid broadMatchBid = (broadMatchBidArr == null ? null : broadMatchBidArr[index]);
+		final Bid contentMatchBid = (contentMatchBidArr == null ? null : contentMatchBidArr[index]);
+		final Bid exactMatchBid = (exactMatchBidArr == null ? null : exactMatchBidArr[index]);
+		final Bid phraseMatchBid = (phraseMatchBidArr == null ? null : phraseMatchBidArr[index]);
+		final Keyword keyword = new Keyword();
+		keyword.setId(id);
+		keyword.setBroadMatchBid(broadMatchBid);
+		keyword.setContentMatchBid(contentMatchBid);
+		keyword.setExactMatchBid(exactMatchBid);
+		keyword.setPhraseMatchBid(phraseMatchBid);
+		return keyword;
 	}
 	
 	public String pauseKeywordById(String json) throws Exception
@@ -1824,16 +1958,17 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 
 	@Override
 	public void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws RemoteException
-	{
+	{		
+		logger.info("Will try to Delete Keywords by Ids for AccountId [" + accountId + "] and AdGroupID [" + adGroupId + "]");
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		try{
 			campaignManagement.deleteKeywords(new DeleteKeywordsRequest(adGroupId, keywordIds));
 		}
 		catch(AdApiFaultDetail e1){
-			throw new RemoteException(e1.dumpToString());			
+			throw new RemoteException(e1.dumpToString(), e1);			
 		}
 		catch(ApiFaultDetail e2){
-			throw new RemoteException(e2.dumpToString());
+			throw new RemoteException(e2.dumpToString(), e2);
 		}
 	}
 
@@ -2134,88 +2269,89 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		}
 
 	}
-	private Boolean setStateTargetObject( ICampaignManagementService campaignManagement, Target[] targetsStored, Account account,
-			Long campaignId, String state) throws MsnCloudException{
-			try{	
-				Boolean res = false;
-				//Create and add radius object that will contain location information
-					
-				logger.info("Creating state object with location...");
-				StateTargetBid stateTar = new StateTargetBid();
-				stateTar.setState(state);
-				stateTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);
-				
-
-				if(targetsStored[0]== null){
-					Target target = new Target();
-					StateTarget statTarg = new StateTarget();
-					statTarg.setBids(new StateTargetBid[] {stateTar});
-					LocationTarget locTarget = new LocationTarget();
-					locTarget.setStateTarget(statTarg);
-					target.setLocation(locTarget);
-			
-					
-					Target[] targets = new Target[]{target};
-					AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
-					requestTar.setTargets(targets);
-					AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);
-					
-					long[] targetIDs = responseTar.getTargetIds();
-					
-					//Add target object to campaign
-					logger.info("Adding target to campaign...");
-					SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
-					requestCamp.setTargetId(targetIDs[0]);
-					requestCamp.setCampaignId(campaignId);
-					SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
-					logger.info("Target loaded");
-					res = true;
-				} else {
-					
-					//if target already exists add new business to bid array
-					if(targetsStored.length>1){
-						throw new MsnCloudException("Too many targets in this campaign");
-					}
-					Target targetUpdate = targetsStored[0];
-					LocationTarget locUpdate = targetUpdate.getLocation();
-					StateTarget stateTarUpdate = locUpdate.getStateTarget();
-					StateTargetBid[] bidsStored;
-					if(stateTarUpdate!=null){
-						bidsStored = new StateTargetBid[stateTarUpdate.getBids().length+1];
-						for(int j=0; j<stateTarUpdate.getBids().length; j++){
-							bidsStored[j] = stateTarUpdate.getBids()[j];
-						}
-						bidsStored[stateTarUpdate.getBids().length] = stateTar;
-					}else{
-						bidsStored = new StateTargetBid[]{stateTar};
-						stateTarUpdate = new StateTarget();
-					}
-					stateTarUpdate.setBids(bidsStored);
-					//Update location target
-					locUpdate.setStateTarget(stateTarUpdate);
-					targetUpdate.setLocation(locUpdate);
-					targetUpdate.setIsLibraryTarget(null);
-					//Update target in library
-					UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
-					updateTarRequest.setTargets(new Target[] {targetUpdate});
-					UpdateTargetsInLibraryResponse updateTarResponse =  campaignManagement.updateTargetsInLibrary(updateTarRequest);
-					logger.info("Target Updated");
-					res = true;
+	private Boolean setStateTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId, String state) throws MsnCloudException
+	{
+		try
+		{	
+			Boolean res = false;
+			logger.info("Creating state object with location...");
+			final StateTargetBid stateTar = new StateTargetBid();
+			stateTar.setState(state);
+			stateTar.setIncrementalBid(IncrementalBidPercentage.ZeroPercent);			
+			if(targetsStored[0]== null)
+			{
+				final Target target = new Target();
+				final StateTarget statTarg = new StateTarget();
+				statTarg.setBids(new StateTargetBid[] {stateTar});
+				final LocationTarget locTarget = new LocationTarget();
+				locTarget.setStateTarget(statTarg);
+				target.setLocation(locTarget);
+				final Target[] targets = new Target[]{target};
+				final AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
+				requestTar.setTargets(targets);
+				logger.info("About to request CampaignManagement to AddTargetsToLibrary: [" + SemplestUtils.getMsnAddTargetsToLibraryRequestString(requestTar) + "]");
+				final AddTargetsToLibraryResponse responseTar =campaignManagement.addTargetsToLibrary(requestTar);				
+				final long[] targetIDs = responseTar.getTargetIds();				
+				logger.info("Adding target to campaign...");
+				final SetTargetToCampaignRequest requestCamp = new SetTargetToCampaignRequest();
+				requestCamp.setTargetId(targetIDs[0]);
+				requestCamp.setCampaignId(campaignId);
+				final SetTargetToCampaignResponse responseCamp = campaignManagement.setTargetToCampaign(requestCamp);
+				logger.info("Target loaded");
+				res = true;
+			} 
+			else 
+			{				
+				//if target already exists add new business to bid array
+				if(targetsStored.length>1)
+				{
+					throw new MsnCloudException("Too many targets in this campaign");
 				}
-				return res;
+				final Target targetUpdate = targetsStored[0];
+				final LocationTarget locUpdate = targetUpdate.getLocation();
+				StateTarget stateTarUpdate = locUpdate.getStateTarget();
+				StateTargetBid[] bidsStored;
+				if(stateTarUpdate!=null)
+				{
+					bidsStored = new StateTargetBid[stateTarUpdate.getBids().length+1];
+					for(int j=0; j<stateTarUpdate.getBids().length; j++)
+					{
+						bidsStored[j] = stateTarUpdate.getBids()[j];
+					}
+					bidsStored[stateTarUpdate.getBids().length] = stateTar;
+				}
+				else
+				{					
+					bidsStored = new StateTargetBid[]{stateTar};
+					stateTarUpdate = new StateTarget();
+				}
+				stateTarUpdate.setBids(bidsStored);
+				locUpdate.setStateTarget(stateTarUpdate);
+				targetUpdate.setLocation(locUpdate);
+				targetUpdate.setIsLibraryTarget(null);
+				final UpdateTargetsInLibraryRequest updateTarRequest = new UpdateTargetsInLibraryRequest();
+				updateTarRequest.setTargets(new Target[] {targetUpdate});
+				final UpdateTargetsInLibraryResponse updateTarResponse =  campaignManagement.updateTargetsInLibrary(updateTarRequest);
+				logger.info("Target Updated");
+				res = true;
 			}
-			catch(RemoteException e1){
-				throw new MsnCloudException(e1);			
-			}
+			return res;
+		}
+		catch(RemoteException e1)
+		{
+			final String errMsg = "Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID [" + campaignId + "], State [" + state + "]";
+			logger.info(errMsg, e1);
+			throw new MsnCloudException(errMsg, e1);			
+		}
 	}
+	
 	public String setGeoTarget(String json) throws Exception
 	{	
 		logger.debug("call setGeoTarget(String json)" + json);
 		HashMap<String,String> data = protocolJson.getHashMapFromJson(json);
 		Boolean ret = null;
-		try {
-			
-			
+		try 
+		{				
 			ret = setGeoTarget((data.get("accountId")==null)? null:new Long(data.get("accountId")), 
 					(data.get("campaignId")==null)? null:new Long(data.get("campaignId")), 
 					(data.get("latitude")==null)? null:Double.valueOf(data.get("latitude")),
@@ -2226,8 +2362,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 					(data.get("state")==null)? null:data.get("state"),
 					(data.get("country")==null)? null:data.get("country"),
 					(data.get("zip")==null)? null:data.get("zip"));
-		} catch (Exception e) {
-			throw new Exception(e);
+		} 
+		catch (Exception e) 
+		{
+			throw new Exception("Problem setting GeoTarget for JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	}
@@ -2257,33 +2395,46 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 			
 			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId, customerID);
 			
-			//Get targets already isntalled
+			//Get targets already installed
 			GetTargetsByCampaignIdsRequest getTargReq = new GetTargetsByCampaignIdsRequest();
 			getTargReq.setCampaignIds(new long[]{campaignId});
 			
 			GetTargetsByCampaignIdsResponse getTargResp = campaignManagement.getTargetsByCampaignIds(getTargReq);
 			Target[] targetsStored = getTargResp.getTargets();
 			//Consider different cases
-			if(radius==null && state!=null && state.length()>0){
-				if(!state.contains("US-")){
+			if(radius==null && state!=null && state.length()>0)
+			{
+				if(!state.contains("US-"))
+				{
 					state = "US-"+state;
-					logger.info("Setting target: "+ state);
+					logger.info("Setting state: "+ state);
 				}
 				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, state);
-			}else if( addr!=null && city!=null && state!=null && country!=null && zip!=null && addr.length()>0 && city.length()>0
-					&& state.length()>0 && country.length()>0 && zip.length()>0){
+			}
+			else if( addr!=null && city!=null && state!=null && country!=null && zip!=null && addr.length()>0 && city.length()>0 && state.length()>0 && country.length()>0 && zip.length()>0)
+			{
 				country="US";
 				return setBusinessTargetObject( campaignManagement, targetsStored, account, campaignId, radius, addr, city, state, country, zip); 
-			}else if(radius!=null && latitude!=null && longitude!=null){
+			}
+			else if(radius!=null && latitude!=null && longitude!=null)
+			{
 				return setRadiusTargetObject( campaignManagement, targetsStored, account, campaignId, radius, latitude, longitude);
-			}else {
-				country="US";
-				logger.info("Setting default: "+ country);
-				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, country);
+			}
+			else 
+			{
+				if(!state.contains("US-"))
+				{
+					state = "US-"+state;
+					logger.info("Setting state: "+ state);
+				}
+				return setStateTargetObject( campaignManagement, targetsStored, account, campaignId, state);
 			}
 		}
-		catch(RemoteException e1){
-			throw new MsnCloudException(e1);			
+		catch(RemoteException e1)
+		{
+			final String errMsg = "Problem setting MSN GeoTarget for AccountID [" + accountId + "], CampaignID [" + campaignId+ "], Latitude [" + latitude + "], Longitude [" + longitude+ "], Radius [" + radius + "], Address [" + addr + "], City [" + city + "], State [" + state + "], Country [" + country + "], Zip [" + zip + "]";
+			logger.info(errMsg, e1);
+			throw new MsnCloudException(errMsg, e1);			
 		}
        
 	}
@@ -3063,7 +3214,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface //MsnClo
 		try
 		{
 			String namespace = adCenterCredentials.getCustomerManagementNamespace();			
-			CustomerManagementServiceLocator customerManagementServiceLocator = new CustomerManagementServiceLocator();
+			CustomerManagementServiceLocator customerManagementServiceLocator = new CustomerManagementServiceLocator();		
 			final String customerManagementUrl = adCenterCredentials.getCustomerManagementUrl();			
 			customerManagementServiceLocator.setBasicHttpBinding_ICustomerManagementServiceEndpointAddress(customerManagementUrl);
 			ICustomerManagementService customerManagementService = customerManagementServiceLocator.getBasicHttpBinding_ICustomerManagementService();

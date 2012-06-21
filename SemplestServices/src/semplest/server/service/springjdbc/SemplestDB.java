@@ -1012,10 +1012,10 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(SQL_UPDATE_AD_ENGINE_AD_ID, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
 	}
 	
-	public static Integer deleteAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
+	public static Integer deleteAdIDForAdGroup(String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
 		
-		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngineAdPK, advertisingEngine});
+		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngine});
 	}	
 	
 	

@@ -14,27 +14,27 @@ public class MsnCloudException extends Exception {
 	private static final long serialVersionUID = 1L;
 	
 	public MsnCloudException(Exception e) {
-		super(e);
+		super("Problem", e);
 	}
 	
-	public MsnCloudException(AdApiFaultDetail e) {
-		super("AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " adApi errors: " + toString(e.getErrors()), e);
+	public MsnCloudException(String string, AdApiFaultDetail e) {
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " adApi errors: " + toString(e.getErrors()), e);
 	}
 	
-	public MsnCloudException(AnalyticsApiFaultDetail e) {
-		super("AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + " goal errors: " + toString(e.getGoalErrors()), e);
+	public MsnCloudException(String string, AnalyticsApiFaultDetail e) {
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + " goal errors: " + toString(e.getGoalErrors()), e);
 	}
 	
-	public MsnCloudException(ApiFault e) {
-		super("AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()), e);
+	public MsnCloudException(String string, ApiFault e) {
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()), e);
 	}
 	
-	public MsnCloudException(ApiFaultDetail e) {
-		super("AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + " batch errors: " + toString(e.getBatchErrors()), e);
+	public MsnCloudException(String string, ApiFaultDetail e) {
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " operation errors: " + toString(e.getOperationErrors()) + " batch errors: " + toString(e.getBatchErrors()), e);
 	}
 	
-	public MsnCloudException(EditorialApiFaultDetail e) {
-		super("AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " batch errors: " + toString(e.getBatchErrors()) + " editorial errors: " + toString(e.getEditorialErrors()) + " operation errors: " + toString(e.getOperationErrors()), e);
+	public MsnCloudException(String string, EditorialApiFaultDetail e) {
+		super(string + " because AdCenter ApplicationFault trackingId=" + e.getTrackingId() + " batch errors: " + toString(e.getBatchErrors()) + " editorial errors: " + toString(e.getEditorialErrors()) + " operation errors: " + toString(e.getOperationErrors()), e);
 	}
 	
 	public MsnCloudException(String string) {

@@ -1342,7 +1342,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						final UpdateAdRequest matchingRequest = findMatchingRequest(updateRequests, textAd);
 						if (matchingRequest == null)
 						{							
-							logger.warn("Could not find matching request for Google Text Ad [" + (textAd == null ? "null" : SemplestUtils.getTextAdString(textAd) + ", status=[" + returnedAdStatus + "]"));
+							logger.warn("Could not find matching request for Google Text Ad [" + (textAd == null ? "null" : SemplestUtils.getGoogleTextAdString(textAd) + ", status=[" + returnedAdStatus + "]"));
 						}
 						else
 						{
