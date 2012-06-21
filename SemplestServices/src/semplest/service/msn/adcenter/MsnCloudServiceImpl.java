@@ -2477,8 +2477,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 				final Target[] targets = new Target[] { target };
 				final AddTargetsToLibraryRequest requestTar = new AddTargetsToLibraryRequest();
 				requestTar.setTargets(targets);
-				logger.info("About to request CampaignManagement to AddTargetsToLibrary: ["
-						+ SemplestUtils.getMsnAddTargetsToLibraryRequestString(requestTar) + "]");
+				logger.info("About to request CampaignManagement to AddTargetsToLibrary: [" + SemplestUtils.getMsnAddTargetsToLibraryRequestString(requestTar) + "]");
 				final AddTargetsToLibraryResponse responseTar = campaignManagement.addTargetsToLibrary(requestTar);
 				final long[] targetIDs = responseTar.getTargetIds();
 				logger.info("Adding target to campaign...");

@@ -524,8 +524,17 @@ public final class SemplestUtils
 		{
 			return "";
 		}
-		final Target[] targetsArray = request.getTargets();
-		final List<Target> targets = Arrays.asList(targetsArray);
+		final Target[] targets = request.getTargets();
+		final StringBuilder sb = new StringBuilder();
+		for (final Target target : targets)
+		{
+			if (sb.length() != 0)
+			{
+				sb.append(",");
+			}
+			sb.append(getMsnTargetString(target));
+		}
+		
 		return "AddTargetsToLibraryRequest[tagets=" + targets + "]";		
 	}
 	
