@@ -569,9 +569,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// int PromotionPK, Long KeywordAdEngineID, String Keyword,
 				// Integer MicroBidAmount, String BidType, String
 				// AdvertisingEngine, Boolean IsNegative
-				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount()
-						.intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
-				logger.info(++counter + ": added Google Keyword [" + keywordDataObj.getKeyword() + "] to Promotion for ID [" + promotionID + "]");
+				logger.info(++counter + ": will try to save in db Google Keyword for GoogleID [" + keywordDataObj.getBidID() + "], Text [" + keywordObj.getKeyword() + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
+				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), keywordDataObj.getMicroBidAmount().intValue(), keywordDataObj.getMatchType(), adEngine, keywordObj.getIsNegative());
 				Thread.sleep(1000); // Wait for google
 				// *****TEST
 				// TEST++;
@@ -608,8 +607,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
 				}
 				final Double microBidAmountForDB = microBidAmount == null ? 0.0 : microBidAmount;
-				addKeywordBidSP.execute(promotionID, msnKeywordId, keywordText, microBidAmountForDB, semplestMatchType, adEngine, false);
-				logger.info(++counter + ": added MSN Keyword [" + keywordText + "] to Promotion for ID [" + promotionID + "]");
+				logger.info(++counter + ": will try to save in db MSN Keyword for MsnID [" + msnKeywordId + "], Text [" + keywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
+				addKeywordBidSP.execute(promotionID, msnKeywordId, keywordText, microBidAmountForDB, semplestMatchType, adEngine, false);				
 			}
 		}
 		else
@@ -714,7 +713,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String text2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
 				final String text = text1 + " " + text2;
 				final Long msnAdId = msn.createAd(msnAccountId, adGroupID, title, text, displayURL, url);
-				logger.info(++counter + ": got the MSN Ad ID [" + msnAdId + "] after creating this Ad in MSN: [" + ad + "]");
+				logger.info(++counter + ": got the MSN Ad ID [" + msnAdId + "] after creating this Ad in MSN for AdGroupID [" + adGroupID + "]: [" + ad + "]");
 				ad.setAdEngineAdID(msnAdId);
 			}
 			adGrpData.setAdGroupID(adGroupID);
@@ -2418,19 +2417,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], New Start Date [" + newStartDate + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], New Start Date [" + newStartDate + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "ChangePromotionStartDate";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createChangePromotionStartDateTask(customerID, promotionID, newStartDate,
-					adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createChangePromotionStartDateTask(customerID, promotionID, newStartDate, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
