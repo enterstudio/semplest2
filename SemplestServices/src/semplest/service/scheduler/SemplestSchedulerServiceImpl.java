@@ -40,7 +40,7 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		//Start the Scheduler
 		SemplestScheduler scheduler = new SemplestScheduler(lock,recordMessageList);
 		scheduler.start();
-		messageBroker = new SemplestMessageBroker(lock, scheduler);
+		messageBroker = new SemplestMessageBroker(scheduler);
 		messageBroker.start();
 		logger.info("Started Semplest Scheduler Service");
 		//load the next schedule from the DB
