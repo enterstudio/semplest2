@@ -7,7 +7,7 @@ namespace Semplest.Core.Models.Repositories
 {
     public interface ICampaignRepository
     {
-        void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model);
+        void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model, CampaignSetupModel oldModel);
         CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId);
         IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid);
         Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName);
@@ -17,12 +17,12 @@ namespace Semplest.Core.Models.Repositories
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
         void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext,
-                                      int customerFk);
+                                      int customerFk, CampaignSetupModel oldModel);
 
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
         void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
-        void AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
+        List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
 
         void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,

@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.SharedResources.Services;
 using SemplestModel;
+using Semplest.SharedResources;
 
 
 namespace Semplest.Core.Models.Repositories
@@ -179,7 +180,7 @@ namespace Semplest.Core.Models.Repositories
             }
             return _dbcontext;
         }
-        public void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model)
+        public void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
             using (var dbcontext = new SemplestModel.Semplest())
             {
@@ -216,14 +217,14 @@ namespace Semplest.Core.Models.Repositories
                                 // add geotargeting to promotion
                                 AddGeoTargetingToPromotion(updatePromotion, model, custfk);
                                 // promotion ads
-                                AddPromotionAdsToPromotion(updatePromotion, model, custfk);
+                                AddPromotionAdsToPromotion(updatePromotion, model, custfk,null);
 
                                 dbcontext.Promotions.Add(updatePromotion);
                             }
                             else
                             {
                                 // update promotion
-                                UpdatePromotionFromModel(updatePromotion, model, dbcontext, custfk);
+                                UpdatePromotionFromModel(updatePromotion, model, dbcontext, custfk, oldModel);
                             }
                         }
 
@@ -257,7 +258,7 @@ namespace Semplest.Core.Models.Repositories
                         AddSiteLinksToPromotion(promo, model, custfk);
 
                         // promotion ads
-                        AddPromotionAdsToPromotion(promo, model, custfk);
+                        AddPromotionAdsToPromotion(promo, model, custfk,null);
 
                         // add product group
                         dbcontext.ProductGroups.Add(prodgroup);
@@ -465,7 +466,7 @@ namespace Semplest.Core.Models.Repositories
 
         }
 
-        public void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk)
+        public void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk, CampaignSetupModel oldModel)
         {
             var configuration = dbcontext.Configurations.First();
             updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
@@ -517,9 +518,22 @@ namespace Semplest.Core.Models.Repositories
             SavePromotionAdEngineSelected(updatePromotion, model, dbcontext);
             AddGeoTargetingToPromotion(updatePromotion, model, customerFk);
             AddSiteLinksToPromotion(updatePromotion, model, customerFk);
-            AddPromotionAdsToPromotion(updatePromotion, model, customerFk);
+            List<PromotionAd> adAds = AddPromotionAdsToPromotion(updatePromotion, model, customerFk, oldModel);
             SaveNegativeKeywords(updatePromotion, model, dbcontext);
             dbcontext.SaveChanges();
+            List<int> ads = new List<int>();
+            foreach(PromotionAd ad in adAds)
+            {
+                ads.Add(dbcontext.PromotionAds.Where(key => key.AdTextLine1 == ad.AdTextLine1 && key.AdTextLine2 == ad.AdTextLine2 && key.AdTitle == ad.AdTitle && key.PromotionFK == updatePromotion.PromotionPK).First().PromotionAdsPK);
+            }
+            if (ads.Count > 0  && updatePromotion.IsLaunched)
+            {
+                var adEngines = new List<string>();
+                adEngines.AddRange(updatePromotion.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                var sw = new ServiceClientWrapper();
+                sw.scheduleAds(customerFk, updatePromotion.PromotionPK, ads, adEngines, SEMplestConstants.PromotionAdAction.Add);
+            }
+
         }
 
         public void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext)
@@ -608,55 +622,66 @@ namespace Semplest.Core.Models.Repositories
                         PromotionFK = promo.PromotionPK
                     };
                     promo.SiteLinks.Add(slink);
-                    try
-                    {
-                        var sw = new ServiceClientWrapper();
-                        var adEngines = new List<string>();
-                        if (promo.IsLaunched)
-                        {
-                            adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                            sw.scheduleRefreshSiteLinksForAd(customerFk, promo.PromotionPK, adEngines);
-                        }
-                    }
-                    catch (Exception ex) { SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
                 }
+            try
+            {
+                var sw = new ServiceClientWrapper();
+                var adEngines = new List<string>();
+                if (promo.IsLaunched)
+                {
+                    adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                    sw.scheduleRefreshSiteLinks(customerFk, promo.PromotionPK, adEngines);
+                }
+            }
+            catch (Exception ex) { SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
         }
 
-        public void AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
+        public List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel)
         {
+            List<PromotionAd> adAds = new List<PromotionAd>();
             foreach (PromotionAd pad in model.AdModelProp.Ads.Where(t => !t.Delete))
             {
-                var cad = new PromotionAd { AdTextLine1 = pad.AdTextLine1, AdTextLine2 = pad.AdTextLine2, AdTitle = pad.AdTitle };
-
-                //if (pad.SiteLinks != null)
-                //{
-                //    // add sitelinks
-                //    foreach (SiteLink slink in pad.SiteLinks)
-                //    {
-                //        // this is check should be removed once we fix the logic in partialview and model
-                //        if (!String.IsNullOrEmpty(slink.LinkText) && !String.IsNullOrEmpty(slink.LinkURL))
-                //        {
-                //            var slinkobj = new SiteLink { LinkText = slink.LinkText, LinkURL = slink.LinkURL };
-                //            cad.SiteLinks.Add(slinkobj);
-                //        }
-                //    }
-                //}
-
+                var cad = new PromotionAd { AdTextLine1 = pad.AdTextLine1, AdTextLine2 = pad.AdTextLine2, AdTitle = pad.AdTitle, PromotionAdsPK = pad.PromotionAdsPK };
                 promo.PromotionAds.Add(cad);
-                try
-                {
-                    var sw = new ServiceClientWrapper();
-                    var adEngines = new List<string>();
-                    var promoAds = new List<int>();
-                    if (promo.IsLaunched)
-                    {
-                        adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                        promoAds.AddRange(promo.PromotionAds.Select(pa => pa.PromotionAdsPK));
-                        sw.scheduleAds(customerFk, promo.PromotionPK, promoAds, adEngines, true);
-                    }
-                }
-                catch (Exception ex) { SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
             }
+            try
+            {
+                var sw = new ServiceClientWrapper();
+                var adEngines = new List<string>();
+                var promoAds = new List<PromotionAd>();
+                
+                List<int> deleteAds = new List<int>();
+                List<int> updateAds = new List<int>();
+                if (promo.IsLaunched)
+                {
+                    adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                    //promoAds.AddRange(promo.PromotionAds.Select(pa => pa.PromotionAdsPK));
+                    foreach (PromotionAd oldPa in oldModel.AdModelProp.Ads)
+                    {
+                        var matchingAds = promo.PromotionAds.Where(key => key.PromotionAdsPK == oldPa.PromotionAdsPK);
+                        if (matchingAds.Count() > 0)
+                        {
+                            foreach (PromotionAd pa in matchingAds)
+                                if (pa.AdTextLine1 != oldPa.AdTextLine1 || pa.AdTextLine2 != oldPa.AdTextLine2 || pa.AdTitle != oldPa.AdTitle)
+                                {
+                                    updateAds.Add(pa.PromotionAdsPK);
+                                    break;
+                                }
+                        }
+                        else
+                            deleteAds.Add(oldPa.PromotionAdsPK);
+                    }
+                    foreach (PromotionAd pa in promo.PromotionAds.Where(key => key.PromotionAdsPK == 0))
+                            adAds.Add(pa);
+
+                    if (updateAds.Count>0)
+                        sw.scheduleAds(customerFk, promo.PromotionPK, updateAds, adEngines, SEMplestConstants.PromotionAdAction.Update);
+                    if (deleteAds.Count>0)
+                        sw.scheduleAds(customerFk, promo.PromotionPK, deleteAds, adEngines, SEMplestConstants.PromotionAdAction.Delete);
+                }
+            }
+            catch (Exception ex) { SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            return adAds;
         }
 
         public void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories)
@@ -717,7 +742,7 @@ namespace Semplest.Core.Models.Repositories
                 dr["IsTargetMSN"] = kpo.isTargetMSN;
                 dr["IsTargetGoogle"] = kpo.isTargetGoogle;
                 stationIds.Rows.Add(dr);
-                //System.Diagnostics.Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + kpo.keyword + "',1,0,1,0,0)");
+                System.Diagnostics.Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + dr["Keyword"].ToString() + "',1,0,1,0,0)");
             }
             if (stationIds.Rows.Count > 0)
             {

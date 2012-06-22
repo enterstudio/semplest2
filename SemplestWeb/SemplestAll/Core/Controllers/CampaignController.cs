@@ -124,7 +124,7 @@ namespace Semplest.Core.Controllers
                     var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
                     Logger.Write(logEnty);
 
-                    _campaignRepository.SaveProductGroupAndCampaign(userid, model);
+                    _campaignRepository.SaveProductGroupAndCampaign(userid, model, (CampaignSetupModel)Session["CampaignSetupModel"]);
 
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -520,8 +520,6 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult Preview(int promotionId)
         {
-            var scw = new ServiceClientWrapper();
-            scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
 
             var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
             //set sitelinks in session

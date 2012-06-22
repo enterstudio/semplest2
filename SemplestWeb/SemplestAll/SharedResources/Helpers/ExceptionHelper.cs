@@ -18,7 +18,7 @@ namespace Semplest.SharedResources.Helpers
             //{
             try
             {
-                 var _dbContext = new SemplestModel.Semplest();
+                var _dbContext = new SemplestModel.Semplest();
                 SemplestModel.Error er = new SemplestModel.Error();
                 er.ErrorMessage = filterContext.Exception.ToString();
                 //filterContext.RequestContext.HttpContext.Session
@@ -32,34 +32,39 @@ namespace Semplest.SharedResources.Helpers
                 var scw = new ServiceClientWrapper();
                 scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString());
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
                 //throw;
             }
             // Log filterContext.Exception in some way.  
             //}
         }
 
-        static public void  LogException(string errorMessage)
+        static public void LogException(string errorMessage)
         {
-                        try
+            var _dbContext = new SemplestModel.Semplest();
+            SemplestModel.Error er = new SemplestModel.Error();
+            //first try saving to the database then try sending an email
+            try
             {
-                var _dbContext = new SemplestModel.Semplest();
-                SemplestModel.Error er = new SemplestModel.Error();
                 er.ErrorMessage = errorMessage;
                 //filterContext.RequestContext.HttpContext.Session
-                if (HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] == null)
-                    er.UsersFK = 1;
+                if (HttpContext.Current == null || HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] == null)
+                    er.UsersFK = null;
                 else
                     er.UsersFK = ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]) == null ? 1 : ((Credential)HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).UsersFK;
                 er.CreatedDate = DateTime.Now;
                 _dbContext.Errors.Add(er);
                 _dbContext.SaveChanges();
+            }
+            catch { }
+            try
+            {
                 var scw = new ServiceClientWrapper();
                 scw.SendEmail("WebSite Error Message", "website@semplest.com", _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
             }
-            catch (Exception ex) { Console.WriteLine(ex.ToString());
-                //throw;
-            }
+            catch { }
         }
     }
 

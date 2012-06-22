@@ -5,6 +5,8 @@ using System.Linq;
 using System.Net;
 using Newtonsoft.Json;
 using SemplestModel;
+using System.Threading;
+using Semplest.SharedResources;
 
 namespace Semplest.SharedResources.Services
 {
@@ -173,110 +175,33 @@ namespace Semplest.SharedResources.Services
 
         public bool schedulePromotion(int customerId, int promoId, string[] adds, bool shouldResume)
         {
-            string returnData = string.Empty;
-            bool retVal;
-            try
-            {
-                var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("customerID", customerId.ToString());
-                jsonHash.Add("promotionID", promoId.ToString());
-                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
-                jsonHash.Add("adEngines", jsonAdds);
-                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerId.ToString());
+            jsonHash.Add("promotionID", promoId.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            string jsonstr = JsonConvert.SerializeObject(jsonHash);
 
-                returnData = string.Empty;
-                try
-                {
-                    if (shouldResume)
-                        returnData = runMethod(_baseURLTest, ADENGINESERVICE, "scheduleUnpausePromotion", jsonstr, timeoutMS);
-                    else
-                        returnData = runMethod(_baseURLTest, ADENGINESERVICE, "schedulePausePromotion", jsonstr, timeoutMS);
-                }
-                catch (Exception ex)
-                {
-                    string errmsg = ex.Message;
-                    throw;
-                }
-                //return JsonConvert.DeserializeObject<List<string>>(returnData);
-
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
-                if (jsonstrlist == "Service Timeout")
-                {
-                    throw new Exception("Service Timeout for schedulePausePromotion");
-                }
-                else if (jsonstrlist == "No Service for semplest.server.service.adengine.SemplestAdengineService Available")
-                {
-                    // temporary fix needs to be corrected
-                    return true;
-                }
-                retVal = bool.Parse(lis[0]);
-            }
-            catch
-            {
-                if (string.IsNullOrEmpty(returnData))
-                    throw;
-                else
-                    throw new Exception(returnData);
-            }
-            return retVal;
+            if (shouldResume)
+                return runBooleanMethod(ADENGINESERVICE, "scheduleUnpausePromotion", jsonstr);
+            else
+                return runBooleanMethod(ADENGINESERVICE, "schedulePausePromotion", jsonstr);
         }
 
         public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId, string[] adEngineList)
         {
-            return true;
             string returnData = string.Empty;
-            bool retVal;
-            try
-            {
-                var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("customerID", customerID.ToString());
-                jsonHash.Add("productGroupID", productGroupId.ToString());
-                jsonHash.Add("promotionID", promoId.ToString());
-                string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
-                jsonHash.Add("adEngineList", jsonAdds);
-                string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-
-                returnData = string.Empty;
-                try
-                {
-                    returnData = runMethod(_baseURLTest, ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr, timeoutMS);
-                }
-                catch (Exception ex)
-                {
-                    string errmsg = ex.Message;
-                    throw;
-                }
-                //return JsonConvert.DeserializeObject<List<string>>(returnData);
-
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
-                if (jsonstrlist == "Service Timeout")
-                {
-                    throw new Exception("Service Timeout for schedulePausePromotion");
-                }
-                else if (jsonstrlist == "No Service for semplest.server.service.adengine.SemplestAdengineService Available")
-                {
-                    // temporary fix needs to be corrected
-                    return true;
-                }
-                retVal = bool.Parse(lis[0]);
-            }
-            catch
-            {
-                if (string.IsNullOrEmpty(returnData))
-                    throw;
-                else
-                    throw new Exception(returnData);
-            }
-            return retVal;
-
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("customerID", customerID.ToString());
+            jsonHash.Add("productGroupID", productGroupId.ToString());
+            jsonHash.Add("promotionID", promoId.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
+            jsonHash.Add("adEngineList", jsonAdds);
+            string jsonstr = JsonConvert.SerializeObject(jsonHash);
+            return runBooleanMethod(ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr);
         }
 
-        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines, bool isAdd)
+        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines, SEMplestConstants.PromotionAdAction actionType)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
@@ -286,10 +211,12 @@ namespace Semplest.SharedResources.Services
             jsonAdds = JsonConvert.SerializeObject(promotionAdIds, Formatting.Indented);
             jsonHash.Add("promotionAdIds", jsonAdds);
             
-            if (isAdd)
+            if (actionType == SEMplestConstants.PromotionAdAction.Add)
                 return runBooleanMethod(ADENGINESERVICE, "scheduleAddAds", JsonConvert.SerializeObject(jsonHash));
-            else
+            else if(actionType == SEMplestConstants.PromotionAdAction.Delete)
                 return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteAds", JsonConvert.SerializeObject(jsonHash));
+            else
+                return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateAds", JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool scheduleUpdateGeoTargeting(int customerID, int promotionID, List<String> adEngines)
@@ -309,7 +236,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            jsonHash.Add("newStartDate", newStartDate.ToString());
+            jsonHash.Add("newStartDate", newStartDate.ToString("yyyymmdd"));
             return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate", JsonConvert.SerializeObject(jsonHash));
         }
 
@@ -339,54 +266,74 @@ namespace Semplest.SharedResources.Services
                 return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleRefreshSiteLinksForAd(int customerID, int promotionID, List<String> adEngines)
+        public bool scheduleRefreshSiteLinks(int customerID, int promotionID, List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "scheduleRefreshSiteLinksForAd", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "scheduleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
         }
 
-
-
+        private Thread _workerThread;
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
+            ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
+            _workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
+            _workerThread.Start(tData);
+            return true;
+        }
+
+        private void runBooleanMethodAsync(object data)
+        {
+            ThreadData param = (ThreadData) data;
+
             string returnData = string.Empty;
             try
             {
-                returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr, timeoutMS);
+                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr, timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                //this should be the case but we are always going to return true so this line has been commented out
+                if(!bool.Parse(lis[0]))
+                    throw new Exception("Json Call returned a false");
             }
-            catch (Exception ex)
-            {
-                string errmsg = ex.Message;
-                throw;
+            catch (Exception ex) {
+                System.Text.StringBuilder stemp = new System.Text.StringBuilder();
+                stemp.Append("Json Passed:");
+                stemp.Append(param.JsonStr);
+                stemp.Append(Environment.NewLine);
+                stemp.Append("Service Requested:");
+                stemp.Append(param.ServiceRequested);
+                stemp.Append(Environment.NewLine);
+                stemp.Append("Method Requested:");
+                stemp.Append(param.MethodRequested);
+                stemp.Append(Environment.NewLine);
+                stemp.Append("Json Returned:");
+                stemp.Append(returnData);
+                stemp.Append(Environment.NewLine);
+                stemp.Append(ex.ToString());
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(stemp.ToString()); 
             }
-            //return JsonConvert.DeserializeObject<List<string>>(returnData);
-
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            if (jsonstrlist == "Service Timeout")
-            {
-                throw new Exception("Service Timeout for schedulePausePromotion");
-            }
-            else if (jsonstrlist == "No Service for semplest.server.service.adengine.SemplestAdengineService Available")
-            {
-                // temporary fix needs to be corrected
-                return true;
-            }
-            return bool.Parse(lis[0]);
+            
         }
 
-        
+         private class ThreadData
+        {
+            public string ServiceRequested{get;set;}
+            public string MethodRequested { get; set; }
+            public string JsonStr { get; set; }
 
-        
+            public ThreadData(string serviceRequested, string methodRequested, string jsonStr)
+            {
+                ServiceRequested = serviceRequested;
+                MethodRequested = methodRequested;
+                JsonStr = jsonStr;
+            }
+        }
 
-
-
-        //
         public GatewayReturnObject CreateProfile(CustomerObject customerObject)
         {
             string returnData;
@@ -497,17 +444,22 @@ namespace Semplest.SharedResources.Services
 
         public Boolean SendEmail(String subject, String from, String recipient, String msgTxt)
         {
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("subject", subject);
-            jsonHash.Add("from", from);
-            jsonHash.Add("recipient", recipient);
-            jsonHash.Add("msgTxt", msgTxt);
-            jsonHash.Add("msgType", "text/html; charset=utf-8;"); //"text/plain
-            string jsonstr = JsonConvert.SerializeObject(jsonHash);
-            string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            string boolResult = dict.Values.First();
-            return Convert.ToBoolean(boolResult);
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("subject", subject);
+                jsonHash.Add("from", from);
+                jsonHash.Add("recipient", recipient);
+                jsonHash.Add("msgTxt", msgTxt);
+                jsonHash.Add("msgType", "text/html; charset=utf-8;"); //"text/plain
+                string jsonstr = JsonConvert.SerializeObject(jsonHash);
+                string returnData = runMethod(_baseURLTest, MAILSERVICEOFFERED, "SendEmail", jsonstr, timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                string boolResult = dict.Values.First();
+                return Convert.ToBoolean(boolResult);
+            }
+            catch  { }
+            return false;
         }
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
