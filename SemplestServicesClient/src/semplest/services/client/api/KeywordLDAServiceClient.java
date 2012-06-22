@@ -29,12 +29,13 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			boolean flag = false;
+			boolean flag = true;
 			while(flag){
 				System.out.println("**************DEV MACHINE 1*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
 				long start = System.currentTimeMillis();
-				ArrayList<String> res = client.getCategories(null, "rugby sale balls and gloves", "rugby sale balls and gloves", null, null);
+				ArrayList<String> res = client.getCategories(null, "Best Seafood Dinner in NJ Get NJs best Lobster Dinners Caught Fresh Daily", 
+						"Best Seafood Dinner in NJ Get NJs best Lobster Dinners Caught Fresh Daily", null, null);
 				double sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("categories took " + sec + " seconds");
 				for (int i = 0; i < res.size(); i++)
@@ -44,11 +45,12 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				
 				start = System.currentTimeMillis();
 				ArrayList<String> selectCateg = new ArrayList<String>();
-				selectCateg.add(res.get(0));
+				selectCateg.add(res.get(1));
 				System.out.println("Selected:"+res.get(1));
 				
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-						"rugby sale balls and gloves", "rugby sale balls and gloves", null, "http://www.planetrugby.com", null ,new Integer[]{50,50});
+						"Lobster Dinners", "lobster, lobster dinners, lobster salad, take out, seafood, fresh fish, fish", 
+						null, "http://www.thelobsterhouse.com/home", null ,new Integer[]{50,50});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds.  Number keywords=" +  kw.length);
 				
