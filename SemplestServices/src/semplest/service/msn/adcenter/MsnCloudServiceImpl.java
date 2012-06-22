@@ -36,8 +36,10 @@ import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
+import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.UpdateAdRequest;
@@ -1930,48 +1932,44 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 	}
 
-	public String updateKeywordBidsByIds(String json) throws Exception
+	public List<Keyword> getKeywords(List<BidElement> bids)
 	{
-		logger.debug("call updateKeywordBidsByIds(String json)" + json);
-		HashMap<String, String> data = protocolJson.getHashMapFromJson(json);
-		long[] keywordId = gson.fromJson(data.get("keywordId"), long[].class);
-		Bid[] broadMatchBid = gson.fromJson(data.get("broadMatchBid"), Bid[].class);
-		Bid[] contentMatchBid = gson.fromJson(data.get("contentMatchBid"), Bid[].class);
-		Bid[] exactMatchBid = gson.fromJson(data.get("exactMatchBid"), Bid[].class);
-		Bid[] phraseMatchBid = gson.fromJson(data.get("phraseMatchBid"), Bid[].class);
-		try
+		final List<Keyword> keywords = new ArrayList<Keyword>();
+		for (final BidElement bid : bids)
 		{
-			updateKeywordBidsByIds(new Long(data.get("accountId")), new Long(data.get("adGroupId")), keywordId, broadMatchBid, contentMatchBid,
-					exactMatchBid, phraseMatchBid);
+			final Keyword keyword = new Keyword();
+			final Long keywordAdEngineID = bid.getKeywordAdEngineID();
+			final String matchType = bid.getMatchType();
+			final Long microBidAmountLong = bid.getMicroBidAmount();
+			final Double microBidAmountDouble = ((double)microBidAmountLong) / 1000000;  
+			final Bid keywordBid = new Bid(microBidAmountDouble);
+			keyword.setId(keywordAdEngineID);
+			if (SemplestMatchType.Broad.name().equals(matchType))
+			{
+				keyword.setBroadMatchBid(keywordBid);
+			}
+			else if (SemplestMatchType.Exact.name().equals(matchType))
+			{
+				keyword.setExactMatchBid(keywordBid);
+			}
+			else if (SemplestMatchType.Phrase.name().equals(matchType))
+			{
+				keyword.setPhraseMatchBid(keywordBid);
+			}
+			keywords.add(keyword);
 		}
-		catch (RemoteException e)
-		{
-			throw new Exception(e);
-		}
-		return gson.toJson(0);
+		return keywords;
 	}
 
 	@Override
-	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, long[] keywordId, Bid[] broadMatchBid, Bid[] contentMatchBid,
-			Bid[] exactMatchBid, Bid[] phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
+	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
-		if (keywordId == null)
-		{
-			return;
-		}
-
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-
-		int len = keywordId.length;
-		Keyword[] ret = new Keyword[len];
-		for (int i = 0; i < len; i++)
-		{
-			ret[i] = makeKeywordFromArrays(i, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
-		}
-
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		final List<Keyword> keywords = getKeywords(bids);
+		final Keyword[] keywordArray = keywords.toArray(new Keyword[keywords.size()]); 
 		try
 		{
-			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, ret));
+			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, keywordArray));
 		}
 		catch (AdApiFaultDetail e1)
 		{

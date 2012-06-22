@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
@@ -111,7 +112,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws Exception;	
 	void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid, Bid phraseMatchBid) throws Exception;	
-	void updateKeywordBidsByIds(Long accountId, Long adGroupId, long[] keywordId, Bid[] broadMatchBid, Bid[] contentMatchBid, Bid[] exactMatchBid, Bid[] phraseMatchBid) throws Exception;	
+	void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws Exception;	
 	void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordsById(Long accountId, Long adGroupId, long[] keywordIds) throws Exception;

@@ -13,6 +13,7 @@ import semplest.other.MsnManagementIds;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnAccountObject;
@@ -1113,26 +1114,16 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		logger.debug("updateKeywordBidById: (if successful returns 0) " + ret);
 	}
 
-	@Override
-	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, long[] keywordId, Bid[] broadMatchBid, Bid[] contentMatchBid,
-			Bid[] exactMatchBid, Bid[] phraseMatchBid) throws Exception
+	@Override	       
+	public void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws Exception
 	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		String keywordIdStr = gson.toJson(keywordId);
-		String broadMatchBidStr = gson.toJson(broadMatchBid);
-		String contentMatchBidStr = gson.toJson(contentMatchBid);
-		String exactMatchBidStr = gson.toJson(exactMatchBid);
-		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		final Map<String, String> jsonHash = new HashMap<String, String>();
+		final String bidElementsStr = gson.toJson(bids);		
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
-		jsonHash.put("keywordId", keywordIdStr);
-		jsonHash.put("broadMatchBid", broadMatchBidStr);
-		jsonHash.put("contentMatchBid", contentMatchBidStr);
-		jsonHash.put("exactMatchBid", exactMatchBidStr);
-		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
-		String json = gson.toJson(jsonHash);
-		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidsByIds", json, timeoutMS);
+		jsonHash.put("bidElements", bidElementsStr);
+		final String json = gson.toJson(jsonHash);		
+		final String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidsByIds", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("updateKeywordBidsByIds: (if successful returns 0) " + ret);
 	}

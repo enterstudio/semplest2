@@ -243,14 +243,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_scheduleAddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_scheduleAddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.MSN.name()}));
 		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngineMSN, productGroupID_scheduleAddPromotionToAdEngineMSN, promotionID_scheduleAddPromotionToAdEngineMSN, adEngines_scheduleAddPromotionToAdEngineMSN);
-
+*/
 		// AddPromotionToAdEngine - MSN
 		final Integer customerID_AddPromotionToAdEngineMSN = 12;
 		final Integer productGroupID_AddPromotionToAdEngineMSN = 76;
 		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
-
+/*
 		// scheduleAddAds - MSN
 		final Integer customerID_ScheduleAddAds = 12;
 		final Integer promotionID_ScheduleAddAds = 62;
@@ -358,13 +358,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<Integer> keywordIds_scheduleDeleteKeywords = Arrays.asList(12421);
 		final List<String> adEngines_scheduleDeleteKeywords = Arrays.asList(AdEngine.MSN.name());
 		client.scheduleDeleteKeywords(customerID_scheduleDeleteKeywords,  promotionID_scheduleDeleteKeywords, keywordIds_scheduleDeleteKeywords, adEngines_scheduleDeleteKeywords);
-*/
+
 		// DeleteKeywords - MSN
 		final Integer promotionID_DeleteKeywords = 62;
 		final List<Integer> keywordIds_DeleteKeywords = Arrays.asList(12095);
 		final List<String> adEngines_DeleteKeywords = Arrays.asList(AdEngine.MSN.name());
 		client.DeleteKeywords(promotionID_DeleteKeywords, keywordIds_DeleteKeywords, adEngines_DeleteKeywords);
-/*
+
 
 		// schedulePauseProductGroups - MSN
 		final Integer customerID_schedulePauseProductGroups = 12;
