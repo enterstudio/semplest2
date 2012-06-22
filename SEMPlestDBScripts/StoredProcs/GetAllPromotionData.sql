@@ -29,7 +29,7 @@ BEGIN TRY
 		p.PromotionBudgetAmount,p.PromotionStartDate, p.PromotionEndDate,bc.BudgetCycle,
 		p.BudgetToAddToNextCycle,p.CycleStartDate,
 		p.RemainingBudgetInCycle,p.StartBudgetInCycle,
-		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , aea.AdvertisingEngineAccountPK, ae.AdvertisingEngine
+		p.EditedDate, p.IsLaunched, p.IsCompleted,p.IsPaused,p.CreatedDate, aep.AdvertisingEngineCampaignPK, aep.AdvertisingEngineAdGroupID , aea.AdvertisingEngineAccountPK, aea.AdvertisingEngineAccountNumber, ae.AdvertisingEngine
 		from Promotion p 
 		inner join BudgetCycle bc on bc.BudgetCyclePK = p.BudgetCycleFK
 		left join AdvertisingEnginePromotion aep on aep.PromotionFK = p.PromotionPK
