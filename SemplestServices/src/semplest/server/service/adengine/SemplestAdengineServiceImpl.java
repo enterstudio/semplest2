@@ -500,6 +500,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, false, true);
 				final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = getKeywordProbabilitiesForKeywordIds(keywordProbabilities,
 						keywordIds);
+				logger.info("Out of the following " + keywordProbabilities.size() + " KeywordProbabilities, found " + keywordProbabilitiesForKeywordIds.size() + " for KeywordIds [" + keywordIds + "]");
 				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
 				final List<Long> msnKeywordIds = new ArrayList<Long>();
 				for (final KeywordProbabilityObject keywordProbability : keywordProbabilitiesForKeywordIds)
@@ -1493,8 +1494,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						}
 					}
 				}
-				final com.microsoft.adcenter.v8.Keyword[] regularKeywordsArray = regularKeywordsToRemove
-						.toArray(new com.microsoft.adcenter.v8.Keyword[regularKeywordsToRemove.size()]);
+				final com.microsoft.adcenter.v8.Keyword[] regularKeywordsArray = regularKeywordsToRemove.toArray(new com.microsoft.adcenter.v8.Keyword[regularKeywordsToRemove.size()]);
 				msn.createKeywords(accountID, adGroupID, regularKeywordsArray);
 				msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
 			}
@@ -1711,7 +1711,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					final long msnKeywordId = newKeywordIds[i];
 					final com.microsoft.adcenter.v8.Keyword msnKeyword = msnKeywordsArray[i];
-					addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), null, SemplestMatchType.Exact, adEngine, false);
+					addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_AMOUNT, SemplestMatchType.Exact, adEngine, false);
 				}
 			}
 			else
