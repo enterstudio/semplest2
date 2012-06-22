@@ -2553,13 +2553,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 	}
 	
-	public static CampaignCriterionOperation getNegativeKeywordUpdateOperation(Long campaignID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId)
+	public static CampaignCriterionOperation getNegativeKeywordUpdateOperation(Long campaignID, String keywordString, KeywordMatchType matchType, Long criterionId)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setId(criterionId);
 		keyword.setText(keywordString);        
-		keyword.setMatchType(matchType);                  
-		final NegativeCampaignCriterion negativeCampaignCriterion = new NegativeCampaignCriterion();        
+		keyword.setMatchType(matchType);
+		final NegativeCampaignCriterion negativeCampaignCriterion = new NegativeCampaignCriterion();
 		negativeCampaignCriterion.setCampaignId(campaignID);        
 		negativeCampaignCriterion.setCriterion(keyword);          		
 		final CampaignCriterionOperation operation = new CampaignCriterionOperation();        
@@ -2581,11 +2581,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 	
-	public static CampaignCriterionOperation getNegativeKeywordAddOperation(Long campaignID, String keywordString, KeywordMatchType matchType, Long microBidAmount)
+	public static CampaignCriterionOperation getNegativeKeywordAddOperation(Long campaignID, String keywordString, KeywordMatchType matchType)
 	{
 		final Keyword keyword = new Keyword();        
 		keyword.setText(keywordString);        
-		keyword.setMatchType(matchType);                  
+		keyword.setMatchType(matchType);
 		final NegativeCampaignCriterion negativeCampaignCriterion = new NegativeCampaignCriterion();        
 		negativeCampaignCriterion.setCampaignId(campaignID);        
 		negativeCampaignCriterion.setCriterion(keyword);          		
@@ -2606,7 +2606,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
 		final AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
 		operation.setOperand(keywordBiddableAdGroupCriterion);
-		operation.setOperator(Operator.ADD);
+		operation.setOperator(Operator.REMOVE);
 		return operation;
 	}
 	
@@ -2672,11 +2672,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					{
 						throw new RuntimeException("CriterionID is null for Keyword [" + keywordString + "]");						
 					}
-					negativeKeywordAddUpdateOperation = getNegativeKeywordUpdateOperation(campaignID, keywordString, matchType, microBidAmount, criterionId);
+					negativeKeywordAddUpdateOperation = getNegativeKeywordUpdateOperation(campaignID, keywordString, matchType, criterionId);
 				}
 				else
 				{
-					negativeKeywordAddUpdateOperation = getNegativeKeywordAddOperation(campaignID, keywordString, matchType, microBidAmount);
+					negativeKeywordAddUpdateOperation = getNegativeKeywordAddOperation(campaignID, keywordString, matchType);
 				}				
 				negativeKeywordOperations.add(negativeKeywordAddUpdateOperation);
 				if (removeOpposite)
@@ -3757,7 +3757,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 	}
 	
-	private List<SitelinksExtension> GetSitelinkExtensions(String accountID, Long campaignID, CampaignAdExtensionStatus status) throws Exception
+	public List<SitelinksExtension> GetSitelinkExtensions(String accountID, Long campaignID, CampaignAdExtensionStatus status) throws Exception
 	{
 		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
