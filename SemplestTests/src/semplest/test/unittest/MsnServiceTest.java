@@ -32,6 +32,7 @@ import com.microsoft.adcenter.v8.TextAd;
 import semplest.other.Money;
 import semplest.other.MsnManagementIds;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
@@ -1002,25 +1003,25 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("updateKeywordBidsByIds:");
 			try{
-				Keyword[] kws1 = test.getKeywordByAdGroupId(accountId, adGroupId);
-				int size = kws1.length;
-				long[] kwid = new long[size];
-				Bid[] bids = new Bid[size];
-				for(int i = 0; i<size; i++){
-					kwid[i] = kws1[i].getId();
-					bids[i] = new Bid();
-					bids[i].setAmount(i+0.05);
-				}			
-				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, bids, null, null, null);
-				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, bids, null, null);
-				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, null, bids, null);
-				test.updateKeywordBidsByIds(accountId, adGroupId, kwid, null, null, null, bids);
+				Keyword[] kws = test.getKeywordByAdGroupId(accountId, adGroupId);
+				List<BidElement> bidList = new ArrayList<BidElement>();
+				int j = 0;
+				for(Keyword k : kws){
+					BidElement be  = new BidElement();
+					be.setKeyword(k.getText());
+					be.setKeywordAdEngineID(k.getId());
+					be.setMatchType("Excact");
+					be.setMicroBidAmount(new Long(j*1000000+5000));
+					j++;
+				}
+				test.updateKeywordBidsByIds(accountId, adGroupId, bidList);
+				
 				System.out.println("OK");	
 				
 				//verify result
 				Keyword[] kws2 = test.getKeywordByAdGroupId(accountId, adGroupId);
 				for(int i = 0; i<kws2.length; i++){
-					if(kws2[i].getBroadMatchBid().getAmount() != (i+0.05))
+					if(kws2[i].getBroadMatchBid().getAmount().equals(new Long(i*1000000+5000)))
 						errorHandler(new Exception(vMsg + "Bid amount not updated correctly."));
 					break;
 				}	
@@ -1761,15 +1762,14 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("updateKeywordBidsByIds:");
 			try{
-				Keyword[] kws1 = test.getKeywordByAdGroupId(accountId, adGroupId);
-				int size = kws1.length;
-				long[] kwid = new long[size];
-				Bid[] bids = new Bid[size];
-				for(int i = 0; i<size; i++){
-					kwid[i] = kws1[i].getId();
-					bids[i].setAmount(i+0.05);
-				}			
-				test.updateKeywordBidsByIds(1595249L, 754813047L, kwid, bids, bids, bids, bids);
+				Keyword[] kws = test.getKeywordByAdGroupId(accountId, adGroupId);
+				List<BidElement> bidList = new ArrayList<BidElement>();		
+				for(Keyword k : kws){
+					BidElement be = new BidElement();
+					be.setKeywordAdEngineID(k.getId());
+					be.setMicroBidAmount(5500000L);
+				}		
+				test.updateKeywordBidsByIds(1595249L, 754813047L, bidList);
 				System.out.println("OK");				
 			}
 			catch(Exception e){
