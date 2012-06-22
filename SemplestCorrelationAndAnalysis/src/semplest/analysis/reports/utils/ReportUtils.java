@@ -17,6 +17,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -29,6 +30,19 @@ public class ReportUtils {
 		ObjectOutput out = new ObjectOutputStream(new FileOutputStream(filename));
 	    out.writeObject(obj);
 	    out.close();
+	}
+	
+	public static Double average(ArrayList<Double> array){
+		double sum = 0.0;
+		int count =0;
+		for(Double elem : array){
+			if(elem!=null){
+				sum = sum+elem;
+				count ++;
+			}
+			
+		}
+		return (count == 0)? -1.0 : sum/count; 
 	}
 	
 	public static Object loadSerializedObject(String filename) throws IOException, ClassNotFoundException{
@@ -62,6 +76,7 @@ public class ReportUtils {
 		HashMap<String, ArrayList<ReportObject>> hashMap =  new HashMap<String, ArrayList<ReportObject>>();
 		for(ReportObject rep : reports){
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			Date dateD = rep.getCreatedDate();
 			String date = df.format(rep.getCreatedDate());
 			if(hashMap.containsKey(date)){
 				hashMap.get(date).add(rep);
