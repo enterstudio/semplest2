@@ -13,7 +13,8 @@ CREATE PROCEDURE dbo.AddAdvertisingEngineAccount
 (
 	@AdvertisingEngineAccountID bigint,
 	@AdvertisingEngine nvarchar(50),
-	@CustomerID int
+	@CustomerID int, 
+	@AdvertisingEngineAccountNumber varchar(50) = null
 )
 AS
 BEGIN TRY
@@ -37,8 +38,8 @@ BEGIN TRY
 	--get Ad Engine ID
 	select @AdEngineID = a.AdvertisingEnginePK from AdvertisingEngine a where a.AdvertisingEngine = @AdvertisingEngine
 	--Add Ad Engine's ID to Customer
-	insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK)
-		VALUES (@AdvertisingEngineAccountID,@AdEngineID,@CustomerID)
+	insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK, AdvertisingEngineAccountNumber)
+		VALUES (@AdvertisingEngineAccountID,@AdEngineID,@CustomerID, @AdvertisingEngineAccountNumber)
 		
 	
 END TRY
