@@ -34,6 +34,7 @@ public class PromotionObj
 	private Long AdvertisingEngineAdGroupID;
 	private Long AdvertisingEngineAccountPK; 
 	private String AdvertisingEngine;
+	private String AdvertisingEngineAccountNumber;
 	
 	public String getDisplayURL()
 	{
@@ -232,6 +233,14 @@ public class PromotionObj
 	public void setAdvertisingEngine(String advertisingEngine)
 	{
 		AdvertisingEngine = advertisingEngine;
+	}
+	public String getAdvertisingEngineAccountNumber()
+	{
+		return AdvertisingEngineAccountNumber;
+	}
+	public void setAdvertisingEngineAccountNumber(String advertisingEngineAccountNumber)
+	{
+		AdvertisingEngineAccountNumber = advertisingEngineAccountNumber;
 	}
 	
 }

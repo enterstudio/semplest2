@@ -18,14 +18,15 @@ public class AddAdvertisingEngineAccountSP extends StoredProcedure
 		declareParameter(new SqlParameter("AdvertisingEngineAccountID", Types.BIGINT));
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("CustomerID", Types.INTEGER));
+		declareParameter(new SqlParameter("AdvertisingEngineAccountNumber", Types.VARCHAR));
 		compile();
 	}
 
 	/*
 	 * returns the next schedule job to run
 	 */
-	public void execute(Long AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID)
+	public void execute(Long AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID, String AdvertisingEngineAccountNumber)
 	{
-		Map<String, Object> results = super.execute(AdvertisingEngineAccountID, AdvertisingEngine, CustomerID);
+		Map<String, Object> results = super.execute(AdvertisingEngineAccountID, AdvertisingEngine, CustomerID, AdvertisingEngineAccountNumber);
 	}
 }
