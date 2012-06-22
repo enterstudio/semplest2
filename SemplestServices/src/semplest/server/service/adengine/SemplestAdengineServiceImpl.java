@@ -588,21 +588,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final String keywordText = keyword.getKeyword();
 				final Bid bid = new Bid();
-				final Double bidAmount = microBidAmount == null ? null : 1.0 * microBidAmount;
+				final Double bidAmount = microBidAmount == null ? SemplestUtils.MSN_DEFAULT_BID_AMOUNT : ((double) microBidAmount) / SemplestUtils.MICRO_AMOUNT_FACTOR;
 				bid.setAmount(bidAmount);
 				final long msnKeywordId;
 				final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.valueOf(semplestMatchType);
 				if (semplestMatchTypeEnum == SemplestMatchType.Broad)
 				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, null, null, null);
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID);
 				}
 				else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
 				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, null, null, bid, null);
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid, SemplestUtils.MSN_DUMMY_BID);
 				}
 				else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
 				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, null, null, null, bid);
+					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid);
 				}
 				else
 				{
@@ -1632,6 +1632,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
 				final Long accountId = adEngineData.getAccountID();
 				final Long adGroupId = adEngineData.getAdGroupID();
+				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
+				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 				final List<com.microsoft.adcenter.v8.Keyword> msnKeywords = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
 				for (final KeywordProbabilityObject keywordProbabilitiesForId : keywordProbabilitiesForIds)
@@ -1641,6 +1643,27 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final String keywordText = keywordProbabilitiesForId.getKeyword();
 						com.microsoft.adcenter.v8.Keyword k = new com.microsoft.adcenter.v8.Keyword();
 						k.setText(keywordText);
+						final Bid bid = new Bid(SemplestUtils.MSN_DEFAULT_BID_AMOUNT);						
+						k.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
+						k.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
+						k.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
+						k.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);						
+						if (SemplestMatchType.Broad.name().equals(semplestMatchType))
+						{							
+							k.setBroadMatchBid(bid);
+						}
+						else if (SemplestMatchType.Exact.name().equals(semplestMatchType))
+						{
+							k.setExactMatchBid(bid);
+						}
+						else if (SemplestMatchType.Phrase.name().equals(semplestMatchType))
+						{
+							k.setPhraseMatchBid(bid);
+						}
+						else 
+						{
+							throw new Exception("SemplestMatchType [" + semplestMatchType + "] is not recognized");
+						}
 						msnKeywords.add(k);
 					}
 				}
