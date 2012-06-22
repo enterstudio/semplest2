@@ -83,6 +83,7 @@ public final class SemplestUtils
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	public static final DateFormat DATE_FORMAT_YYYYMMDD_HHmmss = new SimpleDateFormat("yyyyMMdd HHmmss");
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
+	public static final Double MICRO_AMOUNT_FACTOR = 1000000d;
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final Type TYPE_LIST_OF_STRINGS = new TypeToken<List<String>>(){}.getType();
 	public static final Type TYPE_LIST_OF_INTEGERS = new TypeToken<List<Integer>>(){}.getType();
@@ -93,7 +94,10 @@ public final class SemplestUtils
 	public static final Character SUBSTITUTION_CHARACTER = '-';
 	public static final Integer USER_NAME_MIN_LENGTH = 6;
 	public static final Integer USER_NAME_MAX_LENGTH = 20;
+	public static final Double MSN_DEFAULT_BID_AMOUNT = 0.05;
+	public static final Double GOOGLE_DEFAULT_BID_AMOUNT = null;
 	public static final Random RANDOM = new Random();
+	public static final Bid MSN_DUMMY_BID = new Bid(0.0);
 	
 	public static String getMsnAgeRangeString(final AgeRange ageRange)
 	{
