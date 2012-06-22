@@ -49,7 +49,9 @@ Account Service
     
     <div id="productGroupModel">
         <div class="configuration">
-            <h3 style="font-size: 16px">@Model.AccountServiceModel.Customer - Account ID @Model.AccountServiceModel.AccountNumber</h3>
+            <h3 style="font-size: 16px">@Model.AccountServiceModel.Customer - Account ID @Model.AccountServiceModel.AccountNumber
+                <button style="margin-left: 170px;" class="k-button">
+                    Setup</button></h3>
             <table>
                 <tr>
                     <td>
@@ -67,7 +69,7 @@ Account Service
                         </ul>
                     </td>
                     <td>
-                        <ul class="options">
+                        <ul class="options" style="margin-left: 100px;">
                             <li>
                                 <label class="required">
                                     Rep Name
@@ -96,12 +98,12 @@ Account Service
                                 <fieldset style="width: 560px">
                                     <legend>Account Actions</legend>
                                     <div style="margin: 5px">
-                                    @if (Model.AccountServiceModel.isActive)
-                                    {@Html.ActionLink("Disable", "", "", new { @class = "disableuser" }) }
-                                    else
-                                    { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
+                                        @if (Model.AccountServiceModel.isActive)
+                                        {@Html.ActionLink("Disable", "", "", new { @class = "disableuser" }) }
+                                        else
+                                        { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
                                         @Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })
-                                        @Html.RouteLink("Delete Account", new { Controller = "CustomerAccount", action = "Remove", id = Model.AccountServiceModel.AccountNumber })
+                                        @Html.ActionLink("Delete Account","","", new { @class = "deleteaccount" })
                                         <a href="#">Impresonate</a> <a href="#">Issue Refund</a>
                                         @if (Model.ParentName.ToLower() == "This is a parent".ToLower())
                                         {
@@ -114,7 +116,7 @@ Account Service
                                 <fieldset style="margin-left: 20px">
                                     <legend>Live Advertising</legend>
                                     <div style="margin: 10px">
-                                        @Html.ActionLink("Restart", null, null, new { @class = "restartPromotions" }) 
+                                        @Html.ActionLink("Restart", null, null, new { @class = "restartPromotions" })
                                         @Html.ActionLink("Pause", null, null, new { @class = "pauseuser" })
                                     </div>
                                 </fieldset>
@@ -123,7 +125,7 @@ Account Service
                     </table>
                 </li>
                 <li>
-                    <br/>
+                    <br />
                     <h3>
                         Billing Information</h3>
                 </li>
@@ -131,58 +133,54 @@ Account Service
         </div>
     </div>
 }
-
-<div id="DisableUserWindow" style="display:none">
-                <form name="hiddenDisabledName" id="hiddenDisabled" action="../DisableUser" method="post">
-                <div class="questionE">
-                </div>
-                <div style="text-align: center">
-                    <input type="button" id="btnOkDisableUser" value="OK" class="k-button" />
-                    <input type="button" id="btnCancelDisableUser" value="Cancel" class="k-button" />
-                </div>
-                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
-                </form>
-            </div>
-
-        
-    
-              <div id="EnableUserWindow" style="display:none">
-                <form name="hiddenEnableName" id="hiddenEnable" action="../EnableUser" method="post">
-                <div class="questionR">
-                </div>
-                <div style="text-align: center">
-                    <input type="button" id="btnOkEnableUser" value="OK" class="k-button" />
-                    <input type="button" id="btnCancelEnableUser" value="Cancel" class="k-button" />
-                </div>
-                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
-                </form>
-            </div>
-
-
-            <div id="PausePromotionsWindow" style="display:none">
-                <form name="hiddenPausePromotions" id="hiddenPausePromotions" action="../PausePromotions" method="post">
-                <div class="questionPause">
-                </div>
-                <div style="text-align: center">
-                    <input type="button" id="btnOkPausePromotions" value="OK" class="k-button" />
-                    <input type="button" id="btnCancelPausePromotions" value="Cancel" class="k-button" />
-                </div>
-                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
-                </form>
-            </div>
-
-            <div id="RestartPromotionsWindow" style="display:none">
-                <form name="hiddenRestartPromotions" id="hiddenRestartPromotions" action="../RestartPromotions" method="post">
-                <div class="questionRestart">
-                </div>
-                <div style="text-align: center">
-                    <input type="button" id="btnOkRestartPromotions" value="OK" class="k-button" />
-                    <input type="button" id="btnCancelRestartPromotions" value="Cancel" class="k-button" />
-                </div>
-                <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
-                </form>
-            </div>
-
+<div id="DisableUserWindow" style="display: none">
+    <form name="hiddenDisabledName" id="hiddenDisabled" action="../DisableUser" method="post">
+    <div class="questionE">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkDisableUser" value="OK" class="k-button" />
+        <input type="button" id="btnCancelDisableUser" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="EnableUserWindow" style="display: none">
+    <form name="hiddenEnableName" id="hiddenEnable" action="../EnableUser" method="post">
+    <div class="questionR">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkEnableUser" value="OK" class="k-button" />
+        <input type="button" id="btnCancelEnableUser" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="PausePromotionsWindow" style="display: none">
+    <form name="hiddenPausePromotions" id="hiddenPausePromotions" action="../PausePromotions"
+    method="post">
+    <div class="questionPause">
+    </div>
+    <div style="text-align: center">
+        <input type="button" id="btnOkPausePromotions" value="OK" class="k-button" />
+        <input type="button" id="btnCancelPausePromotions" value="Cancel" class="k-button" />
+    </div>
+    <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+<div id="RestartPromotionsWindow" style="display: none">
+    <form name="hiddenRestartPromotions" id="hiddenRestartPromotions" action="../RestartPromotions"
+          method="post">
+        <div class="questionRestart">
+        </div>
+        <div style="text-align: center">
+            <input type="button" id="btnOkRestartPromotions" value="OK" class="k-button" />
+            <input type="button" id="btnCancelRestartPromotions" value="Cancel" class="k-button" />
+        </div>
+        <input type="hidden" id="id" name="id" value="@Model.AccountServiceModel.AccountNumber" />
+    </form>
+</div>
+  <div id="deleteWindow">
+    </div>
 <script type="text/javascript">    $(".disableuser").click(function (event) {
         $('#userId').val(event.target.id);
         $('.questionE').html("<br/>Are you sure you want to disable this account?<br/><br/>");
@@ -221,7 +219,7 @@ Account Service
     });
 
     $("#btnOkEnableUser").click(function (event) {
-    
+
         $("#hiddenEnable").submit();
         event.preventDefault();
     });
@@ -279,4 +277,13 @@ Account Service
         $('#RestartPromotionsWindow').hide();
         endPromotionWindow.close();
     });
-</script>​
+    $('.deleteaccount').click(function () {
+        var deleteWindow = $('#deleteWindow').kendoWindow({
+            modal: true,
+            content: '@Url.Action("Delete","CustomerAccount", new { @id = @Model.AccountServiceModel.AccountNumber })'
+        }).data('kendoWindow');
+        deleteWindow.center();
+        deleteWindow.open();
+    });
+</script>
+​

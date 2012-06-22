@@ -208,11 +208,11 @@ Add Customer Account:
                                                 @Html.LabelFor(model => model.BillTypes, new { @style = "width:125px;" })
                                                 @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes, new { @class = "k-dropdownlist bill" })
                                                 <br style="line-height: 20px;" />
-                                                @Html.LabelFor(model => model.CustomerAccount.ServiceFee, new { @style = "width:125px;" })
+                                                <label> Monthly Fee</label>
                                                 @Html.TextBoxFor(model => model.CustomerAccount.ServiceFee, new { @class = "k-textbox" })
                                                 @Html.ValidationMessageFor(model => model.CustomerAccount.ServiceFee)
                                                 <br style="line-height: 40px;" />
-                                                @Html.LabelFor(model => model.CustomerAccount.PercentMedia, new { @style = "width:125px;" })
+                                                <label>% Media</label>
                                                 @Html.TextBoxFor(model => model.CustomerAccount.PercentMedia, new { @class = "k-textbox" })
                                                 @Html.ValidationMessageFor(model => model.CustomerAccount.PercentMedia)
 

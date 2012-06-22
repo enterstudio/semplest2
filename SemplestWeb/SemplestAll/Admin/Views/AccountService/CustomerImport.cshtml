@@ -1,6 +1,4 @@
 ﻿@model Semplest.Admin.Models.CustomerImport 
-           
-           
 @{
     ViewBag.Title = "Customer Import";
 }
@@ -13,38 +11,53 @@ Customer Import
 @section Links{
     @Html.Partial("TopMenu")
 }
-
-@using (Html.BeginForm("Upload","AccountService",FormMethod.Post , new { enctype = "multipart/form-data" } ))
+<style>
+    label
+    {
+        margin-right: 10px;
+    }
+</style>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.k-dropdown').kendoDropDownList();
+    });
+</script>
+@using (Html.BeginForm("Upload", "AccountService", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
-    <label>Upload file</label>
-    <input name="uploadFile" type="file" />
-    
-    <h3>Billing:</h3>
-    <br />
-   @Html.HiddenFor(m=>m.ParentID)
-
-    
-        <div class="editor-label">
-    @Html.LabelFor(model => model.Roles)
-            
+    <div id="productGroupModel" style="height: 600px;">
+        <div class="configuration">
+            <ul class="options">
+                <li>
+                    <label>
+                        Select Import File</label>
+                    <input name="uploadFile" type="file" class="k-upload-files" />
+                    <br style="line-height: 40px;"/>
+                </li>
+                <li>
+                    @Html.LabelFor(model => model.Roles)
+                    @Html.DropDownListFor(r => r.SelectedRoleID, Model.Roles, new { @class = "k-dropdown" })
+                    <br style="line-height: 40px;"/>
+                </li>
+                <li>
+                    @Html.LabelFor(model => model.BillTypes)
+                    @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes, new { @class = "k-dropdown" })
+                    <br style="line-height: 40px;"/>
+                </li>
+                <li>
+                    <label>
+                    </label>
+                    <input type="checkbox" name="sendcustomeremail" checked="checked" />Send Customer
+                    Email 
+                    <br style="line-height: 40px;"/>
+                </li>
+                <li>
+                    @Html.HiddenFor(m => m.ParentID)
+                    <div style="text-align: center; margin-left: -240px">
+                        <input type="submit" value="Cancel" title="Upload File" class="k-button" />
+                        <input type="submit" value="Upload File" title="Upload File" class="k-button" />
+                    </div>
+                </li>
+            </ul>
+        </div>
     </div>
-    <div class="editor-field">
-    @Html.DropDownListFor(r => r.SelectedRoleID , Model.Roles)
-    </div>
-
-       
-                                         
-    <div class="editor-label">
-    @Html.LabelFor(model => model.BillTypes)
-            
-    </div>
-    <div class="editor-field">
-    @Html.DropDownListFor(r => r.SelectedBillTypeID, Model.BillTypes)
-    </div>
-    
-    <div>  <input type="checkbox" name="sendcustomeremail"   checked="checked"/>Send Customer Email<br /></div>
-    
-    
-    <input type="submit" value="UploadFile" title="Upload File" />
-    
 }

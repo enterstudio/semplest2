@@ -1297,7 +1297,7 @@ namespace Semplest.Admin.Controllers
 
 
 
-        public ActionResult Remove(int id)
+        public ActionResult Delete(int id)
         {
 
             SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
@@ -1345,7 +1345,7 @@ namespace Semplest.Admin.Controllers
         }
 
         [HttpPost]
-        public ActionResult Remove(CustomerAccountWithEmployeeModel m, string command)
+        public ActionResult Delete(CustomerAccountWithEmployeeModel m, string command)
         {
             SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
             //Semplest context = new SemplestModel.Semplest();
