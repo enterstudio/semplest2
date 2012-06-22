@@ -349,7 +349,7 @@ public class BidGeneratorObj {
 				Boolean isActive = true;
 				Boolean isNegative = false;
 
-				bidsMatchTypeMSN_Temp.add(new BidElement(w.getText(), w.getId(), 1000000L, 
+				bidsMatchTypeMSN_Temp.add(new BidElement(w.getText(), w.getId(), 500000L, 
 						matchType, competitiveType, isDefaultValue, isActive, isNegative));
  
 			}
@@ -1468,7 +1468,7 @@ public class BidGeneratorObj {
 		
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
-			Integer promotionID = new Integer(365); 
+			Integer promotionID = new Integer(377); 
 			//Integer promotionID = new Integer(60); 
 			String searchEngine = "MSN";
 			BudgetObject budgetData = new BudgetObject();
@@ -1476,7 +1476,7 @@ public class BidGeneratorObj {
 			budgetData.setRemainingDays(31);
 
 
-			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
