@@ -245,9 +245,9 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngineMSN, productGroupID_scheduleAddPromotionToAdEngineMSN, promotionID_scheduleAddPromotionToAdEngineMSN, adEngines_scheduleAddPromotionToAdEngineMSN);
 */
 		// AddPromotionToAdEngine - MSN
-		final Integer customerID_AddPromotionToAdEngineMSN = 12;
-		final Integer productGroupID_AddPromotionToAdEngineMSN = 76;
-		final Integer promotionID_AddPromotionToAdEngineMSN = 62;
+		final Integer customerID_AddPromotionToAdEngineMSN = 1418;
+		final Integer productGroupID_AddPromotionToAdEngineMSN = 248;
+		final Integer promotionID_AddPromotionToAdEngineMSN = 251;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
 /*

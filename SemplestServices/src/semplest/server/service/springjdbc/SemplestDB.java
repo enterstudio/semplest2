@@ -865,19 +865,13 @@ public class SemplestDB extends BaseDB
 	}
 	*/
 
-	public static Integer addAdEngineAccountID(int customerID, Long accountID, String adEngine) throws Exception
+	public static Integer addAdEngineAccountID(int customerID, String accountNumber, Long accountID, String adEngine) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineFK,CustomerFK) "
-				+ "select ? ,ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
-
+		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineAccountNumber,AdvertisingEngineFK,CustomerFK) "
+					  + "select ? , ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.update(strSQL, new Object[]
-			{ accountID, customerID, adEngine });
-		}
-		catch (EmptyResultDataAccessException e)
-		{
-			return null;
+			return jdbcTemplate.update(strSQL, new Object[]{ accountID, accountNumber, customerID, adEngine });
 		}
 		catch (Exception e)
 		{

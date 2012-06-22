@@ -27,13 +27,18 @@ package semplest.other;
  * 
  * @author kristian
  */
-public class MsnManagementIds {
+public class MsnManagementIds 
+{
 	private final Long accountId;
+	private final String accountNumber;
 	private final Long customerId;
 	private final Long userId;
 	
-	public MsnManagementIds(Long accountId, Long customerId, Long userId) {
+	
+	public MsnManagementIds(Long accountId, String accountNumber, Long customerId, Long userId) 
+	{
 		this.accountId = accountId;
+		this.accountNumber = accountNumber;
 		this.customerId = customerId;
 		this.userId = userId;
 	}
@@ -49,10 +54,71 @@ public class MsnManagementIds {
 	public Long getUserId() {
 		return userId;
 	}
-	
-	@Override
-	public String toString() {
-		return "MsnManagementIds [accountId=" + accountId + ", customerId=" + customerId + ", userId=" + userId + "]";
+		
+	public String getAccountNumber()
+	{
+		return accountNumber;
 	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((accountId == null) ? 0 : accountId.hashCode());
+		result = prime * result + ((accountNumber == null) ? 0 : accountNumber.hashCode());
+		result = prime * result + ((customerId == null) ? 0 : customerId.hashCode());
+		result = prime * result + ((userId == null) ? 0 : userId.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MsnManagementIds other = (MsnManagementIds) obj;
+		if (accountId == null)
+		{
+			if (other.accountId != null)
+				return false;
+		}
+		else if (!accountId.equals(other.accountId))
+			return false;
+		if (accountNumber == null)
+		{
+			if (other.accountNumber != null)
+				return false;
+		}
+		else if (!accountNumber.equals(other.accountNumber))
+			return false;
+		if (customerId == null)
+		{
+			if (other.customerId != null)
+				return false;
+		}
+		else if (!customerId.equals(other.customerId))
+			return false;
+		if (userId == null)
+		{
+			if (other.userId != null)
+				return false;
+		}
+		else if (!userId.equals(other.userId))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "MsnManagementIds [accountId=" + accountId + ", accountNumber=" + accountNumber + ", customerId=" + customerId + ", userId=" + userId
+				+ "]";
+	}
+
 	
 }

@@ -343,8 +343,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 					+ "]\n\tParentCustomerID: [" + parentCustomerId + "],\n\tApplicationType: [" + applicationType + "]");
 			final SignupCustomerResponse signupCustomerResponse = customerManagementService.signupCustomer(request);
 			logger.info("New MSN account created [" + SemplestUtils.getMsnCustomerResponseString(signupCustomerResponse) + "]");
-			return new MsnManagementIds(signupCustomerResponse.getAccountId(), signupCustomerResponse.getCustomerId(),
-					(long) signupCustomerResponse.getUserId());
+			final Long accountId = signupCustomerResponse.getAccountId();
+			final String accountNumber = signupCustomerResponse.getAccountNumber();
+			final Long customerId = signupCustomerResponse.getCustomerId();
+			final Long userId = signupCustomerResponse.getUserId();
+			return new MsnManagementIds(accountId, accountNumber, customerId, userId);
 		}
 		catch (AdApiFaultDetail e)
 		{

@@ -3,8 +3,18 @@ package semplest.server.protocol.adengine;
 public class AdEngineID
 {
 	private Long accountID;
+	private String AccountNumber;
 	private Long campaignID;
 	private Long adGroupID;
+	
+	public String getAccountNumber()
+	{
+		return AccountNumber;
+	}
+	public void setAccountNumber(String accountNumber)
+	{
+		AccountNumber = accountNumber;
+	}
 	public Long getAccountID()
 	{
 		return accountID;
@@ -34,6 +44,7 @@ public class AdEngineID
 	{
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((AccountNumber == null) ? 0 : AccountNumber.hashCode());
 		result = prime * result + ((accountID == null) ? 0 : accountID.hashCode());
 		result = prime * result + ((adGroupID == null) ? 0 : adGroupID.hashCode());
 		result = prime * result + ((campaignID == null) ? 0 : campaignID.hashCode());
@@ -49,6 +60,13 @@ public class AdEngineID
 		if (getClass() != obj.getClass())
 			return false;
 		AdEngineID other = (AdEngineID) obj;
+		if (AccountNumber == null)
+		{
+			if (other.AccountNumber != null)
+				return false;
+		}
+		else if (!AccountNumber.equals(other.AccountNumber))
+			return false;
 		if (accountID == null)
 		{
 			if (other.accountID != null)
@@ -75,8 +93,8 @@ public class AdEngineID
 	@Override
 	public String toString()
 	{
-		return "AdEngineID [accountID=" + accountID + ", campaignID=" + campaignID + ", adGroupID=" + adGroupID + "]";
+		return "AdEngineID [accountID=" + accountID + ", AccountNumber=" + AccountNumber + ", campaignID=" + campaignID + ", adGroupID=" + adGroupID
+				+ "]";
 	}
-	
 	
 }

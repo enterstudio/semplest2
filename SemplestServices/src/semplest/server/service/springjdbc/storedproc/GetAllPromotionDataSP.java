@@ -64,14 +64,14 @@ public class GetAllPromotionDataSP extends StoredProcedure
 					AdEngineID data = new AdEngineID();
 					data.setAccountID(onePromo.getAdvertisingEngineAccountPK());
 					data.setAdGroupID(onePromo.getAdvertisingEngineAdGroupID());
-					data.setCampaignID(onePromo.getAdvertisingEngineCampaignPK());
+					data.setCampaignID(onePromo.getAdvertisingEngineCampaignPK());					
+					final String adEngineAccountNumber = onePromo.getAdvertisingEngineAccountNumber();
+					data.setAccountNumber(adEngineAccountNumber);
 					adEngineData.put(onePromo.getAdvertisingEngine(), data);
 					PromotionAdEngineID.put(promoID, adEngineData);
-				}
-				
+				}				
 			}
-		}
-		
+		}		
 	}
 	
 	public PromotionObj getPromotionData()

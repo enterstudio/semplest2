@@ -23,6 +23,7 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.AdEngineAccountIdGroup;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.AdsObject;
@@ -231,9 +232,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			companyName = AdEngineAccoutRow.getCustomerName();
 			if (AdEngineAccoutRow.getAccountID() == null)
 			{
-				accountID = createAdEngineAccount(advertisingEngine, companyName);
-				SemplestDB.addAdEngineAccountID(customerID, accountID, advertisingEngine);
-				logger.info("Created Account for " + companyName + ":" + String.valueOf(accountID));
+				final AdEngineAccountIdGroup idGroup = createAdEngineAccount(advertisingEngine, companyName);
+				accountID = idGroup.getAccountId();
+				final String accountNumber = idGroup.getAccountNumber();
+				SemplestDB.addAdEngineAccountID(customerID, accountNumber, accountID, advertisingEngine);
+				logger.info("Created Account for " + companyName + ":" + idGroup);
 			}
 			else
 			{
@@ -584,39 +587,64 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long accId = Long.valueOf(accountID);
 			int counter = 0;
+			final List<KeywordProbabilityObject> negativeKeywords = new ArrayList<KeywordProbabilityObject>();
 			for (final KeywordProbabilityObject keyword : keywordList)
 			{
-				final String keywordText = keyword.getKeyword();
-				final Bid bid = new Bid();
-				final Double bidAmount = microBidAmount == null ? SemplestUtils.MSN_DEFAULT_BID_AMOUNT : ((double) microBidAmount) / SemplestUtils.MICRO_AMOUNT_FACTOR;
-				bid.setAmount(bidAmount);
-				final long msnKeywordId;
-				final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.valueOf(semplestMatchType);
-				if (semplestMatchTypeEnum == SemplestMatchType.Broad)
+				if (keyword.getIsNegative())
 				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID);
-				}
-				else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
-				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid, SemplestUtils.MSN_DUMMY_BID);
-				}
-				else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
-				{
-					msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid);
+					negativeKeywords.add(keyword);
 				}
 				else
 				{
-					throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
+					final String keywordText = keyword.getKeyword();
+					final Bid bid = new Bid();
+					final Double bidAmount = microBidAmount == null ? SemplestUtils.MSN_DEFAULT_BID_AMOUNT : ((double) microBidAmount) / SemplestUtils.MICRO_AMOUNT_FACTOR;
+					bid.setAmount(bidAmount);
+					final long msnKeywordId;
+					final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.valueOf(semplestMatchType);
+					if (semplestMatchTypeEnum == SemplestMatchType.Broad)
+					{
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID);
+					}
+					else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
+					{
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid, SemplestUtils.MSN_DUMMY_BID);
+					}
+					else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
+					{
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid);
+					}
+					else
+					{
+						throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
+					}					
+					logger.info(++counter + ": will try to save in db MSN Keyword for MsnID [" + msnKeywordId + "], Text [" + keywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
+					addKeywordBidSP.execute(promotionID, msnKeywordId, keywordText, bidAmount, semplestMatchType, adEngine, false);
 				}
-				final Double microBidAmountForDB = microBidAmount == null ? 0.0 : microBidAmount;
-				logger.info(++counter + ": will try to save in db MSN Keyword for MsnID [" + msnKeywordId + "], Text [" + keywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-				addKeywordBidSP.execute(promotionID, msnKeywordId, keywordText, microBidAmountForDB, semplestMatchType, adEngine, false);				
+			}
+			
+			if (!negativeKeywords.isEmpty())
+			{
+				logger.info("Will try to add " + negativeKeywords.size() + " Negative Keywords to MSN");
+				final List<String> keywordTexts = getKywordTextList(negativeKeywords);
+				msn.setNegativeKeywords(accId, campaignID, keywordTexts);
 			}
 		}
 		else
 		{
 			throw new Exception("AdEngine specified [" + adEngine + "] is not valid for Adding Keywords to AdGroup (at least not yet)");
 		}
+	}
+	
+	private List<String> getKywordTextList(final List<KeywordProbabilityObject> keywords)
+	{
+		final List<String> keywordTextList = new ArrayList<String>();
+		for (final KeywordProbabilityObject keyword : keywords)
+		{
+			final String keywordText = keyword.getKeyword();
+			keywordTextList.add(keywordText);
+		}
+		return keywordTextList;
 	}
 
 	private HashMap<String, HashMap<String, Object>> setupAdEngineBudget(Integer PromotionID, ArrayList<String> adEngineList,
@@ -833,8 +861,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return daily;
 	}
 
-	private Long createAdEngineAccount(String adEngine, String companyName) throws Exception
+	private AdEngineAccountIdGroup createAdEngineAccount(String adEngine, String companyName) throws Exception
 	{
+		logger.info("Will try to Create AdEngine Account with AdEngine [" + adEngine + "], CompanyName [" + companyName + "]");
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			// assume US dollars US timezone
@@ -854,9 +883,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			catch (Exception e)
 			{
-				logger.error("Error Setting up Budget at the account level " + e.getMessage());
+				logger.error("Error Setting up Budget at the account level ", e);
 			}
-			return account.getCustomerId();
+			final Long customerId = account.getCustomerId();
+			final AdEngineAccountIdGroup idGroup = new AdEngineAccountIdGroup(customerId, null);
+			return idGroup;
 		}
 		else if (adEngine.equalsIgnoreCase(AdEngine.MSN.name()))
 		{
@@ -870,8 +901,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			// final String userName = companyName + "_Semplest";
 			SemplestString company = new SemplestString();
 			company.setSemplestString(userName);
-			MsnManagementIds id = msn.createAccount(company);
-			return id.getAccountId();
+			MsnManagementIds ids = msn.createAccount(company);
+			final Long accountId = ids.getAccountId();
+			final String accountNumber = ids.getAccountNumber();
+			final AdEngineAccountIdGroup idGroup = new AdEngineAccountIdGroup(accountId, accountNumber);
+			return idGroup;
 		}
 		else
 		{
