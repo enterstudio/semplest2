@@ -97,7 +97,8 @@ public final class SemplestUtils
 	public static final Double MSN_DEFAULT_BID_AMOUNT = 0.05;
 	public static final Double GOOGLE_DEFAULT_BID_AMOUNT = null;
 	public static final Random RANDOM = new Random();
-	public static final Bid MSN_DUMMY_BID = new Bid(0.0);
+	public static final Double MSN_DUMMY_AMOUNT = 0.0;
+	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
 	
 	public static String getMsnAgeRangeString(final AgeRange ageRange)
 	{
