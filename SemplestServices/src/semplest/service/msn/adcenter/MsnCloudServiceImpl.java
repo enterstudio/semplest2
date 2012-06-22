@@ -940,6 +940,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	public void updateCampaignBudget(Long accountId, Long campaignId, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget)
 			throws RemoteException
 	{
+		logger.info("Will try to change Campaign Budget for AccountID [" + accountId + "], CampaignID [" + campaignId + "], BudgetLimitType [" + budgetLimitType + "], NewDailyBudget [" + dailyBudget + "], NewMonthlyBudget [" + monthlyBudget + "]");
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 
 		Campaign campaign = new Campaign();

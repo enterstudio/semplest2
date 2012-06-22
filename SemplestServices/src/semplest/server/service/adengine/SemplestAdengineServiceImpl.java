@@ -986,6 +986,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			else if (adEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name()))
 			{
 				logger.info("REPORT FOR MSN NOT YET IMPLEMENTED");
+				//get report and store
+				//SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
 			}
 			else
 			{
@@ -2383,9 +2385,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudgetMonthly, List<String> adEngines) throws Exception
 	{
-		logger.info("Will try to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudget + "] for AdEngines [" + adEngines + "]");
+		logger.info("Will try to Change Budget for PromotionID [" + promotionID + "] by changeInBudgetMonthly [" + changeInBudgetMonthly + "] for AdEngines [" + adEngines + "]");
 		final Map<String, String> errorMap = new HashMap<String, String>();
 		for (final String adEngine : adEngines)
 		{
@@ -2400,7 +2402,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long campaignID = adEngineData.getCampaignID();
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final Double oldBudgetAmount = promotion.getPromotionBudgetAmount();
-				final Double newBudgetDouble = oldBudgetAmount + changeInBudget;
+				final Double changeInBudgetDaily = changeInBudgetMonthly / 31;
+				final Double newBudgetDouble = oldBudgetAmount + changeInBudgetDaily;
 				final Double newBudgetDoubleGoogleUnits = newBudgetDouble * SemplestUtils.GOOGLE_MONEY_UNIT;
 				final Long newBudgetAmountGoogleUnits = newBudgetDoubleGoogleUnits.longValue();
 				final Double oldBudgetDoubleGoogleUnits = oldBudgetAmount * SemplestUtils.GOOGLE_MONEY_UNIT;
@@ -2430,14 +2433,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long accountId = adEngineData.getAccountID();
 				final Long campaignId = adEngineData.getCampaignID();
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-				final double dailyBudget = promotion.getPromotionBudgetAmount(); // TODO:
-																					// is
-																					// this
-																					// right?
-				final double monthlyBudget = promotion.getStartBudgetInCycle(); // TODO:
-																				// is
-																				// this
-																				// right?
+				final Double oldMonthlyBudget = promotion.getPromotionBudgetAmount();
+				final Double oldDailyBudget = oldMonthlyBudget / 31;
+				final Double changeInBudgetDaily = changeInBudgetMonthly / 31;				
+				final double dailyBudget = oldDailyBudget + changeInBudgetDaily;
+				final double monthlyBudget = oldMonthlyBudget + changeInBudgetMonthly;
 				msn.updateCampaignBudget(accountId, campaignId, BudgetLimitType.DailyBudgetStandard, dailyBudget, monthlyBudget);
 			}
 			else
@@ -2450,7 +2450,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudget
+			final String errMsg = "Summary of errors when trying to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudgetMonthly
 					+ "] for AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
