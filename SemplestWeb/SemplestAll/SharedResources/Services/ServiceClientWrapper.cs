@@ -564,6 +564,12 @@ namespace Semplest.SharedResources.Services
         public bool isDeleted { get; set; }
     }
 
+    public class KeywordIdRemoveOppositePair
+    {
+        public int KeywordId { get; set; }
+        public bool RemoveOpposite { get; set; }
+    }
+
 
 
 
@@ -608,7 +614,4 @@ namespace Semplest.SharedResources.Services
         public String CustomerRefNum = null;
     }
 
-    public class KeywordIdRemoveOppositePair
-    {
-    }
 }

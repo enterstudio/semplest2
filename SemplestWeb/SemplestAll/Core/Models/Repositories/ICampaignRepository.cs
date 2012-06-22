@@ -31,7 +31,7 @@ namespace Semplest.Core.Models.Repositories
         bool IsDeletedKeyword(string keyword, List<string> negativeKeywords);
 
         bool IsNegativeKeyword(string keyword, List<string> negativeKeywords);
-        void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
+        void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk);
         string GetStateNameFromCode(int stateCode);
         List<string> GetAdEngines();
         bool IsPromotionLaunched(int promoId);

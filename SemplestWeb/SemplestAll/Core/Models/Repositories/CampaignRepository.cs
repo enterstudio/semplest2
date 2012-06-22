@@ -267,7 +267,7 @@ namespace Semplest.Core.Models.Repositories
                         dbcontext.SaveChanges();
 
                         // save negative keywords
-                        SaveNegativeKeywords(promo, model, dbcontext);
+                        SaveNegativeKeywords(promo, model, dbcontext, custfk);
 
                         // we need to set this because the _dbcontext is  and campaign is updated so reflect changes we need to create new context
                         _savedCampaign = true;
@@ -519,7 +519,7 @@ namespace Semplest.Core.Models.Repositories
             AddGeoTargetingToPromotion(updatePromotion, model, customerFk);
             AddSiteLinksToPromotion(updatePromotion, model, customerFk);
             List<PromotionAd> adAds = AddPromotionAdsToPromotion(updatePromotion, model, customerFk, oldModel);
-            SaveNegativeKeywords(updatePromotion, model, dbcontext);
+            SaveNegativeKeywords(updatePromotion, model, dbcontext,customerFk);
             dbcontext.SaveChanges();
             List<int> ads = new List<int>();
             foreach(PromotionAd ad in adAds)
@@ -795,7 +795,7 @@ namespace Semplest.Core.Models.Repositories
             return negativeKeywords.Any(key => keyword.ToUpper().Equals(key.ToUpper()));
         }
 
-        public void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext)
+        public void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk)
         {
             IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
             var kpos = new List<KeywordProbabilityObject>();
@@ -812,14 +812,53 @@ namespace Semplest.Core.Models.Repositories
                 kpos.Add(kpo);
             }
             if (model.AdModelProp.NegativeKeywords != null)
+            {
+
+                List<KeywordIdRemoveOppositePair> addKiops = new List<KeywordIdRemoveOppositePair>();
                 foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
                 {
-                    if (!qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
+                    if (qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
+                    {
+                        if (promo.IsLaunched)
+                        {
+                            KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
+                            PromotionKeywordAssociation pka = qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
+                            if (!pka.IsNegative)
+                            {
+                                kiop.KeywordId = pka.KeywordFK;
+                                kiop.RemoveOpposite = true;
+                                addKiops.Add(kiop);
+                            }
+                        }
+                    }
+                    else
                     {
                         kpo = new KeywordProbabilityObject { keyword = negativeKeyword };
                         kpos.Add(kpo);
+                        if (promo.IsLaunched)
+                        {
+                            KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
+                            PromotionKeywordAssociation pka = qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
+                            if (!pka.IsNegative)
+                            {
+                                kiop.KeywordId = pka.KeywordFK;
+                                kiop.RemoveOpposite = false;
+                                addKiops.Add(kiop);
+                            }
+                        }
                     }
+                    ServiceClientWrapper sw = new ServiceClientWrapper();
+                    if (addKiops.Count() > 0)
+                    {
+                        var adEngines = new List<string>();
+                        adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                        sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
+                    }
+                    //model.AdModelProp.NegativeKeywords.
+                    foreach (PromotionKeywordAssociation pka in qry.Where(key => key.IsNegative == true).ToList())
+                    { }
                 }
+            }
             SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
         }
 
