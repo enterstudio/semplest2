@@ -8,10 +8,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.bidding.estimation.EstimatorData;
 import semplest.bidding.optimization.CampaignBid;
@@ -28,8 +30,11 @@ import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
+import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
+import com.microsoft.adcenter.v8.Bid;
+import com.microsoft.adcenter.v8.Keyword;
 
 public class BidGeneratorObj {
 	
@@ -208,8 +213,11 @@ public class BidGeneratorObj {
 			throw new Exception("Failed to get AdEngineID from the database. "+e.getMessage());
 		}
 		
-		logger.info("Got campaign related IDs from the database" + " Google Account" + googleAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
-
+		if (searchEngine.equalsIgnoreCase(google)){
+			logger.info("Got campaign related IDs from the database" + " Google Account " + googleAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
+		} else if(searchEngine.equalsIgnoreCase(msn)){
+			logger.info("Got campaign related IDs from the database" + " MSN Account " + msnAccountID +  ":" + "CampaignID = " + String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
+		}
 		
 		
 		
@@ -313,9 +321,70 @@ public class BidGeneratorObj {
 		
 		if(searchEngine.equalsIgnoreCase(msn))
 		{
-			final String errMsg = "Method not implemented for MSN yet!!";
-			logger.error(errMsg);
-			throw new Exception(errMsg);
+
+			///////////////////////////////////////// HACK ////////////////////////////////////////////////
+			//////////////////////////// THIS IS A TEMPORARY HACK FOR MSN /////////////////////////////////
+
+			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			Keyword[] kwList = null;
+			try{
+				kwList =msn.getKeywordByAdGroupId(msnAccountID, adGroupID);
+			} catch(Exception e){
+				logger.error("ERROR: Unable to get keywords from MSN. "+e.getMessage());
+				//e.printStackTrace();
+				throw new Exception("Unable to get keywords from MSN. "+e.getMessage());
+			}
+			
+			ArrayList<BidElement> bidsMatchTypeMSN_Temp = new ArrayList<BidElement>();
+			for(Keyword w : kwList){
+				logger.info(w.getText()+" "+w.getBroadMatchBid().getAmount()+" "+w.getExactMatchBid().getAmount()+" "+w.getPhraseMatchBid().getAmount());
+				
+				String matchType = ProtocolEnum.SemplestMatchType.Exact.name(); 
+				if(w.getExactMatchBid().getAmount()==null || w.getExactMatchBid().getAmount() < 0.0001){
+					logger.error("In phase beta only EXACT match is supported!!!");
+					throw new Exception("In phase beta only EXACT match is supported!!!");
+				}
+				String competitiveType = ProtocolEnum.SemplestCompetitionType.Comp.name();
+				Boolean isDefaultValue = false;
+				Boolean isActive = true;
+				Boolean isNegative = false;
+
+				bidsMatchTypeMSN_Temp.add(new BidElement(w.getText(), w.getId(), 1000000L, 
+						matchType, competitiveType, isDefaultValue, isActive, isNegative));
+ 
+			}
+
+
+			try{
+				if (bidsMatchTypeMSN_Temp.size()>0) {
+				SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchTypeMSN_Temp);
+				logger.info("Stroed bid data to the databse for "+bidsMatchTypeMSN_Temp.size()+" keywords.");
+				} else {
+					logger.info("No bid data to write to the databse");
+				}
+			} catch (Exception e) {
+				logger.error("ERROR: Unable to store bid data to the database. "+e.getMessage());
+				//e.printStackTrace();
+				throw new Exception("Failed to store bid data to the database. "+e.getMessage());
+			}
+
+			try{
+				msn.updateKeywordBidsByIds(msnAccountID, adGroupID, bidsMatchTypeMSN_Temp);
+			} catch(Exception e){
+				logger.error("ERROR: Unable to update bids to MSN. "+e.getMessage());
+				//e.printStackTrace();
+				throw new Exception("Failed to update bids to MSN. "+e.getMessage());
+			}
+		
+
+			
+			
+			final String msg = "Method NOT CORRECTLY implemented for MSN yet!! The present code is a temporary fix for integration testing!";
+			logger.info(msg);
+			
+			return new Boolean(true);
+			
+			
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
 		
@@ -1316,7 +1385,7 @@ public class BidGeneratorObj {
 
 //		String accountID = "2188810777"; // small campaign : 100 words
 //		String accountID = "9544523876";
-		String accountID = "1283163526"; // large capmaign : 1500 words
+//		String accountID = "1283163526526"; // large capmaign : 1500 words
 		
 //		String accountID = "4764852610"; // teststudiobloom;
 //		String accountID = "9036397375"; // bethflowers
@@ -1344,6 +1413,8 @@ public class BidGeneratorObj {
 //		System.exit(0);
 		
 		*/
+		
+		/*
 
 		try {
 
@@ -1377,6 +1448,41 @@ public class BidGeneratorObj {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
+		
+		
+		
+		
+		try{
+			
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object) {
+				object.wait();
+			}
+			
+			System.out.println("Testing MSN inital bidding!");
+		
+			BidGeneratorObj bidObject = new BidGeneratorObj();
+
+			Integer promotionID = new Integer(365); 
+			//Integer promotionID = new Integer(60); 
+			String searchEngine = "MSN";
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(75.0);
+			budgetData.setRemainingDays(31);
+
+
+			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+		
 	}
 
 
