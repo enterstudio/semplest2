@@ -606,7 +606,7 @@ public class DatabaseTest extends BaseDB{
 				System.out.println("addAdEngineAccountID:");
 				
 				//db.addAdEngineAccountID(customerID, google_accountId, adEngine);
-				db.addAdEngineAccountID(customerID, test_accountId, adEngine);
+				db.addAdEngineAccountID(customerID, "account_number", test_accountId, adEngine);
 				System.out.println("OK");
 				
 				//--- verification

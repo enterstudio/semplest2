@@ -12,7 +12,8 @@ import semplest.services.client.api.KeywordLDAServiceClient;
 public class KeywordServiceTest {
 
 	private int errorCounter = 0;
-	private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";
+	//private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";
+	private static String serviceURL = "http://VMJAVA1:9898/semplest";
 	
 	public static void main(String args[]){
 		try{

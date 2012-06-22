@@ -4,9 +4,11 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -17,9 +19,12 @@ import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.CampaignCriterion;
 import com.google.api.adwords.v201109.cm.CampaignStatus;
 import com.google.api.adwords.v201109.cm.TextAd;
+import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionStatus;
+import com.google.api.adwords.v201109_1.cm.SitelinksExtension;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.adengine.SemplestAdengineServiceImpl;
 import semplest.server.service.springjdbc.BaseDB;
@@ -30,8 +35,9 @@ import semplest.services.client.api.SemplestAdEngineServiceClient;
 public class AdengineServiceTest extends BaseDB{	
 	
 	private int errorCounter = 0;
-	//private int sleepTime = 500;
-	private int sleepTime = 10000;  //when test scheduled methods
+	private int sleepTime = 1000;  //1s
+
+	boolean isDeleteHistoryTestData = false;
 	
 	private String vMsg = "Verification FAILED! ";
 	
@@ -53,53 +59,45 @@ public class AdengineServiceTest extends BaseDB{
 	
 	public int Test_Adengine_Client(){
 		
-		try{		
+		try{					
 			if(!initializeTest()){
 				System.out.println("Failed to initialize the test. Exit without doing tests.");
 				return 1;
 			}
 			
-			/* ********** Start to Test ********** */
+			/* ********** Start to Test ********** */			
+			System.out.println();
+			System.out.println("***** Start the Test *****");			
 			
-			//*** Finished
-			TEST_METHOD method;
+			//set if to run through scheduler or not
+			TEST_METHOD method;			
 			
-			//Test without going through Scheduler
-			method = TEST_METHOD.generic;
+			method = TEST_METHOD.generic;  //Test without going through Scheduler
+			//method = TEST_METHOD.scheduled;  //Test that goes through Scheduler
 			
-			AddPromotionToAdEngine(method);  //google, msn, manual verify onGoingBidding and Negative Keywords	
-			//PausePromotion(method);  //google,msn
-			//UpdateGeoTargeting(method);  //google,msn
-			//UpdateBudget(method);  //google,msn
-			//AddAds(method);  //google,msn
-			//UpdateAds(method);  //google,msn
-			//DeleteAds(method);  //google,msn
-			AddKeywords(method);  //google,msn  //-------code fix
+			sleepTime = (method == TEST_METHOD.scheduled)? 10000 : sleepTime;
+			
+/* 
+ * Finished Implementation
+ */			
+			AddPromotionToAdEngine(method);  //google, msn, manual verify onGoingBidding
+			PausePromotion(method);  //google,msn
+			UpdateGeoTargeting(method);  //google,msn
+			UpdateBudget(method);  //google,msn
+			AddAds(method);  //google,msn
+			UpdateAds(method);  //google,msn
+			DeleteAds(method);  //google,msn
+			AddKeywords(method);  //google,msn 
 			DeleteKeywords(method);  //google,msn
-			
-			//Test that goes through Scheduler
-			method = TEST_METHOD.scheduled;
-			
-/*			AddPromotionToAdEngine(method); 	
-			PausePromotion(method);  
-			UpdateGeoTargeting(method); 
-			UpdateBudget(method);  
-			AddAds(method);  
-			UpdateAds(method);  
-			DeleteAds(method);  */
-			//AddKeywords(method); 
-			//DeleteKeywords(method);  
+			PauseProductGroups(method);  //google,msn
+			//RefreshSiteLinks(method);  //google
+			AddNegativeKeywords(method);  //google 
+			DeleteNegativeKeywords(method);  //google
+			ExecuteBidProcess(method);  //can't verify result without real report data
 			
 /*		
  * In progress:
- * 
-			RefreshSiteLinks();  //TODO					
-						
-			AddNegativeKeywords();  //TODO
-			DeleteNegativeKeywords();  //TODO
-			PauseProductGroups();  //TODO
-			ExecuteBidProcess();  //TODO			
-			
+ * 			
 			UnpausePromotion();  //google,msn - n/a for test
 			ChangePromotionStartDate();  //low priority
 	*/		
@@ -111,7 +109,6 @@ public class AdengineServiceTest extends BaseDB{
 			System.out.println("------------------------------------------------------------");
 			System.out.println("End of the AdEngine Test. Test Data used for this test:");
 			System.out.println(" - " + testData.toString());
-			//cleanUp();
 		}
 		
 		if(errorCounter > 0){
@@ -158,11 +155,12 @@ public class AdengineServiceTest extends BaseDB{
 			
 			Thread.sleep(sleepTime);
 			
-			/* ********** Verification ********** */		
+			/* ********** Verification ********** */ 		
 			String sql;
 			int match = 0;
 			String finaATitle = testData.promotionAds.get(1).adTitle;
 			String findAKeyword = testData.keywords.get(1);
+			String findANegKeyword = testData.negKeywords.get(1);
 						
 			//***check if we got all the things created successfully at google, and stored necessary information in the database	
 			System.out.println("Verify IDs:");			
@@ -228,11 +226,23 @@ public class AdengineServiceTest extends BaseDB{
 				if(gkws.length != testData.keywords.size()){
 					//verify the num of Keywords get added
 					errorHandler(new Exception(vMsg + "Not all Keywords in database are created on google. " +
-							"Num of Keywords in database: " + testData.keywords.size() + ". Num of Ads added to google: " + gkws.length));
+							"Num of Keywords in database: " + testData.keywords.size() + ". Num of Keywords added to google: " + gkws.length));
 				}				
 				
-				//***check if we set negative keywords correctly on google					
-				//TODO
+				//***check if we set negative keywords correctly on google	
+				System.out.println("Verify Negative Keywords:");	
+				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				System.out.println("Negative keywords that we put on google:");
+				match = 0;
+				for(String negkw : negKeywords.keySet()){
+					System.out.println(" -" + negkw);
+					if(negkw.equals(findANegKeyword))
+						match++;
+				}
+				if(match != 1){
+					errorHandler(new Exception(vMsg + "Negative Keywords are not created correctly on google. " +
+							"A Negative Keyword '" + findANegKeyword + "' is not found."));
+				}				
 				
 				//***check if we set geoTarget correctly on google
 				System.out.println("Verify Geo Targets:");	
@@ -251,12 +261,12 @@ public class AdengineServiceTest extends BaseDB{
 						System.out.println(" -latitude = " + gLatitude);							
 						System.out.println(" -radius = " + gRadius);	
 						
-						/*if(!gLongitude.equals(new Double(testData.longitude * 1000000).intValue())){
+						if(!gLongitude.equals(new Double(testData.longitude * 1000000).intValue())){
 							errorHandler(new Exception(vMsg + "Longitude doesn't match. Value in database = " + testData.longitude + ". Value on google = " + gLongitude + "(in micro)."));
 						}
 						if(!gLatitude.equals(new Double(testData.latitude * 1000000).intValue())){
 							errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.latitude + ". Value on google = " + gLatitude + "(in micro)."));
-						}			*/			
+						}						
 						if(!gRadius.equals(testData.radius)){
 							errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.radius + ". Value on google = " + gRadius + "."));
 						}
@@ -300,8 +310,8 @@ public class AdengineServiceTest extends BaseDB{
 				//verify content of the Keywords
 				match = 0;
 				for(com.microsoft.adcenter.v8.Keyword kw : mkws){
-					System.out.println(" -" + kw);
-					if(kw.equals(findAKeyword))
+					System.out.println(" -" + kw.getText());
+					if(kw.getText().equals(findAKeyword))
 						match++;
 				}		
 				if(match != 1){
@@ -315,31 +325,31 @@ public class AdengineServiceTest extends BaseDB{
 				}				
 				
 				//***check if we set negative keywords correctly on msn					
-				//TODO
+				System.out.println("Verify Negative Keywords: (manually)");					
 				
 				//***check if we set geoTarget correctly on msn
 				System.out.println("Verify Geo Targets:");	
 				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.campaignId);
 				
 				com.microsoft.adcenter.v8.LocationTarget mLocation = mTarget.getLocation();
-				Double mLatitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLatitudeDegrees();
-				Double mLongitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLongitudeDegrees();
-				int mRadius = mTarget.getLocation().getRadiusTarget().getBids()[0].getRadius();
+				/*Double mLatitude = mLocation.getRadiusTarget().getBids()[0].getLatitudeDegrees();
+				Double mLongitude = mLocation.getRadiusTarget().getBids()[0].getLongitudeDegrees();
+				int mRadius = mLocation.getRadiusTarget().getBids()[0].getRadius();
 				
 				System.out.println(" -address = (street address), " + mLocation.getCityTarget().getBids()[0].getCity() + ", " + mLocation.getMetroAreaTarget().getBids()[0].getMetroArea() + ", " + mLocation.getStateTarget().getBids()[0].getState() + ", " + mLocation.getCountryTarget().getBids()[0].getCountryAndRegion());
 				System.out.println(" -latitude = " + mLatitude);	
 				System.out.println(" -longtitude = " + mLongitude);	
 				System.out.println(" -radius = " + mRadius);	
 				
-				/*if(!mLongitude.equals(testData.longitude)){
+				if(!mLongitude.equals(testData.longitude)){
 					errorHandler(new Exception(vMsg + "Longitude doesn't match. Value in database = " + testData.longitude + ". Value on msn = " + mLongitude + "."));
 				}
 				if(!mLatitude.equals(testData.latitude)){
 					errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.latitude + ". Value on msn = " + mLatitude + "."));
-				}				*/
+				}				
 				if(mRadius != testData.radius.intValue()){
 					errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.radius + ". Value on msn = " + mRadius + "(double to int)."));
-				}				
+				}				*/
 
 			}				
 			
@@ -362,12 +372,12 @@ public class AdengineServiceTest extends BaseDB{
 			boolean ret = false;
 			try{
 				if(method.equals(TEST_METHOD.scheduled)){
-					System.out.println("scheduleAddPromotionToAdEngine(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.adEngineList.toString() + ")");
-					ret = adEngine.scheduleAddPromotionToAdEngine(testData.semplestCustomerId, testData.semplestProductGroupId, testData.semplestPromotionId, testData.adEngineList);
+					System.out.println("schedulePausePromotion(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.adEngineList.toString() + ")");
+					ret = adEngine.schedulePausePromotion(testData.semplestCustomerId, testData.semplestPromotionId, testData.adEngineList);
 				}
 				else{
 					System.out.println("PausePromotion(" + testData.semplestPromotionId + ", " + testData.adEngineList.toString() + ")");
-					ret = adEngine.PausePromotion(testData.semplestPromotionId, testData.adEngineList);
+					ret = adEngine.PausePromotion(testData.semplestPromotionId, testData.adEngineList);					
 				}
 			}
 			catch(Exception e){
@@ -493,7 +503,7 @@ public class AdengineServiceTest extends BaseDB{
 				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.campaignId);
 				
 				com.microsoft.adcenter.v8.LocationTarget mLocation = mTarget.getLocation();
-				Double mLatitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLatitudeDegrees();
+				/*Double mLatitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLatitudeDegrees();
 				Double mLongitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLongitudeDegrees();
 				int mRadius = mTarget.getLocation().getRadiusTarget().getBids()[0].getRadius();
 				
@@ -502,15 +512,15 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(" -longtitude = " + mLongitude);	
 				System.out.println(" -radius = " + mRadius);	
 				
-				/*if(!mLongitude.equals(testData.newLongitude)){
+				if(!mLongitude.equals(testData.newLongitude)){
 					errorHandler(new Exception(vMsg + "Longitude doesn't match. Value in database = " + testData.newLongitude + ". Value on msn = " + mLongitude + "."));
 				}
 				if(!mLatitude.equals(testData.newLatitude)){
 					errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.newLatitude + ". Value on msn = " + mLatitude + "."));
-				}		*/		
+				}				
 				if(mRadius != testData.newRadius.intValue()){
 					errorHandler(new Exception(vMsg + "Latitude doesn't match. Value in database = " + testData.newRadius + ". Value on msn = " + mRadius + "(double to int)."));
-				}
+				}*/
 			}
 			
 		}
@@ -525,7 +535,7 @@ public class AdengineServiceTest extends BaseDB{
 		//UpdateBudget
 		System.out.println("------------------------------------------------------------");
 		try{
-			Double changeInBudget = 77.55;
+			Double changeInBudget = 1.55; //77.55;
 			boolean ret = false;
 			try{			
 				if(method.equals(TEST_METHOD.scheduled)){
@@ -567,8 +577,8 @@ public class AdengineServiceTest extends BaseDB{
 					if(map.get("Id").equals(testData.campaignId.toString())){
 						String amount = map.get("Amount");
 						System.out.println("Budget Amount of the Campaign " + testData.campaignId + " is - " + amount + " (in micro).");
-						if(!amount.equals(new Double(updatedBudget * 1000000).intValue())){
-							errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + updatedBudget + ". The value on google = " + amount + " (in micro)."));
+						if(!amount.equals(String.valueOf(new Double(updatedBudget * 1000000).intValue()))){
+							errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + updatedBudget + " (" + String.valueOf(updatedBudget * 1000000) + "). The value on google = " + amount + " (in micro)."));
 						}
 					}
 				}
@@ -579,8 +589,8 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on MSN >>>");
 				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
 				System.out.println("Budget Amount of the Campaign " + testData.campaignId + " is - " + mcpn.getDailyBudget() + " (Daily Budget)");
-				if(!mcpn.getDailyBudget().equals(changeInBudget)){
-					errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + changeInBudget + ". The value on msn = " + mcpn.getDailyBudget() + "."));
+				if(!mcpn.getDailyBudget().equals(updatedBudget)){
+					errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + updatedBudget + ". The value on msn = " + mcpn.getDailyBudget() + "."));
 				}
 			}
 			
@@ -592,18 +602,62 @@ public class AdengineServiceTest extends BaseDB{
 		Thread.sleep(sleepTime);
 	}
 	
-	private void RefreshSiteLinks() throws Exception{
+	private void RefreshSiteLinks(TEST_METHOD method) throws Exception{
 		//RefreshSiteLinks
 		System.out.println("------------------------------------------------------------");
 		try{
-			System.out.println("RefreshSiteLinks(" + testData.semplestPromotionId + ", " + AdEngine.Google.name() + ")");
-			adEngine.RefreshSiteLinks(testData.semplestPromotionId, testData.adEngineList);
-			System.out.println("DONE");
+			boolean ret = false;
+			try{
+				if(method.equals(TEST_METHOD.scheduled)){
+					System.out.println("scheduleRefreshSiteLinks(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.adEngineList + ")");
+					ret = adEngine.scheduleRefreshSiteLinks(testData.semplestCustomerId, testData.semplestPromotionId, testData.adEngineList);
+				}
+				else{
+					System.out.println("RefreshSiteLinks(" + testData.semplestPromotionId + ", " + testData.adEngineList + ")");
+					ret = adEngine.RefreshSiteLinks(testData.semplestPromotionId, testData.adEngineList);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}			
+			if(!ret){
+				errorHandler(new Exception("Failed running method."));
+				return;
+			}			
+			System.out.println("*DONE");	
 			
 			Thread.sleep(sleepTime);
+			
 			//Verification
 			System.out.println("Verify result...");
-			//TODO
+			int match = 0;
+			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				System.out.println(">>> Verify result on Google >>>");
+				
+				List<SitelinksExtension> gSiteLinks = google.GetSitelinkExtensions(testData.googleAccountId.toString(), testData.campaignId, CampaignAdExtensionStatus.ACTIVE);
+				match = 0;
+				for(SitelinksExtension sle : gSiteLinks){
+					System.out.println("Sitelinks:");
+					for(com.google.api.adwords.v201109_1.cm.Sitelink sl : sle.getSitelinks()){
+						System.out.println(" - " + sl.getDisplayText() + ", " + sl.getDestinationUrl());
+						if((sl.getDisplayText().equalsIgnoreCase(testData.siteLink3.linkText))
+								&& (sl.getDestinationUrl().equalsIgnoreCase(testData.siteLink3.linkUrl))){
+							match++;
+						}
+					}
+					if(sle.getSitelinks().length != testData.sitelinks.size()){
+						errorHandler(new Exception(vMsg + "The num of SiteLinks in database and the num of SiteLinks be refreshed on google don't match. " +
+								"Num of SiteLinks in database: " + testData.sitelinks.size() + ". Num of SiteLinks refreshed to google: " + sle.getSitelinks().length));
+					}
+					if(match != 1){
+						errorHandler(new Exception(vMsg + "SiteLinks are not refreshed correctly on google. " +
+								"A SiteLink " + testData.siteLink3 + " is not found on google."));
+					}
+				}
+			}
 			
 		}
 		catch(Exception e){
@@ -972,8 +1026,8 @@ public class AdengineServiceTest extends BaseDB{
 				//verify content of the Keywords
 				match = 0;
 				for(com.microsoft.adcenter.v8.Keyword kw : mkws){
-					System.out.println(" -" + kw);
-					if(kw.equals(findAKeyword))
+					System.out.println(" -" + kw.getText());
+					if(kw.getText().equals(findAKeyword))
 						match++;
 				}		
 				if(match != 1){
@@ -1055,8 +1109,8 @@ public class AdengineServiceTest extends BaseDB{
 				//verify content of the Keywords
 				match = 0;
 				for(com.microsoft.adcenter.v8.Keyword kw : mkws){
-					System.out.println(" -" + kw);
-					if(kw.equals(findAKeyword))
+					System.out.println(" -" + kw.getText());
+					if(kw.getText().equals(findAKeyword))
 						match++;
 				}		
 				if(match > 0){
@@ -1073,27 +1127,135 @@ public class AdengineServiceTest extends BaseDB{
 		Thread.sleep(sleepTime);
 	}
 	
-	private void AddNegativeKeywords() throws Exception{
+	private void AddNegativeKeywords(TEST_METHOD method) throws Exception{
 		//AddNegativeKeywords
 		System.out.println("------------------------------------------------------------");
 		try{
-			//no same positive keyword exists in the database before
-			//TODO
+			//Insert some new positive keywords to the database	
+			System.out.println("Add some new positive keywords to the database and google.");
+			for(Integer kwid : testData.posKeywordIds){
+				String sql = "INSERT INTO PromotionKeywordAssociation(KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)" +
+						"VALUES(?,?,CURRENT_TIMESTAMP,1,0,0,1,1,1)";
+				
+				jdbcTemplate.update(sql, new Object[]
+						{kwid, testData.semplestPromotionId});				
+			}
+			adEngine.AddKeywords(testData.semplestPromotionId, testData.posKeywordIds, testData.adEngineList);
 			
-			//same positive keyword already exists in the database
-			//firstly add positive keyword and related keywords
-			//TODO
-			//Then set negative keyword
-			KeywordIdRemoveOppositePair nk1 = new KeywordIdRemoveOppositePair(testData.keywordIds.get(0),true);
-			testData.keywordIdRemoveOppositePairs.add(nk1);
-			System.out.println("AddNegativeKeywords(" + testData.semplestPromotionId + ", " + "keywordIdRemoveOppositePairs[622665,true]" + ", " + AdEngine.Google.name() + ")");
-			adEngine.AddNegativeKeywords(testData.semplestPromotionId, testData.keywordIdRemoveOppositePairs, testData.adEngineList);
-			System.out.println("DONE");
+			//verify the current negative keywords
+			Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+			System.out.println("Negative keywords on google before we put on the new negative keywords:");
+			for(String negkw : negKeywords.keySet()){
+				System.out.println(" -" + negkw);
+			}
+			
+			//verify the current positive keywords
+			System.out.println("Positive keywords on google before we put on the new negative keywords:");
+			String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+			for(String kw : gkws){
+				System.out.println(" -" + kw);
+			}
+						
+			//Insert some new negative keywords to the database	
+			System.out.println("Add some new negative keywords to the database.");			
+			for(Integer kwid : testData.newNegKeywordIds){
+				//add new negative keywords
+				String sql = "INSERT INTO PromotionKeywordAssociation(KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)" +
+						"VALUES(?,?,CURRENT_TIMESTAMP,1,0,1,1,1,1)";
+				
+				jdbcTemplate.update(sql, new Object[]
+						{kwid, testData.semplestPromotionId});
+				
+				KeywordIdRemoveOppositePair nk = new KeywordIdRemoveOppositePair(kwid,false);
+				testData.keywordIdRemoveOppositePairs.add(nk);
+			}				
+			for(Integer kwid : testData.posToNegKeywordIds){
+				//update existing positive keywords to negative keywords
+				String sql = "UPDATE PromotionKeywordAssociation SET IsNegative = 1 WHERE KeywordFK = ? AND PromotionFK = ?";
+				
+				jdbcTemplate.update(sql, new Object[]
+						{kwid, testData.semplestPromotionId});
+				
+				KeywordIdRemoveOppositePair nk = new KeywordIdRemoveOppositePair(kwid,true);
+				testData.keywordIdRemoveOppositePairs.add(nk);
+			}
+			
+			//run the method
+			boolean ret = false;
+			try{
+				if(method.equals(TEST_METHOD.scheduled)){
+					System.out.println("scheduleAddNegativeKeywords(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.keywordIdRemoveOppositePairs + ", " + testData.adEngineList + ")");
+					ret = adEngine.scheduleAddNegativeKeywords(testData.semplestCustomerId, testData.semplestPromotionId, testData.keywordIdRemoveOppositePairs, testData.adEngineList);
+				}
+				else{
+					System.out.println("AddNegativeKeywords(" + testData.semplestPromotionId + ", " + testData.keywordIdRemoveOppositePairs + ", " + testData.adEngineList + ")");
+					ret = adEngine.AddNegativeKeywords(testData.semplestPromotionId, testData.keywordIdRemoveOppositePairs, testData.adEngineList);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}			
+			if(!ret){
+				errorHandler(new Exception("Failed running method."));
+				return;
+			}			
+			System.out.println("*DONE");	
 			
 			Thread.sleep(sleepTime);
+			
 			//Verification
 			System.out.println("Verify result...");
-			//TODO
+			int match = 0;
+			int numExpectedOutputNegKeywords = testData.negKeywordIds.size() + testData.newNegKeywordIds.size() + testData.posToNegKeywordIds.size();
+			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				System.out.println(">>> Verify result on Google >>>");					
+				
+				negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				System.out.println("Negative keywords that we have on google:");
+				match = 0;
+				for(String negkw : negKeywords.keySet()){
+					System.out.println(" -" + negkw);
+					if(negkw.equals(testData.negKeywords.get(1))){
+						//the neg keyword that added by addPromotionToAdEngine
+						match++;
+					}
+					if(negkw.equals(testData.newNegKeywords.get(1))){
+						//a new neg keyword that added at the beginning at this test
+						match++;
+					}
+					if(negkw.equals(testData.posToNegKeywords.get(1))){
+						//a neg keyword that used to be a positive keyword
+						match++;
+					}
+				}								
+				if(negKeywords.size() != numExpectedOutputNegKeywords){
+					errorHandler(new Exception(vMsg + "The num of Negative Keywords in database and the num of Negative Keywords put on google don't match. " +
+							"Num of Negative Keywords in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: " + negKeywords.size()));
+				}
+				if(match != 3){
+					//some expected neg keywords are not found on google
+					errorHandler(new Exception(vMsg + "Negative Keywords are not added correctly on google. Some expected negtive keywords are not found."));
+				}
+				
+				System.out.println("Positive keywords on google after we put on the negative keywords:");
+				gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				match = 0;
+				for(String kw : gkws){
+					System.out.println(" -" + kw);
+					if(kw.equals(testData.posToNegKeywords.get(0))){
+						errorHandler(new Exception(vMsg + "Negative Keywords are not added correctly on google. A Negative Keyword '" + testData.posToNegKeywords.get(0) + "' is not taken off from the Positive Keyword list."));
+					}
+				}
+			}
+			
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				/* ***** For MSN ***** */			
+				System.out.println(">>> Verify result on MSN >>>");
+				System.out.println("Verify manually.");
+			}
 			
 		}
 		catch(Exception e){
@@ -1103,18 +1265,81 @@ public class AdengineServiceTest extends BaseDB{
 		Thread.sleep(sleepTime);
 	}
 	
-	private void DeleteNegativeKeywords() throws Exception{
+	
+	private void DeleteNegativeKeywords(TEST_METHOD method) throws Exception{
 		//DeleteNegativeKeywords
 		System.out.println("------------------------------------------------------------");
 		try{
-			System.out.println("DeleteNegativeKeywords(" + testData.semplestPromotionId + ", " + "keywordIds[622665]" + ", " + AdEngine.Google.name() + ")");
-			adEngine.DeleteNegativeKeywords(testData.semplestPromotionId, testData.keywordIds.subList(0, 1), testData.adEngineList);
-			System.out.println("DONE");
+			//the negative keywords that we want to delete from google
+			List<Integer> deleteKeywordsList = new ArrayList<Integer>();
+			deleteKeywordsList.addAll(testData.negKeywordIds);
+			deleteKeywordsList.addAll(testData.posToNegKeywordIds);
+			
+			boolean ret = false;
+			try{
+				if(method.equals(TEST_METHOD.scheduled)){
+					System.out.println("scheduleDeleteNegativeKeywords(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + deleteKeywordsList + ", " + testData.adEngineList + ")");
+					ret = adEngine.scheduleDeleteNegativeKeywords(testData.semplestCustomerId, testData.semplestPromotionId, deleteKeywordsList, testData.adEngineList);
+				}
+				else{
+					System.out.println("DeleteNegativeKeywords(" + testData.semplestPromotionId + ", " + deleteKeywordsList + ", " + testData.adEngineList + ")");
+					ret = adEngine.DeleteNegativeKeywords(testData.semplestPromotionId, deleteKeywordsList, testData.adEngineList);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}			
+			if(!ret){
+				errorHandler(new Exception("Failed running method."));
+				return;
+			}			
+			System.out.println("*DONE");	
 			
 			Thread.sleep(sleepTime);
+			
 			//Verification
 			System.out.println("Verify result...");
-			//TODO
+			int match = 0;
+			String findANegKeyword1 = testData.negKeywords.get(0);
+			String findANegKeyword2 = testData.posToNegKeywords.get(0);
+			int numExpectedOutputNegKeywords = testData.newNegKeywordIds.size();
+			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				System.out.println(">>> Verify result on Google >>>");					
+				
+				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				System.out.println("Negative keywords that we have on google:");
+				match = 0;
+				for(String negkw : negKeywords.keySet()){
+					System.out.println(" -" + negkw);
+					if(negkw.equals(findANegKeyword1) || negkw.equals(findANegKeyword2)){
+						//the neg keywords that should have been deleted
+						match++;
+					}
+				}								
+				if(negKeywords.size() != numExpectedOutputNegKeywords){
+					errorHandler(new Exception(vMsg + "The num of Negative Keywords in database and the num of Negative Keywords put on google don't match. " +
+							"Num of Negative Keywords active in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: " + negKeywords.size()));
+				}
+				if(match > 0){
+					//some neg keywords are not deleted on google
+					errorHandler(new Exception(vMsg + "Negative Keywords are not deleted correctly on google. Some negtive keywords that should have been deleted are still found on google."));
+				}
+				
+				System.out.println("Positive keywords on google after we deleted the negative keywords:");
+				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				for(String kw : gkws){
+					System.out.println(" -" + kw);					
+				}
+			}
+			
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				/* ***** For MSN ***** */			
+				System.out.println(">>> Verify result on MSN >>>");
+				System.out.println("Verify manually.");
+			}
 			
 		}
 		catch(Exception e){
@@ -1123,19 +1348,94 @@ public class AdengineServiceTest extends BaseDB{
 		}		
 		Thread.sleep(sleepTime);
 	}
+
 	
-	private void PauseProductGroups() throws Exception{
+	private void PauseProductGroups(TEST_METHOD method) throws Exception{
 		//PauseProductGroups
 		System.out.println("------------------------------------------------------------");
 		try{
-			System.out.println("PauseProductGroups(" + testData.semplestPromotionId + ", " + "productGroupIds[196,197]" + ", " + AdEngine.Google.name() + ")");
-			adEngine.PauseProductGroups(testData.productGroupIds, testData.adEngineList);
-			System.out.println("DONE");
+			//set the target campaigns active before the test
+			Long account1 = testData.googleAccountId.longValue();
+			Long account2 = testData.presetGoogleAccountId;
+			Long campaign1 = testData.campaignId;
+			Long campaign2 = testData.presetGoogleCampaignId;
+			if(testData.adEngineList.contains(AdEngine.Google.name())){				
+				//active a campaign in the 1st product group
+				google.changeCampaignsStatus(account1.toString(), Arrays.asList(campaign1), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
+				//active a campaign in the 2nd product group
+				google.changeCampaignsStatus(account2.toString(), Arrays.asList(campaign2), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
+			}
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				account1 = testData.msnAccountId;
+				account2 = null;
+				campaign2 = null;
+				msn.resumeCampaignById(account1, campaign1);
+			}
+			
+			//test the method
+			boolean ret = false;
+			try{
+				if(method.equals(TEST_METHOD.scheduled)){
+					System.out.println("schedulePauseProductGroups(" + testData.semplestCustomerId + ", " + testData.productGroupIds + ", " + testData.adEngineList + ")");
+					ret = adEngine.schedulePauseProductGroups(testData.semplestCustomerId, testData.productGroupIds, testData.adEngineList);
+				}
+				else{
+					System.out.println("PauseProductGroups(" + testData.productGroupIds + ", " + testData.adEngineList + ")");
+					ret = adEngine.PauseProductGroups(testData.productGroupIds, testData.adEngineList);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}			
+			if(!ret){
+				errorHandler(new Exception("Failed running method."));
+				return;
+			}
+			System.out.println("*DONE");
 			
 			Thread.sleep(sleepTime);
 			//Verification
 			System.out.println("Verify result...");
-			//TODO
+			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				System.out.println(">>> Verify result on Google >>>");
+				//Check if the promotion in the 1st product group be paused
+				ArrayList<HashMap<String, String>> gcpn1 = google.getCampaignsByAccountId(account1.toString(), false);
+				for(HashMap<String, String> map : gcpn1){
+					if(map.get("Id").equals(campaign1.toString())){
+						String status = map.get("Status");
+						System.out.println("Status of the campaign " + campaign1 + " in the ProductGroup 196 " + " is - " + status);
+						if(!status.equals(com.google.api.adwords.v201109.cm.CampaignStatus.PAUSED.getValue())){
+							errorHandler(new Exception(vMsg + "Campaign is not paused."));
+						}
+					}
+				}
+				//Check if the promotion in the 2nd product group be paused
+				ArrayList<HashMap<String, String>> gcpn2 = google.getCampaignsByAccountId(account2.toString(), false);
+				for(HashMap<String, String> map : gcpn2){
+					if(map.get("Id").equals(campaign2.toString())){
+						String status = map.get("Status");
+						System.out.println("Status of the campaign " + campaign2 + " in the ProductGroup 197 " + " is - " + status);
+						if(!status.equals(com.google.api.adwords.v201109.cm.CampaignStatus.PAUSED.getValue())){
+							errorHandler(new Exception(vMsg + "Campaign is not paused."));
+						}
+					}
+				}
+			}
+			
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				/* ***** For MSN ***** */			
+				System.out.println(">>> Verify result on MSN >>>");
+				//Check if the promotion in the 1st product group be paused
+				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(account1, campaign1);
+				System.out.println("Status of Campaign " + account1 + " is - " + mcpn.getStatus().getValue());
+				if(!mcpn.getStatus().equals(com.microsoft.adcenter.v8.CampaignStatus.Paused)){
+					errorHandler(new Exception(vMsg + "Campaign is not paused."));
+				}
+				//TODO
+			}
 			
 		}
 		catch(Exception e){
@@ -1145,18 +1445,46 @@ public class AdengineServiceTest extends BaseDB{
 		Thread.sleep(sleepTime);
 	}
 	
-	private void ExecuteBidProcess() throws Exception{
+	
+	private void ExecuteBidProcess(TEST_METHOD method) throws Exception{
 		//ExecuteBidProcess
 		System.out.println("------------------------------------------------------------");
-		try{
-			System.out.println("ExecuteBidProcess(" + testData.semplestPromotionId + ", " + AdEngine.Google.name() + ")");
-			adEngine.ExecuteBidProcess(testData.semplestPromotionId, testData.adEngineList);
-			System.out.println("DONE");
+		try{			
+			boolean ret = false;
+			try{
+				if(method.equals(TEST_METHOD.scheduled)){}
+				else{
+					System.out.println("ExecuteBidProcess(" + testData.semplestPromotionId + ", " + AdEngine.Google.name() + ")");
+					ret = adEngine.ExecuteBidProcess(testData.semplestPromotionId, testData.adEngineList);
+				}
+			}
+			catch(Exception e){
+				e.printStackTrace();
+				errorHandler(e);
+			}			
+			if(!ret){
+				errorHandler(new Exception("Failed running method."));
+				return;
+			}			
+			System.out.println("*DONE");	
 			
 			Thread.sleep(sleepTime);
 			//Verification
 			System.out.println("Verify result...");
-			//TODO
+			
+			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				System.out.println(">>> Verify result on Google >>>");						
+				//TODO
+				
+			}
+			
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				/* ***** For MSN ***** */			
+				System.out.println(">>> Verify result on MSN >>>");
+				//TODO
+			}
 			
 		}
 		catch(Exception e){
@@ -1166,7 +1494,9 @@ public class AdengineServiceTest extends BaseDB{
 		Thread.sleep(sleepTime);
 	}
 	
+	
 	//Lower priority or not implemented yet on the service
+	
 	
 	private void UnpausePromotion(TEST_METHOD method) throws Exception{
 		//UnpausePromotion
@@ -1290,6 +1620,15 @@ public class AdengineServiceTest extends BaseDB{
 	
 	private boolean initializeTest(){
 		try{			
+
+			System.out.println("####################################################################################");
+			System.out.println("#                                                                                  #");
+			System.out.println("#                              AdEngine Test (Client)                              #");
+			System.out.println("#                                                                                  #");
+			System.out.println("####################################################################################");			
+						
+			System.out.println("Loading configuration...");
+			
 			//Load the configuration
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 			Object object = new Object();
@@ -1299,19 +1638,19 @@ public class AdengineServiceTest extends BaseDB{
 			synchronized (object)
 			{
 				object.wait();
-			}
+			}						
 						
 			adEngine = new SemplestAdEngineServiceClient(baseUrl);
 			google = new GoogleAdwordsServiceImpl();
-			msn = new MsnCloudServiceImpl();
-			
+			msn = new MsnCloudServiceImpl();			
 		
-			System.out.println("####################################################################################");
-			System.out.println("#                                                                                  #");
-			System.out.println("#                              AdEngine Test (Client)                              #");
-			System.out.println("#                                                                                  #");
-			System.out.println("####################################################################################");			
-						
+			System.out.println("End of configuration.");
+			
+			//delete history test data
+			if(isDeleteHistoryTestData){
+				clearHistoryTestData();
+			}			
+			
 			System.out.println("Initializing the test...");
 			
 			//create a new promotion for the test
@@ -1352,12 +1691,29 @@ public class AdengineServiceTest extends BaseDB{
 						{kwId, testData.semplestPromotionId});
 			}
 			
+			//Negative Keywords
+			for(Integer kwId : testData.negKeywordIds){
+				sql = "INSERT INTO PromotionKeywordAssociation(KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)" +
+						"VALUES(?,?,CURRENT_TIMESTAMP,1,0,1,1,1,1)";
+				
+				jdbcTemplate.update(sql, new Object[]
+						{kwId, testData.semplestPromotionId});
+			}
+			
 			//GeoTargeting			
 			sql = "INSERT INTO GeoTargeting (PromotionFK, Address,City,StateCodeFK,Zip,Longitude,Latitude,ProximityRadius) " +
 					"VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 			jdbcTemplate.update(sql, new Object[]
 					{testData.semplestPromotionId, testData.address, testData.city, testData.stateCode, testData.zipCode, testData.longitude, testData.latitude, testData.radius});
-		
+			
+			//SiteLinks
+			for(TestDataModel.SiteLink sl : testData.sitelinks){
+				sql = "INSERT INTO SiteLinks(PromotionFK,LinkText,LinkURL) " +
+						"VALUES(?,?,?)";
+				jdbcTemplate.update(sql, new Object[]
+						{testData.semplestPromotionId, sl.linkText, sl.linkUrl});
+			}		
+			
 			
 			System.out.println(" - Created Promotion " + testData.semplestPromotionId + " for the test.");
 			System.out.println(" - Data created for the promotion:");
@@ -1373,53 +1729,74 @@ public class AdengineServiceTest extends BaseDB{
 			return false;
 		}
 	}
-	
-	private void cleanUp(){
+
+	private void clearHistoryTestData(){
 		try{
-			//clean up the promotion
 			String sql;
+			System.out.println("Clearing history test data...");
 			
-			System.out.println("------------------------------------------------------------");
-			System.out.println("Cleaning up the test...");
+			System.out.println(" - Delete history test data from database.");
 			
-			for(Integer ad : testData.promotionAdIds){
-				sql = "DELETE FROM AdvertisingEngineAds WHERE PromotionAdsFK = ?";
+			System.out.println("  -- clear scheduler data");
+			//Clear the scheduler data
+			sql = "delete from ScheduleLog; " +
+					"delete from ScheduleJob; " +
+					"delete from ScheduleTaskAssociation; " +
+					"delete from Schedule; " +
+					"delete from Task; ";
+			jdbcTemplate.update(sql);
+			
+			System.out.println("  -- clear other data");
+			sql= "DELETE from KeywordBidData;" +
+					"DELETE FROM TargetedDailyBudget;" +
+					"DELETE FROM AdvertisingEngineAds;";			
+			jdbcTemplate.update(sql);						
+			
+			//get the list of promotion IDs
+			sql = "SELECT p.PromotionPK FROM Promotion p WHERE ProductGroupFK = ?";
+			List<Integer> promoIds = jdbcTemplate.queryForList(sql, new Object[]
+					{testData.semplestProductGroupId}, Integer.class);
+					//{testData.productGroupIds.get(1)}, Integer.class);
+			
+			System.out.println("  -- delete promotion data.");
+			for(Integer promoId : promoIds){				
+				sql = "DELETE FROM AdvertisingEnginePromotion where PromotionFK = ?;" +
+						"DELETE PromotionAds WHERE PromotionFK = ?;" +
+						"DELETE FROM KeywordBid WHERE PromotionFK = ?;" +
+						"DELETE PromotionKeywordAssociation WHERE PromotionFK = ?;" +
+						"DELETE GeoTargeting WHERE PromotionFK = ?;" +
+						"DELETE SiteLinks WHERE PromotionFK = ?;" +
+						"DELETE Promotion WHERE PromotionPK = ?;";
+				
 				jdbcTemplate.update(sql, new Object[]
-						{ad});
-			}
+						{promoId,promoId,promoId,promoId,promoId,promoId,promoId});						
+				
+				System.out.println("     - promotion " + promoId + " deleted");
+			}			
 			
-			sql = "DELETE PromotionAds WHERE PromotionFK = ?";
-			jdbcTemplate.update(sql, new Object[]
-					{testData.semplestPromotionId});
+			System.out.println(" - Delete history test data from google.");
+			//clear Test Data on google	
+			ArrayList<HashMap<String, String>> googleCampaigns = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
+			for(HashMap<String, String> map : googleCampaigns){
+				google.deleteCampaign(testData.googleAccountId.toString(), Long.valueOf(map.get("Id")));
+				System.out.println("  -- deleted campaign " + map.get("Id"));
+				Thread.sleep(500);
+			}	
 			
-			System.out.println(" - ADs cleaned up.");
+			System.out.println(" - Delete history test data from msn.");
+			//clear Test Data on google	
+			com.microsoft.adcenter.v8.Campaign[] msnCampaigns = msn.getCampaignsByAccountId(testData.msnAccountId);
+			for(com.microsoft.adcenter.v8.Campaign cpn : msnCampaigns){
+				msn.deleteCampaignById(testData.msnAccountId, cpn.getId());
+				System.out.println("  -- deleted campaign " + cpn.getId());
+				Thread.sleep(500);
+			}	
 			
-			sql = "DELETE PromotionKeywordAssociation WHERE PromotionFK = ?";
-			jdbcTemplate.update(sql, new Object[]
-					{testData.semplestPromotionId});		
-			
-			System.out.println(" - Keywords cleaned up.");
-			
-			sql = "DELETE GeoTargeting WHERE PromotionFK = ?";
-			jdbcTemplate.update(sql, new Object[]
-					{testData.semplestPromotionId});
-			
-			System.out.println(" - GeoTargets cleaned up.");
-			
-			sql = "DELETE AdvertisingEnginePromotion WHERE PromotionFK = ?";
-			jdbcTemplate.update(sql, new Object[]
-					{testData.semplestPromotionId});
-			
-			sql = "DELETE Promotion WHERE PromotionPK = ?";
-			jdbcTemplate.update(sql, new Object[]
-					{testData.semplestPromotionId});
-			
-			System.out.println(" - Promotion cleaned up.");
-			System.out.println("End of clean up.");
+			System.out.println("History test data cleaned up.");
 		}
 		catch(Exception e){
 			e.printStackTrace();
-			errorHandler(e);
+			errorHandler(new Exception("Clear History Test Data Failed",e));
 		}
 	}
 	
@@ -1428,10 +1805,10 @@ public class AdengineServiceTest extends BaseDB{
 		//Semplest Variables
 		public Integer semplestCustomerId = 1388; //semplest_testing (set up manually in database)
 		public Integer semplestProductGroupId = 196; //semplest_testing (set up manually in database)
-		public Integer semplestPromotionId;  // = 207;
+		public Integer semplestPromotionId;
 		public String semplestPromotionName;
-		public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
-		//public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.Google.name(),AdEngine.MSN.name()));				
+		//public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
+		public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));				
 		
 		//Ad Engine Variables
 		public Integer googleAccountId = 54103;
@@ -1452,15 +1829,32 @@ public class AdengineServiceTest extends BaseDB{
 		public List<AD> newAds = Arrays.asList(ad4, ad5);
 		public List<Integer> newAdIds = new ArrayList<Integer>();
 		
+		//Ad Group
 		public List<Integer> productGroupIds = Arrays.asList(196,197);
+		public Integer presetPromoId = 298;  //a promotion pre-set in the database for adgroup 197 for the pauseAdGroup test		
+		public Long presetGoogleAccountId = 54103L;
+		public Long presetGoogleCampaignId = 680388L;
+		public Long presetGoogleAdgroupId = 3066578036L;
 		
-		//Keywords (set up manually in database)
+		//Keywords (all keywords are set up manually in database)
 		public List<String> keywords = Arrays.asList("nan adengine test","nan adengine test one","nan adengine test two");
-		public List<Integer> keywordIds = Arrays.asList(622665, 622666, 622667);
-		public List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs;		
+		public List<Integer> keywordIds = Arrays.asList(622665, 622666, 622667);					
 		
 		public List<String> newKeywords = Arrays.asList("nan adengine test three","nan adengine test four");
 		public List<Integer> newKeywordIds = Arrays.asList(781025, 781026);
+		
+		//Negative Keywords		
+		public List<String> negKeywords = Arrays.asList("nan adengine test negative", "nan adengine test negative one");
+		public List<Integer> negKeywordIds = Arrays.asList(781027, 781028);	
+		
+		public List<String> posKeywords = Arrays.asList("nan", "adengine test five", "adengine test six");
+		public List<Integer> posKeywordIds = Arrays.asList(781033, 781031, 781032);
+		public List<String> newNegKeywords = Arrays.asList("nan adengine test negative two", "nan adengine test negative three");
+		public List<Integer> newNegKeywordIds = Arrays.asList(781029, 781030);		
+		public List<String> posToNegKeywords = Arrays.asList("nan", "adengine test five");
+		public List<Integer> posToNegKeywordIds = Arrays.asList(781033, 781031);	
+		
+		public List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = new ArrayList<KeywordIdRemoveOppositePair>();
 		
 		//GeoTargeting
 		public String address = "195 Broadway";
@@ -1477,7 +1871,13 @@ public class AdengineServiceTest extends BaseDB{
 		public String newZipCode = "07083";
 		public Double newLongitude = -74.29096;
 		public Double newLatitude = 40.69801;
-		public Double newRadius = 20.00;				
+		public Double newRadius = 20.00;	
+		
+		//SiteLinks
+		private SiteLink siteLink1 = new SiteLink(1);
+		private SiteLink siteLink2 = new SiteLink(2);
+		private SiteLink siteLink3 = new SiteLink(3);
+		public List<SiteLink> sitelinks = Arrays.asList(siteLink1, siteLink2, siteLink3);
 		
 		//helper classes
 		public class AD{
@@ -1491,7 +1891,16 @@ public class AdengineServiceTest extends BaseDB{
 				this.adTextLine2 = this.adTextLine2 + index.toString();
 			}
 		}
-
+		
+		public class SiteLink{
+			public String linkText = "Test SiteLink ";
+			public String linkUrl = "http://www.semplest.com/";
+			
+			public SiteLink(Integer index){
+				this.linkText = this.linkText + index.toString();
+				this.linkUrl = this.linkUrl + index.toString();
+			}
+		}
 
 		@Override
 		public String toString() {
@@ -1503,12 +1912,33 @@ public class AdengineServiceTest extends BaseDB{
 					+ googleAccountId + ", msnAccountId=" + msnAccountId
 					+ ", msnCustomerId=" + msnCustomerId + ", campaignId="
 					+ campaignId + ", adGroupId=" + adGroupId
-					+ ", promotionAdIds=" + promotionAdIds
-					+ ", productGroupIds=" + productGroupIds + ", keywordIds="
-					+ keywordIds + ", address=" + address + ", city=" + city
-					+ ", longitude=" + longitude + ", latitude=" + latitude
-					+ ", radius=" + radius + "]";
-		}
+					+ ", promotionAdIds=" + promotionAdIds + ", ad4=" + ad4
+					+ ", ad5=" + ad5 + ", newAds=" + newAds + ", newAdIds="
+					+ newAdIds + ", productGroupIds=" + productGroupIds
+					+ ", presetPromoId=" + presetPromoId
+					+ ", presetGoogleAccountId=" + presetGoogleAccountId
+					+ ", presetGoogleCampaignId=" + presetGoogleCampaignId
+					+ ", presetGoogleAdgroupId=" + presetGoogleAdgroupId
+					+ ", keywords=" + keywords + ", keywordIds=" + keywordIds
+					+ ", newKeywords=" + newKeywords + ", newKeywordIds="
+					+ newKeywordIds + ", negKeywords=" + negKeywords
+					+ ", negKeywordIds=" + negKeywordIds + ", posKeywords="
+					+ posKeywords + ", posKeywordIds=" + posKeywordIds
+					+ ", newNegKeywords=" + newNegKeywords
+					+ ", newNegKeywordIds=" + newNegKeywordIds
+					+ ", posToNegKeywords=" + posToNegKeywords
+					+ ", posToNegKeywordIds=" + posToNegKeywordIds
+					+ ", keywordIdRemoveOppositePairs="
+					+ keywordIdRemoveOppositePairs + ", address=" + address
+					+ ", city=" + city + ", stateCode=" + stateCode
+					+ ", zipCode=" + zipCode + ", longitude=" + longitude
+					+ ", latitude=" + latitude + ", radius=" + radius
+					+ ", newAddress=" + newAddress + ", newCity=" + newCity
+					+ ", newStateCode=" + newStateCode + ", newZipCode="
+					+ newZipCode + ", newLongitude=" + newLongitude
+					+ ", newLatitude=" + newLatitude + ", newRadius="
+					+ newRadius + ", sitelinks=" + sitelinks + "]";
+		}				
 		
 	}
 
