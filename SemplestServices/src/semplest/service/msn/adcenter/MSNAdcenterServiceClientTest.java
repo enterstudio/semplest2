@@ -12,6 +12,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
@@ -20,6 +21,7 @@ import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_Campaign
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 
 import com.microsoft.adcenter.v8.AdGroup;
@@ -157,24 +159,21 @@ public class MSNAdcenterServiceClientTest {
 		int j=0;
 		while (j<kw.length){
 			int remain = kw.length-j;
-			long[] kwIds; 
-			Bid[] zeroBid; 
-			Bid[] defaultBid; 
+
 			if(remain>=kwLimit){
 				remain = kwLimit;
 			}
-			kwIds = new long[remain];
-			zeroBid = new Bid[remain];
-			defaultBid = new Bid[remain];
-			
+			ArrayList<BidElement> bids = new ArrayList<BidElement>();
 			for(int i = 0 ; i<remain && j<kw.length ; i++){
-				kwIds[i] = kw[j].getId();
-				zeroBid[i] = new Bid(0.0);
-				defaultBid[i] = new Bid(2.0);
-				j++;
+				BidElement bid = new BidElement();
+				bid.setKeyword(kw[j].getText());
+				bid.setKeywordAdEngineID(kw[j].getId());
+				bid.setMatchType("Broad");
+				bid.setMicroBidAmount(new Long(1000000));
+	
 			}
-		
-			test.updateKeywordBidsByIds(accountID, adGroupID, kwIds, zeroBid, zeroBid, defaultBid, zeroBid);
+			
+			test.updateKeywordBidsByIds(accountID, adGroupID, bids);
 		}
 		
 	}
