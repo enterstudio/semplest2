@@ -64,7 +64,7 @@ BEGIN TRY
 	--Check to see if this keyword is already bid on for the AdEngine and BidType	
 	if exists (select * from PromotionKeywordAssociation pka
 				inner join Keyword k on k.KeywordPK = pka.KeywordFK
-				inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
+				inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK and kb.PromotionFK = @PromotionPK
 				inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
 				where pka.PromotionFK = @PromotionPK and a.AdvertisingEnginePK = @AdEngineID 
 					 and kb.BidTypeFK = @BidTypeID
@@ -74,7 +74,7 @@ BEGIN TRY
 		select @currentMicroBidAmt = kb.MicroBidAmount, @keywordBidPK = kb.KeywordBidPK , @keywordPK = kb.KeywordFK
 			from PromotionKeywordAssociation pka
 					inner join Keyword k on k.KeywordPK = pka.KeywordFK
-					inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK
+					inner join KeywordBid kb on kb.KeywordFK = k.KeywordPK and kb.PromotionFK = @PromotionPK
 					inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK
 					where pka.PromotionFK = @PromotionPK and pka.IsActive = 1 and a.AdvertisingEnginePK = @AdEngineID
 						 and kb.BidTypeFK = @BidTypeID
