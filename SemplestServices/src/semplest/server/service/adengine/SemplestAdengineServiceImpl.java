@@ -1425,7 +1425,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
 		final Map<String, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
-		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
 		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll,
@@ -1477,8 +1476,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long adGroupID = adEngineData.getAdGroupID();
 				final Long campaignID = adEngineData.getCampaignID();
 				final Set<Entry<KeywordProbabilityObject, Boolean>> entrySet = keywordToRemoveOppositeMap.entrySet();
-				final List<com.microsoft.adcenter.v8.Keyword> regularKeywordsToRemove = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
 				final List<String> negativeKeywordsToAdd = new ArrayList<String>();
+				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
+				final List<Long> msnPositiveKeywordIdsToRemove = new ArrayList<Long>();
 				for (final Entry<KeywordProbabilityObject, Boolean> entry : entrySet)
 				{
 					final KeywordProbabilityObject keywordProbability = entry.getKey();
@@ -1489,14 +1489,25 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final Boolean removeOpposite = entry.getValue();
 						if (removeOpposite)
 						{
-							final com.microsoft.adcenter.v8.Keyword regularKeywordToRemove = new com.microsoft.adcenter.v8.Keyword();
-							regularKeywordToRemove.setText(keywordText);
-							regularKeywordsToRemove.add(regularKeywordToRemove);
+							for (final BidElement bid : bids)
+							{
+								final String keyword = bid.getKeyword();
+								if (keywordText.equals(keyword))
+								{
+									final Long msnKeywordId = bid.getKeywordAdEngineID();
+									msnPositiveKeywordIdsToRemove.add(msnKeywordId);
+								}
+							}		
 						}
 					}
-				}
-				final com.microsoft.adcenter.v8.Keyword[] regularKeywordsArray = regularKeywordsToRemove.toArray(new com.microsoft.adcenter.v8.Keyword[regularKeywordsToRemove.size()]);
-				msn.createKeywords(accountID, adGroupID, regularKeywordsArray);
+				}				
+				final long[] msnPositiveKeywordIdsToRemoveArray = new long[msnPositiveKeywordIdsToRemove.size()];
+				for (int i = 0; i < msnPositiveKeywordIdsToRemove.size(); ++i)
+				{
+					msnPositiveKeywordIdsToRemoveArray[i] = msnPositiveKeywordIdsToRemove.get(i);
+				}				
+				logger.info("Will try to:\nDelete MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd Negative Keywords: [" + negativeKeywordsToAdd + "]");
+				msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
 				msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
 			}
 			else
