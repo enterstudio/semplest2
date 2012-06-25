@@ -214,7 +214,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		// 9. Schedule OnGoingBidding  
 	 */
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
-		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, new ArrayList<String>(adEngineList));
+		final ArrayList adEngines = new ArrayList<String>(adEngineList);
+		final HashMap<String, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines);
 		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		final Map<String, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, new ArrayList<String>(adEngineList), bidClient);
 		String companyName = null;
@@ -2583,7 +2584,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer productGroupID = Integer.parseInt(data.get("productGroupID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
-		final List<String> adEngines = gson.fromJson(data.get("adEngine"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<String> adEngines = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		final Boolean result = scheduleAddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
