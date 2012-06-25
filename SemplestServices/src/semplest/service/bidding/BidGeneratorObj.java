@@ -337,8 +337,8 @@ public class BidGeneratorObj {
 			
 			ArrayList<BidElement> bidsMatchTypeMSN_Temp = new ArrayList<BidElement>();
 			for(Keyword w : kwList){
-				logger.info("Keyword: "+w.getText()+" "+w.getBroadMatchBid().getAmount()+" "+w.getExactMatchBid().getAmount()+" "+w.getPhraseMatchBid().getAmount());
-				logger.info("Keyword ID: "+w.getId());
+				logger.info("Keyword: "+w.getText()+" "+w.getBroadMatchBid().getAmount()+" "+
+						w.getExactMatchBid().getAmount()+" "+w.getPhraseMatchBid().getAmount()+", Keyword ID: "+w.getId());
 				
 				String matchType = ProtocolEnum.SemplestMatchType.Exact.name(); 
 				if(w.getExactMatchBid().getAmount()==null || w.getExactMatchBid().getAmount() < 0.0001){
