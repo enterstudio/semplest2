@@ -358,8 +358,8 @@ public class BidGeneratorObj {
 
 			try{
 				if (bidsMatchTypeMSN_Temp.size()>0) {
-				SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchTypeMSN_Temp);
-				logger.info("Stroed bid data to the databse for "+bidsMatchTypeMSN_Temp.size()+" keywords.");
+					SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchTypeMSN_Temp);
+					logger.info("Stroed bid data to the databse for "+bidsMatchTypeMSN_Temp.size()+" keywords.");
 				} else {
 					logger.info("No bid data to write to the databse");
 				}
@@ -379,9 +379,10 @@ public class BidGeneratorObj {
 		
 
 			
-			
+			/*
 			final String msg = "Method NOT CORRECTLY implemented for MSN yet!! The present code is a temporary fix for integration testing!";
 			logger.info(msg);
+			*/
 			
 			return new Boolean(true);
 			
