@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
@@ -605,15 +606,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.valueOf(semplestMatchType);
 					if (semplestMatchTypeEnum == SemplestMatchType.Broad)
 					{
-						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, bid, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID);
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, MatchType.Broad, bid);
 					}
 					else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
 					{
-						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid, SemplestUtils.MSN_DUMMY_BID);
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, MatchType.Exact, bid);
 					}
 					else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
 					{
-						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, SemplestUtils.MSN_DUMMY_BID, bid);
+						msnKeywordId = msn.createKeyword(accId, adGroupID, keywordText, MatchType.Phrase, bid);
 					}
 					else
 					{

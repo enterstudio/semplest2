@@ -1693,25 +1693,25 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	// ==================================
 	public String createKeyword(String json) throws Exception
 	{
-		logger.debug("call createKeyword(String json)" + json);
+		logger.debug("call createKeyword(String json) [" + json + "]");
 		HashMap<String, String> data = protocolJson.getHashMapFromJson(json);
 		long ret = -1;
-		String broadMatchBidStr = data.get("broadMatchBid");
-		Bid broadMatchBid = gson.fromJson(broadMatchBidStr, Bid.class);
-		String contentMatchBidStr = data.get("contentMatchBid");
-		Bid contentMatchBid = gson.fromJson(contentMatchBidStr, Bid.class);
-		String exactMatchBidStr = data.get("exactMatchBid");
-		Bid exactMatchBid = gson.fromJson(exactMatchBidStr, Bid.class);
-		String phraseMatchBidStr = data.get("phraseMatchBid");
-		Bid phraseMatchBid = gson.fromJson(phraseMatchBidStr, Bid.class);
+		final String matchTypeString = data.get("matchType");
+		final MatchType matchType = gson.fromJson(matchTypeString, MatchType.class);
+		final String bidString = data.get("bid");
+		final Bid bid = gson.fromJson(bidString, Bid.class);
+		final String accountIdString = data.get("accountId");
+		final Long accountId = Long.valueOf(accountIdString);
+		final String adGroupIdString = data.get("adGroupId");
+		final Long adGroupId = Long.valueOf(adGroupIdString);
+		final String text = data.get("text");
 		try
 		{
-			ret = createKeyword(new Long(data.get("accountId")), new Long(data.get("adGroupId")), data.get("text"), broadMatchBid, contentMatchBid,
-					exactMatchBid, phraseMatchBid);
+			ret = createKeyword(accountId, adGroupId, text, matchType, bid);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem creating MSN keyword for JSON [" + json + "]", e);
 		}
 		return gson.toJson(ret);
 	}
@@ -1739,20 +1739,34 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	}
 
 	@Override
-	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
-			Bid phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
+	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail, Exception
 	{
 		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
-		keyword.setBroadMatchBid(broadMatchBid);
-		keyword.setContentMatchBid(contentMatchBid);
-		keyword.setExactMatchBid(exactMatchBid);
-		keyword.setPhraseMatchBid(phraseMatchBid);
+		if (matchType == MatchType.Exact)
+		{
+			keyword.setExactMatchBid(bid);
+		}
+		else if (matchType == MatchType.Broad)
+		{
+			keyword.setBroadMatchBid(bid);	
+		}
+		else if (matchType == MatchType.Phrase)
+		{
+			keyword.setPhraseMatchBid(bid);	
+		}
+		else if (matchType == MatchType.Content)
+		{
+			keyword.setPhraseMatchBid(bid);	
+		}	 
+		else 
+		{
+			throw new Exception("Problem creating MSN keyword for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Text [" + text + "], Bid [" + bid + "] because the MatchType specified [" + matchType + "] is not known");
+		}
 		try
 		{
-			final AddKeywordsResponse addKeywordsResponse = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId,
-					new Keyword[] { keyword }));
+			final AddKeywordsResponse addKeywordsResponse = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]{keyword}));
 			return addKeywordsResponse.getKeywordIds()[0];
 		}
 		catch (AdApiFaultDetail e1)
@@ -1893,35 +1907,56 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 
 	public String updateKeywordBidById(String json) throws Exception
 	{
-		logger.debug("call updateKeywordBidById(String json)" + json);
-		HashMap<String, String> data = protocolJson.getHashMapFromJson(json);
-		Bid broadMatchBid = gson.fromJson(data.get("broadMatchBid"), Bid.class);
-		Bid contentMatchBid = gson.fromJson(data.get("contentMatchBid"), Bid.class);
-		Bid exactMatchBid = gson.fromJson(data.get("exactMatchBid"), Bid.class);
-		Bid phraseMatchBid = gson.fromJson(data.get("phraseMatchBid"), Bid.class);
+		logger.debug("JSON: [" + json + "]");
+		final Map<String, String> data = protocolJson.getHashMapFromJson(json);
+		final String bidString = data.get("bid");
+		final Bid bid = gson.fromJson(bidString, Bid.class);
+		final String matchTypeString = data.get("matchType");
+		final MatchType matchType = gson.fromJson(matchTypeString, MatchType.class);
+		final String accountIdString = data.get("accountId");
+		final Long accountId = Long.valueOf(accountIdString);
+		final String adGroupIdString = data.get("adGroupId");
+		final Long adGroupId = Long.valueOf(adGroupIdString);
+		final String keywordIdString = data.get("keywordId");
+		final Long keywordId = Long.valueOf(keywordIdString);
 		try
 		{
-			updateKeywordBidById(new Long(data.get("accountId")), new Long(data.get("adGroupId")), new Long(data.get("keywordId")), broadMatchBid,
-					contentMatchBid, exactMatchBid, phraseMatchBid);
+			updateKeywordBidById(accountId, adGroupId, keywordId, matchType, bid);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem Updating MSN KeywordBid by ID for JSON [" + json + "]", e);
 		}
 		return gson.toJson(0);
 	}
 
 	@Override
-	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
-			Bid phraseMatchBid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
+	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail, Exception
 	{
+		logger.info("Will try to Update Keyword Bid by ID for KeywordId [" + keywordId + "], AccountID [" + accountId + "], AdGroupId [" + adGroupId + "], MatchType [" + matchType + "], Bid [" + bid + "]");
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		Keyword keyword = new Keyword();
 		keyword.setId(keywordId);
-		keyword.setBroadMatchBid(broadMatchBid);
-		keyword.setContentMatchBid(contentMatchBid);
-		keyword.setExactMatchBid(exactMatchBid);
-		keyword.setPhraseMatchBid(phraseMatchBid);
+		if (matchType == MatchType.Exact)
+		{
+			keyword.setExactMatchBid(bid);
+		}
+		else if (matchType == MatchType.Broad)
+		{
+			keyword.setBroadMatchBid(bid);			
+		}
+		else if (matchType == MatchType.Content)
+		{
+			keyword.setContentMatchBid(bid);	
+		}
+		else if (matchType == MatchType.Phrase)
+		{
+			keyword.setPhraseMatchBid(bid);	
+		}
+		else
+		{
+			throw new Exception("Problem Updating MSN Keyword Bid By Keyword ID [" + keywordId + "] for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Bid [" + bid + "] because the MatchType [" + matchType + "] is not found");
+		}
 		try
 		{
 			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, new Keyword[] { keyword }));

@@ -265,11 +265,9 @@ public class MSNAdcenterServiceClientTest {
 	      // Print the content on the console
 	      strLine = strLine.replaceAll("\\[", "").replaceAll("\\]", "");
 	      logger.info("Adding "+ strLine);
-	      Bid exactMatchBid1 = new Bid();
-	      exactMatchBid1.setAmount(1.00);
-	      Bid Bid1 = new Bid();
-	      Bid1.setAmount(0.00);
-	      long ret = test.createKeyword(accountID, adGroupID, strLine, Bid1, Bid1, exactMatchBid1, Bid1);	
+	      Bid exactMatchBid = new Bid();
+	      exactMatchBid.setAmount(1.00);
+	      long ret = test.createKeyword(accountID, adGroupID, strLine, MatchType.Exact, exactMatchBid);	
 	      logger.info("KeywordID"+ret);
 	      i++;
 	    }

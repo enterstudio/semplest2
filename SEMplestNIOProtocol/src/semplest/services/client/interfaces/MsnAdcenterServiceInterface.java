@@ -107,11 +107,11 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// Keyword Methods
 	// ==================================
 	
-	long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid, Bid phraseMatchBid) throws Exception;	
+	long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception;	
 	long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception;	
 	Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws Exception;	
-	void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid, Bid phraseMatchBid) throws Exception;	
+	void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws Exception;	
 	void updateKeywordBidsByIds(Long accountId, Long adGroupId, List<BidElement> bids) throws Exception;	
 	void pauseKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	void deleteKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	

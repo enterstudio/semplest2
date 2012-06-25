@@ -199,7 +199,7 @@ public class MsnServiceTest {
 		return 0;
 	}
 	
-	public int Test_MsnServices_Standalone(){
+	public int Test_MsnServices_Standalone() {
 		
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		errorCounter = 0;
@@ -893,13 +893,17 @@ public class MsnServiceTest {
 				exactMatchBid.setAmount(2.02);
 				Bid phraseMatchBid = new Bid();
 				phraseMatchBid.setAmount(2.03);
-				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", null, null, null, null);						
+				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", MatchType.Exact, null);						
 				System.out.println("OK");
 				
 				if(keywordId == 0L)
 					errorHandler(new Exception(vMsg + "No keyword Id returned."));
 			}
 			catch(RemoteException e){
+				errorHandler(e);
+			}
+			catch (Exception e)
+			{
 				errorHandler(e);
 			}
 			
@@ -985,10 +989,10 @@ public class MsnServiceTest {
 				exactMatchBid.setAmount(5.02);
 				Bid phraseMatchBid = new Bid();
 				phraseMatchBid.setAmount(5.03);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, null, null, null);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, contentMatchBid, null, null);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, null, exactMatchBid, null);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, null, null, null, phraseMatchBid);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Broad, broadMatchBid);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Content, contentMatchBid);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Exact, exactMatchBid);
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Phrase, phraseMatchBid);
 				System.out.println("OK");
 				
 			}
@@ -1667,15 +1671,9 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createKeyword:");
 			try{
-				Bid broadMatchBid = new Bid();
-				broadMatchBid.setAmount(2.00);
-				Bid contentMatchBid = new Bid();
-				contentMatchBid.setAmount(2.01);
 				Bid exactMatchBid = new Bid();
 				exactMatchBid.setAmount(2.02);
-				Bid phraseMatchBid = new Bid();
-				phraseMatchBid.setAmount(2.03);
-				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);			
+				keywordId = test.createKeyword(accountId, adGroupId, "nan keyword test", MatchType.Exact, exactMatchBid);			
 				System.out.println("OK");
 			}
 			catch(Exception e){
@@ -1742,17 +1740,10 @@ public class MsnServiceTest {
 			System.out.println("------------------------------------------------------------");
 			System.out.println("updateKeywordBidById:");
 			try{
-				Bid broadMatchBid = new Bid();
-				broadMatchBid.setAmount(5.00);
-				Bid contentMatchBid = new Bid();
-				contentMatchBid.setAmount(5.01);
 				Bid exactMatchBid = new Bid();
 				exactMatchBid.setAmount(5.02);
-				Bid phraseMatchBid = new Bid();
-				phraseMatchBid.setAmount(5.03);
-				test.updateKeywordBidById(accountId, adGroupId, keywordId, broadMatchBid, contentMatchBid, exactMatchBid, phraseMatchBid);
-				System.out.println("OK");
-				
+				test.updateKeywordBidById(accountId, adGroupId, keywordId, MatchType.Exact, exactMatchBid);
+				System.out.println("OK");			
 			}
 			catch(Exception e){
 				errorHandler(e);

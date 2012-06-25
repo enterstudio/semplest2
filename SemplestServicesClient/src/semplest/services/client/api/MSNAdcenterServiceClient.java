@@ -1028,23 +1028,17 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public long createKeyword(Long accountId, Long adGroupId, String text, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
-			Bid phraseMatchBid) throws Exception
+	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		String broadMatchBidStr = gson.toJson(broadMatchBid);
-		String contentMatchBidStr = gson.toJson(contentMatchBid);
-		String exactMatchBidStr = gson.toJson(exactMatchBid);
-		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		String matchTypeString = gson.toJson(matchType);
+		String bidString = gson.toJson(bid);			
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		jsonHash.put("text", text);
-		jsonHash.put("broadMatchBid", broadMatchBidStr);
-		jsonHash.put("contentMatchBid", contentMatchBidStr);
-		jsonHash.put("exactMatchBid", exactMatchBidStr);
-		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
-		String json = gson.toJson(jsonHash);
-		
+		jsonHash.put("matchType", matchTypeString);
+		jsonHash.put("bid", bidString);
+		String json = gson.toJson(jsonHash);		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeyword", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("createKeyword: KeywordId = " + ret);
@@ -1092,23 +1086,17 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, Bid broadMatchBid, Bid contentMatchBid, Bid exactMatchBid,
-			Bid phraseMatchBid) throws Exception
+	public void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		String broadMatchBidStr = gson.toJson(broadMatchBid);
-		String contentMatchBidStr = gson.toJson(contentMatchBid);
-		String exactMatchBidStr = gson.toJson(exactMatchBid);
-		String phraseMatchBidStr = gson.toJson(phraseMatchBid);		
+		String matchTypeString = gson.toJson(matchType);
+		String bidString = gson.toJson(bid);		
 		jsonHash.put("accountId", Long.toString(accountId.longValue()));
 		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
 		jsonHash.put("keywordId", Long.toString(keywordId));
-		jsonHash.put("broadMatchBid", broadMatchBidStr);
-		jsonHash.put("contentMatchBid", contentMatchBidStr);
-		jsonHash.put("exactMatchBid", exactMatchBidStr);
-		jsonHash.put("phraseMatchBid", phraseMatchBidStr);
-		String json = gson.toJson(jsonHash);
-		
+		jsonHash.put("matchType", matchTypeString);
+		jsonHash.put("bid", bidString);
+		String json = gson.toJson(jsonHash);		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "updateKeywordBidById", json, timeoutMS);
 		long ret = gson.fromJson(returnData, long.class);
 		logger.debug("updateKeywordBidById: (if successful returns 0) " + ret);

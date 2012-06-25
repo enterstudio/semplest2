@@ -3,7 +3,6 @@ package semplest.services.client.api;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
-import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
@@ -243,14 +241,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_scheduleAddPromotionToAdEngineMSN = 62;
 		final ArrayList<String> adEngines_scheduleAddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.MSN.name()}));
 		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngineMSN, productGroupID_scheduleAddPromotionToAdEngineMSN, promotionID_scheduleAddPromotionToAdEngineMSN, adEngines_scheduleAddPromotionToAdEngineMSN);
-*/
+
 		// AddPromotionToAdEngine - MSN
 		final Integer customerID_AddPromotionToAdEngineMSN = 1418;
 		final Integer productGroupID_AddPromotionToAdEngineMSN = 248;
 		final Integer promotionID_AddPromotionToAdEngineMSN = 251;
 		final ArrayList<String> adEngines_AddPromotionToAdEngineMSN = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
 		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngineMSN, productGroupID_AddPromotionToAdEngineMSN, promotionID_AddPromotionToAdEngineMSN, adEngines_AddPromotionToAdEngineMSN);
-/*
+
 		// scheduleAddAds - MSN
 		final Integer customerID_ScheduleAddAds = 12;
 		final Integer promotionID_ScheduleAddAds = 62;
@@ -276,7 +274,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<Integer> promotionAdIds_DeleteAds = Arrays.asList(218);
 		final List<String> adEngines_DeleteAds = Arrays.asList(AdEngine.MSN.name());
 		client.DeleteAds(promotionID_DeleteAds, promotionAdIds_DeleteAds, adEngines_DeleteAds);
-	
+
 		// scheduleUpdateAds - MSN
 		final Integer customerID_scheduleUpdateAds = 12;
 		final Integer promotionID_scheduleUpdateAds = 62;
@@ -337,97 +335,6 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final Integer promotionID_PausePromotion = 62;
 		final List<String> adEngines_PausePromotion = Arrays.asList(AdEngine.MSN.name());
 		client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
-
-		// scheduleAddPromotionToAdEngine - MSN
-		final Integer customerID_scheduleAddPromotionToAdEngine = 12;
-		final Integer productGroupID_scheduleAddPromotionToAdEngine = 76;
-		final Integer promotionID_scheduleAddPromotionToAdEngine = 62;
-		final ArrayList<String> adEngines_scheduleAddPromotionToAdEngine = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.MSN.name()}));
-		client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
-			
-		// AddPromotionToAdEngine - MSN
-		final Integer customerID_AddPromotionToAdEngine = 12;
-		final Integer productGroupID_AddPromotionToAdEngine = 76;
-		final Integer promotionID_AddPromotionToAdEngine = 62;
-		final ArrayList<String> adEngines_AddPromotionToAdEngine = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
-		client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine, productGroupID_AddPromotionToAdEngine, promotionID_AddPromotionToAdEngine, adEngines_AddPromotionToAdEngine);
-
-		// scheduleDeleteKeywords - MSN
-		final Integer customerID_scheduleDeleteKeywords = 12;
-		final Integer promotionID_scheduleDeleteKeywords = 62;
-		final List<Integer> keywordIds_scheduleDeleteKeywords = Arrays.asList(12421);
-		final List<String> adEngines_scheduleDeleteKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.scheduleDeleteKeywords(customerID_scheduleDeleteKeywords,  promotionID_scheduleDeleteKeywords, keywordIds_scheduleDeleteKeywords, adEngines_scheduleDeleteKeywords);
-
-		// DeleteKeywords - MSN
-		final Integer promotionID_DeleteKeywords = 62;
-		final List<Integer> keywordIds_DeleteKeywords = Arrays.asList(12095);
-		final List<String> adEngines_DeleteKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.DeleteKeywords(promotionID_DeleteKeywords, keywordIds_DeleteKeywords, adEngines_DeleteKeywords);
-
-
-		// schedulePauseProductGroups - MSN
-		final Integer customerID_schedulePauseProductGroups = 12;
-		final List<Integer> productGroupIds_schedulePauseProductGroups = Arrays.asList(76);
-		final List<String> adEngines_schedulePauseProductGroups = Arrays.asList(AdEngine.MSN.name());
-		client.schedulePauseProductGroups(customerID_schedulePauseProductGroups, productGroupIds_schedulePauseProductGroups, adEngines_schedulePauseProductGroups);
-				
-		// PauseProductGroups - MSN
-		final List<Integer> productGroupIds_PauseProductGroups = Arrays.asList(76);
-		final List<String> adEngines_PauseProductGroups = Arrays.asList(AdEngine.MSN.name());
-		client.PauseProductGroups(productGroupIds_PauseProductGroups, adEngines_PauseProductGroups);		
-		
-		// scheduleAddKeywords - MSN
-		final Integer customerID_scheduleAddKeywords = 12;
-		final Integer promotionID_scheduleAddKeywords = 62;
-		final List<Integer> keywordIds_scheduleAddKeywords = Arrays.asList(12241, 12242);
-		final List<String> adEngines_scheduleAddKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.scheduleAddKeywords(customerID_scheduleAddKeywords, promotionID_scheduleAddKeywords, keywordIds_scheduleAddKeywords, adEngines_scheduleAddKeywords);
-
-		// AddKeywords - MSN
-		final Integer promotionID_AddKeywords = 62;
-		final List<String> adEngines_AddKeywords = Arrays.asList(AdEngine.MSN.name());
-		final List<Integer> keywordIds_AddKeywords = Arrays.asList(12241, 12242);
-		client.AddKeywords(promotionID_AddKeywords, keywordIds_AddKeywords, adEngines_AddKeywords);
-
-		// scheduleAddNegativeKeywords - MSN
-		final Integer customerID_scheduleAddNegativeKeywords = 12;
-		final Integer promotionID_scheduleAddNegativeKeywords = 62;
-		final KeywordIdRemoveOppositePair pair1_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, false);
-		final KeywordIdRemoveOppositePair pair2_scheduleAddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
-		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords = new ArrayList<KeywordIdRemoveOppositePair>();
-		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair1_scheduleAddNegativeKeywords);
-		keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords.add(pair2_scheduleAddNegativeKeywords);
-		final List<String> adEngines_scheduleAddNegativeKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.scheduleAddNegativeKeywords(customerID_scheduleAddNegativeKeywords, promotionID_scheduleAddNegativeKeywords, keywordIdRemoveOppositePairs_scheduleAddNegativeKeywords, adEngines_scheduleAddNegativeKeywords);
-
-		// AddNegativeKeywords - MSN
-		final Integer promotionID_AddNegativeKeywords = 62;
-		final KeywordIdRemoveOppositePair pair1_AddNegativeKeywords = new KeywordIdRemoveOppositePair(12241, true);
-		final KeywordIdRemoveOppositePair pair2_AddNegativeKeywords = new KeywordIdRemoveOppositePair(12242, false);
-		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs_AddNegativeKeywords = new ArrayList<KeywordIdRemoveOppositePair>();
-		keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair1_AddNegativeKeywords);
-		keywordIdRemoveOppositePairs_AddNegativeKeywords.add(pair2_AddNegativeKeywords);
-		final List<String> adEngines_AddNegativeKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.AddNegativeKeywords(promotionID_AddNegativeKeywords, keywordIdRemoveOppositePairs_AddNegativeKeywords, adEngines_AddNegativeKeywords);
-
-		// ExecuteBidProcess - MSN
-		final Integer promotionID_ExecuteBidProcess = 62;
-		final ArrayList<String> adEngines_ExecuteBidProcess = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));
-		client.ExecuteBidProcess(promotionID_ExecuteBidProcess, adEngines_ExecuteBidProcess);
-		
-		// scheduleDeleteNegativeKeywords - MSN
-		final Integer customerID_scheduleDeleteNegativeKeywords = 12;
-		final Integer promotionID_scheduleDeleteNegativeKeywords = 62;
-		final List<Integer> keywordIds_scheduleDeleteNegativeKeywords = Arrays.asList(12241, 12242);
-		final List<String> adEngines_scheduleDeleteNegativeKeywords = Arrays.asList(AdEngine.MSN.name());
-		client.scheduleDeleteNegativeKeywords(customerID_scheduleDeleteNegativeKeywords, promotionID_scheduleDeleteNegativeKeywords, keywordIds_scheduleDeleteNegativeKeywords, adEngines_scheduleDeleteNegativeKeywords);
-
-		// DeleteNegativeKeywords - MSN
-		final Integer promotionID_DeleteNegativeKeywords = 62;
-		final List<String> adEngines_DeleteNegativeKeywords = Arrays.asList(AdEngine.MSN.name());
-		final List<Integer> keywordIds_DeleteNegativeKeywords = Arrays.asList(12241, 12242);
-		client.DeleteNegativeKeywords(promotionID_DeleteNegativeKeywords, keywordIds_DeleteNegativeKeywords, adEngines_DeleteNegativeKeywords);
 	*/	
 	}
 	
