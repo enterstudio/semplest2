@@ -196,7 +196,7 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("productGroupID", productGroupId.ToString());
             jsonHash.Add("promotionID", promoId.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngineList, Formatting.Indented);
-            jsonHash.Add("adEngineList", jsonAdds);
+            jsonHash.Add("adEngines", jsonAdds);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
             return runBooleanMethod(ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr);
         }
