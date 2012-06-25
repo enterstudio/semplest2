@@ -799,6 +799,10 @@ namespace Semplest.Core.Models.Repositories
         {
             IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
             var kpos = new List<KeywordProbabilityObject>();
+            List<KeywordIdRemoveOppositePair> addKiops = new List<KeywordIdRemoveOppositePair>();
+            List<KeywordIdRemoveOppositePair> addNewKiops = new List<KeywordIdRemoveOppositePair>();
+            List<KeywordIdRemoveOppositePair> addDeletedKiops = new List<KeywordIdRemoveOppositePair>();
+            List<string> addNewKeywords = new List<string>();
             KeywordProbabilityObject kpo;
             foreach (PromotionKeywordAssociation pka in qry)
             {
@@ -813,8 +817,6 @@ namespace Semplest.Core.Models.Repositories
             }
             if (model.AdModelProp.NegativeKeywords != null)
             {
-
-                List<KeywordIdRemoveOppositePair> addKiops = new List<KeywordIdRemoveOppositePair>();
                 foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
                 {
                     if (qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
@@ -823,9 +825,10 @@ namespace Semplest.Core.Models.Repositories
                         {
                             KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
                             PromotionKeywordAssociation pka = qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
+                            //means if the keyword existied and was positive it needs to be removed and added as a negative.
+                            kiop.KeywordId = pka.KeywordFK;
                             if (!pka.IsNegative)
                             {
-                                kiop.KeywordId = pka.KeywordFK;
                                 kiop.RemoveOpposite = true;
                                 addKiops.Add(kiop);
                             }
@@ -837,29 +840,42 @@ namespace Semplest.Core.Models.Repositories
                         kpos.Add(kpo);
                         if (promo.IsLaunched)
                         {
-                            KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
-                            PromotionKeywordAssociation pka = qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
-                            if (!pka.IsNegative)
-                            {
-                                kiop.KeywordId = pka.KeywordFK;
-                                kiop.RemoveOpposite = false;
-                                addKiops.Add(kiop);
-                            }
+                            addNewKeywords.Add(negativeKeyword);
                         }
                     }
-                    ServiceClientWrapper sw = new ServiceClientWrapper();
-                    if (addKiops.Count() > 0)
-                    {
-                        var adEngines = new List<string>();
-                        adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                        sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
-                    }
-                    //model.AdModelProp.NegativeKeywords.
-                    foreach (PromotionKeywordAssociation pka in qry.Where(key => key.IsNegative == true).ToList())
-                    { }
                 }
             }
+            //check for negative keywords that have been removed
+            foreach (PromotionKeywordAssociation k in qry.Where(key => key.IsNegative == true))
+            {
+                if (!model.AdModelProp.NegativeKeywords.Contains(k.Keyword.Keyword1))
+                {
+                    //if (k.IsDeleted)
+                    KeywordIdRemoveOppositePair kiopDelete = new KeywordIdRemoveOppositePair();
+                    kiopDelete.KeywordId = k.Keyword.KeywordPK;
+                    kiopDelete.RemoveOpposite = false;
+                    addDeletedKiops.Add(kiopDelete);
+                }
+            }
+            ServiceClientWrapper sw = new ServiceClientWrapper();
+            var adEngines = new List<string>();
+            adEngines.AddRange(promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+            if(addDeletedKiops.Count >0)
+                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addDeletedKiops, adEngines, false);
+
             SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords, model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+
+            if (addKiops.Count() > 0)
+                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
+            KeywordIdRemoveOppositePair kiopNew = new KeywordIdRemoveOppositePair();
+            foreach (string k in addNewKeywords)
+            {
+                kiopNew.KeywordId = dbcontext.Keywords.Where(key => key.Keyword1 == k).FirstOrDefault().KeywordPK;
+                kiopNew.RemoveOpposite = false;
+                addNewKiops.Add(kiopNew);
+            }
+            if (addNewKiops.Count() > 0)
+                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addNewKiops, adEngines, true);
         }
 
         public string GetStateNameFromCode(int stateCode)
