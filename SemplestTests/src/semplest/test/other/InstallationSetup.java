@@ -191,7 +191,7 @@ public class InstallationSetup {
 			properties.load(in);
 			in.close();		
 			
-			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_test";
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_testing";
 			String comment = "Keyword Service for Exp ESB. Updated by InstallationSetup (Nan).";
 			writeProps(path, properties, jdbc, comment);
 		}
@@ -233,7 +233,7 @@ public class InstallationSetup {
 			properties.load(in);
 			in.close();		
 			
-			String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplest";
+			String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";
 			String comment = "Service on Test Box. Updated by InstallationSetup (Nan).";
 			writeProps(path, properties, jdbc, comment);
 		}
