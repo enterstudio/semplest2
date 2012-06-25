@@ -8,7 +8,6 @@ namespace Semplest.SharedResources.Encryption
 {
     public sealed class EncryptionHelper
     {
-        private static EncryptionHelper _instance;
         private static string _encryptionKey;
 
         private EncryptionHelper() { }
