@@ -2,8 +2,8 @@ package semplest.server.protocol.chaseorbitalgateway;
 
 public class CustomerObject
 {
-	private String FirstName;
-	private String LastName;
+	private String customerProfileRefNum;
+	private String name;
 	private String Address1;
 	private String Address2;
 	private String City;
@@ -13,7 +13,17 @@ public class CustomerObject
 	private String Phone;
 	private String creditCardNumber;
     private String ExpireDateMMYY;
+    
+    
 	
+	public String getCustomerProfileRefNum()
+	{
+		return customerProfileRefNum;
+	}
+	public void setCustomerProfileRefNum(String customerProfileRefNum)
+	{
+		this.customerProfileRefNum = customerProfileRefNum;
+	}
 	public String getCreditCardNumber()
 	{
 		return creditCardNumber;
@@ -85,22 +95,14 @@ public class CustomerObject
 	public void setPhone(String phone)
 	{
 		Phone = phone;
-	}
-	public String getFirstName()
+	}	
+	public String getName()
 	{
-		return FirstName;
+		return name;
 	}
-	public void setFirstName(String firstName)
+	public void setName(String name)
 	{
-		FirstName = firstName;
-	}
-	public String getLastName()
-	{
-		return LastName;
-	}
-	public void setLastName(String lastName)
-	{
-		LastName = lastName;
+		this.name = name;
 	}
 	@Override
 	public int hashCode()
@@ -112,12 +114,12 @@ public class CustomerObject
 		result = prime * result + ((City == null) ? 0 : City.hashCode());
 		result = prime * result + ((Email == null) ? 0 : Email.hashCode());
 		result = prime * result + ((ExpireDateMMYY == null) ? 0 : ExpireDateMMYY.hashCode());
-		result = prime * result + ((FirstName == null) ? 0 : FirstName.hashCode());
-		result = prime * result + ((LastName == null) ? 0 : LastName.hashCode());
 		result = prime * result + ((Phone == null) ? 0 : Phone.hashCode());
 		result = prime * result + ((StateAbbr == null) ? 0 : StateAbbr.hashCode());
 		result = prime * result + ((ZipCode == null) ? 0 : ZipCode.hashCode());
 		result = prime * result + ((creditCardNumber == null) ? 0 : creditCardNumber.hashCode());
+		result = prime * result + ((customerProfileRefNum == null) ? 0 : customerProfileRefNum.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
 	@Override
@@ -165,20 +167,6 @@ public class CustomerObject
 		}
 		else if (!ExpireDateMMYY.equals(other.ExpireDateMMYY))
 			return false;
-		if (FirstName == null)
-		{
-			if (other.FirstName != null)
-				return false;
-		}
-		else if (!FirstName.equals(other.FirstName))
-			return false;
-		if (LastName == null)
-		{
-			if (other.LastName != null)
-				return false;
-		}
-		else if (!LastName.equals(other.LastName))
-			return false;
 		if (Phone == null)
 		{
 			if (other.Phone != null)
@@ -207,14 +195,28 @@ public class CustomerObject
 		}
 		else if (!creditCardNumber.equals(other.creditCardNumber))
 			return false;
+		if (customerProfileRefNum == null)
+		{
+			if (other.customerProfileRefNum != null)
+				return false;
+		}
+		else if (!customerProfileRefNum.equals(other.customerProfileRefNum))
+			return false;
+		if (name == null)
+		{
+			if (other.name != null)
+				return false;
+		}
+		else if (!name.equals(other.name))
+			return false;
 		return true;
 	}
 	@Override
 	public String toString()
 	{
-		return "CustomerObject [FirstName=" + FirstName + ", LastName=" + LastName + ", Address1=" + Address1 + ", Address2=" + Address2 + ", City="
-				+ City + ", StateAbbr=" + StateAbbr + ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone=" + Phone + ", creditCardNumber="
-				+ creditCardNumber + ", ExpireDateMMYY=" + ExpireDateMMYY + "]";
+		return "CustomerObject [customerProfileRefNum=" + customerProfileRefNum + ", name=" + name + ", Address1=" + Address1 + ", Address2="
+				+ Address2 + ", City=" + City + ", StateAbbr=" + StateAbbr + ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone=" + Phone
+				+ ", creditCardNumber=" + creditCardNumber + ", ExpireDateMMYY=" + ExpireDateMMYY + "]";
 	}
-
+	
 }

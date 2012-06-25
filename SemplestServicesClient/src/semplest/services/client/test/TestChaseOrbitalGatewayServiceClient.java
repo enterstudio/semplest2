@@ -1,6 +1,8 @@
 package semplest.services.client.test;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -28,9 +30,10 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		final TestChaseOrbitalGatewayServiceClient testClient = new TestChaseOrbitalGatewayServiceClient();		
 		final GatewayReturnObject gatewayReturnObject = testClient.testCreateProfile();
 		testClient.testAuthorizeAndCapture(gatewayReturnObject);		
-		testClient.UpdateProfileRecurringBilling(gatewayReturnObject);
-		testClient.refundPayment(gatewayReturnObject);
-		testClient.terminateRecurringPayments(gatewayReturnObject);
+		testClient.testUpdateProfileRecurringBilling(gatewayReturnObject);
+		testClient.testRefundPayment(gatewayReturnObject);
+		testClient.testTerminateRecurringPayments(gatewayReturnObject);
+		testClient.testGetProfiles(gatewayReturnObject);
 	}
 	
 	public GatewayReturnObject testCreateProfile() throws Exception
@@ -39,8 +42,7 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		customerObject.setAddress1("1313 Mock Lane");
 		customerObject.setCity("Bedrock");
 		customerObject.setEmail("Fred@flinstone.com");
-		customerObject.setFirstName("Fred");
-		customerObject.setLastName("Flintstone");
+		customerObject.setName("Fred Flintstone");
 		customerObject.setPhone("5555555555");
 		customerObject.setStateAbbr("NY");
 		customerObject.setZipCode("67676");
@@ -57,7 +59,7 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		logger.info("Response from AuthorizeAndCapture(...): " + response.toStringPretty());
 	}
 	
-	public void UpdateProfileRecurringBilling(final GatewayReturnObject gatewayReturnObject) throws Exception
+	public void testUpdateProfileRecurringBilling(final GatewayReturnObject gatewayReturnObject) throws Exception
 	{		
 		final Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_YEAR, 2);
@@ -66,15 +68,23 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		logger.info("Response from UpdateProfileRecurringBilling(...): " + response.toStringPretty());
 	}
 	
-	public void refundPayment(final GatewayReturnObject gatewayReturnObject) throws Exception
+	public void testRefundPayment(final GatewayReturnObject gatewayReturnObject) throws Exception
 	{
 		final GatewayReturnObject response = client.refundPayment(gatewayReturnObject.getCustomerRefNum(), 5.15);
 		logger.info("Response from refundPayment(...): " + response.toStringPretty());
 	}
 	
-	public void terminateRecurringPayments(final GatewayReturnObject gatewayReturnObject) throws Exception
+	public void testTerminateRecurringPayments(final GatewayReturnObject gatewayReturnObject) throws Exception
 	{
 		final GatewayReturnObject response = client.terminateRecurringPayments(new SemplestString(gatewayReturnObject.getCustomerRefNum()));
 		logger.info("Response from terminateRecurringPayments(...): " + response.toStringPretty());
+	}
+	
+	public void testGetProfiles(final GatewayReturnObject gatewayReturnObject) throws Exception
+	{
+		final List<String> customerProfileRefNumbers = new ArrayList<String>();
+		customerProfileRefNumbers.add(gatewayReturnObject.getCustomerRefNum());
+		final List<CustomerObject> response = client.GetProfiles(customerProfileRefNumbers);
+		logger.info("Response from testGetProfiles(...): " + response);
 	}
 }

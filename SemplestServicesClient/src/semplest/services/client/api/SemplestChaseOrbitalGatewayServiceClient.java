@@ -14,6 +14,7 @@ import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 import semplest.services.client.interfaces.ChaseOrbitalGatewayInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 
@@ -137,10 +138,19 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumbers) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Got request to get profiles for CustomerProfileRefNumbers [" + customerProfileRefNumbers + "]");
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		final String customerProfileRefNumbersStr = gson.toJson(customerProfileRefNumbers, List.class);	
+		jsonHash.put("customerProfileRefNumbers", customerProfileRefNumbersStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("Request JSON: [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "GetProfiles", json, timeoutMS);
+		logger.info("Response JSON returned from processing: [" + returnData + "]");
+		final List<CustomerObject> customers =  gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_CUSTOMER_OBJECTS);
+		logger.info("Customers generated from the Final JSON: [" + customers + "]");
+		return customers;
 	}
 
 	@Override

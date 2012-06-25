@@ -1,7 +1,5 @@
 package semplest.services.client.interfaces;
 
-
-
 import java.util.List;
 
 import semplest.server.protocol.SemplestString;
@@ -11,7 +9,7 @@ import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 public interface ChaseOrbitalGatewayInterface extends ServiceInitialize
 {
 	GatewayReturnObject CreateProfile(CustomerObject customerObject) throws Exception;
-	List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception;
+	List<CustomerObject> GetProfiles(List<String> customerProfileRefNumbers) throws Exception;
 	GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception;
 	GatewayReturnObject AuthorizeAndCapture(String customerProfileRefNumber, Double Amount) throws Exception;
 	GatewayReturnObject UpdateProfileRecurringBilling(String customerProfileRefNumber, Double recurringAmount, java.util.Date startDate) throws Exception;

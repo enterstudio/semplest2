@@ -33,8 +33,7 @@ public class TestChaseOrbitalGateway
 			customerObject.setAddress1("1313 Mock Lane");
 			customerObject.setCity("Bedrock");
 			customerObject.setEmail("Fred@flinstone.com");
-			customerObject.setFirstName("Fred");
-			customerObject.setLastName("Flintstone");
+			customerObject.setName("Fred Flintstone");
 			customerObject.setPhone("5555555555");
 			customerObject.setStateAbbr("NY");
 			customerObject.setZipCode("67676");

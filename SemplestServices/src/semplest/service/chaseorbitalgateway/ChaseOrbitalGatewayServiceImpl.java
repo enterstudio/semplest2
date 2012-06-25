@@ -98,7 +98,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("CustomerBin", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
 			request.setFieldValue("CustomerMerchantID", ChaseOrbitalGatewayObject.MERCHANTID);
 			// Customer Info
-			request.setFieldValue("CustomerName", customerObject.getFirstName() + " " + customerObject.getLastName());
+			request.setFieldValue("CustomerName", customerObject.getName());
 			request.setFieldValue("CustomerAddress1", customerObject.getAddress1());
 			if (customerObject.getAddress2() != null && customerObject.getAddress2().trim().length() > 0)
 			{
@@ -371,9 +371,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 
 		GatewayReturnObject ret = new GatewayReturnObject();
-		// Display the response
-		// This line displays the entire xml response on the java system
-		// console.
+
 		ret.setXmlReturn(response.toXmlString());
 		ret.setIsGood(response.isGood());
 		ret.setIsError(response.isError());
@@ -388,8 +386,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		ret.setAVSCode(response.getAVSResponseCode());
 		ret.setCVV2ResponseCode(response.getCVV2RespCode());
 
-		// profile specific
-		ret.setCustomerRefNum(response.getValue("CustomerRefNum"));
+
 		return ret;
 	}
 	/*
@@ -479,7 +476,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	public String refundPayment(String json) throws Exception
 	{
 		logger.debug("call refundPayment(String json)" + json);
-		final HashMap<String, String> data = gson.fromJson(json, HashMap.class);			
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
 		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
 		final Double Amount = Double.parseDouble(data.get("Amount"));
 		final GatewayReturnObject response = refundPayment(customerProfileRefNumber, Amount);
@@ -571,12 +568,128 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		return ret;
 	}
+	
+	public CustomerObject getProfile(final String customerReferenceNumber) throws Exception
+	{
+		logger.info("Will try to Get Profile for CustomerProfileRefNumbers [" + customerReferenceNumber + "]");
+		RequestIF request = null;
+		try
+		{
+			request = new Request(RequestIF.PROFILE_TRANSACTION);
+			request.setFieldValue("OrbitalConnectionUsername", ChaseOrbitalGatewayObject.ORBITAL_USERNAME);
+			request.setFieldValue("OrbitalConnectionPassword", gatewayObj.getAes().decrypt(ChaseOrbitalGatewayObject.ORBITAL_PASSWORD));
+			request.setFieldValue("CustomerBin", ChaseOrbitalGatewayObject.SALEM_PLATFORM);
+			request.setFieldValue("CustomerMerchantID", ChaseOrbitalGatewayObject.MERCHANTID);
+			request.setFieldValue("CustomerProfileAction", "R");
+			request.setFieldValue("CustomerProfileFromOrderInd", "S");			
+			request.setFieldValue("CustomerRefNum", customerReferenceNumber);
+		}
+		catch (InitializationException ie)
+		{
+			final String errMsg = "Unable to initialize request object";
+			logger.error(errMsg, ie);
+			throw new Exception(errMsg, ie);
+		}
+		catch (FieldNotFoundException fnfe)
+		{
+			final String errMsg = "Unable to find XML field in template";
+			logger.error(errMsg, fnfe);
+			throw new Exception(errMsg, fnfe);
+		}
+		catch (Exception ex)
+		{
+			final String errMsg = "Problem getting profile information";
+			logger.error(errMsg, ex);
+			throw new Exception(errMsg, ex);
+		}
+
+		ResponseIF response = null;
+		try
+		{
+			response = gatewayObj.getTransactionProcessor().process(request);
+		}
+		catch (TransactionException tex)
+		{
+			final String errMsg = "Transaction failed, including retries and failover";
+			logger.error(errMsg, tex);
+			throw new Exception(errMsg, tex);
+		}
+		
+		final String customerAddress1 = response.getValue("CustomerAddress1");
+		final String customerAddress2 = response.getValue("CustomerAddress2");
+		final String customerCity = response.getValue("CustomerCity");
+		final String customerState = response.getValue("CustomerState");
+		final String customerZip = response.getValue("CustomerZIP");
+		final String customerEmail = response.getValue("CustomerEmail");
+		final String phone = response.getValue("CustomerPhone");
+		final String creditCardNumber = response.getValue("CCAccountNum");
+		final String creditCardExpireDate = response.getValue("CCExpireDate");
+		final String customerName = response.getValue("CustomerName");
+		
+		final GatewayReturnObject ret = new GatewayReturnObject();
+		ret.setXmlReturn(response.toXmlString());
+		ret.setIsGood(response.isGood());
+		ret.setIsError(response.isError());
+		ret.setIsQuickResponse(response.isQuickResponse());
+		ret.setIsApproved(response.isApproved());
+		ret.setIsDeclined(response.isDeclined());
+		ret.setAuthCode(response.getAuthCode());
+		ret.setTxRefNum(response.getTxRefNum());
+		ret.setResponseCode(response.getResponseCode());
+		ret.setStatus(response.getStatus());
+		ret.setMessage(response.getMessage());
+		ret.setAVSCode(response.getAVSResponseCode());
+		ret.setCVV2ResponseCode(response.getCVV2RespCode());
+		try
+		{
+			logger.info("Response: " + ret.toStringPretty());			
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem generating formatted string for GatewayReturnObject [" + ret + "]");
+		}
+		
+		
+		final CustomerObject customer = new CustomerObject();
+		customer.setCustomerProfileRefNum(customerReferenceNumber);
+		customer.setAddress1(customerAddress1);
+		customer.setAddress2(customerAddress2);
+		customer.setCity(customerCity);
+		customer.setCreditCardNumber(creditCardNumber);
+		customer.setEmail(customerEmail);
+		customer.setExpireDateMMYY(creditCardExpireDate);
+		customer.setName(customerName);
+		customer.setPhone(phone);
+		customer.setStateAbbr(customerState);
+		customer.setZipCode(customerZip);
+		
+		return customer;
+	}
+	
+	public String GetProfiles(String json) throws Exception
+	{
+		logger.debug("call GetProfiles(String json)" + json);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
+		final String customerProfileRefNumbersString = data.get("customerProfileRefNumbers");
+		final List<String> customerProfileRefNumbers = gson.fromJson(customerProfileRefNumbersString, SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<CustomerObject> customers = GetProfiles(customerProfileRefNumbers);
+		return gson.toJson(customers);
+	}
+
 
 	@Override
-	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumber) throws Exception
+	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumbers) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to Get Profiles for " + customerProfileRefNumbers.size() + " CustomerProfileRefNumbers [" + customerProfileRefNumbers + "]");
+		final List<CustomerObject> customers = new ArrayList<CustomerObject>();
+		for (final String  customerProfileRefNum : customerProfileRefNumbers)
+		{
+			final CustomerObject customer = getProfile(customerProfileRefNum);
+			customers.add(customer);
+		}
+		logger.info("For of " + customerProfileRefNumbers.size() + " CustomerProfileRefNumbers, found " + customers.size() + " Customers: [" + customers + "]");
+		return customers;
+		
 	}
 
 	@Override
