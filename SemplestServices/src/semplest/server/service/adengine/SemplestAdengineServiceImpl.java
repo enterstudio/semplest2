@@ -660,24 +660,30 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				regularKeywords.add(msnKeyword);				
 			}			
 			// Add Positive Keywords
-			final com.microsoft.adcenter.v8.Keyword[] msnKeywordArray = regularKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[regularKeywords.size()]);
-			final long[] keywordIds = msn.createKeywords(accId, adGroupID, msnKeywordArray);
-			if (keywordIds.length != msnKeywordArray.length)
+			final int batchSize = 1000;
+			final List<List<com.microsoft.adcenter.v8.Keyword>> keywordBatches = SemplestUtils.getBatches(regularKeywords, batchSize);
+			logger.info("Out of " + regularKeywords.size() + " MSN keywords, created " + keywordBatches.size() + " batches of " + batchSize);
+			for (final List<com.microsoft.adcenter.v8.Keyword> batch : keywordBatches)
 			{
-				logger.warn("# of keywordIds returned from MSN [" + keywordIds.length + "] is NOT the same as # of keywords requested to add [" + msnKeywordArray.length + "].  This is NOT expected.");
-			}
-			else
-			{
-				logger.info("# of keywordIds returned from MSN [" + keywordIds.length + "] is the same as # of keywords requested to add [" + msnKeywordArray.length + "]");
-			}
-			for (int i = 0; i < keywordIds.length; ++i)
-			{
-				final long keywordId = keywordIds[i]; 
-				com.microsoft.adcenter.v8.Keyword keyword = msnKeywordArray[i];
-				final String text = keyword.getText();
-				logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-				addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_AMOUNT, semplestMatchType, adEngine, false);	
-			}			
+				final com.microsoft.adcenter.v8.Keyword[] msnKeywordArray = batch.toArray(new com.microsoft.adcenter.v8.Keyword[batch.size()]);
+				final long[] keywordIds = msn.createKeywords(accId, adGroupID, msnKeywordArray);
+				if (keywordIds.length != msnKeywordArray.length)
+				{
+					logger.warn("# of keywordIds returned from MSN [" + keywordIds.length + "] is NOT the same as # of keywords requested to add [" + msnKeywordArray.length + "].  This is NOT expected.");
+				}
+				else
+				{
+					logger.info("# of keywordIds returned from MSN [" + keywordIds.length + "] is the same as # of keywords requested to add [" + msnKeywordArray.length + "]");
+				}
+				for (int i = 0; i < keywordIds.length; ++i)
+				{
+					final long keywordId = keywordIds[i]; 
+					com.microsoft.adcenter.v8.Keyword keyword = msnKeywordArray[i];
+					final String text = keyword.getText();
+					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
+					addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_AMOUNT, semplestMatchType, adEngine, false);	
+				}	
+			}		
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
 			{
