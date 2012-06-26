@@ -601,7 +601,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}			
 			// Positive Keywords			
 			final List<GoogleAddKeywordRequest> positiveKeywordRequests = getAddKeywordRequests(regularKeywordProbabilities, keywordMatchType, 0L);
-			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = google.addKeywords(accountID, adGroupID, positiveKeywordRequests);
+			final List<List<GoogleAddKeywordRequest>> positiveKeywordRequestBatches = SemplestUtils.getBatches(positiveKeywordRequests, 500);
+			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
+			for (final List<GoogleAddKeywordRequest> requestBatch : positiveKeywordRequestBatches)
+			{
+				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch);
+				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
+			}			
+			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
 			counter = 0;
 			for (final Entry<GoogleAddKeywordRequest, Long> entry : entrySet)

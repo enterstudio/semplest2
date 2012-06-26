@@ -1592,6 +1592,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	@Override
 	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests) throws Exception
 	{
+		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size() + " GoogleAddKeywordRequests [<potentially to many to practically print>]");
 		final Map<GoogleAddKeywordRequest, Long> requestToIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
 		final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests);		
 		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
@@ -1615,7 +1616,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						final GoogleAddKeywordRequest originalRequest = getGoogleAddKeywordRequest(requests, keywordText, keywordMatchType);
 						if (originalRequest == null)
 						{
-							logger.warn("Could not find original GoogleAddKeywordRequest for KeywordText [] and KeywordMatchType [] from within the Keyword Criterions returned from Google");
+							logger.warn("Could not find original GoogleAddKeywordRequest for KeywordText [" + keywordText + "] and KeywordMatchType [" + keywordMatchType + "] from within the Keyword Criterions returned from Google");
 						}
 						else
 						{
