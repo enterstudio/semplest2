@@ -14,23 +14,36 @@ function enableIsLaunched() {
 //    $('.k-dropdownlist').attr('disabled', 'disabled');
 //    $('input').attr('disabled', true);
 }
-function openAllTabs() {
+function openAllTabs(displayCategories) {
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-    tabStrip.append({
-        text: "Negative Keywords",
-        contentUrl: '/Campaign/NegativeKeywords'
-    }, tabStrip.tabGroup.children("li:last")).select();
     tabStrip.append({
         text: "Additional Links",
         contentUrl: '/Campaign/AdditionalLinks'
     }, tabStrip.tabGroup.children("li:last")).select();
     tabStrip.append({
+        text: "Negative Keywords",
+        contentUrl: '/Campaign/NegativeKeywords'
+    }, tabStrip.tabGroup.children("li:last")).select();
+    if (displayCategories)
+    {
+    tabStrip.append({
+        text: "Categories",
+        contentUrl: '/Campaign/Categories'
+    }, tabStrip.tabGroup.children("li:last")).select();
+    }
+    tabStrip.append({
         text: "BillingLaunch",
         contentUrl: '/Campaign/BillingLaunch'
     }, tabStrip.tabGroup.children("li:last")).select();
-   
+    tabStrip.append({
+        text: "View Keywords",
+        contentUrl: '/Campaign/KeyWords'
+    }, tabStrip.tabGroup.children("li:last")).select();
 }
 function enableDisable() {
+        $(":input").attr("disabled", true);
+        $(":button").attr("disabled", true);
+
 //    if ($('#IsLaunched').val() == 'True') {
 //        //alert($('#IsCompleted').val());
 //        if ($('#IsCompleted').val() == 'True') {

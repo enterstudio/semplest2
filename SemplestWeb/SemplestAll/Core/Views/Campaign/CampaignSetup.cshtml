@@ -81,13 +81,18 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function () {
-    if ('@Model.IsCompleted' == 'True')
-    {
-        $(":input").attr("disabled", true);
-    }
-//        enableDisable();
-//        $("#tabstrip").children('.k-content').height(650);
-    });
+        
+        if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
+            openAllTabs(false); enableDisable();
+        }
+        else if ($('#IsLaunched').val() == 'False') {
+            openAllTabs(true);
+        }
+
+        })
+        //        enableDisable();
+        //        $("#tabstrip").children('.k-content').height(650);
+
     var onActivate = function () {
 //        var height = $(window).height();
 //        $("#tabstrip").children('.k-content').height(height - 225);
