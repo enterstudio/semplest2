@@ -24,14 +24,15 @@ public class AddTrafficEstimatorSP extends StoredProcedure
 		declareParameter(new SqlParameter("AveNumberClicks", Types.FLOAT));
 		declareParameter(new SqlParameter("AvePosition", Types.FLOAT));
 		declareParameter(new SqlParameter("AveCPC", Types.FLOAT));
+		declareParameter(new SqlParameter("currentTime", Types.TIMESTAMP));
 
 		compile();
 	}
 
 	public void execute(int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
-			Float AveNumberClicks, Float AvePosition, Float AveCPC) throws Exception
+			Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime) throws Exception
 	{
 		Map<String, Object> results = super.execute(PromotionID, Keyword, AdvertisingEngine, BidType,  MicroBid, AveMicroCost,
-				AveNumberClicks,AvePosition, AveCPC);
+				AveNumberClicks,AvePosition, AveCPC, currentTime);
 	}
 }

@@ -283,6 +283,9 @@ public class SemplestDB extends BaseDB
 	public static void storeTrafficEstimatorData(int promotionID, String AdEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		java.util.Date date= new java.util.Date();
+		Timestamp ts = new Timestamp(date.getTime());
+
 		HashMap<String, HashMap<String, HashMap<Long, BidData>>> trafficData = trafficEstimatorObj.getBidDataMap();
 		// go through each keyword
 		if (trafficData.keySet().isEmpty())
@@ -314,7 +317,7 @@ public class SemplestDB extends BaseDB
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),
 									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid),
 									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid),
-									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid));
+									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid), ts);
 						}
 					}
 				}
