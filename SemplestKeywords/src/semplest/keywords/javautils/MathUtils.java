@@ -4,10 +4,11 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import semplest.keywords.lda.KWGenDmozLDAServer;
+import semplest.keywords.lda.KWGenDmozLDAServer1;
+import semplest.keywords.lda.KWGenDmozLDAServer2;
 
 public class MathUtils {
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer2.class);
 	public static double[][] minNelem(double vect[], int N){
 		// Find the N minimum elements in an array and return values and index (sorted) 
 		// Not an efficient implementation for large N, efficient for large vect.length
