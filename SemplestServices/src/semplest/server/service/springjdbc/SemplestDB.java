@@ -37,6 +37,7 @@ import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
 import semplest.server.service.springjdbc.helper.AllBiddableRSExtractor;
 import semplest.server.service.springjdbc.helper.ScheduleTaskRowMapper;
+import semplest.server.service.springjdbc.storedproc.AddAdvertisingEngineAccountSP;
 import semplest.server.service.springjdbc.storedproc.AddBidSP;
 import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
@@ -865,13 +866,12 @@ public class SemplestDB extends BaseDB
 	}
 	*/
 
-	public static Integer addAdEngineAccountID(int customerID, String accountNumber, Long accountID, String adEngine) throws Exception
+	public static void addAdEngineAccountID(int customerID, String accountNumber, Long accountID, String adEngine) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEngineAccount(AdvertisingEngineAccountPK,AdvertisingEngineAccountNumber,AdvertisingEngineFK,CustomerFK) "
-					  + "select ? , ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.update(strSQL, new Object[]{ accountID, accountNumber, customerID, adEngine });
+			AddAdvertisingEngineAccountSP addAccount = new AddAdvertisingEngineAccountSP();
+			addAccount.execute(accountID, adEngine, customerID, accountNumber);
 		}
 		catch (Exception e)
 		{
