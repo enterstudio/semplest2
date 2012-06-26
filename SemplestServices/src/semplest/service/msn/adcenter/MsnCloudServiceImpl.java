@@ -2005,36 +2005,25 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	{
 		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		final List<Keyword> keywords = getKeywords(bids);
-		final Keyword[] keywordArray = keywords.toArray(new Keyword[keywords.size()]); 
-		try
+		final int batchSize = 1000;
+		final List<List<Keyword>> keywordBatches = SemplestUtils.getBatches(keywords, batchSize);
+		logger.info(keywords.size() + " Keywords broken up into " + keywordBatches.size() + " batches of " + batchSize);
+		for (final List<Keyword> keywordBatch : keywordBatches)
 		{
-			campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, keywordArray));
+			final Keyword[] keywordArray = keywordBatch.toArray(new Keyword[keywordBatch.size()]); 
+			try
+			{
+				campaignManagement.updateKeywords(new UpdateKeywordsRequest(adGroupId, keywordArray));
+			}
+			catch (AdApiFaultDetail e1)
+			{
+				throw new RemoteException(e1.dumpToString(), e1);
+			}
+			catch (EditorialApiFaultDetail e2)
+			{
+				throw new RemoteException(e2.dumpToString(), e2);
+			}	
 		}
-		catch (AdApiFaultDetail e1)
-		{
-			throw new RemoteException(e1.dumpToString());
-		}
-		catch (EditorialApiFaultDetail e2)
-		{
-			throw new RemoteException(e2.dumpToString());
-		}
-	}
-
-	private Keyword makeKeywordFromArrays(int index, long[] keywordId, Bid[] broadMatchBidArr, Bid[] contentMatchBidArr, Bid[] exactMatchBidArr,
-			Bid[] phraseMatchBidArr)
-	{
-		final long id = keywordId[index];
-		final Bid broadMatchBid = (broadMatchBidArr == null ? null : broadMatchBidArr[index]);
-		final Bid contentMatchBid = (contentMatchBidArr == null ? null : contentMatchBidArr[index]);
-		final Bid exactMatchBid = (exactMatchBidArr == null ? null : exactMatchBidArr[index]);
-		final Bid phraseMatchBid = (phraseMatchBidArr == null ? null : phraseMatchBidArr[index]);
-		final Keyword keyword = new Keyword();
-		keyword.setId(id);
-		keyword.setBroadMatchBid(broadMatchBid);
-		keyword.setContentMatchBid(contentMatchBid);
-		keyword.setExactMatchBid(exactMatchBid);
-		keyword.setPhraseMatchBid(phraseMatchBid);
-		return keyword;
 	}
 
 	public String pauseKeywordById(String json) throws Exception

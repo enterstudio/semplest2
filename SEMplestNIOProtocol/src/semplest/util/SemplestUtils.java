@@ -3,6 +3,7 @@ package semplest.util;
 import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -101,6 +102,34 @@ public final class SemplestUtils
 	public static final Random RANDOM = new Random();
 	public static final Double MSN_DUMMY_AMOUNT = 0.0;
 	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
+	
+	public static <T> List<List<T>> getBatches(final List<T> list, final int batchSize)
+	{
+		if (batchSize < 1)
+		{
+			throw new IllegalArgumentException("BatchSize [" + batchSize + "] cannot be less than 1");
+		}
+		final List<List<T>> batches = new ArrayList<List<T>>();
+		if (list == null)
+		{
+			return batches;
+		}
+		List<T> currentBatch = new ArrayList<T>();
+		for (final T o : list)
+		{
+			currentBatch.add(o);
+			if (currentBatch.size() == batchSize)
+			{
+				batches.add(currentBatch);
+				currentBatch = new ArrayList<T>();
+			}
+		}
+		if (!currentBatch.isEmpty())
+		{
+			batches.add(currentBatch);
+		}
+		return batches;
+	}
 	
 	public static String getMsnAgeRangeString(final AgeRange ageRange)
 	{

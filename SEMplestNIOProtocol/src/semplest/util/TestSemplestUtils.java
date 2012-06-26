@@ -12,6 +12,58 @@ import org.junit.Test;
 public class TestSemplestUtils
 {
 	@Test
+	public void testGetBatches()
+	{
+		final List<String> list = new ArrayList<String>();
+		final String one = "one";
+		final String two = "two";
+		final String three = "three";
+		final String four = "four";
+		final String five = "five";
+		list.add(one);
+		list.add(two);
+		list.add(three);
+		list.add(four);
+		list.add(five);
+		final List<String> expectedBatch1 = new ArrayList<String>();
+		final List<String> expectedBatch2 = new ArrayList<String>();
+		final List<String> expectedBatch3 = new ArrayList<String>();
+		expectedBatch1.add(one);
+		expectedBatch1.add(two);
+		expectedBatch2.add(three);
+		expectedBatch2.add(four);
+		expectedBatch3.add(five);
+		final List<List<String>> expectedBatches = new ArrayList<List<String>>();
+		expectedBatches.add(expectedBatch1);
+		expectedBatches.add(expectedBatch2);
+		expectedBatches.add(expectedBatch3);
+		final List<List<String>> actualBatches = SemplestUtils.getBatches(list, 2);
+		Assert.assertEquals(expectedBatches, actualBatches);
+	}
+	
+	@Test
+	public void testGetBatches_ListNull()
+	{
+		final List<List<Object>> expectedBatches = new ArrayList<List<Object>>();
+		final List<List<Object>> actualBatches = SemplestUtils.getBatches(null, 5);
+		Assert.assertEquals(expectedBatches, actualBatches);
+	}
+	
+	@Test
+	public void testGetBatches_BatchSizeLessThan1()
+	{
+		try
+		{
+			SemplestUtils.getBatches(new ArrayList<String>(), 0);
+			Assert.fail("Exception should have been thrown because BatchSize is 0 (which is less than 1)");
+		}
+		catch (IllegalArgumentException e)
+		{
+			// expected
+		}
+	}
+	
+	@Test
 	public void testGetRandomAllowedChars()
 	{
 		Assert.assertEquals(4, SemplestUtils.getRandomAllowedChars(4, SemplestUtils.ALLOWED_CHARS).length());
