@@ -39,9 +39,9 @@ BEGIN TRY
 				inner join KeywordBid kb on te.KeywordBidFK = kb.KeywordBidPK
 				inner join Keyword k on k.KeywordPK = kb.KeywordFK
 				inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
-				where kb.PromotionFK = @PromotionPK and (@Keyword is null or k.Keyword = @Keyword) and ae.AdvertisingEngine = @AdvertisingEngine
-				group by te.KeywordBidFK) mte on te.KeywordBidFK = kb.KeywordBidPK and mte.lastDate = te.CreatedDate 
-		where pka.PromotionFK = @PromotionPK and  (@Keyword is null or k.Keyword = @Keyword) and ae.AdvertisingEngine = @AdvertisingEngine			 
+				where kb.PromotionFK = @PromotionPK and (@Keyword is null or k.Keyword = @Keyword) and ae.AdvertisingEngine = @AdvertisingEngine and kb.IsActive = 1
+				group by te.KeywordBidFK) mte on te.KeywordBidFK = mte.KeywordBidFK and mte.lastDate = te.CreatedDate 
+		where pka.PromotionFK = @PromotionPK and  (@Keyword is null or k.Keyword = @Keyword) and ae.AdvertisingEngine = @AdvertisingEngine and kb.IsActive = 1		 
 	
 END TRY
 BEGIN CATCH

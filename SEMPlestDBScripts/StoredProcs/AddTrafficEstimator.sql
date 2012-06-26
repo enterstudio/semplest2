@@ -20,12 +20,13 @@ CREATE PROCEDURE dbo.AddTrafficEstimator
 	@AveMicroCost			float,
 	@AveNumberClicks		float,
 	@AvePosition			float,
-	@AveCPC					float
+	@AveCPC					float,
+	@currentTime datetime2
 )
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @keywordBidPK int, @currentTime datetime2, @BidTypeID int, 
+	DECLARE @ErrMsg VARCHAR(250), @keywordBidPK int, @BidTypeID int, 
 			@AdEngineID int,@keywordPK int
 	-- make sure keyword is in promotion
 	if not exists (select * from PromotionKeywordAssociation pka inner join Keyword k on k.KeywordPK = pka.KeywordFK
@@ -33,8 +34,7 @@ BEGIN TRY
 	BEGIN
 		SELECT @ErrMsg = 'The Selected keyword does not exist for the Promotion'; 
 		RAISERROR (@ErrMsg, 16, 1);
-	END;	
-	set @currentTime = CURRENT_TIMESTAMP	
+	END;		
 	BEGIN TRANSACTION		
 	--check to see if the KeywordBid Exists for the MatchType
 	if NOT EXISTS (select * from KeywordBid kb 
