@@ -154,10 +154,19 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception
+	public GatewayReturnObject CopyProfile(SemplestString customerProfileRefNumber) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Got request to copy profile for CustomerProfileRefNumber [" + customerProfileRefNumber + "]");
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		final String customerProfileRefNumbersStr = gson.toJson(customerProfileRefNumber, List.class);	
+		jsonHash.put("customerProfileRefNumber", customerProfileRefNumbersStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("Request JSON: [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "CopyProfile", json, timeoutMS);
+		logger.info("Response JSON returned from processing: [" + returnData + "]");
+		final GatewayReturnObject gatewayReturnObject =  gson.fromJson(returnData, GatewayReturnObject.class);
+		logger.info("GatewayReturnObject generated from the Final JSON: [" + gatewayReturnObject + "]");
+		return gatewayReturnObject;
 	}
 
 }

@@ -667,7 +667,6 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		return gson.toJson(customers);
 	}
 
-
 	@Override
 	public List<CustomerObject> GetProfiles(List<String> customerProfileRefNumbers) throws Exception
 	{
@@ -679,15 +678,35 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			customers.add(customer);
 		}
 		logger.info("For of " + customerProfileRefNumbers.size() + " CustomerProfileRefNumbers, found " + customers.size() + " Customers: [" + customers + "]");
-		return customers;
-		
+		return customers;	
+	}
+	
+	public String CopyProfile(String json) throws Exception
+	{
+		logger.debug("call CopyProfile(String json) [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);			
+		final String customerProfileRefNumber = data.get("customerProfileRefNumber");
+		final SemplestString customerProfileRefNumberSemplestString = new SemplestString(customerProfileRefNumber);
+		final GatewayReturnObject response = CopyProfile(customerProfileRefNumberSemplestString);
+		return gson.toJson(response);
 	}
 
 	@Override
-	public GatewayReturnObject CopyProfile(String customerProfileRefNumber) throws Exception
+	public GatewayReturnObject CopyProfile(SemplestString customerProfileRefNumber) throws Exception
 	{
-		// TODO Auto-generated method stub
-		return null;
+		logger.info("Will try to copy profile for CustomerProfileRefNum [" + customerProfileRefNumber + "]");
+		final String customerProfileRefNum = customerProfileRefNumber.getSemplestString();
+		final List<String> customerProfileNums = new ArrayList<String>();
+		customerProfileNums.add(customerProfileRefNum);
+		final List<CustomerObject> customers = GetProfiles(customerProfileNums);
+		if (customers.isEmpty())
+		{
+			final String errMsg = "Could not copy profile for CustomerProfileRefNum [" + customerProfileRefNumber + "] because could not find that profile in Chase Orbital Gateway";
+			logger.info(errMsg);
+			throw new Exception(errMsg);
+		}
+		final CustomerObject customerToCopy = customers.get(0);
+		final GatewayReturnObject response = CreateProfile(customerToCopy);
+		return response;
 	}
-
 }
