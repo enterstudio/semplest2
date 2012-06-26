@@ -2405,11 +2405,22 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			logger.info("Longitude: " + storedBus[0].getLongitudeDegrees());
 			long res = 0;
 			return true;
-
 		}
-		catch (RemoteException e1)
+		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e1);
+			throw new MsnCloudException("Problem", e);
+		}
+		catch (ApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException("Problem", e);
+		}
+		catch (Exception e)
+		{
+			throw new MsnCloudException("Problem", e);
 		}
 	}
 
@@ -2740,19 +2751,19 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem", e);
 		}
 		catch (ApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem", e);
 		}
 		catch (Exception e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem", e);
 		}
 		return ret;
 	}
