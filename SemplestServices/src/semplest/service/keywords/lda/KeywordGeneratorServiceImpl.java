@@ -6,8 +6,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
-
-import semplest.keywords.lda.KWGenDmozLDAServer;
+import semplest.keywords.lda.KWGenDmozLDAServer2;
 import semplest.keywords.javautils.catUtils;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -22,7 +21,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	
 	private static final catUtils cu = new catUtils();
 	
-	private KWGenDmozLDAServer kwGen;
+	private KWGenDmozLDAServer2 kwGen;
 	public String getCategories(String json) throws Exception
 	{
 		logger.debug("call  getCategories(String json)" + json);
@@ -40,7 +39,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception
 	{
 		
-		kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
+		kwGen =  new KWGenDmozLDAServer2(SemplestConfiguration.configData);
 		ArrayList<String> categOpt = kwGen.getCategories(companyName,searchTerm,description,adds, url);
 		if (categOpt == null)
 		{
@@ -69,7 +68,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 		 * Init Keyword Data
 		 */
 		logger.info("Initialized Keyword generator...");
-		kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
+		kwGen =  new KWGenDmozLDAServer2(SemplestConfiguration.configData);
 		//kwGen =  new KWGenDmozLDAServer(null);
 		kwGen.initializeService(null);
 	}
@@ -94,7 +93,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	@Override
 	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
-		kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
+		kwGen =  new KWGenDmozLDAServer2(SemplestConfiguration.configData);
 		KeywordProbabilityObject[] keywords = kwGen.getKeywords( cu.decode( categories),
 				companyName, searchEngines, searchTerm, description, adds, url, gt, nGrams);
 		if (keywords == null)

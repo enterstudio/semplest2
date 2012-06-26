@@ -25,14 +25,14 @@ public class createReportsOverTime {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		String matchType = "Broad";
-		String[] dates = {"20120525" , "20120526" ,"20120527" , "20120528" , "20120529" , "20120530", "20120531",
+		String[] dates = {"20120525" , "20120526" ,"20120527" , "20120528" , "20120529" , "20120531",
 				 "20120601", "20120602" , "20120603", "20120604" ,"20120605" ,"20120606" , "20120607" ,
 				 "20120608" , "20120609", "20120610", "20120611" ,"20120612" , "20120613" ,"20120614"  , 
-				 "20120615"  , "20120616" ,"20120617" ,"20120618", "20120619" ,"20120620" };
+				 "20120615"  , "20120616" ,"20120617" ,"20120618", "20120619" ,"20120620"};
 		String basePath = "/semplest/data/dailyReportObjects/PiperHallTest/";
 		PrintStream stdout = System.out;
-		PrintStream outMSN = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/MSNdailyPerKw.csv"));
-		PrintStream outGoogle = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/GoogledailyPerKw.csv"));
+		PrintStream outMSN = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/MSNdailyPerOverlapKw.csv"));
+		PrintStream outGoogle = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/GoogledailyOverlapPerKw.csv"));
 		
 		//Loading msn Data
 		ReportObject[] repArrayMSN = loadAndMergeReports(dates, basePath, "_MSNReport.robj");
@@ -75,16 +75,22 @@ public class createReportsOverTime {
 				totalOverlapKwWithImp.add(kw);
 				stdout.print(kw+", ");
 		}
+		stdout.println("\nSize: "+ totalOverlapKwWithImp.size());
+		
 		stdout.print("\n");
 		stdout.println("Overlap Keywords with Clicks");
+		stdout.println("Size: "+ totalOverlapKwWithImp.size());
 		for(String kw : kwWithClicksMSN){
 			if(kwWithClicksGoogle.contains(kw)){
 				totalOverlapKwWithClicks.add(kw);
 				stdout.print(kw+", ");
 			}
 		}
+		stdout.println("\nSize: "+ totalOverlapKwWithClicks.size());
+		
 		//MSN daily Reports
-		String [] keywords2 = keySet.toArray(new String[keySet.size()]); 
+		//String [] keywords2 = keySet.toArray(new String[keySet.size()]); 
+		String [] keywords2 = totalOverlapKwWithImp.toArray(new String[totalOverlapKwWithImp.size()]); 
 		createDailyReportPerKwQS(mapReportMSNDailybyKw, keywords2 , outMSN);
 		createDailyReportPerKwClicks(mapReportMSNDailybyKw, keywords2 , outMSN);
 		createDailyReportPerKwCPC(mapReportMSNDailybyKw, keywords2 , outMSN);
@@ -101,7 +107,7 @@ public class createReportsOverTime {
 		
 		//Google daily Reports
 		keySet = mapReportGoogleTotal.keySet();
-		keywords2 = keySet.toArray(new String[keySet.size()]); 
+		//keywords2 = keySet.toArray(new String[keySet.size()]); 
 		createDailyReportPerKwQS(mapReportGoogleDailybyKw, keywords2 , outGoogle);
 		createDailyReportPerKwClicks(mapReportGoogleDailybyKw, keywords2 , outGoogle);
 		createDailyReportPerKwCPC(mapReportGoogleDailybyKw, keywords2 , outGoogle);
