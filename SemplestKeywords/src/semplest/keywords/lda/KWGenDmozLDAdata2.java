@@ -14,9 +14,9 @@ import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.properties.ProjectProperties;
 
 
-public class KWGenDmozLDAdata implements Runnable{
+public class KWGenDmozLDAdata2 implements Runnable{
 	
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdata2.class);
 	public DmozLucene dl; //Index of categories
 	public HashMap<String,String> TrainingData;
 	public dictUtils dict;
@@ -24,6 +24,7 @@ public class KWGenDmozLDAdata implements Runnable{
 	private static String baseMultiWPath ;
 	public MultiWordCollect[] biGrams; //Collection of bigrams for each subcategory sorted by categories
 	public MultiWordCollect[] triGrams; //Collection of trigrams for each subcategory sorted by categories
+	public MultiWordCollect[] fourGrams; //Collection of bigrams for each subcategory sorted by categories
 	private static String[] nGramsSubC; 
 	public int numTopics; 
 	public double userInfoWeight; 
@@ -31,7 +32,7 @@ public class KWGenDmozLDAdata implements Runnable{
 	public int numKeywordsMSN; 
 	public static ProjectProperties pr; 
 	
-	public KWGenDmozLDAdata(HashMap<String,Object> configData) throws IOException {
+	public KWGenDmozLDAdata2(HashMap<String,Object> configData) throws IOException {
 		/*//Load property file if necessary for paths
 		if(SEMplestService.properties==null){
 			String PROPSFILE = "../SemplestServices/bin/system.properties";
@@ -76,22 +77,30 @@ public class KWGenDmozLDAdata implements Runnable{
 			logger.info("Loading Bigrams for each subcategory");
 			biGrams= new MultiWordCollect[nGramsSubC.length];
 			for (int i=0; i< nGramsSubC.length; i++){
-				String biPath = baseMultiWPath+nGramsSubC[i]+".txt.2";
+				String biPath = baseMultiWPath+nGramsSubC[i]+".2";
 				logger.info("Loading"+biPath);
 				biGrams[i]= new MultiWordCollect(nGramsSubC[i],biPath);
 			}
 			logger.info("Loading Trigrams for each subcategory");
 			triGrams= new MultiWordCollect[nGramsSubC.length];
 			for (int i=0; i< nGramsSubC.length; i++){
-				String triPath = baseMultiWPath+nGramsSubC[i]+".txt.3";
+				String triPath = baseMultiWPath+nGramsSubC[i]+".3";
 				logger.info("Loading"+triPath);
 				triGrams[i]= new MultiWordCollect(nGramsSubC[i],triPath);
+			}
+			logger.info("Loading Fourgrams for each subcategory");
+			fourGrams= new MultiWordCollect[nGramsSubC.length];
+			for (int i=0; i< nGramsSubC.length; i++){
+				String triPath = baseMultiWPath+nGramsSubC[i]+".4";
+				logger.info("Loading"+triPath);
+				fourGrams[i]= new MultiWordCollect(nGramsSubC[i],triPath);
 			}
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage(), e);
-			throw new IOException(e.getMessage(), e);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new IOException(e);
 		}
 		
 	}
@@ -108,7 +117,7 @@ public class KWGenDmozLDAdata implements Runnable{
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			logger.error("Problem", e);
+			e.printStackTrace();
 		}
 	}
 }

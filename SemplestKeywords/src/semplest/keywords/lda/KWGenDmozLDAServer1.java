@@ -7,9 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -30,16 +28,16 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
-public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
+public class KWGenDmozLDAServer1 implements SemplestKeywordLDAServiceInterface{
 	
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer1.class);
 	//Search index for categories
-	private static KWGenDmozLDAdata data;
+	private static KWGenDmozLDAdata1 data;
 	private static HashMap<String,Object> configData;
 	private static enum SearchEngine {
 		Google, MSN;
 	}
-	public KWGenDmozLDAServer(HashMap<String,Object> configDataIn) {
+	public KWGenDmozLDAServer1(HashMap<String,Object> configDataIn) {
 		configData = configDataIn;
 	}
 	@Override
@@ -52,10 +50,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			final List<String> ads = Arrays.asList(adds);
-			final String errMsg = "Problem getting categories for Company [" + companyName + "], SearchTerm [" + searchTerm + "], Description [" + description + "], Ads [" + ads + "], URL [" + url + "]";			
-			logger.error(errMsg, e);
-			throw new Exception(errMsg, e);
+			logger.error(e);
+			throw e;
 		}
 	}
 	public ArrayList<String> getCategories(String searchTerm) throws Exception {
@@ -83,9 +79,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 			return optList;
 		}catch(Exception e){
-			final String errMsg = "Problem getting categories for SearchTerm [" + searchTerm + "]";
-			logger.error(errMsg, e);
-			throw new Exception(errMsg, e);
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -158,8 +153,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			return keywordsList.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
-			logger.error(e.getMessage(), e);
-			throw new Exception(e.getMessage(), e);
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -237,8 +232,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 			return keywords;
 		}catch(Exception e){
-			logger.error(e.getMessage(), e);
-			throw new Exception(e.getMessage(), e);
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -672,12 +667,12 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	@Override
 	public void initializeService(String str) throws Exception {
 		try{
-			data = new KWGenDmozLDAdata(configData);
+			data = new KWGenDmozLDAdata1(configData);
 			Thread thread = new Thread(data);
 			thread.start();
 		}catch(Exception e){
-			logger.error(e.getMessage(), e);
-			throw new Exception(e.getMessage(), e);
+			logger.error(e);
+			throw e;
 		}
 	}
 	
@@ -793,7 +788,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		logger.info("Initialized Keyword generator...");
 		
 		//KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(SemplestConfiguration.configData);
-		KWGenDmozLDAServer kwGen =  new KWGenDmozLDAServer(null);
+		KWGenDmozLDAServer1 kwGen =  new KWGenDmozLDAServer1(null);
 		kwGen.initializeService(null);
 		String[] searchTerm = new String[1];
 		String userInfo1="";
@@ -884,7 +879,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			System.setOut(stdout);
 			
 			}catch(Exception e){
-				logger.error(e.getMessage(), e);
+				logger.error(e);
 			}
 		}
 	}
@@ -923,7 +918,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		catch (Exception e)
 		{
 			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
-			logger.error("Problem", e);
+			e.printStackTrace();
 		}
 	} */
 

@@ -31,7 +31,7 @@ public class MalletTopic {
 	private int numTopics;
 	private double initalpha;
 	private double initbeta;
-	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer.class);
+	private static final Logger logger = Logger.getLogger(KWGenDmozLDAServer2.class);
 	private double[] testprobab; //Probability distribution of the last test data infered from this model;
 	
 	
