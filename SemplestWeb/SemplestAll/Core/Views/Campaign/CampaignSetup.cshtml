@@ -81,6 +81,10 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function () {
+    if ('@Model.IsCompleted' == 'True')
+    {
+        $(":input").attr("disabled", true);
+    }
 //        enableDisable();
 //        $("#tabstrip").children('.k-content').height(650);
     });
