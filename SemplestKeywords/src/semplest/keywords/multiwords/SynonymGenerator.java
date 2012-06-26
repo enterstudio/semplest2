@@ -1,6 +1,7 @@
 package semplest.keywords.multiwords;
 
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -10,6 +11,8 @@ import com.sun.jersey.api.client.WebResource;
 
 public class SynonymGenerator
 {
+	private static final Logger logger = Logger.getLogger(SynonymGenerator.class);
+	
 	private static String preUrl = "http://words.bighugelabs.com/api/2/febc1a7d186b265748dac5331d603093/";
 	
 	public static void main(String[] args)
@@ -33,8 +36,7 @@ public class SynonymGenerator
 		catch (Exception e)
 		{
 			System.out.println("No Synonyms not found for " + word);
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

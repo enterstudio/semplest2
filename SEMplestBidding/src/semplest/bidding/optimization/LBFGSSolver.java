@@ -1,5 +1,8 @@
 package semplest.bidding.optimization;
 
+import org.apache.log4j.Logger;
+
+import semplest.bidding.naive.Campaign;
 import semplest.bidding.optimization.LBFGS.ExceptionWithIflag;
 import flanagan.math.ArrayMaths;
 
@@ -9,6 +12,8 @@ import flanagan.math.ArrayMaths;
  * 
  */
 public class LBFGSSolver {
+	
+	private static final Logger logger = Logger.getLogger(LBFGSSolver.class);
 
   double[] currentSol; // current solution
   boolean diagco = false; // code for whether or not diagonal will be provided
@@ -93,8 +98,7 @@ public class LBFGSSolver {
         LBFGS.lbfgs(n, m, currentSol, f, g, diagco, diag, iprint, convergeTol,
             precision, iflag);
       } catch (ExceptionWithIflag e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
+    	  logger.error("Problem", e);
       }
 
       // if iflag[0] is negative, there was a problem in line search

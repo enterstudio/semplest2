@@ -6,9 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.classification.Document;
 
 public class CategoryTree {
+	
+	private static final Logger logger = Logger.getLogger(CategoryTree.class);
 	
 	private TreeNode root;
 	private HashMap<String,TreeNode> nodeHash;
@@ -108,7 +112,7 @@ public class CategoryTree {
 			out.write("}\n");
 			out.close();
 		} catch (IOException e) { 
-			e.printStackTrace();
+			logger.error("Problem", e);
 			System.out.println("Unable to write to new file!!");
 		}
 	}

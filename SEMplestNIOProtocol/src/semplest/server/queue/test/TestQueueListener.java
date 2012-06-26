@@ -5,8 +5,12 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
+import org.apache.log4j.Logger;
+
 public class TestQueueListener implements MessageListener
 {
+	private static final Logger logger = Logger.getLogger(TestQueueListener.class);
+	
 	private String name = null;
 	public TestQueueListener(String name)
 	{
@@ -23,7 +27,7 @@ public class TestQueueListener implements MessageListener
             }
             catch (final JMSException e)
             {
-                e.printStackTrace();
+            	logger.error("Problem", e);
             }
         }
         else

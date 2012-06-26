@@ -2,9 +2,12 @@ package semplest.server.protocol;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 
 public class ProtocolEnum 
 {
+	private static final Logger logger = Logger.getLogger(ProtocolEnum.class);
 	
 	private static HashMap<String,HashMap<String, String>> matchTypeMap = new HashMap<String,HashMap<String, String>>();
 	static {
@@ -194,8 +197,7 @@ public class ProtocolEnum
 		try {
 			System.out.println(ProtocolEnum.SemplestMatchType.getSearchEngineMatchType("EXact", "Msn"));
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

@@ -1,9 +1,11 @@
 package semplest.server.queue.test;
 
+import org.apache.log4j.Logger;
 
 public class TestMQ
 {
-
+	private static final Logger logger = Logger.getLogger(TestMQ.class);
+	
 	/**
 	 * @param args
 	 */
@@ -30,9 +32,7 @@ public class TestMQ
 		}
 		catch (Exception e)
 		{
-			System.out.println("Broker Error " + e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

@@ -1,9 +1,14 @@
 package semplest.bidding.optimization;
 
+import org.apache.log4j.Logger;
+
+import semplest.bidding.naive.Campaign;
 import semplest.bidding.optimization.LBFGS.ExceptionWithIflag;
 
 public class LBFGS_Test {
 
+	private static final Logger logger = Logger.getLogger(Campaign.class);
+	
   /**
    * illustrates how to use LBFGS
    * @param args
@@ -38,9 +43,8 @@ public class LBFGS_Test {
         }
       }
     } catch (ExceptionWithIflag e) {
-      // TODO Auto-generated catch block
       System.out.println("Caught an exception.");
-      //e.printStackTrace();
+      logger.error("Problem", e);
     }
   }
 }

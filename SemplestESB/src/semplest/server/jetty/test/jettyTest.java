@@ -4,6 +4,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -14,6 +15,8 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 @Path("/helloworld")
 public class jettyTest
 {
+	private static final Logger logger = Logger.getLogger(jettyTest.class);
+	
 		// The Java method will process HTTP GET requests
 		@GET
 		// The Java method will produce content identified by the MIME Media
@@ -54,18 +57,15 @@ public class jettyTest
 		}
 		catch (NumberFormatException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

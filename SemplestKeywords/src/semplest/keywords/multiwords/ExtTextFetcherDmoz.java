@@ -10,13 +10,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.MultiWords;
+import semplest.keywords.javautils.XmlUtils;
 import semplest.keywords.javautils.ioUtils;
 import semplest.keywords.scalautils.*;
 
 
 public class ExtTextFetcherDmoz {
 	
+	private static final Logger logger = Logger.getLogger(ExtTextFetcherDmoz.class);
 	
 	private String inFileName;
 	private String outFileName;
@@ -94,7 +98,7 @@ public class ExtTextFetcherDmoz {
 			fileText.createNewFile();
 		
 		} catch (Exception e){
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		
@@ -104,7 +108,7 @@ public class ExtTextFetcherDmoz {
 			try{ // try:sleep
 				Thread.sleep(3000);
 			} catch( Exception e) {
-				e.printStackTrace();
+				logger.error("Problem", e);
 			} // try: sleep
 			
 			// fetch from Worker
@@ -140,7 +144,7 @@ public class ExtTextFetcherDmoz {
 					out2.close();
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("Problem", e);
 				} // try: IO
 			
 			} else
@@ -219,7 +223,7 @@ public void fetchMultiWordsSubsequent(int [] n, int minCount){
 			try{ // try:sleep
 				Thread.sleep(3000);
 			} catch( Exception e) {
-				e.printStackTrace();
+				logger.error("Problem", e);
 			} // try: sleep
 			
 			// fetch from Worker
@@ -255,7 +259,7 @@ public void fetchMultiWordsSubsequent(int [] n, int minCount){
 					out2.close();
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("Problem", e);
 				} // try: IO
 			
 			} else
@@ -331,7 +335,7 @@ public void MultiWordsNoFetch(int [] n, int minCount){
 		bufRead.close();
 
 	} catch (Exception e) {
-		e.printStackTrace();
+		logger.error("Problem", e);
 	}
 	System.out.println("Finished processing. Processed "+count+" categories.");
 

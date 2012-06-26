@@ -4,11 +4,12 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class ProtocolJSON implements ProtocolOperationsInterface
 {
-	
+	private static final Logger logger = Logger.getLogger(ProtocolJSON.class);
 	private static  ObjectMapper mapper = null;
 	public static final byte SEMplest_REGISTER = 1;
 	public static final byte SEMplest_PING = 2;
@@ -37,8 +38,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 
@@ -54,8 +54,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 				throw e;
 			}
 	}
@@ -67,8 +66,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 				throw e;
 			}
 	}
@@ -80,8 +78,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}
@@ -94,8 +91,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}
@@ -109,8 +105,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}
@@ -139,8 +134,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}
@@ -154,8 +148,7 @@ public class ProtocolJSON implements ProtocolOperationsInterface
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}

@@ -52,7 +52,7 @@ public class AESBouncyCastle
 		catch (Exception e)
 		{
 
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}
@@ -168,18 +168,15 @@ public class AESBouncyCastle
 		}
 		catch (IllegalBlockSizeException e)
 		{
-			// 
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (BadPaddingException e)
 		{
-
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (UnsupportedEncodingException e)
 		{
-
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		if (cryptedbytes != null)
 		{

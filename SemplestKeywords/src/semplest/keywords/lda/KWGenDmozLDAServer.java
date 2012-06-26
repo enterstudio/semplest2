@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -50,8 +52,10 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			logger.error(e);
-			throw e;
+			final List<String> ads = Arrays.asList(adds);
+			final String errMsg = "Problem getting categories for Company [" + companyName + "], SearchTerm [" + searchTerm + "], Description [" + description + "], Ads [" + ads + "], URL [" + url + "]";			
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 	public ArrayList<String> getCategories(String searchTerm) throws Exception {
@@ -79,8 +83,9 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			}
 			return optList;
 		}catch(Exception e){
-			logger.error(e);
-			throw e;
+			final String errMsg = "Problem getting categories for SearchTerm [" + searchTerm + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 	
@@ -153,8 +158,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			
 			return keywordsList.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
-			logger.error(e);
-			throw e;
+			logger.error(e.getMessage(), e);
+			throw new Exception(e.getMessage(), e);
 		}
 	}
 	
@@ -232,8 +237,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 	
 			return keywords;
 		}catch(Exception e){
-			logger.error(e);
-			throw e;
+			logger.error(e.getMessage(), e);
+			throw new Exception(e.getMessage(), e);
 		}
 	}
 	
@@ -671,8 +676,8 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			Thread thread = new Thread(data);
 			thread.start();
 		}catch(Exception e){
-			logger.error(e);
-			throw e;
+			logger.error(e.getMessage(), e);
+			throw new Exception(e.getMessage(), e);
 		}
 	}
 	
@@ -879,7 +884,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 			System.setOut(stdout);
 			
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -918,7 +923,7 @@ public class KWGenDmozLDAServer implements SemplestKeywordLDAServiceInterface{
 		catch (Exception e)
 		{
 			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	} */
 

@@ -51,8 +51,7 @@ public class DmozLucene {
       w = new IndexWriter(index, config);
     } catch (Exception e ){
 
-      logger.error(e.getMessage());
-      e.printStackTrace();
+      logger.error(e.getMessage(), e);
     }
   }
 
@@ -65,7 +64,7 @@ public class DmozLucene {
       doc.add(new Field("desc", desc, Field.Store.YES, Field.Index.ANALYZED));
       w.addDocument(doc);
     } catch (Exception e ){
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
   }
   // done adding words
@@ -73,7 +72,7 @@ public class DmozLucene {
     try {
       w.close(); 
     } catch (Exception e ){
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
   }
 
@@ -83,7 +82,7 @@ public class DmozLucene {
     try {
       res = search(qs, 10);
     } catch (Exception e ){
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return res;
   }
@@ -111,7 +110,7 @@ public class DmozLucene {
       }
       searcher.close();
     } catch (Exception e ){
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return res;
   }

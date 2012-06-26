@@ -18,7 +18,11 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
 
+import org.apache.log4j.Logger;
+
 public class ioUtils {
+	
+	private static final Logger logger = Logger.getLogger(ioUtils.class);
 
   // returns nth line of file (indexed from 0) as string
   public static String readLine(String file, int n){
@@ -28,7 +32,7 @@ public class ioUtils {
         r.readLine();
       return r.readLine();
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
       return "";
     }
   }
@@ -50,7 +54,7 @@ public class ioUtils {
           }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return lines;
   }
@@ -64,7 +68,7 @@ public class ioUtils {
       String line;
       while ((line = br.readLine()) != null) 
         arraybuf.add( line );
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return arraybuf; 
   }
 
@@ -81,7 +85,7 @@ public class ioUtils {
         if( cols.length > col )
           arraybuf.add( cols[col] );
       }
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return arraybuf; 
   }
 
@@ -95,7 +99,7 @@ public class ioUtils {
       String line;
       while ((line = br.readLine()) != null)
         arraybuf.add( line.split("\\s+" ));
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return arraybuf; 
   }
   // reads file and returns first two columns as a HashMap 
@@ -111,7 +115,7 @@ public class ioUtils {
         if( cols.length >= 2  )
           hash.put( cols[0], cols[1] );
       }
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return hash; 
   }
   // reads file and returns it as a map of strings with index
@@ -127,7 +131,7 @@ public class ioUtils {
         map.put( line, index );
         index++;
       }
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return map; 
   }
 
@@ -146,7 +150,7 @@ public class ioUtils {
           map.put( cols[col], index );
         index++;
       }
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return map; 
   }
 
@@ -162,7 +166,7 @@ public class ioUtils {
           map.put( cols[0].trim(), cols[1].trim() );
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return map;
   }
@@ -183,7 +187,7 @@ public class ioUtils {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return map;
   }
@@ -200,7 +204,7 @@ public class ioUtils {
         map.put( head, toWc( tail ) );
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return map;
   }
@@ -219,7 +223,7 @@ public class ioUtils {
         count++;
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return map;
   }
@@ -266,7 +270,7 @@ public class ioUtils {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return map;
   }
@@ -306,7 +310,7 @@ public class ioUtils {
         row++;
       }
     } catch (Exception e ){
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return mat;
   }
@@ -366,7 +370,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wc[1] ).intValue(); 
         } catch (Exception e ) {
-          e.printStackTrace();
+        	logger.error("Problem", e);
         }
         if( wcount != -1 )
           docv[ index ] = wcount;
@@ -394,7 +398,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wc[1] ); 
         } catch (Exception e ) {
-          e.printStackTrace();
+        	logger.error("Problem", e);
         }
         if( wcount != -1 )
           map.put( word, wcount);
@@ -424,7 +428,7 @@ public class ioUtils {
         String words = docWords( line );
         map.put(id, words);
       }
-    } catch ( Exception e ){ e.printStackTrace();}
+    } catch ( Exception e ){ logger.error("Problem", e);}
     return map;
   }
   // get us a document vector of the indexth document  
@@ -459,7 +463,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wordcount[1] ).intValue(); 
         } catch (Exception e ) {
-          e.printStackTrace();
+        	logger.error("Problem", e);
         }
         for( int j=0; j< wcount; j++)
           wordstring = wordstring + word + " ";

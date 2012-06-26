@@ -2,10 +2,14 @@ package semplest.bidding.test;
 
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import semplest.bidding.estimation.*;
 
 public class TestWeibullFit {
 
+	private static final Logger logger = Logger.getLogger(TestWeibullFit.class);
+	
 	/**
 	 * @param args
 	 */
@@ -24,7 +28,7 @@ public class TestWeibullFit {
 				y[i]=f.function(x[i], params);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		ParameterEstimator pe = new ParameterEstimator(f, x, y);

@@ -9,12 +9,16 @@ import com.google.api.adwords.lib.AdWordsService;
 import java.util.Comparator;
 import java.util.Arrays;
 
+import org.apache.log4j.Logger;
+
 // Bids naiely for an ad-group
 //  Sets bid to first-page-cpc for high-volume keywords
 //  Sets bid to first-page-cpc + $0.50 for low-volume keywords
 //  When first-page-cpc is not available we use the default bid 
 
 public class NaiveBidder {
+	
+	private static final Logger logger = Logger.getLogger(NaiveBidder.class);
 
   public static int DELAY_MS = 1000;
 
@@ -95,7 +99,10 @@ public class NaiveBidder {
     try { 
       NaiveBidder nb = new NaiveBidder( CLID, CAID, AGID);
       int spent = nb.bid( budget );
-    } catch (Exception e ){ e.printStackTrace();}
+    } catch (Exception e )
+    { 
+    	logger.error("Problem", e);
+    }
   }
 }
 

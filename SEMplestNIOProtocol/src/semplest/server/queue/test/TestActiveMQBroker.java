@@ -13,9 +13,12 @@ import javax.naming.NamingException;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.log4j.Logger;
 
 public class TestActiveMQBroker implements Runnable
 {
+	private static final Logger logger = Logger.getLogger(TestActiveMQBroker.class);
+	
 	private BrokerService broker = null;
 	private ActiveMQQueue queue = null;
 	private Destination queueDestination = null;
@@ -61,8 +64,7 @@ public class TestActiveMQBroker implements Runnable
 		catch (Exception e)
 		{
 			System.out.println("Broker Error " + e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 	/*
@@ -83,14 +85,12 @@ public class TestActiveMQBroker implements Runnable
 		}
 		catch (NamingException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 		catch (JMSException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			return null;
 		}
 	}

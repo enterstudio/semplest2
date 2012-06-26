@@ -463,8 +463,7 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

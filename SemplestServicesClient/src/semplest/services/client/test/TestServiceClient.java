@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.log4j.Logger;
+
 import semplest.server.protocol.ProtocolJSON;
 import semplest.services.client.api.ServiceRun;
 import semplest.services.client.interfaces.TestServiceInterface;
@@ -16,7 +18,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class TestServiceClient extends ServiceRun implements TestServiceInterface, Runnable
 {
-
+	private static final Logger logger = Logger.getLogger(TestServiceClient.class);
 	/**
 	 * @param args
 	 */
@@ -55,8 +57,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 
 			/*
@@ -78,8 +79,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 		}
 		catch (UniformInterfaceException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		return null;
 	}
@@ -109,8 +109,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 	}

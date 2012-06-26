@@ -8,9 +8,14 @@ package semplest.keywords.javautils;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
+
 import semplest.keywords.classification.Document;;
 
 public class TreeNode {
+	
+	private static final Logger logger = Logger.getLogger(TreeNode.class);
 	
 	private int level; // 0 for Top, then incrementally added
 	private String name; // Photography
@@ -93,7 +98,7 @@ public class TreeNode {
 			try {
 				file.write(name.replaceAll("[0-9]","X").replaceAll(".html","_html")+"->"+t.getName().replaceAll("[0-9]","X").replaceAll(".html","_html")+";\n");
 			} catch (IOException e) { 
-				e.printStackTrace();
+				logger.error("Problem", e);
 				System.out.println("File write error!!");
 			}
 			t.dftGenGraph(file);

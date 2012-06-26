@@ -7,8 +7,13 @@ import com.google.api.adwords.lib.AdWordsService;
 
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 public class LocationInfo {
   
+	private static final Logger logger = Logger.getLogger(LocationInfo.class);
+
+	
   static String[] fields = {"Id","LocationName","CanonicalName","DisplayType",
     "ParentLocations","Reach"};
   AdWordsUser user = null;
@@ -72,7 +77,10 @@ public class LocationInfo {
       Long mid = l.getId( "New York", "Metro" );
 
       System.out.println( sid + "," + cid + "," + mid );
-    } catch (Exception e ){ e.printStackTrace(); }
+    } catch (Exception e )
+    {
+    	logger.error("Problem", e); 
+    }
   }
 }
 

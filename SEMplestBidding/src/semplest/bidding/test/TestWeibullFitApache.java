@@ -6,6 +6,7 @@ import java.util.Random;
 import org.apache.commons.math3.analysis.ParametricUnivariateFunction;
 import org.apache.commons.math3.optimization.fitting.CurveFitter;
 import org.apache.commons.math3.optimization.general.LevenbergMarquardtOptimizer;
+import org.apache.log4j.Logger;
 
 import flanagan.plot.PlotGraph;
 
@@ -14,6 +15,8 @@ import semplest.bidding.estimation.Weibull;
 
 public class TestWeibullFitApache {
 
+	private static final Logger logger = Logger.getLogger(TestWeibullFitApache.class);
+	
 	/**
 	 * @param args
 	 */
@@ -36,7 +39,7 @@ public class TestWeibullFitApache {
 				data[1][i]=y[i];
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		CurveFitter fitter = new CurveFitter(new LevenbergMarquardtOptimizer());

@@ -5,8 +5,11 @@ import java.util.HashMap;
 
 import javax.ws.rs.core.MultivaluedMap;
 
+import org.apache.log4j.Logger;
+
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.services.client.api.SemplestMailServiceClient;
 import semplest.services.client.api.ServiceRun;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.TestService2Interface;
@@ -19,7 +22,7 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 
 public class TestService2Client extends ServiceRun implements TestService2Interface, SchedulerTaskRunnerInterface
 {
-
+	private static final Logger logger = Logger.getLogger(TestService2Client.class);
 	private static String timeoutMS = "40000";
 	private static String SERVICEOFFERED = "semplest.test.TestService2";
 	private static String BASEURLTEST = "http://localhost:9898/semplest"; // VMJAVA1
@@ -63,8 +66,7 @@ public class TestService2Client extends ServiceRun implements TestService2Interf
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 
 			/*
@@ -86,8 +88,7 @@ public class TestService2Client extends ServiceRun implements TestService2Interf
 		}
 		catch (UniformInterfaceException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		return null;
 	}

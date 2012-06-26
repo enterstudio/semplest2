@@ -8,6 +8,10 @@ import com.google.api.adwords.lib.AdWordsService;
 import java.lang.Math.*;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
+
+
 // Bids naiely for an ad-group
 //  Sets bid to first-page-cpc for high-volume keywords
 //  Sets bid to first-page-cpc + $0.50 for low-volume keywords
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 
 public class AGInfo {
 
+	private static final Logger logger = Logger.getLogger(AGInfo.class);
 
   long agId;
   AdGroupCriterionServiceInterface acs = null; 
@@ -132,7 +137,11 @@ public class AGInfo {
       AGInfo a = new AGInfo( CLID, CAID, AGID );
       BiddableAdGroupCriterion bac = a.gCriterion("portrait photography");
       System.out.println( a.gDatums( bac )); 
-    } catch (Exception e ){ e.printStackTrace();}
+    } 
+    catch (Exception e )
+    { 
+    	logger.info("Problem", e);
+    }
   }
 }
 

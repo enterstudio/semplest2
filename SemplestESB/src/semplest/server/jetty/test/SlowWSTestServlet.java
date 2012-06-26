@@ -18,10 +18,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Path;
 
+import org.apache.log4j.Logger;
+
 @WebServlet(name = "myServlet", urlPatterns ={ "/slowprocess" }, asyncSupported = true)
 
 public class SlowWSTestServlet extends HttpServlet
 {
+	private static final Logger logger = Logger.getLogger(SlowWSTestServlet.class);
 
 	/**
 	 * 
@@ -65,8 +68,7 @@ public class SlowWSTestServlet extends HttpServlet
 							}
 							catch (IOException e)
 							{
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error("Problem", e);
 							}
 						}
 					});

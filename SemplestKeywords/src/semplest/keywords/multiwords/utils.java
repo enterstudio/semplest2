@@ -6,9 +6,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.ioUtils;
 
 public class utils {
+	
+	private static final Logger logger = Logger.getLogger(utils.class);
 	
 	public static void tmpToSemplest(String inFileName, String outFileName){
 		ArrayList<String> lines = ioUtils.readFile(inFileName);
@@ -113,7 +117,7 @@ public class utils {
 			out5.close();
 			
 		} catch (Exception e){
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

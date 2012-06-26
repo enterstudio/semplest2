@@ -34,7 +34,7 @@ public class QueueListener implements MessageListener
 				}
 				catch (final JMSException e)
 				{
-					e.printStackTrace();
+					logger.error("Problem", e);
 				}
 			}
 			else if (message instanceof BytesMessage)
@@ -79,8 +79,7 @@ public class QueueListener implements MessageListener
 		}
 		catch (JMSException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

@@ -95,8 +95,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 		}
 		catch (Exception e)
 		{
-			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 		

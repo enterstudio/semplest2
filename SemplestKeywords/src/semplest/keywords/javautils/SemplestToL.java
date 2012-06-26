@@ -11,8 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 
 public class SemplestToL {
+	
+	private static final Logger logger = Logger.getLogger(SemplestToL.class);
 	/**
 	 * Converts semplest format data to LDA format data.
 	 * @param inFile input filename with semplest format data
@@ -61,7 +65,7 @@ public class SemplestToL {
 			}
 			out.close();
 		} catch (IOException e) { 
-			e.printStackTrace();
+			logger.error("Problem", e);
 			System.out.println("File write error!!");
 		}
 		
@@ -77,7 +81,7 @@ public class SemplestToL {
 				vocab.write(wordList[i]+"\n");
 			vocab.close();
 		} catch (IOException e)	{ 
-			e.printStackTrace();
+			logger.error("Problem", e);
 			System.out.println("File write error!!");
 		}
 		System.out.println("Successfully converted data. \nNumber of documents processed: "+lines.size()+"\nNumber of unique words found: "+(idx-1));

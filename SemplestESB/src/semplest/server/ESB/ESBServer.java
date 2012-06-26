@@ -26,7 +26,7 @@ import semplest.server.socket.SocketServerThread;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 public class ESBServer
-{
+{	
 	private Properties properties = null;
 	private static final String SERVERPROPSFILE = "properties/system.properties";
 	private static final String LOG4JSERVERPROPSFILE = "properties/log4j_server.properties";
@@ -96,9 +96,7 @@ public class ESBServer
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				logger.error(e.getMessage());
+				logger.error(e.getMessage(), e);
 				return false;
 			}
 			/*
@@ -173,8 +171,7 @@ public class ESBServer
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		finally
 		{

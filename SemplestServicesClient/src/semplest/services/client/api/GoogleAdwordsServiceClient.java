@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
@@ -45,6 +47,8 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	private String timeoutMS = "20000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
+	
+	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceClient.class);
 	
 	private final String baseurl;
 	
@@ -217,8 +221,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		/*
 		HashMap<String, Object> jsonHash = new HashMap<String, Object>();

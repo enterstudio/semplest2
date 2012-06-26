@@ -1,5 +1,7 @@
 package semplest.bidding.naive;
 
+import org.apache.log4j.Logger;
+
 import com.google.api.adwords.v201109.o.*;
 import com.google.api.adwords.v201109.cm.*;
 import com.google.api.adwords.lib.AdWordsUser;
@@ -8,6 +10,8 @@ import com.google.api.adwords.lib.AdWordsService;
 // Gets traffic estimates from Google
 public class Estimator {
 
+	private static final Logger logger = Logger.getLogger(Estimator.class);
+	
   KeywordMatchType mtype = KeywordMatchType.EXACT;
   TrafficEstimatorServiceInterface tes = null; 
   long cid = 0;
@@ -82,10 +86,15 @@ public class Estimator {
     long AGID = 3582397881L;
     int budget = 2500;  // cents
 
-    try { 
+    try 
+    { 
       Estimator e = new Estimator( CLID, CAID, AGID );
       System.out.println( e.gCost("portrait photography", 200 )); 
-          } catch (Exception e ){ e.printStackTrace();}
+    } 
+    catch (Exception e )
+    { 
+    	logger.error("Problem", e);
+    }
   }
 }
 

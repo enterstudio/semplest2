@@ -28,8 +28,7 @@ public class SocketServerThread implements Runnable
 		}
 		catch (InterruptedException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 
@@ -53,8 +52,7 @@ public class SocketServerThread implements Runnable
 		}
 		catch (IOException e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 	}

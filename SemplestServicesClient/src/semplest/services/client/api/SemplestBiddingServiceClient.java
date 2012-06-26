@@ -52,8 +52,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 	}

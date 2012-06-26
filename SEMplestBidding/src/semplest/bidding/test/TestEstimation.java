@@ -2,10 +2,14 @@ package semplest.bidding.test;
 
 import java.util.Random;
 
+import org.apache.log4j.Logger;
+
 import semplest.bidding.estimation.*;
 
 public class TestEstimation {
 
+	private static final Logger logger = Logger.getLogger(TestEstimation.class);
+	
 	/**
 	 * @param args
 	 */
@@ -24,7 +28,7 @@ public class TestEstimation {
 				y[i]=f.function(x[i], params);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		ParameterEstimator pe = new ParameterEstimator(f, x, y);

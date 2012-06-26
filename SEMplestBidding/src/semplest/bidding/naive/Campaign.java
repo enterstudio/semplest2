@@ -9,7 +9,11 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.AbstractMap;
 
+import org.apache.log4j.Logger;
+
 public class Campaign {
+	
+	private static final Logger logger = Logger.getLogger(Campaign.class);
   
   static String[] fields = {"Id","CampaignId","LocationName","DisplayType",
     "RadiusInUnits","GeoPoint","Address"};
@@ -147,7 +151,8 @@ public class Campaign {
       long rs = c.setGeoLoc( "NY" );
       System.out.println( ra + "," + rs );
       // c.printCC();
-    } catch (Exception e ){ e.printStackTrace(); }
+    } catch (Exception e ){ logger.error("Problem", e); }
+    
   }
 }
 

@@ -55,7 +55,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -84,7 +84,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 			}
 			return optList;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -161,7 +161,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 			
 			return keywordsList.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -243,7 +243,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 	
 			return keywords;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -705,7 +705,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 			Thread thread = new Thread(data);
 			thread.start();
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -913,7 +913,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 			System.setOut(stdout);
 			
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -952,7 +952,7 @@ public class CopyOfKWGenDmozLDAServerSimpleCrawl2 implements SemplestKeywordLDAS
 		catch (Exception e)
 		{
 			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	} */
 

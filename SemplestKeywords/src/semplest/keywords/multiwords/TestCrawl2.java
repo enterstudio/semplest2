@@ -1,11 +1,15 @@
 
 package semplest.keywords.multiwords;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.TextUtils;
 import semplest.keywords.scalautils.*;
 
 public class TestCrawl2 {
 
+	private static final Logger logger = Logger.getLogger(TestCrawl2.class);
+	
 	/**
 	 * @param args
 	 */
@@ -25,7 +29,7 @@ public class TestCrawl2 {
 	    try {
 	      Thread.sleep( 30000 ); 
 	    } catch( Exception e) {
-	      e.printStackTrace();
+	    	logger.error("Problem", e);
 	    }
 
 	    String[] results = c.fetch();

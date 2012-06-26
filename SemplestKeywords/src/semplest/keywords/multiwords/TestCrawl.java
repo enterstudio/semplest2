@@ -1,5 +1,6 @@
 package semplest.keywords.multiwords;
 
+import org.apache.log4j.Logger;
 import org.apache.nutch.crawl.*;
 
 //necessary imports
@@ -16,6 +17,7 @@ import org.apache.nutch.util.NutchConfiguration;
 
 public class TestCrawl {
 	
+	private static final Logger logger = Logger.getLogger(TestCrawl.class);
 	
 	public static void main(String [] args) {
 		
@@ -50,7 +52,7 @@ public class TestCrawl {
 //		parseData.
 			
 		} catch ( Exception e )	{ 
-			e.printStackTrace();
+			logger.error("Problem", e);
 		} 
 		
 

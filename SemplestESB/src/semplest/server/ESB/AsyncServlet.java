@@ -86,7 +86,7 @@ public class AsyncServlet extends HttpServlet
 			}
 			catch (NumberFormatException e)
 			{
-				logger.error("Error Setting timeout.  No timeout set on call");
+				logger.error("Error Setting timeout.  No timeout set on call", e);
 			}
 
 		}

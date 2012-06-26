@@ -43,8 +43,7 @@ public class ServerClientSocketThread implements Runnable
 		}
 		catch (IOException e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 
@@ -92,29 +91,25 @@ public class ServerClientSocketThread implements Runnable
 					}
 					catch (JsonParseException e)
 					{
-						logger.error("JsonParseException in ServerClientSocketThread " + e.getMessage());
-						e.printStackTrace();
+						logger.error("JsonParseException in ServerClientSocketThread " + e.getMessage(), e);
 						break;
 					}
 					catch (JsonMappingException e)
 					{
-						logger.error("JsonMappingException in ServerClientSocketThread " + e.getMessage());
-						e.printStackTrace();
+						logger.error("JsonMappingException in ServerClientSocketThread " + e.getMessage(), e);
 						break;
 					}
 
 					catch (JMSException e)
 					{
-						logger.error("JMSException in ServerClientSocketThread " + e.getMessage());
-						e.printStackTrace();
+						logger.error("JMSException in ServerClientSocketThread " + e.getMessage(), e);
 						break;
 					}
 				}
 			}
 			catch (IOException e)
 			{
-				logger.error("IOEXCEPTION in ServerClientSocketThread " + e.getMessage());
-				e.printStackTrace();
+				logger.error("IOEXCEPTION in ServerClientSocketThread " + e.getMessage(), e);
 				return;
 			}
 
@@ -147,8 +142,7 @@ public class ServerClientSocketThread implements Runnable
 			}
 			catch (Exception e)
 			{
-				logger.error("Error in creating MQ producer or Consumer " + e.getMessage());
-				e.printStackTrace();
+				logger.error("Error in creating MQ producer or Consumer " + e.getMessage(), e);
 				sendBackError("Error registering: " + e.getMessage());
 				throw new JMSException(e.getMessage());
 			}
@@ -260,8 +254,7 @@ public class ServerClientSocketThread implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error("Error ping " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Error ping " + e.getMessage(), e);
 		}
 	}
 

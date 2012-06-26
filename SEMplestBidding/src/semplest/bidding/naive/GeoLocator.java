@@ -9,8 +9,12 @@ import java.util.ArrayList;
 import java.util.AbstractMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class GeoLocator {
   
+	private static final Logger logger = Logger.getLogger(GeoLocator.class);
+	
   AdWordsUser user = null;
   GeoLocationServiceInterface gls = null;
 
@@ -81,7 +85,10 @@ public class GeoLocator {
       GeoLocator gl = new GeoLocator( GawUtils.clientId );
       Map.Entry<Integer,Integer> ll = gl.getLatLon( address, city, state, zip ); 
       System.out.println( ll );
-    } catch( Exception e){ e.printStackTrace(); }
+    } catch( Exception e)
+    { 
+    	logger.error("Problem", e);
+    }
   }
 }
 

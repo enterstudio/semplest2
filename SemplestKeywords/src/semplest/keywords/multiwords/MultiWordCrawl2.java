@@ -10,10 +10,14 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.MultiWords;
 import semplest.keywords.properties.ProjectProperties;
 
 public class MultiWordCrawl2 {
+	
+	private static final Logger logger = Logger.getLogger(MultiWordCrawl2.class);
 	
 	public static void parseFile(String inFile, String outFile, int minCount, int n){
 		
@@ -54,8 +58,7 @@ public class MultiWordCrawl2 {
 			out.close();
 
 		} catch (Exception e) {//Catch exception if any
-			e.printStackTrace();
-			//System.err.println("Error: " + e.getMessage());
+			logger.error("Problem", e);
 		}
 		
 	}
@@ -65,8 +68,7 @@ public class MultiWordCrawl2 {
 		try {
 			ProjectProperties projProp = new ProjectProperties();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 //		String inFile="//fs3/Semplest/data/dmoz/"+args[0]+"/hTest.2";
 //		String outFile="//fs3/Semplest/data/dmoz/multiwords/crawl2/"+args[0]+"."+args[1];

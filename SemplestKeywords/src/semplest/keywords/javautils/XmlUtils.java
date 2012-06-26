@@ -2,6 +2,8 @@ package semplest.keywords.javautils;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
@@ -13,6 +15,8 @@ import java.util.Comparator;
 
 // Uses Google's autocomplete service to get keyword suggestions and volume
 public class XmlUtils {
+	
+	private static final Logger logger = Logger.getLogger(XmlUtils.class);
 
   // - The interface ----------
   // Uses Dom parser 
@@ -30,7 +34,7 @@ public class XmlUtils {
         String  in= n.getAttribute("int").equals("") ?"0": n.getAttribute("int");
         res.put( da, Integer.decode( in ));
       }
-    } catch (Exception e) { e.printStackTrace(); }
+    } catch (Exception e) { logger.error("Problem", e);}
     return res;
   }
 

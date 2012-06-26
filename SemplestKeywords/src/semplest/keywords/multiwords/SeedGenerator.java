@@ -5,10 +5,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.javautils.ioUtils;
 
 public class SeedGenerator {
 	
+	private static final Logger logger = Logger.getLogger(SeedGenerator.class);
 	
 	private String inFileName;
 	private String outFileName;
@@ -56,7 +59,7 @@ public class SeedGenerator {
 			out.close();
 			
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 	

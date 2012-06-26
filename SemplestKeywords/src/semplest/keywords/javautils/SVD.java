@@ -22,8 +22,13 @@ import java.util.Map;
 import java.util.List;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 // singular value decomposition and latent semantic analysis utilities
 public class SVD {
+	
+	private static final Logger logger = Logger.getLogger(SVD.class);
+	
   public static final Format inputFormat  = Format.SVDLIBC_SPARSE_TEXT;
   public static final Format matrixFormat = Format.SVDLIBC_DENSE_TEXT;
 
@@ -84,7 +89,7 @@ public class SVD {
       MatrixIO.writeMatrix(new ArrayMatrix(smat), sFile, matrixFormat);
       MatrixIO.writeMatrix(new ArrayMatrix(tmat), tFile, matrixFormat);
     } catch (IOException ioe) {
-      ioe.printStackTrace();
+    	logger.error("Problem", ioe);
     }
   }
 
@@ -157,7 +162,7 @@ public class SVD {
     try {
       MatrixIO.writeMatrix( m, ofile, mformat ); 
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
   }
   public static Matrix readMatrix( String fname ){
@@ -167,7 +172,7 @@ public class SVD {
     try {
       m = MatrixIO.readMatrix( ifile, mformat ); 
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return m;
   }
@@ -196,7 +201,7 @@ public class SVD {
       MatrixIO.writeMatrix(usv[1], sFile, matrixFormat);
       MatrixIO.writeMatrix(usv[2], tFile, matrixFormat);
     } catch (IOException ioe) {
-      ioe.printStackTrace();
+    	logger.error("Problem", ioe);
     }
   }
 
@@ -211,7 +216,7 @@ public class SVD {
         coli++;
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
     return coli;
   }

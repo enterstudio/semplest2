@@ -47,7 +47,7 @@ public class dictUtils
   is = new FileInputStream(PROPSFILE);
   SEMplestService.properties.load(is);
   is.close();
-  } catch (Exception e){ e.printStackTrace();}
+  } catch (Exception e){logger.error("Problem", e);}
   }
   dictfile= SEMplestService.properties.getProperty("data.stemworddict");
   docfile = SEMplestService.properties.getProperty("data.dmoz.allcats");

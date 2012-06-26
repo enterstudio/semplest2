@@ -32,9 +32,7 @@ public class ActiveMQBroker implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error("Broker Error " + e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Broker Error ", e);
 		}
 	}
 

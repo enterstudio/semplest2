@@ -37,8 +37,7 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 			}
 			catch (Exception e2)
 			{
-				logger.error("Error Getting StartTime" + e2.getMessage());
-				e2.printStackTrace();
+				logger.error("Error Getting StartTime" + e2.getMessage(), e2);
 			}
 			SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(null);
 			client.NewSchedule(1,1, startTime, false);
@@ -46,8 +45,7 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 	

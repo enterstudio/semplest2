@@ -1,5 +1,7 @@
 package semplest.keywords.javautils;
 
+import org.apache.log4j.Logger;
+
 import semplest.keywords.scalautils.*;
 
 /* Semplest Crawler
@@ -38,6 +40,8 @@ import semplest.keywords.scalautils.*;
 // ------------
 class Crawl {
 
+	private static final Logger logger = Logger.getLogger(Crawl.class);
+	
   public static void main(String[] args){
 
     String ss = "http://www.google.com";
@@ -51,7 +55,7 @@ class Crawl {
     try {
       Thread.sleep( 30000 ); 
     } catch( Exception e) {
-      e.printStackTrace();
+    	logger.error("Problem", e);
     }
 
     // getch results periodically

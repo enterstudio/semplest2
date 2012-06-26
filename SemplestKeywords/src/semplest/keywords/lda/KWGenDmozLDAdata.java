@@ -90,9 +90,8 @@ public class KWGenDmozLDAdata implements Runnable{
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			throw new IOException(e);
+			logger.error(e.getMessage(), e);
+			throw new IOException(e.getMessage(), e);
 		}
 		
 	}
@@ -109,7 +108,7 @@ public class KWGenDmozLDAdata implements Runnable{
 		try {
 			Thread.sleep(0);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 }

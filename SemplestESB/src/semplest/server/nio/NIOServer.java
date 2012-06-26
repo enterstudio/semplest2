@@ -122,7 +122,7 @@ public class NIOServer implements Runnable
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 		}
 	}
@@ -219,7 +219,7 @@ public class NIOServer implements Runnable
 		{
 			// The remote forcibly closed the connection, cancel
 			// the selection key and close the channel.
-			logger.error("IOException in NIO Read..Closing Connection " + e.getMessage());
+			logger.error("IOException in NIO Read..Closing Connection " + e.getMessage(), e);
 			key.channel().close();
 			return;
 		}
@@ -392,8 +392,7 @@ public class NIOServer implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error("Error ping " + e.getMessage());
-			e.printStackTrace();
+			logger.error("Error ping " + e.getMessage(), e);
 		}
 	}
 
@@ -408,7 +407,7 @@ public class NIOServer implements Runnable
 		}
 		catch (IOException e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 }

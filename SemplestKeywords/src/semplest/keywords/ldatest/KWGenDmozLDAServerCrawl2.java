@@ -52,7 +52,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -81,7 +81,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			}
 			return optList;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -156,7 +156,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			
 			return keywordsList.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -235,7 +235,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 	
 			return keywords;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -685,7 +685,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			Thread thread = new Thread(data);
 			thread.start();
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -893,7 +893,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 			System.setOut(stdout);
 			
 			}catch(Exception e){
-				logger.error(e);
+				logger.error(e.getMessage(), e);
 			}
 		}
 	}
@@ -932,7 +932,7 @@ public class KWGenDmozLDAServerCrawl2 implements SemplestKeywordLDAServiceInterf
 		catch (Exception e)
 		{
 			//logger.error(e.getSemplestErrorID() + e.getSemplestErrorMessage());
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	} */
 

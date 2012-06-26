@@ -83,25 +83,9 @@ public class ProcessRequestWorker implements Runnable
 						//dataEvent.server.send(dataEvent.socket, dataEvent.data);
 					}
 				}
-				catch (JsonParseException e)
+				catch (Exception e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (JsonMappingException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (IOException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				catch (JMSException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Problem", e);
 				}
 			}
 

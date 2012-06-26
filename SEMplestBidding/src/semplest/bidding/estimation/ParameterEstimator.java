@@ -1,9 +1,13 @@
 package semplest.bidding.estimation;
 
+import org.apache.log4j.Logger;
+
 import flanagan.math.Minimisation;
 import flanagan.math.MinimisationFunction;
 
 class LeastSquares implements MinimisationFunction {
+	
+	private static final Logger logger = Logger.getLogger(LeastSquares.class);
 
   private ParametricFunction pf = null;
 
@@ -30,7 +34,7 @@ class LeastSquares implements MinimisationFunction {
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+    	logger.error(e.getMessage(), e);
     }
     return sum;
   }

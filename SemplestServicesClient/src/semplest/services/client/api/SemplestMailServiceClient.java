@@ -2,6 +2,8 @@ package semplest.services.client.api;
 
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
@@ -17,6 +19,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
+	private static final Logger logger = Logger.getLogger(SemplestMailServiceClient.class);
 
 	private String baseurl;
 
@@ -30,9 +33,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		}
 		catch (Exception e)
 		{
-			System.out.println(e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

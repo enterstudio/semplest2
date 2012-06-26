@@ -125,8 +125,7 @@ public class TextUtils {
       conn.setReadTimeout( READ_TIMEOUT );
       java.io.InputStream is = conn.getInputStream();
     } catch (Exception e) {
-      e.printStackTrace();
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
       return false;
     }
     return true;
@@ -144,8 +143,8 @@ public class TextUtils {
     URI baseURI = null;
     try {
       baseURI = new URI( url );
-    } catch (Exception e) { e.printStackTrace(); 
-      logger.error( e.getMessage());
+    } catch (Exception e) {  
+      logger.error( e.getMessage(), e);
       return new URL[0];
     }
 
@@ -155,9 +154,8 @@ public class TextUtils {
       URL fqurl = null;  
       try {
         fqurl = baseURI.resolve( outlinks[i].toURI() ).toURL();  
-      } catch (Exception e) { 
-        e.printStackTrace(); 
-        logger.error( e.getMessage());
+      } catch (Exception e) {
+        logger.error( e.getMessage(), e);
       }
       if( fqurl != null )
         fqurls.add( fqurl ); 
@@ -178,8 +176,7 @@ public class TextUtils {
     try {
       outs = sb.getStrings();
     } catch (Exception e) {
-      e.printStackTrace();
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
     }
     return outs;
   }
@@ -256,8 +253,7 @@ public class TextUtils {
     try { 
       htmlString = HTMLText( url );
     } catch ( Exception e ){
-      e.printStackTrace();
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validStems( words );
@@ -282,8 +278,7 @@ public class TextUtils {
     try { 
       htmlString = HTMLText( url );
     } catch ( Exception e ){
-      e.printStackTrace();
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
@@ -296,8 +291,7 @@ public class TextUtils {
     try { 
       htmlString = FileText( url );
     } catch ( Exception e ){
-      e.printStackTrace();
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
     }
     ArrayList<String> words = getWords( htmlString );
     ArrayList<String> validWords = validWords( words );
@@ -397,8 +391,7 @@ public class TextUtils {
       Parser p = new Parser( conn );
       return p;
     } catch (Exception e) { 
-      e.printStackTrace (); 
-      logger.error( e.getMessage());
+      logger.error( e.getMessage(), e);
     }
     return null;
   }
