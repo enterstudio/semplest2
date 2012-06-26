@@ -26,11 +26,11 @@ public class ProtocolEnum
 	
 	
 	/*
-	 * ENUMS
+	 * ENUMS - Latin-1
 	 */
 	public static enum EmailType
 	{
-		PlanText("text/plain; charset=utf-8"), HTML("text/html; charset=utf-8");
+		PlanText("text/plain; charset=ISO-8859-1"), HTML("text/html; charset=ISO-8859-1");
 		private String val;
 
 		public String getEmailValue()
