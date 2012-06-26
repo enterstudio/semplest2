@@ -817,6 +817,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, String adEngine, Double monthlyBudgetAmount,
 			GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
 	{
+		if (monthlyBudgetAmount < 0)
+		{
+			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle + "] because MonthlyBudgetAmount [" + monthlyBudgetAmount + "] is less than 0");
+		}
 		if (adEngine.equalsIgnoreCase(AdEngine.Google.name()))
 		{
 			// assume US dollars US timezone
