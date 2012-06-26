@@ -41,6 +41,7 @@ import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
+import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.service.SemplestConfiguration;
@@ -2815,6 +2816,26 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					+ "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
+	}
+
+	public String getGoogleKeywordIdeas(String json) throws Exception
+	{
+		logger.debug("call  getGoogleKeywordIdeas(String json)" + json);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		List<String> keywords = gson.fromJson(data.get("keywords"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		Integer numberResults = Integer.parseInt(data.get("numberResults"));
+		KeywordToolStats[] res  = getGoogleKeywordIdeas(keywords, numberResults);
+		return gson.toJson(res);
+	}
+	@Override
+	public KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception
+	{
+		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+		String[] keywordArr = new String[keywords.size()]; 
+		keywordArr = keywords.toArray(keywordArr); 
+		ArrayList<KeywordToolStats> res =  google.getGoogleKeywordIdeas(keywordArr, numberResults);
+		KeywordToolStats[] statsArr = new KeywordToolStats[res.size()];
+		return res.toArray(statsArr);
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.google.KeywordToolStats;
 
 public interface SemplestAdengineServiceInterface extends ServiceInitialize
 {		
@@ -57,4 +58,6 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
 	Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
+	
+	public abstract KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
 }

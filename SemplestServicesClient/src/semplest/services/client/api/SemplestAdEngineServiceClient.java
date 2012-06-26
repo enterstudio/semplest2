@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.google.KeywordToolStats;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 
@@ -24,7 +26,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://23.22.63.111:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "300000";  //5 mins
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -33,7 +35,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static void main(String[] args) throws Exception
 	{
 		BasicConfigurator.configure();
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMDEVJAVA1:9898/semplest");
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
 		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://172.18.9.26:9898/semplest");
 /*
 		// scheduleAddAds
@@ -1150,6 +1152,20 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception
+	{
+		final String methodName = "getGoogleKeywordIdeas";
+		HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		String keywordsStr = gson.toJson(keywords, ArrayList.class);
+		jsonHash.put("keywords",keywordsStr);
+		jsonHash.put("numberResults", Integer.toString(numberResults));
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		return gson.fromJson(returnData, KeywordToolStats[].class);
 	}
 	
 }
