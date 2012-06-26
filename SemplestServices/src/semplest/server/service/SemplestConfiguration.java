@@ -44,7 +44,6 @@ public class SemplestConfiguration implements Runnable
 		{
 			logger.error("FAILED TO LOAD CONFIGUATION");
 			configData = null;
-			e.printStackTrace();
 			SemplestErrorHandler.logToDatabase(new Exception("FAILED TO LOAD CONFIGUATION - " + e.getMessage(), e));
 		}
 		synchronized(obj)

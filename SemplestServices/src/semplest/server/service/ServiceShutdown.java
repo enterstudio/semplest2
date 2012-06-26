@@ -42,8 +42,7 @@ public class ServiceShutdown implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error(e);
-			e.printStackTrace();
+			logger.error("Problem", e);
 			SemplestErrorHandler.logToDatabase(new Exception("ServiceShutdown - " + e.getMessage(), e));
 		}
 		

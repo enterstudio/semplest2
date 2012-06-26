@@ -6,14 +6,19 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.log4j.Logger;
+
 import com.google.gson.Gson;
 
 import semplest.server.service.SemplestConfiguration;
+import semplest.service.scheduler.SemplestSchedulerService;
 import semplest.services.client.interfaces.TestServiceInterface;
 
 
 public class TestService2Impl implements TestServiceInterface
 {
+	private static final Logger logger = Logger.getLogger(TestService2Impl.class);
+	
 	@Override
 	public String TestMethod(String jsonStr)
 	{
@@ -22,7 +27,7 @@ public class TestService2Impl implements TestServiceInterface
 		try {
 			Thread.sleep(600);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		long total =  System.currentTimeMillis() - start;

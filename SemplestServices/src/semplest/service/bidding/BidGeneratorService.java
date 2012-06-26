@@ -28,8 +28,7 @@ public class BidGeneratorService implements ServiceInterface {
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(e);
 			throw e;
 		}

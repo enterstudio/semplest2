@@ -206,7 +206,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 
@@ -3410,7 +3410,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 				}
 				catch (InterruptedException e)
 				{
-					e.printStackTrace();
+					logger.error("Problem", e);
 				}
 				elapsedSeconds += waitSeconds;
 

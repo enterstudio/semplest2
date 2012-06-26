@@ -78,7 +78,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 		}
 		catch(Exception e)
 		{
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 			throw e;
 		}
 		finally

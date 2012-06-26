@@ -136,12 +136,12 @@ public class SemplestScheduler extends Thread
 
 			catch (InterruptedException ie)
 			{
-				logger.error(ie);
+				logger.error("Problem", ie);
 				SemplestErrorHandler.logToDatabase(ie);
 			}
 			catch (Exception e)
 			{
-				logger.error(e);
+				logger.error("Problem", e);
 				SemplestErrorHandler.logToDatabase(e);
 			}
 		}
@@ -323,7 +323,7 @@ public class SemplestScheduler extends Thread
 		}
 		catch (Exception e)
 		{
-			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID);
+			logger.error("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID, e);
 			SemplestErrorHandler.logToDatabase(new Exception("Error removeScheduleToRun: " + e.getMessage() + " for schedule job:" + ScheduleJobID, e));
 			return false;
 
@@ -384,14 +384,10 @@ public class SemplestScheduler extends Thread
 			Boolean res = runScheduledTasks(runData.getScheduleJobID(),runData.getScheduleID());
 
 			return res;
-
-			//
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error(e.getMessage());		
+			logger.error(e.getMessage(), e);		
 			SemplestErrorHandler.logToDatabase(e);
 			return false;
 		}
@@ -451,7 +447,6 @@ public class SemplestScheduler extends Thread
 						catch (Exception e)
 						{
 							logger.error("SemplestErrorHandler " + e.getMessage(), e);
-							e.printStackTrace();
 						}
 					}
 					//TODO: send email for successfully executed schedule	
@@ -462,7 +457,7 @@ public class SemplestScheduler extends Thread
 					errorOutput.setIsSuccessful(false);
 					errorOutput.setErrorMessage(e.getMessage());
 					previousTaskOutput = errorOutput;
-					logger.error(e.getMessage());			
+					logger.error(e.getMessage(), e);			
 					SemplestErrorHandler.logToDatabase(e);
 					//TODO: send email is successful = false
 				}				 
@@ -486,8 +481,7 @@ public class SemplestScheduler extends Thread
 		}
 		catch (Exception e)
 		{
-			logger.error("runScheduledTasks:" + e.getMessage());
-			e.printStackTrace();
+			logger.error("runScheduledTasks:" + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(e);
 			return false;
 		}

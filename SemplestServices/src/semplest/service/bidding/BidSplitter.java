@@ -21,8 +21,7 @@ public class BidSplitter {
 		try{
 			Thread.sleep(1000);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error("Unable to sleep! May have error in default config values! "+e.getMessage());
+			logger.error("Unable to sleep! May have error in default config values! "+e.getMessage(), e);
 		}
 		
 		Double googlePercent =  ((Integer) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent")).doubleValue();

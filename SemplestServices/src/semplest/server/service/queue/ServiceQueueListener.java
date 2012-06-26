@@ -41,7 +41,7 @@ public class ServiceQueueListener implements MessageListener
 			    }
 			    catch (final JMSException e)
 			    {
-			        e.printStackTrace();
+			    	logger.error("Problem", e);
 			        SemplestErrorHandler.logToDatabase(new Exception(e.getMessage() + " - TextMessage: " + textMessage.getText(), e));
 			    }
 			}
@@ -63,8 +63,7 @@ public class ServiceQueueListener implements MessageListener
 				}
 				catch (Exception e)
 				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.error("Problem", e);
 					SemplestErrorHandler.logToDatabase(new Exception(e.getMessage() + " - UniqueID is " + uniqueID + ", MethodName is " + methodName + ", jsonString is " + jsonStr, e));
 				}
 				
@@ -77,8 +76,7 @@ public class ServiceQueueListener implements MessageListener
 		}
 		catch (JMSException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			SemplestErrorHandler.logToDatabase(new Exception("JMSException: " + e.getMessage(), e));
 		}
     }    

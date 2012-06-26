@@ -63,8 +63,6 @@ public class ServiceThread implements Runnable
 		{
 			result = getErrorInJson("", e);
 			logger.error("Error running Service: " + methodName + ":" + jsonStr);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			SemplestErrorHandler.logToDatabase(new Exception("Error running Service: " + methodName + ":" + jsonStr + " - " + e.getMessage(), e));
 		}
 		//put result on message queue
@@ -74,9 +72,7 @@ public class ServiceThread implements Runnable
 		}
 		catch (JMSException e)
 		{
-			logger.error("maessage queue connection error" + e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("maessage queue connection error" + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception("maessage queue connection error - " + e.getMessage(), e));
 		}
 	}

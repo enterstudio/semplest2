@@ -116,8 +116,7 @@ public class MSNAdcenterServiceClientTest {
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}

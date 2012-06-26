@@ -574,12 +574,12 @@ public class SemplestDB extends BaseDB
 		}
 		catch (EmptyResultDataAccessException e)
 		{
-			logger.error("getBudget " + e.getMessage());
+			logger.error("getBudget " + e.getMessage(), e);
 			return null;
 		}
 		catch (Exception e)
 		{
-			logger.error("getBudget " + e.getMessage());
+			logger.error("getBudget " + e.getMessage(), e);
 			throw e;
 		}
 	}
@@ -603,8 +603,8 @@ public class SemplestDB extends BaseDB
 				}
 				catch (Exception e)
 				{
-					logger.error("Strore Bid Object Error " + bid.getKeyword() + ":" + e.getMessage());
-					e.printStackTrace();
+					logger.error("Strore Bid Object Error " + bid.getKeyword() + ":" + e.getMessage(), e);
+					logger.error("Problem", e);
 					throw e;
 				}
 			}
@@ -1090,7 +1090,6 @@ public class SemplestDB extends BaseDB
 		}
 		catch (Exception e1)
 		{
-			e1.printStackTrace();
 			logger.error("logError: " + e1.getMessage() , e1);
 		}
 	}

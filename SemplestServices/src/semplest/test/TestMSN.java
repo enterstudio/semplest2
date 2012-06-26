@@ -7,11 +7,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
 import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.service.google.adwords.TestGoogleAdwords;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 
@@ -36,6 +39,7 @@ public class TestMSN
 	private List<Target> targets = new ArrayList<Target>();
 	
 	private static final Long msnAccountId = 800609L; // THIS IS A REAL VENDOR ID !!! SEMPLESTg6phzn6t http://www.highlandhtsfloral.com
+	private static final Logger logger = Logger.getLogger(TestMSN.class);
 
 	/**
 	 * @param args
@@ -53,8 +57,7 @@ public class TestMSN
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

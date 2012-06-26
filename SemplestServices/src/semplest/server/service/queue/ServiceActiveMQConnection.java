@@ -113,9 +113,7 @@ public class ServiceActiveMQConnection
 		}
 		catch (JMSException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			logger.error("Error closing MQProducer:" + e.getMessage());
+			logger.error("Error closing MQProducer:" + e.getMessage(), e);
 		}
 	}
 	

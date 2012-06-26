@@ -26,7 +26,7 @@ public class MailSessionObject implements Runnable
 		}
 		catch (InterruptedException e)
 		{
-			logger.error("THREAD INTERRUPTED...");
+			logger.error("THREAD INTERRUPTED...", e);
 		}
 	}
 	public Session getSession()

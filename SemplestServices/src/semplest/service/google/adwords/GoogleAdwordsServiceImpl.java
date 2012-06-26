@@ -191,15 +191,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			logger.error("Unable to initialize Google API", e);
-			e.printStackTrace();
-			throw e;
+			final String errMsg = "Unable to initialize Google API";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
 	public static void main(String[] args)
 	{
-
 		// Log SOAP XML request and response.
 		try
 		{
@@ -282,7 +281,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 //					System.out.println(w.getKeyword());
 //				}
 			} catch (Exception e){ 
-				e.printStackTrace(); 
+				logger.error("Problem", e); 
 			}
 			*/
 
@@ -466,7 +465,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		catch (Exception e)
 		{
 			logger.error("Problem", e);
-			e.printStackTrace();
 		}
 
 	}
@@ -524,18 +522,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException se)
 		{
-			logger.error(se);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", se);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]";
+			logger.error(errMsg, se);
+			throw new Exception(errMsg, se);
 		}
 		catch (ApiException e)
 		{
-			logger.error(e);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString(), e);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString();
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		catch (RemoteException e)
 		{
-			logger.error(e);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", e);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 
 	}
@@ -581,18 +582,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException se)
 		{
-			logger.error(se);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", se);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]";
+			logger.error(errMsg, se);
+			throw new Exception(errMsg, se);
 		}
 		catch (ApiException e)
 		{
-			logger.error(e);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString(), e);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]: " + e.dumpToString();
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 		catch (RemoteException e)
 		{
-			logger.error(e);
-			throw new Exception("Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]", e);
+			final String errMsg = "Problem getting SpentAPIUnitsPerAccountID for AccountID [" + accountID + "], StateDate [" + startDate + "], EndDate [" + endDate + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 
 	}
@@ -3681,8 +3685,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
-			throw new Exception(e);
+			logger.error("Problem", e);
+			throw new Exception("Problem", e);
 		}
 
 	}

@@ -46,14 +46,11 @@ public class ChaseOrbitalGatewayObject extends Thread
 		}
 		catch (InitializationException iex)
 		{
-			logger.error("TransactionProcessor failed to initialize " + iex.getMessage());
-			iex.printStackTrace();
+			logger.error("TransactionProcessor failed to initialize " + iex.getMessage(), iex);
 		}
 		catch (Exception e)
 		{
-			logger.error("Exception in ChaseOrbitalGatewayObject " + e.getMessage());
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in ChaseOrbitalGatewayObject " + e.getMessage(), e);
 		}
 		synchronized(object)
 		{

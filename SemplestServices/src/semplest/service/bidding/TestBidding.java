@@ -119,16 +119,14 @@ public class TestBidding {
 		}
 		catch (Exception e)
 		{
-			logger.error("Unable to create Google Client " + e.getMessage());
-			//e.printStackTrace();
-			throw new Exception("Unable to create Google Client " + e.getMessage());
+			logger.error("Unable to create Google Client " + e.getMessage(), e);
+			throw new Exception("Unable to create Google Client " + e.getMessage(), e);
 		}
 
 		try{
 			Thread.sleep(1000);
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.info("Unable to sleep! May have error in default config values! "+e.getMessage());
+			logger.error("Unable to sleep! May have error in default config values! "+e.getMessage(), e);
 		}
 		maxRetry = (Integer) SemplestConfiguration.configData.get("SemplestBiddingMaxRetry");
 		sleepPeriod = (Integer) SemplestConfiguration.configData.get("SemplestBiddingSleepPeriod");
@@ -257,12 +255,11 @@ public class TestBidding {
 					if (k<=maxRetry) {
 						//e.printStackTrace();
 						logger.error("Received exception getAllBiddableAdGroupCriteria AccountID = " + googleAccountID + " AdGroupID = " +
-								String.valueOf(adGroupID) + ": will retry..., k="+k+e.getMessage());
+								String.valueOf(adGroupID) + ": will retry..., k="+k+e.getMessage(), e);
 						k++;				
 					} else {
-						//e.printStackTrace();
-						logger.error("Failed to get BiddableAdGroupCriteria from Google after "+k+" efforts "+e.getMessage());
-						throw new Exception("Failed to get BiddableAdGroupCriteria from Google after "+k+" efforts "+e.getMessage());
+						logger.error("Failed to get BiddableAdGroupCriteria from Google after "+k+" efforts "+e.getMessage(), e);
+						throw new Exception("Failed to get BiddableAdGroupCriteria from Google after "+k+" efforts "+e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
@@ -319,9 +316,8 @@ public class TestBidding {
 					logger.info("Attenpting to get traffic estimator info.");
 					o = getTrafficEstimatorDataForGoogle();
 				} catch (Exception e) {
-					//e.printStackTrace();
-					logger.error("Failed to get Google traffic estimator data. "+e.getMessage());
-					throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage());
+					logger.error("Failed to get Google traffic estimator data. "+e.getMessage(), e);
+					throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage(), e);
 				}
 				logger.info("Got traffic estimator data.");
 			} else {
@@ -394,7 +390,7 @@ public class TestBidding {
 			fileOut.close();
 			
 		} catch(IOException i) {
-			i.printStackTrace();
+			logger.error("Problem", i);
 		}
 		*/
 		
@@ -470,9 +466,8 @@ public class TestBidding {
 //				o2 = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, 
 //						KeywordMatchType.EXACT,	wordBidMap);
 //			} catch (Exception e) {
-//				logger.error("Failed to get Google traffic estimator data. "+e.getMessage());
-//				//e.printStackTrace();
-//				throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage());
+//				logger.error("Failed to get Google traffic estimator data. "+e.getMessage(), e);
+//				throw new Exception("Failed to get Google traffic estimator data. "+e.getMessage(), e);
 //			}
 //			if (o2!=null) {
 //				String[] words = o2.getListOfKeywords();
@@ -505,9 +500,8 @@ public class TestBidding {
 //					SemplestDB.storeKeywordDataObjects(promotionID, google,
 //							new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 //				} catch (Exception e) {
-//					logger.error("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
-//					//e.printStackTrace();
-//					throw new Exception("Failed to store Google adGroupCriterion data to database. "+e.getMessage());
+//					logger.error("Failed to store Google adGroupCriterion data to database. "+e.getMessage(), e);
+//					throw new Exception("Failed to store Google adGroupCriterion data to database. "+e.getMessage(), e);
 //				}
 //			} // if(searchEngine.equalsIgnoreCase(google))
 //
@@ -522,9 +516,8 @@ public class TestBidding {
 //				try {
 //				SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
 //				} catch (Exception e) {
-//					logger.error("Failed to write traffic estimator data "+e.getMessage());
-//					//e.printStackTrace();
-//					throw new Exception("Failed to write traffic estimator data "+e.getMessage());
+//					logger.error("Failed to write traffic estimator data "+e.getMessage(), e);
+//					throw new Exception("Failed to write traffic estimator data "+e.getMessage(), e);
 //				}
 //				logger.info("Stored traffic estimator data to database");
 //			} else {
@@ -594,9 +587,8 @@ public class TestBidding {
 //				logger.info("No bid data to write to the databse");
 //			}
 //		} catch (Exception e) {
-//			logger.error("ERROR: Unable to store bid data to the database. "+e.getMessage());
-//			//e.printStackTrace();
-//			throw new Exception("Failed to store bid data to the database. "+e.getMessage());
+//			logger.error("ERROR: Unable to store bid data to the database. "+e.getMessage(), e);
+//			throw new Exception("Failed to store bid data to the database. "+e.getMessage(), e);
 //		}
 //		
 //		
@@ -609,9 +601,8 @@ public class TestBidding {
 //			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
 //			logger.info("Stroed targeted daily budget data to the databse");
 //		} catch (Exception e) {
-//			logger.error("ERROR: Unable to store targeted daily budget data to the database. "+e.getMessage());
-//			//e.printStackTrace();
-//			throw new Exception("Failed to store targeted daily budget data to the database ."+e.getMessage());
+//			logger.error("ERROR: Unable to store targeted daily budget data to the database. "+e.getMessage(), e);
+//			throw new Exception("Failed to store targeted daily budget data to the database ."+e.getMessage(), e);
 //		}
 //
 //		
@@ -633,13 +624,11 @@ public class TestBidding {
 //						break;
 //					} catch (Exception e) {
 //						if (k<=maxRetry) {
-//							//e.printStackTrace();
-//							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+//							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 //							k++;				
 //						} else {
-//							e.printStackTrace();
-//							logger.error("Failed to update bids for keyword "+word+" "+e.getMessage());
-//							throw new Exception("Failed to update bids for keyword "+word+" "+e.getMessage());
+//							logger.error("Failed to update bids for keyword "+word+" "+e.getMessage(), e);
+//							throw new Exception("Failed to update bids for keyword "+word+" "+e.getMessage(), e);
 //						}
 //					} // try-catch
 //				} // while(true) 
@@ -667,13 +656,11 @@ public class TestBidding {
 //					break;
 //				} catch (Exception e) {
 //					if (k<=maxRetry) {
-//						//e.printStackTrace();
-//						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+//						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 //						k++;				
 //					} else {
-//						//e.printStackTrace();
-//						logger.error("Failed to update default microBid via Google API. "+e.getMessage());
-//						throw new Exception("Failed to update default microBid via Google API. "+e.getMessage());
+//						logger.error("Failed to update default microBid via Google API. "+e.getMessage(), e);
+//						throw new Exception("Failed to update default microBid via Google API. "+e.getMessage(), e);
 //					}
 //				} // try-catch
 //			} // while(true) 
@@ -727,13 +714,11 @@ public class TestBidding {
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
-					//e.printStackTrace();
-					logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+					logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 					k++;				
 				} else {
-					//e.printStackTrace();
-					logger.error("Failed to get traffic estimator data from Google after "+k+" efforts ."+e.getMessage());
-					throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts ."+e.getMessage());
+					logger.error("Failed to get traffic estimator data from Google after "+k+" efforts ."+e.getMessage(), e);
+					throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts ."+e.getMessage(), e);
 				}
 			}
 		}
@@ -786,13 +771,11 @@ public class TestBidding {
 				break;
 			} catch (Exception e) {
 				if (k<=maxRetry) {
-					//e.printStackTrace();
-					logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+					logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 					k++;				
 				} else {
-					//e.printStackTrace();
-					logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
-					throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
+					logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
+					throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
 				}
 			}
 		}
@@ -857,13 +840,11 @@ public class TestBidding {
 					break;
 				} catch (Exception e) {
 					if (k<=maxRetry) {
-						//e.printStackTrace();
-						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+						logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 						k++;				
 					} else {
-						//e.printStackTrace();
-						logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
-						throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
+						logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
+						throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
 					}
 				}
 			}
@@ -950,13 +931,11 @@ public class TestBidding {
 						break;
 					} catch (Exception e) {
 						if (k<=maxRetry) {
-							//e.printStackTrace();
-							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage());
+							logger.error("Received exception : will retry..., k="+k+" "+e.getMessage(), e);
 							k++;				
 						} else {
-							//e.printStackTrace();
-							logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
-							throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage());
+							logger.error("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
+							throw new Exception("Failed to get traffic estimator data from Google after "+k+" efforts "+e.getMessage(), e);
 						}
 					}
 				}
@@ -1033,7 +1012,7 @@ public class TestBidding {
 				for (int i=0; i< adGroups.length; i++)
 					System.out.println(adGroups[i].getAdGroupName()+": "+adGroups[i].getAdGroupID());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 
 			Long adGroupID = adGroups[0].getAdGroupID();
@@ -1098,7 +1077,7 @@ public class TestBidding {
 				
 				
 			}catch (Exception e){//Catch exception if any
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 			
 			*/
@@ -1177,7 +1156,7 @@ public class TestBidding {
 
 			
 		} catch (Exception e){
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

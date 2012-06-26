@@ -256,7 +256,7 @@ public class Campaign
       for( String r : res )
         System.out.println(r);
 
-    } catch (Exception e ){ e.printStackTrace(); }
+    } catch (Exception e ){ logger.error("Problem", e); }
   }
 }
 

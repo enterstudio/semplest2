@@ -87,7 +87,7 @@ public class PingService implements Runnable
 							logger.info("Ping Service failed for " + this.serviceName + " will try again....in 5 seconds " + retry + ":" + e.getMessage());
 							Thread.sleep(5000);
 							connectSocket();
-							e.printStackTrace();
+							logger.error("Problem", e);
 						}
 					}
 
@@ -109,9 +109,7 @@ public class PingService implements Runnable
 			}
 			catch (InterruptedException e1)
 			{
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-				logger.error(e1.getMessage());
+				logger.error(e1.getMessage(), e1);
 			}
 		}
 	}
@@ -129,8 +127,7 @@ public class PingService implements Runnable
 			}
 			catch (Exception e)
 			{
-				logger.error("Error connecting socket " + e.getMessage() );
-				e.printStackTrace();
+				logger.error("Error connecting socket " + e.getMessage(), e);
 				SemplestErrorHandler.logToDatabase(new Exception("Error connecting socket - " + e.getMessage(), e));
 				return false;
 			}
@@ -223,8 +220,7 @@ public class PingService implements Runnable
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception("registerServiceWithESB - " + e.getMessage(), e));
 			return false;
 		}

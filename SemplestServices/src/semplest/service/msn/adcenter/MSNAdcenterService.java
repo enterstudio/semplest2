@@ -32,8 +32,7 @@ public class MSNAdcenterService implements ServiceInterface
 			}
 			catch (Exception e)
 			{
-				logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
-				e.printStackTrace();
+				logger.error(methodName + ":" + jsonStr + "- " + e.getMessage(), e);
 				throw e;
 			}
 		

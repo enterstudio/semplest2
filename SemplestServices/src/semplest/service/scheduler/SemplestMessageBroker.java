@@ -33,8 +33,7 @@ public class SemplestMessageBroker extends Thread
 			}
 			catch (Exception e)
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("Problem", e);
 				SemplestErrorHandler.logToDatabase(e);
 			}
 
@@ -57,8 +56,7 @@ public class SemplestMessageBroker extends Thread
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			logger.error("Error getting Message: " + e.getMessage());
+			logger.error("Error getting Message: " + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception("Error getting Message - " + e.getMessage(), e));
 		}
 	}

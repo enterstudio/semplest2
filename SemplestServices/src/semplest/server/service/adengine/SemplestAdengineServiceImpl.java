@@ -158,7 +158,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 
 	}
@@ -966,7 +966,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				catch (Exception e)
 				{
 					logger.error("Unable to download Report for account " + promoObj.getAdvertisingEngineAccountPK().toString() + ":"
-							+ e.getMessage());
+							+ e.getMessage(), e);
 				}
 				// update the API charges
 				try
@@ -983,7 +983,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				catch (Exception e)
 				{
 					logger.error("Error updating API charges for Google Account " + promoObj.getAdvertisingEngineAccountPK().toString() + ":"
-							+ e.getMessage());
+							+ e.getMessage(), e);
 				}
 			}
 			else if (adEngine.equalsIgnoreCase(ProtocolEnum.AdEngine.MSN.name()))

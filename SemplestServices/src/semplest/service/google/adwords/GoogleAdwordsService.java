@@ -20,15 +20,13 @@ public class GoogleAdwordsService implements ServiceInterface
 		{
 			logger.debug("Running Google Service " + methodName + ":" + jsonStr);
 			GoogleAdwordsServiceImpl service = new GoogleAdwordsServiceImpl();
-			Class[] parameterTypes = new Class[]
-			{ String.class };
+			Class[] parameterTypes = new Class[]{ String.class };
 			Method method = service.getClass().getMethod(methodName, parameterTypes);
 			return (String) method.invoke(service, jsonStr);
 		}
 		catch (Exception e)
 		{
-			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
-			e.printStackTrace();
+			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
 			throw e;
 		}

@@ -76,9 +76,7 @@ public class SEMplestService
 		}
 		catch (Exception e)
 		{
-			logger.error(e);
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem running Semplest Service", e);
 			SemplestErrorHandler.logToDatabase(e);
 			return;
 		}
@@ -122,8 +120,7 @@ public class SEMplestService
 		}
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 			SemplestErrorHandler.logToDatabase(new Exception("SEMplestService.readProperties - " + e.getMessage(), e));
 			return false;
 		}
@@ -211,8 +208,7 @@ public class SEMplestService
 		}
 		catch (Exception e)
 		{
-			logger.error(e.getMessage());
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 			return false;
 		}
 	}

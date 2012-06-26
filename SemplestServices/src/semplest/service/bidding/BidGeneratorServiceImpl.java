@@ -283,8 +283,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 				logger.info("Added keyword: "+word+"to the account.");
 				Thread.sleep(500);
 			} catch (Exception e) {
-				e.printStackTrace();
-				logger.error("Couldn't add keyword: "+word+"to the account. Exception received. "+e.getMessage());
+				logger.error("Couldn't add keyword: "+word+"to the account. Exception received. "+e.getMessage(), e);
 			}
 		}
 
@@ -341,8 +340,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		
 			//client.setBidsInitial(promotionID, searchEngine, budgetData);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.info("Problem", e);
 		}
 	}
 

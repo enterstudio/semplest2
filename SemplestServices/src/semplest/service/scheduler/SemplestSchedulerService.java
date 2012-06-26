@@ -27,8 +27,7 @@ public class SemplestSchedulerService  implements ServiceInterface
 		}
 		catch (Exception e)
 		{
-			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage());
-			e.printStackTrace();
+			logger.error(methodName + ":" + jsonStr + "- " + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception(methodName + ":" + jsonStr + "- " + e.getMessage(), e));
 			throw e;
 		}

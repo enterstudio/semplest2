@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -19,6 +20,8 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 
 public class TestGoogleAdwords {
 
+	private static final Logger logger = Logger.getLogger(TestGoogleAdwords.class);
+	
 	/**
 	 * @param args
 	 */
@@ -109,7 +112,7 @@ public class TestGoogleAdwords {
 			
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 

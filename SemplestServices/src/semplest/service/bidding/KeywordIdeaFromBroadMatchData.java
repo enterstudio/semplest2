@@ -31,8 +31,7 @@ public class KeywordIdeaFromBroadMatchData {
 			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
 			ret = client.getSearchQueryReportForAccount(new SemplestString().toSemplestString(accountID));
 		} catch(Exception e){
-			//e.printStackTrace();
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		}
 			for(ReportObject r : ret){
 				if (r.getBidMatchType().equalsIgnoreCase("broad")){

@@ -153,7 +153,7 @@ public class NIOClient implements Runnable
 			}
 			catch (Exception e)
 			{
-				e.printStackTrace();
+				logger.error("Problem", e);
 			}
 		}
 	}
@@ -312,7 +312,7 @@ public class NIOClient implements Runnable
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 	}
 }

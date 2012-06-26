@@ -26,8 +26,7 @@ public class KeywordGeneratorService implements ServiceInterface
 		}
 		catch (Exception e)
 		{
-			logger.error("ServiceGet:" + e.getMessage());
-			e.printStackTrace();
+			logger.error("ServiceGet:" + e.getMessage(), e);
 			SemplestErrorHandler.logToDatabase(new Exception("ServiceGet - " + e.getMessage(), e));
 			throw e;	
 		}

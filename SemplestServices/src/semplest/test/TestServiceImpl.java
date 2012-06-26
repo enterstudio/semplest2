@@ -1,5 +1,7 @@
 package semplest.test;
 
+import org.apache.log4j.Logger;
+
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.TestServiceInterface;
@@ -7,7 +9,8 @@ import semplest.services.client.interfaces.TestServiceInterface;
 
 public class TestServiceImpl implements TestServiceInterface
 {
-
+	private static final Logger logger = Logger.getLogger(TestServiceImpl.class);
+	
 	@Override
 	public String TestMethod(String jsonStr)
 	{
@@ -18,7 +21,7 @@ public class TestServiceImpl implements TestServiceInterface
 		try {
 			Thread.sleep(600);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		
 		long total =  System.currentTimeMillis() - start;

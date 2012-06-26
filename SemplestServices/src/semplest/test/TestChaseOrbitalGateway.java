@@ -77,7 +77,7 @@ public class TestChaseOrbitalGateway
 		{
 			System.err.println("TransactionProcessor failed to initialize");
 			System.err.println(iex.getMessage());
-			iex.printStackTrace();
+			logger.error("Problem", iex);
 			System.exit(-1);
 
 		}

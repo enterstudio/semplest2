@@ -152,9 +152,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (TransactionException tex)
 		{
-			logger.error("Transaction failed, including retries and failover " + tex.getMessage());
-			tex.printStackTrace();
-			throw new Exception("Transaction failed, including retries and failover" + ":" + tex.getMessage());
+			logger.error("Transaction failed, including retries and failover " + tex.getMessage(), tex);
+			throw new Exception("Transaction failed, including retries and failover" + ":" + tex.getMessage(), tex);
 		}
 
 		GatewayReturnObject ret = new GatewayReturnObject();
@@ -249,9 +248,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (TransactionException tex)
 		{
-			logger.error(tex.getMessage());
-			tex.printStackTrace();
-			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage());
+			logger.error(tex.getMessage(), tex);
+			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage(), tex);
 		}
 		GatewayReturnObject ret = new GatewayReturnObject();
 		// This line displays the entire xml response on the java system
@@ -338,20 +336,18 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (InitializationException ie)
 		{
-			logger.error("Unable to initialize request object " + ie.getMessage());
-			ie.printStackTrace();
-			throw new Exception("Unable to initialize request object" + ":" + ie.getMessage());
+			logger.error("Unable to initialize request object " + ie.getMessage(), ie);
+			throw new Exception("Unable to initialize request object" + ":" + ie.getMessage(), ie);
 		}
 		catch (FieldNotFoundException fnfe)
 		{
-			logger.error("Unable to find XML field in template " + fnfe.getMessage());
-			fnfe.printStackTrace();
-			throw new Exception("Unable to find XML field in template" + ":" + fnfe.getMessage());
+			logger.error("Unable to find XML field in template " + fnfe.getMessage(), fnfe);
+			throw new Exception("Unable to find XML field in template" + ":" + fnfe.getMessage(), fnfe);
 
 		}
 		catch (Exception ex)
 		{
-			ex.printStackTrace();
+			logger.error("Problem", ex);
 			throw ex;
 
 		}
@@ -364,10 +360,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (TransactionException tex)
 		{
-			logger.error("Transaction failed, including retries and failover");
-			logger.error(tex.getMessage());
-			tex.printStackTrace();
-			throw new Exception("Transaction failed, including retries and failover" + ":" + tex.getMessage());
+			logger.error("Transaction failed, including retries and failover", tex);
+			throw new Exception("Transaction failed, including retries and failover" + ":" + tex.getMessage(), tex);
 		}
 
 		GatewayReturnObject ret = new GatewayReturnObject();
@@ -515,19 +509,17 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (InitializationException ie)
 		{
-			logger.error(ie.getMessage());
-			ie.printStackTrace();
-			throw new Exception("Unable to initialize request object: " + ie.getMessage());
+			logger.error(ie.getMessage(), ie);
+			throw new Exception("Unable to initialize request object: " + ie.getMessage(), ie);
 		}
 		catch (FieldNotFoundException fnfe)
 		{
-			logger.error(fnfe.getMessage());
-			fnfe.printStackTrace();
-			throw new Exception("Unable to find XML field in template " + fnfe.getMessage());
+			logger.error(fnfe.getMessage(), fnfe);
+			throw new Exception("Unable to find XML field in template " + fnfe.getMessage(), fnfe);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			logger.error("Problem", e);
 			throw e;
 		}
 		//Process Transaction
@@ -539,9 +531,8 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (TransactionException tex)
 		{
-			logger.error(tex.getMessage());
-			tex.printStackTrace();
-			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage());
+			logger.error(tex.getMessage(), tex);
+			throw new Exception("Transaction failed, including retries and failover " + tex.getMessage(), tex);
 		}
 		GatewayReturnObject ret = new GatewayReturnObject();
 		// This line displays the entire xml response on the java system
@@ -646,7 +637,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem generating formatted string for GatewayReturnObject [" + ret + "]");
+			logger.error("Problem generating formatted string for GatewayReturnObject [" + ret + "]", e);
 		}
 		
 		
