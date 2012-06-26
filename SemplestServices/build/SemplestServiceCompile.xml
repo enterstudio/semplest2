@@ -162,7 +162,10 @@
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
 	  	 	<copy todir="${lib}" filtering="off">
 	  	 		<flattenmapper />
-	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
+	  	 		<fileset dir="${semplest.keywords.lib}" 
+	  	 			includes="**/*.jar" >
+	  	 			<exclude name = "SemplestServices.jar" />
+	  	 		</fileset>
 	  	 	</copy>
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>

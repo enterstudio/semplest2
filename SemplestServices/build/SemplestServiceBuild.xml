@@ -217,7 +217,10 @@
 		<!-- Create a Jar for SemplestKeywords, and put it to SemplestServices/lib -->
   	 	<copy todir="${dist}/lib" filtering="off">
   	 		<flattenmapper />
-  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />
+  	 		<fileset dir="${semplest.keywords.lib}" 
+  	 			includes="**/*.jar" >
+  	 			<exclude name = "SemplestServices.jar" />
+  	 		</fileset>
   	 	</copy>
 			<path id="keywords.path">
 				<pathelement location="${classes}"/>
