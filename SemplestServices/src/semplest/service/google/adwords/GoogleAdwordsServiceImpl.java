@@ -35,6 +35,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleAddKeywordRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.GoogleSiteLink;
@@ -1560,6 +1561,87 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return gson.toJson(res);
 	}
 	
+	public List<AdGroupCriterionOperation> getAddKeywordOperations(final Long adGroupId, final List<GoogleAddKeywordRequest> requests)
+	{
+		final List<AdGroupCriterionOperation> addKeywordOperations = new ArrayList<AdGroupCriterionOperation>();
+		for (final GoogleAddKeywordRequest request : requests)
+		{
+			final String keywordString = request.getKeyword();
+			final KeywordMatchType matchType = request.getMatchType();
+			final Long microBidAmount = request.getMicroBidAmount();
+			final AdGroupCriterionOperation addKeywordOperation = getRegularKeywordAddOperation(adGroupId, keywordString, matchType, microBidAmount);
+			addKeywordOperations.add(addKeywordOperation);
+		}
+		return addKeywordOperations;
+	}
+	
+	public GoogleAddKeywordRequest getGoogleAddKeywordRequest(final List<GoogleAddKeywordRequest> requests, final String keywordText, final KeywordMatchType keywordMatchType)
+	{
+		for (final GoogleAddKeywordRequest request: requests)
+		{
+			final String requestKeywordText = request.getKeyword();
+			final KeywordMatchType requestKeywordMatchType = request.getMatchType();
+			if (requestKeywordMatchType == keywordMatchType && requestKeywordText.equals(keywordText))
+			{
+				return request;
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests) throws Exception
+	{
+		final Map<GoogleAddKeywordRequest, Long> requestToIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
+		final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests);		
+		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
+		final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
+		final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
+		final AdGroupCriterionReturnValue regularKeywordResult = adGroupCriterionService.mutate(addKeywordOperationsArray);			
+		if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
+		{
+			final AdGroupCriterion[] adGroupCriterions = regularKeywordResult.getValue();
+			for (final AdGroupCriterion adGroupCriterion : adGroupCriterions)
+			{
+				if (adGroupCriterion instanceof BiddableAdGroupCriterion)
+				{
+					final Criterion criterion = adGroupCriterion.getCriterion();
+					if (criterion instanceof Keyword)
+					{
+						final Keyword keyword = (Keyword)criterion;
+						final Long googleKeywordId = keyword.getId();
+						final String keywordText = keyword.getText();
+						final KeywordMatchType keywordMatchType = keyword.getMatchType();
+						final GoogleAddKeywordRequest originalRequest = getGoogleAddKeywordRequest(requests, keywordText, keywordMatchType);
+						if (originalRequest == null)
+						{
+							logger.warn("Could not find original GoogleAddKeywordRequest for KeywordText [] and KeywordMatchType [] from within the Keyword Criterions returned from Google");
+						}
+						else
+						{
+							requestToIdMap.put(originalRequest, googleKeywordId);
+						}
+					}
+				}
+			}
+			if (requestToIdMap.size() != requests.size())
+			{
+				logger.warn("# of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size() + "] is NOT equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");						
+			}
+			else
+			{
+				logger.warn("As expected, # of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size() + "] is equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");
+			}
+		}
+		else
+		{
+			final String errMsg = "No results returned from Google when executing RegularKeyword Add operations.  This is NOT expected.";
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}
+		return requestToIdMap;
+	}
+	
 	@Override
 	public KeywordDataObject addKeyWordToAdGroup(String accountID, Long adGroupID, String keyword, KeywordMatchType matchType, Long microBidAmount)
 			throws Exception
@@ -2599,7 +2681,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 	
-	public AdGroupCriterionOperation getRegularKeywordRemoveOperation(Long adGroupID, Long criterionId)
+	public static AdGroupCriterionOperation getRegularKeywordRemoveOperation(Long adGroupID, Long criterionId)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setId(criterionId);
@@ -2614,7 +2696,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 	
-	public AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId)
+	public static AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);
@@ -2635,7 +2717,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 	
-	public AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount)
+	public static AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);

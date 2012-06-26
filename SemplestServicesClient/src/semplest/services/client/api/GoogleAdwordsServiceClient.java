@@ -21,6 +21,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
+import semplest.server.protocol.google.GoogleAddKeywordRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
 import semplest.server.protocol.google.UpdateAdRequest;
@@ -705,6 +706,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public Boolean deleteNegativeKeywords(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

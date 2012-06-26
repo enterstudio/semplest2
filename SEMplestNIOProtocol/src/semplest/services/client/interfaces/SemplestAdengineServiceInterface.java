@@ -53,11 +53,9 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception;
 		
 	Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngine) throws Exception;	
-	
-	// done for MSN
-	
+		
 	Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines);
 	Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception;
 	
-	public abstract KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
+	KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
 }

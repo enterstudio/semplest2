@@ -1737,11 +1737,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			throw new Exception(e2.dumpToString(), e2);
 		}
 	}
-
-	@Override
-	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail, Exception
+	
+	public Keyword getKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception
 	{
-		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
 		keyword.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
@@ -1768,6 +1766,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		{
 			throw new Exception("Problem creating MSN keyword for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Text [" + text + "], Bid [" + bid + "] because the MatchType specified [" + matchType + "] is not known");
 		}
+		return keyword;
+	}
+
+	@Override
+	public long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws RemoteException, ApiFaultDetail, AdApiFaultDetail, Exception
+	{
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		final Keyword keyword = getKeyword(accountId, adGroupId, text, matchType, bid);
 		try
 		{
 			final AddKeywordsResponse addKeywordsResponse = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, new Keyword[]{keyword}));
