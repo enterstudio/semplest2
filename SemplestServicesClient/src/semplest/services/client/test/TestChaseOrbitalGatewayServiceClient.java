@@ -31,9 +31,9 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		final GatewayReturnObject gatewayReturnObject = testClient.testCreateProfile();
 		testClient.testAuthorizeAndCapture(gatewayReturnObject);		
 		testClient.testUpdateProfileRecurringBilling(gatewayReturnObject);
-		testClient.testRefundPayment(gatewayReturnObject);
-		testClient.testTerminateRecurringPayments(gatewayReturnObject);
+		testClient.testRefundPayment(gatewayReturnObject);		
 		testClient.testGetProfiles(gatewayReturnObject);
+		testClient.testTerminateRecurringPayments(gatewayReturnObject);
 	}
 	
 	public GatewayReturnObject testCreateProfile() throws Exception
