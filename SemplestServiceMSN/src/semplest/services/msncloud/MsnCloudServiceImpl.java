@@ -1012,8 +1012,7 @@ public class MsnCloudServiceImpl implements MsnCloudService
 		}
 		catch (RemoteException e)
 		{
-			e.printStackTrace();
-			throw new SemplestError(e);
+			throw new SemplestError("Problem", e);
 		}
 
 		String reportId = submitGenerateReportResponse.getReportRequestId();
@@ -1189,7 +1188,7 @@ public class MsnCloudServiceImpl implements MsnCloudService
 				}
 				catch (InterruptedException e)
 				{
-					e.printStackTrace();
+					LOG.error("Problem", e);
 				}
 				elapsedSeconds += waitSeconds;
 

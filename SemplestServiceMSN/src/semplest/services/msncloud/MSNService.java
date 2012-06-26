@@ -3,6 +3,8 @@ package semplest.services.msncloud;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.log4j.Logger;
+
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
 import semplest.other.TimeServer;
@@ -10,7 +12,8 @@ import semplest.other.TimeServerImpl;
 
 public class MSNService implements ServiceInterface
 {
-
+	private static final Logger logger = Logger.getLogger(MSNService.class);
+	
 	@Override
 	public String ServiceGet(String methodName, String jsonStr)
 	{
@@ -26,28 +29,23 @@ public class MSNService implements ServiceInterface
 		}
 		catch (SecurityException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (IllegalArgumentException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (NoSuchMethodException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (IllegalAccessException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		catch (InvocationTargetException e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Problem", e);
 		}
 		return "Error running " + methodName ;
 		
