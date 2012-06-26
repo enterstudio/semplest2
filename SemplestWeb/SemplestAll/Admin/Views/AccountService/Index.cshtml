@@ -104,7 +104,7 @@ Account Service
                                         { @Html.ActionLink("Enable", "", "", new { @class = "enableuser" })}
                                         @Html.RouteLink("Update Account", new { Controller = "CustomerAccount", action = "Edit", id = Model.AccountServiceModel.AccountNumber })
                                         @Html.ActionLink("Delete Account","","", new { @class = "deleteaccount" })
-                                        <a href="#">Impresonate</a> <a href="#">Issue Refund</a>
+                                        <a href="#">Impersonate</a> <a href="#">Issue Refund</a>
                                         @if (Model.ParentName.ToLower() == "This is a parent".ToLower())
                                         {
                                             @Html.RouteLink("Excel Import Customer Data", new { Controller = "AccountService", action = "CustomerImport", id = Model.AccountServiceModel.AccountNumber })

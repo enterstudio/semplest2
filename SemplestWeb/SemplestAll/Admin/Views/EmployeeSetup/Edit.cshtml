@@ -96,13 +96,9 @@ Edit Employee:
                     @Html.ValidationMessageFor(model => model.EmployeeSetup.UserID)
                 </li>
                 <li>
-                <input class="k-textbox" data-val="true" data-val-required="The Password field is required." id="EmployeeSetupt_UserPassword" name="EmployeeSetup.UserPassword" type="password" value=@Model.EmployeeSetup.UserPassword  />
+                    @Html.LabelFor(model => model.EmployeeSetup.UserPassword)
+                    <input class="k-textbox" data-val="true" data-val-required="The Password field is required." id="EmployeeSetupt_UserPassword" name="EmployeeSetup.UserPassword" type="password" value=@Model.EmployeeSetup.UserPassword  />
                     @Html.ValidationMessageFor(model => model.EmployeeSetup.UserPassword)
-        
-        @*          @Html.LabelFor(model => model.EmployeeSetup.UserPassword)
-                    @Html.TextBoxFor(model => model.EmployeeSetup.UserPassword, new { @class = "k-textbox" })
-                    @Html.ValidationMessageFor(model => model.EmployeeSetup.UserPassword)
-        *@        
                 </li>
                 <li>
                     <label>

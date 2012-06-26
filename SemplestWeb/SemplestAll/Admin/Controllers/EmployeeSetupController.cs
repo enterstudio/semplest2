@@ -16,22 +16,22 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
-    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class EmployeeSetupController : Controller
     {
 
         public ActionResult Add()
         {
             SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
-          
+
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
-          
+
 
             /////////////////////////////////////////////////////////////////////////////////
             //for roles dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r=>r.RoleName);
+            var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
             x.SelectedRoleID = -1;
             x.Roles = roles.Select(r => new SelectListItem
             {
@@ -53,7 +53,7 @@ namespace Semplest.Admin.Controllers
                     FirstName = u.FirstName,
                     LastName = u.LastName
                 }
-                ).ToList().OrderBy(r=>r.LastName).ThenBy(r=>r.FirstName);
+                ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
             x.SelectedReportingToID = -1;
 
 
@@ -91,7 +91,7 @@ namespace Semplest.Admin.Controllers
             //FUTURE: add rearch by email and by account number || u.Email.Contains(emailsearch)
             //if (search == null) search = "";
             //var filter;
-            
+
 
             var viewModel =
                from e in dbcontext.Employees
@@ -115,28 +115,28 @@ namespace Semplest.Admin.Controllers
                    RoleName = r.RoleName,
                    Email = u.Email,
                    ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value),
-                   isActive = u.IsActive 
+                   isActive = u.IsActive
                };
 
             //ordering by lastname, firstname
-            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName); 
+            viewModel = viewModel.OrderBy(p => p.LastName).ThenBy(p => p.FirstName);
 
 
             //filtering the search with linqkit (added linqkit package through nugit)
-            var predicate = PredicateBuilder.True <EmployeeSetup>();
-            if (search != null && search!="")
+            var predicate = PredicateBuilder.True<EmployeeSetup>();
+            if (search != null && search != "")
             {
 
-                predicate = PredicateBuilder.False <EmployeeSetup>();
+                predicate = PredicateBuilder.False<EmployeeSetup>();
                 predicate = predicate.Or(p => p.FirstName.ToLower().Contains(search.ToLower()));
                 predicate = predicate.Or(p => p.LastName.ToLower().Contains(search.ToLower()));
                 predicate = predicate.Or(p => p.Email.ToLower().Contains(search.ToLower()));
                 viewModel = viewModel.AsExpandable().Where(predicate);
 
             }
-            
 
-            
+
+
             return View(viewModel);
         }
 
@@ -175,9 +175,9 @@ namespace Semplest.Admin.Controllers
                    LastName = u.LastName,
                    RoleName = r.RoleName,
                    Email = u.Email,
-                    ReportingTo=(e.ReportingTo==null?-1:e.ReportingTo.Value),
-                    HireDate = e.HireDate, 
-                    isActive=u.IsActive 
+                   ReportingTo = (e.ReportingTo == null ? -1 : e.ReportingTo.Value),
+                   HireDate = e.HireDate,
+                   isActive = u.IsActive
                };
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
@@ -198,8 +198,8 @@ namespace Semplest.Admin.Controllers
             x.SelectedRoleID = viewModel.Select(r => r.RolesFK).FirstOrDefault();
             x.Roles = roles.Select(r => new SelectListItem
             {
-            Value = r.RolePK.ToString() ,
-            Text = r.RoleName.ToString()
+                Value = r.RolePK.ToString(),
+                Text = r.RoleName.ToString()
             });
 
 
@@ -211,14 +211,14 @@ namespace Semplest.Admin.Controllers
                 from e in dbcontext.Employees
                 join u in dbcontext.Users on e.UsersFK equals u.UserPK
                 where u.IsActive.Equals(true)
-                select new ReportingToModel 
+                select new ReportingToModel
                 {
-                     EmployeePK =e.EmployeePK,
-                     FirstName=u.FirstName,
-                     LastName=u.LastName 
+                    EmployeePK = e.EmployeePK,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName
                 }
                 ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
-            x.SelectedReportingToID= viewModel.Select(r => r.ReportingTo).FirstOrDefault();
+            x.SelectedReportingToID = viewModel.Select(r => r.ReportingTo).FirstOrDefault();
 
 
             //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
@@ -226,7 +226,7 @@ namespace Semplest.Admin.Controllers
             sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Not Assigned" });
 
 
-            x.ReportingTo= reportingto.Select(r => new SelectListItem
+            x.ReportingTo = reportingto.Select(r => new SelectListItem
             {
                 Value = r.EmployeePK.ToString(),
                 Text = r.FirstName.ToString() + " " + r.LastName.ToString()
@@ -235,8 +235,8 @@ namespace Semplest.Admin.Controllers
             /////////////////////////////////////////////////////////////////////////////////
             // for employeetype dropdown
             /////////////////////////////////////////////////////////////////////////////////
-            var employeetypes = (from r in dbcontext.EmployeeTypes  select r).ToList();
-            x.SelectedEmployeeTypeID  = viewModel.Select(r => r.EmployeeTypeID).FirstOrDefault();
+            var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+            x.SelectedEmployeeTypeID = viewModel.Select(r => r.EmployeeTypeID).FirstOrDefault();
             x.EmployeeTypes = employeetypes.Select(r => new SelectListItem
             {
                 Value = r.EmployeeTypeID.ToString(),
@@ -265,71 +265,71 @@ namespace Semplest.Admin.Controllers
 
             //check if userid has been taken by other users
 
-                  var userIDSs = from c in dbcontext.Credentials
-                        where c.Username.Equals(m.EmployeeSetup.UserID) && !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
-                        select c;
-                  if (userIDSs.Count() > 0)
-                      ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
+            var userIDSs = from c in dbcontext.Credentials
+                           where c.Username.Equals(m.EmployeeSetup.UserID) && !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
+                           select c;
+            if (userIDSs.Count() > 0)
+                ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
 
 
-                  if (!ModelState.IsValid)
-                  {
-                      //repopulate 
+            if (!ModelState.IsValid)
+            {
+                //repopulate 
 
-                      /////////////////////////////////////////////////////////////////////////////////
-                      //for roles dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
+                /////////////////////////////////////////////////////////////////////////////////
+                //for roles dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
 
-                      m.Roles = roles.Select(r => new SelectListItem
-                      {
-                          Value = r.RolePK.ToString(),
-                          Text = r.RoleName.ToString()
-                      });
-
-
-                      /////////////////////////////////////////////////////////////////////////////////
-                      //for Reportingto dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var reportingto = (
-                          from e in dbcontext.Employees
-                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where u.IsActive.Equals(true)
-                          select new ReportingToModel
-                          {
-                              EmployeePK = e.EmployeePK,
-                              FirstName = u.FirstName,
-                              LastName = u.LastName
-                          }
-                          ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
+                m.Roles = roles.Select(r => new SelectListItem
+                {
+                    Value = r.RolePK.ToString(),
+                    Text = r.RoleName.ToString()
+                });
 
 
+                /////////////////////////////////////////////////////////////////////////////////
+                //for Reportingto dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var reportingto = (
+                    from e in dbcontext.Employees
+                    join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                    where u.IsActive.Equals(true)
+                    select new ReportingToModel
+                    {
+                        EmployeePK = e.EmployeePK,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName
+                    }
+                    ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
 
-                      //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
-                      List<SelectListItem> sli = new List<SelectListItem>();
-                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Not Assigned" });
 
 
-                      m.ReportingTo = reportingto.Select(r => new SelectListItem
-                      {
-                          Value = r.EmployeePK.ToString(),
-                          Text = r.FirstName.ToString() + " " + r.LastName.ToString()
-                      }).Union(sli);
+                //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
+                List<SelectListItem> sli = new List<SelectListItem>();
+                sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "Not Assigned" });
 
-                      /////////////////////////////////////////////////////////////////////////////////
-                      // for employeetype dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
 
-                      m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
-                      {
-                          Value = r.EmployeeTypeID.ToString(),
-                          Text = r.EmployeeType1.ToString()
-                      });
+                m.ReportingTo = reportingto.Select(r => new SelectListItem
+                {
+                    Value = r.EmployeePK.ToString(),
+                    Text = r.FirstName.ToString() + " " + r.LastName.ToString()
+                }).Union(sli);
 
-                      return View(m);
-                  }
-            
+                /////////////////////////////////////////////////////////////////////////////////
+                // for employeetype dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+
+                m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
+                {
+                    Value = r.EmployeeTypeID.ToString(),
+                    Text = r.EmployeeType1.ToString()
+                });
+
+                return View(m);
+            }
+
             var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
             user.FirstName = m.EmployeeSetup.FirstName;
             user.MiddleInitial = m.EmployeeSetup.MiddleInitial;
@@ -342,7 +342,7 @@ namespace Semplest.Admin.Controllers
 
             var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
             employee.EmployeeTypeFK = m.SelectedEmployeeTypeID;
-            employee.ReportingTo = m.SelectedReportingToID == -1 ?  default(int?) : m.SelectedReportingToID;
+            employee.ReportingTo = m.SelectedReportingToID == -1 ? default(int?) : m.SelectedReportingToID;
             employee.HireDate = m.EmployeeSetup.HireDate;
             UpdateModel(employee);
 
@@ -423,7 +423,7 @@ namespace Semplest.Admin.Controllers
 
             //return View("index");
 
-            return RedirectToAction("Index"); 
+            return RedirectToAction("Index");
 
         }
 
@@ -442,72 +442,72 @@ namespace Semplest.Admin.Controllers
 
             //check if userid has been taken by other users
 
-                  var userIDSs = from c in dbcontext.Credentials
-                        where c.Username.Equals(m.EmployeeSetup.UserID) //&& !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
-                        select c;
-                  if (userIDSs.Count() > 0)
-                      ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
+            var userIDSs = from c in dbcontext.Credentials
+                           where c.Username.Equals(m.EmployeeSetup.UserID) //&& !c.UsersFK.Equals(m.EmployeeSetup.UserPK)
+                           select c;
+            if (userIDSs.Count() > 0)
+                ModelState.AddModelError("EmployeeSetup.UserID", "This UserID is already taken!!");
 
 
-                  if (!ModelState.IsValid)
-                  {
-                      //repopulate 
+            if (!ModelState.IsValid)
+            {
+                //repopulate 
 
 
-                      var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
-                      
-                      m.Roles = roles.Select(r => new SelectListItem
-                      {
-                          Value = r.RolePK.ToString(),
-                          Text = r.RoleName.ToString()
-                      });
+                var roles = (from r in dbcontext.Roles select r).ToList().OrderBy(r => r.RoleName);
 
-
-
-                      /////////////////////////////////////////////////////////////////////////////////
-                      //for Reportingto dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var reportingto = (
-                          from e in dbcontext.Employees
-                          join u in dbcontext.Users on e.UsersFK equals u.UserPK
-                          where u.IsActive.Equals(true)
-                          select new ReportingToModel
-                          {
-                              EmployeePK = e.EmployeePK,
-                              FirstName = u.FirstName,
-                              LastName = u.LastName
-                          }
-                          ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
-                      
+                m.Roles = roles.Select(r => new SelectListItem
+                {
+                    Value = r.RolePK.ToString(),
+                    Text = r.RoleName.ToString()
+                });
 
 
 
-                      //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
-                      List<SelectListItem> sli = new List<SelectListItem>();
-                      sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+                /////////////////////////////////////////////////////////////////////////////////
+                //for Reportingto dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var reportingto = (
+                    from e in dbcontext.Employees
+                    join u in dbcontext.Users on e.UsersFK equals u.UserPK
+                    where u.IsActive.Equals(true)
+                    select new ReportingToModel
+                    {
+                        EmployeePK = e.EmployeePK,
+                        FirstName = u.FirstName,
+                        LastName = u.LastName
+                    }
+                    ).ToList().OrderBy(r => r.LastName).ThenBy(r => r.FirstName);
 
 
-                      m.ReportingTo = reportingto.Select(r => new SelectListItem
-                      {
-                          Value = r.EmployeePK.ToString(),
-                          Text = r.FirstName.ToString() + " " + r.LastName.ToString()
-                      }).Union(sli);
+
+
+                //to add exception to dropdownlist - it can be optional, in this case the employee reporting to may be optional
+                List<SelectListItem> sli = new List<SelectListItem>();
+                sli.Add(new SelectListItem { Value = (-1).ToString(), Text = "«« Not Assigned »»" });
+
+
+                m.ReportingTo = reportingto.Select(r => new SelectListItem
+                {
+                    Value = r.EmployeePK.ToString(),
+                    Text = r.FirstName.ToString() + " " + r.LastName.ToString()
+                }).Union(sli);
 
 
 
-                      /////////////////////////////////////////////////////////////////////////////////
-                      // for employeetype dropdown
-                      /////////////////////////////////////////////////////////////////////////////////
-                      var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
-                      m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
-                      {
-                          Value = r.EmployeeTypeID.ToString(),
-                          Text = r.EmployeeType1.ToString()
-                      });
+                /////////////////////////////////////////////////////////////////////////////////
+                // for employeetype dropdown
+                /////////////////////////////////////////////////////////////////////////////////
+                var employeetypes = (from r in dbcontext.EmployeeTypes select r).ToList();
+                m.EmployeeTypes = employeetypes.Select(r => new SelectListItem
+                {
+                    Value = r.EmployeeTypeID.ToString(),
+                    Text = r.EmployeeType1.ToString()
+                });
 
 
-                      return View(m);
-                  }
+                return View(m);
+            }
 
 
             try
@@ -526,14 +526,14 @@ namespace Semplest.Admin.Controllers
 
                             };
                 dbcontext.Users.Add(u);
-                
 
-                var r= dbcontext.Roles.First(p => p.RolePK   == m.SelectedRoleID );
-                var ura = new UserRolesAssociation {Role = r, User = u};
+
+                var r = dbcontext.Roles.First(p => p.RolePK == m.SelectedRoleID);
+                var ura = new UserRolesAssociation { Role = r, User = u };
                 dbcontext.UserRolesAssociations.Add(ura);
 
                 var et = dbcontext.EmployeeTypes.First(p => p.EmployeeTypeID == m.SelectedEmployeeTypeID);
-                var e = new Employee {EmployeeType = et, User = u, HireDate = m.EmployeeSetup.HireDate};
+                var e = new Employee { EmployeeType = et, User = u, HireDate = m.EmployeeSetup.HireDate };
                 dbcontext.Employees.Add(e);
                 //Credential c = dbcontext.Credentials.Add(new Credential { User = u, Username = m.EmployeeSetup.Email, Password = "t" });
 
@@ -544,7 +544,7 @@ namespace Semplest.Admin.Controllers
                                  Username = m.EmployeeSetup.UserID,
                                  Password = m.EmployeeSetup.UserPassword
                              };
-                dbcontext.Credentials.Add(cr); 
+                dbcontext.Credentials.Add(cr);
 
 
                 //BillType bt = dbcontext.BillTypes.First(p => p.BillType1 == "Flat Fee"); // --- feees --- !!!
@@ -585,7 +585,7 @@ namespace Semplest.Admin.Controllers
         }
 
 
-        public ActionResult Remove(int id)
+        public ActionResult Delete(int id)
         {
 
             SemplestModel.Semplest dbcontext = new SemplestModel.Semplest();
@@ -617,61 +617,55 @@ namespace Semplest.Admin.Controllers
 
             EmployeeSetupWithRolesModel x = new EmployeeSetupWithRolesModel();
             x.EmployeeSetup = viewModel.FirstOrDefault();
-            
+
 
             return PartialView(x);
             //return RedirectToAction("Index");
         }
 
         [HttpPost]
-        public ActionResult Remove(EmployeeSetupWithRolesModel m, string command)
+        public ActionResult Delete(EmployeeSetupWithRolesModel m, string command)
         {
             var dbcontext = new SemplestModel.Semplest();
 
             if (command.ToLower() == "cancel") return RedirectToAction("Index");
-            if (command.ToLower() == "delete") {
+            if (command.ToLower() == "delete")
+            {
 
                 try
-                { 
-
-                var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
-                
-                //need to add effective date to db ---><><>
-
-                var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
-                
-                var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
-
-                var credential = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
-
-
-                var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.EmployeeFK.Equals(m.EmployeeSetup.UserPK));
-
-                if (employeecustomerassociation != null) throw new Exception("Could not delete employee");
-
-                dbcontext.Users.Remove(user);
-                dbcontext.Employees.Remove(employee);
-                dbcontext.UserRolesAssociations.Remove(userrolesassociation);
-                dbcontext.Credentials.Remove(credential);
-
-                dbcontext.SaveChanges();
-                TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " has been successfully deleted.";
-                }
-                
-                catch(Exception ex)
                 {
-                    TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " could NOT be deleted."; 
+
+                    var user = dbcontext.Users.ToList().Find(p => p.UserPK == m.EmployeeSetup.UserPK);
+
+                    //need to add effective date to db ---><><>
+
+                    var employee = dbcontext.Employees.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+
+                    var userrolesassociation = dbcontext.UserRolesAssociations.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+
+                    var credential = dbcontext.Credentials.ToList().Find(p => p.UsersFK == m.EmployeeSetup.UserPK);
+
+
+                    var employeecustomerassociation = dbcontext.EmployeeCustomerAssociations.ToList().Find(p => p.EmployeeFK.Equals(m.EmployeeSetup.UserPK));
+
+                    if (employeecustomerassociation != null) throw new Exception("Could not delete employee");
+
+                    dbcontext.Users.Remove(user);
+                    dbcontext.Employees.Remove(employee);
+                    dbcontext.UserRolesAssociations.Remove(userrolesassociation);
+                    dbcontext.Credentials.Remove(credential);
+
+                    dbcontext.SaveChanges();
+                    TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " has been successfully deleted.";
                 }
 
-
+                catch (Exception ex)
+                {
+                    TempData["message"] = "Employee " + m.EmployeeSetup.FirstName + " " + m.EmployeeSetup.LastName + " could NOT be deleted.";
+                }
 
             }
-            //return View();
             return RedirectToAction("Index");
         }
-
-
-
-
     }
 }
