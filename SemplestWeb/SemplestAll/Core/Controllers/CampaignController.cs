@@ -291,6 +291,7 @@ namespace Semplest.Core.Controllers
             //ProductGroup pg = dbContext.ProductGroups.Where(x => x.ProductGroupName == model.ProductGroup.ProductGroupName).First();
             //Promotion pm = dbContext.ProductGroups.Where(x => x.ProductGroupName==model.ProductGroup.ProductGroupName).First().Promotions.Where(p => p.PromotionName == model.ProductGroup.ProductPromotionName).First();
             var userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            int customerFk = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
             var pm =
                 dbContext.Users.First(x => x.UserPK == userid).Customer.ProductGroups.First(
                     x => x.ProductGroupName == model.ProductGroup.ProductGroupName).Promotions.First(
@@ -299,7 +300,7 @@ namespace Semplest.Core.Controllers
                 adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
             try
             {
-                pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(pm.PromotionPK, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
+                pm.IsLaunched = sw.scheduleAddPromotionToAdEngine(customerFk, pm.ProductGroupFK, pm.PromotionPK, adEngines.ToArray()); ;
             }
             catch (Exception ex)
             {
