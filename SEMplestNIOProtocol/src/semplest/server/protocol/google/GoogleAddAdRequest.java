@@ -1,5 +1,7 @@
 package semplest.server.protocol.google;
 
+import semplest.util.SemplestUtils;
+
 public class GoogleAddAdRequest
 {
 	private final Integer promotionAdID;
@@ -10,9 +12,9 @@ public class GoogleAddAdRequest
 	public GoogleAddAdRequest(Integer promotionAdID, String headline, String description1, String description2)
 	{
 		this.promotionAdID = promotionAdID;
-		this.headline = headline;
-		this.description1 = description1;
-		this.description2 = description2;
+		this.headline = SemplestUtils.getTrimmedNonNullString(headline);
+		this.description1 = SemplestUtils.getTrimmedNonNullString(description1);
+		this.description2 = SemplestUtils.getTrimmedNonNullString(description2);
 	}
 	
 	public Integer getPromotionAdID()

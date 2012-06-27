@@ -16,8 +16,8 @@ public class GoogleAddAdsRequest
 	{
 		this.accountID = accountID;
 		this.adGroupID = adGroupID;
-		this.displayURL = displayURL;
-		this.url = url;
+		this.displayURL = SemplestUtils.getTrimmedNonNullString(displayURL);
+		this.url = SemplestUtils.getTrimmedNonNullString(url);
 		this.addAdTextRequests = addAdTextRequests;
 	}
 
