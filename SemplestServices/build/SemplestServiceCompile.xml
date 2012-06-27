@@ -158,7 +158,7 @@
   	 	/>	
 	  	
 	  	<!-- Create JAR for SemplestKeywords and put it to SemplestServices/lib -->
-	  	 	<echo message="Creating Jar for SemplestKeywords..."/>	 
+	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 
 			<!-- Copy over the google and msn codes (from SemplestServices), so we can compile them with the keyword project together -->
 			<mkdir dir="${semplest.keywords.dir}/dep"/>
 			<copydir src="${basedir}/src/semplest/service/google/adwords"
