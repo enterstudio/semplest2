@@ -38,6 +38,7 @@ import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleAddKeywordRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
@@ -75,6 +76,7 @@ import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.AdGroupStatus;
 import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109.cm.ApprovalStatus;
 import com.google.api.adwords.v201109.cm.Bid;
 import com.google.api.adwords.v201109.cm.BidLandscapeLandscapePoint;
 import com.google.api.adwords.v201109.cm.BiddableAdGroupCriterion;
@@ -113,6 +115,7 @@ import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
+import com.google.api.adwords.v201109.cm.QualityInfo;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -2152,6 +2155,92 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		KeywordDataObject res = setBidForKeyWord(data.get("accountID"), keywordID, adGroupID, microBidAmount);
 		// convert result to Json String
 		return gson.toJson(res);
+	}
+	
+	@Override
+	public List<KeywordDataObject> setBidForKeyWords(final String accountID, final List<GoogleSetBidForKeywordRequest> requests) throws Exception
+	{
+		logger.info("Will try to Set Bids for " + requests.size() + " Keywords for AccountID [" + accountID + "]");
+		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+		final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
+		final List<AdGroupCriterionOperation> operations = new ArrayList<AdGroupCriterionOperation>();
+		for (final GoogleSetBidForKeywordRequest request : requests)
+		{
+			final Long keywordID = request.getKeywordID();
+			final Long adGroupID = request.getAdGroupID();
+			final Long microBidAmount = request.getMicroBidAmount();
+			final AdGroupCriterionOperation operation = getAdGroupCriterionOperationToSetBid(keywordID, adGroupID, microBidAmount);
+			operations.add(operation);
+		}
+		final int batchSize = 500;
+		final List<List<AdGroupCriterionOperation>> operationBatches = SemplestUtils.getBatches(operations, batchSize);
+		logger.info("Out of " + operations.size() + " Operations generated " + operationBatches.size() + " batches of " + batchSize);
+		final List<KeywordDataObject> responses = new ArrayList<KeywordDataObject>();
+		int counter = 0;
+		for (final List<AdGroupCriterionOperation> operationBatch : operationBatches)
+		{
+			logger.info("Processing Batch #" + ++counter + " of " + operationBatch.size() + " Operations");
+			final AdGroupCriterionOperation[] operationArray = operationBatch.toArray(new AdGroupCriterionOperation[operationBatch.size()]);
+			final AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operationArray);
+			if (result != null && result.getValue() != null)
+			{
+				final AdGroupCriterion[] adGroupCriterions = result.getValue();
+				for (final AdGroupCriterion adGroupCriterion : adGroupCriterions)
+				{
+					if (adGroupCriterion instanceof BiddableAdGroupCriterion)
+					{
+						final BiddableAdGroupCriterion res = (BiddableAdGroupCriterion)adGroupCriterion;
+						final Criterion criterion = res.getCriterion();
+						if (criterion instanceof Keyword)
+						{
+							final Keyword keyword = (Keyword)criterion;
+							final KeywordDataObject bidResponse = new KeywordDataObject();
+							if (res.getQualityInfo() != null)
+							{
+								final QualityInfo qualityInfo = res.getQualityInfo();
+								bidResponse.setQualityScore(qualityInfo.getQualityScore());
+							}
+							if (res.getFirstPageCpc() != null)
+							{
+								final Bid bid = res.getFirstPageCpc();
+								final Money bidAmount = bid.getAmount();
+								bidResponse.setFirstPageCpc(bidAmount.getMicroAmount());
+							}
+							bidResponse.setBidID(keyword.getId());
+							final ApprovalStatus approvalStatus = res.getApprovalStatus();
+							bidResponse.setApprovalStatus(approvalStatus.getValue());
+							final ManualCPCAdGroupCriterionBids bids = (ManualCPCAdGroupCriterionBids)res.getBids();
+							final Bid bid = bids.getMaxCpc();
+							final Money bidAmount = bid.getAmount();
+							bidResponse.setMicroBidAmount(bidAmount.getMicroAmount());
+							bidResponse.setKeyword(keyword.getText());
+							bidResponse.setMatchType(keyword.getMatchType().getValue());
+							bidResponse.setNegative(false);
+							responses.add(bidResponse);
+						}						
+					}					
+				}
+			}
+		}
+		return responses;
+	}
+	
+	public static AdGroupCriterionOperation getAdGroupCriterionOperationToSetBid(Long keywordID, Long adGroupID, Long microBidAmount)
+	{
+		final Criterion criterion = new Criterion();
+		criterion.setId(keywordID);
+		final BiddableAdGroupCriterion biddableAdGroupCriterion = new BiddableAdGroupCriterion();
+		biddableAdGroupCriterion.setAdGroupId(adGroupID);
+		biddableAdGroupCriterion.setCriterion(criterion);
+		final ManualCPCAdGroupCriterionBids bids = new ManualCPCAdGroupCriterionBids();
+		final Money money = new Money();
+		money.setMicroAmount(microBidAmount);
+		bids.setMaxCpc(new Bid(money));
+		biddableAdGroupCriterion.setBids(bids);
+		final AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
+		operation.setOperand(biddableAdGroupCriterion);
+		operation.setOperator(Operator.SET);
+		return operation;
 	}
 
 	@Override

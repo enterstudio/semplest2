@@ -24,6 +24,7 @@ import semplest.server.protocol.google.GoogleAddAdsRequest;
 import semplest.server.protocol.google.GoogleAddKeywordRequest;
 import semplest.server.protocol.google.GoogleRefreshSiteLinksRequest;
 import semplest.server.protocol.google.GoogleRelatedKeywordObject;
+import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
@@ -713,6 +714,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 
 	@Override
 	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<KeywordDataObject> setBidForKeyWords(String accountID, List<GoogleSetBidForKeywordRequest> requests) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

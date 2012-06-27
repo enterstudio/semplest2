@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -27,10 +29,12 @@ import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
+import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
+import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.microsoft.adcenter.v8.Bid;
@@ -663,36 +667,24 @@ public class BidGeneratorObj
 		// 16. SE API call: Update matchType, bid for keywords
 		if (searchEngine.equalsIgnoreCase(google))
 		{
-			keyIT = wordBidMap.keySet().iterator();
-			while (keyIT.hasNext())
+			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
+			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
+			for (final Entry<String, Long> entry : entrySet)
 			{
-				String word = keyIT.next();
-				k = 0;
-				while (true)
-				{
-					Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-					try
-					{
-						clientGoogle.setBidForKeyWord(googleAccountID, wordIDMap.get(word), adGroupID, wordBidMap.get(word));
-						logger.info("Updated bid for keyword " + word + " via Google API with bid value " + wordBidMap.get(word));
-						break;
-					}
-					catch (Exception e)
-					{
-						if (k <= maxRetry)
-						{
-							logger.error("Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
-							k++;
-						}
-						else
-						{
-							logger.error("Failed to update bids for keyword " + word + " " + e.getMessage(), e);
-							throw new Exception("Failed to update bids for keyword " + word + " " + e.getMessage(), e);
-						}
-					} // try-catch
-				} // while(true)
+				final String word = entry.getKey();
+				final Long keywordID = wordIDMap.get(word);
+				final Long microBidAmount = wordBidMap.get(word);
+				final GoogleSetBidForKeywordRequest request = new GoogleSetBidForKeywordRequest(adGroupID, word, keywordID, microBidAmount);
+				requests.add(request);
 			}
-		} // if(searchEngine.equalsIgnoreCase(google))
+			final int batchSize = 500;
+			final List<List<GoogleSetBidForKeywordRequest>> requestBatches = SemplestUtils.getBatches(requests, batchSize);
+			logger.info("Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
+			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
+			{
+				clientGoogle.setBidForKeyWords(googleAccountID, requests);
+			}
+		} 
 
 		if (searchEngine.equalsIgnoreCase(msn))
 		{
