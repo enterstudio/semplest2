@@ -201,10 +201,10 @@ public class MsnCloudServiceImpl implements MsnCloudService
 	@Override
 	public MsnManagementIds createAccount(String name) throws MsnCloudException
 	{
+		LOG.info("Will try to Create Account for Name [" + name + "]");
 		Customer customer = aNew().adCenterCustomer().withCustomerName(name).build();
 		User user = aNew().adCenterUser().withUserName(name).build();
 		Account account = aNew().adCenterAccount().withAccountName(name).build();
-
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();

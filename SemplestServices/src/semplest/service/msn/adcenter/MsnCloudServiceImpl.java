@@ -356,7 +356,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		catch (ApiFault e)
 		{
 			logger.info("Problem creating account in MSN", e);
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem creating account in MSN", e);
 		}
 		catch (RemoteException e)
 		{
@@ -2506,11 +2506,22 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			}
 			return res;
 		}
-		catch (RemoteException e1)
+		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e1);
+			throw new MsnCloudException("Problem", e);
 		}
-
+		catch (ApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException("Problem", e);
+		}
+		catch (Exception e)
+		{
+			throw new MsnCloudException("Problem", e);
+		}
 	}
 
 	private Boolean setStateTargetObject(ICampaignManagementService campaignManagement, Target[] targetsStored, Account account, Long campaignId,
@@ -2582,12 +2593,21 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			}
 			return res;
 		}
-		catch (RemoteException e1)
+		catch (AdApiFaultDetail e)
 		{
-			final String errMsg = "Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID ["
-					+ campaignId + "], State [" + state + "]";
-			logger.info(errMsg, e1);
-			throw new MsnCloudException(errMsg, e1);
+			throw new MsnCloudException("Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID [" + campaignId + "], State [" + state + "]", e);
+		}
+		catch (ApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID [" + campaignId + "], State [" + state + "]", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException("Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID [" + campaignId + "], State [" + state + "]", e);
+		}
+		catch (Exception e)
+		{
+			throw new MsnCloudException("Problem setting state target for Account [" + SemplestUtils.getMsnAccountString(account) + "], CampaignID [" + campaignId + "], State [" + state + "]", e);
 		}
 	}
 
@@ -2778,6 +2798,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	 */
 	public HashMap<String, int[][]> getKeywordVolumes(Long accountId, String[] keywords, MonthAndYear startMonth) throws MsnCloudException
 	{
+		logger.info("Will try to Get Keyword Volumes for AccountID [" + accountId + "], MonthAndYear [" + startMonth + "], " + keywords.length + " Keywords");
 		HashMap<String, int[][]> ret = new HashMap<String, int[][]>();
 		try
 		{
@@ -2863,19 +2884,19 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem Getting Keyword Volumes for AccountID [" + accountId + "], MonthAndYear [" + startMonth + "], " + keywords.length + " Keywords", e);
 		}
 		catch (ApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem Getting Keyword Volumes for AccountID [" + accountId + "], MonthAndYear [" + startMonth + "], " + keywords.length + " Keywords", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem Getting Keyword Volumes for AccountID [" + accountId + "], MonthAndYear [" + startMonth + "], " + keywords.length + " Keywords", e);
 		}
 		catch (Exception e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Problem Getting Keyword Volumes for AccountID [" + accountId + "], MonthAndYear [" + startMonth + "], " + keywords.length + " Keywords", e);
 		}
 
 		return ret;
@@ -2890,7 +2911,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	 */
 	public HashMap<String, String[]> getKeywordSuggestions(Long accountId, String[] keywords, int maxRecs) throws MsnCloudException
 	{
-
+		logger.info("Will try to Get Keyword Suggestions for AccountID [], MaxRecs [], " + keywords.length + " Keywords");
 		HashMap<String, String[]> ret = new HashMap<String, String[]>();
 		try
 		{
@@ -2940,19 +2961,19 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Will try to Get Keyword Suggestions for AccountID [], MaxRecs [], " + keywords.length + " Keywords", e);
 		}
 		catch (ApiFaultDetail e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Will try to Get Keyword Suggestions for AccountID [], MaxRecs [], " + keywords.length + " Keywords", e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Will try to Get Keyword Suggestions for AccountID [], MaxRecs [], " + keywords.length + " Keywords", e);
 		}
 		catch (Exception e)
 		{
-			throw new MsnCloudException(e);
+			throw new MsnCloudException("Will try to Get Keyword Suggestions for AccountID [], MaxRecs [], " + keywords.length + " Keywords", e);
 		}
 
 		return ret;
@@ -3352,6 +3373,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 
 	private InputStream getReportAsZipStream(String reportId, Long accountId) throws MsnCloudException, RemoteException
 	{
+		logger.info("Will try to Get Report As Zip Stream for ReportID [" + reportId + "], AccountID [" + accountId + "]");
 		PollGenerateReportRequest pollGenerateReportRequest = null;
 		PollGenerateReportResponse pollGenerateReportResponse = null;
 
@@ -3379,11 +3401,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			}
 			catch (AdApiFaultDetail e1)
 			{
-				throw new MsnCloudException(e1.dumpToString());
+				throw new MsnCloudException("Problem Getting Report As Zip Stream for ReportID [" + reportId + "], AccountID [" + accountId + "]", e1);
 			}
 			catch (ApiFaultDetail e2)
 			{
-				throw new MsnCloudException(e2.dumpToString());
+				throw new MsnCloudException("Problem Getting Report As Zip Stream for ReportID [" + reportId + "], AccountID [" + accountId + "]", e2);
 			}
 
 			// Display the TrackingId that was returned in the response header.
