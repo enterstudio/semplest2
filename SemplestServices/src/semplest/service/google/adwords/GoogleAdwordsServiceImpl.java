@@ -218,7 +218,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			}
 			
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			final GoogleAddAdRequest req = new GoogleAddAdRequest(75, "555555555frozen yogurt", "1111111any flavor", "33333333333healthy");
+			final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
+			addAdTextRequests.add(req);
+			final GoogleAddAdsRequest request = new GoogleAddAdsRequest("54104", 3066601739L, "http://www.aol.com", "http://www.weddingchannel.com", addAdTextRequests); 
+			test.addTextAds(request);
+			
+			/*GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(60);
 			PromotionObj promoObj = getPromoDataSP.getPromotionData();
 			Long cumulativeUnitsUsedFromStart = test.getSpentAPIUnitsPerAccountID(promoObj.getAdvertisingEngineAccountPK(), promoObj.getPromotionStartDate(), new Date());
@@ -227,7 +233,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
 				Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), ProtocolEnum.AdEngine.Google.name(), cumulativeUnitsUsedFromStart);
 				logger.info("Added additional API Cost of " + newCost + " to Google Account " + promoObj.getAdvertisingEngineAccountPK());
-			}
+			}*/
 			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 15)), new Date());
 			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(), new Date());
 			//System.out.println("Spend: " + spend);
@@ -2224,6 +2230,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 						}						
 					}					
 				}
+			}
+			try
+			{
+				Thread.sleep(3000);
+			}
+			catch(InterruptedException e)
+			{
+				logger.warn("Got interrupted while trying to sleep, but will just log and ignore");
 			}
 		}
 		return responses;
