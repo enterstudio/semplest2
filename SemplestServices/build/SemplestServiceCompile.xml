@@ -164,11 +164,13 @@
 			<copydir src="${basedir}/src/semplest/service/google/adwords"
 	  	 		dest="${semplest.keywords.dir}/src/semplest/service/google/adwords"
 	  	 	    includes="**/*.java"
+				excludes="GoogleAdwordsService.java"
 	  	 	/>	
 			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"/>
 			<copydir src="${basedir}/src/semplest/service/msn/adcenter"
 	  	 		dest="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"
 	  	 	    includes="**/*.java"
+				excludes="MsnAdcenterService.java"
 	  	 	/>	
 			<!-- spring jdbc stuff -->
 			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc"/>
@@ -188,7 +190,9 @@
 	  	 	/>		
 			<!-- other service related stuff -->			
 			<copy todir="${semplest.keywords.dir}/src/semplest/server/service">
-				<fileset dir="${basedir}/src/semplest/server/service" includes="SemplestConfiguration.java" />
+				<fileset dir="${basedir}/src/semplest/server/service" 
+					includes="*.java"
+				/>
 			</copy>
 			<mkdir dir="${semplest.keywords.dir}/src/semplest/util"/>
 			<copydir src="${basedir}/src/semplest/util"
