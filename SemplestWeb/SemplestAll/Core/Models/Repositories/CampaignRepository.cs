@@ -133,41 +133,6 @@ namespace Semplest.Core.Models.Repositories
             return GetAdEngines();
         }
 
-        public CampaignSetupModel GetKeyWordsOld(CampaignSetupModel model)
-        {
-            if (model.AllCategories.Count == 0)
-            {
-                //model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
-            }
-
-            var catList = new List<string>();
-
-            foreach (var cat in model.AllCategories)
-            {
-                catList.AddRange(from t in model.CategoryIds where cat.Id == t select cat.Name);
-            }
-
-            var scw = new ServiceClientWrapper();
-            // create AdCopy array
-
-            // get keywords from the web service
-            //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
-            var keywords = scw.GetKeywords(catList, null, model.ProductGroup.ProductPromotionName,
-                                            model.ProductGroup.Words, model.AdModelProp.Ads.Select(pad => pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2).ToArray(), model.AdModelProp.LandingUrl, null);
-            if (keywords != null && keywords.Count > 0)
-            {
-                foreach (var kwm in keywords.Select(key => new CampaignSetupModel.KeywordsModel { Name = key }))
-                {
-                    model.AllKeywords.Add(kwm);
-                }
-            }
-            else
-            {
-                var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Could not get Keywords from web service" };
-                Logger.Write(logEnty);
-            }
-            return model;
-        }
         static bool _savedCampaign;
         static SemplestModel.Semplest _dbcontext;
         //readonly Func<Semplest, int, Promotion> _promotonIdQuery = CompiledQuery.Compile((Semplest nw, int promoId) => nw.Promotions.FirstOrDefault(p => p.PromotionPK == promoId));
@@ -326,8 +291,7 @@ namespace Semplest.Core.Models.Repositories
                 // set islaunched
                 model.IsLaunched = promo.IsLaunched;
                 model.IsCompleted = promo.IsCompleted;
-
-                // set sitelinks
+                model.AllKeywords.AddRange(promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
                 model.SiteLinks = promo.SiteLinks.ToList();
             }
             var cnt = model.AdModelProp.NegativeKeywords.Count();
@@ -519,14 +483,14 @@ namespace Semplest.Core.Models.Repositories
             AddGeoTargetingToPromotion(updatePromotion, model, customerFk);
             AddSiteLinksToPromotion(updatePromotion, model, customerFk);
             List<PromotionAd> adAds = AddPromotionAdsToPromotion(updatePromotion, model, customerFk, oldModel);
-            SaveNegativeKeywords(updatePromotion, model, dbcontext,customerFk);
+            SaveNegativeKeywords(updatePromotion, model, dbcontext, customerFk);
             dbcontext.SaveChanges();
             List<int> ads = new List<int>();
-            foreach(PromotionAd ad in adAds)
+            foreach (PromotionAd ad in adAds)
             {
                 ads.Add(dbcontext.PromotionAds.Where(key => key.AdTextLine1 == ad.AdTextLine1 && key.AdTextLine2 == ad.AdTextLine2 && key.AdTitle == ad.AdTitle && key.PromotionFK == updatePromotion.PromotionPK).First().PromotionAdsPK);
             }
-            if (ads.Count > 0  && updatePromotion.IsLaunched)
+            if (ads.Count > 0 && updatePromotion.IsLaunched)
             {
                 var adEngines = new List<string>();
                 adEngines.AddRange(updatePromotion.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
@@ -730,6 +694,9 @@ namespace Semplest.Core.Models.Repositories
             stationIds.Columns.Add("SemplestProbability", typeof(float));
             stationIds.Columns.Add("IsTargetMSN", typeof(Boolean));
             stationIds.Columns.Add("IsTargetGoogle", typeof(Boolean));
+            List<string> negativeKeywordsToBeInserted = new List<string>() ;
+            if (negativeKeywords != null)
+            negativeKeywordsToBeInserted.AddRange(negativeKeywords);
             foreach (var kpo in kpos)
             {
                 kpo.isDeleted = IsDeletedKeyword(kpo.keyword.Trim(), negativeKeywords);
@@ -737,12 +704,30 @@ namespace Semplest.Core.Models.Repositories
                 dr["Keyword"] = kpo.keyword.Trim();
                 dr["IsActive"] = "true";
                 dr["IsDeleted"] = kpo.isDeleted;
-                dr["IsNegative"] = IsNegativeKeyword(kpo.keyword.Trim(), negativeKeywords);
+                if (IsNegativeKeyword(kpo.keyword.Trim(), negativeKeywords))
+                {
+                    dr["IsNegative"] = true;
+                    negativeKeywordsToBeInserted.Remove(kpo.keyword.Trim());
+                }
+                else
+                    dr["IsNegative"] = false;
                 dr["SemplestProbability"] = kpo.semplestProbability;
                 dr["IsTargetMSN"] = kpo.isTargetMSN;
                 dr["IsTargetGoogle"] = kpo.isTargetGoogle;
                 stationIds.Rows.Add(dr);
-                System.Diagnostics.Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + dr["Keyword"].ToString() + "',1,0,1,0,0)");
+                //System.Diagnostics.Debug.WriteLine("insert into @kwa (keyword,IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN) values ('" + dr["Keyword"].ToString() + "',1,0,1,0,0)");
+            }
+            foreach (string s in negativeKeywordsToBeInserted)
+            {
+                var dr = stationIds.NewRow();
+                dr["Keyword"] = s.Trim();
+                dr["IsActive"] = "true";
+                dr["IsNegative"] = true;
+                dr["IsDeleted"] = false;
+                dr["SemplestProbability"] = string.Empty;
+                dr["IsTargetMSN"] = 0;
+                dr["IsTargetGoogle"] = 0;
+                stationIds.Rows.Add(dr);
             }
             if (stationIds.Rows.Count > 0)
             {
