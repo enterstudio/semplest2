@@ -27,10 +27,10 @@ import semplest.keywords.lda.*;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.google.KeywordToolStats;
-//import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.SemplestConfiguration;
 
 
-//import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
+import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
@@ -350,8 +350,8 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	private ArrayList<KeywordProbabilityObject> getGoogleSug(String searchTerms, ArrayList<SearchEngine> srchE) throws Exception{
 
 		ArrayList<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
-		//UNCOMENT
-		/*ArrayList<String> bigrams = this.generateNgramsFromString(searchTerms, 2);
+		
+		ArrayList<String> bigrams = this.generateNgramsFromString(searchTerms, 2);
 		String[] keywords = bigrams.toArray(new String[bigrams.size()]);
 		GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 		
@@ -366,7 +366,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			kwP.setKeyword(kw.getKeyword());
 			kwP.setSemplestProbability(1.0);
 			kwProb.add(kwP);
-		}*/
+		}
 		
 		return kwProb;
 	}
@@ -682,10 +682,10 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	public static void main(String[] args) throws Exception {
 		
 		BasicConfigurator.configure();
-		//UNCOMENT
+
 		/*
 		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
-		 *
+		 */
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
 		SemplestConfiguration configDB = new SemplestConfiguration(object);
