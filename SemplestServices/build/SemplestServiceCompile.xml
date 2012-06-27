@@ -158,60 +158,42 @@
   	 	/>	
 	  	
 	  	<!-- Create JAR for SemplestKeywords and put it to SemplestServices/lib -->
-	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 
-			<!-- Copy over the google and msn codes and all the related codes (jdbc etc.) from SemplestServices, so we can compile them with the keyword project together -->
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/google/adwords"/>
-			<copydir src="${basedir}/src/semplest/service/google/adwords"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/service/google/adwords"
-	  	 	    includes="**/*.java"
-				excludes="GoogleAdwordsService.java"
-	  	 	/>	
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"/>
-			<copydir src="${basedir}/src/semplest/service/msn/adcenter"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"
-	  	 	    includes="**/*.java"
-				excludes="MsnAdcenterService.java"
-	  	 	/>	
-			<!-- spring jdbc stuff -->
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc"/>
-			<copydir src="${basedir}/src/semplest/server/service/springjdbc"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc"
-	  	 	    includes="**/*.java"
-	  	 	/>
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/helper"/>
-			<copydir src="${basedir}/src/semplest/server/service/springjdbc/helper"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/helper"
-	  	 	    includes="**/*.java"
-	  	 	/>
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/storedproc"/>
-			<copydir src="${basedir}/src/semplest/server/service/springjdbc/storedproc"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/storedproc"
-	  	 	    includes="**/*.java"
-	  	 	/>		
-			<!-- other service related stuff -->			
-			<copy todir="${semplest.keywords.dir}/src/semplest/server/service">
-				<fileset dir="${basedir}/src/semplest/server/service" 
-					includes="*.java"
-				/>
-			</copy>
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/util"/>
-			<copydir src="${basedir}/src/semplest/util"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/util"
-	  	 	    includes="**/*.java"
-	  	 	/>	
+	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 				
 			
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
 	  	 	<copy todir="${lib}" filtering="off">
 	  	 		<flattenmapper />
-	  	 		<fileset dir="${semplest.keywords.lib}" 
-	  	 			includes="**/*.jar" >
-	  	 			<exclude name = "SemplestServices.jar" />
-	  	 		</fileset>
+	  	 		<fileset dir="${semplest.keywords.lib}" includes="**/*.jar" />	  	 			
 	  	 	</copy>
+		
+			<!-- compile SemplestServices just for creating the keywords jar -->
+			<copy todir="${semplest.keywords.lib}" filtering="off">
+	  	 		<flattenmapper />
+	  	 		<fileset dir="${lib}" includes="**/*.jar" />			
+	  	 	</copy>
+			<mkdir dir="${semplest.keywords.dir}/semplestservicescompilefiles"/>
+			<echo message="Compiling SemplestServices and making it a jar for Keyword Service..."/>
+		    <javac srcdir="${source}" destdir="${semplest.keywords.dir}/semplestservicescompilefiles" classpathref="class.path"
+		      target="1.6"
+		      source="1.6"
+		      debug="${java.debug}"   	
+		      includes="**/*.java"
+		      excludes="**/*.svn"
+		    />
+			<jar destfile="${semplest.keywords.lib}/SemplestServices.jar" basedir="${semplest.keywords.dir}/semplestservicescompilefiles">
+	  	 		<manifest>
+	  	 	    	<attribute name="Main-Class" value="semplest.service.keywords.lda.KeywordGeneratorService"/>
+	  	 	    </manifest>
+	  	 	</jar>
+		
 	  	 	<!-- Compile SemplestKeywords -->
 	  	 	<echo message="Creating Jar for SemplestKeywords..."/>
+			<path id="keywords.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
+			</path>
 	  	 	<mkdir dir="${semplest.keywords.dir}/temp"/>
-	  	 	<javac srcdir="${semplest.keywords.dir}/src" destdir="${semplest.keywords.dir}/temp" classpathref="class.path"
+	  	 	<javac srcdir="${semplest.keywords.dir}/src" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
 	  	 		target="1.6"
 	  	 	  	source="1.6"
 	  	 	  	debug="${java.debug}"   	
