@@ -160,13 +160,14 @@
 	  	<!-- Create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 
 			<!-- Copy over the google and msn codes (from SemplestServices), so we can compile them with the keyword project together -->
-			<mkdir dir="${semplest.keywords.dir}/dep"/>
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/google/adwords"/>
 			<copydir src="${basedir}/src/semplest/service/google/adwords"
-	  	 		dest="${semplest.keywords.dir}/dep"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/service/google/adwords"
 	  	 	    includes="**/*.java"
 	  	 	/>	
+		<mkdir dir="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"/>
 			<copydir src="${basedir}/src/semplest/service/msn/adcenter"
-	  	 		dest="${semplest.keywords.dir}/dep"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"
 	  	 	    includes="**/*.java"
 	  	 	/>	
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
