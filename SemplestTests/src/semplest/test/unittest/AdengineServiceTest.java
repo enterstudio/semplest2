@@ -23,6 +23,7 @@ import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionStatus;
 import com.google.api.adwords.v201109_1.cm.SitelinksExtension;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.service.SemplestConfiguration;
@@ -37,7 +38,7 @@ public class AdengineServiceTest extends BaseDB{
 	private int errorCounter = 0;
 	private int sleepTime = 1000;  //1s
 
-	boolean isDeleteHistoryTestData = false;
+	boolean isDeleteHistoryTestData = true;
 	
 	private String vMsg = "Verification FAILED! ";
 	
@@ -90,7 +91,7 @@ public class AdengineServiceTest extends BaseDB{
 			AddKeywords(method);  //google,msn 
 			DeleteKeywords(method);  //google,msn
 			PauseProductGroups(method);  //google,msn
-			//RefreshSiteLinks(method);  //google
+			RefreshSiteLinks(method);  //google
 			AddNegativeKeywords(method);  //google 
 			DeleteNegativeKeywords(method);  //google
 			ExecuteBidProcess(method);  //can't verify result without real report data
@@ -160,35 +161,38 @@ public class AdengineServiceTest extends BaseDB{
 			int match = 0;
 			String finaATitle = testData.promotionAds.get(1).adTitle;
 			String findAKeyword = testData.keywords.get(1);
-			String findANegKeyword = testData.negKeywords.get(1);
-						
-			//***check if we got all the things created successfully at google, and stored necessary information in the database	
-			System.out.println("Verify IDs:");			
-			
-			sql = "SELECT aep.AdvertisingEngineCampaignPK FROM AdvertisingEnginePromotion aep WHERE PromotionFK = ?";
-			testData.campaignId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
-			
-			sql = "SELECT aep.AdvertisingEngineAdGroupID FROM AdvertisingEnginePromotion aep WHERE PromotionFK = ?";
-			testData.adGroupId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
-			
-			System.out.println(" -Account ID = " + testData.googleAccountId);
-			System.out.println(" -Campaign ID = " + testData.campaignId);
-			System.out.println(" -AdGroup ID = " + testData.adGroupId);
-			
-			if(testData.campaignId.equals(null) || testData.adGroupId.equals(null)){
-				errorHandler(new Exception(vMsg + "The promotion is not created correctly. One or more IDs are missing in the database."));
-				return;
-			}
-			System.out.println("*ID verification PASSED");							
+			String findANegKeyword = testData.negKeywords.get(1);									
 			
 			if(testData.adEngineList.contains(AdEngine.Google.name())){
 				/* ***** For Google ***** */
 				
-				System.out.println(">>> Verify result on Google >>>");
+				System.out.println(">>> Verify results on Google >>>");
+				
+				//***check if we got all the things created successfully at google, and stored necessary information in the database	
+				System.out.println("Verify IDs:");			
+				
+				sql = "select aep.AdvertisingEngineCampaignPK from AdvertisingEnginePromotion aep " +
+						"inner join AdvertisingEngineAccount aea on aep.AdvertisingEngineAccountFK = aea.AdvertisingEngineAccountPK " +
+						"where aea.AdvertisingEngineFK = 2 and aep.PromotionFK = ?";
+				testData.googleCampaignId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
+				
+				sql = "SELECT aep.AdvertisingEngineAdGroupID FROM AdvertisingEnginePromotion aep " +
+						"inner join AdvertisingEngineAccount aea on aep.AdvertisingEngineAccountFK = aea.AdvertisingEngineAccountPK " +
+						"where aea.AdvertisingEngineFK = 2 and aep.PromotionFK = ?";
+				testData.googleAdGroupId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
+				
+				System.out.println(" -Account ID = " + testData.googleAccountId);
+				System.out.println(" -Campaign ID = " + testData.googleCampaignId);
+				System.out.println(" -AdGroup ID = " + testData.googleAdGroupId);
+				
+				if(testData.googleCampaignId.equals(null) || testData.googleAdGroupId.equals(null)){
+					errorHandler(new Exception(vMsg + "The promotion is not created correctly. One or more IDs are missing in the database."));
+					return;
+				}
 				
 				//***check if we have all the ads are set up on google
 				System.out.println("Verify ADs:");				
-				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.adGroupId).longValue());
+				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId).longValue());
 				System.out.println("Ads that we put on google:");
 				//verify content of the Ads
 				match = 0;
@@ -210,7 +214,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				//***check if we have all the keywords are set up on google
 				System.out.println("Verify Keywords:");				
-				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
 				System.out.println("Keywords that we put on google:");
 				//verify content of the Keywords
 				match = 0;				
@@ -231,7 +235,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				//***check if we set negative keywords correctly on google	
 				System.out.println("Verify Negative Keywords:");	
-				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.googleCampaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
 				System.out.println("Negative keywords that we put on google:");
 				match = 0;
 				for(String negkw : negKeywords.keySet()){
@@ -246,7 +250,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				//***check if we set geoTarget correctly on google
 				System.out.println("Verify Geo Targets:");	
-				CampaignCriterion[] gCpnCrits = google.getAllCampaignCriterions(testData.googleAccountId.toString(), testData.campaignId);
+				CampaignCriterion[] gCpnCrits = google.getAllCampaignCriterions(testData.googleAccountId.toString(), testData.googleCampaignId);
 				for(CampaignCriterion gcpncrit: gCpnCrits){
 					if(gcpncrit.getCriterion() instanceof com.google.api.adwords.v201109.cm.Proximity){
 						com.google.api.adwords.v201109.cm.Proximity proximity = (com.google.api.adwords.v201109.cm.Proximity)gcpncrit.getCriterion();
@@ -277,12 +281,34 @@ public class AdengineServiceTest extends BaseDB{
 			if(testData.adEngineList.contains(AdEngine.MSN.name())){
 				/* ***** For MSN ***** */
 				
-				System.out.println(">>> Verify result on MSN >>>");
+				System.out.println(">>> Verify results on MSN >>>");
+				
+				//***check if we got all the things created successfully on msn, and stored necessary information in the database	
+				System.out.println("Verify IDs:");			
+				
+				sql = "select aep.AdvertisingEngineCampaignPK from AdvertisingEnginePromotion aep " +
+						"inner join AdvertisingEngineAccount aea on aep.AdvertisingEngineAccountFK = aea.AdvertisingEngineAccountPK " +
+						"where aea.AdvertisingEngineFK = 1 and aep.PromotionFK = ?";
+				testData.msnCampaignId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
+				
+				sql = "SELECT aep.AdvertisingEngineAdGroupID FROM AdvertisingEnginePromotion aep " +
+						"inner join AdvertisingEngineAccount aea on aep.AdvertisingEngineAccountFK = aea.AdvertisingEngineAccountPK " +
+						"where aea.AdvertisingEngineFK = 1 and aep.PromotionFK = ?";
+				testData.msnAdGroupId = jdbcTemplate.queryForLong(sql, testData.semplestPromotionId);
+				
+				System.out.println(" -Account ID = " + testData.msnAccountId);
+				System.out.println(" -Campaign ID = " + testData.msnCampaignId);
+				System.out.println(" -AdGroup ID = " + testData.msnAdGroupId);
+				
+				if(testData.msnCampaignId.equals(null) || testData.msnAdGroupId.equals(null)){
+					errorHandler(new Exception(vMsg + "The promotion is not created correctly. One or more IDs are missing in the database."));
+					return;
+				}
 				
 				//***check if we have all the ads are set up on msn
 				System.out.println("Verify ADs:");
 				
-				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.adGroupId);
+				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.msnAdGroupId);
 				//verify content of the Ads
 				System.out.println("Ads that we put on msn:");
 				match = 0;
@@ -305,7 +331,7 @@ public class AdengineServiceTest extends BaseDB{
 				//***check if we have all the keywords are set up on msn
 				System.out.println("Verify Keywords:");
 				
-				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.adGroupId));
+				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.msnAdGroupId));
 				System.out.println("Keywords that we put on MSN:");
 				//verify content of the Keywords
 				match = 0;
@@ -329,7 +355,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				//***check if we set geoTarget correctly on msn
 				System.out.println("Verify Geo Targets:");	
-				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.campaignId);
+				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.msnCampaignId);
 				
 				com.microsoft.adcenter.v8.LocationTarget mLocation = mTarget.getLocation();
 				/*Double mLatitude = mLocation.getRadiusTarget().getBids()[0].getLatitudeDegrees();
@@ -400,9 +426,9 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on Google >>>");
 				ArrayList<HashMap<String, String>> gcpn = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 				for(HashMap<String, String> map : gcpn){
-					if(map.get("Id").equals(testData.campaignId.toString())){
+					if(map.get("Id").equals(testData.googleCampaignId.toString())){
 						String status = map.get("Status");
-						System.out.println("Status of Campaign " + testData.campaignId + " is - " + status);
+						System.out.println("Status of Campaign " + testData.googleCampaignId + " is - " + status);
 						if(!status.equals(CampaignStatus.PAUSED.getValue())){
 							errorHandler(new Exception(vMsg + "Campaign is not paused."));
 						}
@@ -413,8 +439,8 @@ public class AdengineServiceTest extends BaseDB{
 			if(testData.adEngineList.contains(AdEngine.MSN.name())){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
-				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
-				System.out.println("Status of Campaign " + testData.campaignId + " is - " + mcpn.getStatus().getValue());
+				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
+				System.out.println("Status of Campaign " + testData.msnCampaignId + " is - " + mcpn.getStatus().getValue());
 				if(!mcpn.getStatus().equals(com.microsoft.adcenter.v8.CampaignStatus.Paused)){
 					errorHandler(new Exception(vMsg + "Campaign is not paused."));
 				}
@@ -469,7 +495,7 @@ public class AdengineServiceTest extends BaseDB{
 			if(testData.adEngineList.contains(AdEngine.Google.name())){
 				/* ***** For Google ***** */		
 				System.out.println(">>> Verify results on Google >>>");	
-				CampaignCriterion[] gCpnCrits = google.getAllCampaignCriterions(testData.googleAccountId.toString(), testData.campaignId);
+				CampaignCriterion[] gCpnCrits = google.getAllCampaignCriterions(testData.googleAccountId.toString(), testData.googleCampaignId);
 				for(CampaignCriterion gcpncrit: gCpnCrits){
 					if(gcpncrit.getCriterion() instanceof com.google.api.adwords.v201109.cm.Proximity){
 						com.google.api.adwords.v201109.cm.Proximity proximity = (com.google.api.adwords.v201109.cm.Proximity)gcpncrit.getCriterion();
@@ -500,9 +526,10 @@ public class AdengineServiceTest extends BaseDB{
 			if(testData.adEngineList.contains(AdEngine.MSN.name())){
 				/* ***** For MSN ***** */		
 				System.out.println(">>> Verify results on MSN >>>");	
-				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.campaignId);
+				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.msnCampaignId);
 				
 				com.microsoft.adcenter.v8.LocationTarget mLocation = mTarget.getLocation();
+				//TODO
 				/*Double mLatitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLatitudeDegrees();
 				Double mLongitude = mTarget.getLocation().getRadiusTarget().getBids()[0].getLongitudeDegrees();
 				int mRadius = mTarget.getLocation().getRadiusTarget().getBids()[0].getRadius();
@@ -574,9 +601,9 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on Google >>>");
 				ArrayList<HashMap<String, String>> gcpn = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 				for(HashMap<String, String> map : gcpn){
-					if(map.get("Id").equals(testData.campaignId.toString())){
+					if(map.get("Id").equals(testData.googleCampaignId.toString())){
 						String amount = map.get("Amount");
-						System.out.println("Budget Amount of the Campaign " + testData.campaignId + " is - " + amount + " (in micro).");
+						System.out.println("Budget Amount of the Campaign " + testData.googleCampaignId + " is - " + amount + " (in micro).");
 						if(!amount.equals(String.valueOf(new Double(updatedBudget * 1000000).intValue()))){
 							errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + updatedBudget + " (" + String.valueOf(updatedBudget * 1000000) + "). The value on google = " + amount + " (in micro)."));
 						}
@@ -587,8 +614,8 @@ public class AdengineServiceTest extends BaseDB{
 			if(testData.adEngineList.contains(AdEngine.MSN.name())){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
-				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
-				System.out.println("Budget Amount of the Campaign " + testData.campaignId + " is - " + mcpn.getDailyBudget() + " (Daily Budget)");
+				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
+				System.out.println("Budget Amount of the Campaign " + testData.msnCampaignId + " is - " + mcpn.getDailyBudget() + " (Daily Budget)");
 				if(!mcpn.getDailyBudget().equals(updatedBudget)){
 					errorHandler(new Exception(vMsg + "Budget Amount is not updated correctly. Update budget amount = " + updatedBudget + ". The value on msn = " + mcpn.getDailyBudget() + "."));
 				}
@@ -637,7 +664,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				
-				List<SitelinksExtension> gSiteLinks = google.GetSitelinkExtensions(testData.googleAccountId.toString(), testData.campaignId, CampaignAdExtensionStatus.ACTIVE);
+				List<SitelinksExtension> gSiteLinks = google.GetSitelinkExtensions(testData.googleAccountId.toString(), testData.msnCampaignId, CampaignAdExtensionStatus.ACTIVE);
 				match = 0;
 				for(SitelinksExtension sle : gSiteLinks){
 					System.out.println("Sitelinks:");
@@ -718,7 +745,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on Google >>>");
 				
 				//***check if we have all the ads are set up on google
-				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.adGroupId).longValue());
+				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId).longValue());
 				System.out.println("Ads that we have on google:");
 				//verify content of the Ads
 				match = 0;
@@ -744,7 +771,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on MSN >>>");
 				
 				//***check if we have all the ads are set up on msn			
-				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.adGroupId);
+				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.msnAdGroupId);
 				//verify content of the Ads
 				System.out.println("Ads that we put on msn:");
 				match = 0;
@@ -817,7 +844,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on Google >>>");
 				
 				//***check if we have all the ads are set up on google
-				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.adGroupId).longValue());
+				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId).longValue());
 				System.out.println("Ads that we have on google:");
 				//verify content of the Ads
 				match = 0;
@@ -844,7 +871,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on MSN >>>");
 				
 				//***check if we have all the ads are set up on msn			
-				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.adGroupId);
+				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.msnAdGroupId);
 				//verify content of the Ads
 				System.out.println("Ads that we put on msn:");
 				match = 0;
@@ -904,7 +931,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on Google >>>");
 				
 				//***check if we have all the ads are set up on google
-				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.adGroupId).longValue());
+				AdGroupAd[] gads = google.getAdsByAdGroupId(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId).longValue());
 				System.out.println("Ads that we have on google:");
 				//verify content of the Ads
 				match = 0;
@@ -926,7 +953,7 @@ public class AdengineServiceTest extends BaseDB{
 				System.out.println(">>> Verify result on MSN >>>");
 				
 				//***check if we have all the ads are set up on msn			
-				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.adGroupId);
+				com.microsoft.adcenter.v8.Ad[] mads = msn.getAdsByAdGroupId(testData.msnAccountId, testData.msnAdGroupId);
 				//verify content of the Ads
 				System.out.println("Ads that we put on msn:");
 				match = 0;
@@ -996,7 +1023,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				System.out.println(">>> Verify result on Google >>>");
 				
-				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
 				System.out.println("Keywords that we have on google:");
 				//verify content of the Keywords
 				match = 0;				
@@ -1021,7 +1048,7 @@ public class AdengineServiceTest extends BaseDB{
 				
 				System.out.println(">>> Verify result on MSN >>>");
 				
-				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.adGroupId));
+				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.msnAdGroupId));
 				System.out.println("Keywords that we put on MSN:");
 				//verify content of the Keywords
 				match = 0;
@@ -1085,7 +1112,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For Google ***** */				
 				System.out.println(">>> Verify result on Google >>>");
 				
-				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
 				System.out.println("Keywords that we have on google:");
 				//verify content of the Keywords
 				match = 0;				
@@ -1104,7 +1131,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For MSN ***** */				
 				System.out.println(">>> Verify result on MSN >>>");
 				
-				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.adGroupId));
+				com.microsoft.adcenter.v8.Keyword[] mkws = msn.getKeywordByAdGroupId(testData.msnAccountId, new Long(testData.msnAdGroupId));
 				System.out.println("Keywords that we put on MSN:");
 				//verify content of the Keywords
 				match = 0;
@@ -1132,7 +1159,7 @@ public class AdengineServiceTest extends BaseDB{
 		System.out.println("------------------------------------------------------------");
 		try{
 			//Insert some new positive keywords to the database	
-			System.out.println("Add some new positive keywords to the database and google.");
+			System.out.println("Add some new positive keywords to the database and google/msn.");
 			for(Integer kwid : testData.posKeywordIds){
 				String sql = "INSERT INTO PromotionKeywordAssociation(KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)" +
 						"VALUES(?,?,CURRENT_TIMESTAMP,1,0,0,1,1,1)";
@@ -1142,18 +1169,26 @@ public class AdengineServiceTest extends BaseDB{
 			}
 			adEngine.AddKeywords(testData.semplestPromotionId, testData.posKeywordIds, testData.adEngineList);
 			
-			//verify the current negative keywords
-			Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
-			System.out.println("Negative keywords on google before we put on the new negative keywords:");
-			for(String negkw : negKeywords.keySet()){
-				System.out.println(" -" + negkw);
+			if(testData.adEngineList.contains(AdEngine.Google.name())){
+				/* ***** For Google ***** */			
+				//verify the current negative keywords
+				Map<String, Long> negKeywords1 = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.googleCampaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				System.out.println("Negative keywords on google before we put on the new negative keywords:");
+				for(String negkw : negKeywords1.keySet()){
+					System.out.println(" -" + negkw);
+				}			
+				//verify the current positive keywords
+				System.out.println("Positive keywords on google before we put on the new negative keywords:");
+				String[] gkws1 = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
+				for(String kw : gkws1){
+					System.out.println(" -" + kw);
+				}
 			}
 			
-			//verify the current positive keywords
-			System.out.println("Positive keywords on google before we put on the new negative keywords:");
-			String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
-			for(String kw : gkws){
-				System.out.println(" -" + kw);
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+				/* ***** For msn ***** */			
+				//manually verify the existing negative keywords on the msn adcenter website
+				//TODO
 			}
 						
 			//Insert some new negative keywords to the database	
@@ -1213,10 +1248,10 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");					
 				
-				negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				Map<String, Long> negKeywords2 = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.googleCampaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
 				System.out.println("Negative keywords that we have on google:");
 				match = 0;
-				for(String negkw : negKeywords.keySet()){
+				for(String negkw : negKeywords2.keySet()){
 					System.out.println(" -" + negkw);
 					if(negkw.equals(testData.negKeywords.get(1))){
 						//the neg keyword that added by addPromotionToAdEngine
@@ -1231,9 +1266,9 @@ public class AdengineServiceTest extends BaseDB{
 						match++;
 					}
 				}								
-				if(negKeywords.size() != numExpectedOutputNegKeywords){
+				if(negKeywords2.size() != numExpectedOutputNegKeywords){
 					errorHandler(new Exception(vMsg + "The num of Negative Keywords in database and the num of Negative Keywords put on google don't match. " +
-							"Num of Negative Keywords in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: " + negKeywords.size()));
+							"Num of Negative Keywords in database: " + numExpectedOutputNegKeywords + ". Num of Negative Keywords existing to google: " + negKeywords2.size()));
 				}
 				if(match != 3){
 					//some expected neg keywords are not found on google
@@ -1241,9 +1276,9 @@ public class AdengineServiceTest extends BaseDB{
 				}
 				
 				System.out.println("Positive keywords on google after we put on the negative keywords:");
-				gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				String[] gkws2 = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
 				match = 0;
-				for(String kw : gkws){
+				for(String kw : gkws2){
 					System.out.println(" -" + kw);
 					if(kw.equals(testData.posToNegKeywords.get(0))){
 						errorHandler(new Exception(vMsg + "Negative Keywords are not added correctly on google. A Negative Keyword '" + testData.posToNegKeywords.get(0) + "' is not taken off from the Positive Keyword list."));
@@ -1255,6 +1290,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				System.out.println("Verify manually.");
+				//TODO
 			}
 			
 		}
@@ -1309,7 +1345,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");					
 				
-				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.campaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
+				Map<String, Long> negKeywords = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.googleCampaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
 				System.out.println("Negative keywords that we have on google:");
 				match = 0;
 				for(String negkw : negKeywords.keySet()){
@@ -1329,7 +1365,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 				
 				System.out.println("Positive keywords on google after we deleted the negative keywords:");
-				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.adGroupId), true);
+				String[] gkws = google.getAllAdGroupKeywords(testData.googleAccountId.toString(), new Long(testData.googleAdGroupId), true);
 				for(String kw : gkws){
 					System.out.println(" -" + kw);					
 				}
@@ -1339,6 +1375,7 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				System.out.println("Verify manually.");
+				//TODO
 			}
 			
 		}
@@ -1353,23 +1390,16 @@ public class AdengineServiceTest extends BaseDB{
 	private void PauseProductGroups(TEST_METHOD method) throws Exception{
 		//PauseProductGroups
 		System.out.println("------------------------------------------------------------");
-		try{
-			//set the target campaigns active before the test
-			Long account1 = testData.googleAccountId.longValue();
-			Long account2 = testData.presetGoogleAccountId;
-			Long campaign1 = testData.campaignId;
-			Long campaign2 = testData.presetGoogleCampaignId;
-			if(testData.adEngineList.contains(AdEngine.Google.name())){				
+		try{			
+			//set the target campaigns active before the test			
+			if(testData.adEngineList.contains(AdEngine.Google.name())){						
 				//active a campaign in the 1st product group
-				google.changeCampaignsStatus(account1.toString(), Arrays.asList(campaign1), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
+				google.changeCampaignsStatus(testData.googleAccountId.toString(), Arrays.asList(testData.googleCampaignId), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
 				//active a campaign in the 2nd product group
-				google.changeCampaignsStatus(account2.toString(), Arrays.asList(campaign2), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
+				google.changeCampaignsStatus(testData.presetGoogleAccountId.toString(), Arrays.asList(testData.presetGoogleCampaignId), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
 			}
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
-				account1 = testData.msnAccountId;
-				account2 = null;
-				campaign2 = null;
-				msn.resumeCampaignById(account1, campaign1);
+			if(testData.adEngineList.contains(AdEngine.MSN.name())){				
+				msn.resumeCampaignById(testData.msnAccountId.longValue(), testData.msnCampaignId);
 			}
 			
 			//test the method
@@ -1402,22 +1432,22 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				//Check if the promotion in the 1st product group be paused
-				ArrayList<HashMap<String, String>> gcpn1 = google.getCampaignsByAccountId(account1.toString(), false);
+				ArrayList<HashMap<String, String>> gcpn1 = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 				for(HashMap<String, String> map : gcpn1){
-					if(map.get("Id").equals(campaign1.toString())){
+					if(map.get("Id").equals(testData.googleCampaignId.toString())){
 						String status = map.get("Status");
-						System.out.println("Status of the campaign " + campaign1 + " in the ProductGroup 196 " + " is - " + status);
+						System.out.println("Status of the campaign " + testData.googleCampaignId + " in the ProductGroup 196 " + " is - " + status);
 						if(!status.equals(com.google.api.adwords.v201109.cm.CampaignStatus.PAUSED.getValue())){
 							errorHandler(new Exception(vMsg + "Campaign is not paused."));
 						}
 					}
 				}
 				//Check if the promotion in the 2nd product group be paused
-				ArrayList<HashMap<String, String>> gcpn2 = google.getCampaignsByAccountId(account2.toString(), false);
+				ArrayList<HashMap<String, String>> gcpn2 = google.getCampaignsByAccountId(testData.presetGoogleAccountId.toString(), false);
 				for(HashMap<String, String> map : gcpn2){
-					if(map.get("Id").equals(campaign2.toString())){
+					if(map.get("Id").equals(testData.presetGoogleCampaignId.toString())){
 						String status = map.get("Status");
-						System.out.println("Status of the campaign " + campaign2 + " in the ProductGroup 197 " + " is - " + status);
+						System.out.println("Status of the campaign " + testData.presetGoogleCampaignId + " in the ProductGroup 197 " + " is - " + status);
 						if(!status.equals(com.google.api.adwords.v201109.cm.CampaignStatus.PAUSED.getValue())){
 							errorHandler(new Exception(vMsg + "Campaign is not paused."));
 						}
@@ -1429,8 +1459,8 @@ public class AdengineServiceTest extends BaseDB{
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				//Check if the promotion in the 1st product group be paused
-				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(account1, campaign1);
-				System.out.println("Status of Campaign " + account1 + " is - " + mcpn.getStatus().getValue());
+				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId.longValue(), testData.msnCampaignId);
+				System.out.println("Status of Campaign " + testData.msnCampaignId + " is - " + mcpn.getStatus().getValue());
 				if(!mcpn.getStatus().equals(com.microsoft.adcenter.v8.CampaignStatus.Paused)){
 					errorHandler(new Exception(vMsg + "Campaign is not paused."));
 				}
@@ -1518,9 +1548,9 @@ public class AdengineServiceTest extends BaseDB{
 			System.out.println(">>> Verify result on Google >>>");
 			ArrayList<HashMap<String, String>> ret = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 			for(HashMap<String, String> map : ret){
-				if(map.get("Id").equals(testData.campaignId.toString())){
+				if(map.get("Id").equals(testData.googleCampaignId.toString())){
 					String status = map.get("Status");
-					System.out.println("Status of Campaign " + testData.campaignId + " is - " + status);
+					System.out.println("Status of Campaign " + testData.googleCampaignId + " is - " + status);
 					if(!status.equals(CampaignStatus.ACTIVE.getValue())){
 						errorHandler(new Exception(vMsg + "Campaign is not unpaused."));
 					}
@@ -1529,7 +1559,7 @@ public class AdengineServiceTest extends BaseDB{
 			
 			/* ***** For MSN ***** */			
 			System.out.println(">>> Verify result on MSN >>>");
-			com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
+			com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
 			if(!mcpn.getStatus().equals(com.microsoft.adcenter.v8.CampaignStatus.Active)){
 				errorHandler(new Exception(vMsg + "Campaign is not unpaused."));
 			}
@@ -1540,16 +1570,16 @@ public class AdengineServiceTest extends BaseDB{
 			//google
 			ArrayList<HashMap<String, String>> ret2 = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 			for(HashMap<String, String> map : ret2){
-				if(map.get("Id").equals(testData.campaignId.toString())){
+				if(map.get("Id").equals(testData.msnCampaignId.toString())){
 					String status = map.get("Status");
-					System.out.println("Status of Campaign " + testData.campaignId + " is - " + status);
+					System.out.println("Status of Campaign " + testData.msnCampaignId + " is - " + status);
 					if(!status.equals(CampaignStatus.PAUSED.getValue())){
 						errorHandler(new Exception(vMsg + "Campaign is not paused on Google."));
 					}
 				}
 			}
 			//msn
-			com.microsoft.adcenter.v8.Campaign mcpn2 = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
+			com.microsoft.adcenter.v8.Campaign mcpn2 = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
 			if(!mcpn2.getStatus().equals(com.microsoft.adcenter.v8.CampaignStatus.Paused)){
 				errorHandler(new Exception(vMsg + "Campaign is not paused on MSN."));
 			}		
@@ -1578,9 +1608,9 @@ public class AdengineServiceTest extends BaseDB{
 			DateFormat df = new SimpleDateFormat("YYYYMMDD");
 			ArrayList<HashMap<String, String>> ret2 = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
 			for(HashMap<String, String> map : ret2){
-				if(map.get("Id").equals(testData.campaignId.toString())){
+				if(map.get("Id").equals(testData.googleCampaignId.toString())){
 					String ret = map.get("StartDate");
-					System.out.println("StartDate of Campaign " + testData.campaignId + " is - " + ret);
+					System.out.println("StartDate of Campaign " + testData.googleCampaignId + " is - " + ret);
 					if(!ret.equals(df.format(startDate))){
 						errorHandler(new Exception(vMsg + "Campaign is not updated to Date " + df.format(startDate)));
 					}
@@ -1589,7 +1619,7 @@ public class AdengineServiceTest extends BaseDB{
 			
 			/* ***** For MSN ***** */			
 			System.out.println(">>> Verify result on MSN >>>");
-			com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.campaignId);
+			com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
 			//TODO: figure out where can I get the StartDate from msn (not on the website interface?)
 			
 			
@@ -1807,15 +1837,19 @@ public class AdengineServiceTest extends BaseDB{
 		public Integer semplestProductGroupId = 196; //semplest_testing (set up manually in database)
 		public Integer semplestPromotionId;
 		public String semplestPromotionName;
-		//public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
-		public List<AdEngine> adEngineList = Arrays.asList(AdEngine.MSN);				
+		//public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google));
+		//public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.MSN));
+		public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google, ProtocolEnum.AdEngine.MSN));
 		
 		//Ad Engine Variables
-		public Integer googleAccountId = 54103;
+		public Integer googleAccountId = 54103;		
+		public Long googleCampaignId;
+		public Long googleAdGroupId;
+		
 		public Long msnAccountId = 1629687L;
 		public Long msnCustomerId = 13068662L;
-		public Long campaignId;
-		public Long adGroupId;
+		public Long msnCampaignId;
+		public Long msnAdGroupId;
 		
 		//ADs
 		private AD ad1 = new AD(1);
@@ -1909,12 +1943,13 @@ public class AdengineServiceTest extends BaseDB{
 					+ ", semplestPromotionId=" + semplestPromotionId
 					+ ", semplestPromotionName=" + semplestPromotionName
 					+ ", adEngineList=" + adEngineList + ", googleAccountId="
-					+ googleAccountId + ", msnAccountId=" + msnAccountId
-					+ ", msnCustomerId=" + msnCustomerId + ", campaignId="
-					+ campaignId + ", adGroupId=" + adGroupId
-					+ ", promotionAdIds=" + promotionAdIds + ", ad4=" + ad4
-					+ ", ad5=" + ad5 + ", newAds=" + newAds + ", newAdIds="
-					+ newAdIds + ", productGroupIds=" + productGroupIds
+					+ googleAccountId + ", googleCampaignId="
+					+ googleCampaignId + ", googleAdGroupId=" + googleAdGroupId
+					+ ", msnAccountId=" + msnAccountId + ", msnCustomerId="
+					+ msnCustomerId + ", msnCampaignId=" + msnCampaignId
+					+ ", msnAdGroupId=" + msnAdGroupId + ", promotionAdIds="
+					+ promotionAdIds + ", newAdIds=" + newAdIds
+					+ ", productGroupIds=" + productGroupIds
 					+ ", presetPromoId=" + presetPromoId
 					+ ", presetGoogleAccountId=" + presetGoogleAccountId
 					+ ", presetGoogleCampaignId=" + presetGoogleCampaignId
@@ -1938,7 +1973,9 @@ public class AdengineServiceTest extends BaseDB{
 					+ newZipCode + ", newLongitude=" + newLongitude
 					+ ", newLatitude=" + newLatitude + ", newRadius="
 					+ newRadius + ", sitelinks=" + sitelinks + "]";
-		}				
+		}
+
+		
 		
 	}
 
