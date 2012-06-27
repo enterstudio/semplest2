@@ -273,10 +273,6 @@ $(document).ready(function () {
                 contentUrl: $('$ViewSelectedKeywordsUrl').val()
             });
     });
-    tab = tabStrip.tabGroup.children('li:contains("View Keywords")');
-    tabStrip.select(tab);
-
-
 });
 
 function removeNestedForm(element, container, deleteElement) {
