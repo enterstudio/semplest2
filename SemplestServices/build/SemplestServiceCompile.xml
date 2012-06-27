@@ -186,12 +186,10 @@
 	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/storedproc"
 	  	 	    includes="**/*.java"
 	  	 	/>		
-			<!-- other service related stuff -->
-			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service"/>
-			<copydir src="${basedir}/src/semplest/server/service"
-	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service"
-	  	 	    includes="**/*.java"
-	  	 	/>
+			<!-- other service related stuff -->			
+			<copy todir="${semplest.keywords.dir}/src/semplest/server/service">
+				<fileset dir="${basedir}/src/semplest/server/service" includes="SemplestConfiguration.java" />
+			</copy>
 			
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
 	  	 	<copy todir="${lib}" filtering="off">
