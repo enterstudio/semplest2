@@ -851,6 +851,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final String accountID = request.getAccountID();
 		final Long adGroupID = request.getAdGroupID();
 		final String displayURL = request.getDisplayURL();
+		if (!displayURL.startsWith("http"))
+		{
+			throw new Exception("DisplayURL [" + displayURL + "] within the following GoogleAddAdsRequest does NOT start with 'http': [" + request + "]");
+		}
 		final String url = request.getDisplayURL();
 		try
 		{
