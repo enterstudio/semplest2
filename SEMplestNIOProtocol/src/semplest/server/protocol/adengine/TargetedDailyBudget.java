@@ -4,13 +4,15 @@ public class TargetedDailyBudget
 {
 	private Long TargetedDailyMicroBudget;
 	private Integer TargetedDailyClicks;
+	private Long TargetedCPC;
 	
 	public TargetedDailyBudget(){
 	}
 	
-	public TargetedDailyBudget(Long TargetedDailyMicroBudget, Integer TargetedDailyClicks){
+	public TargetedDailyBudget(Long TargetedDailyMicroBudget, Integer TargetedDailyClicks, Long TargetedCPC){
 		this.TargetedDailyMicroBudget = TargetedDailyMicroBudget;
 		this.TargetedDailyClicks = TargetedDailyClicks;
+		this.TargetedCPC = TargetedCPC;
 	}
 	
 	public Long getTargetedDailyMicroBudget()
@@ -28,6 +30,13 @@ public class TargetedDailyBudget
 	public void setTargetedDailyClicks(Integer targetedDailyClicks)
 	{
 		TargetedDailyClicks = targetedDailyClicks;
+	}
+	public Long getTargetedCPC() {
+		return TargetedCPC;
+	}
+
+	public void setTargetedCPC(Long targetedCPC) {
+		TargetedCPC = targetedCPC;
 	}
 
 }
