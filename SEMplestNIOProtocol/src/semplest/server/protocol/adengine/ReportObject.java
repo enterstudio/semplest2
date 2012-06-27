@@ -33,6 +33,7 @@ public class ReportObject implements Serializable
 	private Long firstPageCPC;
 	private Date createdDate;
 	private Long microCost;
+	private Long adGroupID;
 	
 	// added for search query report
 	private String searchTerm;
@@ -166,6 +167,12 @@ public class ReportObject implements Serializable
 	public void setAverageCPC(Long averageCPC)
 	{
 		this.averageCPC = averageCPC;
+	}
+	public Long getAdGroupID() {
+		return adGroupID;
+	}
+	public void setAdGroupID(Long adGroupID) {
+		this.adGroupID = adGroupID;
 	}
 
 	
