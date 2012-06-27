@@ -32,7 +32,7 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// TODO Auto-generated method stub		
+		logger.info("Doing nothing during initialization");
 	}
 	
 	public SemplestChaseOrbitalGatewayServiceClient(String baseurl)
@@ -158,7 +158,7 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	{
 		logger.info("Got request to copy profile for CustomerProfileRefNumber [" + customerProfileRefNumber + "]");
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		final String customerProfileRefNumbersStr = gson.toJson(customerProfileRefNumber, List.class);	
+		final String customerProfileRefNumbersStr = customerProfileRefNumber.getSemplestString();	
 		jsonHash.put("customerProfileRefNumber", customerProfileRefNumbersStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("Request JSON: [" + json + "]");

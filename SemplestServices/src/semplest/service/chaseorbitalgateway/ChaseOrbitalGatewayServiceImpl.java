@@ -694,7 +694,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 	@Override
 	public GatewayReturnObject CopyProfile(SemplestString customerProfileRefNumber) throws Exception
 	{
-		logger.info("Will try to copy profile for CustomerProfileRefNum [" + customerProfileRefNumber + "]");
+		logger.info("Will try to Copy profile for CustomerProfileRefNum [" + customerProfileRefNumber + "]");
 		final String customerProfileRefNum = customerProfileRefNumber.getSemplestString();
 		final List<String> customerProfileNums = new ArrayList<String>();
 		customerProfileNums.add(customerProfileRefNum);

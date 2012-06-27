@@ -33,6 +33,7 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		testClient.testUpdateProfileRecurringBilling(gatewayReturnObject);
 		testClient.testRefundPayment(gatewayReturnObject);		
 		testClient.testGetProfiles(gatewayReturnObject);
+		testClient.testCopyProfile(gatewayReturnObject);
 		testClient.testTerminateRecurringPayments(gatewayReturnObject);
 	}
 	
@@ -86,5 +87,13 @@ public class TestChaseOrbitalGatewayServiceClient extends ServiceRun
 		customerProfileRefNumbers.add(gatewayReturnObject.getCustomerRefNum());
 		final List<CustomerObject> response = client.GetProfiles(customerProfileRefNumbers);
 		logger.info("Response from testGetProfiles(...): " + response);
+	}
+	
+	public void testCopyProfile(final GatewayReturnObject gatewayReturnObject) throws Exception
+	{
+		final String customerRefNum = gatewayReturnObject.getCustomerRefNum();
+		final SemplestString customerProfileRefNumber = new SemplestString(customerRefNum);
+		final GatewayReturnObject response = client.CopyProfile(customerProfileRefNumber);
+		logger.info("Response from testCopyProfile(...): " + response.toStringPretty());
 	}
 }

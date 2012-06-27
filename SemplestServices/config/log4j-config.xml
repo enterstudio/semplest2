@@ -4,13 +4,13 @@
     <appender name="eCommerce" class="org.apache.log4j.RollingFileAppender">
     	<param name="File" value="${PAYMENTECH_LOGDIR}/eCommerce.log"/>
         <layout class="org.apache.log4j.PatternLayout">
-        	<param name="ConversionPattern" value="%5p,%d,[%c] - %m%n"/>
+        	<param name="ConversionPattern" value="%5p,%d,[%c#%M] - %m%n"/>
         </layout>
     </appender>
     <appender name="engine" class="org.apache.log4j.RollingFileAppender">
     	<param name="File" value="${PAYMENTECH_LOGDIR}/engine.log"/>
         <layout class="org.apache.log4j.PatternLayout">
-        	<param name="ConversionPattern" value="%5p,%d,[%c] - %m%n"/>
+        	<param name="ConversionPattern" value="%5p,%d,[%c#%M] - %m%n"/>
         </layout>
     </appender>
     <category name="eCommerceLogger" additivity="false"> 		
