@@ -897,7 +897,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			double dailybudgetAmount = calculateDailyBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
 			final Long accountId = Long.valueOf(accountID);
-			final String campaignName = getPromoDataSP.getPromotionData().getPromotionName();
+			final String campaignName = System.currentTimeMillis() + "_" +  getPromoDataSP.getPromotionData().getPromotionName();
 			final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 			final double monthlyBudget = monthlyBudgetAmount.doubleValue();
 			final CampaignStatus campaignStatus = com.microsoft.adcenter.v8.CampaignStatus.Active;
