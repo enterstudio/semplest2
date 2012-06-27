@@ -215,6 +215,19 @@
   	 	/>		
 		
 		<!-- Create a Jar for SemplestKeywords, and put it to SemplestServices/lib -->
+		<echo message="Creating SemplestKeywords jar..."/>
+		<!-- Compile the google and msn codes (from SemplestServices), and put them to compile with the keyword project together -->
+		<echo message="Compiling google and msn codes for Keywords project."/>
+		<mkdir dir="${semplest.keywords.dir}/dep"/>
+		<copydir src="${basedir}/semplest/service/google/adwords"
+  	 		dest="${semplest.keywords.dir}/dep"
+  	 	    includes="**/*.java"
+  	 	/>	
+		<copydir src="${basedir}/semplest/service/msn/adcenter"
+  	 		dest="${semplest.keywords.dir}/dep"
+  	 	    includes="**/*.java"
+  	 	/>	
+		<!-- Compile and build jar of SemplestKeywords -->
   	 	<copy todir="${dist}/lib" filtering="off">
   	 		<flattenmapper />
   	 		<fileset dir="${semplest.keywords.lib}" 
@@ -222,20 +235,20 @@
   	 			<exclude name = "SemplestServices.jar" />
   	 		</fileset>
   	 	</copy>
-			<path id="keywords.path">
-				<pathelement location="${classes}"/>
-					<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
-				</path>
-				<mkdir dir="${semplest.keywords.dir}/temp"/>
-			<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
-					target="1.6"
-					source="1.6"
-					debug="${java.debug}"   	
-					includes="**/*.java" >
-					<exclude name="**/*.svn"/>
-			</javac>
-			<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
-			</jar>
+		<path id="keywords.path">
+		<pathelement location="${classes}"/>
+			<fileset dir="${semplest.keywords.lib}" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.keywords.dir}/temp"/>
+		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${dist}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
+		</jar>
 		
 	  	<!-- If it's a Keyword service, copy data folder -->
 	  	<if>
