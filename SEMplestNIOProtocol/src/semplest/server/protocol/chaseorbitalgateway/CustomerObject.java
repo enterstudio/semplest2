@@ -12,10 +12,17 @@ public class CustomerObject
 	private String Email;
 	private String Phone;
 	private String creditCardNumber;
+	private String creditCardSecurityCode;
     private String ExpireDateMMYY;
-    
-    
-	
+    	
+	public String getCreditCardSecurityCode()
+	{
+		return creditCardSecurityCode;
+	}
+	public void setCreditCardSecurityCode(String creditCardSecurityCode)
+	{
+		this.creditCardSecurityCode = creditCardSecurityCode;
+	}
 	public String getCustomerProfileRefNum()
 	{
 		return customerProfileRefNum;
@@ -104,6 +111,7 @@ public class CustomerObject
 	{
 		this.name = name;
 	}
+	
 	@Override
 	public int hashCode()
 	{
@@ -118,10 +126,12 @@ public class CustomerObject
 		result = prime * result + ((StateAbbr == null) ? 0 : StateAbbr.hashCode());
 		result = prime * result + ((ZipCode == null) ? 0 : ZipCode.hashCode());
 		result = prime * result + ((creditCardNumber == null) ? 0 : creditCardNumber.hashCode());
+		result = prime * result + ((creditCardSecurityCode == null) ? 0 : creditCardSecurityCode.hashCode());
 		result = prime * result + ((customerProfileRefNum == null) ? 0 : customerProfileRefNum.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
+	
 	@Override
 	public boolean equals(Object obj)
 	{
@@ -195,6 +205,13 @@ public class CustomerObject
 		}
 		else if (!creditCardNumber.equals(other.creditCardNumber))
 			return false;
+		if (creditCardSecurityCode == null)
+		{
+			if (other.creditCardSecurityCode != null)
+				return false;
+		}
+		else if (!creditCardSecurityCode.equals(other.creditCardSecurityCode))
+			return false;
 		if (customerProfileRefNum == null)
 		{
 			if (other.customerProfileRefNum != null)
@@ -216,7 +233,8 @@ public class CustomerObject
 	{
 		return "CustomerObject [customerProfileRefNum=" + customerProfileRefNum + ", name=" + name + ", Address1=" + Address1 + ", Address2="
 				+ Address2 + ", City=" + City + ", StateAbbr=" + StateAbbr + ", ZipCode=" + ZipCode + ", Email=" + Email + ", Phone=" + Phone
-				+ ", creditCardNumber=" + creditCardNumber + ", ExpireDateMMYY=" + ExpireDateMMYY + "]";
+				+ ", creditCardNumber=" + creditCardNumber + ", creditCardSecurityCode=" + creditCardSecurityCode + ", ExpireDateMMYY="
+				+ ExpireDateMMYY + "]";
 	}
-	
+
 }

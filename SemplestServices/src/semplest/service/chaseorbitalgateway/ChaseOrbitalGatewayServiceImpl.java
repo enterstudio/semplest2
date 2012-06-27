@@ -119,6 +119,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("CustomerAccountType", "CC");
 			request.setFieldValue("CCAccountNum", customerObject.getCreditCardNumber());
 			request.setFieldValue("CCExpireDate", customerObject.getExpireDateMMYY());
+			request.setFieldValue("CardSecVal", customerObject.getCreditCardSecurityCode());
 			
 			request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
 
