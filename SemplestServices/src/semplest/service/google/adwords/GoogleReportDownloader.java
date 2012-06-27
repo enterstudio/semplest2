@@ -204,6 +204,8 @@ public class GoogleReportDownloader
 					rdata.setApprovalStatus(data[15]);
 					rdata.setFirstPageCPC(Long.valueOf(data[13]));
 					rdata.setMicroCost(Long.valueOf(data[7]));
+					rdata.setAdGroupID(Long.valueOf(data[1]));
+
 					//yyyy-mm-dd
 					rdata.setTransactionDate(dateFormatter.parse(data[0]));
 					//google report doesn't have a created date. so the current date is used here.
