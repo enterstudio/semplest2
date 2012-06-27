@@ -159,17 +159,34 @@
 	  	
 	  	<!-- Create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 
-			<!-- Copy over the google and msn codes (from SemplestServices), so we can compile them with the keyword project together -->
+			<!-- Copy over the google and msn codes and all the related codes (jdbc etc.) from SemplestServices, so we can compile them with the keyword project together -->
 			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/google/adwords"/>
 			<copydir src="${basedir}/src/semplest/service/google/adwords"
 	  	 		dest="${semplest.keywords.dir}/src/semplest/service/google/adwords"
 	  	 	    includes="**/*.java"
 	  	 	/>	
-		<mkdir dir="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"/>
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"/>
 			<copydir src="${basedir}/src/semplest/service/msn/adcenter"
 	  	 		dest="${semplest.keywords.dir}/src/semplest/service/msn/adcenter"
 	  	 	    includes="**/*.java"
 	  	 	/>	
+			<!-- spring jdbc stuff -->
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc"/>
+			<copydir src="${basedir}/src/semplest/server/service/springjdbc"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc"
+	  	 	    includes="**/*.java"
+	  	 	/>
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/helper"/>
+			<copydir src="${basedir}/src/semplest/server/service/springjdbc/helper"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/helper"
+	  	 	    includes="**/*.java"
+	  	 	/>
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/storedproc"/>
+			<copydir src="${basedir}/src/semplest/server/service/springjdbc/storedproc"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/server/service/springjdbc/storedproc"
+	  	 	    includes="**/*.java"
+	  	 	/>
+			
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
 	  	 	<copy todir="${lib}" filtering="off">
 	  	 		<flattenmapper />
