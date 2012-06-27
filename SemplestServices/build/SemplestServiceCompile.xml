@@ -190,6 +190,11 @@
 			<copy todir="${semplest.keywords.dir}/src/semplest/server/service">
 				<fileset dir="${basedir}/src/semplest/server/service" includes="SemplestConfiguration.java" />
 			</copy>
+			<mkdir dir="${semplest.keywords.dir}/src/semplest/util"/>
+			<copydir src="${basedir}/src/semplest/util"
+	  	 		dest="${semplest.keywords.dir}/src/semplest/util"
+	  	 	    includes="**/*.java"
+	  	 	/>	
 			
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
 	  	 	<copy todir="${lib}" filtering="off">
