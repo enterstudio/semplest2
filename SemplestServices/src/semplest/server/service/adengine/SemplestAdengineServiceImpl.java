@@ -738,6 +738,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String description2 = ad.getAdTextLine2();
 			final GoogleAddAdRequest textRequestKey = new GoogleAddAdRequest(promotionAdID, headline, description1, description2);
 			final Long adEngineAdID = requestToAdEngineAdIdMap.get(textRequestKey);
+			logger.info("Found GoogleAdID [" + adEngineAdID + "] for [" + textRequestKey + "]");
 			ad.setAdEngineAdID(adEngineAdID);
 		}
 	}
@@ -785,7 +786,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, textRequests);
 			final Map<GoogleAddAdRequest, Long> requestToGoogleAdIdMap = google.addTextAds(request);
-			logger.info("Added " + requestToGoogleAdIdMap.size() + " Google ads in bulk");
+			logger.info("Added " + requestToGoogleAdIdMap.size() + " Google ads in bulk:\n" + SemplestUtils.getEasilyReadableString(requestToGoogleAdIdMap));
 			backfillAdEngineAdID(nonDeletedAds, requestToGoogleAdIdMap);
 			adGrpData.setAds(nonDeletedAds);
 			google.updateGeoTargets(accountID, campaignID, geoObjList);
