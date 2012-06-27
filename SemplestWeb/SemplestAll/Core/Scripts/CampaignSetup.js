@@ -15,7 +15,6 @@ $(document).ready(function () {
             e.preventDefault();
     });
     $('#AdModelProp_DisplayUrl').live("keypress", function (e) {
-        //alert(e.keyCode);
         if (e.keyCode == 47 || e.keyCode == 63)
             e.preventDefault();
         var dispStr = $('#AdModelProp_DisplayUrl').val();
@@ -29,10 +28,11 @@ $(document).ready(function () {
         var originalValue = $('#AdModelProp_LandingUrl').val();
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
-            var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
-            if (dispStr.indexOf('/') >= 0) {
-                dispStr = dispStr.substring(0, dispStr.indexOf('/'));
-            }
+            //var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
+            var dispStr = $('#AdModelProp_LandingUrl').val();
+            //            if (dispStr.indexOf('/') >= 0) {
+            //                dispStr = dispStr.substring(0, dispStr.indexOf('/'));
+            //            }
             if (dispStr.indexOf('?') >= 0) {
                 dispStr = dispStr.substring(0, dispStr.indexOf('?'));
             }
