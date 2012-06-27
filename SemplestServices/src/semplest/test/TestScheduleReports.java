@@ -7,6 +7,7 @@ import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
@@ -29,7 +30,7 @@ public class TestScheduleReports
 
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
 			GetAdEngineAccountSP getAdEngineAccount = new  GetAdEngineAccountSP();
-			 AdEngineAccountObj ll= getAdEngineAccount.execute(2, "Google");
+			 AdEngineAccountObj ll= getAdEngineAccount.execute(2, AdEngine.Google);
 			//Test Scheduler
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			

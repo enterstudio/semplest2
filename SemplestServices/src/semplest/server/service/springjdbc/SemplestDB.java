@@ -218,7 +218,7 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 
-	public static Long getDefaultBid(int promotionID, String adEngine) throws Exception
+	public static Long getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
 	{
 		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  "
 				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
@@ -228,8 +228,7 @@ public class SemplestDB extends BaseDB
 		Integer defBid;
 		try
 		{
-			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]
-			{ promotionID, adEngine }, Integer.class);
+			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]{ promotionID, adEngine }, Integer.class);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -250,7 +249,7 @@ public class SemplestDB extends BaseDB
 
 	}
 	
-	public static void storeDefaultBid(int promotionID, String adEngine, Long microDefaultBid) throws Exception
+	public static void storeDefaultBid(int promotionID, AdEngine adEngine, Long microDefaultBid) throws Exception
 	{
 		Integer microBid =  microDefaultBid.intValue();
 		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  " +
@@ -264,19 +263,19 @@ public class SemplestDB extends BaseDB
 
 	}
 	
-	public static void UpdateDefaultBidForKeywords(int promotionID, String adEngine) throws Exception
+	public static void UpdateDefaultBidForKeywords(int promotionID, AdEngine adEngine) throws Exception
 	{
 		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
 		updateDefBiAmounts.execute(promotionID, adEngine);
 	}
 
-	public static void storeTargetedDailyBudget(int promotionID, String AdEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
+	public static void storeTargetedDailyBudget(int promotionID, AdEngine adEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
 			throws Exception
 	{
 		jdbcTemplate.update(
 				"insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyMicroBudget,TargetedDailyClicks,CreatedDate) "
 						+ "select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[]
-				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, AdEngine });
+				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, adEngine });
 
 	}
 
@@ -355,7 +354,7 @@ public class SemplestDB extends BaseDB
 
 	private static final RowMapper<BidElement> bidElementMapper = new BeanPropertyRowMapper<BidElement>(BidElement.class);
 
-	public static List<BidElement> getLatestBids(int promotionID, String searchEngine) throws Exception
+	public static List<BidElement> getLatestBids(int promotionID, AdEngine searchEngine) throws Exception
 	{
 		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, " 
 				+ " kb.isActive, kb.isDefaultValue from Promotion p  "
@@ -373,13 +372,9 @@ public class SemplestDB extends BaseDB
 		{
 			return null;
 		}
-		catch (Exception e)
-		{
-			throw e;
-		}
 	}
 
-	public static HashMap<String, ArrayList<BidElement>> getAllBids(int promotionID, String searchEngine, Date startDate, Date endDate)
+	public static HashMap<String, ArrayList<BidElement>> getAllBids(int promotionID, AdEngine searchEngine, Date startDate, Date endDate)
 			throws Exception
 	{
 
@@ -509,24 +504,16 @@ public class SemplestDB extends BaseDB
 	 * This get the last created Traffic Estimator Data for one keyword
 	 * associated with campaign
 	 */
-	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, String advertisingEngine)
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, AdEngine advertisingEngine)
 			throws Exception
 	{
-		if (!AdEngine.existsAdEngine(advertisingEngine))
-		{
-			throw new Exception(advertisingEngine + " Not Found");
-		}
 		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
 		return trafficEst.execute(promotionID, keyword, advertisingEngine);
 	}
 	
-	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimator(Integer promotionID, String advertisingEngine)
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimator(Integer promotionID, AdEngine advertisingEngine)
 			throws Exception
 	{
-		if (!AdEngine.existsAdEngine(advertisingEngine))
-		{
-			throw new Exception(advertisingEngine + " Not Found");
-		}
 		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
 		return trafficEst.execute(promotionID, null, advertisingEngine);
 	}
@@ -588,12 +575,8 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static void storeBidObjects(int promotionID, String advertisingEngine, ArrayList<BidElement> bidObjects) throws Exception
+	public static void storeBidObjects(int promotionID, AdEngine advertisingEngine, ArrayList<BidElement> bidObjects) throws Exception
 	{
-		if (!AdEngine.existsAdEngine(advertisingEngine))
-		{
-			throw new Exception(advertisingEngine + " Not Found");
-		}
 		if (bidObjects != null && bidObjects.size() > 0)
 		{
 			AddBidSP addBid = new AddBidSP();
@@ -601,8 +584,7 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(),
-							advertisingEngine, bid.getIsNegative());
+					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(), advertisingEngine, bid.getIsNegative());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
@@ -619,7 +601,7 @@ public class SemplestDB extends BaseDB
 	 * Report calls
 	 */
 
-	public static void storeAdvertisingEngineReportData(Integer promotionID, String adEngine, ReportObject[] reportObjList) throws Exception
+	public static void storeAdvertisingEngineReportData(Integer promotionID, AdEngine adEngine, ReportObject[] reportObjList) throws Exception
 	{
 		AddReportDataSP setReportSP = new AddReportDataSP();
 		for (int i=0; i < reportObjList.length; i++)
@@ -628,7 +610,7 @@ public class SemplestDB extends BaseDB
 			//Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
 			//Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
 			//Integer FirstPageMicroCpc, Integer MicroCost
-			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine, rptObj.getTransactionDate(), 
+			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine.name(), rptObj.getTransactionDate(), 
 					rptObj.getMicroBidAmount().intValue(),  rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getBidMatchType(), 
 					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(),
 					rptObj.getMicroCost().intValue());
@@ -701,13 +683,8 @@ public class SemplestDB extends BaseDB
 
 	private static final RowMapper<TargetedDailyBudget> targetedDailyBudgetMapper = new BeanPropertyRowMapper<TargetedDailyBudget>(TargetedDailyBudget.class);
 
-	public static TargetedDailyBudget getLatestTargetedDailyBudget(int promotionID, String adEngine) throws Exception
+	public static TargetedDailyBudget getLatestTargetedDailyBudget(int promotionID, AdEngine adEngine) throws Exception
 	{
-
-		if (!AdEngine.existsAdEngine(adEngine))
-		{
-			throw new Exception(adEngine + " Not Found");
-		}
 		String strSQL = "select top 1 tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
 				+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? order by tdb.CreatedDate DESC";
@@ -727,14 +704,9 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, String adEngine, java.util.Date startDate,
+	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, AdEngine adEngine, java.util.Date startDate,
 			java.util.Date endDate) throws Exception
 	{
-
-		if (!AdEngine.existsAdEngine(adEngine))
-		{
-			throw new Exception(adEngine + " Not Found");
-		}
 		String strSQL = null;
 		try
 		{
@@ -774,7 +746,7 @@ public class SemplestDB extends BaseDB
 	 */
 	private static final RowMapper<AdEngineID> adEngineObjMapper = new BeanPropertyRowMapper<AdEngineID>(AdEngineID.class);
 
-	public static AdEngineID getAdEngineID(Integer promotionID, String adEngine) throws Exception
+	public static AdEngineID getAdEngineID(Integer promotionID, AdEngine adEngine) throws Exception
 	{
 		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], aep.AdvertisingEngineAdGroupID [AdGroupID] from Customer c "
 				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
@@ -783,16 +755,11 @@ public class SemplestDB extends BaseDB
 				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK where p.PromotionPK = ? and ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ promotionID, adEngine }, adEngineObjMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[]{ promotionID, adEngine }, adEngineObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
 			return null;
-		}
-		catch (Exception e)
-		{
-			throw e;
 		}
 	}
 
@@ -869,7 +836,7 @@ public class SemplestDB extends BaseDB
 	}
 	*/
 
-	public static void addAdEngineAccountID(int customerID, String accountNumber, Long accountID, String adEngine) throws Exception
+	public static void addAdEngineAccountID(int customerID, String accountNumber, Long accountID, AdEngine adEngine) throws Exception
 	{
 		try
 		{
@@ -903,7 +870,7 @@ public class SemplestDB extends BaseDB
 
 	}
 	
-	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
+	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{		
 		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
 	}
@@ -956,7 +923,7 @@ public class SemplestDB extends BaseDB
 		return idPairRowCountMap;
 	}
 	
-	public static Map<GoogleAdIdSemplestAdIdPair, Integer> setAdIDForAdGroupBulk(final List<GoogleAdIdSemplestAdIdPair> idPairs, final String advertisingEngine) throws Exception
+	public static Map<GoogleAdIdSemplestAdIdPair, Integer> setAdIDForAdGroupBulk(final List<GoogleAdIdSemplestAdIdPair> idPairs, final AdEngine advertisingEngine) throws Exception
 	{	
 		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_SET_AD_ID_FOR_AD_GROUP,
  											             new BatchPreparedStatementSetter() 
@@ -965,7 +932,7 @@ public class SemplestDB extends BaseDB
 											              	{
 												                ps.setLong(1, idPairs.get(i).getGoogleAdId());
 												                ps.setInt(2, idPairs.get(i).getSemplestAdId());
-												                ps.setString(3, advertisingEngine);
+												                ps.setString(3, advertisingEngine.name());
 											              	}	
 											              
 											              	public int getBatchSize() 
@@ -976,7 +943,7 @@ public class SemplestDB extends BaseDB
 		return getIdPairRowCountMap(idPairs, rowCounts);
 	}
 	
-	public static Map<Entry<UpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<UpdateAdRequest, Long> oldToNewAdIdMap, final String advertisingEngine) throws Exception
+	public static Map<Entry<UpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<UpdateAdRequest, Long> oldToNewAdIdMap, final AdEngine advertisingEngine) throws Exception
 	{
 		final Set<Entry<UpdateAdRequest, Long>> entries = oldToNewAdIdMap.entrySet();
 		final List<Entry<UpdateAdRequest, Long>> entryList = new ArrayList<Entry<UpdateAdRequest, Long>>(entries);
@@ -993,7 +960,7 @@ public class SemplestDB extends BaseDB
 												                ps.setLong(1, newAdID);
 												                ps.setInt(2, promotionAdId);
 												                ps.setLong(3, oldAdID);
-												                ps.setString(4, advertisingEngine);
+												                ps.setString(4, advertisingEngine.name());
 											              	}	
 											              
 											              	public int getBatchSize() 
@@ -1009,7 +976,7 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(SQL_UPDATE_AD_ENGINE_AD_ID, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
 	}
 	
-	public static Integer deleteAdIDForAdGroup(String advertisingEngine, Integer promotionAdsFK) throws Exception
+	public static Integer deleteAdIDForAdGroup(AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
 		
 		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngine});
@@ -1021,7 +988,7 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(SQL_MARK_AD_DELETED, new Object[]{date, advertisingEngineAdID});
 	}
 	
-	public static  Map<Integer, Integer> deleteAdIDForAdGroupBulk(final List<Integer> promotionAdIds, final String advertisingEngine) throws Exception
+	public static  Map<Integer, Integer> deleteAdIDForAdGroupBulk(final List<Integer> promotionAdIds, final AdEngine advertisingEngine) throws Exception
 	{
 		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_DELETE_AD_ENGINE_AD_ID,
 									             new BatchPreparedStatementSetter() 
@@ -1030,7 +997,7 @@ public class SemplestDB extends BaseDB
 									              	{
 									              		final Integer promotionAdId = promotionAdIds.get(i);
 										                ps.setInt(1, promotionAdId);
-										                ps.setString(2, advertisingEngine);
+										                ps.setString(2, advertisingEngine.name());
 									              	}	
 									              
 									              	public int getBatchSize() 

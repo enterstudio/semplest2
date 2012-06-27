@@ -12,6 +12,7 @@ import com.microsoft.adcenter.v8.ReportAggregation;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
@@ -100,7 +101,7 @@ public class CreateSchedulerAndTask
 		return taskObj;
 	}
 	
-	public static SemplestSchedulerTaskObject createAddPromotionToAdEngineTask(Integer customerID, Integer productGroupID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createAddPromotionToAdEngineTask(Integer customerID, Integer productGroupID, Integer promotionID, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddPromotionToAdEngine.getClientServiceNameValue());
@@ -116,7 +117,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject ExecuteBidProcess(Integer promotionID, ArrayList<String> adEngineList)
+	public static SemplestSchedulerTaskObject ExecuteBidProcess(Integer promotionID, List<AdEngine> adEngines)
 	{
 		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
 		//Client service name to call from scheduler
@@ -126,7 +127,7 @@ public class CreateSchedulerAndTask
 		//json parameters
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID",Integer.toString(promotionID));
-		String adEngineListStr = gson.toJson(adEngineList,ArrayList.class);
+		String adEngineListStr = gson.toJson(adEngines);
 		jsonHash.put("adEngines",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		taskObj.setParameters(json);
@@ -134,7 +135,7 @@ public class CreateSchedulerAndTask
 		return taskObj;
 	}
 	
-	public static SemplestSchedulerTaskObject createChangePromotionStartDateTask(Integer customerID, Integer promotionID, Date newStartDate, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createChangePromotionStartDateTask(Integer customerID, Integer promotionID, Date newStartDate, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.ChangePromotionStartDate.getClientServiceNameValue());
@@ -151,7 +152,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 		
-	public static SemplestSchedulerTaskObject createUpdateBudgetTask(Integer customerID, Integer promotionID, Double changeInBudget, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createUpdateBudgetTask(Integer customerID, Integer promotionID, Double changeInBudget, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.UpdateBudget.getClientServiceNameValue());
@@ -167,7 +168,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createPausePromotionTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createPausePromotionTask(Integer customerID, Integer promotionID, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.PausePromotion.getClientServiceNameValue());
@@ -182,7 +183,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createUnpausePromotionTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createUnpausePromotionTask(Integer customerID, Integer promotionID, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.UnpausePromotion.getClientServiceNameValue());
@@ -197,7 +198,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 		
-	public static SemplestSchedulerTaskObject createPauseProductGroupTask(Integer customerID, List<Integer> productGroupIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createPauseProductGroupTask(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.RefreshSiteLinksForAd.getClientServiceNameValue());
@@ -213,7 +214,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}	
 		
-	public static SemplestSchedulerTaskObject createRefreshSiteLinksForAdTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createRefreshSiteLinksForAdTask(Integer customerID, Integer promotionID, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.RefreshSiteLinksForAd.getClientServiceNameValue());
@@ -228,7 +229,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createDeleteNegativeKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createDeleteNegativeKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteKeyword.getClientServiceNameValue());
@@ -245,7 +246,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}	
 	
-	public static SemplestSchedulerTaskObject createDeleteKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createDeleteKeywordTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteKeyword.getClientServiceNameValue());
@@ -262,7 +263,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}	
 	
-	public static SemplestSchedulerTaskObject createUpdateGeoTargetingTask(Integer customerID, Integer promotionID, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createUpdateGeoTargetingTask(Integer customerID, Integer promotionID, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.UpdateGeoTargeting.getClientServiceNameValue());
@@ -277,7 +278,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createUpdateAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createUpdateAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.UpdateAds.getClientServiceNameValue());
@@ -294,7 +295,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createAddNegativeKeywordsTask(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createAddNegativeKeywordsTask(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddNegativeKeywords.getClientServiceNameValue());
@@ -311,7 +312,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createAddKeywordsTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createAddKeywordsTask(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddKeywords.getClientServiceNameValue());
@@ -328,7 +329,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createAddAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String scheduleNamePostfix)
+	public static SemplestSchedulerTaskObject createAddAdsTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines, String scheduleNamePostfix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.AddAds.getClientServiceNameValue());
@@ -345,7 +346,7 @@ public class CreateSchedulerAndTask
 		return task;
 	}
 	
-	public static SemplestSchedulerTaskObject createDeleteAdEngineAdTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines, String deleteAdPostFix)
+	public static SemplestSchedulerTaskObject createDeleteAdEngineAdTask(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines, String deleteAdPostFix)
 	{
 		final SemplestSchedulerTaskObject task = new SemplestSchedulerTaskObject();
 		task.setClientServiceName(ProtocolEnum.ClientServiceName.DeleteAd.getClientServiceNameValue());

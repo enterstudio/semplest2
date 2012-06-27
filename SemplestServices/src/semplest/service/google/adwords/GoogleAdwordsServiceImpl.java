@@ -24,7 +24,7 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.keyword.KeywordMatchingType;
-import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -231,7 +231,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
 			{
 				UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
-				Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), ProtocolEnum.AdEngine.Google.name(), cumulativeUnitsUsedFromStart);
+				Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), AdEngine.Google, cumulativeUnitsUsedFromStart);
 				logger.info("Added additional API Cost of " + newCost + " to Google Account " + promoObj.getAdvertisingEngineAccountPK());
 			}*/
 			//final Long spend = test.getSpentAPIUnitsPerAccountID(2387614989L, new Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 15)), new Date());

@@ -63,7 +63,7 @@ public class DatabaseTest extends BaseDB{
 	private Long test_accountId;
 	private Long test_campaignId;
 	
-	private String adEngine = AdEngine.Google.name();
+	private AdEngine adEngine = AdEngine.Google;
 	private Long google_accountId = 5058200123L;
 	private Long google_campaignId = 116193337L;
 	private int adEnginePK = 2;
@@ -174,7 +174,7 @@ public class DatabaseTest extends BaseDB{
 				case 1: {//real data
 					//get report (of ALL_TIME) from google
 					report = getReportFromGoogle();	
-					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), report);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google, report);
 					break;
 				}
 				case 2:{//duplicated both keywords and transaction date
@@ -216,8 +216,8 @@ public class DatabaseTest extends BaseDB{
 					dup[0].setQualityScore(6);
 					dup[0].setTransactionDate(transactionDate);
 					
-					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), report);
-					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google.name(), dup);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google, report);
+					db.storeAdvertisingEngineReportData(promotionID, AdEngine.Google, dup);
 					break;
 				}
 				default: report = null;
@@ -304,7 +304,7 @@ public class DatabaseTest extends BaseDB{
 			switch(caseNum){
 				case 1:{//getLatestTrafficEstimatorForKeyword()				
 					String keyword = "civil wedding ceremony venues";
-					List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionID, keyword, AdEngine.Google.name());
+					List<TrafficEstimatorDataObject> ret = db.getLatestTrafficEstimatorForKeyword(promotionID, keyword, AdEngine.Google);
 					System.out.println("keyword = " + keyword);
 					int c = 0;
 					for(TrafficEstimatorDataObject t : ret){
@@ -355,7 +355,7 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** get default bid amount from the AdvertisingEnginePromotion table
-			Long ret = db.getDefaultBid(promotionID, AdEngine.Google.name());
+			Long ret = db.getDefaultBid(promotionID, AdEngine.Google);
 			System.out.println("DefaultBid = " + ret);
 			
 		} catch (Exception e) {
@@ -495,7 +495,7 @@ public class DatabaseTest extends BaseDB{
 			switch(caseNum){
 				case 1:{
 					//*** get Latest Bids from the database
-					List<BidElement> bids = db.getLatestBids(promotionID, AdEngine.Google.name());
+					List<BidElement> bids = db.getLatestBids(promotionID, AdEngine.Google);
 					int i = 0;
 					for(BidElement be : bids){
 						System.out.println("#"+i+"----------------------------");

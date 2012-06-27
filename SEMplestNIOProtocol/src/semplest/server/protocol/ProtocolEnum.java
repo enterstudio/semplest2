@@ -1,6 +1,8 @@
 package semplest.server.protocol;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 
@@ -9,19 +11,21 @@ public class ProtocolEnum
 {
 	private static final Logger logger = Logger.getLogger(ProtocolEnum.class);
 	
-	private static HashMap<String,HashMap<String, String>> matchTypeMap = new HashMap<String,HashMap<String, String>>();
-	static {
+	private static HashMap<AdEngine,HashMap<String, String>> matchTypeMap = new HashMap<AdEngine,HashMap<String, String>>();
+	
+	static 
+	{
 		HashMap<String,String> googleMap = new HashMap<String,String>();
 		googleMap.put("exact","EXACT");
 		googleMap.put("broad","BROAD");
 		googleMap.put("phrase","PHRASE");
-		matchTypeMap.put("google", googleMap);
+		matchTypeMap.put(AdEngine.Google, googleMap);
 		
 		HashMap<String,String> msnMap = new HashMap<String,String>();
 		msnMap.put("exact","Exact");
 		msnMap.put("broad","Broad");
 		msnMap.put("phrase","Phrase");
-		matchTypeMap.put("msn", msnMap);
+		matchTypeMap.put(AdEngine.MSN, msnMap);
 	}
 	
 	
@@ -73,15 +77,41 @@ public class ProtocolEnum
 			{
 				for (AdEngine val : AdEngine.values())
 				{
-					if (val.name().equalsIgnoreCase(adEngine))
+					if (val.name().equals(adEngine))
 					{
 						return true;
 
 					}
 				}
-
 			}
 			return false;
+		}
+		
+		public static void validateAdEngine(final String adEngine)
+		{
+			if (!AdEngine.existsAdEngine(adEngine))
+			{
+				throw new IllegalArgumentException("AdEngine specified [" + adEngine + "] is not valid");
+			}
+		}
+		
+		public static void validateAdEngines(final List<String> adEngines)
+		{
+			for (final String adEngine : adEngines)
+			{
+				validateAdEngine(adEngine);
+			}
+		}
+		
+		public static List<AdEngine> getAdEngines(final List<String> adEngineStrings)
+		{
+			final List<AdEngine> adEngineList = new ArrayList<AdEngine>();
+			for (final String adEngineString : adEngineStrings)
+			{
+				final AdEngine adEngine = AdEngine.valueOf(adEngineString);
+				adEngineList.add(adEngine);
+			}
+			return adEngineList;
 		}
 	}
 	
@@ -106,14 +136,13 @@ public class ProtocolEnum
 		}
 		
 
-		public static String getSearchEngineMatchType(String matchType, String adEngine) throws Exception {
-			if(!SemplestMatchType.existsMatchType(matchType)) {
+		public static String getSearchEngineMatchType(String matchType, AdEngine adEngine) throws Exception 
+		{
+			if(!SemplestMatchType.existsMatchType(matchType)) 
+			{
 				throw new Exception("Invalid matchtype "+matchType+"!!");
 			} 
-			if(!AdEngine.existsAdEngine(adEngine)) {
-				throw new Exception("Invalid ad engine "+adEngine+"!!");
-			}
-			return matchTypeMap.get(adEngine.toLowerCase()).get(matchType.toLowerCase());
+			return matchTypeMap.get(adEngine).get(matchType.toLowerCase());
 		}	
 	}
 	
@@ -195,7 +224,7 @@ public class ProtocolEnum
 	
 	public static void main(String [] args) {
 		try {
-			System.out.println(ProtocolEnum.SemplestMatchType.getSearchEngineMatchType("EXact", "Msn"));
+			System.out.println(ProtocolEnum.SemplestMatchType.getSearchEngineMatchType("EXact", AdEngine.MSN));
 		} catch (Exception e) {
 			logger.error("Problem", e);
 		}

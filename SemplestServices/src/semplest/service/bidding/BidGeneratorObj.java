@@ -155,16 +155,11 @@ public class BidGeneratorObj
 		costDataMap = new HashMap<String, EstimatorData>();
 	}
 
-	public HashMap<String, AdEngineInitialData> getInitialValues(Integer promotionID, ArrayList<String> searchEngine) throws Exception
+	public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception
 	{
-
-		HashMap<String, AdEngineInitialData> initValues = new HashMap<String, AdEngineInitialData>();
-		for (String se : searchEngine)
+		final Map<AdEngine, AdEngineInitialData> initValues = new HashMap<AdEngine, AdEngineInitialData>();
+		for (AdEngine se : searchEngine)
 		{
-			if (!AdEngine.existsAdEngine(se))
-			{
-				throw new Exception("Ad engine " + se + " Not Found");
-			}
 			// Long defaultMicroBid = 1000000L; // $1.00
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
 			adEngineInitialDataObject.setSemplestMatchType(ProtocolEnum.SemplestMatchType.Exact.name());
@@ -174,11 +169,10 @@ public class BidGeneratorObj
 			// SemplestDB.storeDefaultBid(promotionID, se, defaultMicroBid);
 			initValues.put(se, adEngineInitialDataObject);
 		}
-
 		return initValues;
 	}
 
-	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception
+	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
 
 		/* ******************************************************************************************* */
@@ -188,29 +182,19 @@ public class BidGeneratorObj
 
 		logger.info("setBidsInitial called for ad engine " + searchEngine);
 
-		/* ******************************************************************************************* */
-		// 0. Check if Ad engine name is valid
-		if (!AdEngine.existsAdEngine(searchEngine))
-		{
-			throw new Exception("Ad engine " + searchEngine + " Not Found");
-		}
 
 		/* ******************************************************************************************* */
 		// 1. Database call: get campaign specific IDs
 		try
 		{
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
-			if (searchEngine.equalsIgnoreCase(google))
+			if (searchEngine == AdEngine.Google)
 			{
 				googleAccountID = String.valueOf(adEngineInfo.getAccountID());
 			}
-			else if (searchEngine.equalsIgnoreCase(msn))
+			else if (searchEngine == AdEngine.MSN)
 			{
 				msnAccountID = adEngineInfo.getAccountID();
-			}
-			else
-			{
-				throw new Exception("Ad engine type " + searchEngine + " is not yet implemented!!");
 			}
 			campaignID = adEngineInfo.getCampaignID();
 			adGroupID = adEngineInfo.getAdGroupID();
@@ -221,15 +205,13 @@ public class BidGeneratorObj
 			throw new Exception("Failed to get AdEngineID from the database. " + e.getMessage(), e);
 		}
 
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
-			logger.info("Got campaign related IDs from the database" + " Google Account " + googleAccountID + ":" + "CampaignID = "
-					+ String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
+			logger.info("Got campaign related IDs from the database" + " Google Account " + googleAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
 		}
-		else if (searchEngine.equalsIgnoreCase(msn))
+		else if (searchEngine == AdEngine.MSN)
 		{
-			logger.info("Got campaign related IDs from the database" + " MSN Account " + msnAccountID + ":" + "CampaignID = "
-					+ String.valueOf(campaignID) + ":" + String.valueOf(adGroupID));
+			logger.info("Got campaign related IDs from the database" + " MSN Account " + msnAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
 		}
 
 		/* ******************************************************************************************* */
@@ -245,7 +227,7 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 3. [google] API call: get adgroup criterion for all keywords
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			k = 0;
 			while (true)
@@ -283,7 +265,7 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 4. [google] Decide competitive, non-competitive and no-info
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			for (int i = 0; i < keywordDataObjs.length; i++)
 			{
@@ -322,7 +304,7 @@ public class BidGeneratorObj
 		// i. some keywords are pushed back to non-competitive category if
 		// information available is not useful
 
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			if (compKeywords.size() > 0)
 			{
@@ -347,7 +329,7 @@ public class BidGeneratorObj
 		/* *************************************** */
 		// b. [msn] for all keywords and compute firstPage CPC from the data
 
-		if (searchEngine.equalsIgnoreCase(msn))
+		if (searchEngine == AdEngine.MSN)
 		{
 
 			// /////////////////////////////////////// HACK
@@ -493,7 +475,7 @@ public class BidGeneratorObj
 		Long totalDailyCost = 0L;
 		Float totalDailyClick = 0F;
 
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			try
 			{
@@ -534,7 +516,7 @@ public class BidGeneratorObj
 		// 11. [google] Database call: write adgroup criterion
 		if (keywordDataObjs != null && keywordDataObjs.length > 0)
 		{
-			if (searchEngine.equalsIgnoreCase(google))
+			if (searchEngine == AdEngine.Google)
 			{
 				try
 				{
@@ -552,7 +534,7 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			if (o != null)
 			{
@@ -574,7 +556,7 @@ public class BidGeneratorObj
 			}
 		} // if(searchEngine.equalsIgnoreCase(google))
 
-		if (searchEngine.equalsIgnoreCase(msn))
+		if (searchEngine == AdEngine.MSN)
 		{
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
@@ -665,7 +647,7 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 16. SE API call: Update matchType, bid for keywords
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
@@ -686,7 +668,7 @@ public class BidGeneratorObj
 			}
 		} 
 
-		if (searchEngine.equalsIgnoreCase(msn))
+		if (searchEngine == AdEngine.MSN)
 		{
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
@@ -695,7 +677,7 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
-		if (searchEngine.equalsIgnoreCase(google))
+		if (searchEngine == AdEngine.Google)
 		{
 			k = 0;
 			while (true)
@@ -729,9 +711,8 @@ public class BidGeneratorObj
 
 	} // setBidsInitial()
 
-	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception
+	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
-
 		logger.info("setBidsUpdate called. presently not doing anything!!");
 		// throw new Exception("setBidsUpdate not yet implemented!!");
 

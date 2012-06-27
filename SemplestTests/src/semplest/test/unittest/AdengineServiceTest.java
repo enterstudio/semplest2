@@ -1808,7 +1808,7 @@ public class AdengineServiceTest extends BaseDB{
 		public Integer semplestPromotionId;
 		public String semplestPromotionName;
 		//public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.Google.name()));
-		public ArrayList<String> adEngineList = new ArrayList<String>(Arrays.asList(AdEngine.MSN.name()));				
+		public List<AdEngine> adEngineList = Arrays.asList(AdEngine.MSN);				
 		
 		//Ad Engine Variables
 		public Integer googleAccountId = 54103;

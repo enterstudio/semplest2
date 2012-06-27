@@ -10,9 +10,9 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
-import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
@@ -341,7 +341,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines)
 	{
 		final String methodName = "scheduleDeleteNegativeKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -367,7 +367,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
 		final String methodName = "DeleteNegativeKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -392,7 +392,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
 	{
 		final String methodName = "scheduleAddNegativeKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -418,7 +418,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines)
+	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
 			throws Exception
 	{
 		final String methodName = "AddNegativeKeywords";
@@ -444,7 +444,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<String> adEngines)
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines)
 	{
 		final String methodName = "scheduleAddKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -470,7 +470,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception
+	public Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
 		final String methodName = "AddKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -495,7 +495,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) 
+	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) 
 	{
 		final String methodName = "scheduleAddAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -521,7 +521,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean AddAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean AddAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
 		final String methodName = "AddAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -546,7 +546,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)
+	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines)
 	{
 		final String methodName = "scheduleDeleteAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -572,7 +572,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception
+	public Boolean DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
 		final String methodName = "DeleteAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -597,7 +597,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines)  
+	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleUpdateAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
@@ -623,7 +623,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<String> adEngines) throws Exception 
+	public Boolean UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateAds";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
@@ -648,7 +648,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleUpdateGeoTargeting(Integer customerID, Integer PromotionID, List<String> adEngines)  
+	public Boolean scheduleUpdateGeoTargeting(Integer customerID, Integer PromotionID, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleUpdateGeoTargeting";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -672,7 +672,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean UpdateGeoTargeting(Integer PromotionID, List<String> adEngines) throws Exception 
+	public Boolean UpdateGeoTargeting(Integer PromotionID, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateGeoTargeting";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -695,7 +695,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleChangePromotionStartDate(Integer customerID, Integer promotionID, java.util.Date newStartDate, List<String> adEngines)  
+	public Boolean scheduleChangePromotionStartDate(Integer customerID, Integer promotionID, java.util.Date newStartDate, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleChangePromotionStartDate";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -721,7 +721,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<String> adEngines) throws Exception 
+	public Boolean ChangePromotionStartDate(Integer promotionID, java.util.Date newStartDate, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "ChangePromotionStartDate";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -746,7 +746,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<String> adEngines)  
+	public Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleUpdateBudget";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();	
@@ -771,7 +771,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<String> adEngines) throws Exception 
+	public Boolean UpdateBudget(Integer promotionID, Double changeInBudget, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "UpdateBudget";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();	
@@ -795,7 +795,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 		
 	@Override
-	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<String> adEngines)  
+	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines)  
 	{
 		final String methodName = "schedulePausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -819,7 +819,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean PausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean PausePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "PausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -842,7 +842,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<String> adEngines)  
+	public Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleUnpausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -866,7 +866,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean UnpausePromotion(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean UnpausePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "UnpausePromotion";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -889,7 +889,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds , List<String> adEngines)  
+	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds , List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleDeleteKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -915,7 +915,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<String> adEngines) throws Exception 
+	public Boolean DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "DeleteKeywords";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -940,7 +940,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 		
 	@Override
-	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<String> adEngines)  
+	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<AdEngine> adEngines)  
 	{
 		final String methodName = "scheduleRefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -964,7 +964,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean RefreshSiteLinks(Integer promotionID, List<String> adEngines) throws Exception 
+	public Boolean RefreshSiteLinks(Integer promotionID, List<AdEngine> adEngines) throws Exception 
 	{
 		final String methodName = "RefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
@@ -987,13 +987,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<String> adEngines)  
+	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines)  
 	{
 		final String methodName = "schedulePauseProductGroups";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID",Integer.toString(customerID));
-		jsonHash.put("productGroupIds", gson.toJson(productGroupIds, List.class));		
-		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		jsonHash.put("productGroupIds", gson.toJson(productGroupIds));		
+		final String adEnginesStr = gson.toJson(adEngines);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
@@ -1011,13 +1011,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean PauseProductGroups(List<Integer> productGroupIds, List<String> adEngines) throws Exception
+	public Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception
 	{
 		final String methodName = "PauseProductGroups";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		final String productGroupIdsStr = gson.toJson(productGroupIds, List.class);		
+		final String productGroupIdsStr = gson.toJson(productGroupIds);		
 		jsonHash.put("productGroupIds", productGroupIdsStr);		
-		final String adEnginesStr = gson.toJson(adEngines, List.class);
+		final String adEnginesStr = gson.toJson(adEngines);
 		jsonHash.put("adEngines", adEnginesStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
@@ -1035,14 +1035,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList) 
+	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngineList) 
 	{
 		final String methodName = "scheduleAddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("productGroupID", Integer.toString(productGroupID));
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
-		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
+		final String adEngineListStr = gson.toJson(adEngineList);
 		jsonHash.put("adEngines",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
@@ -1060,14 +1060,14 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 	
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<String> adEngineList) throws Exception
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngineList) throws Exception
 	{
 		final String methodName = "AddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("customerID", Integer.toString(customerID));
 		jsonHash.put("productGroupID", Integer.toString(productGroupID));
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
-		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
+		final String adEngineListStr = gson.toJson(adEngineList);
 		jsonHash.put("adEngines",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
@@ -1090,7 +1090,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final String methodName = "scheduleAddPromotionToAdEngine";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", Integer.toString(promotionID));
-		final String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
+		final String adEngineListStr = gson.toJson(adEngineList);
 		jsonHash.put("adEngines",adEngineListStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");		
@@ -1108,12 +1108,12 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean ExecuteBidProcess(Integer PromotionID, ArrayList<String> adEngineList) throws Exception
+	public Boolean ExecuteBidProcess(Integer PromotionID, List<AdEngine> adEngineList) throws Exception
 	{
 		final String methodName = "ExecuteBidProcess";
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("promotionID",Integer.toString(PromotionID));
-		String adEngineListStr = gson.toJson(adEngineList, ArrayList.class);
+		String adEngineListStr = gson.toJson(adEngineList);
 		jsonHash.put("adEngines",adEngineListStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");

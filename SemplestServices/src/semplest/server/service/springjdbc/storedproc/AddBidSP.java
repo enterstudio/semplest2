@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.BaseDB;
 
 public class AddBidSP extends StoredProcedure
@@ -31,9 +32,9 @@ public class AddBidSP extends StoredProcedure
 	/*
 	 * returns KeywordBidPK
 	 */
-	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, String AdvertisingEngine, boolean IsNegative) throws Exception
+	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, AdEngine AdvertisingEngine, boolean IsNegative) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine,IsNegative);
+		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative);
 		if (results.get("ID") == null)
 		{
 			return null;

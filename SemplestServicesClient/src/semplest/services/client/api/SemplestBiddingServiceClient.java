@@ -4,11 +4,13 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.AdEngineInitialData;
@@ -83,51 +85,49 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 	
 	@Override
-	public HashMap<String,AdEngineInitialData>  getInitialValues(Integer promotionID,
-			ArrayList<String> searchEngine) throws Exception {
-		
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
+	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngines) throws Exception 
+	{	
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		String searchEngStr = gson.toJson(searchEngine, ArrayList.class);
+		final String searchEngStr = gson.toJson(searchEngines);
 		jsonHash.put("searchEngine", searchEngStr);
-		String json = protocolJson.createJSONHashmap(jsonHash);
-
-		String returnData = runMethod(baseurl, SERVICEOFFERED, "getInitialValues", json, timeoutMS);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, "getInitialValues", json, timeoutMS);
 		//Define the type for conversion
-		Type type = new TypeToken<Map<String,AdEngineInitialData>>(){}.getType();
-		return gson.fromJson(returnData, type);
-		
-		
+		final Type type = new TypeToken<Map<String,AdEngineInitialData>>(){}.getType();
+		return gson.fromJson(returnData, type);		
 	}
+	
 	@Override
-	public HashMap<String, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, ArrayList<String> searchEngine)
-			throws Exception {
+	public Map<AdEngine, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, List<AdEngine> searchEngine) throws Exception 
+	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		String searchEngStr = gson.toJson(searchEngine, ArrayList.class);
+		String searchEngStr = gson.toJson(searchEngine);
 		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 	}
+	
 	@Override
-	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", searchEngine);
+		jsonHash.put("searchEngine", searchEngine.name());
 		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "setBidsInitial", json, timeoutMS);
 		return gson.fromJson(returnData, Boolean.class);
 	}
+	
 	@Override
-	public Boolean setBidsUpdate(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("searchEngine", searchEngine.name());
 		jsonHash.put("budgetData", gson.toJson(budgetData, BudgetObject.class));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "setBidsUpdate", json, timeoutMS);
@@ -135,19 +135,19 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 
 	@Override
-	public HashMap<String, Double> getBid(String accountID, Long campaignID, Long adGroupID, ArrayList<String> keywords) throws Exception
+	public HashMap<String, Double> getBid(String accountID, Long campaignID, Long adGroupID, List<String> keywords) throws Exception
 	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		String keyLevelStr = gson.toJson(keywords, ArrayList.class);
+		String keyLevelStr = gson.toJson(keywords);
 		jsonHash.put("keywords",keyLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBid", json, timeoutMS);
 		return gson.fromJson(returnData, HashMap.class);
 	}
+	
 	@Override
 	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
 	{
@@ -159,63 +159,51 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 
 	@Override
-	public void getBidsInitial(String accountID,
-			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
-		
+	public void getBidsInitial(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
+	{	
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
 		jsonHash.put("searchEngine", String.valueOf(searchEngine));
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		runMethod(baseurl, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
-//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
-//		return gson.fromJson(returnData, ArrayList.class);
 	}
+	
 	@Override
-	public void getBidsUpdate(String accountID,
-			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
-		
+	public void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
+	{	
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("searchEngine", searchEngine.name());
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
-//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
-//		return gson.fromJson(returnData, ArrayList.class);
 	}
+	
 	@Override
-	public void getBidsInitialNaive(String accountID,
-			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
-		
+	public void getBidsInitialNaive(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
+	{	
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("searchEngine", searchEngine.name());
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		runMethod(baseurl, SERVICEOFFERED, "getBidsInitialNaive", json, timeoutMS);
-
 	}
+	
 	@Override
-	public void getBidsUpdateNaive(String accountID,
-			Long campaignID, Long adGroupID, String searchEngine) throws Exception {
-		
+	public void getBidsUpdateNaive(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
+	{	
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("accountID", accountID);
 		jsonHash.put("campaignID", String.valueOf(campaignID));
 		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
+		jsonHash.put("searchEngine", searchEngine.name());
 		String json = protocolJson.createJSONHashmap(jsonHash);
-
 		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdateNaive", json, timeoutMS);
-//		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
-//		return gson.fromJson(returnData, ArrayList.class);
 	}
 
 

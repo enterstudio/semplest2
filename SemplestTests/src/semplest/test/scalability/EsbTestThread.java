@@ -14,6 +14,7 @@ import org.joda.time.DateTime;
 
 import com.microsoft.adcenter.v8.ReportAggregation;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
@@ -242,7 +243,7 @@ public class EsbTestThread implements Runnable{
 					SemplestBiddingServiceClient client = new SemplestBiddingServiceClient(testUrl, null);
 					BudgetObject budgetData =  new BudgetObject();
 					long start = System.currentTimeMillis();
-					client.setBidsUpdate(71, "google", budgetData);
+					client.setBidsUpdate(71, AdEngine.Google, budgetData);
 					long latency = System.currentTimeMillis() - start;
 					return latency;
 				}

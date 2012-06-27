@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.BaseDB;
 
 public class UpdateAdEngineAPIChargeSP  extends StoredProcedure
@@ -27,7 +28,7 @@ public class UpdateAdEngineAPIChargeSP  extends StoredProcedure
 	/*
 	 * returns API cost 
 	 */
-	public Double execute(Long AdvertisingEngineAccountID, String AdvertisingEngin, Long CumulativeAPIUnits) throws Exception
+	public Double execute(Long AdvertisingEngineAccountID, AdEngine AdvertisingEngin, Long CumulativeAPIUnits) throws Exception
 	{
 		Map<String, Object> results = super.execute(AdvertisingEngineAccountID, AdvertisingEngin, CumulativeAPIUnits);
 		if (results.get("cost") == null)

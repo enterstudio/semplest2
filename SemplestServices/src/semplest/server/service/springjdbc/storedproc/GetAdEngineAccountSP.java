@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.BaseDB;
 import semplest.server.service.springjdbc.ScheduleJobObj;
@@ -33,9 +34,9 @@ public class GetAdEngineAccountSP extends StoredProcedure
 	/*
 	 * returns KeywordBidPK
 	 */
-	public AdEngineAccountObj execute(int CustomerID, String AdEngine) throws Exception
+	public AdEngineAccountObj execute(int CustomerID, AdEngine adEngine) throws Exception
 	{
-		Map<String, Object> results = super.execute(CustomerID, AdEngine);
+		Map<String, Object> results = super.execute(CustomerID, adEngine);
 		
 		if (results.get("acct") == null)
 		{
