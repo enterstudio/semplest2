@@ -279,7 +279,7 @@ public class SemplestDB extends BaseDB
 
 	}
 
-	public static void storeTrafficEstimatorData(int promotionID, String AdEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
+	public static void storeTrafficEstimatorData(int promotionID, AdEngine adEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
 		java.util.Date date= new java.util.Date();
@@ -312,7 +312,7 @@ public class SemplestDB extends BaseDB
 						{
 							Long microBid = microbids.next();
 							// add the data to the DB
-							addTrafficEstSP.execute(promotionID, keyword, AdEngine, matchType, microBid,
+							addTrafficEstSP.execute(promotionID, keyword, adEngine, matchType, microBid,
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),
 									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid),
 									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid),
@@ -324,7 +324,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static void storeKeywordDataObjects(int promotionID, String AdEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception
+	public static void storeKeywordDataObjects(int promotionID, AdEngine adEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception
 	{
 		AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
 		if (keywordDataObjectList != null && keywordDataObjectList.size() > 0)
@@ -338,10 +338,10 @@ public class SemplestDB extends BaseDB
 				{
 					firstpgcpc = kdObj.getFirstPageCpc().intValue();
 				}
-				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + AdEngine  + ":" + kdObj.getMatchType()  + ":" + kdObj.getQualityScore()  + ":" +
+				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + adEngine  + ":" + kdObj.getMatchType()  + ":" + kdObj.getQualityScore()  + ":" +
 						kdObj.getApprovalStatus() + ":" + firstpgcpc + ":" + kdObj.isIsEligibleForShowing());
 				//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing
-				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), AdEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
+				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), adEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
 						kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
 				if (res == null || res == 0)
 				{
@@ -423,17 +423,10 @@ public class SemplestDB extends BaseDB
 	 * This get the last created KeywordBid Data for all keywords associated
 	 * with campaign
 	 */
-	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, String advertisingEngine) throws Exception
+	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, AdEngine advertisingEngine) throws Exception
 	{
-		if (!AdEngine.existsAdEngine(advertisingEngine))
-		{
-			throw new Exception(advertisingEngine + " Not Found");
-		}
-		
-	
 		GetBiddableAdGroupCriteriaSP getLatestBiddableAdGroupCriteria = new GetBiddableAdGroupCriteriaSP();
 		return getLatestBiddableAdGroupCriteria.execute(promotionID, advertisingEngine);
-		
 	}
 
 	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate,
@@ -627,14 +620,9 @@ public class SemplestDB extends BaseDB
 
 	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper<ReportObject>(ReportObject.class);
 
-	public static List<ReportObject> getReportData(int promotionID, String adEngine, java.util.Date startDate, java.util.Date endDate)
+	public static List<ReportObject> getReportData(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate)
 			throws Exception
 	{
-
-		if (!AdEngine.existsAdEngine(adEngine))
-		{
-			throw new Exception(adEngine + " Not Found");
-		}
 		String strSQL = null;
 		try
 		{

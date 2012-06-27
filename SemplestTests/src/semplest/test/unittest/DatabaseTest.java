@@ -140,7 +140,7 @@ public class DatabaseTest extends BaseDB{
 			kdo.add(k);
 			
 			try {
-				db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo);
+				db.storeKeywordDataObjects(promotionID, AdEngine.Google, kdo);
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -235,7 +235,7 @@ public class DatabaseTest extends BaseDB{
 			//get report data from database
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DATE, -365);
-			List<ReportObject> ret = db.getReportData(promotionID, AdEngine.Google.name(), cal.getTime(), null);
+			List<ReportObject> ret = db.getReportData(promotionID, AdEngine.Google, cal.getTime(), null);
 			int c = 0;
 			for(ReportObject r: ret){
 				System.out.println("#"+c+" ---------------------------------------");										
@@ -291,7 +291,7 @@ public class DatabaseTest extends BaseDB{
 			TrafficEstimatorObject ret = test.getTrafficEstimationForKeywords(test_accountId,test_campaignId, KeywordMatchType.EXACT, KeywordWithBid);
 			
 			//store data to the database
-			db.storeTrafficEstimatorData(promotionID, AdEngine.Google.name(), ret);
+			db.storeTrafficEstimatorData(promotionID, AdEngine.Google, ret);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -386,11 +386,11 @@ public class DatabaseTest extends BaseDB{
 		try{
 			//*** test for Existed KeywordBid			
 			ArrayList<KeywordDataObject> kdo1 = genKeywordDataObj(MatchType.Exact.getValue());
-			db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo1);			
+			db.storeKeywordDataObjects(promotionID, AdEngine.Google, kdo1);			
 			
 			//*** test for New Bid on Keyword			
 			ArrayList<KeywordDataObject> kdo2 = genKeywordDataObj(MatchType.Broad.getValue());
-			db.storeKeywordDataObjects(promotionID, AdEngine.Google.name(), kdo2);
+			db.storeKeywordDataObjects(promotionID, AdEngine.Google, kdo2);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -403,7 +403,7 @@ public class DatabaseTest extends BaseDB{
 			switch(caseNum){
 				case 1:{
 					//*** get Latest Biddable AdGroup Criteria from the database
-					List<KeywordDataObject> ret = db.getLatestBiddableAdGroupCriteria(promotionID, AdEngine.Google.name());
+					List<KeywordDataObject> ret = db.getLatestBiddableAdGroupCriteria(promotionID, AdEngine.Google);
 					int i = 0;
 					System.out.println("num of KeywordDataObject=" + ret.size());
 					for(KeywordDataObject kd : ret){

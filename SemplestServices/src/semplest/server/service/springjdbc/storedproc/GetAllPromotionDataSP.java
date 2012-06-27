@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdsObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -24,7 +25,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 	private static final RowMapper<AdsObject> adsObjMapper = new BeanPropertyRowMapper<AdsObject>(AdsObject.class);
 	private static final RowMapper<GeoTargetObject> geoTargetObjectMapper = new BeanPropertyRowMapper<GeoTargetObject>(GeoTargetObject.class);
 	private Map<String, Object> results = null;
-	private Map<Integer,HashMap<String,AdEngineID>> PromotionAdEngineID = new HashMap<Integer,HashMap<String,AdEngineID>>();
+	private Map<Integer,Map<AdEngine,AdEngineID>> PromotionAdEngineID = new HashMap<Integer,Map<AdEngine,AdEngineID>>();
 	
 	public GetAllPromotionDataSP()
 	{
@@ -50,24 +51,26 @@ public class GetAllPromotionDataSP extends StoredProcedure
 				Integer promoID = onePromo.getPromotionPK();
 				if (PromotionAdEngineID.containsKey(promoID) && onePromo.getAdvertisingEngine() != null)
 				{
-					HashMap<String,AdEngineID> adEngineData = PromotionAdEngineID.get(promoID);
+					Map<AdEngine,AdEngineID> adEngineData = PromotionAdEngineID.get(promoID);
 					AdEngineID data = new AdEngineID();
 					data.setAccountID(onePromo.getAdvertisingEngineAccountPK());
 					data.setAdGroupID(onePromo.getAdvertisingEngineAdGroupID());
 					data.setCampaignID(onePromo.getAdvertisingEngineCampaignPK());
-					adEngineData.put(onePromo.getAdvertisingEngine(), data);
+					final AdEngine adEngine = AdEngine.valueOf(onePromo.getAdvertisingEngine());
+					adEngineData.put(adEngine, data);
 					
 				}
 				else if (onePromo.getAdvertisingEngine() != null)
 				{
-					HashMap<String,AdEngineID> adEngineData = new HashMap<String,AdEngineID>();
+					Map<AdEngine,AdEngineID> adEngineData = new HashMap<AdEngine,AdEngineID>();
 					AdEngineID data = new AdEngineID();
 					data.setAccountID(onePromo.getAdvertisingEngineAccountPK());
 					data.setAdGroupID(onePromo.getAdvertisingEngineAdGroupID());
 					data.setCampaignID(onePromo.getAdvertisingEngineCampaignPK());					
 					final String adEngineAccountNumber = onePromo.getAdvertisingEngineAccountNumber();
 					data.setAccountNumber(adEngineAccountNumber);
-					adEngineData.put(onePromo.getAdvertisingEngine(), data);
+					final AdEngine adEngine = AdEngine.valueOf(onePromo.getAdvertisingEngine());
+					adEngineData.put(adEngine, data);					
 					PromotionAdEngineID.put(promoID, adEngineData);
 				}				
 			}
@@ -116,7 +119,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 		}
 	}
 	
-	public Map<String,AdEngineID> getPromotionAdEngineID(Integer promotionID)
+	public Map<AdEngine,AdEngineID> getPromotionAdEngineID(Integer promotionID)
 	{
 		if (PromotionAdEngineID.containsKey(promotionID))
 		{

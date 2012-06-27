@@ -42,10 +42,6 @@ import com.microsoft.adcenter.v8.Keyword;
 
 public class BidGeneratorObj
 {
-
-	private String google = ProtocolEnum.AdEngine.Google.name();
-	private String msn = ProtocolEnum.AdEngine.MSN.name();
-
 	private String networkSetting = ProtocolEnum.NetworkSetting.SearchOnly.name();
 
 	// private static Gson gson = new Gson();
@@ -520,7 +516,7 @@ public class BidGeneratorObj
 			{
 				try
 				{
-					SemplestDB.storeKeywordDataObjects(promotionID, google, new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+					SemplestDB.storeKeywordDataObjects(promotionID, AdEngine.Google, new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 				}
 				catch (Exception e)
 				{
@@ -540,7 +536,7 @@ public class BidGeneratorObj
 			{
 				try
 				{
-					SemplestDB.storeTrafficEstimatorData(promotionID, google, o);
+					SemplestDB.storeTrafficEstimatorData(promotionID, AdEngine.Google, o);
 				}
 				catch (Exception e)
 				{

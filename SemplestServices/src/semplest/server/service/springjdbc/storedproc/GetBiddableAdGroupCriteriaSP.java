@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.core.SqlReturnResultSet;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.service.springjdbc.BaseDB;
 
@@ -28,7 +29,7 @@ public class GetBiddableAdGroupCriteriaSP extends StoredProcedure
 		compile();
 	}
 	
-	public List<KeywordDataObject> execute(int promotionID, String advertisingEngine )
+	public List<KeywordDataObject> execute(int promotionID, AdEngine advertisingEngine )
 	{
 		Map<String, Object> results = super.execute(new Object[] {promotionID, advertisingEngine});
 		if (results.get("biddable") == null)

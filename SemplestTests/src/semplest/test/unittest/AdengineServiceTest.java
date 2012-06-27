@@ -163,7 +163,7 @@ public class AdengineServiceTest extends BaseDB{
 			String findAKeyword = testData.keywords.get(1);
 			String findANegKeyword = testData.negKeywords.get(1);									
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */
 				
 				System.out.println(">>> Verify results on Google >>>");
@@ -278,7 +278,7 @@ public class AdengineServiceTest extends BaseDB{
 				}				
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */
 				
 				System.out.println(">>> Verify results on MSN >>>");
@@ -421,7 +421,7 @@ public class AdengineServiceTest extends BaseDB{
 			
 			//Verification
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				ArrayList<HashMap<String, String>> gcpn = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
@@ -436,7 +436,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
@@ -492,7 +492,7 @@ public class AdengineServiceTest extends BaseDB{
 			//Verification
 			System.out.println("Verify result...");
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */		
 				System.out.println(">>> Verify results on Google >>>");	
 				CampaignCriterion[] gCpnCrits = google.getAllCampaignCriterions(testData.googleAccountId.toString(), testData.googleCampaignId);
@@ -523,7 +523,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */		
 				System.out.println(">>> Verify results on MSN >>>");	
 				com.microsoft.adcenter.v8.Target mTarget = msn.getCampaignTargets(testData.msnAccountId, testData.msnCustomerId, testData.msnCampaignId);
@@ -596,7 +596,7 @@ public class AdengineServiceTest extends BaseDB{
 			
 			updatedBudget = updatedBudget + changeInBudget;
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				ArrayList<HashMap<String, String>> gcpn = google.getCampaignsByAccountId(testData.googleAccountId.toString(), false);
@@ -611,7 +611,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				com.microsoft.adcenter.v8.Campaign mcpn = msn.getCampaignById(testData.msnAccountId, testData.msnCampaignId);
@@ -660,7 +660,7 @@ public class AdengineServiceTest extends BaseDB{
 			System.out.println("Verify result...");
 			int match = 0;
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				
@@ -740,7 +740,7 @@ public class AdengineServiceTest extends BaseDB{
 			String finaATitle = testData.newAds.get(1).adTitle;
 			int numAllAds = testData.promotionAds.size() + testData.newAds.size();
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */				
 				System.out.println(">>> Verify result on Google >>>");
 				
@@ -766,7 +766,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */				
 				System.out.println(">>> Verify result on MSN >>>");
 				
@@ -839,7 +839,7 @@ public class AdengineServiceTest extends BaseDB{
 			int match = 0;
 			String finaATitle = updateAd.adTitle;
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */				
 				System.out.println(">>> Verify result on Google >>>");
 				
@@ -866,7 +866,7 @@ public class AdengineServiceTest extends BaseDB{
 				}							
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */				
 				System.out.println(">>> Verify result on MSN >>>");
 				
@@ -902,11 +902,11 @@ public class AdengineServiceTest extends BaseDB{
 			boolean ret = false;
 			try{
 				if(method.equals(TEST_METHOD.scheduled)){
-					System.out.println("scheduleDeleteAds(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.promotionAdIds.toString() + ", " + AdEngine.Google.name() + ")");
+					System.out.println("scheduleDeleteAds(" + testData.semplestCustomerId + ", " + testData.semplestPromotionId + ", " + testData.promotionAdIds.toString() + ", " + AdEngine.Google + ")");
 					ret = adEngine.scheduleDeleteAds(testData.semplestCustomerId, testData.semplestPromotionId, testData.promotionAdIds, testData.adEngineList);
 				}
 				else{
-					System.out.println("DeleteAds(" + testData.semplestPromotionId + ", " + testData.promotionAdIds.toString() + ", " + AdEngine.Google.name() + ")");
+					System.out.println("DeleteAds(" + testData.semplestPromotionId + ", " + testData.promotionAdIds.toString() + ", " + AdEngine.Google + ")");
 					ret = adEngine.DeleteAds(testData.semplestPromotionId, testData.promotionAdIds, testData.adEngineList);
 				}
 			}
@@ -926,7 +926,7 @@ public class AdengineServiceTest extends BaseDB{
 			int match = 0;
 			String finaATitle = testData.promotionAds.get(1).adTitle;
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */				
 				System.out.println(">>> Verify result on Google >>>");
 				
@@ -948,7 +948,7 @@ public class AdengineServiceTest extends BaseDB{
 				}							
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */				
 				System.out.println(">>> Verify result on MSN >>>");
 				
@@ -1018,7 +1018,7 @@ public class AdengineServiceTest extends BaseDB{
 			String findAKeyword = testData.newKeywords.get(1);
 			Integer numAllKeywords = testData.keywordIds.size() + testData.newKeywordIds.size();
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */
 				
 				System.out.println(">>> Verify result on Google >>>");
@@ -1043,7 +1043,7 @@ public class AdengineServiceTest extends BaseDB{
 				}				
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */
 				
 				System.out.println(">>> Verify result on MSN >>>");
@@ -1108,7 +1108,7 @@ public class AdengineServiceTest extends BaseDB{
 			int match = 0;
 			String findAKeyword = testData.keywords.get(1);
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */				
 				System.out.println(">>> Verify result on Google >>>");
 				
@@ -1127,7 +1127,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */				
 				System.out.println(">>> Verify result on MSN >>>");
 				
@@ -1169,7 +1169,7 @@ public class AdengineServiceTest extends BaseDB{
 			}
 			adEngine.AddKeywords(testData.semplestPromotionId, testData.posKeywordIds, testData.adEngineList);
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				//verify the current negative keywords
 				Map<String, Long> negKeywords1 = google.getAllNegativeKeywordsToCriterionIdMap(testData.googleAccountId.toString(), testData.googleCampaignId, com.google.api.adwords.v201109.cm.KeywordMatchType.EXACT);
@@ -1185,7 +1185,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For msn ***** */			
 				//manually verify the existing negative keywords on the msn adcenter website
 				//TODO
@@ -1244,7 +1244,7 @@ public class AdengineServiceTest extends BaseDB{
 			int match = 0;
 			int numExpectedOutputNegKeywords = testData.negKeywordIds.size() + testData.newNegKeywordIds.size() + testData.posToNegKeywordIds.size();
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");					
 				
@@ -1286,7 +1286,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				System.out.println("Verify manually.");
@@ -1341,7 +1341,7 @@ public class AdengineServiceTest extends BaseDB{
 			String findANegKeyword2 = testData.posToNegKeywords.get(0);
 			int numExpectedOutputNegKeywords = testData.newNegKeywordIds.size();
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");					
 				
@@ -1371,7 +1371,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				System.out.println("Verify manually.");
@@ -1392,13 +1392,13 @@ public class AdengineServiceTest extends BaseDB{
 		System.out.println("------------------------------------------------------------");
 		try{			
 			//set the target campaigns active before the test			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){						
+			if(testData.adEngineList.contains(AdEngine.Google)){						
 				//active a campaign in the 1st product group
 				google.changeCampaignsStatus(testData.googleAccountId.toString(), Arrays.asList(testData.googleCampaignId), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
 				//active a campaign in the 2nd product group
 				google.changeCampaignsStatus(testData.presetGoogleAccountId.toString(), Arrays.asList(testData.presetGoogleCampaignId), com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE);
 			}
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){				
+			if(testData.adEngineList.contains(AdEngine.MSN)){				
 				msn.resumeCampaignById(testData.msnAccountId.longValue(), testData.msnCampaignId);
 			}
 			
@@ -1428,7 +1428,7 @@ public class AdengineServiceTest extends BaseDB{
 			//Verification
 			System.out.println("Verify result...");
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");
 				//Check if the promotion in the 1st product group be paused
@@ -1455,7 +1455,7 @@ public class AdengineServiceTest extends BaseDB{
 				}
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				//Check if the promotion in the 1st product group be paused
@@ -1484,7 +1484,7 @@ public class AdengineServiceTest extends BaseDB{
 			try{
 				if(method.equals(TEST_METHOD.scheduled)){}
 				else{
-					System.out.println("ExecuteBidProcess(" + testData.semplestPromotionId + ", " + AdEngine.Google.name() + ")");
+					System.out.println("ExecuteBidProcess(" + testData.semplestPromotionId + ", " + AdEngine.Google + ")");
 					ret = adEngine.ExecuteBidProcess(testData.semplestPromotionId, testData.adEngineList);
 				}
 			}
@@ -1503,14 +1503,14 @@ public class AdengineServiceTest extends BaseDB{
 			System.out.println("Verify result...");
 			
 			
-			if(testData.adEngineList.contains(AdEngine.Google.name())){
+			if(testData.adEngineList.contains(AdEngine.Google)){
 				/* ***** For Google ***** */			
 				System.out.println(">>> Verify result on Google >>>");						
 				//TODO
 				
 			}
 			
-			if(testData.adEngineList.contains(AdEngine.MSN.name())){
+			if(testData.adEngineList.contains(AdEngine.MSN)){
 				/* ***** For MSN ***** */			
 				System.out.println(">>> Verify result on MSN >>>");
 				//TODO
@@ -1532,7 +1532,7 @@ public class AdengineServiceTest extends BaseDB{
 		//UnpausePromotion
 		System.out.println("------------------------------------------------------------");
 		try{
-			System.out.println("UnpausePromotion(" + testData.semplestPromotionId + ", " + AdEngine.Google.name() + ")");			
+			System.out.println("UnpausePromotion(" + testData.semplestPromotionId + ", " + AdEngine.Google + ")");			
 			if(method.equals(TEST_METHOD.scheduled)){
 				adEngine.scheduleUnpausePromotion(testData.semplestCustomerId, testData.semplestPromotionId, testData.adEngineList);
 			}
@@ -1597,7 +1597,7 @@ public class AdengineServiceTest extends BaseDB{
 		System.out.println("------------------------------------------------------------");
 		try{
 			Date startDate = new Date();
-			System.out.println("ChangePromotionStartDate(" + testData.semplestPromotionId + ", " + startDate.toString() + ", " + AdEngine.Google.name() + ")");
+			System.out.println("ChangePromotionStartDate(" + testData.semplestPromotionId + ", " + startDate.toString() + ", " + AdEngine.Google + ")");
 			adEngine.ChangePromotionStartDate(testData.semplestPromotionId, startDate, testData.adEngineList);
 			System.out.println("DONE");
 			

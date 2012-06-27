@@ -39,9 +39,6 @@ import com.google.api.adwords.v201109.cm.KeywordMatchType;
 
 public class TestBidding {
 
-	private String google = ProtocolEnum.AdEngine.Google.name();
-	private String msn = ProtocolEnum.AdEngine.MSN.name();
-
 	private String networkSetting = ProtocolEnum.NetworkSetting.SearchOnly.name();
 
 
@@ -191,7 +188,7 @@ public class TestBidding {
 
 
 
-	public Boolean setBidsInitial(Integer promotionID, String searchEngine, BudgetObject budgetData) throws Exception {
+	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		
 		/* ******************************************************************************************* */
 		// declarations
@@ -199,13 +196,7 @@ public class TestBidding {
 		TrafficEstimatorObject o = null, o2 = null;
 
 		logger.info("setBidsInitial called for ad engine "+searchEngine);
-		
-		/* ******************************************************************************************* */
-		// 0. Check if Ad engine name is valid
-		if (!AdEngine.existsAdEngine(searchEngine)){
-			throw new Exception("Ad engine "+ searchEngine + " Not Found");
-		}
-		
+	
 		
 //		/* ******************************************************************************************* */
 //		// 1. Database call: get campaign specific IDs	
@@ -244,7 +235,7 @@ public class TestBidding {
 		
 		/* ******************************************************************************************* */
 		// 3. [google] API call: get adgroup criterion for all keywords
-		if(searchEngine.equalsIgnoreCase(google)){
+		if(searchEngine == AdEngine.Google){
 			k=0;
 			while(true) {
 				Thread.sleep(sleepPeriod+k*sleepBackOffTime);
@@ -277,7 +268,7 @@ public class TestBidding {
 		
 		/* ******************************************************************************************* */
 		// 4. [google] Decide competitive, non-competitive and no-info
-		if(searchEngine.equalsIgnoreCase(google)){
+		if(searchEngine == AdEngine.Google){
 			for(int i=0; i<keywordDataObjs.length; i++){
 				keywordDataObj = keywordDataObjs[i];
 				if(keywordDataObj.getFirstPageCpc()==null){
@@ -310,7 +301,7 @@ public class TestBidding {
 		//        i. some keywords are pushed back to non-competitive category if
 		//           information available is not useful
 		
-		if(searchEngine.equalsIgnoreCase(google)){
+		if(searchEngine == AdEngine.Google){
 			if (compKeywords.size()>0) {
 				try {
 					logger.info("Attenpting to get traffic estimator info.");
@@ -328,7 +319,7 @@ public class TestBidding {
 		                /* *************************************** */
 		//    b. [msn] for all keywords and compute firstPage CPC from the data
 		
-		if(searchEngine.equalsIgnoreCase(msn)){
+		if(searchEngine == AdEngine.MSN){
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		

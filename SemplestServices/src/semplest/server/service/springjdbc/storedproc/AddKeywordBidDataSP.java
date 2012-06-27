@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.BaseDB;
 
 public class AddKeywordBidDataSP extends StoredProcedure
@@ -41,9 +42,9 @@ public class AddKeywordBidDataSP extends StoredProcedure
 		compile();
 	}
 
-	public Integer execute(int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing) throws Exception
+	public Integer execute(int PromotionID, String Keyword, AdEngine AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionID, Keyword, AdvertisingEngine, BidType, QualityScore, ApprovalStatus, FirstPageMicroCpc, IsEligibleForShowing);
+		Map<String, Object> results = super.execute(PromotionID, Keyword, AdvertisingEngine.name(), BidType, QualityScore, ApprovalStatus, FirstPageMicroCpc, IsEligibleForShowing);
 		if (results.get("ID") == null)
 		{
 			return null;
