@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,11 +16,14 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.joda.time.DateTime;
+
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 //import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.analysis.reports.msn.MSNReportTools;
 import semplest.analysis.reports.utils.ReportUtils;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MSNAdcenterServiceClientTest;
@@ -123,6 +127,29 @@ public class GoogleReportTools {
 		
 	}
 	
+	public  ArrayList<String> storeTrafficEstimatorDataGoogle(String keyword, KeywordMatchType matchType, Long[] bids) throws Exception{
+		//Put in an ArrayList<String> all the TrafficEstimator information
+		ArrayList<String> lines = new ArrayList<String>();
+		lines.add(keyword+", AveClickPerDay, AveCPC, AvePosition, AveTotalDailyMicroCost");
+		for(Long bid : bids){
+			String newLine = bid+", ";
+			HashMap<String, Long> map = new HashMap<String, Long>();
+			map.put(keyword, bid);
+			TrafficEstimatorObject te = google.getTrafficEstimationForKeywords(accountId.toString(), campaignId,  matchType, map);
+			if(te!=null){
+			newLine = newLine+te.getAveClickPerDay(keyword, matchType.getValue(), bid)+", ";
+			newLine = newLine+te.getAveCPC(keyword, matchType.getValue(), bid)+", ";
+			newLine = newLine+te.getAvePosition(keyword, matchType.getValue(), bid)+", ";
+			newLine = newLine+te.getAveTotalDailyMicroCost(keyword, matchType.getValue(), bid)+", ";
+			}else{
+				newLine= newLine+"-1.0, -1.0, -1.0, -1.0,";
+			}
+			lines.add(newLine);
+		}
+		
+		return lines;
+	}
+	
 	public ReportObject[] getKeywordReportObjects(String firstDay, String lastDay) throws Exception{
 		ReportObject[] reps = google.getReportForAccount(accountId.toString(), firstDay, lastDay);
 		ArrayList<ReportObject> repList = new ArrayList<ReportObject>();
@@ -195,5 +222,6 @@ public class GoogleReportTools {
 
 		
 	}
+	
 
 }
