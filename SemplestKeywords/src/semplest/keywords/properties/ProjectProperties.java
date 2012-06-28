@@ -18,6 +18,7 @@ public class ProjectProperties {
   public static String dictfile; 
   public static String docfile; 
   public static String twfile;
+  public static String dffile;
   //for KWGenDmozLDAServer
   public static String dfile;
   public static String baseMultiWPath;
@@ -54,6 +55,7 @@ public class ProjectProperties {
     dictfile  = properties.getProperty("dictfile");
     docfile   = properties.getProperty("docfile"); 
     twfile    = properties.getProperty("twfile"); 
+    dffile    = properties.getProperty("dffile"); 
     dfile     = properties.getProperty("dfile"); 
     baseMultiWPath = properties.getProperty("baseMultiWPath");
     nGramsC     = properties.getProperty("nGramsC");; 
@@ -86,6 +88,7 @@ public class ProjectProperties {
     dictfile  = getString( "SemplestKeywordsdictfile",  dictfile );
     docfile   = getString("SemplestKeywordsdocfile",    docfile); 
     twfile    = getString("SemplestKeywordstwfile",     twfile); 
+    dffile    = getString("SemplestKeywordsdffile",     dffile); 
     dfile     = getString("SemplestKeywordsdfile",      dfile); 
     nGramsC     = getString("SemplestKeywordsnGramsC",  nGramsC); 
     catMap      = getString("catMap",                   catMap);
