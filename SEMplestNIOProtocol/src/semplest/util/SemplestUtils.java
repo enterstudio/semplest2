@@ -13,6 +13,7 @@ import java.util.Random;
 import org.apache.axis.types.UnsignedByte;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 
 import com.google.api.adwords.v201109.cm.TextAd;
@@ -92,6 +93,7 @@ public final class SemplestUtils
 	public static final Type TYPE_LIST_OF_LONGS = new TypeToken<List<Long>>(){}.getType();
 	public static final Type TYPE_LIST_OF_CUSTOMER_OBJECTS = new TypeToken<List<CustomerObject>>(){}.getType();
 	public static final Type TYPE_MAP_OF_STRING_TO_STRING = new TypeToken<Map<String, String>>(){}.getType();
+	public static final Type TYPE_MAP_OF_ADENGINE_TO_DOUBLE = new TypeToken<Map<AdEngine, Double>>(){}.getType();
 	public static final Type TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS = new TypeToken<List<KeywordIdRemoveOppositePair>>(){}.getType();	
 	public static final List<Character> ALLOWED_CHARS = Arrays.asList('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','-');
 	public static final Character SUBSTITUTION_CHARACTER = '-';
@@ -102,6 +104,7 @@ public final class SemplestUtils
 	public static final Random RANDOM = new Random();
 	public static final Double MSN_DUMMY_AMOUNT = 0.0;
 	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
+	public static final Integer SLEEP_MILLIS_BETWEEN_BATCHES = 30000;
 	
 	public static <T> List<List<T>> getBatches(final List<T> list, final int batchSize)
 	{
