@@ -9,6 +9,7 @@ using Semplest.SharedResources.Helpers;
 using LinqKit;
 using System.Data.Objects;
 using Semplest.SharedResources.Services;
+using Semplest.SharedResources.Encryption;
 //using System.Web.Security;
 
 
@@ -1193,10 +1194,11 @@ namespace Semplest.Admin.Controllers
 
                 /////////////////////////////////////////////////////////////////////////////
                 ///// sending of emails
-
+                AesEncyrption ae = AesEncyrption.getInstance();
+                string encryptedToken = ae.GenerateToken(ch.CustomerParentFK.Value.ToString(), DateTime.Now.ToString(), cr.Username, cr.Password);
+                string emailUrl = System.Configuration.ConfigurationManager.AppSettings["VerificationUrl"].ToString() + encryptedToken;
                 if (fc["sendcustomeremail"] != null)
                 {
-
                     string from, to, body, subject;
 
                     //send email to child customers
@@ -1223,7 +1225,7 @@ namespace Semplest.Admin.Controllers
                         body = body.Replace("[FAQs]", "http://faq");
                         body = body.Replace("[ChildCustomerUserID]", cr.Username.ToString());
                         body = body.Replace("[ChildCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        body = body.Replace("[INSERT LINK]", emailUrl);
                         bool sent = false;
                         ServiceClientWrapper scw = new ServiceClientWrapper();
                         sent = scw.SendEmail(subject, from, to, body);
@@ -1249,7 +1251,7 @@ namespace Semplest.Admin.Controllers
                         body = body.Replace("[ParentCustomerName]", c.Name.FirstOrDefault().ToString());
                         body = body.Replace("[ParentCustomerUserID]", cr.Username.ToString());
                         body = body.Replace("[ParentCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        body = body.Replace("[INSERT LINK]", emailUrl);
                         body = body.Replace("[DefaultEmailContactUS]", dbcontext.Configurations.First().DefaultEmailContactUs.ToString());
                         bool sent = false;
                         ServiceClientWrapper scw = new ServiceClientWrapper();
@@ -1275,7 +1277,7 @@ namespace Semplest.Admin.Controllers
                         body = body.Replace("[NonParentCustomer]", u.FirstName.ToString() + " " + u.LastName.ToString());
                         body = body.Replace("[NonParentCustomerUserID]", cr.Username.ToString());
                         body = body.Replace("[NonParentCustomerPassword]", cr.Password.ToString());
-                        body = body.Replace("[INSERT LINK]", "http://encrypto");
+                        body = body.Replace("[INSERT LINK]", emailUrl);
                         bool sent = false;
                         ServiceClientWrapper scw = new ServiceClientWrapper();
                         sent = scw.SendEmail(subject, from, to, body);

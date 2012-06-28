@@ -14,22 +14,23 @@ using Org.BouncyCastle.Crypto.Modes;
 
 namespace Semplest.SharedResources.Encryption
 {
-    public sealed class EncryptionHelper
+    public sealed class AesEncyrption
     {
 
         private static String _encryptionKey = null;
         private BufferedBlockCipher decrypt = null;
         private BufferedBlockCipher encrypt = null;
-        private static EncryptionHelper instance = null;
+        private static AesEncyrption instance = null;
 	    private static byte[] iv = { 0x43, (byte) 0x6d, 0x22, (byte) 0x9a, 0x22, (byte) 0xf8, (byte) 0xcf, (byte) 0xfe, 0x15, 0x21, (byte) 0x0b, 0x38, 0x01, (byte) 0xa7, (byte) 0xfc, 0x0e };
+        private const string TOKENDELIMITER = "&";
 
 
-        private EncryptionHelper() 
+        private AesEncyrption() 
         {
  
         }
 
-        public static EncryptionHelper getInstance()
+        public static AesEncyrption getInstance()
         {
 
 
@@ -42,7 +43,7 @@ namespace Semplest.SharedResources.Encryption
                     {
                         Initalize();
                     }
-                    EncryptionHelper bcEngine = new EncryptionHelper();
+                    AesEncyrption bcEngine = new AesEncyrption();
                     KeyParameter keyParam = new KeyParameter(Encoding.UTF8.GetBytes(_encryptionKey));
                     ICipherParameters param = new ParametersWithIV(keyParam, iv);
 
@@ -144,6 +145,21 @@ namespace Semplest.SharedResources.Encryption
             {
                 _encryptionKey = dbContext.Configurations.FirstOrDefault().SemplestEncryptionkey;
             }
+        }
+
+        
+        public string GenerateToken(string parentid, string datetime, string username, string password)
+        {
+            AesEncyrption a = AesEncyrption.getInstance();
+            StringBuilder s = new StringBuilder();
+            s.Append(parentid);
+            s.Append(TOKENDELIMITER);
+            s.Append(datetime);
+            s.Append(TOKENDELIMITER);
+            s.Append(username);
+            s.Append(TOKENDELIMITER);
+            s.Append(password);
+            return getInstance().EncryptString(s.ToString());
         }
     }
 }

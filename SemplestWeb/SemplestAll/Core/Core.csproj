@@ -147,7 +147,6 @@
   <ItemGroup>
     <Compile Include="Controllers\CampaignController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\EncryptionController.cs" />
     <Compile Include="Controllers\EntityController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ReportingController.cs" />
