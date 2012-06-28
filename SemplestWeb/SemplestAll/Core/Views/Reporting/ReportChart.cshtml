@@ -1,37 +1,39 @@
-﻿
-@model Semplest.Core.Models.ReportIndexModel
+﻿@model Semplest.Core.Models.ReportIndexModel
 @{
     ViewBag.Title = "ReportDetails";
 }
 <script type="text/javascript">
     $(document).ready(function () {
+        var dataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("ReportGraph")',
+                    data: {
+                        promotionFk: $("#PromotionFks").val(),
+                        advertisingEngineFk: $("#EngineFks").val(),
+                        startDate: $("#StartDate").val(),
+                        endDate: $("#EndDate").val()
+                    }
+                }, error: function (e) {
+                    alert(e.xhr.responseText);
+                }
+            },
+            change: function (e) {
+                var totalitems = e.sender.total();
+                $('#chart').css('width', totalitems * 50);
+            },
+            sort: {
+                field: "Date",
+                dir: "asc"
+            }
+        });
         createChart();
+
         function createChart() {
+
             $("#chart").kendoChart({
                 theme: 'metro',
-                dataSource: {
-                    transport: {
-                        read: {
-                            url: '@Url.Action("ReportGraph")',
-                            data: {
-                                promotionFk: $("#PromotionFK").val(),
-                                advertisingEngineFk: $("#EngineFK").val(),
-                                startDate: $("#StartDate").val(),
-                                endDate: $("#EndDate").val()
-                            }
-                        }, error: function (e) {
-                            alert(e.xhr.responseText);
-                        }
-                    },
-                    change: function (e) {
-                        var totalitems = e.sender.total();
-                        $('#chart').css('width', totalitems * 50);
-                    },
-                    sort: {
-                        field: "Date",
-                        dir: "asc"
-                    }
-                },
+                dataSource: dataSource,
                 title: {
                     text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + ""
                     , position: "left"
@@ -43,41 +45,139 @@
                         [{
                             field: "Impressions",
                             name: "Impressions",
-                            type: "column"
+                            type: "line"
                         }, {
                             field: "Clicks",
                             name: "Clicks",
                             type: "line"
-                        }],
+                        },
+            {
+                field: "LivePromotions",
+                name: "LivePromotions",
+                stack: true,
+                type: "column"
+            }, {
+                field: "NonLivePromotions",
+                name: "NonLivePromotions",
+                stack: true,
+                type: "column"
+            }],
                 categoryAxis: {
-                    field: "Date"
+                    field: "Date",
+                    axisCrossingValue: [0, 0, 100, 100]
                 },
-                valueAxis: [{
-                    labels: {
-                        format: "{0:N0}"
-                    },
-                    majorUnit: 2000
-                },
-                {
-                    labels: {
-                        format: "{0:N0}"
-                    },
-                    majorUnit: 2000
-                }],
+                valueAxis: [
+            {
+                labels: { format: "{0:N0}" },
+                title: { text: "Live" },
+                min: 0,
+                max: 200,
+                majorUnit: 20
+            },
+            {
+                labels: { format: "{0:N0}" },
+                title: { text: "Impressions" },
+                majorUnit: 2000
+            },
+            {
+                labels: { format: "{0:N0}" },
+                title: { text: "NonLive" },
+                min: 0,
+                max: 200,
+                majorUnit: 20
+            },
+            {
+                labels: { format: "{0:N0}" },
+                title: { text: "Clicks" },
+                min: 0,
+                max: 200,
+                majorUnit: 20
+            }],
                 tooltip: {
                     visible: true,
                     format: "{0:N0}"
                 }
             });
         }
+        var datesData = [
+        { text: "Daily", value: "1" },
+        { text: "Weekly", value: "2" },
+        { text: "Monthly", value: "3" },
+        { text: "Yearly", value: "4" }
+        ];
+        $('#datecombo').kendoDropDownList({
+            dataTextField: "text",
+            dataValueField: "value",
+            dataSource: datesData,
+            index: 0,
+            change: onDateChange
+        });
+        function onDateChange() {
+            var value = $("#datecombo").val();
+            //dataSource.query({filter :{ field:"Date",operator:"gte",value:value}});
+            //dataSource.fetch();
+            //dataSource.sync();
+        }
+        var livePromotionsDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetLivePromotions")',
+                    data: {
+                        promotionFk: $("#PromotionFks").val(),
+                        advertisingEngineFk: $("#EngineFks").val(),
+                        startDate: $("#StartDate").val(),
+                        endDate: $("#EndDate").val()
+                    }
+                }, error: function (e) {
+                    alert(e.xhr.responseText);
+                }
+            }
+        });
+        var nonLivePromotionsDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetNonLivePromotions")',
+                    data: {
+                        promotionFk: $("#PromotionFks").val(),
+                        advertisingEngineFk: $("#EngineFks").val(),
+                        startDate: $("#StartDate").val(),
+                        endDate: $("#EndDate").val()
+                    }
+                }, error: function (e) {
+                    alert(e.xhr.responseText);
+                }
+            }
+        });
+        $('#livePromotions').kendoDropDownList({
+            dataSource: livePromotionsDataSource,
+            dataTextField: "PromotionName",
+            dataValueField: "PromotionId",
+            change: function (e) {
+                alert(e.PromotionId);
+            }
+        });
+        $('#nonLivePromotions').kendoDropDownList({
+            dataSource: nonLivePromotionsDataSource,
+            dataTextField: "PromotionName",
+            dataValueField: "PromotionId"
+        });
     });
 </script>
+<div>
+ @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines) {
+    @Html.CheckBox(item.AdvertisingEnginePK.ToString(),true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK})
+    <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
+ }
+ <input id='datecombo' style='width:80px;' />
+ <input id='livePromotions' />
+ <input id='nonLivePromotions' />
+</div>
 <div class="chart-wrapper" style="margin: auto; overflow: auto; height: 270px">
     <div id="chart" style=" height: 250px">
     </div>
 </div>
-@Html.HiddenFor(t => t.PromotionFK)
-@Html.HiddenFor(t => t.EngineFK)
+@Html.HiddenFor(t => t.PromotionFks)
+@Html.HiddenFor(t => t.EngineFks)
 @Html.HiddenFor(t => t.PromotionName)
 @Html.HiddenFor(t => t.SearchEngineName)
 @Html.HiddenFor(t => t.StartDate)

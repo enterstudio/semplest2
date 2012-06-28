@@ -3,6 +3,7 @@
     list-style: none;
     margin: 0;
     padding: 15px;
+    font-family: 'Arial';
 }
 h3
 {
@@ -125,6 +126,7 @@ a.more:hover
 .kendo-nav
 {
     margin-top: 5px;
+    text-transform: uppercase;
 }
 .main-nav a, .kendo-nav a, .suite-demos-nav a, #footer .bottom-nav a, #examples-list a, .get-kendoui, .widgetGrid a
 {
@@ -140,7 +142,7 @@ a.more:hover
 }
 .kendo-nav a
 {
-    color: #2e2e2e;
+    color: gray;
     display: block;
     font-size: 10px;
 }
@@ -224,7 +226,7 @@ a.more:hover
 
 #footer
 {
-    background: #242424;
+    background: #B7B7B7;
 }
 
 .overview #footer
@@ -234,7 +236,7 @@ a.more:hover
 
 #footer, #footer a
 {
-    color: #7f7f7f;
+    color: #fff;
 }
 
 #footer .active a, #footer .bottom-nav a:hover
@@ -257,16 +259,7 @@ a.more:hover
 #footer p
 {
     line-height: 1;
-}
-
-#footer p a
-{
-    color: #e26b1d;
-}
-
-#footer p a:hover
-{
-    text-decoration: underline;
+    color: #fff;
 }
 
 p#copy
@@ -282,6 +275,12 @@ p#copy
     color: #fff;
     height: 42px;
     margin-top: 10px;
+}
+#exampleTitleHeader label
+{
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 5px;
 }
 
 #exampleTitle
@@ -464,7 +463,7 @@ span.k-tooltip
 
 .gradient-style
 {
-    font-family: "Lucida Sans Unicode" , "Lucida Grande" , Sans-Serif;
+    font-family: 'Arial';
     font-size: 12px;
     width: 400PX;
     text-align: left;
@@ -484,11 +483,23 @@ span.k-tooltip
 .gradient-style td
 {
     padding: 2px;
-    border-bottom: 1px solid #ADC76E;
-    color: #669;
+    color: #000;
     border-top: 1px solid #fff;
-    background: #fff;
 }
+.preview
+{
+    display: list-item;
+    list-style-type: circle;
+    list-style-position: inside;
+    color: green;
+}
+
+a, a span
+{
+    color: #000;
+    text-decoration: underline;
+}
+
 .gradient-style tfoot tr td
 {
     background: #e8edff;
@@ -548,7 +559,6 @@ hr
     border-style: solid;
     border-color: White;
     background-color: White;
-    margin-bottom: 15px;
 }
 
 .table h3
@@ -600,7 +610,7 @@ hr
     -webkit-border-radius: 0;
     border-radius: 0;
     font-size: 100%;
-    font-family: inherit;
+    font-family: 'Arial';
     border-style: solid;
     border-width: 1px;
     -webkit-appearance: none;
@@ -622,7 +632,7 @@ hr
     -webkit-border-radius: 0;
     border-radius: 0;
     font-size: 100%;
-    font-family: inherit;
+    font-family: 'Arial';
     border-style: solid;
     border-width: 1px;
     -webkit-appearance: none;
@@ -723,7 +733,7 @@ hr
     -webkit-border-radius: 0;
     border-radius: 0;
     font-size: 100%;
-    font-family: inherit;
+    font-family: 'Arial';
     border-style: solid;
     border-width: 1px;
     -webkit-appearance: none;
@@ -751,7 +761,7 @@ hr
     -webkit-border-radius: 0;
     border-radius: 0;
     font-size: 100%;
-    font-family: inherit;
+    font-family: 'Arial';
     border-style: solid;
     border-width: 1px;
     -webkit-appearance: none;
@@ -771,7 +781,7 @@ hr
     -webkit-border-radius: 0;
     border-radius: 0;
     font-size: 100%;
-    font-family: inherit;
+    font-family: 'Arial';
     border-style: solid;
     border-width: 1px;
     -webkit-appearance: none;
@@ -858,4 +868,58 @@ hr
     vertical-align: middle;
     font-weight: bold;
     padding-top: 15px;
+}
+.titlewhiteline
+{
+    margin-bottom: 3px;
+}
+.titlewhitelinebottom
+{
+    margin-bottom: 80px;
+}
+hr
+{
+    margin-bottom: 15px;
+}
+
+.k-backbutton
+{
+    background-color: #EFEFEF;
+    background-image: none;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0;
+    border-radius: 0;
+    font-size: 100%;
+    font-family: inherit;
+    border-style: solid;
+    border-width: 1px;
+    -webkit-appearance: none;
+    display: inline-block;
+    margin: 0;
+    padding: 2px 7px 2px;
+    font-family: inherit;
+    line-height: 1.66em;
+    text-align: center;
+    cursor: pointer;
+    outline: 0;
+    text-transform:uppercase;
+}
+.k-backbutton, .k-backbutton.k-state-disabled:hover, .k-state-disabled .k-backbutton:hover
+{
+    border-color: #dadada;
+}
+.k-backbutton:hover
+{
+    border-color: #e6e6e6;
+    background-color: #fff;
+    color: grey;
+}
+.k-backbutton:active
+{
+    color: #fff;
+    background-color: #ADC76E;
+}
+.k-state-disabled .k-backbutton
+{
+    color: #dadada;
 }

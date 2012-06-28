@@ -33,6 +33,8 @@ namespace Semplest.Core.Models
         public IEnumerable<SemplestModel.vwPromotionChart> Detail;
 
         public int PromotionFK { get; set; }
+        public string PromotionFks { get; set; }
+        public string EngineFks { get; set; }
         public int EngineFK { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
@@ -63,6 +65,14 @@ namespace Semplest.Core.Models
         public string Date { get; set; }
         public double Clicks { get; set; }
         public double Impressions { get; set; }
+        public double LivePromotions { get; set; }
+        public double NonLivePromotions { get; set; }
+        public int PromotionId { get; set; }
+        public string PromotionName { get; set; }
     }
-
+    public class PromotionModel
+    {
+        public int PromotionId { get; set; }
+        public string PromotionName { get; set; }
+    }
 }

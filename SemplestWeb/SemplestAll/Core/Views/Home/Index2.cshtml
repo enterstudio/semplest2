@@ -2,10 +2,10 @@
 @section Title{
     My Account (@ViewBag.Title)
 }
-<table>
+<table style="margin-left: 10px;">
     <tr>
         <td style="width: 300px; vertical-align: top;">
-            <fieldset style="padding: 0; border-width: 1px; width: 250px">
+            <fieldset style="padding: 0; border-width: 0px; width: 250px">
                 <legend><b>Account Actions</b></legend>
                 <div style="padding: 5px">
                     <button class="k-button" id="btnCreatAd">
@@ -17,7 +17,7 @@
                 Live Advertising
             </h3>
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
-                scroll over to see summary, click to edit
+                scroll over to see summary
             </label>
             <div style="width: 320px; height: 200px; overflow: auto">
                 <table class="gradient-style" style="width: 300px;">
@@ -29,11 +29,13 @@
                             {
                         <tr>
                             <td style="width: 150px;">
-                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK, @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })">
+                                    <span>@p.PromotionName</span></a>
                             </td>
                             @if (p.IsPaused)
                             {
-                                <td>@Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
+                                <td>
+                                    @Html.ActionLink("Restart", "", "", new { @class = "resumead", id = p.PromotionPK, name = p.PromotionName })
                                 </td>
                             }
                             else
@@ -55,7 +57,7 @@
             <h3 style="margin-bottom: 0px;">
                 Unfinished Advertising</h3>
             <label style="color: grey; width: 270px; text-align: left; margin-top: -3px">
-                scroll over to see summary, click to edit
+                scroll over to see summary
             </label>
             <div style="width: 320px; height: 350px; overflow: auto">
                 <table class="gradient-style" style="width: 300px">
@@ -67,20 +69,23 @@
                             {
                         <tr>
                             <td style="width: 150px;">
-                                @Html.ActionLink(p.PromotionName, "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })
+                            <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK, @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })">
+                                    <span>@p.PromotionName</span></a>
                             </td>
                             <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
                             </td>
                             <td>@Html.ActionLink("Edit", "CampaignSetup", "Campaign", new { promotionid = p.PromotionPK }, new { @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK })
                             </td>
-                            <td>&nbsp;&nbsp;&nbsp;</td>
+                            <td>
+                                &nbsp;&nbsp;&nbsp;
+                            </td>
                         </tr>
                             }
                         }
                     }
                 </table>
             </div>
-            <div id="RemovePromotionWindow" style="display:none">
+            <div id="RemovePromotionWindow" style="display: none">
                 <form name="hiddenButton" id="hiddenButton" action="RemovePromotion" method="post">
                 <div class="question">
                 </div>
@@ -91,7 +96,7 @@
                 <input type="hidden" id="promotionId" name="promotionId" />
                 </form>
             </div>
-            <div id="PausePromotionWindow" style="display:none">
+            <div id="PausePromotionWindow" style="display: none">
                 <form name="hiddenPause" id="hiddenPause" action="PausePromotion" method="post">
                 <div class="questionP">
                 </div>
@@ -102,7 +107,7 @@
                 <input type="hidden" id="promotionIdP" name="promotionIdP" />
                 </form>
             </div>
-            <div id="ResumePromotionWindow" style="display:none">
+            <div id="ResumePromotionWindow" style="display: none">
                 <form name="hiddenResume" id="hiddenResume" action="ResumePromotion" method="post">
                 <div class="questionR">
                 </div>
@@ -113,7 +118,7 @@
                 <input type="hidden" id="promotionIdR" name="promotionIdR" />
                 </form>
             </div>
-            <div id="EndPromotionWindow" style="display:none">
+            <div id="EndPromotionWindow" style="display: none">
                 <form name="hiddenResume" id="hiddenEnd" action="EndPromotion" method="post">
                 <div class="questionE">
                 </div>
@@ -252,7 +257,7 @@
             </script>
             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
         </td>
-        <td style="vertical-align: top; height:650px; width: 500px;">
+        <td style="vertical-align: top; height: 650px; width: 500px;">
             <div id='loading'>
                 <h3 style="margin-left: 22px">
                     Loading Preview...</h3>

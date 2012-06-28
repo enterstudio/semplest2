@@ -1,21 +1,71 @@
-﻿@model Semplest.Core.Models.ReportIndexModel
-
-@section Title{
-Reporting (@ViewBag.Title)}
+﻿@model Semplest.Core.Models.ReportIndexModel 
+@section Title{ Reporting (@ViewBag.Title)}
 <script type="text/javascript">
     $(document).ready(function () {
-        var reportTreeView = $("#reportTreeView").kendoTreeView({
-            template: kendo.template($("#treeview-template").html()),
-            checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()), select: onSelect
-        }).data("kendoTreeView");
+        //alert($('.engnieBox').length);
+        //        var reportTreeView = $("#reportTreeView").kendoTreeView({
+        //            template: kendo.template($("#treeview-template").html()),
+        //            checkboxTemplate: kendo.template($("#treeview-checkbox-template").html()), select: onSelect
+        //        }).data("kendoTreeView");
+        $("#reportTreeView").dynatree({
+            checkbox: true,
+            selectMode: 3,
+            title: "Reports",
+            onSelect: function (select, node) {
+                // Get a list of all selected nodes, and convert to a key array:        
+                var selKeys = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.key; });
+                var selTexts = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.title; });
+                var selEngines = $.map($('.engnieBox'), function (node) { if (node.checked) return node.id; });
+                //alert(selEngines);
+                //alert(selKeys);
+                //alert(selKeys.join(", "));        
+                // Get a list of all selected TOP nodes        
+                var selRootNodes = node.tree.getSelectedNodes(true);
+                // ... and convert to a key array:        
+                var selRootKeys = $.map(selRootNodes, function (node) { return node.data.key; });
+                //alert(selRootKeys.join(", "));    
+                //alert(selTexts.join(", "));
+                //alert(selRootNodes.join(", "));  
+                $('#EngineFks').val(selEngines.join(", "));
+                $('#PromotionFks').val(selKeys.join(", "));
+                $('#PromotionName').val(selTexts.join(", "));
+            },
+            onDblClick: function (node, event) {
+                node.toggleSelect();
+            },
+            onKeydown: function (node, event) {
+                if (event.which == 32) {
+                    node.toggleSelect();
+                    return false;
+                }
+            },
+            onActivate: function (node) {
+                //        alert(node.getKeyPath());        
+                if (node.data.url)
+                    window.open(node.data.url, node.data.target);
+            },
+            onDeactivate: function (node) {
+
+            },
+            onFocus: function (node) {
+
+            },
+            onBlur: function (node) {
+
+            } 
+        });
         $.getJSON($('#SideBarUrl').val(), {}, function (data) {
+            var rootNode = $("#reportTreeView").dynatree("getRoot");
             for (var mainGroup in data) {
                 for (var subitem in data[mainGroup].SubItems) {
-                    var items = [];
+                    var childNode = rootNode.addChild({
+                        title: data[mainGroup].SubItems[subitem].Name,
+                        tooltip: data[mainGroup].SubItems[subitem].Name,
+                        key: data[mainGroup].SubItems[subitem].Id
+                    });
                     for (var subitem1 in data[mainGroup].SubItems[subitem].SubItems) {
-                        items[subitem1] = ({ text: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, Id: data[mainGroup].SubItems[subitem].SubItems[subitem1].Id });
+                        childNode.addChild({ title: data[mainGroup].SubItems[subitem].SubItems[subitem1].Name, key: data[mainGroup].SubItems[subitem].SubItems[subitem1].Id });
                     }
-                    reportTreeView.append({ text: data[mainGroup].SubItems[subitem].Name, items: items });
                 }
             }
         });
@@ -27,15 +77,6 @@ Reporting (@ViewBag.Title)}
                 startDate.setDate(startDate.getDate() + 1);
                 end.min(startDate);
             }
-        }
-        function onSelect(e) {
-            var checkboxes = $(e.node).find(":checkbox");
-            if (checkboxes.length > 0) {
-                $(checkboxes[0]).prop('checked', 'checked');
-            }
-
-            //HINT: you can get the node text this way as well
-            var nodeText = e.node.outerText;
         }
         function endChange() {
             var endDate = end.value();
@@ -58,30 +99,7 @@ Reporting (@ViewBag.Title)}
         start.max(end.value());
         end.min(start.value());
     });
-    function showSerializedData() {
-        var serializedData = $("#reportTreeView input").serialize()
-                        .replace(/%5B/g, "[")
-                        .replace(/%5D/g, "]")
-                        .replace(/&/g, "&amp;");
-
-        $("#checked-nodes").html(serializedData);
-    }
-    $(document).on("click", ".delete-link", function () {
-        var treeview = $("#treeview").data("kendoTreeView");
-        treeview.remove($(this).closest(".k-item"));
-        showSerializedData();
-    });
-    $(document).on("click", ".k-in", function (e) {
-        treeview.toggle($(e.target).closest(".k-item"));
-    });
-    $(document).on("click", ".checkbox", function (e) {
-        $('#PromotionFK').val(e.currentTarget.id);
-        $('#PromotionName').val(e.currentTarget.parentElement.parentElement.innerText);
-    });
-    $(document).on("click", ".engnieBox", function (e) {
-        $('#EngineFK').val(e.currentTarget.id);
-        $('#SearchEngineName').val(e.currentTarget.parentElement.parentElement.innerText);
-    });
+    
 </script>
 <script id="treeview-template" type="text/kendo-ui-template">
             #= item.text #
@@ -90,82 +108,84 @@ Reporting (@ViewBag.Title)}
             # } #
 </script>
 <script id="treeview-checkbox-template" type="text/kendo-ui-template">
-            # var name = "checkedFiles[" + item.Id + "]"; #
-            # var id = item.Id ; #
-            <!-- uncomment the next line to get default checkbox values (RoR, ASP.NET MVC) -->
-            <!-- <input type="hidden" name="#= name #" value="false" /> -->
-            <input type="checkbox" id= "#= id #" name="#= name #" class="checkbox" value="true" />
+ <input type="checkbox" name="promotion[#= item.Id #]" value="#= item.Id #" />
 </script>
-@using (Html.BeginForm())
-{
-    <div style="padding: 10px;">
-        <div class="table">
-            <ul>
-                <li><strong>1# Please select a product group for which you would like to view reports.</strong><br/>
-                    <strong style="margin-left: 16px">Selecting more than one product group will provide you a report with combined data.</strong>
-                </li>
-                <li>
-                    <table>
-                        <tr>
-                            <td>
-                                <div style="height: 476px; width: 250px; border:gray solid 1px; " class="k-treeview">
-                                    <ul id="reportTreeView" style="margin: 5px;">
-                                    </ul>
-                                </div>
-                            </td>
-                            <td style="vertical-align: top">
-                                <div style="margin-left: 10px;">
-                                    <div style="border:gray solid 1px;">
-                                        <div style="margin: 5px;">
+@using (Html.BeginForm()) {
+<div style="padding: 10px;">
+    <div class="table">
+        <ul>
+            <li><strong>1# Please select a product group for which you would like to view reports.</strong><br />
+                <strong style="margin-left: 16px">Selecting more than one product group will provide
+                    you a report with combined data.</strong> </li>
+            <li>
+                <table>
+                    <tr>
+                        <td>
+                            <div style="height: 476px; width: 250px; border: gray solid 1px;" class="k-treeview">
+                                <ul id="reportTreeView" style="margin: 5px;">
+                                </ul>
+                                @Html.HiddenFor(t=>t.PromotionFks)
+                            </div>
+                        </td>
+                        <td style="vertical-align: top">
+                            <div style="margin-left: 10px;">
+                                <div style="border: gray solid 1px;">
+                                    <div style="margin: 5px;">
                                         <strong>2# Please select a search engine for which you would like to view reports. Selecting
                                             more than one engine will provide you a report with combined data.</strong>
-                                        @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
-                                        {
-                                            <br />
-                                            @Html.CheckBox("ps.PromotionPK",true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
-                                            <img src="@Url.Content("~/Content/" + item.LogoURL)" style="vertical-align: middle;" />
+                                        @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines) {
+                                        <br />
+                                        @Html.CheckBox(item.AdvertisingEnginePK.ToString(),true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK
+                                        })
+                                        <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
                                         }
-                                        </div>
-                                    </div>
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <br />
-                                    <div style="margin-left: 5px;border:gray solid 1px;">
-                                        <div style="margin: 5px;">
-                                            <strong>#3 Please Select Date Range</strong>
-                                            <br />
-                                            <div class="table" style="margin: 5px;">
-                                                <ul>
-                                                    <li>Start date
-                                                        @Html.TextBoxFor(t => t.StartDate)
-                                                        <span style="margin-left: 30px">End date</span>
-                                                        @Html.TextBoxFor(t => t.EndDate)
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <br/>
-                                    <br/>
-                                    <br/>
-                                    <br/>
-                                    <div style="text-align: center">
-                                        <input type="submit" id="btnOne" value="Get Report" class="k-button" />
                                     </div>
                                 </div>
-                            </td>
-                        </tr>
-                    </table>
-                </li>
-            </ul>
-        </div>
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <div style="margin-left: 5px; border: gray solid 1px;">
+                                    <div style="margin: 5px;">
+                                        <strong>#3 Please Select Date Range</strong>
+                                        <br />
+                                        <div class="table" style="margin: 5px;">
+                                            <ul>
+                                                <li>Start date @Html.TextBoxFor(t => t.StartDate) <span style="margin-left: 30px">End
+                                                    date</span> @Html.TextBoxFor(t => t.EndDate) </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <br />
+                                <br />
+                                <br />
+                                <div style="text-align: center">
+                                    <input type="submit" id="btnOne" value="Get Report" class="k-button" />
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </li>
+        </ul>
     </div>
-    
-    @Html.HiddenFor(t => t.PromotionFK)
-    @Html.HiddenFor(t => t.EngineFK)
-    @Html.HiddenFor(t => t.PromotionName)
-    @Html.HiddenFor(t => t.SearchEngineName)
-    <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+</div>
+<script>
+    $('#btnOne').click(function (e) {
+        var node = $("#reportTreeView").dynatree("getRoot");
+        var selKeys = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.key; });
+        var selTexts = $.map(node.tree.getSelectedNodes(), function (node) { return node.data.title; });
+        var selEngines = $.map($('.engnieBox'), function (node) { if (node.checked) return node.id; });
+        $('#EngineFks').val(selEngines.join(","));
+        $('#PromotionFks').val(selKeys.join(","));
+        $('#PromotionName').val(selTexts.join(","));
+        alert(selKeys);
+    });
+</script>
+@Html.HiddenFor(t => t.PromotionFK) @Html.HiddenFor(t => t.EngineFks) @Html.HiddenFor(t
+=> t.PromotionName) @Html.HiddenFor(t => t.SearchEngineName)
+<input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]' />
 }

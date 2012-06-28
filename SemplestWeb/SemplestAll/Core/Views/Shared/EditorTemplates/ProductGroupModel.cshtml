@@ -23,7 +23,7 @@
                     Description <a href ="#" class="help-button" id="helpbutton3" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]3"  tabindex="-1" >
                         ?</a>
                 </h3>
-                <label for="ProductGroupModel_Words" style="color: #BFBFBF; margin-top: 5px;">
+                <label for="ProductGroupModel_Words" style="color:grey; margin-top: 5px;">
                     Please type in several words or phrases that describe your business or what you
                     sell or are promoting (separated by commas) to help us build your search campaign:
                 </label>
@@ -39,7 +39,7 @@
                 <label id="lblbudgetdisplay" style="margin-left: 10px">/ Month</label>
                 @Html.HiddenFor(t => t.Configuration.CustomerMinOrderAmount)
                 <br />
-                <label style="color: #BFBFBF; margin-top: 5px;">
+                <label style="color: grey; margin-top: 5px;">
                     Enter whole numbers only. Ex: $100 not $100.00 Minimum @Convert.ToInt32(@Model.Configuration.CustomerMinOrderAmount)</label>
             </li>
             <li>
