@@ -107,6 +107,7 @@ public final class SemplestUtils
 	public static final Integer SLEEP_MILLIS_BETWEEN_BATCHES = 30000;
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
+	public static final Integer DEFAULT_RETRY_COUNT = 10;
 	
 	public static <T> List<List<T>> getBatches(final List<T> list, final int batchSize)
 	{

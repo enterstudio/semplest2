@@ -9,18 +9,18 @@ import com.google.api.adwords.v201109.cm.CampaignCriterionServiceInterface;
 
 public class CampaignCriterionRetriableGoogleOperation extends AbstractRetriableGoogleOperation<CampaignCriterionReturnValue>
 { 					
-	private final CampaignCriterionServiceInterface campaignCriterionService;
+	private final CampaignCriterionServiceInterface service;
 	private final CampaignCriterionOperation[] operations;
 
-	public CampaignCriterionRetriableGoogleOperation(final CampaignCriterionServiceInterface campaignCriterionService, final CampaignCriterionOperation[] operations, final Integer maxRetries)
+	public CampaignCriterionRetriableGoogleOperation(final CampaignCriterionServiceInterface service, final CampaignCriterionOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
-		this.campaignCriterionService = campaignCriterionService;
+		this.service = service;
 		this.operations = operations;
 	}
 	
-	public CampaignCriterionReturnValue porformCustomOperation() throws ApiException, RemoteException
+	protected CampaignCriterionReturnValue porformCustomOperation() throws ApiException, RemoteException
 	{
-		return campaignCriterionService.mutate(operations);	
+		return service.mutate(operations);	
 	}		
 }

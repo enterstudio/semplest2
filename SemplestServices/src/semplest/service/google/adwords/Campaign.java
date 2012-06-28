@@ -10,6 +10,8 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.adengine.GeoTargetObject;
+import semplest.server.protocol.google.CampaignCriterionRetriableGoogleOperation;
+import semplest.util.SemplestUtils;
 
 public class Campaign 
 {
@@ -91,7 +93,11 @@ public class Campaign
       removeProximityOperations.add(removeProximityOperation);
     }
     final CampaignCriterionOperation[] removeProximityOperationsArray = removeProximityOperations.toArray(new CampaignCriterionOperation[removeProximityOperations.size()]);
-    final CampaignCriterion[] resultCampaignCriterionArray = ccs.mutate(removeProximityOperationsArray).getValue();
+    
+    
+    final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 
+    
+    final CampaignCriterion[] resultCampaignCriterionArray = retriableOperation.performOperation().getValue();
     final List<Long> resultCriterionIds = new ArrayList<Long>();
     for (int i = 0; i < resultCampaignCriterionArray.length; ++i)
     {
@@ -115,8 +121,7 @@ public class Campaign
   {
     return sGeoLocation( cProximity(r, (int)(lat*1000000), (int)(lon*1000000)));
   }
-  public long setGeoLoc(Double r, String addr, String city, String state,
-      String zip) throws Exception 
+  public long setGeoLoc(Double r, String addr, String city, String state, String zip) throws Exception 
   { 
     return sGeoLocation( cCriterion( r, addr, city, state, zip ));
   }
@@ -164,8 +169,9 @@ public class Campaign
     CampaignCriterionOperation o = new CampaignCriterionOperation();
     o.setOperand( cc );
     o.setOperator( Operator.ADD );
-    CampaignCriterion[] rs = 
-      ccs.mutate(new CampaignCriterionOperation[]{o}).getValue();
+    final CampaignCriterionOperation[] operations = new CampaignCriterionOperation[]{o};
+    final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(ccs, operations, SemplestUtils.DEFAULT_RETRY_COUNT);     
+    CampaignCriterion[] rs = retriableOperation.performOperation().getValue();
     // pCCs( rs );
     return gCaId( rs );
   }

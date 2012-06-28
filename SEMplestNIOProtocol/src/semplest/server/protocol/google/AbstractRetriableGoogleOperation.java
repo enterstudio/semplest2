@@ -45,7 +45,7 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGo
 		throw new Exception("Problem performing operation because maximum num of retries reached [" + maxRetries + "]");
 	}
 	
-	public abstract T porformCustomOperation() throws ApiException, RemoteException;
+	protected abstract T porformCustomOperation() throws ApiException, RemoteException;
 	
 	protected void handleApiException(final ApiException e) throws Exception
 	{

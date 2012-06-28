@@ -1535,8 +1535,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String keywordMatchTypeString = SemplestMatchType.getSearchEngineMatchType(semplestMatchType, adEngine);
 				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
 				final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-				final Boolean processedSuccessfully = google.addUpdateKeywords(accountID, campaignID, adGroupID, keywordToRemoveOppositeMap,
-						keywordMatchType, null);
+				final Boolean processedSuccessfully = google.addUpdateKeywords(accountID, campaignID, adGroupID, keywordToRemoveOppositeMap, keywordMatchType, null);
 				if (processedSuccessfully)
 				{
 					logger.info("Processed successfully");
@@ -1960,11 +1959,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					}
 				}
 				final GoogleAddAdsRequest request = new GoogleAddAdsRequest(accountID, adGroupID, displayURL, url, addAdTextRequests);
-				logger.info("Generated " + addAdTextRequests.size() + " individual requests within a single GoogleAddAdsRequest from "
-						+ promotionAdIds.size() + " PromotionAdIds");
+				logger.info("Generated " + addAdTextRequests.size() + " individual requests within a single GoogleAddAdsRequest from " + promotionAdIds.size() + " PromotionAdIds");
 				final Map<GoogleAddAdRequest, Long> requestToGoogleIdMap = googleAdwordsService.addTextAds(request);
-				logger.info("Created " + requestToGoogleIdMap.size() + " known Ads in Google that are associated with " + addAdTextRequests.size()
-						+ " original requests");
+				logger.info("Created " + requestToGoogleIdMap.size() + " known Ads in Google that are associated with " + addAdTextRequests.size() + " original requests");
 				final String easilyReadableRequestToGoogleIdMap = SemplestUtils.getEasilyReadableString(requestToGoogleIdMap);
 				logger.info("Results from operation:\n" + easilyReadableRequestToGoogleIdMap);
 				final List<GoogleAdIdSemplestAdIdPair> idPairs = getIdPairs(requestToGoogleIdMap);
