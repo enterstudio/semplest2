@@ -6,9 +6,14 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,6 +32,7 @@ import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
@@ -962,7 +968,7 @@ public class TestBidding {
 			
 			
 			
-			String accountID = "2188810777"; // small campaign : 100 words
+			//String accountID = "2188810777"; // small campaign : 100 words
 			//campaignID: 77290470
 			//adGroupIDs:
 			//Bids_Alex: 3887444670
@@ -970,6 +976,8 @@ public class TestBidding {
 			//Keyword Tool Generated words: 3703543830
 			//Test Broad Match: 3217107030
 			//Wedding Flowers: 3074331030
+			//Bids_Subhojit_QS_Adjusted: 3914596950
+			//Bids_Subhojit_QS_Adjusted_Phrase: 3918232230
 			
 			
 			
@@ -989,9 +997,10 @@ public class TestBidding {
 			
 			
 			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-
+			
+			
 			/*
-
+			
 			ArrayList<HashMap<String, String>> campaignsByAccountId = client.getCampaignsByAccountId(accountID, false);
 			Long campaignID = new Long(campaignsByAccountId.get(0).get("Id"));
 			System.out.println(campaignID);
@@ -1007,12 +1016,79 @@ public class TestBidding {
 			}
 
 			Long adGroupID = adGroups[0].getAdGroupID();
+			
 			*/
 			
 			/*
 			
-			long Bids_AlexID = 3887444670L;
-			long Bids_SubhojitID = 3887444790L;
+			try{
+
+				String accountID = "2188810777";
+				//long Bids_AlexID = 3887444670L; // exact old
+				//long Bids_SubhojitID = 3887444790L; // exact old
+				//long Bids_SubhojitID = 3914596950L; // exact new QSCAdj
+				long Bids_SubhojitID = 3918232230L; //phrase QSCAdj
+
+
+
+				Long adGroupID = Bids_SubhojitID;
+
+				Calendar cal = Calendar.getInstance();
+				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+				Date now = new Date();
+				cal.setTime(now);
+				//get yesterday
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				Date yesterday = cal.getTime();
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				ReportObject[] report = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
+							
+				long totalMicroCost = 0;
+				int totalClicks = 0;
+				//long maxBid=0L;
+				for(ReportObject r : report){
+//					if(maxBid<r.getMicroBidAmount()){
+//						maxBid=r.getMicroBidAmount();
+//					}
+					if(r.getAdGroupID().equals(adGroupID) && r.getNumberClick()>0){
+						System.out.println(r.getKeyword()+" "+r.getNumberClick()+" "+r.getMicroCost());
+						totalMicroCost+=r.getMicroCost();
+						totalClicks+=r.getNumberClick();
+					} 
+				}
+				
+				Long avgMicroCPC = totalMicroCost/totalClicks;
+				System.out.println("Average CPC: "+avgMicroCPC.doubleValue()*1e-6);
+				
+
+				for(ReportObject r : report){
+					if(r.getAdGroupID().equals(adGroupID) && r.getNumberImpressions()>4){
+						//System.out.println(r.getKeyword()+" "+r.getMicroBidAmount()+" "+r.getAveragePosition()+" "+r.getNumberClick());
+						System.out.println(r.getKeywordID()+": "+r.getAveragePosition()+" "+r.getNumberImpressions()
+								+" "+r.getKeyword()+" "+r.getQualityScore()+" "+r.getMicroBidAmount().doubleValue()*1e-6);
+//						if(r.getMicroBidAmount()<avgMicroCPC*12/10){
+//							System.out.println(r.getKeyword()+": "+avgMicroCPC*12/10);
+//						//client.setBidForKeyWord(accountID, r.getKeywordID(), adGroupID, avgMicroCPC*12/10/10000*10000);
+						client.setBidForKeyWord(accountID, r.getKeywordID(), adGroupID, r.getMicroBidAmount()*2/3/1000*1000);
+//						}
+					} 
+				}
+				
+
+
+
+			}catch (Exception e){//Catch exception if any
+				e.printStackTrace();
+			}
+			*/
+			
+			
+			
+			String accountID = "2188810777";
+			//long Bids_AlexID = 3887444670L; // exact old
+			//long Bids_SubhojitID = 3887444790L; // exact old
+			//long Bids_SubhojitID = 3914596950L; // exact new QSCAdj
+			long Bids_SubhojitID = 3918232230L; //phrase QSCAdj
 			
 			HashMap<String,Integer> wordIdxMap = new HashMap<String,Integer>();
 			ArrayList<Double> bidList = new ArrayList<Double>();
@@ -1059,7 +1135,7 @@ public class TestBidding {
 					String word = b.getKeyword();
 					Long wordID = b.getBidID();
 					if(wordIdxMap.containsKey(word)){
-						client.setBidForKeyWord(accountID, wordID, adGroupID, ((new Double(1e6*bidList.get(wordIdxMap.get(word)))).longValue())/10000L*10000L);
+						client.setBidForKeyWord(accountID, wordID, adGroupID, ((new Double(2e6*bidList.get(wordIdxMap.get(word)))).longValue())/10000L*10000L);
 					} else {
 						System.out.println("No bid for the word "+word+" was not found. Must be an error!!");
 					}
@@ -1071,6 +1147,37 @@ public class TestBidding {
 				logger.error("Problem", e);
 			}
 			
+			
+			
+			
+			
+			/*
+			Integer promotionID = new Integer(60); 
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			Date startDate = df.parse("05/01/2012");
+			Date endDate = df.parse("06/21/2012");
+
+			List<ReportObject> reportObjList = SemplestDB.getReportData(promotionID, "Google", startDate, endDate);
+			System.out.println("Number of entries: "+reportObjList.size());
+			
+//			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+//			Date now = new Date();
+//			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(now);
+//			cal.add(Calendar.DAY_OF_MONTH, -30);
+//			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			
+			
+			int numImpressions = 0;
+			for(ReportObject r : reportObjList){
+				numImpressions+=r.getNumberImpressions();
+				//if(r.getNumberClick()>0){
+					System.out.println(r.getKeyword()+": "+r.getMicroCost()+", "+r.getNumberImpressions()+", "+r.getTransactionDate()+", "
+							+r.getBidMatchType()+", "+r.getQualityScore());
+				//}
+			}
+			System.out.println("Total impressions: "+numImpressions);
 			*/
 			
 			
@@ -1086,17 +1193,22 @@ public class TestBidding {
 			budgetData.setRemainingBudgetInCycle(75.0);
 			budgetData.setRemainingDays(31);
 			
+			
+			String accountID = "2387614989";
+			long campaignID = 88453391L;
+			long adGroupID = 4766339711L;
 			bidObject.setAdGroupID(adGroupID);
 			bidObject.setGoogleAccountID(accountID);
 			bidObject.setCampaignID(campaignID);
 			
 			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
-			
 			*/
+			
 			
 			/*
 			Integer promotionID = new Integer(60);
 			String searchEngine = "Google";
+			
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
 			System.out.println("Account ID: "+ adEngineInfo.getAccountID() + ", campaign ID: " 
 					+ adEngineInfo.getCampaignID() +",adgroup ID: "+ adEngineInfo.getAdGroupID());
@@ -1111,7 +1223,7 @@ public class TestBidding {
 			for(TrafficEstimatorDataObject te : teList){
 				
 				if(words.contains(te.getKeyword())) {
-					System.out.println("Repeat word: "+te.getKeyword());
+					//System.out.println("Repeat word: "+te.getKeyword());
 				} else {
 					words.add(te.getKeyword());
 				}
@@ -1121,7 +1233,13 @@ public class TestBidding {
 				}
 
 			}
+			
 			*/
+			
+			
+			
+
+			
 			
 			
 			/*

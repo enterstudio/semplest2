@@ -18,6 +18,7 @@ import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.bidding.estimation.EstimatorData;
+import semplest.bidding.optimization.BidOptimizer;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
@@ -27,6 +28,7 @@ import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
@@ -93,6 +95,8 @@ public class BidGeneratorObj
 
 	private HashMap<String, EstimatorData> clickDataMap = new HashMap<String, EstimatorData>();
 	private HashMap<String, EstimatorData> costDataMap = new HashMap<String, EstimatorData>();
+	private HashMap<String, EstimatorData> cpcDataMap = new HashMap<String, EstimatorData>();
+
 
 	public BidGeneratorObj() throws Exception
 	{ // constructor
@@ -149,6 +153,7 @@ public class BidGeneratorObj
 
 		clickDataMap = new HashMap<String, EstimatorData>();
 		costDataMap = new HashMap<String, EstimatorData>();
+		cpcDataMap = new HashMap<String, EstimatorData>();
 	}
 
 	public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception
@@ -226,27 +231,24 @@ public class BidGeneratorObj
 		if (searchEngine == AdEngine.Google)
 		{
 			k = 0;
-			while (true)
-			{
+			while (true) {
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-				try
-				{
+				try {
 					keywordDataObjs = clientGoogle.getAllBiddableAdGroupCriteria(googleAccountID, adGroupID, true);
 					break;
-				}
-				catch (Exception e)
-				{
-					if (k <= maxRetry)
-					{
-						logger.error(
-								"Received exception getAllBiddableAdGroupCriteria AccountID = " + googleAccountID + " AdGroupID = "
-										+ String.valueOf(adGroupID) + ": will retry..., k=" + k + e.getMessage(), e);
+				} catch (Exception e) {
+					if (k <= maxRetry) {
+						logger.error("Received exception getAllBiddableAdGroupCriteria AccountID = "
+										+ googleAccountID + " AdGroupID = "
+										+ String.valueOf(adGroupID)
+										+ ": will retry..., k=" + k
+										+ e.getMessage(), e);
 						k++;
-					}
-					else
-					{
-						logger.error("Failed to get BiddableAdGroupCriteria from Google after " + k + " efforts " + e.getMessage(), e);
-						throw new Exception("Failed to get BiddableAdGroupCriteria from Google after " + k + " efforts " + e.getMessage(), e);
+					} else {
+						logger.error("Failed to get BiddableAdGroupCriteria from Google after "
+										+ k + " efforts " + e.getMessage(), e);
+						throw new Exception("Failed to get BiddableAdGroupCriteria from Google after "
+										+ k + " efforts " + e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
@@ -404,6 +406,42 @@ public class BidGeneratorObj
 			return new Boolean(true);
 
 		} // if(searchEngine.equalsIgnoreCase(msn))
+		
+		
+		
+		
+		
+		
+		/* ******************************************************************************************* */
+		// XX. Database call: get traffic estimator data from database
+		
+		/*
+		List<TrafficEstimatorDataObject> teList = SemplestDB.getLatestTrafficEstimator(promotionID, searchEngine);
+		System.out.println("Number of entries retrieved: "+teList.size());
+		HashSet<String> teWordSet = new HashSet<String>();
+		HashMap<String,ArrayList<Double>> teWordClickMap = new HashMap<String,ArrayList<Double>>();
+		HashMap<String,ArrayList<Double>> teWordCPCMap = new HashMap<String,ArrayList<Double>>();
+		HashMap<String,ArrayList<Double>> teWordCostMap = new HashMap<String,ArrayList<Double>>();
+		HashMap<String,ArrayList<Double>> teWordBidMap = new HashMap<String,ArrayList<Double>>();
+
+		for(TrafficEstimatorDataObject te : teList){
+			
+			if(!teWordSet.contains(te.getKeyword())) {
+				teWordSet.add(te.getKeyword());
+				teWordClickMap.put(te.getKeyword(), new ArrayList<Double>());
+				teWordCPCMap.put(te.getKeyword(), new ArrayList<Double>());
+				teWordCostMap.put(te.getKeyword(), new ArrayList<Double>());
+				teWordBidMap.put(te.getKeyword(), new ArrayList<Double>());
+
+			}
+			teWordClickMap.get(te.getKeyword()).add(new Double(te.getAveNumberClicks()));
+			teWordCPCMap.get(te.getKeyword()).add(new Double(te.getAveCPC()));
+			teWordCostMap.get(te.getKeyword()).add(new Double(te.getAveMicroCost()*1e-6));
+			teWordBidMap.get(te.getKeyword()).add(new Double(((double) te.getMicroBid() )*1e-6));
+
+		}
+		*/
+		
 
 		/* ******************************************************************************************* */
 		// 6. [google] Compute bids for competitive keywords
@@ -413,15 +451,46 @@ public class BidGeneratorObj
 		// selected by optimizer
 
 		// imp: consider the case that compKeywords is empty
+		
+		
+		BidOptimizer bidOptimizer = new BidOptimizer();
+
 
 		for (String s : compKeywords)
 		{
-			notSelectedKeywords.add(s);
+			double[] bidArray = costDataMap.get(s).getBidArray();
+			Arrays.sort(bidArray);
+			//public KeyWord(String name, double score, double[] bid, double[] Clicks,
+			//	      double[] CPC, double[] Pos, double[] DCost, Double cutoff, Double clickFactor)
+			bidOptimizer.addKeyWord(new KeyWord(s, qualityScoreMap.get(s).doubleValue(), bidArray, clickDataMap.get(s).getData(bidArray), 
+					cpcDataMap.get(s).getData(bidArray), null, costDataMap.get(s).getData(bidArray), 0.05 ,1.0));
+			//notSelectedKeywords.add(s);
 		}
-		compKeywords.clear();
+		//compKeywords.clear();
+		
+		Long totalDailyCost = 0L;
+		Float totalDailyClick = 0F;
+		
+		if(compKeywords.size()>0){
+			bidOptimizer.setDailyBudget(targetDailyBudget);
+			HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
+			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
+			totalDailyCost = new Double(bidOptimizer.getTotalDailyCost()*1e6).longValue();
+			totalDailyClick = new Float(bidOptimizer.getTotalDailyClicks());
+			
+			
+			Iterator<String> wordIT = bidData.keySet().iterator();
+			while (wordIT.hasNext()){
+				String s = wordIT.next();
+				wordBidMap.put(s, (new Double(bidData.get(s)*1e6).longValue())/10000L*10000L);
+				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+			}
+			
+		}
+		
 
-		// logger.info("Computed bids for competitive keywords.");
-		logger.info("No competitive keywords.");
+		logger.info("Computed bids for competitive keywords.");
+		//logger.info("No competitive keywords.");
 
 		/* ******************************************************************************************* */
 		// 7. [google] Compute bids for competitive keywords which optimizer
@@ -431,7 +500,10 @@ public class BidGeneratorObj
 		{
 			for (String s : notSelectedKeywords)
 			{
-				wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
+				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
+				wordBidMap.put(s, defaultMicroBid);
+				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+
 			}
 			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
 		}
@@ -442,7 +514,11 @@ public class BidGeneratorObj
 		{
 			for (String s : nonCompKeywords)
 			{
-				wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
+				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
+				wordBidMap.put(s, defaultMicroBid);
+				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+
+
 			}
 			logger.info("Computed bids for rest of the keywords with first page cpc.");
 		}
@@ -456,6 +532,8 @@ public class BidGeneratorObj
 			for (String s : noInfoKeywords)
 			{
 				wordBidMap.put(s, null); // bid using default bid
+				logger.info("Microbid for keyword "+s+" is "+defaultMicroBid);
+
 			}
 			logger.info("Left the remaining keywords for default bidding");
 		}
@@ -467,6 +545,8 @@ public class BidGeneratorObj
 		// keywords
 		// b. [msn] use all keywords
 
+		
+		/*
 		// defaultMicroBid = 1000000L;
 		Long totalDailyCost = 0L;
 		Float totalDailyClick = 0F;
@@ -507,6 +587,8 @@ public class BidGeneratorObj
 		} // if(searchEngine.equalsIgnoreCase(google))
 
 		logger.info("Computed expected cpc and set default bid at " + defaultMicroBid);
+		
+		*/
 
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
@@ -527,7 +609,7 @@ public class BidGeneratorObj
 
 			logger.info("Stored adgroup criterion data to database for Google");
 		}
-
+		
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
 		if (searchEngine == AdEngine.Google)
@@ -556,6 +638,8 @@ public class BidGeneratorObj
 		{
 			throw new Exception("Method not implemented for MSN yet!!");
 		} // if(searchEngine.equalsIgnoreCase(msn))
+		
+		
 
 		/* ******************************************************************************************* */
 		// 13. Database call: write default bid for campaign
@@ -677,27 +761,20 @@ public class BidGeneratorObj
 		if (searchEngine == AdEngine.Google)
 		{
 			k = 0;
-			while (true)
-			{
+			while (true) {
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-				try
-				{
+				try {
 					clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
 					break;
-				}
-				catch (Exception e)
-				{
-					if (k <= maxRetry)
-					{
+				} catch (Exception e) {
+					if (k <= maxRetry) {
 						// e.printStackTrace();
 						logger.error("Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
 						k++;
-					}
-					else
-					{
+					} else {
 						// e.printStackTrace();
-						logger.error("Failed to update default microBid via Google API. " + e.getMessage(), e);
-						throw new Exception("Failed to update default microBid via Google API. " + e.getMessage(), e);
+						logger.error( "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						throw new Exception( "Failed to update default microBid via Google API. " + e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
@@ -707,6 +784,10 @@ public class BidGeneratorObj
 		return new Boolean(true);
 
 	} // setBidsInitial()
+	
+	
+	
+	
 
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
@@ -727,8 +808,9 @@ public class BidGeneratorObj
 		HashMap<String, Long> bids = new HashMap<String, Long>();
 		for (String s : compKeywords)
 		{
-			bids.put(s, firstPageCPCMap.get(s) + stepFirst); // stepFirst above
-																// fp CPC
+			//bids.put(s, firstPageCPCMap.get(s) + stepFirst); // stepFirst above fp CPC
+			bids.put(s, 500000L + stepFirst); // stepFirst above fp CPC
+
 		}
 		logger.info("Number of initial competitive keywords: " + bids.size());
 
@@ -793,6 +875,11 @@ public class BidGeneratorObj
 					costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
 							/ (2 * 1e6));
 					costDataMap.put(words[i], costDataObj);
+					
+					EstimatorData cpcDataObj = new EstimatorData();
+					cpcDataObj.addData(abid / 1e6, (points.get(abid).getMaxAveCPC() + points.get(abid).getMinAveCPC())
+							/ (2 * 1e6));
+					cpcDataMap.put(words[i], cpcDataObj);
 				}
 			}
 		}
@@ -802,7 +889,8 @@ public class BidGeneratorObj
 		bids = new HashMap<String, Long>();
 		for (String s : compKeywords)
 		{
-			bids.put(s, firstPageCPCMap.get(s) + stepSecond);
+			//bids.put(s, firstPageCPCMap.get(s) + stepSecond);
+			bids.put(s, 500000L + stepSecond);
 		}
 		k = 0;
 		while (true)
@@ -851,6 +939,11 @@ public class BidGeneratorObj
 				costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
 						/ (2 * 1e6));
 				costDataMap.put(words[i], costDataObj);
+				
+				EstimatorData cpcDataObj = cpcDataMap.get(words[i]);
+				cpcDataObj.addData(abid / 1e6, (points.get(abid).getMaxAveCPC() + points.get(abid).getMinAveCPC())
+						/ (2 * 1e6));
+				cpcDataMap.put(words[i], cpcDataObj);
 
 				logger.info(words[i] + ":: Total daily cost: $" + points.get(abid).getMaxTotalDailyMicroCost() / 1e6);
 
@@ -876,7 +969,8 @@ public class BidGeneratorObj
 			bids = new HashMap<String, Long>();
 			for (String s : compKeywords)
 			{
-				bids.put(s, firstPageCPCMap.get(s) + j * stepRest);
+				//bids.put(s, firstPageCPCMap.get(s) + j * stepRest);
+				bids.put(s, 500000L + j * stepRest);
 			}
 			System.out.println("j=" + j);
 			k = 0;
@@ -927,6 +1021,11 @@ public class BidGeneratorObj
 					costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
 							/ (2 * 1e6));
 					costDataMap.put(words[i], costDataObj);
+					
+					EstimatorData cpcDataObj = cpcDataMap.get(words[i]);
+					cpcDataObj.addData(abid / 1e6, (points.get(abid).getMaxAveCPC() + points.get(abid).getMinAveCPC())
+							/ (2 * 1e6));
+					cpcDataMap.put(words[i], cpcDataObj);
 
 					logger.info(words[i] + ":: Total daily cost: $" + points.get(abid).getMaxTotalDailyMicroCost() / 1e6);
 
@@ -939,15 +1038,16 @@ public class BidGeneratorObj
 			// now check if we are getting the same data
 			double[] bidArray = costDataMap.get(words[i]).getBidArray();
 			Arrays.sort(bidArray);
-			double[] costArray = costDataMap.get(words[i]).getData(bidArray);
+			double[] cpcArray = cpcDataMap.get(words[i]).getData(bidArray);
 			// if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
-			if (costArray[costArray.length - 1] < costArray[0] + 1e-4)
+			if (cpcArray[cpcArray.length - 1] < cpcArray[0] + 1e-4)
 			{
 				logger.info("Moving keyword \"" + words[i] + "\" to non-competitive category from competitive category.");
 				compKeywords.remove(words[i]);
 				nonCompKeywords.add(words[i]);
 				clickDataMap.remove(words[i]);
 				costDataMap.remove(words[i]);
+				cpcDataMap.remove(words[i]);
 				continue;
 			}
 		}
@@ -1346,7 +1446,7 @@ public class BidGeneratorObj
 			try
 			{
 				bidOptimizer.addKeyWord(new KeyWord(s, qualityScoreMap.get(s).doubleValue(), bidArray, clickDataMap.get(s).getData(bidArray), null,
-						null, costDataMap.get(s).getData(bidArray), firstPageCPCMap.get(s) * 1e-6));
+						null, costDataMap.get(s).getData(bidArray), firstPageCPCMap.get(s) * 1e-6,1.0));
 
 				// double [] costArray = costDataMap.get(s).getData(bidArray);
 				// for(int i=0; i<costArray.length; i++){
