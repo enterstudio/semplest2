@@ -128,7 +128,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			} 
 			
 			String data1 =  "";
-			
+			//Weight data based on on percentage
 			data1 = this.weightData(data.userInfoWeight, url, adds,companyName,searchTerm, description);
 			String[] dataCount = data1.split("\\s+");
 			if(dataCount.length<30) throw new Exception("Not enough data provided");
