@@ -19,8 +19,8 @@ public class CampaignCriterionRetriableGoogleOperation extends AbstractRetriable
 		this.operations = operations;
 	}
 	
-	public void porformCustomOperation() throws ApiException, RemoteException
+	public CampaignCriterionReturnValue porformCustomOperation() throws ApiException, RemoteException
 	{
-		results = campaignCriterionService.mutate(operations);	
+		return campaignCriterionService.mutate(operations);	
 	}		
 }

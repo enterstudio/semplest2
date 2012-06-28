@@ -16,8 +16,6 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGo
 	
 	protected final Integer maxRetries;
 	
-	protected T results;
-	
 	protected AbstractRetriableGoogleOperation(final Integer maxRetries)
 	{
 		this.maxRetries = maxRetries;
@@ -28,22 +26,16 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGo
 	{
 		return maxRetries;
 	}
-	
+		
 	@Override
-	public T getResults()
-	{
-		return results;
-	}
-	
-	@Override
-	public void performOperation() throws Exception 
+	public T performOperation() throws Exception 
 	{			
-		for (int i = 0; i < maxRetries; ++i)
+		for (int i = 1; i <= maxRetries; ++i)
 		{
 			try 
 			{
 				logger.info("Attempt #" + i);
-				porformCustomOperation();					
+				return porformCustomOperation();					
 			}
 			catch (ApiException e)
 			{
@@ -53,7 +45,7 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGo
 		throw new Exception("Problem performing operation because maximum num of retries reached [" + maxRetries + "]");
 	}
 	
-	public abstract void porformCustomOperation() throws ApiException, RemoteException;
+	public abstract T porformCustomOperation() throws ApiException, RemoteException;
 	
 	protected void handleApiException(final ApiException e) throws Exception
 	{
