@@ -2416,6 +2416,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Campaign CreateOneCampaignForAccount(String accountID, String campaignName, CampaignStatus campaignStatus, BudgetBudgetPeriod period,
 			Long microBudgetAmount) throws Exception
 	{
+		logger.info("Will try to Create Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "]");
 		try
 		{
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -2476,15 +2477,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ServiceException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem Creating Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "]", e);
 		}
 		catch (ApiException e)
 		{
-			throw new Exception(e.dumpToString());
+			throw new Exception("Problem Creating Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "]: " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem Creating Campaign for AccountID [" + accountID + "], CampaignName [" + campaignName + "], CampaignStatus [" + campaignStatus + "], BudgetPeriod [" + period + "], MicroBudgetAmount [" + microBudgetAmount + "]", e);
 		}
 	}
 

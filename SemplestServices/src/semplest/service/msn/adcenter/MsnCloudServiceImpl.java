@@ -2043,6 +2043,14 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			{
 				throw new RemoteException(e2.dumpToString(), e2);
 			}	
+			try
+			{
+				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
+			}
+			catch(InterruptedException e)
+			{
+				logger.warn("Got interrupted while trying to sleep, but will just log and ignore");
+			}
 		}
 	}
 

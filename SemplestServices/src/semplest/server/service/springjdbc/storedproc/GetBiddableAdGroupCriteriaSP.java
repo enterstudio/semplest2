@@ -31,7 +31,7 @@ public class GetBiddableAdGroupCriteriaSP extends StoredProcedure
 	
 	public List<KeywordDataObject> execute(int promotionID, AdEngine advertisingEngine )
 	{
-		Map<String, Object> results = super.execute(new Object[] {promotionID, advertisingEngine});
+		Map<String, Object> results = super.execute(new Object[] {promotionID, advertisingEngine.name()});
 		if (results.get("biddable") == null)
 		{
 			return null;

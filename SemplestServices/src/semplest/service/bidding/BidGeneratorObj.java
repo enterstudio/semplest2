@@ -660,7 +660,8 @@ public class BidGeneratorObj
 			logger.info("Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
 			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
 			{
-				clientGoogle.setBidForKeyWords(googleAccountID, requests);
+				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
+				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}
 		} 
 

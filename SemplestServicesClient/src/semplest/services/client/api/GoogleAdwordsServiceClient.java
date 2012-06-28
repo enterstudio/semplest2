@@ -725,7 +725,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
 
 }

@@ -17,6 +17,7 @@ import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -93,8 +94,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", searchEngStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		final String returnData = runMethod(baseurl, SERVICEOFFERED, "getInitialValues", json, timeoutMS);
-		//Define the type for conversion
-		final Type type = new TypeToken<Map<String,AdEngineInitialData>>(){}.getType();
+		final Type type = new TypeToken<Map<AdEngine,AdEngineInitialData>>(){}.getType();
 		return gson.fromJson(returnData, type);		
 	}
 	
@@ -107,7 +107,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("searchEngine", searchEngStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "GetMonthlyBudgetPercentPerSE", json, timeoutMS);
-		return gson.fromJson(returnData, HashMap.class);
+		return gson.fromJson(returnData, SemplestUtils.TYPE_MAP_OF_ADENGINE_TO_DOUBLE);
 	}
 	
 	@Override
@@ -145,7 +145,8 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		jsonHash.put("keywords",keyLevelStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String returnData = runMethod(baseurl, SERVICEOFFERED, "getBid", json, timeoutMS);
-		return gson.fromJson(returnData, HashMap.class);
+		final Type type = new TypeToken<Map<String, Double>>(){}.getType();
+		return gson.fromJson(returnData, type);
 	}
 	
 	@Override

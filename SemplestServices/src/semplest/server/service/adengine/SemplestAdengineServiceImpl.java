@@ -82,7 +82,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Gson gson = new Gson();
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
-	private static String ESBWebServerURL = null;
+	private static String ESBWebServerURL = null;	
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -228,6 +228,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			Long accountID = null;
 			final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
+			logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
 			GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
 			AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
 			companyName = AdEngineAccoutRow.getCustomerName();
@@ -610,6 +611,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
+				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}			
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
@@ -685,6 +687,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_AMOUNT, semplestMatchType, adEngine, false);	
 				}	
+				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}		
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())

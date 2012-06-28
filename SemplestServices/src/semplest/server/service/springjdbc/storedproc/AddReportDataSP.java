@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.BaseDB;
 
 public class AddReportDataSP extends StoredProcedure
@@ -37,11 +38,11 @@ public class AddReportDataSP extends StoredProcedure
 		compile();
 	}
 	
-	public Integer execute(Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
+	public Integer execute(Integer PromotionID, String Keyword,AdEngine AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
 			Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
 			Integer FirstPageMicroCpc, Integer MicroCost) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionID, Keyword,AdvertisingEngine,  TransactionDate,  MicroBidAmount, 
+		Map<String, Object> results = super.execute(PromotionID, Keyword,AdvertisingEngine.name(),  TransactionDate,  MicroBidAmount, 
 				NumberImpressions, NumberClick, AveragePosition, AverageCPC,BidType, QualityScore, ApprovalStatus,
 				FirstPageMicroCpc, MicroCost);
 		

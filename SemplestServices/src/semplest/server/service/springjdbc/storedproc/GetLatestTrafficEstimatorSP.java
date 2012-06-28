@@ -32,7 +32,7 @@ public class GetLatestTrafficEstimatorSP extends StoredProcedure
 	
 	public List<TrafficEstimatorDataObject> execute(int promotionID, String optionalKeyword, AdEngine advertisingEngine )
 	{
-		Map<String, Object> results = super.execute(new Object[] {promotionID, advertisingEngine, optionalKeyword});
+		Map<String, Object> results = super.execute(new Object[] {promotionID, advertisingEngine.name(), optionalKeyword});
 		if (results.get("traffic") == null)
 		{
 			return null;

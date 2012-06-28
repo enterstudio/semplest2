@@ -228,7 +228,7 @@ public class SemplestDB extends BaseDB
 		Integer defBid;
 		try
 		{
-			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]{ promotionID, adEngine }, Integer.class);
+			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]{ promotionID, adEngine.name() }, Integer.class);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -259,14 +259,14 @@ public class SemplestDB extends BaseDB
 				"where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
 
 		jdbcTemplate.update(sql, new Object[]
-		{ microBid, promotionID, adEngine });
+		{ microBid, promotionID, adEngine.name() });
 
 	}
 	
 	public static void UpdateDefaultBidForKeywords(int promotionID, AdEngine adEngine) throws Exception
 	{
 		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
-		updateDefBiAmounts.execute(promotionID, adEngine);
+		updateDefBiAmounts.execute(promotionID, adEngine.name());
 	}
 
 	public static void storeTargetedDailyBudget(int promotionID, AdEngine adEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
@@ -275,7 +275,7 @@ public class SemplestDB extends BaseDB
 		jdbcTemplate.update(
 				"insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyMicroBudget,TargetedDailyClicks,CreatedDate) "
 						+ "select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[]
-				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, adEngine });
+				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, adEngine.name() });
 
 	}
 
@@ -312,7 +312,7 @@ public class SemplestDB extends BaseDB
 						{
 							Long microBid = microbids.next();
 							// add the data to the DB
-							addTrafficEstSP.execute(promotionID, keyword, adEngine, matchType, microBid,
+							addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid,
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),
 									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid),
 									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid),
@@ -366,7 +366,7 @@ public class SemplestDB extends BaseDB
 		try
 		{
 			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, searchEngine }, bidElementMapper);
+			{ promotionID, searchEngine.name() }, bidElementMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -391,7 +391,7 @@ public class SemplestDB extends BaseDB
 						+ "where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? "
 						+ "order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, searchEngine, startDateSQL }, new AllBidRSExtactor());
+				{ promotionID, searchEngine.name(), startDateSQL }, new AllBidRSExtactor());
 			}
 			else
 			{
@@ -403,7 +403,7 @@ public class SemplestDB extends BaseDB
 						+ "where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)"
 						+ "order by k.Keyword";
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, searchEngine, startDateSQL, endDateSQL }, new AllBidRSExtactor());
+				{ promotionID, searchEngine.name(), startDateSQL, endDateSQL }, new AllBidRSExtactor());
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -429,7 +429,7 @@ public class SemplestDB extends BaseDB
 		return getLatestBiddableAdGroupCriteria.execute(promotionID, advertisingEngine);
 	}
 
-	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, String adEngine, Date startDate,
+	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, AdEngine adEngine, Date startDate,
 			Date endDate) throws Exception
 	{
 		String strSQL= null;
@@ -451,7 +451,7 @@ public class SemplestDB extends BaseDB
 			try
 			{
 				return jdbcTemplate.query(strSQL, new Object[]
-					{ promotionID, adEngine,startDate,  promotionID, adEngine }, new AllBiddableRSExtractor());
+					{ promotionID, adEngine.name(),startDate,  promotionID, adEngine.name() }, new AllBiddableRSExtractor());
 			}
 			catch (EmptyResultDataAccessException e)
 			{
@@ -478,7 +478,7 @@ public class SemplestDB extends BaseDB
 			try
 			{
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine, startDate, endDate, promotionID, adEngine }, new AllBiddableRSExtractor());
+				{ promotionID, adEngine.name(), startDate, endDate, promotionID, adEngine.name() }, new AllBiddableRSExtractor());
 			}
 			catch (EmptyResultDataAccessException e)
 			{
@@ -603,7 +603,7 @@ public class SemplestDB extends BaseDB
 			//Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
 			//Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
 			//Integer FirstPageMicroCpc, Integer MicroCost
-			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine.name(), rptObj.getTransactionDate(), 
+			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine, rptObj.getTransactionDate(), 
 					rptObj.getMicroBidAmount().intValue(),  rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getBidMatchType(), 
 					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(),
 					rptObj.getMicroCost().intValue());
@@ -640,7 +640,7 @@ public class SemplestDB extends BaseDB
 						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
 						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine, startDateSQL }, reportObjectjMapper);
+				{ promotionID, adEngine.name(), startDateSQL }, reportObjectjMapper);
 			}
 			else
 			{
@@ -656,7 +656,7 @@ public class SemplestDB extends BaseDB
 						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
 						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ? and aerd.CreatedDate <= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine, startDateSQL, endDateSQL }, reportObjectjMapper);
+				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, reportObjectjMapper);
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -680,7 +680,7 @@ public class SemplestDB extends BaseDB
 		try
 		{
 			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ promotionID, adEngine }, targetedDailyBudgetMapper);
+			{ promotionID, adEngine.name() }, targetedDailyBudgetMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -706,7 +706,7 @@ public class SemplestDB extends BaseDB
 						+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ?";
 
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine, startDateSQL }, targetedDailyBudgetMapper);
+				{ promotionID, adEngine.name(), startDateSQL }, targetedDailyBudgetMapper);
 			}
 			else
 			{
@@ -716,7 +716,7 @@ public class SemplestDB extends BaseDB
 						+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ? and tdb.CreatedDate <= ?";
 
 				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine, startDateSQL, endDateSQL }, targetedDailyBudgetMapper);
+				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, targetedDailyBudgetMapper);
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -743,7 +743,7 @@ public class SemplestDB extends BaseDB
 				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK where p.PromotionPK = ? and ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]{ promotionID, adEngine }, adEngineObjMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[]{ promotionID, adEngine.name() }, adEngineObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -810,7 +810,7 @@ public class SemplestDB extends BaseDB
 
 		try
 		{
-			return jdbcTemplate.queryForList(strSQL, new Object[]{customerID, adEngine});
+			return jdbcTemplate.queryForList(strSQL, new Object[]{customerID, adEngine.name()});
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -829,7 +829,7 @@ public class SemplestDB extends BaseDB
 		try
 		{
 			AddAdvertisingEngineAccountSP addAccount = new AddAdvertisingEngineAccountSP();
-			addAccount.execute(accountID, adEngine, customerID, accountNumber);
+			addAccount.execute(accountID, adEngine.name(), customerID, accountNumber);
 		}
 		catch (Exception e)
 		{
@@ -860,7 +860,7 @@ public class SemplestDB extends BaseDB
 	
 	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{		
-		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine});
+		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine.name()});
 	}
 		
 	public static Map<Integer, Integer> getDeletedAdMappingCountMap(final List<Integer> deletedAdIds, int[] rowCounts)
@@ -967,7 +967,7 @@ public class SemplestDB extends BaseDB
 	public static Integer deleteAdIDForAdGroup(AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
 		
-		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngine});
+		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngine.name()});
 	}	
 	
 	
