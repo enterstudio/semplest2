@@ -91,7 +91,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("gt", jsonGt);
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
-                nGrams = new[] { 50, 50 };
+                nGrams = new[] { 300, 300, 100 };
                 //nGrams = new Int32[] { 1,2,3 };
                 string jsonNgrams = JsonConvert.SerializeObject(nGrams);
                 jsonHash.Add("nGrams", jsonNgrams);
