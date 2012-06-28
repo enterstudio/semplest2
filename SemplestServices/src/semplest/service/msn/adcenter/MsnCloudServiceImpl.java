@@ -996,34 +996,49 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	}
 
 	@Override
-	public long createAdGroup(Long accountId, Long campaignId) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
+	public long createAdGroup(Long accountId, Long campaignId) throws Exception
 	{
 		logger.info("Will try to Create MSN AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]");
-		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		final String nextAdGroupName = uniqueMsnNameService.getNextAdGroupName();
-
-		final PublisherCountry publisherCountry = new PublisherCountry("US", true);
-		final PublisherCountry[] publisherCountries = new PublisherCountry[] { publisherCountry };
-
-		final AdGroup adGroup = new AdGroup();
-		adGroup.setAdDistribution(new String[] { "Search" });
-		adGroup.setBiddingModel(BiddingModel.Keyword);
-		adGroup.setLanguage("English");
-		adGroup.setName(nextAdGroupName);
-		adGroup.setPricingModel(PricingModel.Cpc);
-		adGroup.setPublisherCountries(publisherCountries);
-		adGroup.setNetwork(Network.OwnedAndOperatedAndSyndicatedSearch);
-
-		logger.info("About to create MSN AdGroup: " + SemplestUtils.getMsnAdGroupString(adGroup));
-
-		final AddAdGroupsResponse addAdGroupsResponse = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[] { adGroup }));
-		final long[] adGroupIds = addAdGroupsResponse.getAdGroupIds();
-		logger.info("Got " + adGroupIds.length + " AdGroup Ids from MSN: [" + SemplestUtils.getStringForArray(adGroupIds) + "]");
-		final Long adGroupId = adGroupIds[0];
-		final SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
-		submitAdGroupRequest.setAdGroupId(adGroupId);
-		final SubmitAdGroupForApprovalResponse approvalResponse = campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
-		return adGroupId;
+		try
+		{
+			final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			final String nextAdGroupName = uniqueMsnNameService.getNextAdGroupName();
+	
+			final PublisherCountry publisherCountry = new PublisherCountry("US", true);
+			final PublisherCountry[] publisherCountries = new PublisherCountry[] { publisherCountry };
+	
+			final AdGroup adGroup = new AdGroup();
+			adGroup.setAdDistribution(new String[] { "Search" });
+			adGroup.setBiddingModel(BiddingModel.Keyword);
+			adGroup.setLanguage("English");
+			adGroup.setName(nextAdGroupName);
+			adGroup.setPricingModel(PricingModel.Cpc);
+			adGroup.setPublisherCountries(publisherCountries);
+			adGroup.setNetwork(Network.OwnedAndOperatedAndSyndicatedSearch);
+	
+			logger.info("About to create MSN AdGroup: " + SemplestUtils.getMsnAdGroupString(adGroup));
+	
+			final AddAdGroupsResponse addAdGroupsResponse = campaignManagement.addAdGroups(new AddAdGroupsRequest(campaignId, new AdGroup[] { adGroup }));
+			final long[] adGroupIds = addAdGroupsResponse.getAdGroupIds();
+			logger.info("Got " + adGroupIds.length + " AdGroup Ids from MSN: [" + SemplestUtils.getStringForArray(adGroupIds) + "]");
+			final Long adGroupId = adGroupIds[0];
+			final SubmitAdGroupForApprovalRequest submitAdGroupRequest = new SubmitAdGroupForApprovalRequest();
+			submitAdGroupRequest.setAdGroupId(adGroupId);
+			final SubmitAdGroupForApprovalResponse approvalResponse = campaignManagement.submitAdGroupForApproval(submitAdGroupRequest);
+			return adGroupId;
+		}
+		catch (ApiFaultDetail e)
+		{
+			throw new Exception("Problem Creating MSN AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]: " + e.dumpToString(), e);
+		} 
+		catch (AdApiFaultDetail e) 
+		{
+			throw new Exception("Problem Creating MSN AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]: " + e.dumpToString(), e);
+		} 
+		catch (RemoteException e) 
+		{
+			throw new Exception("Problem Creating MSN AdGroup for AccountID [" + accountId + "], CampaignID [" + campaignId + "]", e);
+		}
 	}
 
 	@Override
