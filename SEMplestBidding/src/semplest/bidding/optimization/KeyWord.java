@@ -14,7 +14,7 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
    */
   private static final long serialVersionUID = -4557533990626640318L;
 
-  private String name = "";
+  private String name = null;
   private double score = 1.0;
   private double[] bid = null;
   private double minBid = 0.01;
@@ -32,35 +32,32 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
   // private double [] ClickParams2 = null;
 
   public KeyWord(String name, double score, double[] bid, double[] Clicks,
-      double[] CPC, double[] Pos, double[] DCost, Double cutoff) {
+      double[] CPC, double[] Pos, double[] DCost, Double cutoff, Double clickFactor) {
     this.name = name;
     this.score = score;
     this.bid = bid;
 
-    if (cutoff == null) {
-      for (int i = 0; i < bid.length; i++) {
-        if (Clicks[i] < 0.0001) {
-          minBid = bid[i];
-        } else {
-          // minBid = bid[i];
-          break;
-        }
-      }
-    } else {
+    if (cutoff != null) {
       minBid = cutoff.doubleValue();
     }
 
-    // CPCParams=estimateModelParams(CPC, true);
-    // DCostParams=estimateModelParams(DCost, true);
-    // ClickParams=estimateModelParams(Clicks, false);
+    //CPCParams=estimateModelParams(CPC, false);
+    //DCostParams=estimateModelParams(DCost, false);
+    //ClickParams=estimateModelParams(Clicks, false);
     // int nBids = bid.length;
     // System.out.println("Got " + nBids + "Bids: ");
     // for (int j = 0; j < nBids; j++) {
     // System.out.println("Bid: " + bid[j] + ", cost: " + DCost[j] + ", clicks:
     // " + Clicks[j]);
     // }
+    
+    
     CPCParams = estimateCpcParams(CPC);
-    ClickParams = estimateClicksParams(Clicks);
+    ClickParams = estimateClicksParams(Clicks,score,clickFactor);
+    DCostParams = estimateDCostParams();
+    
+    //plotOptimizationFunction(1.0);
+
   }
 
   @Override
@@ -73,6 +70,7 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     return bidValue;
   }
 
+  /*
   private double[] estimateModelParams(double[] fitData, boolean plotGraphs) {
     int noValidBidDataPoints = 0;
     for (int i = 0; i < bid.length; i++) {
@@ -149,6 +147,7 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     return EstParams;
 
   }
+  */
 
   /**
    * Estimate the parameters for the bid -> clicks curve This uses a scaled and
@@ -157,14 +156,14 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
    * @param clickVals: double[] of click values corresponding to bids
    * @return
    */
-  private double[] estimateClicksParams(double[] clickVals) {
+  private double[] estimateClicksParams(double[] clickVals, double score, double clickFactor) {
 
     // put the input/output data in the right formats for fitting
     double[][] input = new double[bid.length][1];
     double[] output = new double[bid.length];
     for (int i = 0; i < bid.length; i++) {
-      input[i][0] = bid[i];
-      output[i] = clickVals[i];
+      input[i][0] = bid[i]*10.0/score;
+      output[i] = clickVals[i]/clickFactor;
     }
 
     /*
@@ -190,15 +189,43 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     // pe.suppressNoConvergenceMessage();
     pe.estimateParams();
     boolean converge = pe.getConvergenceStatus();
-    if (!converge) {
-      return null;
-    }
+//    if (!converge) {
+//    	System.out.println("NO CONVERGENCE");
+//      return null;
+//    }
 
     // get the optimal values
     double[] optPar = pe.getParamValues();
     System.out.println("Clicks parameters for " + name);
     String msg = "shape: %.4f, rate: %.4f, amplitude: %.4f, shift: %.4f\n";
     System.out.format(msg, optPar[0], optPar[1], optPar[2], optPar[3]);
+    
+    
+    /*
+    
+    double [][] data = PlotGraph.data(2,bid.length);
+    double [] in = new double[1];
+  
+    for(int i=0; i<bid.length; i++){
+		data[0][i]=input[i][0];
+		data[1][i]=output[i];
+		data[2][i]=input[i][0];
+		in[0]=input[i][0];
+		data[3][i]=f.function(in, optPar);
+
+	}
+    
+	PlotGraph pg = new PlotGraph(data);
+
+	pg.setGraphTitle(name);            // Enter graph title
+	int[] pointOptions = {1, 4}; //, 4};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+	pg.setPoint(pointOptions);
+	pg.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+
+	// Call plotting method
+	pg.plot();
+	*/
+    
 
     return optPar;
   }
@@ -243,10 +270,11 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     //pe.suppressNoConvergenceMessage();
     pe.estimateParams();
     boolean converge = pe.getConvergenceStatus();
-    if (!converge) {
-      // optimization didn't converge
-      return null;
-    }
+//    if (!converge) {
+//      // optimization didn't converge
+//    	System.out.println("NO CONVERGENCE");
+//      return null;
+//    }
 
     // get the optimal values
     double[] optPar = pe.getParamValues();
@@ -254,9 +282,128 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
     System.out.println("CPC parameters for " + name);
     String msg = "shape: %.8f, rate: %.8f, amplitude: %.4f\n";
     System.out.format(msg, optPar[0], optPar[1], optPar[2]);
+    
+    
+    /*
+    
+    double [][] data = PlotGraph.data(2,bid.length);
+    double [] in = new double[1];
+  
+    for(int i=0; i<bid.length; i++){
+		data[0][i]=input[i][0];
+		data[1][i]=output[i];
+		data[2][i]=input[i][0];
+		in[0]=input[i][0];
+		data[3][i]=f.function(in, optPar);
+
+	}
+    
+	PlotGraph pg = new PlotGraph(data);
+
+	pg.setGraphTitle(name);            // Enter graph title
+	int[] pointOptions = {1, 4}; //, 4};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+	pg.setPoint(pointOptions);
+	pg.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+
+	// Call plotting method
+	pg.plot();
+	*/
+       
 
     return optPar;
   }
+  
+  
+  
+  private double[] estimateDCostParams() {
+
+	    // put the input/output data in the right formats for fitting
+	    ParametricFunction f0 = new GammaCurve();
+	    double[][] input = new double[bid.length][1];
+	    double[] output = new double[bid.length];
+	    double [] f0In = new double[1];
+	    for (int i = 0; i < bid.length; i++) {
+	      input[i][0] = bid[i];
+	      f0In[0]=bid[i];
+	      output[i] = f0.function(f0In, CPCParams)*f0.function(f0In, ClickParams);
+	    }
+
+	    /*
+	     * fit using a scaled and shifted gamma cdf. 
+	     * parameters are {shape, rate, amplitude}. All must be non-negative,
+	     * and in this case we enforce one extra constraint: 
+	     *   1. shape <=  1 (this makes sure the curve is concave and starts
+	     *      increasing from 0 immediately)
+	     */
+	    ParametricFunction f = new GammaCurve();
+	    ParameterEstimator pe = new ParameterEstimator(f, input, output);
+	    
+	    double dCost = new ArrayMaths(output).maximum();
+
+	    
+	    pe.addConstraint(0, -1, 1 + numTol); // shape >= 1
+	    pe.addConstraint(1, -1, numTol); // rate >= 0
+	    pe.addConstraint(2, -1, numTol); // amplitude >= 0
+	    pe.addConstraint(3, -1, minBid + numTol); // shift >= minBid
+	    double[] startPoint = {1.1, 1.0, dCost, minBid + 0.1};
+	    double[] stepSize = {0.001, 0.001, 0.001, 0.001};
+	    
+	    
+//	    pe.addConstraint(0, -1, numTol); // shape >= 0
+//	    pe.addConstraint(0, 1, 1 - numTol); // shape <= 1
+//	    pe.addConstraint(1, -1, numTol); // rate >= 0
+//	    pe.addConstraint(2, -1, numTol); // amplitude >= 0
+//	    double[] startPoint = {0.5, 1.0, dCost};
+//	    double[] stepSize = {0.001, 0.001, 0.001};
+	    
+	    pe.setStartPoint(startPoint);
+
+	    pe.setStepSize(stepSize);
+	    //pe.suppressNoConvergenceMessage();
+	    pe.estimateParams();
+	    boolean converge = pe.getConvergenceStatus();
+//	    if (!converge) {
+//	      // optimization didn't converge
+//	    	System.out.println("NO CONVERGENCE");
+//	      return null;
+//	    }
+
+	    // get the optimal values
+	    double[] optPar = pe.getParamValues();
+	    double optVal = pe.getMinimum();
+	    System.out.println("CPC parameters for " + name);
+	    String msg = "shape: %.8f, rate: %.8f, amplitude: %.4f\n";
+	    System.out.format(msg, optPar[0], optPar[1], optPar[2]);
+	    
+	    
+	    /*
+	    
+	    double [][] data = PlotGraph.data(2,bid.length);
+	    double [] in = new double[1];
+	  
+	    for(int i=0; i<bid.length; i++){
+			data[0][i]=input[i][0];
+			data[1][i]=output[i];
+			data[2][i]=input[i][0];
+			in[0]=input[i][0];
+			data[3][i]=f.function(in, optPar);
+
+		}
+	    
+		PlotGraph pg = new PlotGraph(data);
+
+		pg.setGraphTitle(name);            // Enter graph title
+		int[] pointOptions = {1, 4}; //, 4};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+		pg.setPoint(pointOptions);
+		pg.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+
+		// Call plotting method
+		pg.plot();
+		*/
+	       
+
+	    return optPar;
+	  }
 
   @Override
   public String getKeyWord() {
@@ -321,6 +468,39 @@ public class KeyWord implements KeyWordInterface, java.io.Serializable {
   @Override
   public double getMinBid() {
     return minBid;
+  }
+  
+  private void plotOptimizationFunction(double lambda){
+	  ParametricFunction f = new GammaCurve();
+	  BidLagrangeOptim Bid = new BidLagrangeOptim(this, f, lambda);
+	  BidLagrangeOptim Bid2 = new BidLagrangeOptim(this, f, 2*lambda);
+	  
+	  double [] b = new double[200];
+	  for(int i=0; i<b.length;i++){
+		  b[i]=0.1+i*0.1;
+	  }
+	  
+	  double [][] data = PlotGraph.data(2,b.length);
+	  double [] in = new double[1];
+
+	  for(int i=0; i<b.length; i++){
+		  data[0][i]=b[i];
+		  in[0]=data[0][i];
+		  data[1][i]=Bid.function(in);
+		  data[2][i]=b[i];
+		  data[3][i]=Bid2.function(in);
+	  }
+
+	  PlotGraph pg = new PlotGraph(data);
+
+	  pg.setGraphTitle(name);            // Enter graph title
+	  int[] pointOptions = {1, 4};        // Set point option to open circles on the first graph line and filled circles on the second graph line
+	  pg.setPoint(pointOptions);
+	  pg.setLine(1);                      // Set line option to a continuous lines and a 200 point cubic spline interpolation
+
+	  // Call plotting method
+	  pg.plot();
+
   }
 
 }

@@ -86,7 +86,7 @@ public class TestInteriorPointBidding {
 
     for (i = 0; i < keywords.length; i++) {
       KeyWord kw = new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i],
-          null, DCost[i], null);
+          null, DCost[i], null, 1.0);
       if (kw.getClickInfo() == null || kw.getCPCInfo() == null) {
         continue;
       } else {

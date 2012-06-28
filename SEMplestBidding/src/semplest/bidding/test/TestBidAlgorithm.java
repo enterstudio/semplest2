@@ -3,6 +3,7 @@ package semplest.bidding.test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import semplest.bidding.optimization.BidOptimizer;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 //import semplest.keywords.javautils.ioUtils;
@@ -136,13 +137,14 @@ public class TestBidAlgorithm {
 			j++;
 		}
 
-		CampaignBid bidOptimizer = new CampaignBid();
+		BidOptimizer bidOptimizer = new BidOptimizer();
 		
 		for (i=0; i<keywords.length;i++){
 //			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], Pos[i], DCost[i]));
-			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], null, null, DCost[i], null));
+			System.out.println("Trying to add keyword to the bid optimizer: "+keywords[i]);
+			bidOptimizer.addKeyWord(new KeyWord(keywords[i], scores[i], bid, Clicks[i], CPC[i], null, DCost[i], null, 10.0));
 		}
-		bidOptimizer.setDailyBudget(20.0);
+		bidOptimizer.setDailyBudget(100.0);
 		HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 		
 		
