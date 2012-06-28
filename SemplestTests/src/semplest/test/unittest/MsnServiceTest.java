@@ -507,7 +507,7 @@ public class MsnServiceTest {
 				if(adGroupId == 0L)
 					errorHandler(new Exception(vMsg + "No AdGroup ID returned."));
 			}
-			catch(RemoteException e){
+			catch(Exception e){
 				errorHandler(e);
 			}
 			
