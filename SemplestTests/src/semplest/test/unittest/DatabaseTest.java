@@ -422,7 +422,7 @@ public class DatabaseTest extends BaseDB{
 				}
 				case 2:{
 					//*** get ALL Biddable AdGroup Criteria from the database
-					HashMap<String, ArrayList<KeywordDataObject>> rets = db.getAllBiddableAdGroupCriteria(promotionID, AdEngine.Google.name(), new Date(2011, 1, 1), null);
+					HashMap<String, ArrayList<KeywordDataObject>> rets = db.getAllBiddableAdGroupCriteria(promotionID, AdEngine.Google, new Date(2011, 1, 1), null);
 					Set<String> ks = rets.keySet();
 					int i = 0;
 					for(String k : ks){
