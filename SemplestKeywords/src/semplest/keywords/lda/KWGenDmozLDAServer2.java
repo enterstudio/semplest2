@@ -17,6 +17,8 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.google.api.adwords.v201109.cm.ApiException;
+
 
 import semplest.keywords.javautils.MultiWordCollect;
 import semplest.keywords.javautils.TextUtils;
@@ -356,9 +358,19 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 		
 		int numberResults = 1000;
-
-		ArrayList<KeywordToolStats> keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
-		
+		boolean repeat = true;
+		int countRep = 0;
+		ArrayList<KeywordToolStats> keyWordIdeaList = new ArrayList<KeywordToolStats>();
+		while(countRep == 0 && repeat){
+			try{
+				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
+				repeat=false;
+			}catch(ApiException e){
+				logger.error(e.dumpToString());
+				Thread.sleep(5000);
+				countRep++;
+			}
+		}
 		for(KeywordToolStats kw : keyWordIdeaList){
 			KeywordProbabilityObject kwP = new KeywordProbabilityObject();
 			kwP.setIsTargetGoogle(true);
@@ -706,8 +718,17 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		String[] searchTerm = new String[1];
 		String userInfo1="";
 		BasicConfigurator.configure();
+		PrintStream logging = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/categoriesTime.txt"));
+		
+		while(true){
+			Long start = System.currentTimeMillis();
+			ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null, null);
+			logging.println(System.currentTimeMillis()-start);
+		}
+		
+		/*
 		while (!userInfo1.equals("exit")){
-			//try{
+			try{
 			logger.info("\nPlease, introduce search terms:");
 			Scanner scanFile = new Scanner(System.in);
 			searchTerm[0] = scanFile.nextLine();
@@ -790,11 +811,11 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			}
 			
 			System.setOut(stdout);
-			/*
+			
 			}catch(Exception e){
 				logger.error(e);
-			}*/
-		}
+			}
+		}*/
 	}
 
 

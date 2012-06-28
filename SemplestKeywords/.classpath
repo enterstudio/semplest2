@@ -36,6 +36,7 @@
 	<classpathentry kind="lib" path="lib/org.springframework.expression-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.jms-3.1.0.RELEASE.jar"/>
 	<classpathentry kind="lib" path="lib/org.springframework.transaction-3.1.0.RELEASE.jar"/>
+	<classpathentry kind="lib" path="lib/adwords-api-8.6.0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SEMplestProtocol"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/SemplestServices"/>
 	<classpathentry kind="output" path="bin"/>
