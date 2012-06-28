@@ -29,8 +29,9 @@
                             {
                         <tr>
                             <td style="width: 150px;">
-                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK, @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })">
-                                    <span>@p.PromotionName</span></a>
+                                <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
+                                <span>@p.PromotionName</span></a>
+                                  
                             </td>
                             @if (p.IsPaused)
                             {
@@ -69,7 +70,7 @@
                             {
                         <tr>
                             <td style="width: 150px;">
-                            <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK, @id = p.PromotionPK, @rel = "/Campaign/Preview?promotionid=" + p.PromotionPK, @class = "preview", @title = "Preview" })">
+                            <a class="preview" href="@Url.Action("CampaignSetup", "Campaign", new { promotionid = p.PromotionPK })" rel = "/Campaign/Preview?promotionid=" + @p.PromotionPK id = @p.PromotionPK class = "preview", title = "Preview">
                                     <span>@p.PromotionName</span></a>
                             </td>
                             <td>@Html.ActionLink("Delete", "", "", new { @class = "deletead", id = p.PromotionPK, name = p.PromotionName })
