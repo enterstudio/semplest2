@@ -8,7 +8,7 @@ namespace Semplest.Core.Models.Repositories
     public interface ICampaignRepository
     {
         void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model, CampaignSetupModel oldModel);
-        CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId);
+        CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false);
         IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid);
         Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName);
         List<ProductGroup> GetProductGroupsForUser(int userid);

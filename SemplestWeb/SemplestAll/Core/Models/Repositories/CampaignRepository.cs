@@ -241,7 +241,7 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId)
+        public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false)
         {
             var model = new CampaignSetupModel();
             var dbcontext = InitializeContext();
@@ -267,7 +267,11 @@ namespace Semplest.Core.Models.Repositories
             {
                 foreach (var paes in promo.PromotionAdEngineSelecteds)
                 {
-                    var aesm = new AdEngineSelectModel { Id = paes.AdvertisingEngine.AdvertisingEnginePK, Name = paes.AdvertisingEngine.AdvertisingEngine1 };
+                    var aesm = new AdEngineSelectModel
+                                   {
+                                       Id = paes.AdvertisingEngine.AdvertisingEnginePK,
+                                       Name = paes.AdvertisingEngine.AdvertisingEngine1
+                                   };
                     model.ProductGroup.AdEnginesSelectedList.Add(aesm);
                     model.ProductGroup.AdEnginesList.Add(paes.AdvertisingEngine.AdvertisingEnginePK);
                 }
@@ -284,23 +288,35 @@ namespace Semplest.Core.Models.Repositories
                 // set promotionads
                 model.AdModelProp.Ads = promo.PromotionAds.ToList();
 
-                // set negative keywords
-                if (promo.PromotionKeywordAssociations != null)
-                    model.AdModelProp.NegativeKeywords = promo.PromotionKeywordAssociations.Where(m => m.IsNegative).Select(m => m.Keyword.Keyword1).ToList();
+                if (!preview)
+                {
+                    // set negative keywords
+                    if (promo.PromotionKeywordAssociations != null)
+                        model.AdModelProp.NegativeKeywords =
+                            promo.PromotionKeywordAssociations.Where(m => m.IsNegative).Select(m => m.Keyword.Keyword1).
+                                ToList();
+                }
 
-                // set islaunched
+            // set islaunched
                 model.IsLaunched = promo.IsLaunched;
                 model.IsCompleted = promo.IsCompleted;
-                model.AllKeywords.AddRange(promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
+                if (!preview)
+                {
+                    model.AllKeywords.AddRange(promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted).Select(key => new CampaignSetupModel.KeywordsModel { Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK }));
+                }
                 model.SiteLinks = promo.SiteLinks.ToList();
             }
-            var cnt = model.AdModelProp.NegativeKeywords.Count();
-            for (var i = 0; i < cnt; i++)
+
+            if (!preview)
             {
-                model.AdModelProp.NegativeKeywordsText += model.AdModelProp.NegativeKeywords[i];
-                if (i < cnt - 1)
+                var cnt = model.AdModelProp.NegativeKeywords.Count();
+                for (var i = 0; i < cnt; i++)
                 {
-                    model.AdModelProp.NegativeKeywordsText += ", ";
+                    model.AdModelProp.NegativeKeywordsText += model.AdModelProp.NegativeKeywords[i];
+                    if (i < cnt - 1)
+                    {
+                        model.AdModelProp.NegativeKeywordsText += ", ";
+                    }
                 }
             }
 

@@ -522,7 +522,7 @@ namespace Semplest.Core.Controllers
         public ActionResult Preview(int promotionId)
         {
 
-            var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
+            var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId, true);
             //set sitelinks in session
             //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
             //    campaignSetupModel.ProductGroup.StartDate =
