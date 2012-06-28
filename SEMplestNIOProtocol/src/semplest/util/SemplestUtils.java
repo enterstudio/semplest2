@@ -105,6 +105,8 @@ public final class SemplestUtils
 	public static final Double MSN_DUMMY_AMOUNT = 0.0;
 	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
 	public static final Integer SLEEP_MILLIS_BETWEEN_BATCHES = 30000;
+	public static final Integer SECOND = 1000;
+	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	
 	public static <T> List<List<T>> getBatches(final List<T> list, final int batchSize)
 	{

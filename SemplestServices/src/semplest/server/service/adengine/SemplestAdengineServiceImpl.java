@@ -82,7 +82,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Gson gson = new Gson();
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
-	private static String ESBWebServerURL = null;	
+	private static String ESBWebServerURL = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -261,9 +261,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
 				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 				// Keywords
-				final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID,
-						(advertisingEngine == AdEngine.Google) ? true : false,
-						(advertisingEngine == AdEngine.MSN) ? true : false);
+				final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
 				// Set initial bidding
