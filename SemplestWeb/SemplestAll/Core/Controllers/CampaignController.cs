@@ -53,6 +53,7 @@ namespace Semplest.Core.Controllers
             ViewBag.IsLaunched = false;
             ViewBag.IsCompleted = false;
             ViewBag.IsLaunchedAndCompleted = false;
+            ViewBag.IsNew = true;
 
             return View(cs);
         }
@@ -95,7 +96,7 @@ namespace Semplest.Core.Controllers
             ViewBag.IsLaunched = campaignSetupModel.IsLaunched;
             ViewBag.IsCompleted = campaignSetupModel.IsCompleted;
             ViewBag.IsLaunchedAndCompleted = campaignSetupModel.IsLaunched && campaignSetupModel.IsCompleted;
-
+            ViewBag.IsNew = false;
             Session["CampaignSetupModel"] = campaignSetupModel;
             return View(campaignSetupModel);
         }

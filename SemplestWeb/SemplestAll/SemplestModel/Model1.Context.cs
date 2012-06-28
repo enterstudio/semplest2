@@ -31,6 +31,7 @@ namespace SemplestModel
         public DbSet<AdvertisingEngine> AdvertisingEngines { get; set; }
         public DbSet<AdvertisingEngineAccount> AdvertisingEngineAccounts { get; set; }
         public DbSet<AdvertisingEngineAd> AdvertisingEngineAds { get; set; }
+        public DbSet<AdvertisingEngineAPICharge> AdvertisingEngineAPICharges { get; set; }
         public DbSet<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public DbSet<AdvertisingEngineReportData> AdvertisingEngineReportDatas { get; set; }
         public DbSet<BidType> BidTypes { get; set; }
@@ -90,10 +91,10 @@ namespace SemplestModel
         public DbSet<User> Users { get; set; }
         public DbSet<WebContent> WebContents { get; set; }
         public DbSet<WebContentQuestionMarkHelp> WebContentQuestionMarkHelps { get; set; }
+        public DbSet<vwCreditCardTransactionDetail> vwCreditCardTransactionDetails { get; set; }
         public DbSet<vwGetLivePromotionsForUser> vwGetLivePromotionsForUsers { get; set; }
         public DbSet<vwProductPromotion> vwProductPromotions { get; set; }
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
-        public DbSet<vwCreditCardTransactionDetail> vwCreditCardTransactionDetails { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

@@ -12,17 +12,14 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class TargetedDailyBudget
+    public partial class AdvertisingEngineAPICharge
     {
-        public int TargetedDailyBudgetPK { get; set; }
-        public long TargetedDailyMicroBudget { get; set; }
-        public int TargetedDailyClicks { get; set; }
+        public int AdvertisingEngineAPIChargePK { get; set; }
+        public long AdvertisingEngineAccountFK { get; set; }
+        public long APIUnits { get; set; }
+        public decimal APICost { get; set; }
         public System.DateTime CreatedDate { get; set; }
-        public int PromotionFK { get; set; }
-        public int AdvertisingEngineFK { get; set; }
-        public Nullable<long> TargetedMicroCPC { get; set; }
     
-        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
-        public virtual Promotion Promotion { get; set; }
+        public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
     }
 }

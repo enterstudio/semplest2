@@ -59,6 +59,7 @@
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
             <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
+            <input type="hidden" id="IsNew" value="@ViewBag.IsNew"/>
             <img id="displayBox" style="display: none" />
             
              <div id="InvalidDescriptionWindow" style="display:none; text-align:center; font-weight:bold;"  >
@@ -81,15 +82,15 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function () {
-        
-        if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
-            openAllTabs(false); enableDisable();
+        if ($('#IsNew').val() == 'False') {
+            if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
+                openAllTabs(false); enableDisable();
+            }
+            else if ($('#IsLaunched').val() == 'False') {
+                openAllTabs(true);
+            }
         }
-        else if ($('#IsLaunched').val() == 'False') {
-            openAllTabs(true);
-        }
-
-        })
+    })
         //        enableDisable();
         //        $("#tabstrip").children('.k-content').height(650);
 

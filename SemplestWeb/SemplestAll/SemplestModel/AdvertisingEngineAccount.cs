@@ -16,14 +16,17 @@ namespace SemplestModel
     {
         public AdvertisingEngineAccount()
         {
+            this.AdvertisingEngineAPICharges = new HashSet<AdvertisingEngineAPICharge>();
             this.AdvertisingEnginePromotions = new HashSet<AdvertisingEnginePromotion>();
         }
     
         public long AdvertisingEngineAccountPK { get; set; }
         public int AdvertisingEngineFK { get; set; }
         public int CustomerFK { get; set; }
+        public string AdvertisingEngineAccountNumber { get; set; }
     
         public virtual AdvertisingEngine AdvertisingEngine { get; set; }
+        public virtual ICollection<AdvertisingEngineAPICharge> AdvertisingEngineAPICharges { get; set; }
         public virtual ICollection<AdvertisingEnginePromotion> AdvertisingEnginePromotions { get; set; }
         public virtual Customer Customer { get; set; }
     }
