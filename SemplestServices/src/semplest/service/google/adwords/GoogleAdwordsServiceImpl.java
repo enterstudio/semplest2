@@ -2382,9 +2382,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperator(Operator.ADD);
 			final CampaignCriterionOperation[] operations = {operation};
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
-			final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(campaignCriterionService, operations, 10);
-			retriableOperation.performOperation();
-			final CampaignCriterionReturnValue results = retriableOperation.getResults();						
+			final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(campaignCriterionService, operations, 10);			
+			final CampaignCriterionReturnValue results = retriableOperation.performOperation();
 			final KeywordDataObject bidRes = new KeywordDataObject();
 			if (results != null && results.getValue() != null && (results.getValue(0) instanceof CampaignCriterion))
 			{
