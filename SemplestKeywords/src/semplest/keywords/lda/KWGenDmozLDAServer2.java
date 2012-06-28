@@ -496,7 +496,9 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 				for(int j=0; j<nGrams ; j++){
 					newWord = newWord+"+"+words[i+j];
 				}
-				ngrams.add(newWord.replaceAll("\\+$", "").replaceAll("^\\+", ""));
+				String word =newWord.replaceAll("\\+$", "").replaceAll("^\\+", "");
+				if(!ngrams.contains(word))
+					ngrams.add(word);
 			}
 		}
 		
@@ -719,14 +721,14 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		String userInfo1="";
 		BasicConfigurator.configure();
 		PrintStream logging = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/default/categoriesTime.txt"));
-		
+		/*
 		while(true){
 			Long start = System.currentTimeMillis();
 			ArrayList<String> categOpt = kwGen.getCategories(null, null , "science fiction", null, null);
 			logging.println(System.currentTimeMillis()-start);
-		}
+		}*/
 		
-		/*
+		
 		while (!userInfo1.equals("exit")){
 			try{
 			logger.info("\nPlease, introduce search terms:");
@@ -815,7 +817,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			}catch(Exception e){
 				logger.error(e);
 			}
-		}*/
+		}
 	}
 
 
