@@ -1192,7 +1192,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupOperation[] operations = new AdGroupOperation[]
 			{ operation };
 			// Delete ad group.
-			AdGroupReturnValue result = adGroupService.mutate(operations);
+			
+			final AdGroupRetriableGoogleOperation retriableOperation = new AdGroupRetriableGoogleOperation(adGroupService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			AdGroupReturnValue result = retriableOperation.performOperation();
 			// Display ad groups.
 			if (result != null && result.getValue() != null)
 			{
@@ -1633,7 +1635,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]
 			{ keywordAdGroupCriterionOperation };
 			// Add ad group criteria.
-			AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);
+			final AdGroupCriterionRetriableGoogleOperation retriableOperation = new AdGroupCriterionRetriableGoogleOperation(adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			AdGroupCriterionReturnValue result = retriableOperation.performOperation();
 			// Display ad group criteria.
 			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
 			{
@@ -2126,8 +2129,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		for (final List<AdGroupCriterionOperation> operationBatch : operationBatches)
 		{
 			logger.info("Processing Batch #" + ++counter + " of " + operationBatch.size() + " Operations");
-			final AdGroupCriterionOperation[] operationArray = operationBatch.toArray(new AdGroupCriterionOperation[operationBatch.size()]);
-			final AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operationArray);
+			final AdGroupCriterionOperation[] operationArray = operationBatch.toArray(new AdGroupCriterionOperation[operationBatch.size()]);			
+			final AdGroupCriterionRetriableGoogleOperation retriableOperation = new AdGroupCriterionRetriableGoogleOperation(adGroupCriterionService, operationArray, SemplestUtils.DEFAULT_RETRY_COUNT);			
+			final AdGroupCriterionReturnValue result = retriableOperation.performOperation();
 			if (result != null && result.getValue() != null)
 			{
 				final AdGroupCriterion[] adGroupCriterions = result.getValue();
@@ -2225,8 +2229,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperator(Operator.SET);
 			AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]
 			{ operation };
-			// Update ad group criteria.
-			AdGroupCriterionReturnValue result = adGroupCriterionService.mutate(operations);
+			final AdGroupCriterionRetriableGoogleOperation retriableOperation = new AdGroupCriterionRetriableGoogleOperation(adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			AdGroupCriterionReturnValue result = retriableOperation.performOperation();
 			// Display ad group criteria.
 			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
 			{
@@ -2506,7 +2510,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			CampaignOperation[] operations = new CampaignOperation[]
 			{ operation };
 			// Delete campaign.
-			CampaignReturnValue result = campaignService.mutate(operations);
+			final CampaignRetriableGoogleOperation retriableOperation = new CampaignRetriableGoogleOperation(campaignService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			CampaignReturnValue result = retriableOperation.performOperation();
 			// Display campaigns.
 			if (result != null && result.getValue() != null)
 			{
@@ -2911,7 +2916,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 				final CampaignCriterionOperation[] negativeKeywordOperations = negativeKeywordOperationList.toArray(new CampaignCriterionOperation[negativeKeywordOperationList.size()]);
-				final CampaignCriterionReturnValue result = campaignCriterionService.mutate(negativeKeywordOperations);
+				final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(campaignCriterionService, negativeKeywordOperations, SemplestUtils.DEFAULT_RETRY_COUNT);				
+				final CampaignCriterionReturnValue result = retriableOperation.performOperation();
 				if (result != null && result.getValue() != null)
 				{
 					final CampaignCriterion[] campaignCriterions = result.getValue();
@@ -3094,7 +3100,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			CampaignOperation[] operations = getCampaignOp(campaignID, Operator.SET);
 			operations[0].getOperand().setName(newName);
-			CampaignReturnValue ret = campaignService.mutate(operations);
+			final CampaignRetriableGoogleOperation retriableOperation = new CampaignRetriableGoogleOperation(campaignService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);			
+			CampaignReturnValue ret = retriableOperation.performOperation();
 			if (ret != null && ret.getValue() != null)
 			{
 				return true;
@@ -3697,7 +3704,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.SET);
 			final AdGroupOperation[] operations = new AdGroupOperation[]{ operation };
-			final AdGroupReturnValue result = adGroupService.mutate(operations);
+			final AdGroupRetriableGoogleOperation retriableOperation = new AdGroupRetriableGoogleOperation(adGroupService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);			
+			final AdGroupReturnValue result = retriableOperation.performOperation();
 		}
 		catch (ApiException e)
 		{
@@ -3844,7 +3852,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 		final List<CampaignAdExtensionOperation> operationList = getRemoveSiteLinksOperations(campaignID, siteLinkExtIds);
 		final CampaignAdExtensionOperation[] operations = operationList.toArray(new CampaignAdExtensionOperation[operationList.size()]);
-		final CampaignAdExtensionReturnValue result = campaignAdExtensionService.mutate(operations);
+		final CampaignAdExtensionRetriableGoogleOperation retriableOperation = new CampaignAdExtensionRetriableGoogleOperation(campaignAdExtensionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);					
+		final CampaignAdExtensionReturnValue result = retriableOperation.performOperation();
 		final CampaignAdExtension[] resultCampaignAdExtensions = result.getValue();
 		if (resultCampaignAdExtensions.length != siteLinkExtIds.size())
 		{
