@@ -3,6 +3,8 @@ package semplest.bidding.optimization;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 
 import flanagan.math.Minimisation;
 
@@ -12,6 +14,9 @@ import semplest.bidding.estimation.ParametricFunction;
 
 
 public class BidOptimizer implements java.io.Serializable {
+	
+	private static final Logger logger = Logger.getLogger(BidOptimizer.class);
+
 	
 
 	private static final long serialVersionUID = -7298418379123108818L;
@@ -82,7 +87,7 @@ public class BidOptimizer implements java.io.Serializable {
 
 			} // for(int i=0;i<wordList.size();i++)
 			
-			System.out.println("Estimated CPC: "+targetCPC+", Target cost: "+dailyBudget+", Estimated budget: "+totalDailyCost);
+			logger.info("Estimated CPC: "+targetCPC+", Target cost: "+dailyBudget+", Estimated budget: "+totalDailyCost);
 
 			
 			if(totalDailyCost< dailyBudget){
