@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -42,6 +44,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.MsnAccountObject;
@@ -1842,6 +1845,33 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		return sb.toString();
 	}
+	
+	public static Set<Integer> getIndexesOfBadKeywords(final List<MsnEditorialApiFaultDetail> msnList)
+	{
+		final Set<Integer> badIndeces = new HashSet<Integer>();
+		for (final MsnEditorialApiFaultDetail faultDetail : msnList)
+		{
+			final Integer index = faultDetail.getIndex();
+			badIndeces.add(index);
+		}
+		return badIndeces;
+	}
+	
+	public static void filterRequest(final AddKeywordsRequest request, final List<MsnEditorialApiFaultDetail> msnList)
+	{
+		final Set<Integer> indecesOfBadKeywords = getIndexesOfBadKeywords(msnList);
+		final Keyword[] keywords = request.getKeywords();
+		final List<Keyword> filteredKeywords = new ArrayList<Keyword>();
+		for (int i = 0; i < keywords.length; ++i)
+		{
+			if (!indecesOfBadKeywords.contains(i))
+			{
+				filteredKeywords.add(keywords[i]);
+			}
+		}
+		final Keyword[] filteredKeywordArray = filteredKeywords.toArray(new Keyword[filteredKeywords.size()]);
+		request.setKeywords(filteredKeywordArray);
+	}
 
 	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
@@ -1849,28 +1879,57 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		
 		// TODO: remove this after testing
 		logger.info("Keywords......\n" + getKeywordsString(keywords));
+		AddKeywordsResponse response = null;
 		
 		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
-		try
+		final AddKeywordsRequest request = new AddKeywordsRequest(adGroupId, keywords);
+		Boolean completedSuccessfully = false;
+		int attemptNum = 1;
+		while (!completedSuccessfully)
 		{
-			final AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywords));
-			return addKeywords.getKeywordIds();
+			try
+			{			
+				logger.info("Attempt #" + attemptNum++ + ": will try to add " + request.getKeywords().length + " Keywords");
+				response = campaignManagement.addKeywords(request);
+				completedSuccessfully = true;
+			}
+			catch (AdApiFaultDetail e)
+			{
+				throw new RemoteException(e.dumpToString(), e);
+			}
+			catch (EditorialApiFaultDetail e)
+			{
+				final List<MsnEditorialApiFaultDetail> msnList = getMsnEditorialApiFaultDetail(e);
+				final String errMsg = "Problem Creating Keywords for [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]: " + e.dumpToString();
+				logger.error(errMsg + "\n" + SemplestUtils.getEasilyReadableString(msnList));
+				if (msnList.isEmpty())
+				{
+					throw new RemoteException(errMsg + ": " + e.dumpToString(), e);
+				}
+				filterRequest(request, msnList);
+			}	
 		}
-		catch (AdApiFaultDetail e)
-		{
-			throw new RemoteException(e.dumpToString(), e);
-		}
-		catch (EditorialApiFaultDetail e)
-		{
-			throw new RemoteException(e.dumpToString(), e);
-			/*
-			final List<MsnEditorialApiFaultDetail> msnList = getMsnEditorialApiFaultDetail(e);
-			final String errMsg = "Problem Creating Keywords for [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]";
-			logger.error(errMsg + "\n" + SemplestUtils.getEasilyReadableString(msnList));
-			throw new RemoteException(errMsg + ": " + e.dumpToString(), e);*/
-		}
+		final long[] msnKeywordIds = response.getKeywordIds();
+		return msnKeywordIds;
 	}
-
+	
+	public static List<MsnEditorialApiFaultDetail> getMsnEditorialApiFaultDetail(final EditorialApiFaultDetail e)
+	{
+		final List<MsnEditorialApiFaultDetail> msnList = new ArrayList<MsnEditorialApiFaultDetail>();
+		final EditorialError[] editorialErrors = e.getEditorialErrors();
+		for (final EditorialError editorialError : editorialErrors)
+		{
+			final Integer code = editorialError.getCode();
+			final String errorCode = editorialError.getErrorCode();
+			final Integer index = editorialError.getIndex();
+			final String disapprovedText = editorialError.getDisapprovedText();
+			final String message = editorialError.getMessage();
+			final String publisherCountry = editorialError.getPublisherCountry();
+			final MsnEditorialApiFaultDetail msnFaultDetails = new MsnEditorialApiFaultDetail(code, errorCode, index, disapprovedText, message, publisherCountry);
+			msnList.add(msnFaultDetails);
+		}
+		return msnList;
+	}
 
 	public String getKeywordById(String json) throws Exception
 	{
@@ -2085,14 +2144,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			{
 				throw new RemoteException(e2.dumpToString(), e2);
 			}	
-			try
-			{
-				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
-			}
-			catch(InterruptedException e)
-			{
-				logger.warn("Got interrupted while trying to sleep, but will just log and ignore");
-			}
 		}
 	}
 

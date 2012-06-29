@@ -609,7 +609,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
-				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}			
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
@@ -685,7 +684,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_AMOUNT, semplestMatchType, adEngine, false);	
 				}	
-				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}		
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
@@ -1798,8 +1796,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						msnKeywords.add(k);
 					}
 				}
-				final com.microsoft.adcenter.v8.Keyword[] msnKeywordsArray = msnKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[msnKeywords
-						.size()]);
+				final com.microsoft.adcenter.v8.Keyword[] msnKeywordsArray = msnKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[msnKeywords.size()]);
 				final long[] newKeywordIds = msn.createKeywords(accountId, adGroupId, msnKeywordsArray);
 				final AddBidSP addKeywordBidSP = new AddBidSP();
 				for (int i = 0; i < newKeywordIds.length; ++i)

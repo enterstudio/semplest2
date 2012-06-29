@@ -104,7 +104,6 @@ public final class SemplestUtils
 	public static final Random RANDOM = new Random();
 	public static final Double MSN_DUMMY_AMOUNT = 0.0;
 	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
-	public static final Integer SLEEP_MILLIS_BETWEEN_BATCHES = 30000;
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
@@ -136,7 +135,7 @@ public final class SemplestUtils
 		}
 		return batches;
 	}
-	
+		
 	public static String getMsnAgeRangeString(final AgeRange ageRange)
 	{
 		if (ageRange == null)

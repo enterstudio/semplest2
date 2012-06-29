@@ -244,7 +244,7 @@ public class BidGeneratorObj
 					if (k <= maxRetry) {
 						logger.error("Received exception getAllBiddableAdGroupCriteria AccountID = "
 								+ googleAccountID + " AdGroupID = "+ String.valueOf(adGroupID)+ ": will retry..., k=" + k
-								+ e.getMessage(), e);
+										+ e.getMessage(), e);
 						k++;
 					} else {
 						logger.error("Failed to get BiddableAdGroupCriteria from Google after "+ k + " efforts " + e.getMessage(), e);
@@ -755,7 +755,6 @@ public class BidGeneratorObj
 			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
 			{
 				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
-				Thread.sleep(SemplestUtils.SLEEP_MILLIS_BETWEEN_BATCHES);
 			}
 		} 
 
@@ -925,8 +924,8 @@ public class BidGeneratorObj
 							/ (2 * 1e6));
 					cpcDataMap.put(words[i], cpcDataObj);
 //				}
+				}
 			}
-		}
 		logger.info("Number of intermediate competitive keywords: " + compKeywords.size());
 		if(compKeywords.size()==0){
 			return o;
@@ -966,7 +965,6 @@ public class BidGeneratorObj
 				}
 			}
 		}
-
 		words = o.getListOfKeywords();
 		for (int i = 0; i < words.length; i++)
 		{
