@@ -21,7 +21,8 @@ public class KeywordTestThread implements Runnable {
 	private HashMap<String, String> wordList;
 	//boolean noError = true;
 	
-	private static String testUrl = "http://172.18.9.26:9898/semplest";
+	//private static String testUrl = "http://172.18.9.26:9898/semplest";
+	private static String testUrl = "http://VMDEVJAVA1:9898/semplest";
 	
 
 	public KeywordTestThread(int test_frequency) {
@@ -125,7 +126,7 @@ public class KeywordTestThread implements Runnable {
 					
 					start = System.currentTimeMillis();
 					KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-							k, k, null, url, null ,new Integer[]{50,50});
+							k, k, null, url, null ,new Integer[]{300,300,100});
 					latency = System.currentTimeMillis() - start;			
 					
 					writer.append(String.valueOf(latency));
@@ -190,7 +191,7 @@ public class KeywordTestThread implements Runnable {
 	private void init_wordList(){
 		wordList = new HashMap<String, String>();
 		wordList.put("wedding flower", "http://www.theknot.com");
-		wordList.put("peanut butter", "http://peanutbutterlovers.com/");
+		//wordList.put("peanut butter", "http://peanutbutterlovers.com/");
 		wordList.put("flat shoes", "http://www.6pm.com");
 		wordList.put("black mascara", "http://www.lancome.com/");
 		wordList.put("white handbag", "http://www.bloomingdales.com/");

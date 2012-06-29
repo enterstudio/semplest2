@@ -82,7 +82,7 @@ public class AdengineServiceTest extends BaseDB{
  * Finished Implementation
  */			
 			AddPromotionToAdEngine(method);  //google, msn, manual verify onGoingBidding
-			PausePromotion(method);  //google,msn
+/*			PausePromotion(method);  //google,msn
 			UpdateGeoTargeting(method);  //google,msn
 			UpdateBudget(method);  //google,msn
 			AddAds(method);  //google,msn
@@ -95,7 +95,7 @@ public class AdengineServiceTest extends BaseDB{
 			AddNegativeKeywords(method);  //google 
 			DeleteNegativeKeywords(method);  //google
 			ExecuteBidProcess(method);  //can't verify result without real report data
-			
+*/			
 /*		
  * In progress:
  * 			
