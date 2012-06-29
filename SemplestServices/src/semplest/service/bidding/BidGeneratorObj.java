@@ -743,6 +743,9 @@ public class BidGeneratorObj
 				final String word = entry.getKey();
 				final Long keywordID = wordIDMap.get(word);
 				final Long microBidAmount = wordBidMap.get(word);
+				if(microBidAmount==null){
+					continue; // don't write via API is the bid is null
+				}
 				final GoogleSetBidForKeywordRequest request = new GoogleSetBidForKeywordRequest(adGroupID, word, keywordID, microBidAmount);
 				requests.add(request);
 			}
