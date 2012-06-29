@@ -7,12 +7,12 @@ import com.google.api.adwords.v201109.cm.AdGroupReturnValue;
 import com.google.api.adwords.v201109.cm.AdGroupServiceInterface;
 import com.google.api.adwords.v201109.cm.ApiException;
 
-public class AdGroupRetriableGoogleOperation extends AbstractRetriableGoogleOperation<AdGroupReturnValue>
+public class AdGroupMutateRetriableGoogleOperation extends AbstractRetriableGoogleOperation<AdGroupReturnValue>
 { 					
 	private final AdGroupServiceInterface service;
 	private final AdGroupOperation[] operations;
 
-	public AdGroupRetriableGoogleOperation(final AdGroupServiceInterface service, final AdGroupOperation[] operations, final Integer maxRetries)
+	public AdGroupMutateRetriableGoogleOperation(final AdGroupServiceInterface service, final AdGroupOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;

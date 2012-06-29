@@ -7,12 +7,12 @@ import com.google.api.adwords.v201109.mcm.Account;
 import com.google.api.adwords.v201109.mcm.CreateAccountOperation;
 import com.google.api.adwords.v201109.mcm.CreateAccountServiceInterface;
 
-public class CreateAccountRetriableGoogleOperation extends AbstractRetriableGoogleOperation<Account[]>
+public class CreateAccountMutateRetriableGoogleOperation extends AbstractRetriableGoogleOperation<Account[]>
 { 					
 	private final CreateAccountServiceInterface service;
 	private final CreateAccountOperation[] operations;
 
-	public CreateAccountRetriableGoogleOperation(final CreateAccountServiceInterface service, final CreateAccountOperation[] operations, final Integer maxRetries)
+	public CreateAccountMutateRetriableGoogleOperation(final CreateAccountServiceInterface service, final CreateAccountOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;

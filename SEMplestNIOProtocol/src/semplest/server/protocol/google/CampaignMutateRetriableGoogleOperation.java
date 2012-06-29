@@ -7,12 +7,12 @@ import com.google.api.adwords.v201109.cm.CampaignOperation;
 import com.google.api.adwords.v201109.cm.CampaignReturnValue;
 import com.google.api.adwords.v201109.cm.CampaignServiceInterface;
 
-public class CampaignRetriableGoogleOperation extends AbstractRetriableGoogleOperation<CampaignReturnValue>
+public class CampaignMutateRetriableGoogleOperation extends AbstractRetriableGoogleOperation<CampaignReturnValue>
 { 					
 	private final CampaignServiceInterface service;
 	private final CampaignOperation[] operations;
 
-	public CampaignRetriableGoogleOperation(final CampaignServiceInterface service, final CampaignOperation[] operations, final Integer maxRetries)
+	public CampaignMutateRetriableGoogleOperation(final CampaignServiceInterface service, final CampaignOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;

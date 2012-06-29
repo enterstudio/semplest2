@@ -10,7 +10,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.adengine.GeoTargetObject;
-import semplest.server.protocol.google.CampaignCriterionRetriableGoogleOperation;
+import semplest.server.protocol.google.CampaignCriterionMutateRetriableGoogleOperation;
 import semplest.util.SemplestUtils;
 
 public class Campaign 
@@ -95,7 +95,7 @@ public class Campaign
     final CampaignCriterionOperation[] removeProximityOperationsArray = removeProximityOperations.toArray(new CampaignCriterionOperation[removeProximityOperations.size()]);
     
     
-    final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 
+    final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(ccs, removeProximityOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT); 
     
     final CampaignCriterion[] resultCampaignCriterionArray = retriableOperation.performOperation().getValue();
     final List<Long> resultCriterionIds = new ArrayList<Long>();
@@ -170,7 +170,7 @@ public class Campaign
     o.setOperand( cc );
     o.setOperator( Operator.ADD );
     final CampaignCriterionOperation[] operations = new CampaignCriterionOperation[]{o};
-    final CampaignCriterionRetriableGoogleOperation retriableOperation = new CampaignCriterionRetriableGoogleOperation(ccs, operations, SemplestUtils.DEFAULT_RETRY_COUNT);     
+    final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(ccs, operations, SemplestUtils.DEFAULT_RETRY_COUNT);     
     CampaignCriterion[] rs = retriableOperation.performOperation().getValue();
     // pCCs( rs );
     return gCaId( rs );

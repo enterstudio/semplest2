@@ -4,12 +4,12 @@ import java.rmi.RemoteException;
 
 import com.google.api.adwords.v201109.cm.ApiException;
 
-public class BudgetOrderRetriableGoogleOperation extends AbstractRetriableGoogleOperation<com.google.api.adwords.v201109_1.billing.BudgetOrderReturnValue>
+public class BudgetOrderMutateRetriableGoogleOperation extends AbstractRetriableGoogleOperation<com.google.api.adwords.v201109_1.billing.BudgetOrderReturnValue>
 { 					
 	private final com.google.api.adwords.v201109_1.billing.BudgetOrderServiceInterface service;
 	private final com.google.api.adwords.v201109_1.billing.BudgetOrderOperation[] operations;
 
-	public BudgetOrderRetriableGoogleOperation(final com.google.api.adwords.v201109_1.billing.BudgetOrderServiceInterface budgetOrderService, final com.google.api.adwords.v201109_1.billing.BudgetOrderOperation[] operations, final Integer maxRetries)
+	public BudgetOrderMutateRetriableGoogleOperation(final com.google.api.adwords.v201109_1.billing.BudgetOrderServiceInterface budgetOrderService, final com.google.api.adwords.v201109_1.billing.BudgetOrderOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = budgetOrderService;
