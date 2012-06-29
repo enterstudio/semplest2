@@ -16,7 +16,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
 	private static String BASEURLTEST = "http://vmdevjava1:9898/semplest";  //VMJAVA1
-	private static String timeoutMS = "40000";
+	private static String timeoutMS = "60000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(KeywordLDAServiceClient.class);
