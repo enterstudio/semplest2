@@ -16,15 +16,24 @@ import semplest.keywords.properties.*;
 
 public class dictUtils
 {
+  // Document Frequency (DF) 
+  // the df is the log-frequency of word-appearances 
+  // df( word) = log( # documents in which word appears)
+  // SInce we have 300,000 docs, the max value is 18
+  static int DF_THRESHOLD = 15;
+  static int DF_NG_THRESHOLD = 13;
+  static int DF_DEFAULT   = 15;
+
   // Dictionaty utilities --------------------------
   // the dictionary is made up of three maps 
   // 1) dict  ::  stem => word
   // 2) dicti ::  word => index
   // 3) dictwi::  index => word
   // a word is valid if its stem is in the dictionary
-  static String dictfile = ProjectProperties.dictfile;
-  static String docfile  = ProjectProperties.docfile;
-  static String twfile   = ProjectProperties.twfile;
+  static String dictfile  = ProjectProperties.dictfile;
+  static String dffile    = ProjectProperties.dffile;
+  static String docfile   = ProjectProperties.docfile;
+  static String twfile    = ProjectProperties.twfile;
 
   public static HashMap<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
   public static Map<Integer,String> dictwi = invert(dicti);
@@ -32,6 +41,7 @@ public class dictUtils
   public static HashMap<String,Integer> docsi =  ioUtils.readFileIndex(docfile);
   public static Map<Integer,String> docis = invert(docsi);
   public static final HashMap<String,String> docs = ioUtils.topWords(twfile);
+  public static final HashMap<String,Integer> df = ioUtils.readCount(dffile);
 
   // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
@@ -80,7 +90,6 @@ public class dictUtils
   public static boolean validDoc( String doc ){
     return docsi.containsKey( doc );
   }
-  // set a different dictionary
   public static void loadDict(String file){
     dicti = ioUtils.readFileIndex(file, 1);
     dict = ioUtils.readPair(file);
@@ -90,6 +99,26 @@ public class dictUtils
     for (Entry<K,V> entry : map.entrySet())
       inv.put(entry.getValue(), entry.getKey());
     return inv;
+  }
+  // document frequency
+  public static int df( String word ){
+    if( df.containsKey( word ) ) return df.get( word );
+    else return DF_DEFAULT;
+  }
+  public static boolean dfilter( String word ){
+    if( df( word) < DF_THRESHOLD) return true;
+    else return false;
+  }
+  public static int ngdf( String ng ){
+    String[] words = ng.split("\\+");
+    int dfsum = 0;
+    for( String w: words)
+      dfsum += df( w );
+    return dfsum / words.length;
+  }
+  public static boolean ngdfilter( String ng ){
+    if( ngdf( ng ) < DF_NG_THRESHOLD ) return true;
+    else return false;
   }
 
 
