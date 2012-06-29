@@ -138,6 +138,7 @@ public class GoogleReportTools {
 			TrafficEstimatorObject te = google.getTrafficEstimationForKeywords(accountId.toString(), campaignId,  matchType, map);
 			if(te!=null){
 			newLine = newLine+te.getAveClickPerDay(keyword, matchType.getValue(), bid)+", ";
+			newLine = newLine+te.getAveClickPerDay(keyword, matchType.getValue(), bid)+", ";
 			newLine = newLine+te.getAveCPC(keyword, matchType.getValue(), bid)+", ";
 			newLine = newLine+te.getAvePosition(keyword, matchType.getValue(), bid)+", ";
 			newLine = newLine+te.getAveTotalDailyMicroCost(keyword, matchType.getValue(), bid)+", ";
