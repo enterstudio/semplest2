@@ -33,49 +33,7 @@
 	      debug="${java.debug}"   	
 	      includes="**/*.java"
 	      excludes="**/*.svn"
-	    />	
-		
-		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
-		<echo message="Creating Jar for SemplestBidding..."/>
-		<copy todir="${basedir}/lib" filtering="off">
-			<flattenmapper />
-			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
-		</copy>
-		<path id="bid.path">
-			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<mkdir dir="${semplest.bidding.dir}/temp"/>
-		<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
-				target="1.6"
-				source="1.6"
-				debug="${java.debug}"   	
-				includes="**/*.java" >
-				<exclude name="**/*.svn"/>
-		</javac>
-		<jar destfile="${basedir}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">				 
-		</jar> 
-		
-		<!-- Create a Jar for SemplestKeywords, and put it to SemplestTests/lib -->
-		<echo message="Creating Jar for SemplestKeywords..."/>
-	 	<copy todir="${basedir}/lib" filtering="off">
-	 		<flattenmapper />
-	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
-	 	</copy>
-		<path id="keywords.path">
-			<pathelement location="${classes}"/>
-				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
-		</path>
-		<mkdir dir="${semplest.keywords.dir}/temp"/>
-		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
-				target="1.6"
-				source="1.6"
-				debug="${java.debug}"   	
-				includes="**/*.java" >
-				<exclude name="**/*.svn"/>
-		</javac>
-		<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
-		</jar>
+	    />		
 	
 		<!-- Create a Jar for SemplestServicesClient -->
 		<echo message="Creating Jar for SemplestServicesClient..."/>
@@ -99,7 +57,28 @@
 			 <manifest>
 			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
 			 </manifest>
-		</jar>  
+		</jar> 
+		
+		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
+		<echo message="Creating Jar for SemplestBidding..."/>
+		<copy todir="${basedir}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
+		</copy>
+		<path id="bid.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.bidding.dir}/temp"/>
+		<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">				 
+		</jar> 		
 		
 		<!-- compile services -->
 		<path id="services.path">
@@ -114,6 +93,27 @@
 	      includes="**/*.java"
 	      excludes="**/*.svn"
 	    />	
+		
+		<!-- Create a Jar for SemplestKeywords, and put it to SemplestTests/lib -->
+		<echo message="Creating Jar for SemplestKeywords..."/>
+	 	<copy todir="${basedir}/lib" filtering="off">
+	 		<flattenmapper />
+	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
+	 	</copy>
+		<path id="keywords.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.keywords.dir}/temp"/>
+		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
+		</jar>		
 		
 	</target>
 		
