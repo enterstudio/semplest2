@@ -82,12 +82,12 @@ a.k-button
     padding-bottom: .37em;
     padding-top: .37em;
 }
-* + html .k-button
+* + html .k-button .k-backbutton
 {
     overflow: visible;
     margin-right: 4px;
 }
-* + html a.k-button
+* + html a.k-button a.k-backbutton
 {
     line-height: 1.6;
     padding-left: 7px;
@@ -3187,3 +3187,4 @@ html input.k-breadcrumbs-input
     left: 2px;
     bottom: 2px;
 }
+

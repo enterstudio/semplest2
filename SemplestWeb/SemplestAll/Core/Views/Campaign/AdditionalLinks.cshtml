@@ -1,27 +1,37 @@
-﻿
-@using Semplest.Core.Helpers
+﻿@using Semplest.Core.Helpers
 @model Semplest.Core.Models.CampaignSetupModel
-<div>
-    <span class="infoHead">Sitelinks is a feature that lets you include additional links
+<div class="configuration">
+    <span class="infoHead">Create Ads (continue)</span>
+    <h3>
+        Additional click through URLs("Sitelinks")  <a href ="#" class="help-button" id="helpbutton12" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
+                                                                         ?</a></h3> 
+    <label class="greytext">Sitelinks is a feature that lets you include additional links
         to other content on your site that's not on the main landing page. They appear below
-        your ad copy in the search results</span>
-    <div class="configuration1">
-        <span>you can enter upto 10 additional links that may be shown with your Ad</span>
-        <div style="text-align: right">
-            @Html.LinkToAddNestedForm("Add", "#sitelinks", ".sitelinks", "SiteLinks", typeof(SemplestModel.SiteLink))
-        </div>
-        <div class="table">
-            <ul id="sitelinks">
-                @Html.EditorFor(t => t.SiteLinks)
-            </ul>
-            <br />
-        </div>
+        your ad copy in the search results</label>
+     <br style="display: block;margin-bottom: 30px;line-height:40px;" />
+    <span>you can enter upto 10 additional links
+        that may be shown with your Ad</span>
+        <br />
+    
+    <div class="table">
+        <ul id="sitelinks">
+            <li><label class="smallhelptext additionallinkshelptext" style="margin-left:40px;">Link text: 35 max characters</label><label class="smallhelptext additionallinkshelptext">Destination URL: 1024 max characters</label></li>
+            @Html.EditorFor(t => t.SiteLinks)
+        </ul>
+        <br />
     </div>
+    <div>
+        @Html.LinkToAddNestedForm("create site links", "#sitelinks", ".sitelinks", "SiteLinks", typeof(SemplestModel.SiteLink))
+    </div>
+    <br />
     <div class="options">
+        <hr class="titlewhitelinebottom" />
+        <div style="text-align: center">
         <button class="k-button" id="back2" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="save3" type="submit" name="Command" value="SetAdditionalLinks">
-            <span class="k-update k-icon"></span>Save And Continue</button>
+            <span class="k-update k-icon"></span>Save And Continue</button>    
+        </div>
     </div>
 </div>
 <script type="text/javascript">

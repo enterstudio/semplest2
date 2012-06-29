@@ -1,3 +1,4 @@
+
 /*
 * Kendo UI Web v2012.1.322 (http://kendoui.com)
 * Copyright 2012 Telerik AD. All rights reserved.
@@ -21,7 +22,6 @@
 }
 .k-panelbar > .k-item > .k-link, .k-panel > .k-item > .k-link, .k-panelbar .k-panel, .k-panelbar .k-content
 {
-    border-bottom: 1px grey solid;
     color:#979797;
 }
 .k-group, .k-toolbar, .k-grouping-header, .k-pager-wrap, .k-group-footer td, .k-grid-footer, .k-footer-template td, .k-widget .k-status, .k-grouping-row td, td.k-group-cell, .k-calendar th, .k-dropzone-hovered, .k-upload-files
@@ -120,8 +120,8 @@ a .k-link:link, a .k-link:visited
 .k-state-active, .k-state-active:hover, .k-active-filter
 {
     background-color: #e3e3e3;
-    border-color: #ADC76E;
     color: #000;
+    font-weight: bold;
 }
 .k-state-focused
 {

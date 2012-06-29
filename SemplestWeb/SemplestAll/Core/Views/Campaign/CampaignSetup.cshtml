@@ -51,6 +51,8 @@
                     @Html.EditorFor(t => t.AdModelProp)
                 </div>
             </div>
+            @*<hr class="titlewhiteline" style="margin-top: -60px; margin-bottom:5px; " />
+            <br style="margin-top:1px;background-color:red;"></br>*@
             <input type="hidden" id="ViewSelectedKeywordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["ViewSelectedKeywordsUrl"]'/>
             <input type="hidden" id="NegativeKeyWordsUrl" value='@System.Configuration.ConfigurationManager.AppSettings["NegativeKeyWordsUrl"]'/>
             <input type="hidden" id="AdditionalSiteLinksUrl" value='@System.Configuration.ConfigurationManager.AppSettings["AdditionalSiteLinksUrl"]'/>
@@ -59,11 +61,11 @@
             <input type="hidden" id="currentMode" value="@Model.ProductGroup.IsEdit"/>
             <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
             <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
-            <input type="hidden" id="IsNew" value="@ViewBag.IsNew"/>
             <img id="displayBox" style="display: none" />
-            
-             <div id="InvalidDescriptionWindow" style="display:none; text-align:center; font-weight:bold;"  >
-                <div class="InvalidDescriptionText"></div><br />
+            <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
+                <div class="InvalidDescriptionText">
+                </div>
+                <br />
                 <div style="text-align: center">
                     <input type="button" id="btnCancelInvalid" value="OK" class="k-button" />
                 </div>
@@ -82,25 +84,16 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function () {
-        if ($('#IsNew').val() == 'False') {
-            if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
-                openAllTabs(false); enableDisable();
-            }
-            else if ($('#IsLaunched').val() == 'False') {
-                openAllTabs(true);
-            }
-        }
-    })
         //        enableDisable();
         //        $("#tabstrip").children('.k-content').height(650);
-
+    });
     var onActivate = function () {
-//        var height = $(window).height();
-//        $("#tabstrip").children('.k-content').height(height - 225);
-//        //        $("#tabstrip").children('.k-content').height($("#tabstrip").outerHeight() - $('ul.k-tabstrip-items').outerHeight());
+        //        var height = $(window).height();
+        //        $("#tabstrip").children('.k-content').height(height - 225);
+        //        //        $("#tabstrip").children('.k-content').height($("#tabstrip").outerHeight() - $('ul.k-tabstrip-items').outerHeight());
         switch (tabStrip.select().text()) {
             case "Create Ads":
-                
+
                 for (var map in mapArray) {
                     L.Util.requestAnimFrame(mapArray[map].invalidateSize, mapArray[map], !1, mapArray[map]._container);
                 }
@@ -148,9 +141,9 @@
 
     //Generate Tab
     var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate
-    
+
     }).data("kendoTabStrip");
-    
+
     // Start Enable tabs region
     var tab = tabStrip.select();
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
@@ -252,25 +245,25 @@
                     stitle = "Error";
                 }
                 $('.InvalidDescriptionText').html(sbody);
-                    var pausePromotionWindow = $('#InvalidDescriptionWindow').kendoWindow({
-                        resizable: false,
-                        modal: true,
-                        title: stitle
-                    }).data("kendoWindow");
-                    $('#InvalidDescriptionWindow').show();
-                    pausePromotionWindow.center();
-                    pausePromotionWindow.open();
-                    event.preventDefault();
-             }
+                var pausePromotionWindow = $('#InvalidDescriptionWindow').kendoWindow({
+                    resizable: false,
+                    modal: true,
+                    title: stitle
+                }).data("kendoWindow");
+                $('#InvalidDescriptionWindow').show();
+                pausePromotionWindow.center();
+                pausePromotionWindow.open();
+                event.preventDefault();
+            }
         }
         //$("#tabstrip").children('.k-content').height(650);
-        }
+    }
 
-        $("#btnCancelInvalid").click(function (event) {
-            var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
-            $('#InvalidDescriptionWindow').hide();
-            pausePromotionWindow.close();
-        });
+    $("#btnCancelInvalid").click(function (event) {
+        var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
+        $('#InvalidDescriptionWindow').hide();
+        pausePromotionWindow.close();
+    });
     function OnFailure() {
         $.unblockUI();
     }

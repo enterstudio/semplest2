@@ -1,27 +1,28 @@
 ﻿@model Semplest.Core.Models.ProductGroupModel
 <div id="productGroupModel">
     <div class="configuration">
+        <span class="infoHead">Tell us about your product or service</span>
         <ul class="options">
             <li>
                 <h3>
                     @Model.Configuration.DefaultProductGroupName <a href ="#" class="help-button" id="helpbutton1" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]1" tabindex="-1" >
-                        ?</a>
+                                                                     ?</a>
                 </h3>
-@*                    @Html.TextBoxFor(t => t.ProductGroupName, ViewBag.IsLaunchedAndCompleted ? (object)new { disabled = "true", @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName } : new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
+                @*                    @Html.TextBoxFor(t => t.ProductGroupName, ViewBag.IsLaunchedAndCompleted ? (object)new { disabled = "true", @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName } : new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
 *@                  
                 @Html.TextBoxFor(t => t.ProductGroupName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductGroupName })
             </li>
             <li>
                 <h3>
                     @Model.Configuration.DefaultProductPromotionName <a href ="#" class="help-button" id="helpbutton2" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]2"  tabindex="-1" >
-                        ?</a>
+                                                                         ?</a>
                 </h3>
                 @Html.TextBoxFor(t => t.ProductPromotionName, new { @class = "k-textbox", @required = true, @validationmessage = "Please enter " + @Model.Configuration.DefaultProductPromotionName })
             </li>
             <li>
                 <h3 style="margin-top: 5px;">
                     Description <a href ="#" class="help-button" id="helpbutton3" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]3"  tabindex="-1" >
-                        ?</a>
+                                    ?</a>
                 </h3>
                 <label for="ProductGroupModel_Words" style="color:grey; margin-top: 5px;">
                     Please type in several words or phrases that describe your business or what you
@@ -33,7 +34,7 @@
             <li>
                 <h3>
                     Budget <a href ="#" class="help-button" id="helpbutton4" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]4"  tabindex="-1" >
-                        ?</a>
+                               ?</a>
                 </h3>
                 @(!@Model.IsEdit ? Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @minreq = true, @style = "width:60px" }) : Html.TextBoxFor(t => t.Budget, new { @class = "k-textboxbudget", @required = true, @validationmessage = "Please enter {0}", @style = "width:60px" }))
                 <label id="lblbudgetdisplay" style="margin-left: 10px">/ Month</label>
@@ -59,18 +60,18 @@
             <li>
                 <label for="SearchEngines" class="required">
                     Search Engines <a href ="#" class="help-button" id="helpbutton5" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]5 "  tabindex="-1"  >
-                        ?</a>
+                                       ?</a>
                 </label>
                 <br />
                 @Html.CheckBoxListFor(t => t.AdEnginesList, t => t.AdvertisingEngines, t => t.Id, t => t.Name, t => t.ImageUrl, t => t.AdEnginesSelectedList, new { })
                 @Html.ValidationMessageFor(t => t.AdEnginesList)
             </li>
             <li>
-                <hr />
+                <hr class="titlewhitelinebottom" />
                 <div style="text-align: center">
-                <button class="k-button" id="save1" type="button">
-                    <span class="k-update k-icon"></span>Continue
-                </button>
+                    <button class="k-button" id="save1" type="button">
+                        <span class="k-update k-icon"></span>Continue
+                    </button>
                 </div>
             </li>
             <li class="status"></li>

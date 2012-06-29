@@ -11,17 +11,17 @@
     <link href="@Url.Content("~/Content/jquery.cluetip.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/kendo.common.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/kendo.metro.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/ui.dynatree.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/leafletmap.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/leaflet.ie.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/ui.dynatree.css")" rel="stylesheet" type="text/css" />
     <script src="@Url.Content("~/Scripts/jquery-1.7.2.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery-ui.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/kendo.all.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.UiBlock.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.cluetip.min.js")" type="text/javascript"> </script>
-    <script src="@Url.Content("~/Scripts/leaflet.js")" type="text/javascript"> </script>
     <script src="@Url.Content("~/Scripts/jquery.dynatree.min.js")" type="text/javascript"> </script>
+        <script src="@Url.Content("~/Scripts/leaflet.js")" type="text/javascript"> </script>
     <script type="text/jscript">
     @{
         Debug.Assert(Context.Request.ApplicationPath != null, "Context.Request.ApplicationPath != null");
@@ -55,6 +55,7 @@
             -webkit-border-radius: 5px;
         }
     </style>
+    
 </head>
 <body>
     <div id="wrapper">
@@ -63,29 +64,32 @@
                 <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
                 <ul class="kendo-nav">
                     <li>@Html.ActionLink("About Us", "About", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("FAQs", "FAQ", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("Log Off", "LogIn", "Profile")</li>
                 </ul>
             </div>
         </div>
         <div id="sidebar">
             <script src="@Url.Content("~/Scripts/PanelBar.js")" type="text/javascript"> </script>
-            <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
+             <input type="hidden" id="SideBarUrl" value='@System.Configuration.ConfigurationManager.AppSettings["SideBarUrl"]'/>
             <ul id="panelbar-images">
                 <li><span>Home</span>
                     <ul>
                         <li>@Html.ActionLink("My Account", "Index2", "Home")</li>
                         <li>@Html.ActionLink("Create Advertising", "CampaignSetup", "Campaign")</li>
                         <li>@Html.ActionLink("Reporting", "Index", "Reporting")</li>
-                        <li>@Html.ActionLink("Billing", "Billing", "Campaign")</li>
-                        @* <li>@Html.ActionLink("Billing", "CampaignSetup","Campaign")</li>*@
+                         <li>@Html.ActionLink("Billing", "Billing", "Campaign")</li>
+                       @* <li>@Html.ActionLink("Billing", "CampaignSetup","Campaign")</li>*@
                         <li>@Html.ActionLink("My Profile", "MyProfile", "Account")</li>
                     </ul>
                 </li>
                 <li><span>
-                    @Model.Configuration.DefaultProductGroupName
-                </span>
+                        @Model.Configuration.DefaultProductGroupName
+                    </span>
                     <div style="height: 476px;" class="k-treeview">
                         <ul id="treeview">
                         </ul>
@@ -98,34 +102,32 @@
                 <div id="exampleTitleHeader">
                     <p id="exampleTitle">
                         @RenderSection("Title", false)<div style="margin-right: 15px; margin-top: -26px;
-                            text-align: right">
-                            @RenderSection("SectionNav", false)</div>
+                                           text-align: right">
+                                                          @RenderSection("SectionNav", false)</div>
                     </p>
                 </div>
                 <hr class="titlewhiteline" />
                 <div id="mainWrapInner">
                     <div id="main">
-                        @* <div id="tablewrapper">*@
-                        @RenderBody()
+                       @* <div id="tablewrapper">*@
+                            @RenderBody()
                         @*</div>*@
                     </div>
-                    <hr class="titlewhitelinebottom" />
+                    <hr class="titlewhiteline" />
                 </div>
             </div>
         </div>
-        <div id="footer">
-            <div class="centerWrap">
-                <table width="100%" style="height: 40px; font-weight: bold;">
-                    <tr>
-                        <td>
-                            Copyright &copy; 2012 SEMplest
-                        </td>
-                        <td>@Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home")
-                        </td>
-                        <td style="text-align: -webkit-right;">@Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home")
-                        </td>
-                    </tr>
-                </table>
+          <div id="footer">
+            <div class="floatWrap">
+                <ul class="kendo-nav">
+                    <li><span>&copy; 2012 SEMplest LLC.</span></li>
+                    <li><span style="color:transparent;">Testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span></li>
+                    <li>@Html.ActionLink("Terms of Use", "TermsAndConditions", "Home")</li>
+                    <li><span>|</span></li>
+                    <li>@Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home")</li>
+                    <li><span>|</span></li>
+                    <li>@Html.ActionLink("Service Agreement", "", "Home")</li>
+                </ul>
             </div>
         </div>
     </div>

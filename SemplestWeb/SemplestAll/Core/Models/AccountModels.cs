@@ -380,7 +380,7 @@ namespace Semplest.Core.Models
     }
 
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public sealed class ValidatePasswordLengthAttribute : ValidationAttribute, IClientValidatable
+    public sealed class ValidatePasswordLengthAttribute : ValidationAttribute
     {
         private const string _defaultErrorMessage = "'{0}' must be at least {1} characters long.";
         private readonly int _minCharacters = Membership.Provider.MinRequiredPasswordLength;
@@ -390,19 +390,19 @@ namespace Semplest.Core.Models
         {
         }
 
-        #region IClientValidatable Members
+        //#region IClientValidatable Members
 
-        public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata,
-                                                                               ControllerContext context)
-        {
-            return new[]
-                       {
-                           new ModelClientValidationStringLengthRule(FormatErrorMessage(metadata.GetDisplayName()),
-                                                                     _minCharacters, int.MaxValue)
-                       };
-        }
+        //public IEnumerable<ModelClientValidationRule> GetClientValidationRules(ModelMetadata metadata,
+        //                                                                       ControllerContext context)
+        //{
+        //    return new[]
+        //               {
+        //                   new ModelClientValidationStringLengthRule(FormatErrorMessage(metadata.GetDisplayName()),
+        //                                                             _minCharacters, int.MaxValue)
+        //               };
+        //}
 
-        #endregion
+        //#endregion
 
         public override string FormatErrorMessage(string name)
         {

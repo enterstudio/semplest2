@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 <!DOCTYPE html>
@@ -24,8 +23,11 @@
                 <img src="@Url.Content("~/Content/Metro/semplest_logo.png")"/>
                 <ul class="kendo-nav">
                     <li>@Html.ActionLink("About Us", "About", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("FAQs", "FAQ", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+                    <li><span>|</span></li>
                     <li>@Html.ActionLink("Log Off", "LogIn", "Profile")</li>
                 </ul>
             </div>
@@ -41,26 +43,22 @@
                     <div id="main">
                         <div id="example" style="height: 470px">@RenderBody()
                         </div>
-                        <hr class="titlewhitelinebottom" />
+                        <hr class="titlewhiteline" />
                     </div>
                 </div>
             </div>
         </div>
         <div id="footer">
-            <div class="centerWrap">
-                <table width="100%" style="height: 40px; font-weight: bold;">
-                    <tr>
-                        <td>
-                            <p>
-                                Copyright &copy; 2012 SEMplest</p>
-                        </td>
-                        <td>@Html.ActionLink("Terms and Conditions", "TermsAndConditions", "Home")
-                        </td>
-                        <td style="text-align: -webkit-right; text-align: right;">
-                            <p>@Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home")</p>
-                        </td>
-                    </tr>
-                </table>
+            <div class="floatWrap">
+                <ul class="kendo-nav">
+                    <li><span>&copy; 2012 SEMplest LLC.</span></li>
+                    <li><span style="color:transparent;">Testttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttt</span></li>
+                    <li>@Html.ActionLink("Terms of Use", "TermsAndConditions", "Home")</li>
+                    <li><span>|</span></li>
+                    <li>@Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Home")</li>
+                    <li><span>|</span></li>
+                    <li>@Html.ActionLink("Service Agreement", "", "Home")</li>
+                </ul>
             </div>
         </div>
     </div>
