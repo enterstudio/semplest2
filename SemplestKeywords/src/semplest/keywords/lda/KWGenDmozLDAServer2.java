@@ -145,7 +145,6 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		    		numkw=numKw[i];
 		    }
 			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
-			//ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
 			HashSet<KeywordProbabilityObject> set = new HashSet<KeywordProbabilityObject>();
 			int num = 0;
 			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
