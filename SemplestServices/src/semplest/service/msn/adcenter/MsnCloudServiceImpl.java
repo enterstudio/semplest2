@@ -438,10 +438,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			for (int i = 0; i < acInf.length; i++)
 			{
 				Long accountID = acInf[i].getId();
-				String accountName = acInf[i].getName();
-				logger.debug("accountName: " + accountName);
+				//String accountName = acInf[i].getName();
+				String accountNumber = acInf[i].getNumber();
+				logger.debug("accountNumber: " + accountNumber);
 				logger.debug("accountID: " + accountID);
-				accountIDs.put(accountName, accountID.doubleValue());
+				accountIDs.put(accountNumber, accountID.doubleValue());
 			}
 			return accountIDs;
 		}
