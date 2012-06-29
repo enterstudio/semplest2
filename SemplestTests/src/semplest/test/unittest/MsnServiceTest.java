@@ -55,7 +55,7 @@ public class MsnServiceTest {
 	
 	private String vMsg = "Verification FAILED! ";
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws Exception{
 		MsnServiceTest t = new MsnServiceTest();
 		t.Test_MsnServices_Standalone();
 	}
@@ -199,7 +199,7 @@ public class MsnServiceTest {
 		return 0;
 	}
 	
-	public int Test_MsnServices_Standalone() {
+	public int Test_MsnServices_Standalone() throws Exception {
 		
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		errorCounter = 0;

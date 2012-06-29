@@ -40,6 +40,7 @@ import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.ProtocolJSON;
+import semplest.server.protocol.RetriableOperation;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
@@ -47,6 +48,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
+import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnKeywordObject;
@@ -56,6 +58,8 @@ import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109.cm.RateExceededError;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
@@ -1846,89 +1850,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		return sb.toString();
 	}
 	
-	public static Set<Integer> getIndexesOfBadKeywords(final List<MsnEditorialApiFaultDetail> msnList)
-	{
-		final Set<Integer> badIndeces = new HashSet<Integer>();
-		for (final MsnEditorialApiFaultDetail faultDetail : msnList)
-		{
-			final Integer index = faultDetail.getIndex();
-			badIndeces.add(index);
-		}
-		return badIndeces;
-	}
-	
-	public static void filterRequest(final AddKeywordsRequest request, final List<MsnEditorialApiFaultDetail> msnList)
-	{
-		final Set<Integer> indecesOfBadKeywords = getIndexesOfBadKeywords(msnList);
-		final Keyword[] keywords = request.getKeywords();
-		final List<Keyword> filteredKeywords = new ArrayList<Keyword>();
-		for (int i = 0; i < keywords.length; ++i)
-		{
-			if (!indecesOfBadKeywords.contains(i))
-			{
-				filteredKeywords.add(keywords[i]);
-			}
-		}
-		final Keyword[] filteredKeywordArray = filteredKeywords.toArray(new Keyword[filteredKeywords.size()]);
-		request.setKeywords(filteredKeywordArray);
-	}
-
-	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
+	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception
 	{
 		logger.info("Will try to Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]");
-		
-		// TODO: remove this after testing
-		logger.info("Keywords......\n" + getKeywordsString(keywords));
-		AddKeywordsResponse response = null;
-		
 		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		final AddKeywordsRequest request = new AddKeywordsRequest(adGroupId, keywords);
-		Boolean completedSuccessfully = false;
-		int attemptNum = 1;
-		while (!completedSuccessfully)
-		{
-			try
-			{			
-				logger.info("Attempt #" + attemptNum++ + ": will try to add " + request.getKeywords().length + " Keywords");
-				response = campaignManagement.addKeywords(request);
-				completedSuccessfully = true;
-			}
-			catch (AdApiFaultDetail e)
-			{
-				throw new RemoteException(e.dumpToString(), e);
-			}
-			catch (EditorialApiFaultDetail e)
-			{
-				final List<MsnEditorialApiFaultDetail> msnList = getMsnEditorialApiFaultDetail(e);
-				final String errMsg = "Problem Creating Keywords for [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]: " + e.dumpToString();
-				logger.error(errMsg + "\n" + SemplestUtils.getEasilyReadableString(msnList));
-				if (msnList.isEmpty())
-				{
-					throw new RemoteException(errMsg + ": " + e.dumpToString(), e);
-				}
-				filterRequest(request, msnList);
-			}	
-		}
+		final AddKeywordsRetriableMsnOperation retriableOperation = new AddKeywordsRetriableMsnOperation(campaignManagement, request, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final AddKeywordsResponse response = retriableOperation.performOperation();		
 		final long[] msnKeywordIds = response.getKeywordIds();
 		return msnKeywordIds;
-	}
-	
-	public static List<MsnEditorialApiFaultDetail> getMsnEditorialApiFaultDetail(final EditorialApiFaultDetail e)
-	{
-		final List<MsnEditorialApiFaultDetail> msnList = new ArrayList<MsnEditorialApiFaultDetail>();
-		final EditorialError[] editorialErrors = e.getEditorialErrors();
-		for (final EditorialError editorialError : editorialErrors)
-		{
-			final Integer code = editorialError.getCode();
-			final String errorCode = editorialError.getErrorCode();
-			final Integer index = editorialError.getIndex();
-			final String disapprovedText = editorialError.getDisapprovedText();
-			final String message = editorialError.getMessage();
-			final String publisherCountry = editorialError.getPublisherCountry();
-			final MsnEditorialApiFaultDetail msnFaultDetails = new MsnEditorialApiFaultDetail(code, errorCode, index, disapprovedText, message, publisherCountry);
-			msnList.add(msnFaultDetails);
-		}
-		return msnList;
 	}
 
 	public String getKeywordById(String json) throws Exception

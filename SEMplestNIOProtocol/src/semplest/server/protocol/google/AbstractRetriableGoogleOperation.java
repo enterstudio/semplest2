@@ -4,13 +4,14 @@ import java.rmi.RemoteException;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.RetriableOperation;
 import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.v201109.cm.ApiError;
 import com.google.api.adwords.v201109.cm.ApiException;
 import com.google.api.adwords.v201109.cm.RateExceededError;
 
-public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGoogleOperation<T>
+public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOperation<T>
 {		
 	private static final Logger logger = Logger.getLogger(AbstractRetriableGoogleOperation.class);
 	
@@ -21,12 +22,6 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableGo
 		this.maxRetries = maxRetries;
 	}
 	
-	@Override
-	public Integer getMaxRetries()
-	{
-		return maxRetries;
-	}
-		
 	@Override
 	public T performOperation() throws Exception 
 	{			
