@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Semplest.SharedResources.Models;
 using SemplestModel;
 using Semplest.SharedResources.Helpers;
+using Semplest.SharedResources.Encryption;
 
 namespace Semplest.SharedResources.Controllers
 {
@@ -124,33 +125,38 @@ namespace Semplest.SharedResources.Controllers
             return View(pm);
         }
 
-        public ActionResult Verify(string userName, string password)
+
+        public ActionResult CreateToken(string token)
         {
+            
+            AesEncyrption ae = AesEncyrption.getInstance();
+            Session.Add("aes", ae);
+
+            string encryptedToken = ae.GenerateToken("51", DateTime.Now.ToString(), "userandre", "1");
+            return Content(HttpUtility.UrlEncode(encryptedToken) + " " + ae.DecryptString(encryptedToken));
+        }
+
+        [HttpGet]
+        public ActionResult Verify(string token)
+        {
+            
+            string parentid, datetime, username, password;
+            Encryption.AesEncyrption.getInstance().DecryptToken(token, out parentid, out datetime, out username, out password);
             using (var dbContext = new SemplestModel.Semplest())
             {
-                var creds = dbContext.Credentials.Where(c => c.Username == userName && c.Password == password);
-                if (creds.Count() == 1)
+                IQueryable<Credential> creds;
+                creds = dbContext.Credentials.Where(c => c.Username == username && c.Password == password);
+                if (creds != null)
                 {
-                    Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID] = creds.First();
-                    if (creds.First().User.UserRolesAssociations.First().RolesFK == 2)
-                        //means this is an admin user
-                        return RedirectToAction("Index", "Home");
-                    else
-                        if (creds.First().User.IsRegistered)
-                            return RedirectToAction("Index", "Home");
-                        else
-                        {
-                            Semplest.SharedResources.Models.ProfileModel pm = new Models.ProfileModel();
-                            pm.UserName = userName;
-                            pm.Password1 = password;
-                            return PartialView("_Password", pm);
-                        }
+                    int? parentKey = string.IsNullOrEmpty(parentid) ? -1 : int.Parse(parentid);
+                    parentKey = parentKey == -1 ? null : parentKey;
+                    if (creds.Count() == 1 && creds.First().User.Customer.CustomerHierarchies1.First().CustomerParentFK == parentKey)
+                    {
+                        return RedirectToAction("Login", "Profile");
+                    }
                 }
-                Semplest.SharedResources.Models.ProfileModel pm2 = new Models.ProfileModel();
-                pm2.UserName = userName + userName;
-                pm2.Password1 = password;
-                return View(pm2);
             }
+            return Content("The URL is invalid.");
         }
 
         public void AddRightToDatabase(string label, string controllerName, string vAction)

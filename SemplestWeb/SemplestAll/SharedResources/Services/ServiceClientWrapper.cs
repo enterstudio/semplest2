@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using SemplestModel;
 using System.Threading;
 using Semplest.SharedResources;
+using System.Web;
 
 namespace Semplest.SharedResources.Services
 {
@@ -464,6 +465,7 @@ namespace Semplest.SharedResources.Services
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
         {
+            jsonStr = HttpUtility.UrlEncode(jsonStr);
             var client = new WebClient();
             client.QueryString.Add("jsonStr", jsonStr);
             client.QueryString.Add("service", serviceName);
@@ -554,7 +556,7 @@ namespace Semplest.SharedResources.Services
         }
     }
 
-    public class KeywordProbabilityObject
+    public class KeywordProbabilityObject 
     {
         public int id { get; set; }
         public string keyword { get; set; }
