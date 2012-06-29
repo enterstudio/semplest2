@@ -1829,19 +1829,25 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 
 	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
+		logger.info("Keywords......\n" + SemplestUtils.getEasilyReadableString(Arrays.asList(keywords)));
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		try
 		{
 			final AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywords));
 			return addKeywords.getKeywordIds();
 		}
-		catch (AdApiFaultDetail e1)
+		catch (AdApiFaultDetail e)
 		{
-			throw new RemoteException(e1.dumpToString(), e1);
+			throw new RemoteException(e.dumpToString(), e);
 		}
-		catch (EditorialApiFaultDetail e2)
-		{
-			throw new RemoteException(e2.dumpToString(), e2);
+		catch (EditorialApiFaultDetail e)
+		{/*
+			final EditorialError[] editorialErrors = e.getEditorialErrors();
+			for (final EditorialError editorialError : editorialErrors)
+			{
+				editorialError.get
+			}*/
+			throw new RemoteException(e.dumpToString(), e);
 		}
 	}
 
