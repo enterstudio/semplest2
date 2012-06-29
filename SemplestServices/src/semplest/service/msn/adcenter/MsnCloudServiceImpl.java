@@ -42,6 +42,7 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.MsnAccountObject;
@@ -88,6 +89,7 @@ import com.microsoft.adcenter.api.customermanagement.Entities.TimeZoneType;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
+import com.sun.rsasign.k;
 
 public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCloudService
 {
@@ -1826,11 +1828,30 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		return gson.toJson(ret);
 	}
+	
+	public static String getKeywordsString(final Keyword... keywords)
+	{
+		final StringBuilder sb = new StringBuilder();		
+		for (int i = 0; i < keywords.length; ++i)
+		{
+			final Keyword k = keywords[i];
+			if (sb.length() != 0)
+			{
+				sb.append(SemplestUtils.LINE_SEPARATOR);
+			}
+			sb.append(i).append(": ").append(k.getText());
+		}
+		return sb.toString();
+	}
 
 	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws RemoteException, ApiFaultDetail, AdApiFaultDetail
 	{
-		logger.info("Keywords......\n" + SemplestUtils.getEasilyReadableString(Arrays.asList(keywords)));
-		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		logger.info("Will try to Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]");
+		
+		// TODO: remove this after testing
+		logger.info("Keywords......\n" + getKeywordsString(keywords));
+		
+		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		try
 		{
 			final AddKeywordsResponse addKeywords = campaignManagement.addKeywords(new AddKeywordsRequest(adGroupId, keywords));
@@ -1841,14 +1862,32 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			throw new RemoteException(e.dumpToString(), e);
 		}
 		catch (EditorialApiFaultDetail e)
-		{/*
-			final EditorialError[] editorialErrors = e.getEditorialErrors();
-			for (final EditorialError editorialError : editorialErrors)
-			{
-				editorialError.get
-			}*/
+		{
 			throw new RemoteException(e.dumpToString(), e);
+			/*
+			final List<MsnEditorialApiFaultDetail> msnList = getMsnEditorialApiFaultDetail(e);
+			final String errMsg = "Problem Creating Keywords for [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]";
+			logger.error(errMsg + "\n" + SemplestUtils.getEasilyReadableString(msnList));
+			throw new RemoteException(errMsg + ": " + e.dumpToString(), e);*/
 		}
+	}
+	
+	public static List<MsnEditorialApiFaultDetail> getMsnEditorialApiFaultDetail(final EditorialApiFaultDetail e)
+	{
+		final List<MsnEditorialApiFaultDetail> msnList = new ArrayList<MsnEditorialApiFaultDetail>();
+		final EditorialError[] editorialErrors = e.getEditorialErrors();
+		for (final EditorialError editorialError : editorialErrors)
+		{
+			final Integer code = editorialError.getCode();
+			final String errorCode = editorialError.getErrorCode();
+			final Integer index = editorialError.getIndex();
+			final String disapprovedText = editorialError.getDisapprovedText();
+			final String message = editorialError.getMessage();
+			final String publisherCountry = editorialError.getPublisherCountry();
+			final MsnEditorialApiFaultDetail msnFaultDetails = new MsnEditorialApiFaultDetail(code, errorCode, index, disapprovedText, message, publisherCountry);
+			msnList.add(msnFaultDetails);
+		}
+		return msnList;
 	}
 
 	public String getKeywordById(String json) throws Exception
