@@ -42,7 +42,6 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.MsnAccountObject;
@@ -1871,24 +1870,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			throw new RemoteException(errMsg + ": " + e.dumpToString(), e);*/
 		}
 	}
-	
-	public static List<MsnEditorialApiFaultDetail> getMsnEditorialApiFaultDetail(final EditorialApiFaultDetail e)
-	{
-		final List<MsnEditorialApiFaultDetail> msnList = new ArrayList<MsnEditorialApiFaultDetail>();
-		final EditorialError[] editorialErrors = e.getEditorialErrors();
-		for (final EditorialError editorialError : editorialErrors)
-		{
-			final Integer code = editorialError.getCode();
-			final String errorCode = editorialError.getErrorCode();
-			final Integer index = editorialError.getIndex();
-			final String disapprovedText = editorialError.getDisapprovedText();
-			final String message = editorialError.getMessage();
-			final String publisherCountry = editorialError.getPublisherCountry();
-			final MsnEditorialApiFaultDetail msnFaultDetails = new MsnEditorialApiFaultDetail(code, errorCode, index, disapprovedText, message, publisherCountry);
-			msnList.add(msnFaultDetails);
-		}
-		return msnList;
-	}
+
 
 	public String getKeywordById(String json) throws Exception
 	{
