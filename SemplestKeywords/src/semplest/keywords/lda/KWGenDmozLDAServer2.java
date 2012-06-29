@@ -353,7 +353,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 
 		ArrayList<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		
-		ArrayList<String> bigrams = this.generateNgramsFromString(searchTerms, 2);
+		ArrayList<String> bigrams = this.generateNgramsFromString(searchTerms, 2, false);
 		String[] keywords = bigrams.toArray(new String[bigrams.size()]);
 		GoogleAdwordsServiceImpl g = new GoogleAdwordsServiceImpl();
 		
@@ -416,7 +416,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			boolean in=true;
 			
 			//Generate bigrams and trigrams in search Term and add them to the multi word list to be evaluated
-			ArrayList<String> descripWords = this.generateNgramsFromString(searchTerms, nGrams);
+			ArrayList<String> descripWords = this.generateNgramsFromString(searchTerms, nGrams, false);
 			
 
 			// Generating Multiword alphabet
@@ -485,10 +485,11 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		
 	}
 	
-	private  ArrayList<String> generateNgramsFromString(String string, int nGrams){
+	private  ArrayList<String> generateNgramsFromString(String string, int nGrams, boolean stem){
 		//Given a string returns an ArrayList of all the nGrams groups of words in the string serperated by a blank space
 		ArrayList<String> ngrams = new ArrayList<String>();
-		string = this.stemvStringNoFilter(string, data.dict);
+		if(stem)
+			string = this.stemvStringNoFilter(string, data.dict);
 		String[] words = string.split("\\s+");
 		if(words.length >= nGrams ){
 			for(int i=0; i <= words.length-nGrams; i++){
@@ -809,7 +810,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			//System.out.println("\n"+ (n+2)+" word keywords:");
 			for(KeywordProbabilityObject k: kw){
 				String kaux=k.getKeyword();//.replaceAll("wed", "wedding");
-				System.out.println(kaux);
+				System.out.println(kaux+", "+k.getSemplestProbability());
 			}
 			
 			System.setOut(stdout);
