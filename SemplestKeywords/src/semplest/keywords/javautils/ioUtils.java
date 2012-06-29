@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.HashMap;
 
@@ -21,8 +22,8 @@ import java.nio.charset.Charset;
 import org.apache.log4j.Logger;
 
 public class ioUtils {
-	
-	private static final Logger logger = Logger.getLogger(ioUtils.class);
+
+  private static final Logger logger = Logger.getLogger(ioUtils.class);
 
   // returns nth line of file (indexed from 0) as string
   public static String readLine(String file, int n){
@@ -32,7 +33,7 @@ public class ioUtils {
         r.readLine();
       return r.readLine();
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
       return "";
     }
   }
@@ -54,7 +55,7 @@ public class ioUtils {
           }
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return lines;
   }
@@ -118,6 +119,14 @@ public class ioUtils {
     } catch ( Exception e ){ logger.error("Problem", e);}
     return hash; 
   }
+  // reads file and returns first two columns as a HashMap 
+  public static HashMap<String,Integer> readCount(String file){
+    HashMap<String,String> pairs = readPair( file );
+    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    for( Map.Entry<String,String> e : pairs.entrySet())
+      map.put( e.getKey(), Integer.decode( e.getValue()) );
+    return map;
+  }
   // reads file and returns it as a map of strings with index
   public static HashMap<String,Integer> readFileIndex(String file){
     HashMap<String,Integer> map = new HashMap<String,Integer>();
@@ -166,7 +175,7 @@ public class ioUtils {
           map.put( cols[0].trim(), cols[1].trim() );
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return map;
   }
@@ -187,7 +196,7 @@ public class ioUtils {
         }
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return map;
   }
@@ -204,7 +213,7 @@ public class ioUtils {
         map.put( head, toWc( tail ) );
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return map;
   }
@@ -223,7 +232,7 @@ public class ioUtils {
         count++;
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return map;
   }
@@ -270,7 +279,7 @@ public class ioUtils {
         }
       }
     } catch (Exception e) {
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return map;
   }
@@ -310,7 +319,7 @@ public class ioUtils {
         row++;
       }
     } catch (Exception e ){
-    	logger.error("Problem", e);
+      logger.error("Problem", e);
     }
     return mat;
   }
@@ -370,7 +379,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wc[1] ).intValue(); 
         } catch (Exception e ) {
-        	logger.error("Problem", e);
+          logger.error("Problem", e);
         }
         if( wcount != -1 )
           docv[ index ] = wcount;
@@ -398,7 +407,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wc[1] ); 
         } catch (Exception e ) {
-        	logger.error("Problem", e);
+          logger.error("Problem", e);
         }
         if( wcount != -1 )
           map.put( word, wcount);
@@ -463,7 +472,7 @@ public class ioUtils {
         try {
           wcount = new Integer( wordcount[1] ).intValue(); 
         } catch (Exception e ) {
-        	logger.error("Problem", e);
+          logger.error("Problem", e);
         }
         for( int j=0; j< wcount; j++)
           wordstring = wordstring + word + " ";
