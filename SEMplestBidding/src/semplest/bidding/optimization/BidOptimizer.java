@@ -104,6 +104,7 @@ public class BidOptimizer implements java.io.Serializable {
 		
 	
 		for(int i=0; i<bids.length;i++){
+			bids[i]=Math.min(bids[i],3*targetCPC);
 			wordList.get(i).setBidValue(bids[i]);
 			bidData.put(wordList.get(i).getKeyWord(), bids[i]);
 		}		
