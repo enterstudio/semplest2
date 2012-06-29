@@ -30,7 +30,7 @@ BEGIN
 						from @kwa kwa  
 						LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) m)
 						
-	delete from PromotionKeywordAssociation where PromotionFK = @PromotionId and IsNegative <> 1
+	delete from PromotionKeywordAssociation where PromotionFK = @PromotionId
 						
 	INSERT INTO  PromotionKeywordAssociation (KeywordFK,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle)(
 	select KeywordPk,PromotionFK,CreatedDate,IsActive,IsDeleted,IsNegative,SemplestProbability,IsTargetMSN,IsTargetGoogle
@@ -38,7 +38,7 @@ BEGIN
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
 						from @kwa kwa  
-						INNER JOIN keyword k ON kwa.keyword = k.keyword WHERE NOT EXISTS(select Keywordfk from PromotionKeywordAssociation where KeywordFK=k.KeywordPK and promotionfk=@PromotionId))  n)
+						INNER JOIN keyword k ON kwa.keyword = k.keyword )  n)
 												
 	SELECT @@ROWCOUNT
 END
