@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -144,7 +145,8 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		    		numkw=numKw[i];
 		    }
 			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
-			ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
+			//ArrayList<KeywordProbabilityObject> keywordsList = new ArrayList<KeywordProbabilityObject>();
+			HashSet<KeywordProbabilityObject> set = new HashSet<KeywordProbabilityObject>();
 			int num = 0;
 			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
 				for(KeywordProbabilityObject kw : list1){
@@ -155,12 +157,12 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 						else if(se.toString().equalsIgnoreCase("msn")&& num>=numKw[n])
 							kw.setIsTargetMSN(false);
 					}
-					keywordsList.add(kw);
+					set.add(kw);
 					num++;
 				}
 			}
-			
-			return keywordsList.toArray(new KeywordProbabilityObject[]{});
+
+			return set.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
 			logger.error(e);
 			throw e;
