@@ -216,6 +216,8 @@
 		
 		<!-- If it's a Keyword service, create JAR for SemplestKeywords and put it to SemplestServices/lib -->
 		<if>
+		<equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
+	  	 <then>  	   
 	  	 	<echo message="Starting to compile SemplestKeywords..."/>	 				
 			
 	  	 	<!-- Copy SemplestKeywords/lib to SemplestServices/dist/lib -->
@@ -266,10 +268,7 @@
 	  	 	</jar>
 		 <echo message="Done."/> 
 		
-	  	<!-- If it's a Keyword service, copy data folder -->
-	  	
-	  	 <equals arg1="${semplest.service}" arg2="semplest.service.keywords.lda.KeywordGeneratorService" />
-	  	 <then>  	   
+	  	<!-- If it's a Keyword service, copy data folder -->  	 
 	  	 	<echo message="This is KeywordGeneratorService."/>	 	  	 	
 	  	 	<mkdir dir="${dist}/data"/>
 	  	 	<copydir src="${semplest.keywords.dir}/data"
