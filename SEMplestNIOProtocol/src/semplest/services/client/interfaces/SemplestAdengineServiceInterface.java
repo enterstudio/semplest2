@@ -58,4 +58,7 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean PausePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception;
 	
 	KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
+	
+	public abstract Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception;
+	
 }

@@ -83,6 +83,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
 	private static String ESBWebServerURL = null;
+	private static Long AdwordsValidationAccountID = null;
+	private static Long AdwordsValidationAdGroupID = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -181,7 +183,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 
 		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
-
+		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
+		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 	}
 	
 	
@@ -2938,6 +2941,26 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ArrayList<KeywordToolStats> res =  google.getGoogleKeywordIdeas(keywordArr, numberResults);
 		KeywordToolStats[] statsArr = new KeywordToolStats[res.size()];
 		return res.toArray(statsArr);
+	}
+
+	public String validateGoogleAd(String json) throws Exception
+	{
+		logger.debug("call  validateGoogleAd(String json)" + json);
+		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		String landingPageURL = data.get("landingPageURL");
+		String displayURL = data.get("displayURL");
+		String headline = data.get("headline");
+		String description1 = data.get("description1");
+		String description2 = data.get("description2");
+		Boolean res  = validateGoogleAd(landingPageURL, displayURL, headline, description1, description2);
+		return gson.toJson(res);
+	}
+	@Override
+	public Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2)
+			throws Exception
+	{
+		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+		return google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL, headline, description1, description2);
 	}
 
 }

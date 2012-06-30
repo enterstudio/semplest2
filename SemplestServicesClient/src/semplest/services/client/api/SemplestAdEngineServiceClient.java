@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
@@ -16,6 +17,7 @@ import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 
@@ -1166,6 +1168,23 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		logger.info("JSON [" + json + "]");
 		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
 		return gson.fromJson(returnData, KeywordToolStats[].class);
+	}
+
+	@Override
+	public Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2)
+			throws Exception
+	{
+		String methodName = "validateGoogleAd";
+		HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("landingPageURL",landingPageURL);
+		jsonHash.put("displayURL", displayURL);
+		jsonHash.put("headline", headline);
+		jsonHash.put("description1", description1);
+		jsonHash.put("description2", description2);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		return gson.fromJson(returnData, Boolean.class);
 	}
 	
 }
