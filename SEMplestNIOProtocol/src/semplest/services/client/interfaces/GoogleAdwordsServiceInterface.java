@@ -53,6 +53,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	
 	Long AddAdGroup(String accountID, Long campaignID, String AdGroupName, AdGroupStatus status, Long defaultMicroBid) throws Exception;
 	Map<GoogleAddAdRequest, Long> addTextAds(GoogleAddAdsRequest request) throws Exception;
+    public abstract Boolean validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL,String headline,String description1,String description2) throws Exception;	
 	GoogleAdGroupObject[] getAdGroupsByCampaignId(String accountID, Long campaignID, Boolean includeDeleted) throws Exception;
 	List<Long> deleteAds(String accountID, Long adGroupID, List<Long> adIds) throws Exception;
 	Map<UpdateAdRequest, Long> updateAds(UpdateAdsRequestObj request) throws Exception;

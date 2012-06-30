@@ -725,6 +725,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public Boolean validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL, String headline, String description1,
+			String description2) throws Exception
+	{
+		throw new Exception("ValidateAd not implemented in Google client - see AdEngine");
+	}
 	
 
 }
