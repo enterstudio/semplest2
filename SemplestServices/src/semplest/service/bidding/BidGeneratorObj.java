@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -31,10 +32,13 @@ import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
+import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.util.SemplestUtils;
@@ -97,9 +101,9 @@ public class BidGeneratorObj
 	 * not selected by optimizer
 	 */
 
-	private HashMap<String, EstimatorData> clickDataMap = new HashMap<String, EstimatorData>();
-	private HashMap<String, EstimatorData> costDataMap = new HashMap<String, EstimatorData>();
-	private HashMap<String, EstimatorData> cpcDataMap = new HashMap<String, EstimatorData>();
+	private HashMap<String, EstimatorData> clickDataMap;
+	private HashMap<String, EstimatorData> costDataMap;
+	private HashMap<String, EstimatorData> cpcDataMap;
 
 
 	public BidGeneratorObj() throws Exception
@@ -185,7 +189,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// declarations
 		int k;
-		TrafficEstimatorObject o = null, o2 = null;
+		TrafficEstimatorObject o = null;
 
 		logger.info("setBidsInitial called for ad engine " + searchEngine);
 
@@ -328,8 +332,21 @@ public class BidGeneratorObj
 			try{ 
 				Keyword[] kwList = msnClient.getKeywordByAdGroupId(msnAccountID, adGroupID);
 				o = getTrafficEstimatorDataForMSN(kwList);
+				
+				String [] keyListTE = o.getListOfKeywords();
+				for(String s : keyListTE){
+					compKeywords.add(s);
+				}
+				for(Keyword kw : kwList){
+					String s = kw.getText();
+					wordIDMap.put(s, kw.getId());
+					if(!compKeywords.contains(s)){
+						nonCompKeywords.add(s);
+					}
+				}
+				
 			} catch (Exception e) {
-				logger.error("Failed to get MSN traffic keywords and estimator data. " + e.getMessage(), e);
+				logger.error("Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
 				throw new Exception("Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
 			}
 		} // if(searchEngine.equalsIgnoreCase(msn))
@@ -337,7 +354,7 @@ public class BidGeneratorObj
 		
 		
 		
-		
+		/*
 		
 		if (searchEngine == AdEngine.MSN)
 		{
@@ -374,6 +391,7 @@ public class BidGeneratorObj
 				Boolean isDefaultValue = false;
 				Boolean isActive = true;
 				Boolean isNegative = false;
+				
 
 				bidsMatchTypeMSN_Temp.add(new BidElement(w.getText(), w.getId(), 1000000L, matchType, competitiveType, isDefaultValue, isActive,
 						isNegative));
@@ -408,18 +426,17 @@ public class BidGeneratorObj
 				throw new Exception("Failed to update bids to MSN. " + e.getMessage(), e);
 			}
 
-			/*
-			 * final String msg =
-			 * "Method NOT CORRECTLY implemented for MSN yet!! The present code is a temporary fix for integration testing!"
-			 * ; logger.info(msg);
-			 */
+			
+			 final String msg ="Method NOT CORRECTLY implemented for MSN yet!! The present code is a temporary fix for integration testing!"; 
+			 logger.info(msg);
+			 
 
 			return new Boolean(true);
 
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
 		
-		
+		*/
 		
 		
 		
@@ -473,7 +490,7 @@ public class BidGeneratorObj
 			Arrays.sort(bidArray);
 			//public KeyWord(String name, double score, double[] bid, double[] Clicks,
 			//	      double[] CPC, double[] Pos, double[] DCost, Double cutoff, Double clickFactor)
-			bidOptimizer.addKeyWord(new KeyWord(s, qualityScoreMap.get(s).doubleValue(), bidArray, clickDataMap.get(s).getData(bidArray), 
+			bidOptimizer.addKeyWord(new KeyWord(s, (qualityScoreMap.get(s)==null ? 10.0 : qualityScoreMap.get(s).doubleValue()), bidArray, clickDataMap.get(s).getData(bidArray), 
 					cpcDataMap.get(s).getData(bidArray), null, costDataMap.get(s).getData(bidArray), 0.05 ,1.0));
 			//notSelectedKeywords.add(s);
 		}
@@ -510,7 +527,8 @@ public class BidGeneratorObj
 		{
 			for (String s : notSelectedKeywords){
 				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
-				wordBidMap.put(s, defaultMicroBid);
+				//wordBidMap.put(s, defaultMicroBid);
+				wordBidMap.put(s, null);
 				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
 
 			}
@@ -524,7 +542,8 @@ public class BidGeneratorObj
 			for (String s : nonCompKeywords)
 			{
 				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
-				wordBidMap.put(s, defaultMicroBid);
+				//wordBidMap.put(s, defaultMicroBid);
+				wordBidMap.put(s, null);
 				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
 
 
@@ -621,32 +640,23 @@ public class BidGeneratorObj
 		
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
-		if (searchEngine == AdEngine.Google)
-		{
-			if (o != null)
-			{
-				try
-				{
-					SemplestDB.storeTrafficEstimatorData(promotionID, AdEngine.Google, o);
-				}
-				catch (Exception e)
-				{
-					logger.error("Failed to write traffic estimator data " + e.getMessage(), e);
-					// e.printStackTrace();
-					throw new Exception("Failed to write traffic estimator data " + e.getMessage(), e);
-				}
-				logger.info("Stored traffic estimator data to database");
-			}
-			else
-			{
-				logger.info("No traffic estimator data to write to the database");
-			}
-		} // if(searchEngine.equalsIgnoreCase(google))
 
-		if (searchEngine == AdEngine.MSN)
-		{
-			throw new Exception("Method not implemented for MSN yet!!");
-		} // if(searchEngine.equalsIgnoreCase(msn))
+		if (o != null) {
+			try {
+				SemplestDB.storeTrafficEstimatorData(promotionID, searchEngine,o);
+			} catch (Exception e) {
+				logger.error(
+						"Failed to write traffic estimator data "
+								+ e.getMessage(), e);
+				// e.printStackTrace();
+				throw new Exception("Failed to write traffic estimator data "+ e.getMessage(), e);
+			}
+			logger.info("Stored traffic estimator data to database");
+		} else {
+			logger.info("No traffic estimator data to write to the database");
+		}
+
+
 		
 		
 
@@ -760,17 +770,21 @@ public class BidGeneratorObj
 			}
 		} 
 
-		if (searchEngine == AdEngine.MSN)
-		{
-			throw new Exception("Method not implemented for MSN yet!!");
+		if (searchEngine == AdEngine.MSN) {
+			try {
+				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID,bidsMatchType);
+			} catch (Exception e) {
+				logger.error("ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
+				throw new Exception("Failed to update bids to MSN. "+ e.getMessage(), e);
+			}
+
 		} // if(searchEngine.equalsIgnoreCase(msn))
 
 		logger.info("Updated bids and match type for keywords via the search engine API.");
 
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
-		if (searchEngine == AdEngine.Google)
-		{
+		if (searchEngine == AdEngine.Google){
 			k = 0;
 			while (true) {
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
@@ -790,6 +804,15 @@ public class BidGeneratorObj
 				} // try-catch
 			} // while(true)
 		}
+		if(searchEngine == AdEngine.MSN){
+			try{
+				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, defaultMicroBid.doubleValue()*1e-6, 0.05, 0.05);
+			} catch(Exception e){
+				logger.error( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				throw new Exception( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+			}
+		}
+		
 		logger.info("Updated the default bid via search engine API.");
 
 		return new Boolean(true);
@@ -803,10 +826,27 @@ public class BidGeneratorObj
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
 		isFirstCall = false;
-		logger.info("setBidsUpdate called. presently not doing anything!!");
-		// throw new Exception("setBidsUpdate not yet implemented!!");
+    	logger.info("setBidsUpdate called!!");
 
-		return new Boolean(true);
+		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(promotionID);
+		PromotionObj promotion = getPromoDataSP.getPromotionData();
+		logger.info("Promotion creation date: "+promotion.getCreatedDate());
+		logger.info("Promotion start date: "+promotion.getPromotionStartDate());
+		Date d = promotion.getPromotionStartDate();
+		Date today = new Date();
+		Long diff = today.getTime() - d.getTime();
+		long age = diff / (1000 * 60 * 60 * 24);
+
+	    logger.info("The campaign started "+ age + " day(s) ago.");
+	    
+	    if(age==2 || (age%7==0)){
+	    	logger.info("Executing update bids method...");
+	    	return setBidsInitial(promotionID, searchEngine, budgetData); 
+	    } else {
+	    	logger.info("setBidsUpdate not doing anything TODAY!!");
+	    	return new Boolean(true);
+	    }
 	} // setBidsUpdate()
 
 	
@@ -816,6 +856,11 @@ public class BidGeneratorObj
 		ArrayList<String> keywords;
 		
 		b.add(0.05);
+		double bid = 0.25;
+		while(bid<10){
+			b.add(bid);
+			bid+=0.25;
+		}
 		
 		Long[] bidsMoney = new Long[b.size()]; 
 	    for(int f =0 ; f< b.size();f++){
@@ -838,6 +883,27 @@ public class BidGeneratorObj
 	        	keywords = new ArrayList<String>();
 	    	} 
 	    }
+	    
+	    
+	    for(String s : o.getListOfKeywords()){
+			logger.info("Got Traffic estimator data for keyword "+s);
+			
+			EstimatorData clickDataObj = new EstimatorData();
+			EstimatorData costDataObj = new EstimatorData();
+			EstimatorData cpcDataObj = new EstimatorData();
+			
+			String matchType = ProtocolEnum.SemplestMatchType.Exact.name();
+			HashMap<Long,BidData> points = o.getMapOfPoints(s, matchType);
+			for(long abid : points.keySet()){
+				clickDataObj.addData(abid / 1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay()) / 2);
+				costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())/ (2 * 1e6));
+				cpcDataObj.addData(abid / 1e6, (points.get(abid).getMaxAveCPC() + points.get(abid).getMinAveCPC())/ (2 * 1e6));
+			}
+			clickDataMap.put(s, clickDataObj);
+			costDataMap.put(s, costDataObj);
+			cpcDataMap.put(s, cpcDataObj);
+	    }
+	    
 		return o;
 	}
 	
@@ -1261,9 +1327,10 @@ public class BidGeneratorObj
 				object.wait();
 			}
 
+			
 			System.out.println("Testing Google inital bidding!");
 
-			BidGeneratorObj bidObject = new BidGeneratorObj();
+			//BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			Integer promotionID = new Integer(60);
 			// Integer promotionID = new Integer(60);
@@ -1271,7 +1338,40 @@ public class BidGeneratorObj
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			
+			
+			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
+			for(BidElement b : bidData){
+				System.out.println(b.getKeyword()+": "+b.getCompetitiveType()+", "+b.getMicroBidAmount());
+				b.setCompetitiveType(ProtocolEnum.SemplestCompetitionType.Comp.name());
+			}
+			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
+			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
+
+			for(BidElement b : bidData){
+				System.out.println(b.getKeyword()+": "+b.getCompetitiveType()+", "+b.getMicroBidAmount());
+			}
+			
+			
+			/*
+			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(promotionID);
+			PromotionObj promotion = getPromoDataSP.getPromotionData();
+			System.out.println(promotion.getCreatedDate());
+			System.out.println(promotion.getPromotionStartDate());
+			Date d = promotion.getPromotionStartDate();
+			Date today = new Date();
+			Long diff = today.getTime() - d.getTime();
+			//System.out.println(d.getDate());
+
+		    System.out.println("The 21st century (up to " + today + ") is "
+		        + (diff / (1000 * 60 * 60 * 24)) + " days old.");
+			*/
+			
+			
+		
+			
 		}
 		catch (Exception e)
 		{
