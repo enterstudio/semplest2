@@ -112,18 +112,21 @@ namespace Semplest.Core.Controllers
             var userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var reportDate = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid);
+            var reportDate = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate);
             var reports = new List<ReportChartModel>();
             var reports1 = new List<ReportChartModel>();
+            
             var grp = reportDate.GroupBy(t => new { t.PromotionFK, t.PromotionName, t.TransactionDate });
             foreach (var data in grp)
             {
-                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick), Impressions = data.Sum(t => t.NumberImpressions), Date = data.Key.TransactionDate.ToString("MM/dd"), LivePromotions = data.Count(t => t.IsActive), NonLivePromotions = data.Count(t => !t.IsActive), PromotionId = data.Key.PromotionFK, PromotionName = data.Key.PromotionName });
+                var count = data.Count();
+                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.TransactionDate.ToString("MM/dd"), LivePromotions = data.Count(t => t.IsActive), NonLivePromotions = data.Count(t => !t.IsActive), PromotionId = data.Key.PromotionFK, PromotionName = data.Key.PromotionName });
             }
             var grp1 = reports.GroupBy(t => new { t.PromotionId, t.PromotionName, t.Date });
             foreach (var data in grp1)
             {
-                reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks), Impressions = data.Sum(t => t.Impressions), Date = data.Key.Date, LivePromotions = data.Sum(t => t.LivePromotions), NonLivePromotions = data.Sum(t => t.NonLivePromotions), PromotionId = data.Key.PromotionId, PromotionName = data.Key.PromotionName });
+                var count = data.Count();
+                reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key.Date, LivePromotions = data.Sum(t => t.LivePromotions), NonLivePromotions = data.Sum(t => t.NonLivePromotions), PromotionId = data.Key.PromotionId, PromotionName = data.Key.PromotionName });
             }
             return Json(reports1, JsonRequestBehavior.AllowGet);
         }
@@ -134,7 +137,7 @@ namespace Semplest.Core.Controllers
             var userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var reportData = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.IsActive).Select(q => new PromotionModel { PromotionId = q.PromotionFK, PromotionName = q.PromotionName }).Distinct();
+            var reportData = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.IsActive&& t.TransactionDate >= startDate && t.TransactionDate <= endDate).Select(q => new PromotionModel { PromotionId = q.PromotionFK, PromotionName = q.PromotionName }).Distinct();
             return Json(reportData, JsonRequestBehavior.AllowGet);
         }
         public ActionResult GetNonLivePromotions(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
@@ -143,7 +146,7 @@ namespace Semplest.Core.Controllers
             var userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var reportData = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && !t.IsActive).Select(q => new PromotionModel { PromotionId = q.PromotionFK, PromotionName = q.PromotionName }).Distinct();
+            var reportData = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && !t.IsActive&& t.TransactionDate >= startDate && t.TransactionDate <= endDate).Select(q => new PromotionModel { PromotionId = q.PromotionFK, PromotionName = q.PromotionName }).Distinct();
             return Json(reportData, JsonRequestBehavior.AllowGet);
         }
     }
