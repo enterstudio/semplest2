@@ -1,5 +1,6 @@
 package semplest.server.service.adengine;
 
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
+import semplest.server.protocol.google.AdValidation;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
@@ -72,6 +74,7 @@ import com.google.api.adwords.v201109.cm.Campaign;
 import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.google.api.adwords.v201109.mcm.Account;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.CampaignStatus;
@@ -2949,18 +2952,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		String landingPageURL = data.get("landingPageURL");
 		String displayURL = data.get("displayURL");
-		String headline = data.get("headline");
-		String description1 = data.get("description1");
-		String description2 = data.get("description2");
-		Boolean res  = validateGoogleAd(landingPageURL, displayURL, headline, description1, description2);
+		Type type = new TypeToken<List<GoogleAddAdRequest>>(){}.getType();
+		List<GoogleAddAdRequest> ads = gson.fromJson(data.get("ads"), type);
+		List<AdValidation[]> res  = validateGoogleAd(landingPageURL, displayURL, ads);
 		return gson.toJson(res);
 	}
 	@Override
-	public Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2)
+	public List<AdValidation[]> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads)
 			throws Exception
 	{
+		List<AdValidation[]> res = new ArrayList<AdValidation[]>();
 		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-		return google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL, headline, description1, description2);
+		for (GoogleAddAdRequest oneAd : ads)
+		{
+			AdValidation[] ret = google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL,oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
+			res.add(ret);
+		}
+		return res;
 	}
 
 }

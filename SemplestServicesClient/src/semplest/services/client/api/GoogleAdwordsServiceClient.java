@@ -12,12 +12,13 @@ import semplest.other.DateTimeCeiling;
 import semplest.other.DateTimeFloored;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
-import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.google.AdValidation;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
@@ -727,7 +728,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Boolean validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL, String headline, String description1,
+	public AdValidation[] validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL, String headline, String description1,
 			String description2) throws Exception
 	{
 		throw new Exception("ValidateAd not implemented in Google client - see AdEngine");

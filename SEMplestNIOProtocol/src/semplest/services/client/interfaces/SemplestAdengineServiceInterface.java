@@ -4,6 +4,8 @@ import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 
 public interface SemplestAdengineServiceInterface extends ServiceInitialize
@@ -59,6 +61,6 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	
 	KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
 	
-	public abstract Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception;
+	public abstract List<AdValidation[]> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
 	
 }

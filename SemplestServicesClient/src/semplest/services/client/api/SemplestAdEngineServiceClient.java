@@ -1,5 +1,6 @@
 package semplest.services.client.api;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,12 +15,15 @@ import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
+import semplest.server.protocol.adengine.AdEngineInitialData;
+import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
-import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class SemplestAdEngineServiceClient extends ServiceRun implements SemplestAdengineServiceInterface, SchedulerTaskRunnerInterface
 {
@@ -28,7 +32,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	private static String BASEURLTEST = "http://23.22.63.111:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "300000";  //5 mins
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -37,8 +41,26 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static void main(String[] args) throws Exception
 	{
 		BasicConfigurator.configure();
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
-		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://172.18.9.26:9898/semplest");
+		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
+		String landingPageURL = "http://www.semplest.com";
+		String displayURL = landingPageURL;
+		String headline = "hello";
+		String description1= "This is a test";
+		String description2 = "description2 ";
+		List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>();
+		GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1, description2);
+		GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2);
+		ads.add(ad1);
+		ads.add(ad2);
+		List<AdValidation[]> results = client.validateGoogleAd(landingPageURL, displayURL, ads);
+		for (AdValidation[] res : results)
+		{
+			for (int i = 0; i < res.length; i++)
+			{
+				System.out.println(res[i].getPolicyName() + res[i].getPolicyDescription());
+			}
+		}
 /*
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
@@ -1171,20 +1193,20 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public Boolean validateGoogleAd(String landingPageURL, String displayURL, String headline, String description1, String description2)
+	public List<AdValidation[]> validateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
 			throws Exception
 	{
 		String methodName = "validateGoogleAd";
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("landingPageURL",landingPageURL);
 		jsonHash.put("displayURL", displayURL);
-		jsonHash.put("headline", headline);
-		jsonHash.put("description1", description1);
-		jsonHash.put("description2", description2);
+		String adsStr = gson.toJson(ads, ArrayList.class);
+		jsonHash.put("ads",adsStr);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		return gson.fromJson(returnData, Boolean.class);
+		Type type = new TypeToken<List<AdValidation[]>>(){}.getType();
+		return gson.fromJson(returnData,type);
 	}
 	
 }

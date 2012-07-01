@@ -39,6 +39,7 @@ import semplest.server.protocol.google.AdGroupCriterionGetRetriableGoogleOperati
 import semplest.server.protocol.google.AdGroupCriterionMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupGetRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupMutateRetriableGoogleOperation;
+import semplest.server.protocol.google.AdValidation;
 import semplest.server.protocol.google.BudgetOrderMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.CampaignAdExtensionGetRetriableGoogleOperation;
 import semplest.server.protocol.google.CampaignAdExtensionMutateRetriableGoogleOperation;
@@ -241,17 +242,24 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				object.wait();
 			}
-			String accountID = "2387614989";
-			Long adgroupID = 4766339711L;
+			String accountID = "2387614989";//"54104"; //
+			Long adgroupID = 4766339711L;//3066603844L; // 
 			String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
-			String headline = "shit";
+			String headline = "hello";
 			String description1= "This is a test";
 			String description2 = "description2 ";
 
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			Boolean res = test.validateAd(accountID, adgroupID,landingPageURL, displayURL, headline, description1, description2);
-			System.out.println("validate ad res = " + res);
+			AdValidation[] res = test.validateAd(accountID, adgroupID,landingPageURL, displayURL, headline, description1, description2);
+			if (res.length > 0)
+			{
+				for (int i =0; i < res.length; i++)
+				{
+					System.out.println("validate ad res = " + res[i].getPolicyName() + ":" + res[i].getPolicyDescription() + ":" + res[i].getViolatingText() + ":" + res[i].getField() + ":" + res[i].getIsPolicyViolationError() );
+				}
+			}
+			
 			/*
 			 * final GoogleAddAdRequest req = new GoogleAddAdRequest(75, "555555555frozen yogurt", "1111111any flavor", "33333333333healthy");
 			 
@@ -4096,9 +4104,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Boolean validateAd(String accountID,Long adgroupID, String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception
+	public AdValidation[] validateAd(String accountID,Long adgroupID, String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception
 	{
-		
+		ArrayList<AdValidation> errors = new ArrayList<AdValidation>();
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		AdGroupAdServiceInterface adGroupAdService = (AdGroupAdServiceInterface) user.getValidationService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
 
@@ -4126,20 +4134,29 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ApiException e)
 		{
-			String errorList = "";
 			for (ApiError error : e.getErrors())
 			{
-				errorList = errorList + error.getErrorString() + ":" + error.getFieldPath() + ";";
-				/*
+				AdValidation err = new AdValidation();
+				
 				if (error instanceof PolicyViolationError)
 				{
 					PolicyViolationError policyError = (PolicyViolationError) error;
-					errorList = errorList + policyError.getErrorString() + ";";
+					err.setField(policyError.getFieldPath());
+					err.setIsPolicyViolationError(true);
+					err.setPolicyDescription(policyError.getExternalPolicyDescription());
+					err.setPolicyName(policyError.getExternalPolicyName());
+					err.setViolatingText(policyError.getKey().getViolatingText());
 				}
-				*/
+				else
+				{
+					err.setIsPolicyViolationError(false);
+					err.setPolicyDescription(error.getErrorString());
+					err.setField(error.getFieldPath());
+				}
+				
+				errors.add(err);
 			}
-			throw new Exception(errorList);
 		}
-		return true;
+		return errors.toArray(new AdValidation[errors.size()]);
 	}
 }
