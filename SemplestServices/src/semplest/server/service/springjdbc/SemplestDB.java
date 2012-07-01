@@ -568,7 +568,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static void storeBidObjects(int promotionID, AdEngine advertisingEngine, ArrayList<BidElement> bidObjects) throws Exception
+	public static void storeBidObjects(int promotionID, AdEngine advertisingEngine, List<BidElement> bidObjects) throws Exception
 	{
 		if (bidObjects != null && bidObjects.size() > 0)
 		{
