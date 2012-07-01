@@ -50,41 +50,17 @@
                             field: "Clicks",
                             name: "Clicks",
                             type: "line"
-                        },
-            {
-                field: "LivePromotions",
-                name: "LivePromotions",
-                stack: true,
-                type: "column"
-            }, {
-                field: "NonLivePromotions",
-                name: "NonLivePromotions",
-                stack: true,
-                type: "column"
-            }],
+                        }],
                 categoryAxis: {
                     field: "Date",
-                    axisCrossingValue: [0, 0, 100, 100]
+                    axisCrossingValue: [0, 100]
                 },
                 valueAxis: [
-            {
-                labels: { format: "{0:N0}" },
-                title: { text: "Live" },
-                min: 0,
-                max: 200,
-                majorUnit: 20
-            },
+            
             {
                 labels: { format: "{0:N0}" },
                 title: { text: "Impressions" },
                 majorUnit: 2000
-            },
-            {
-                labels: { format: "{0:N0}" },
-                title: { text: "NonLive" },
-                min: 0,
-                max: 200,
-                majorUnit: 20
             },
             {
                 labels: { format: "{0:N0}" },
