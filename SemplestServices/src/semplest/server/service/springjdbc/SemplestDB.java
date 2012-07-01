@@ -577,7 +577,7 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(), advertisingEngine, bid.getIsNegative());
+					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(), advertisingEngine, bid.getIsNegative(), bid.getCompetitiveType());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
