@@ -69,6 +69,8 @@ public class BidGeneratorObj
 	private Long msnAccountID = null;
 	private Long campaignID;
 	private Long adGroupID;
+	
+	private boolean isFirstCall = true;
 
 	private GoogleAdwordsServiceImpl clientGoogle;
 	private MsnCloudServiceImpl msnClient;
@@ -244,7 +246,7 @@ public class BidGeneratorObj
 					if (k <= maxRetry) {
 						logger.error("Received exception getAllBiddableAdGroupCriteria AccountID = "
 								+ googleAccountID + " AdGroupID = "+ String.valueOf(adGroupID)+ ": will retry..., k=" + k
-										+ e.getMessage(), e);
+								+ e.getMessage(), e);
 						k++;
 					} else {
 						logger.error("Failed to get BiddableAdGroupCriteria from Google after "+ k + " efforts " + e.getMessage(), e);
@@ -800,6 +802,7 @@ public class BidGeneratorObj
 
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
 	{
+		isFirstCall = false;
 		logger.info("setBidsUpdate called. presently not doing anything!!");
 		// throw new Exception("setBidsUpdate not yet implemented!!");
 
@@ -924,8 +927,8 @@ public class BidGeneratorObj
 							/ (2 * 1e6));
 					cpcDataMap.put(words[i], cpcDataObj);
 //				}
-				}
 			}
+		}
 		logger.info("Number of intermediate competitive keywords: " + compKeywords.size());
 		if(compKeywords.size()==0){
 			return o;
@@ -965,6 +968,7 @@ public class BidGeneratorObj
 				}
 			}
 		}
+
 		words = o.getListOfKeywords();
 		for (int i = 0; i < words.length; i++)
 		{
@@ -1177,432 +1181,7 @@ public class BidGeneratorObj
 
 	}
 
-	public void getBidsInitialGoogle(String accountID, Long campaignID, Long adGroupID) throws Exception
-	{
-
-		logger.info("Computing initial bids for Google campaign...");
-
-		// **************************************************************************
-
-		// GoogleAdwordsServiceClient client = new
-		// GoogleAdwordsServiceClient(null);
-		GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-
-		CampaignBid bidOptimizer = new CampaignBid();
-
-		HashMap<String, Double> bidData = new HashMap<String, Double>();
-
-		// A0. Add the keywords to the campaign
-
-		// Long maxCPC = 1000000L; // bid in microBidAmount;
-		// addWords(accountID, campaignID, adGroupID, keywords, maxCPC);
-
-		// A. get the bid information from ad campaign
-
-		// first get static information from GOOGLE: first page CPC and quality
-		// score
-		// and form competitive and non-competitive groups
-
-		KeywordDataObject[] keywordDataObjs = null;
-		KeywordDataObject keywordDataObj;
-		TrafficEstimatorObject o;
-
-		int k;
-
-		try
-		{
-			keywordDataObjs = client.getAllBiddableAdGroupCriteria(accountID, adGroupID, true);
-		}
-		catch (Exception e)
-		{
-			logger.error("Problem", e);
-		}
-
-		HashMap<String, Long> firstPageCPCMap = new HashMap<String, Long>();
-		HashMap<String, Double> qualityScoreMap = new HashMap<String, Double>();
-		HashMap<String, String> statusMap = new HashMap<String, String>();
-
-		HashSet<String> compKeywords = new HashSet<String>(); // competitive
-		HashSet<String> nonCompKeywords = new HashSet<String>(); // non-competitive
-		HashSet<String> noInfoKeywords = new HashSet<String>(); // non-competitive
-
-		for (int i = 0; i < keywordDataObjs.length; i++)
-		{
-			keywordDataObj = keywordDataObjs[i];
-			if (keywordDataObj.getFirstPageCpc() == null)
-			{
-				noInfoKeywords.add(keywordDataObj.getKeyword());
-			}
-			else
-			{
-				// logger.info((i+1)+": "+keywordDataObj.getKeyword()+": "+keywordDataObj.getFirstPageCpc()*1e-6
-				// + ": " + keywordDataObj.getQualityScore()+ ", Status: "+
-				// keywordDataObj.getStatus());
-				firstPageCPCMap.put(keywordDataObj.getKeyword(), new Long(keywordDataObj.getFirstPageCpc()));
-				qualityScoreMap.put(keywordDataObj.getKeyword(), new Double(Math.pow(keywordDataObj.getQualityScore(), 1)));
-				statusMap.put(keywordDataObj.getKeyword(), keywordDataObj.getApprovalStatus());
-				if (keywordDataObj.isIsEligibleForShowing())
-				{
-					compKeywords.add(keywordDataObj.getKeyword());
-				}
-				else
-				{
-					nonCompKeywords.add(keywordDataObj.getKeyword());
-				}
-			}
-		} // for(int i=0; i<keywordDataObjs.length; i++)
-
-		// **************************************************************************
-
-		// B. Gather traffic estimator data
-
-		// first competitive keywords
-		HashMap<String, EstimatorData> clickDataMap = new HashMap<String, EstimatorData>();
-		HashMap<String, EstimatorData> costDataMap = new HashMap<String, EstimatorData>();
-
-		// get info for the first page CPC point
-		HashMap<String, Long> bids = new HashMap<String, Long>();
-		for (String s : compKeywords)
-		{
-			bids.put(s, firstPageCPCMap.get(s) + 100000L); // $0.10 above fp CPC
-		}
-		System.out.println("Number of initial competitive keywords: " + bids.size());
-
-		k = 0;
-		while (true)
-		{
-			Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-			try
-			{
-				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
-				break;
-			}
-			catch (Exception e)
-			{
-				if (k <= maxRetry)
-				{
-					logger.error("Received exception : will retry..., k=" + k, e);
-					k++;
-				}
-				else
-				{
-					throw new Exception("Failed to get traffic estimator data from Google after " + k + " efforts", e);
-				}
-			}
-		}
-
-		String[] words = o.getListOfKeywords();
-		for (int i = 0; i < words.length; i++)
-		{
-			HashMap<Long, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i], KeywordMatchType.EXACT.getValue());
-			Iterator<Long> bidIT = points.keySet().iterator();
-			while (bidIT.hasNext())
-			{
-				Long abid = bidIT.next();
-				if (points.get(abid).getMaxTotalDailyMicroCost() < 10000L)
-				{
-					// System.out.println("Moving keyword \""+words[i]+"\" to non-competitive category from competitive category.");
-					// System.out.println(words[i] + ": " + abid/1e6 + ": " +
-					// points.get(abid).getMaxAveCPC()/1e6 + ": " +
-					// points.get(abid).getMaxClickPerDay());
-					compKeywords.remove(words[i]);
-					nonCompKeywords.add(words[i]);
-					continue;
-				}
-				else
-				{
-					System.out.println(words[i] + ":: Total daily cost: $" + points.get(abid).getMaxTotalDailyMicroCost() / 1e6);
-
-					// System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-					// System.out.println(words[i] + ": " + abid/1e6 + ": " +
-					// points.get(abid).getMaxAveCPC()/1e6 + ": " +
-					// points.get(abid).getMaxClickPerDay());
-
-					EstimatorData clickDataObj = new EstimatorData();
-					clickDataObj.addData(abid / 1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay()) / 2);
-					clickDataMap.put(words[i], clickDataObj);
-
-					EstimatorData costDataObj = new EstimatorData();
-					costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
-							/ (2 * 1e6));
-					costDataMap.put(words[i], costDataObj);
-				}
-			}
-		}
-		System.out.println("Number of intermediate competitive keywords: " + compKeywords.size());
-
-		// get the second point
-		bids = new HashMap<String, Long>();
-		for (String s : compKeywords)
-		{
-			bids.put(s, firstPageCPCMap.get(s) + 600000L);
-		}
-		k = 0;
-		while (true)
-		{
-			Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-			try
-			{
-				o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
-				break;
-			}
-			catch (Exception e)
-			{
-				if (k <= maxRetry)
-				{
-					logger.error("Received exception : will retry..., k=" + k, e);
-					k++;
-				}
-				else
-				{
-					throw new Exception("Failed to get traffic estimator data from Google after " + k + " efforts", e);
-				}
-			}
-		}
-		words = o.getListOfKeywords();
-		for (int i = 0; i < words.length; i++)
-		{
-			HashMap<Long, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i], KeywordMatchType.EXACT.getValue());
-			Iterator<Long> bidIT = points.keySet().iterator();
-			while (bidIT.hasNext())
-			{
-				Long abid = bidIT.next();
-
-				// System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-				// System.out.println(words[i] + ": " + abid/1e6 + ": " +
-				// points.get(abid).getMaxAveCPC()/1e6 + ": " +
-				// points.get(abid).getMaxClickPerDay());
-
-				EstimatorData clickDataObj = clickDataMap.get(words[i]);
-				clickDataObj.addData(abid / 1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay()) / 2);
-				clickDataMap.put(words[i], clickDataObj);
-
-				EstimatorData costDataObj = costDataMap.get(words[i]);
-				costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
-						/ (2 * 1e6));
-				costDataMap.put(words[i], costDataObj);
-
-				System.out.println(words[i] + ":: Total daily cost: $" + points.get(abid).getMaxTotalDailyMicroCost() / 1e6);
-
-				/*
-				 * // now check if we are getting the same data double []
-				 * bidArray = costDataMap.get(words[i]).getBidArray();
-				 * Arrays.sort(bidArray); double [] costArray =
-				 * costDataMap.get(words[i]).getData(bidArray); if
-				 * (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
-				 * // System.out.println("Moving keyword \""+words[i]+
-				 * "\" to non-competitive category from competitive category.");
-				 * compKeywords.remove(words[i]); nonCompKeywords.add(words[i]);
-				 * clickDataMap.remove(words[i]); costDataMap.remove(words[i]);
-				 * continue; }
-				 */
-
-			}
-		}
-
-		// get the next 4 points uniformly (for the time being)
-		for (int j = 2; j < 8; j++)
-		{
-			bids = new HashMap<String, Long>();
-			for (String s : compKeywords)
-			{
-				bids.put(s, firstPageCPCMap.get(s) + j * 800000L);
-			}
-			System.out.println("j=" + j);
-			k = 0;
-			while (true)
-			{
-				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-				try
-				{
-					o = getTrafficEstimationForKeywordsGoogle(googleAccountID, campaignID, KeywordMatchType.EXACT, bids);
-					break;
-				}
-				catch (Exception e)
-				{
-					if (k <= maxRetry)
-					{
-						logger.error("Received exception : will retry..., k=" + k, e);
-						k++;
-					}
-					else
-					{
-						throw new Exception("Failed to get traffic estimator data from Google after " + k + " efforts", e);
-					}
-				}
-			}
-			words = o.getListOfKeywords();
-			for (int i = 0; i < words.length; i++)
-			{
-				HashMap<Long, TrafficEstimatorObject.BidData> points = o.getMapOfPoints(words[i], KeywordMatchType.EXACT.getValue());
-				Iterator<Long> bidIT = points.keySet().iterator();
-				while (bidIT.hasNext())
-				{
-					Long abid = bidIT.next();
-
-					// System.out.println("Got valid data from traffic estimator for keyword \""+words[i]+"\".");
-					// System.out.println(words[i] + ": " + abid/1e6 + ": " +
-					// points.get(abid).getMaxAveCPC()/1e6 + ": " +
-					// points.get(abid).getMaxClickPerDay());
-
-					EstimatorData clickDataObj = clickDataMap.get(words[i]);
-					clickDataObj.addData(abid / 1e6, (points.get(abid).getMaxClickPerDay() + points.get(abid).getMinClickPerDay()) / 2);
-					clickDataMap.put(words[i], clickDataObj);
-
-					EstimatorData costDataObj = costDataMap.get(words[i]);
-					costDataObj.addData(abid / 1e6, (points.get(abid).getMaxTotalDailyMicroCost() + points.get(abid).getMinTotalDailyMicroCost())
-							/ (2 * 1e6));
-					costDataMap.put(words[i], costDataObj);
-
-					System.out.println(words[i] + ":: Total daily cost: $" + points.get(abid).getMaxTotalDailyMicroCost() / 1e6);
-
-				}
-			}
-		} // for( int j=0; j<4; j++)
-
-		for (int i = 0; i < words.length; i++)
-		{
-			// now check if we are getting the same data
-			double[] bidArray = costDataMap.get(words[i]).getBidArray();
-			Arrays.sort(bidArray);
-			double[] costArray = costDataMap.get(words[i]).getData(bidArray);
-			// if (Math.abs(costArray[0]-costArray[costArray.length-1])<1e-6){
-			if (costArray[costArray.length - 1] < costArray[0] + 1e-4)
-			{
-				System.out.println("Moving keyword \"" + words[i] + "\" to non-competitive category from competitive category.");
-				compKeywords.remove(words[i]);
-				nonCompKeywords.add(words[i]);
-				clickDataMap.remove(words[i]);
-				costDataMap.remove(words[i]);
-				continue;
-			}
-		}
-
-		System.out.println("Number of final competitive keywords: " + compKeywords.size());
-
-		// **************************************************************************
-
-		// C. Compute bids for competitive keywords
-
-		for (String s : compKeywords)
-		{
-			double[] bidArray = costDataMap.get(s).getBidArray();
-			Arrays.sort(bidArray);
-			// System.out.println(s);
-			try
-			{
-				bidOptimizer.addKeyWord(new KeyWord(s, qualityScoreMap.get(s).doubleValue(), bidArray, clickDataMap.get(s).getData(bidArray), null,
-						null, costDataMap.get(s).getData(bidArray), firstPageCPCMap.get(s) * 1e-6,1.0));
-
-				// double [] costArray = costDataMap.get(s).getData(bidArray);
-				// for(int i=0; i<costArray.length; i++){
-				// System.out.println(bidArray[i]+ ": "+costArray[i]);
-				// }
-			}
-			catch (Exception e)
-			{
-				logger.info("Problem", e);
-			}
-		}
-
-		try
-		{
-			FileOutputStream fileOut = new FileOutputStream("/tmp/piperhall.ser.obj");
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);
-			out.writeObject(bidOptimizer);
-			out.close();
-			fileOut.close();
-		}
-		catch (IOException e)
-		{
-			logger.info("Problem", e);
-		}
-
-		// bidOptimizer = null;
-		// try
-		// {
-		// FileInputStream fileIn = new FileInputStream("/tmp/bloom.ser.obj");
-		// ObjectInputStream in = new ObjectInputStream(fileIn);
-		// bidOptimizer = (CampaignBid) in.readObject();
-		// in.close();
-		// fileIn.close();
-		// System.out.println("Yahoo ... have deserialized!");
-		// }catch(IOException e)
-		// {
-		// e.printStackTrace();
-		// }catch(ClassNotFoundException c)
-		// {
-		// System.out.println("CampaignBid class not found");
-		// c.printStackTrace();
-		// }
-
-		bidOptimizer.setDailyBudget(30.0);
-		HashMap<String, Double> compBidData = bidOptimizer.optimizeBids();
-
-		// // update bids at google adwords account
-		//
-		// for(int i=0; i<keywordDataObjs.length; i++){
-		// keywordDataObj = keywordDataObjs[i];
-		// // client.getBidLandscapeForKeyword(accountID, adGroupID,
-		// keywordDataObjs[i].getBidID());
-		// if (compBidData.containsKey(keywordDataObj.getKeyword())){
-		// bidData.put(keywordDataObj.getKeyword(),compBidData.get(keywordDataObj.getKeyword()));
-		// /*
-		// try {
-		// keywordDataObj=client.setBidForKeyWord(accountID,
-		// keywordDataObj.getBidID(), adGroupID,
-		// (((Long) new
-		// Double(compBidData.get(keywordDataObj.getKeyword())*1e6).longValue())/10000L)*10000L
-		// );
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// Thread.sleep(500);
-		// */
-		// }
-		// }
-
-		// **************************************************************************
-
-		// // E. bid by a pre-determined strategy for the keywords that are
-		// non-competitive
-		//
-		// // TBD: 1. random or aim for first/top page? do we get any other
-		// information like bid for first or top page?
-		//
-		// // Long addValue = 500000L;
-		// Long addValue = (Long) new Double(0.5*1e6).longValue();
-		// for(int i=0; i<keywordDataObjs.length; i++){
-		// keywordDataObj = keywordDataObjs[i];
-		// // client.getBidLandscapeForKeyword(accountID, adGroupID,
-		// keywordDataObjs[i].getBidID());
-		// if (nonCompKeywords.contains(keywordDataObj.getKeyword())){
-		// bidData.put(keywordDataObj.getKeyword(),(keywordDataObj.getFirstPageCpc()+addValue)*1e-6);
-		// /*
-		// try {
-		// keywordDataObj=client.setBidForKeyWord(accountID,
-		// keywordDataObj.getBidID(),
-		// adGroupID,keywordDataObj.getFirstPageCpc()+addValue );
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// Thread.sleep(500);
-		// */
-		// }
-		// }
-
-		// **************************************************************************
-
-		// F. compute optimal bids for the competitive keywords
-
-		/*
-		 * for(String s : keywords){ if (!bidData.containsKey(s)) {
-		 * bidData.put(s, new Double(1.0)); } }
-		 */
-
-	}
+	
 
 	public static void main(String[] args)
 	{

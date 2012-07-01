@@ -139,62 +139,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	/* *********************************** OLD METHODS ********************************** */
 	/* ***************************** WILL BE REMOVED IN FUTURE ************************** */
 
-	public void getBidsInitial(String json) throws Exception
-	{
-		logger.debug("call getBidsInitial(String json)" + json);
-		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		final String accountID = data.get("accountID");
-		final Long campaignID = Long.parseLong(data.get("campaignID")); 
-		final Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		final String searchEngine = data.get("searchEngine");
-		AdEngine.validateAdEngine(searchEngine);
-		final AdEngine adEngine = AdEngine.valueOf(searchEngine);
-		getBidsInitial(accountID, campaignID, adGroupID, adEngine);
-	}
-	
-	@Override
-	public void getBidsInitial(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
-	{
-		if(searchEngine == AdEngine.Google)
-		{
-			// getBidsInitialGoogle(accountID, campaignID, adGroupID);
-			BidGeneratorObj bidGenerator = new BidGeneratorObj();
-			bidGenerator.getBidsInitialGoogle(accountID, campaignID, adGroupID);
-		} 
-		else if(searchEngine == AdEngine.MSN)
-		{
-			// getBidsInitialMSN(accountID, campaignID, adGroupID);
-		} 
-	}
-	
-	
-	public void getBidsUpdate(String json) throws Exception
-	{
-		logger.debug("call  getBidsUpdate(String json)" + json);
-		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
-		final String accountID = data.get("accountID");
-		final Long campaignID = Long.parseLong(data.get("campaignID")); 
-		final Long adGroupID = Long.parseLong(data.get("adGroupID"));
-		final String searchEngine = data.get("searchEngine");
-		AdEngine.validateAdEngine(searchEngine);
-		final AdEngine adEngine = AdEngine.valueOf(searchEngine);
-//		ArrayList<BidObject> res = 
-		getBidsUpdate(accountID, campaignID, adGroupID, adEngine);
-//		return gson.toJson(res);
-	}
-	
-	@Override
-	public void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
-	{
-		if(searchEngine == AdEngine.Google)
-		{
-			// getBidsUpdateGoogle(accountID, campaignID, adGroupID);
-		} 
-		else if(searchEngine == AdEngine.MSN)
-		{
-			// getBidsUpdateMSN(accountID, campaignID, adGroupID);
-		}
-	}
+
 	
 	// ----------------------------------
 	// Naive bidder

@@ -16,9 +16,9 @@ public interface SemplestBiddingInterface extends ServiceInitialize
 
 	Map<String,Double> getBid(String accountID, Long campaignID, Long adGroupID, List<String> keywords) throws Exception ;
 
-	void getBidsInitial(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
+	//void getBidsInitial(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
 	void getBidsInitialNaive(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
 
-	void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
+	//void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
 	void getBidsUpdateNaive(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception;
 }

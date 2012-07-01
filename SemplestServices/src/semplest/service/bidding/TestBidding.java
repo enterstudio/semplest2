@@ -1087,8 +1087,8 @@ public class TestBidding {
 			String accountID = "2188810777";
 			//long Bids_AlexID = 3887444670L; // exact old
 			//long Bids_SubhojitID = 3887444790L; // exact old
-			//long Bids_SubhojitID = 3914596950L; // exact new QSCAdj
-			long Bids_SubhojitID = 3918232230L; //phrase QSCAdj
+			long Bids_SubhojitID = 3914596950L; // exact QSCAdj
+			//long Bids_SubhojitID = 3918232230L; //phrase QSCAdj
 			
 			HashMap<String,Integer> wordIdxMap = new HashMap<String,Integer>();
 			ArrayList<Double> bidList = new ArrayList<Double>();
@@ -1135,7 +1135,14 @@ public class TestBidding {
 					String word = b.getKeyword();
 					Long wordID = b.getBidID();
 					if(wordIdxMap.containsKey(word)){
-						client.setBidForKeyWord(accountID, wordID, adGroupID, ((new Double(2e6*bidList.get(wordIdxMap.get(word)))).longValue())/10000L*10000L);
+						try{
+							client.setBidForKeyWord(accountID, wordID, adGroupID, ((new Double(1e6*bidList.get(wordIdxMap.get(word)))).longValue())/10000L*10000L);
+							System.out.println("Updated bid to "+bidList.get(wordIdxMap.get(word))+" for keyword "+word);
+						} catch(Exception e) {
+							System.out.println("Failed to update bid to "+bidList.get(wordIdxMap.get(word))+" for keyword "+word);
+							e.printStackTrace();
+
+						}
 					} else {
 						System.out.println("No bid for the word "+word+" was not found. Must be an error!!");
 					}

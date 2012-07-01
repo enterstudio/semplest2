@@ -159,29 +159,6 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
-	@Override
-	public void getBidsInitial(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
-	{	
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID);
-		jsonHash.put("campaignID", String.valueOf(campaignID));
-		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("searchEngine", String.valueOf(searchEngine));
-		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(baseurl, SERVICEOFFERED, "getBidsInitial", json, timeoutMS);
-	}
-	
-	@Override
-	public void getBidsUpdate(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
-	{	
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("accountID", accountID);
-		jsonHash.put("campaignID", String.valueOf(campaignID));
-		jsonHash.put("adGroupID", String.valueOf(adGroupID));
-		jsonHash.put("searchEngine", searchEngine.name());
-		String json = protocolJson.createJSONHashmap(jsonHash);
-		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdate", json, timeoutMS);
-	}
 	
 	@Override
 	public void getBidsInitialNaive(String accountID, Long campaignID, Long adGroupID, AdEngine searchEngine) throws Exception 
