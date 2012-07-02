@@ -487,7 +487,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds
 				+ "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
@@ -1007,7 +1007,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean ExecuteBidProcess(Integer PromotionID, List<AdEngine> adEngineList) throws Exception
 	{
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(PromotionID);
+		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
 		/*
 		 *  from Yesterday look back 5 days to get the transactions
@@ -1125,7 +1125,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -1145,7 +1145,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		logger.info("call UpdateGeoTargeting(" + promotionID + ", " + adEngines + ")");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		for (final AdEngine adEngine : adEngines)
@@ -1246,7 +1246,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -1322,7 +1322,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<Long> msnCampaignIds = new ArrayList<Long>();
 		for (final Integer promotionId : promotionIds)
 		{
-			getPromoDataSP.execute(promotionId);
+			Boolean ret = getPromoDataSP.execute(promotionId);
 			final Map<AdEngine, AdEngineID> adEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionId);
 			final AdEngineID googleAdEngineData = adEngineDataMap.get(AdEngine.Google);
 			if (googleAdEngineData != null)
@@ -1449,7 +1449,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					keywordIdRemoveOppositePairs, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -1506,7 +1506,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size()
 				+ " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
@@ -1638,7 +1638,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -1682,7 +1682,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -1732,7 +1732,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds
 				+ "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
@@ -1809,7 +1809,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					final long msnKeywordId = newKeywordIds[i];
 					final com.microsoft.adcenter.v8.Keyword msnKeyword = msnKeywordsArray[i];
-					Integer ret = addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_MICROAMOUNT.intValue(), SemplestMatchType.Exact.name(), adEngine, false, null);
+					Integer r  = addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_MICROAMOUNT.intValue(), SemplestMatchType.Exact.name(), adEngine, false, null);
 				}
 			}
 			else
@@ -1931,7 +1931,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				+ "], AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final List<AdsObject> ads = getPromoDataSP.getAds();
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
@@ -2050,7 +2050,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					adEngines, deleteAdPostFix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + deleteAdPostFix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2106,7 +2106,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				+ "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final List<AdsObject> ads = getPromoDataSP.getAds();
 		final List<AdsObject> nonDeletedAdsForPromotionAdIds = new ArrayList<AdsObject>();
@@ -2227,7 +2227,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		for (final AdEngine adEngine : adEngines)
 		{
@@ -2237,7 +2237,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String accountID = "" + adEngineData.getAccountID();
 				final Long campaignID = adEngineData.getCampaignID();
 				final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
-				getSiteLinksForPromotionSP.execute(promotionID);
+				Boolean r = getSiteLinksForPromotionSP.execute(promotionID);
 				final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
 				final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
 				final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(accountID, campaignID, googleSiteLinks);
@@ -2298,7 +2298,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2351,7 +2351,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				+ "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final PromotionObj promotion = getPromoDataSP.getPromotionData();
 		final String displayURL = SemplestUtils.getTrimmedNonNullString(promotion.getDisplayURL());
@@ -2505,7 +2505,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
+				Boolean ret = getPromoDataSP.execute(promotionID);
 				final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
 				final String accountID = "" + adEngineData.getAccountID();
@@ -2536,7 +2536,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			else if (AdEngine.MSN == adEngine)
 			{
 				final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-				getPromoDataSP.execute(promotionID);
+				Boolean ret = getPromoDataSP.execute(promotionID);
 				final PromotionObj promotion = getPromoDataSP.getPromotionData();
 				final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 				final AdEngineID adEngineData = promotionAdEngineData.get(adEngine);
@@ -2594,7 +2594,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createChangePromotionStartDateTask(customerID, promotionID, newStartDate, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
@@ -2628,7 +2628,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to change StartDate for PromotionID [" + promotionID + "] to  [" + newStartDate + "] for AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		for (final AdEngine adEngine : adEngines)
 		{
@@ -2705,7 +2705,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2747,7 +2747,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2788,7 +2788,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2831,7 +2831,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
@@ -2872,7 +2872,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-			getPromoDataSP.execute(promotionID);
+			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
 			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,

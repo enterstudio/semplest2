@@ -29,10 +29,11 @@ public class AddTrafficEstimatorSP extends StoredProcedure
 		compile();
 	}
 
-	public void execute(int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
+	public Boolean execute(int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
 			Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime) throws Exception
 	{
 		Map<String, Object> results = super.execute(PromotionID, Keyword, AdvertisingEngine, BidType,  MicroBid, AveMicroCost,
 				AveNumberClicks,AvePosition, AveCPC, currentTime);
+		return true;
 	}
 }

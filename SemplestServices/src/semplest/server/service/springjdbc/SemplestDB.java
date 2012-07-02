@@ -266,7 +266,7 @@ public class SemplestDB extends BaseDB
 	public static void UpdateDefaultBidForKeywords(int promotionID, AdEngine adEngine) throws Exception
 	{
 		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
-		updateDefBiAmounts.execute(promotionID, adEngine.name());
+		Boolean ret = updateDefBiAmounts.execute(promotionID, adEngine.name());
 	}
 
 	public static void storeTargetedDailyBudget(int promotionID, AdEngine adEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
@@ -312,11 +312,13 @@ public class SemplestDB extends BaseDB
 						{
 							Long microBid = microbids.next();
 							// add the data to the DB
-							addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid,
-									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid),
-									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid),
-									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid),
-									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid), ts);
+							//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
+							//Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
+							Boolean ret =  addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid.intValue(),
+									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue(),
+									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue(),
+									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue(),
+									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid).floatValue(), ts);
 						}
 					}
 				}
@@ -830,7 +832,7 @@ public class SemplestDB extends BaseDB
 		try
 		{
 			AddAdvertisingEngineAccountSP addAccount = new AddAdvertisingEngineAccountSP();
-			addAccount.execute(accountID, adEngine.name(), customerID, accountNumber);
+			Boolean r = addAccount.execute(accountID, adEngine.name(), customerID, accountNumber);
 		}
 		catch (Exception e)
 		{

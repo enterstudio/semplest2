@@ -40,7 +40,7 @@ public class GetAllPromotionDataSP extends StoredProcedure
 	/*
 	 * store the resits oin a hashmap
 	 */
-	public void execute(Integer promotionID)
+	public Boolean execute(Integer promotionID)
 	{
 		results = super.execute(new Object[] {promotionID}); //,new HashMap());
 		if (results.get("promotion") != null)
@@ -74,7 +74,8 @@ public class GetAllPromotionDataSP extends StoredProcedure
 					PromotionAdEngineID.put(promoID, adEngineData);
 				}				
 			}
-		}		
+		}
+		return true;
 	}
 	
 	public PromotionObj getPromotionData()

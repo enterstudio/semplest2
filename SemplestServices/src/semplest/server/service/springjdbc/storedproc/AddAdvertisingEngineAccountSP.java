@@ -25,8 +25,9 @@ public class AddAdvertisingEngineAccountSP extends StoredProcedure
 	/*
 	 * returns the next schedule job to run
 	 */
-	public void execute(Long AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID, String AdvertisingEngineAccountNumber)
+	public Boolean execute(Long AdvertisingEngineAccountID, String AdvertisingEngine, Integer CustomerID, String AdvertisingEngineAccountNumber)
 	{
 		Map<String, Object> results = super.execute(AdvertisingEngineAccountID, AdvertisingEngine, CustomerID, AdvertisingEngineAccountNumber);
+		return true;
 	}
 }

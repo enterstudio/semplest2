@@ -23,14 +23,13 @@ public class UpdateDefaultBidForKeywordsSP extends StoredProcedure
 
 	}
 
-	/*
-	 * returns the next schedule job to run
-	 */
-	public void execute(Integer promotionPK, String advertisingEngine)
+	
+	public Boolean execute(Integer promotionPK, String advertisingEngine)
 	{
 		Map<String, Object> inputs = new HashMap<String, Object>();
 		inputs.put("PromotionPK", promotionPK);
 		inputs.put("AdvertisingEngine", advertisingEngine);
 		Map results = super.execute(inputs);
+		return true;
 	}
 }

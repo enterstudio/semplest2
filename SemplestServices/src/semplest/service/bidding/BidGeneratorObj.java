@@ -829,7 +829,7 @@ public class BidGeneratorObj
     	logger.info("setBidsUpdate called!!");
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(promotionID);
+		Boolean ret = getPromoDataSP.execute(promotionID);
 		PromotionObj promotion = getPromoDataSP.getPromotionData();
 		logger.info("Promotion creation date: "+promotion.getCreatedDate());
 		logger.info("Promotion start date: "+promotion.getPromotionStartDate());
