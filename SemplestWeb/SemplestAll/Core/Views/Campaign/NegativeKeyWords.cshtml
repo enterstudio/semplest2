@@ -1,18 +1,22 @@
 ﻿@model Semplest.Core.Models.AdModel
-<div class="k-header">
-    <span class="infoHead">Adding a negative keyword to your product group means that your
-        ads won't show for searches containing that term. By filtering out unwanted impressions,
-        negative keywords can help you reach the most appropriate prospects. </span>
-    <div class="configuration1">
-        <span>Please type in several words or phrases that you never want associated with your
-            ad (separated by commas): </span>
-        <br/>
-        <br/>
-        @Html.TextAreaFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
-    </div>
-    
-    <div class="options" style="margin-top: 100px;text-align: center">
-        <hr/>
+<div class="configuration">
+    <span class="infoHead">Create Ads (continue)</span>
+    <h3>
+        Negative Keywords</h3> 
+    <label class="greytext">
+        Adding a negative keyword to your product group means that your ads won't show for
+        searches containing that term. By filtering out unwanted impressions, negative keywords
+        can help you reach the most appropriate prospects.
+    </label>
+    <br style="display: block;margin-bottom: 30px;line-height:40px;" />
+    <span>Please type in several words or phrases that you never want associated with your
+        ad <br /><span>(separated by commas): </span></span>
+        
+    <br />
+    <br />
+    @Html.TextAreaFor(t => t.NegativeKeywordsText, new { @class = "k-textbox negKeyw" })
+    <div class="options" style="margin-top: 100px; text-align: center">
+        <hr />
         <button class="k-button" id="back3" type="button">
             <span class="k-back k-icon"></span>back</button>
         <button class="k-button" id="setNegativeKeywords" type="submit" name="Command" value="SetNegativeKeywords">
@@ -20,7 +24,8 @@
     </div>
 </div>
 <style>
-    .negKeyw {
+    .negKeyw
+    {
         width: 100%;
         height: 150px;
     }
@@ -38,6 +43,4 @@
         tabStrip.remove(tab);
         tabStrip.select(otherTab);
     }
-</script>
-
-​
+</script>​

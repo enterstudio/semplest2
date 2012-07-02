@@ -142,7 +142,7 @@ a .k-link:link, a .k-link:visited
 .k-state-selected, .k-panelbar > .k-state-selected
 {
     color: grey;
-    background-color: #E2EBD0;
+    background-color: #ADC76E;
 }
 .k-state-selected.k-state-focused
 {
@@ -280,6 +280,7 @@ a .k-link:link, a .k-link:visited
     -moz-border-radius: 0;
     -webkit-border-radius: 0;
     border-radius: 0;
+    color: Grey;
 }
 .k-dropdown-wrap .k-select, .k-picker-wrap .k-select, .k-numeric-wrap .k-select, .k-datetimepicker .k-select + .k-select, .k-animation-container .k-calendar-container, .k-list-container.k-state-border-right
 {

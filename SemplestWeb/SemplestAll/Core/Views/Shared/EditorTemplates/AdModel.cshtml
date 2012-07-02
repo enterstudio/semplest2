@@ -2,11 +2,12 @@
 @model Semplest.Core.Models.AdModel
 <script src="@Url.Content("~/Scripts/Maps.js")" type="text/javascript"> </script>
 <div id="adModel" class="configuration">
+    <span class="infoHead">Create Ads</span>
     <ul class="options">
         <li>
             <h3>
                 Location (Enter Address,City,State or Zip) <a href ="#" class="help-button" id="helpbutton6" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]6"  tabindex="-1" >
-                    ?</a></h3>
+                                                               ?</a></h3>
         </li>
         <li>
             <fieldset style="padding-bottom: 10px">
@@ -25,21 +26,18 @@
                 </table>
             </fieldset>
         </li>
-        <li class="infoHead">
-            <h3>
-                Ad Copy</h3>
-        </li>
+        
         <li>
             <fieldset style="padding-bottom: 10px">
                 <legend>
                     <label style="width: 68px">
                         URLs <a href ="#" class="help-button" id="helpbutton7" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]7"  tabindex="-1" >
-                            ?</a></label></legend>
+                                 ?</a></label></legend>
                 <table>
                     <tr style="height: 35px;">
                         <td>
                             <label style="font-weight: bold;width: 68px; margin-left: 5px;">
-                            Landing</label>
+                                Landing</label>
                         </td>
                         <td>
                             @Html.TextBoxFor(m => m.LandingUrl, new { @class = "k-textbox k-textboxAd1", @required = true, @validationmessage = "Please enter {0}" })
@@ -65,13 +63,17 @@
                         <td></td>
                         <td>
                             <button type="button" class="additionalLinks k-button">
-                    <span class="k-add k-icon"></span>additional click through options</button>
-                <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
-                    ?</a>
+                                <span class="k-add k-icon"></span>additional click through options</button>
+                            <a href ="#" class="help-button" id="helpbutton10" rel="@System.Configuration.ConfigurationManager.AppSettings["ClueHelpUrl"]10"  tabindex="-1" >
+                                ?</a>
                         </td>
                     </tr>
                 </table>
             </fieldset>
+        </li>
+        <li class="infoHead">
+            <h3>
+                Ad Copy</h3>
         </li>
         <li>
             <div id="ads">

@@ -922,8 +922,69 @@ fieldset {
 {
     margin-left:26px;
 }
+.sitelinks {
+    height:25px;
+}
+#footer .kendo-nav1
+{
+    list-style: none;
+    margin: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 5px;
+    font-family: 'Arial';
+    margin-top: 5px;
+    float: left;
+    text-transform: uppercase;
+}
+.kendo-nav1 a
+{
+    -moz-transition: all 0.2s ease 0s;
+    -ms-transition: all 0.2s ease 0s;
+    -o-transition: all 0.2s ease 0s;
+    -webkit-transition: all 0.2s ease 0s;
+    transition: all 0.2s ease 0s;
+}
+.kendo-nav1 li
+{
+    margin-left: 10px;
+}
+.kendo-nav1 a
+{
+    color: gray;
+    display: block;
+    font-size: 10px;
+}
+.kendo-nav1 span
+{
+    color: gray;
+    display: block;
+    font-size: 10px;
+}
+.kendo-nav1 .active a
+{
+    color: #e26b1d;
+}
+.kendo-nav1 .active
+{
+    position: relative;
+}
+.kendo-nav1 .active:after
+{
+    border-color: #eb6f18 transparent;
+    border-style: solid;
+    border-width: 0 7px 7px;
+    content: " ";
+    display: block;
+    height: 0;
+    left: 50%;
+    margin: 0 0 0 -7px;
+    position: absolute;
+    top: 39px;
+    width: 0;
+}
 .k-url {
-    width: 250px;
+    width: 280px;
     border-color: transparent;
     background-color: #fff;
     color: #777;
@@ -940,7 +1001,4 @@ fieldset {
     line-height: 1.66em;
     padding: 2px 0;
     text-indent: .3em;
-}
-.sitelinks {
-    height:25px;
 }
