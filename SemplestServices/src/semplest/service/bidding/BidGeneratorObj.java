@@ -683,65 +683,62 @@ public class BidGeneratorObj
 		Boolean isNegative = false;
 
 		Iterator<String> keyIT = wordBidMap.keySet().iterator();
-		while (keyIT.hasNext())
-		{
+		while (keyIT.hasNext()) {
 			// TODO: Add Enum
 			String word = keyIT.next();
-			if (compKeywords.contains(word))
-			{
-				competitiveType = ProtocolEnum.SemplestCompetitionType.Comp.name();
+			if (compKeywords.contains(word)) {
+				competitiveType = ProtocolEnum.SemplestCompetitionType.Comp
+						.name();
+			} else if (notSelectedKeywords.contains(word)) {
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NotSelected
+						.name();
+			} else if (nonCompKeywords.contains(word)) {
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NonComp
+						.name();
+			} else if (noInfoKeywords.contains(word)) {
+				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo
+						.name();
+			} else {
+				throw new Exception(
+						"Unknown competition type. Internal error in bidding service!");
 			}
-			else if (notSelectedKeywords.contains(word))
-			{
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NotSelected.name();
-			}
-			else if (nonCompKeywords.contains(word))
-			{
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NonComp.name();
-			}
-			else if (noInfoKeywords.contains(word))
-			{
-				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo.name();
-			}
-			else
-			{
-				throw new Exception("Unknown competition type. Internal error in bidding service!");
-			}
-			bidsMatchType.add(new BidElement(word, wordIDMap.get(word), (wordBidMap.get(word) == null) ? defaultMicroBid : wordBidMap.get(word),
-					matchType, competitiveType, wordBidMap.get(word) == null, isActive, isNegative));
+			bidsMatchType.add(new BidElement(word, wordIDMap.get(word),
+					(wordBidMap.get(word) == null) ? defaultMicroBid
+							: wordBidMap.get(word), matchType, competitiveType,
+					wordBidMap.get(word) == null, isActive, isNegative));
 		}
 
-		try
-		{
-			if (bidsMatchType.size() > 0)
-			{
-				SemplestDB.storeBidObjects(promotionID, searchEngine, bidsMatchType);
-				logger.info("Stroed bid data to the databse for " + bidsMatchType.size() + " keywords.");
-			}
-			else
-			{
+		try {
+			if (bidsMatchType.size() > 0) {
+				SemplestDB.storeBidObjects(promotionID, searchEngine,
+						bidsMatchType);
+				logger.info("Stroed bid data to the databse for "
+						+ bidsMatchType.size() + " keywords.");
+			} else {
 				logger.info("No bid data to write to the databse");
 			}
-		}
-		catch (Exception e)
-		{
-			logger.error("ERROR: Unable to store bid data to the database. " + e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error("ERROR: Unable to store bid data to the database. "
+					+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to store bid data to the database. " + e.getMessage(), e);
+			throw new Exception("Failed to store bid data to the database. "
+					+ e.getMessage(), e);
 		}
 
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
-		try
-		{
-			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine, totalDailyCost, totalDailyClick.intValue());
+		try {
+			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine,
+					totalDailyCost, totalDailyClick.intValue());
 			logger.info("Stroed targeted daily budget data to the databse");
-		}
-		catch (Exception e)
-		{
-			logger.error("ERROR: Unable to store targeted daily budget data to the database. " + e.getMessage(), e);
+		} catch (Exception e) {
+			logger.error(
+					"ERROR: Unable to store targeted daily budget data to the database. "
+							+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to store targeted daily budget data to the database ." + e.getMessage(), e);
+			throw new Exception(
+					"Failed to store targeted daily budget data to the database ."
+							+ e.getMessage(), e);
 		}
 
 		/* ******************************************************************************************* */
@@ -813,7 +810,7 @@ public class BidGeneratorObj
 			}
 		}
 		
-		logger.info("Updated the default bid via search engine API.");
+		logger.info("Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
 
 		return new Boolean(true);
 
@@ -823,30 +820,30 @@ public class BidGeneratorObj
 	
 	
 
-	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception
-	{
+	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		isFirstCall = false;
-    	logger.info("setBidsUpdate called!!");
+		logger.info("setBidsUpdate called!!");
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		PromotionObj promotion = getPromoDataSP.getPromotionData();
-		logger.info("Promotion creation date: "+promotion.getCreatedDate());
-		logger.info("Promotion start date: "+promotion.getPromotionStartDate());
+		logger.info("Promotion creation date: " + promotion.getCreatedDate());
+		logger.info("Promotion start date: "
+				+ promotion.getPromotionStartDate());
 		Date d = promotion.getPromotionStartDate();
 		Date today = new Date();
 		Long diff = today.getTime() - d.getTime();
 		long age = diff / (1000 * 60 * 60 * 24);
 
-	    logger.info("The campaign started "+ age + " day(s) ago.");
-	    
-	    if(age==2 || (age%7==0)){
-	    	logger.info("Executing update bids method...");
-	    	return setBidsInitial(promotionID, searchEngine, budgetData); 
-	    } else {
-	    	logger.info("setBidsUpdate not doing anything TODAY!!");
-	    	return new Boolean(true);
-	    }
+		logger.info("The campaign started " + age + " day(s) ago.");
+
+		if (age == 2 || (age % 7 == 0)) {
+			logger.info("Executing update bids method...");
+			return setBidsInitial(promotionID, searchEngine, budgetData);
+		} else {
+			logger.info("setBidsUpdate not doing anything TODAY!!");
+			return new Boolean(true);
+		}
 	} // setBidsUpdate()
 
 	
@@ -1328,18 +1325,26 @@ public class BidGeneratorObj
 			}
 
 			
-			System.out.println("Testing Google inital bidding!");
+			System.out.println("Testing inital bidding!");
 
-			//BidGeneratorObj bidObject = new BidGeneratorObj();
+			BidGeneratorObj bidObject = new BidGeneratorObj();
 
-			Integer promotionID = new Integer(60);
-			// Integer promotionID = new Integer(60);
-			BudgetObject budgetData = new BudgetObject();
-			budgetData.setRemainingBudgetInCycle(100.0);
-			budgetData.setRemainingDays(31);
-
+			
+//			Integer promotionID = new Integer(60);
+//			BudgetObject budgetData = new BudgetObject();
+//			budgetData.setRemainingBudgetInCycle(100.0);
+//			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 			
+			
+			Integer promotionID = new Integer(31);
+			BudgetObject budgetData = new BudgetObject();
+			budgetData.setRemainingBudgetInCycle(45.0);
+			budgetData.setRemainingDays(31);
+			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
+
+			
+			/*
 			
 			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
 			for(BidElement b : bidData){
@@ -1352,6 +1357,7 @@ public class BidGeneratorObj
 			for(BidElement b : bidData){
 				System.out.println(b.getKeyword()+": "+b.getCompetitiveType()+", "+b.getMicroBidAmount());
 			}
+			*/
 			
 			
 			/*
