@@ -604,7 +604,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], Text [" + negativeKeywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
 				final Long microBidAmt = keywordDataObj.getMicroBidAmount();
 				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();    
-				addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null);
+				Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null);
 				Thread.sleep(1000); // Wait for google
 			}			
 			// Positive Keywords			
@@ -628,7 +628,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
 				final String matchType = request.getMatchType().toString();
 				logger.info(++counter + ": will try to save in db Google Positive Keyword for GoogleID [" + googleKeywordId + "], Text [" + keyword + "], PromotionID [" + promotionID + "], SemplestMatchType [" + matchType + "], IsNegative [" + false + "]");
-				addKeywordBidSP.execute(promotionID, googleKeywordId, keyword, microBidIntValue, matchType, adEngine, false);
+				Integer ret = addKeywordBidSP.execute(promotionID, googleKeywordId, keyword, microBidIntValue, matchType, adEngine, false, null);
 			}
 		}
 		else if (AdEngine.MSN == adEngine)
@@ -688,7 +688,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					com.microsoft.adcenter.v8.Keyword keyword = msnKeywordArray[i];
 					final String text = keyword.getText();
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-					addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_AMOUNT, semplestMatchType, adEngine, false);	
+					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null);	
 				}	
 			}		
 			// Add Negative Keywords
@@ -1809,7 +1809,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					final long msnKeywordId = newKeywordIds[i];
 					final com.microsoft.adcenter.v8.Keyword msnKeyword = msnKeywordsArray[i];
-					addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_AMOUNT, SemplestMatchType.Exact, adEngine, false, null);
+					Integer ret = addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_MICROAMOUNT.intValue(), SemplestMatchType.Exact.name(), adEngine, false, null);
 				}
 			}
 			else
