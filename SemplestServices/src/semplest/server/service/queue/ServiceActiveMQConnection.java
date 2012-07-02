@@ -26,6 +26,8 @@ public class ServiceActiveMQConnection
 	private MessageConsumer consumer = null;
 	private String producerQueueName = null;
 	
+	private String maxInactivityDuration = "600000";  //the max inactivity timeout for MQ
+	
 	static final Logger logger = Logger.getLogger(ServiceActiveMQConnection.class); 
 
 
@@ -35,7 +37,7 @@ public class ServiceActiveMQConnection
 	public ServiceActiveMQConnection(String host, String port) throws JMSException
 	{
 		//Context ctx = new InitialContext();
-		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port);
+		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port + "?wireFormat.maxInactivityDuration="+ maxInactivityDuration +")");
 		cacheCF = new CachingConnectionFactory();
 		cacheCF.setTargetConnectionFactory(cf);
 		cacheCF.setSessionCacheSize(1);
