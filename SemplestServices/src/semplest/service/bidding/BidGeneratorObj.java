@@ -658,23 +658,10 @@ public class BidGeneratorObj
 
 
 		
-		
+
 
 		/* ******************************************************************************************* */
-		// 13. Database call: write default bid for campaign
-		// remember to update the bids for the words with default bid with
-		// database
-
-		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine))
-		{
-			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
-			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
-		}
-
-		logger.info("Stroed default bid " + defaultMicroBid + " to databse and requested for updating all bids for keywords with default bid.");
-
-		/* ******************************************************************************************* */
-		// 14. Database call: write bid, matchType, competition status
+		// 13. Database call: write bid, matchType, competition status
 		ArrayList<BidElement> bidsMatchType = new ArrayList<BidElement>();
 
 		String competitiveType = "";
@@ -724,13 +711,32 @@ public class BidGeneratorObj
 			throw new Exception("Failed to store bid data to the database. "
 					+ e.getMessage(), e);
 		}
+		
+		
+		
+		
+
+		/* ******************************************************************************************* */
+		// 14. Database call: write default bid for campaign
+		// remember to update the bids for the words with default bid with
+		// database
+
+		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine))
+		{
+			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
+			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+		}
+
+		logger.info("Stroed default bid " + defaultMicroBid + " to databse and requested for updating all bids for keywords with default bid.");
+		
+		
 
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
 		try {
 			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine,
 					totalDailyCost, totalDailyClick.intValue());
-			logger.info("Stroed targeted daily budget data to the databse");
+			logger.info("Stroed targeted daily budget data to the databse.");
 		} catch (Exception e) {
 			logger.error(
 					"ERROR: Unable to store targeted daily budget data to the database. "
@@ -769,7 +775,12 @@ public class BidGeneratorObj
 
 		if (searchEngine == AdEngine.MSN) {
 			try {
-				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID,bidsMatchType);
+				for(BidElement b : bidsMatchType){
+					if(b.getIsDefaultValue()){
+						b.setMicroBidAmount(null);
+					}
+				}
+				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidsMatchType);
 			} catch (Exception e) {
 				logger.error("ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
 				throw new Exception("Failed to update bids to MSN. "+ e.getMessage(), e);
