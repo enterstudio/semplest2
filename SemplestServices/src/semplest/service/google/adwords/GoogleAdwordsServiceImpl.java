@@ -4161,7 +4161,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				{
 					err.setIsPolicyViolationError(false);
 					err.setPolicyDescription(error.getErrorString());
-					err.setField(error.getFieldPath());
+					String violatingField = null;
+					String violatingFieldText = error.getFieldPath();
+					if (violatingFieldText != null)
+					{
+						//split on period
+						String [] fields = violatingFieldText.split("[.]");
+						violatingField = fields[fields.length - 1];
+					}
+					
+					err.setField(violatingField);
 				}
 				
 				errors.add(err);
