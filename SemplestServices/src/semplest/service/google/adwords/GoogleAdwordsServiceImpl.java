@@ -1,5 +1,6 @@
 package semplest.service.google.adwords;
 
+import java.lang.reflect.Type;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Stack;
 
 import javax.xml.rpc.ServiceException;
 
@@ -39,7 +41,7 @@ import semplest.server.protocol.google.AdGroupCriterionGetRetriableGoogleOperati
 import semplest.server.protocol.google.AdGroupCriterionMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupGetRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupMutateRetriableGoogleOperation;
-import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.BudgetOrderMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.CampaignAdExtensionGetRetriableGoogleOperation;
 import semplest.server.protocol.google.CampaignAdExtensionMutateRetriableGoogleOperation;
@@ -138,6 +140,7 @@ import com.google.api.adwords.v201109.cm.Operator;
 import com.google.api.adwords.v201109.cm.OrderBy;
 import com.google.api.adwords.v201109.cm.Paging;
 import com.google.api.adwords.v201109.cm.PolicyViolationError;
+import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.Predicate;
 import com.google.api.adwords.v201109.cm.PredicateOperator;
 import com.google.api.adwords.v201109.cm.QualityInfo;
@@ -246,18 +249,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Long adgroupID = 4766339711L;//3066603844L; // 
 			String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
-			String headline = "shit";
+			String headline = "hello";
 			String description1= "This is a test";
 			String description2 = "description2 ";
 
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			AdValidation[] res = test.validateAd(accountID, adgroupID,landingPageURL, displayURL, headline, description1, description2);
-			if (res.length > 0)
+			List<GoogleViolation> res = test.validateAd(accountID, adgroupID,landingPageURL, displayURL, headline, description1, description2);
+			if (!res.isEmpty())
 			{
-				for (int i =0; i < res.length; i++)
-				{
-					System.out.println("validate ad res = " + res[i].getPolicyName() + ":" + res[i].getPolicyDescription() + ":" + res[i].getViolatingText() + ":" + res[i].getField() + ":" + res[i].getIsPolicyViolationError() );
-				}
+				logger.info("Validations: " + SemplestUtils.getEasilyReadableString(res));
 			}
 			
 			/*
@@ -4037,6 +4037,65 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.ADD);
 		return operation;
 	}
+		
+	@Override
+	public List<GoogleViolation> validateRefreshSiteLinks(final String validationAccountID, final Long validationCampaignId, final GoogleRefreshSiteLinksRequest request) throws Exception
+	{
+		logger.info("Will try to Validate Refresh SiteLinks for " + request.toStringPretty());
+		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
+		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(validationCampaignId, siteLinks);		
+		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		List<GoogleViolation> validations = null;
+		try
+		{
+			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[]{addOperation});
+		}
+		catch (ApiException e)
+		{
+			validations = getViolations(e);
+		}
+		return validations;
+	}
+	
+	public List<GoogleViolation> getViolations(ApiException e)
+	{						
+		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
+		final ApiError[] errors = e.getErrors(); 
+		for (ApiError error : errors)
+		{
+			final GoogleViolation violation;
+			
+			final String errorType = error.getApiErrorType();
+			final String errorMessage = error.getErrorString();
+			final String fieldPath = error.getFieldPath();
+			final String shortFieldPath;
+			if (fieldPath != null && fieldPath.contains("."))
+			{
+				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
+				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);				
+			}
+			else
+			{
+				shortFieldPath = fieldPath;
+			}
+			if (error instanceof PolicyViolationError)
+			{
+				final PolicyViolationError policyError = (PolicyViolationError) error;
+				final String externalPolicyName = policyError.getExternalPolicyName();
+				final String policyDescription = policyError.getExternalPolicyDescription();
+				final PolicyViolationKey policyViolationKey = policyError.getKey();
+				final String policyViolatingText = policyViolationKey.getViolatingText();
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
+			}
+			else
+			{
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);					
+			}
+			violations.add(violation);
+		}
+		return violations;
+	}
 
 	@Override
 	public Boolean refreshSiteLinks(final GoogleRefreshSiteLinksRequest request) throws Exception
@@ -4046,8 +4105,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Long campaignID = request.getCampaignID();
 		final List<SitelinksExtension> activeSitelinksExtensions = GetSitelinkExtensions(accountID, campaignID, CampaignAdExtensionStatus.ACTIVE);
 		final List<Long> existingActiveSitelinkIds = getIds(activeSitelinksExtensions);
-		logger.info("Existing Active SiteLink Ids for AccountID [" + accountID + "] and CampaignID [" + campaignID
-				+ "] which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");
+		logger.info("Existing Active SiteLink Ids for AccountID [" + accountID + "] and CampaignID [" + campaignID + "] which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");
 		final List<CampaignAdExtensionOperation> removeOperationList = getRemoveSiteLinksOperations(campaignID, existingActiveSitelinkIds);
 		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
 		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(campaignID, siteLinks);
@@ -4075,11 +4133,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return true;
 		}
 		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user
-				.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 		final CampaignAdExtensionOperation[] operations = combinedOperations.toArray(new CampaignAdExtensionOperation[combinedOperations.size()]);
-		final CampaignAdExtensionMutateRetriableGoogleOperation retriableOperation = new CampaignAdExtensionMutateRetriableGoogleOperation(
-				campaignAdExtensionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final CampaignAdExtensionMutateRetriableGoogleOperation retriableOperation = new CampaignAdExtensionMutateRetriableGoogleOperation(campaignAdExtensionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 		final CampaignAdExtensionReturnValue result = retriableOperation.performOperation();
 		if (result != null && result.getValue() != null)
 		{
@@ -4104,9 +4160,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public AdValidation[] validateAd(String accountID,Long adgroupID, String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception
+	public List<GoogleViolation> validateAd(String accountID,Long adgroupID, String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception
 	{
-		ArrayList<AdValidation> errors = new ArrayList<AdValidation>();
+		List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 		AdGroupAdServiceInterface adGroupAdService = (AdGroupAdServiceInterface) user.getValidationService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
 
@@ -4134,48 +4190,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ApiException e)
 		{
-			for (ApiError error : e.getErrors())
-			{
-				AdValidation err = new AdValidation();
-				
-				if (error instanceof PolicyViolationError)
-				{
-					PolicyViolationError policyError = (PolicyViolationError) error;
-					
-					err.setIsPolicyViolationError(true);
-					err.setPolicyDescription(policyError.getExternalPolicyDescription());
-					err.setPolicyName(policyError.getExternalPolicyName());
-					err.setViolatingText(policyError.getKey().getViolatingText());
-					String violatingField = null;
-					String violatingFieldText = policyError.getFieldPath();
-					if (violatingFieldText != null)
-					{
-						//split on period
-						String [] fields = violatingFieldText.split("[.]");
-						violatingField = fields[fields.length - 1];
-					}
-					
-					err.setField(violatingField);
-				}
-				else
-				{
-					err.setIsPolicyViolationError(false);
-					err.setPolicyDescription(error.getErrorString());
-					String violatingField = null;
-					String violatingFieldText = error.getFieldPath();
-					if (violatingFieldText != null)
-					{
-						//split on period
-						String [] fields = violatingFieldText.split("[.]");
-						violatingField = fields[fields.length - 1];
-					}
-					
-					err.setField(violatingField);
-				}
-				
-				errors.add(err);
-			}
+			validations = getViolations(e);
 		}
-		return errors.toArray(new AdValidation[errors.size()]);
+		return validations;
 	}
+
+	
 }

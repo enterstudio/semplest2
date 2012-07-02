@@ -4,7 +4,7 @@ import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
-import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 
@@ -37,6 +37,9 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines);
 	Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	
+	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;
+	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
+	
 	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
 	
 	Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngineList);	
@@ -60,7 +63,5 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean PausePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception;
 	
 	KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception;
-	
-	public abstract List<AdValidation[]> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
-	
+		
 }

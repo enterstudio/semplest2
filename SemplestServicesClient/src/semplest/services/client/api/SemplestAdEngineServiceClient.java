@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,11 +17,12 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.protocol.adengine.AdEngineInitialData;
-import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -32,7 +34,8 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
-	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; // VMJAVA1
+	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; 
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; 
 	private static String timeoutMS = "300000";  //5 mins
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -42,26 +45,32 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		BasicConfigurator.configure();
 		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
-		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
-		String landingPageURL = "http://www.semplest.com";
-		String displayURL = landingPageURL;
-		String headline = "hello";
-		String description1= "This is a test";
-		String description2 = "description2 ";
-		List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>();
-		GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1, description2);
-		GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2);
+		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
+		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
+		
+	
+		// validateGoogleAd
+		final String landingPageURL = "http://www.semplest.com";
+		final String displayURL = landingPageURL;
+		final String headline = "shit";
+		final String description1= "This is a test";
+		final String description2 = "description2 ";
+		final List<GoogleAddAdRequest> ads = new ArrayList<GoogleAddAdRequest>();
+		final GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1, description2);
+		final GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2);
 		ads.add(ad1);
 		ads.add(ad2);
-		List<AdValidation[]> results = client.validateGoogleAd(landingPageURL, displayURL, ads);
-		for (AdValidation[] res : results)
+		final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads);
+		if (validations != null)
 		{
-			for (int i = 0; i < res.length; i++)
-			{
-				System.out.println(res[i].getPolicyName() + res[i].getPolicyDescription());
-			}
+			logger.error("Google errors:\n" + SemplestUtils.getEasilyReadableString(validations));
 		}
-/*
+		/*
+		// validateGoogleRefreshSiteLinks
+		final Integer promotionID_RefreshSiteLinksForAd = 62;
+		final List<GoogleValidation> googleValidations = client.validateGoogleRefreshSiteLinks(promotionID_RefreshSiteLinksForAd);
+		logger.info("Google Validations:\n" + SemplestUtils.getEasilyReadableString(googleValidations));
+
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
 		final Integer promotionID_ScheduleAddAds = 62;
@@ -1193,7 +1202,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	}
 
 	@Override
-	public List<AdValidation[]> validateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
+	public List<GoogleViolation> validateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
 			throws Exception
 	{
 		String methodName = "validateGoogleAd";
@@ -1205,8 +1214,30 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		Type type = new TypeToken<List<AdValidation[]>>(){}.getType();
+		Type type = new TypeToken<List<GoogleViolation>>(){}.getType();
 		return gson.fromJson(returnData,type);
+	}
+
+	@Override
+	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
+	{
+		final String methodName = "validateRefreshSiteLinks";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", Integer.toString(promotionID));
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final List<GoogleViolation> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_GOOGLE_VALIDATIONS);
+			return result;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem performing " + methodName;
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
 	}
 	
 }

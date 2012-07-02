@@ -18,7 +18,7 @@ import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
@@ -728,10 +728,18 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public AdValidation[] validateAd(String accountID,Long adgroupID,String landingPageURL, String displayURL, String headline, String description1,
-			String description2) throws Exception
+	public List<GoogleViolation> validateRefreshSiteLinks(final String validationAccountID, final Long validationCampaignID, GoogleRefreshSiteLinksRequest request) throws Exception
 	{
-		throw new Exception("ValidateAd not implemented in Google client - see AdEngine");
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<GoogleViolation> validateAd(String accountID, Long adgroupID, String landingPageURL, String displayURL, String headline,
+			String description1, String description2) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

@@ -38,7 +38,7 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
-import semplest.server.protocol.google.AdValidation;
+import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.GoogleAddAdRequest;
 import semplest.server.protocol.google.GoogleAddAdsRequest;
@@ -87,6 +87,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Calendar cal = Calendar.getInstance();
 	private static String ESBWebServerURL = null;
 	private static Long AdwordsValidationAccountID = null;
+	private static Long AdwordsValidationCampaign = 686474L;
 	private static Long AdwordsValidationAdGroupID = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
@@ -2208,6 +2209,43 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
+	
+	public String validateRefreshSiteLinks(String json) throws Exception
+	{
+		logger.debug("JSON: [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final List<GoogleViolation> validations = validateGoogleRefreshSiteLinks(promotionID);
+		return gson.toJson(validations);
+	}
+	
+	@Override
+	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
+	{
+		logger.info("Will try to Validate Refresh SiteLinks associated with PromotionID [" + promotionID + "]");
+		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		Boolean ret = getPromoDataSP.execute(promotionID);
+		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
+		final AdEngineID adEngineData = promotionAdEngineDataMap.get(AdEngine.Google);
+		final String accountID = "" + adEngineData.getAccountID();
+		final Long campaignID = adEngineData.getCampaignID();
+		final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
+		Boolean r = getSiteLinksForPromotionSP.execute(promotionID);
+		final List<SiteLink> siteLinks = getSiteLinksForPromotionSP.getSiteLinks();
+		final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
+		final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(accountID, campaignID, googleSiteLinks);
+		logger.info("Generated the following request to validate the update of Google SiteLinks: " + request.toStringPretty());
+		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
+		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);				
+		final List<GoogleViolation> googleValidations = googleAdwordsService.validateRefreshSiteLinks(googleValidationAccount, AdwordsValidationCampaign, request);
+		if (googleValidations != null)
+		{
+			validations.addAll(googleValidations);
+		}
+		return validations;
+	}
 
 	public String RefreshSiteLinks(String json) throws Exception
 	{
@@ -2954,19 +2992,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		String displayURL = data.get("displayURL");
 		Type type = new TypeToken<List<GoogleAddAdRequest>>(){}.getType();
 		List<GoogleAddAdRequest> ads = gson.fromJson(data.get("ads"), type);
-		List<AdValidation[]> res  = validateGoogleAd(landingPageURL, displayURL, ads);
+		List<GoogleViolation> res  = validateGoogleAd(landingPageURL, displayURL, ads);
 		return gson.toJson(res);
 	}
+	
 	@Override
-	public List<AdValidation[]> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads)
+	public List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads)
 			throws Exception
 	{
-		List<AdValidation[]> res = new ArrayList<AdValidation[]>();
+		List<GoogleViolation> res = new ArrayList<GoogleViolation>();
 		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 		for (GoogleAddAdRequest oneAd : ads)
 		{
-			AdValidation[] ret = google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL,oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
-			res.add(ret);
+			List<GoogleViolation> ret = google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL,oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
+			res.addAll(ret);
 		}
 		return res;
 	}
