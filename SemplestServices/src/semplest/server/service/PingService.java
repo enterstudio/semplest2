@@ -20,6 +20,14 @@ public class PingService implements Runnable
 	private ProtocolJSON json = new ProtocolJSON();
 	private ServiceShutdown shutdown = null;
 	static final Logger logger = Logger.getLogger(PingService.class);
+	
+	/*
+	 * parameters for reconnecting to the ActiveMQ on TCP failure
+	 */
+	public static String data_getmessageQueueIP;
+	public static String data_getmessageQueuePort;
+	public static String data_getServiceSendQueueName;
+	public static String data_getServiceRecQueueName;
 
 	//
 	public static void main(String[] args)
@@ -197,6 +205,12 @@ public class PingService implements Runnable
 					mq.closeMQ();
 					mq = null;
 				}
+				//Save for reconnect
+				data_getmessageQueueIP = data.getmessageQueueIP();
+				data_getmessageQueuePort = data.getmessageQueuePort();
+				data_getServiceSendQueueName = data.getServiceSendQueueName();
+				data_getServiceRecQueueName = data.getServiceRecQueueName();
+				//connect
 				mq = new ServiceActiveMQConnection(data.getmessageQueueIP(), data.getmessageQueuePort());
 				mq.createProducer(data.getServiceSendQueueName());
 				mq.createConsumer(data.getServiceRecQueueName());
