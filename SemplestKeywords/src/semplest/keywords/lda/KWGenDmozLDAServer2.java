@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
@@ -27,10 +28,12 @@ import semplest.keywords.javautils.ValueComparator;
 import semplest.keywords.javautils.catUtils;
 import semplest.keywords.javautils.dictUtils;
 import semplest.keywords.lda.*;
+import semplest.server.protocol.ProtocolEnum.EmailType;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.mail.SemplestMailServiceImpl;
 
 
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
@@ -43,11 +46,19 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	//Search index for categories
 	private static KWGenDmozLDAdata2 data;
 	private static HashMap<String,Object> configData;
+	SemplestMailServiceImpl mail;
 	private static enum SearchEngine {
 		Google, MSN;
 	}
-	public KWGenDmozLDAServer2(HashMap<String,Object> configDataIn) {
-		configData = configDataIn;
+	public KWGenDmozLDAServer2(HashMap<String,Object> configDataIn) throws Exception {
+		try{
+			configData = configDataIn;
+			mail = new SemplestMailServiceImpl();
+			mail.initializeService(null);
+		}catch(Exception e){
+			logger.error(e.toString());
+			throw e;
+		}
 	}
 	@Override
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
@@ -59,7 +70,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			ArrayList<String> categories = this.getCategories(description);
 			return categories;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.toString());
 			throw e;
 		}
 	}
@@ -145,7 +156,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		    		numkw=numKw[i];
 		    }
 			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
-			HashSet<KeywordProbabilityObject> set = new HashSet<KeywordProbabilityObject>();
+			HashMap<KeywordProbabilityObject, Double> map = new HashMap<KeywordProbabilityObject, Double>();
 			int num = 0;
 			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
 				for(KeywordProbabilityObject kw : list1){
@@ -156,11 +167,14 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 						else if(se.toString().equalsIgnoreCase("msn")&& num>=numKw[n])
 							kw.setIsTargetMSN(false);
 					}
-					set.add(kw);
+					map.put(kw, kw.getSemplestProbability());
 					num++;
 				}
 			}
-
+			ValueComparator vc = new ValueComparator(map);
+			TreeMap<KeywordProbabilityObject, Double> tmap = new TreeMap<KeywordProbabilityObject, Double>(vc);
+			tmap.putAll(map);
+			Set<KeywordProbabilityObject> set = tmap.keySet();
 			return set.toArray(new KeywordProbabilityObject[]{});
 		}catch(Exception e){
 			logger.error(e);
@@ -242,7 +256,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 	
 			return keywords;
 		}catch(Exception e){
-			logger.error(e);
+			logger.error(e.toString());
 			throw e;
 		}
 	}
@@ -290,16 +304,29 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 				    
 		    //Infer word probability based on input data
 		    wordMap = lda.inferWordprob(inferInst, 0,true);
+		    Double maxProb = maxValue(wordMap);
+		    if(maxProb == null)
+		    	maxProb = 1.0;
 		    //logger.info("insider word map size:"+wordMap.size());
 		    String qsStem = this.stemvStringNoFilter( searchTerm, data.dict ); 
 		    if(searchTerm!=null){
 		    	String[] terms = qsStem.split("\\s+");
 			    for(int n=0; n<terms.length; n++){
-			    	wordMap.put(terms[n], new Double(1.0));
+			    	wordMap.put(terms[n], new Double(maxProb));
 			    }
 		    }
 			return wordMap;
 
+	}
+	
+	private static Double maxValue(HashMap<String, Double> map){
+		double max = 0;
+		for(String word : map.keySet()){
+			double prob =  map.get(word);
+			if(prob>max)
+				max=prob;
+		}
+		return max;
 	}
 	
 	private ArrayList<ArrayList<KeywordProbabilityObject>> getKwMultiCombined(ArrayList<String> optCateg, String searchTerms, Integer[] nGrams, 
@@ -310,7 +337,32 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		ArrayList<KeywordProbabilityObject> bigrams = getKwMulti(searchTerms, optCateg, nGrams[0], wordMap, 2, srchE);
 		ArrayList<KeywordProbabilityObject> trigrams = getKwMulti(searchTerms, optCateg, nGrams[1], wordMap, 3, srchE);
 		ArrayList<KeywordProbabilityObject> fourgrams = getKwMulti(searchTerms, optCateg, nGrams[2], wordMap, 4, srchE);
-		ArrayList<KeywordProbabilityObject> googleSug = getGoogleSug(searchTerms, srchE);
+		//Find max and min probability
+		ArrayList<Double> maxValues = new ArrayList<Double>();
+		ArrayList<Double> minValues = new ArrayList<Double>();
+		if(bigrams != null && bigrams.size()>0){
+			maxValues.add(bigrams.get(0).getSemplestProbability());
+			minValues.add(bigrams.get(bigrams.size()-1).getSemplestProbability());
+		}
+		if(trigrams != null && trigrams.size()>0){
+			maxValues.add(trigrams.get(0).getSemplestProbability());
+			minValues.add(trigrams.get(trigrams.size()-1).getSemplestProbability());
+		}
+		if(fourgrams != null && fourgrams.size()>0){
+			maxValues.add(fourgrams.get(0).getSemplestProbability());
+			minValues.add(fourgrams.get(fourgrams.size()-1).getSemplestProbability());
+		}
+		double maxVal = 0.0;
+		double minVal = 1.0;
+		for(int j = 0; j<maxValues.size(); j++){
+			if(maxVal<maxValues.get(j))
+				maxVal = maxValues.get(j);
+			if(minVal>minValues.get(j)){
+				minVal = minValues.get(j);
+			}
+		}
+		ArrayList<KeywordProbabilityObject> googleSug = getGoogleSug(searchTerms, srchE, minVal, maxVal);
+		
 		
 		
 		
@@ -340,17 +392,15 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		results.add(bigrams);
 		results.add(trigrams);
 		results.add(fourgrams);
-		
-		
-		
-		
-		
+
+
 		return results;
 
 		
 	}
 	
-	private ArrayList<KeywordProbabilityObject> getGoogleSug(String searchTerms, ArrayList<SearchEngine> srchE) throws Exception{
+	private ArrayList<KeywordProbabilityObject> getGoogleSug(String searchTerms, ArrayList<SearchEngine> srchE , 
+			Double minVal, Double maxVal) throws Exception{
 
 		ArrayList<KeywordProbabilityObject> kwProb = new ArrayList<KeywordProbabilityObject>();
 		
@@ -362,14 +412,28 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		boolean repeat = true;
 		int countRep = 0;
 		ArrayList<KeywordToolStats> keyWordIdeaList = new ArrayList<KeywordToolStats>();
-		while(countRep == 0 && repeat){
+		while(countRep <= 1 && repeat){
 			try{
-				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
+				//keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
+				keyWordIdeaList = g.getGoogleKeywordIdeas(null, 30000); 
 				repeat=false;
+				
 			}catch(ApiException e){
-				logger.error(e.dumpToString());
-				Thread.sleep(5000);
+				logger.error(e.dumpToString(), e);
+				if(countRep <1) Thread.sleep(5000);
 				countRep++;
+				//Temporary solution, change to e-mails in database
+				if(countRep>1){
+				//	mail.SendEmail("getKeywords: Exception with Google API", "lluis@semplest.com", "lluis@semplest.com", e.dumpToString(), EmailType.PlanText.getEmailValue());
+				}
+			}catch(Exception e){
+				logger.error(e.toString(), e);
+				if(countRep <1) Thread.sleep(5000);
+				countRep++;
+				//Temporary solution, change to e-mails in database
+				if(countRep>1){
+				 //	mail.SendEmail("getKeywords: Exception with Google API", "lluis@semplest.com", 	"lluis@semplest.com", e.toString(), EmailType.PlanText.getEmailValue());
+				}
 			}
 		}
 		for(KeywordToolStats kw : keyWordIdeaList){
@@ -377,7 +441,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			kwP.setIsTargetGoogle(true);
 			kwP.setIsTargetMSN(true);
 			kwP.setKeyword(kw.getKeyword());
-			kwP.setSemplestProbability(1.0);
+			kwP.setSemplestProbability((maxVal-minVal)*Math.random()+minVal);
 			kwProb.add(kwP);
 		}
 		
@@ -449,7 +513,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 									String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
 									wProb=wProb*wordMap.get(subWstem);
 								}
-								multWMap.put(kwrd, wProb);			
+								multWMap.put(kwrd, Math.exp(Math.log(wProb)/nGrams));			
 						}
 						
 					}

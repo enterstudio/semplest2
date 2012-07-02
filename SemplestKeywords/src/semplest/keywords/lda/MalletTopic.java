@@ -260,8 +260,8 @@ public class MalletTopic {
 		ArrayList<TreeSet<IDSorter>> topicSortedWords = model.getSortedWords();
 		//logger.debug(dataAlphabet.size());
 		HashMap<String, Double> wordMap = new HashMap<String, Double>(dataAlphabet.size());
-		ValueComparator bvc =  new ValueComparator(wordMap);
-		TreeMap<String,Double> sorted_map = new TreeMap(bvc);
+		//ValueComparator bvc =  new ValueComparator(wordMap);
+		//TreeMap<String,Double> sorted_map = new TreeMap(bvc);
 		double wordProb;
 		String word;
 		// Show top numwords words in topics with proportions for the instIndex document
