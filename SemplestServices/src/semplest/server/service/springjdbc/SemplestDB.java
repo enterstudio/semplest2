@@ -357,8 +357,9 @@ public class SemplestDB extends BaseDB
 	public static List<BidElement> getLatestBids(int promotionID, AdEngine searchEngine) throws Exception
 	{
 		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, " 
-				+ " kb.isActive, kb.isDefaultValue from Promotion p  "
+				+ " kb.isActive, kb.isDefaultValue, pka.IsNegative from Promotion p  "
 				+ "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
+				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.keywordFK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
 				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " 
 				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
@@ -577,7 +578,7 @@ public class SemplestDB extends BaseDB
 			{
 				try
 				{
-					addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount(), bid.getMatchType(), advertisingEngine, bid.getIsNegative(), bid.getCompetitiveType());
+					Integer id = addBid.execute(promotionID, bid.getKeywordAdEngineID(), bid.getKeyword(), bid.getMicroBidAmount().intValue(), bid.getMatchType(), advertisingEngine, bid.getIsNegative(), bid.getCompetitiveType());
 					logger.info("Added Keyword " + bid.getKeyword() + " MicroBid " + bid.getMicroBidAmount());
 				}
 				catch (Exception e)
