@@ -37,7 +37,7 @@ public class ServiceActiveMQConnection
 	public ServiceActiveMQConnection(String host, String port) throws JMSException
 	{
 		//Context ctx = new InitialContext();
-		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port + "?wireFormat.maxInactivityDuration="+ maxInactivityDuration +")");
+		cf = new ActiveMQConnectionFactory("tcp://" + host + ":" + port + "?wireFormat.maxInactivityDuration="+ maxInactivityDuration);
 		cacheCF = new CachingConnectionFactory();
 		cacheCF.setTargetConnectionFactory(cf);
 		cacheCF.setSessionCacheSize(1);
