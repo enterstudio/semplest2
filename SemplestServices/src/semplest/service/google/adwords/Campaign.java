@@ -185,13 +185,18 @@ public class Campaign
     return ccs.toArray( new CampaignCriterion[]{} );
   }
   // -- Criterion creators --------------
-  private Criterion cCriterion( String s ) throws Exception { 
-    return cLocation( new LocationInfo( clid, user ).getId( s ));}
+  public Criterion cCriterion( String s ) throws Exception 
+  { 
+	  final LocationInfo locationInfo = new LocationInfo(clid, user);
+	  final Long locationInfoId = locationInfo.getId(s);
+	  return cLocation(locationInfoId);
+  }
+  
   private Criterion cCriterion( Double r, String a ) throws Exception {
     Map.Entry e = (new GeoLocator( clid, user )).getLatLon( a );
     return cProximity( r, (Integer)e.getKey(), (Integer) e.getValue());
   }
-  private Criterion cCriterion( Double r, 
+  public Criterion cCriterion( Double r, 
       String s, String c, String st, String z ) throws Exception {
     Map.Entry e = (new GeoLocator( clid, user )).getLatLon( s, c, st, z );
     return cProximity( r, (Integer)e.getKey(), (Integer) e.getValue());
@@ -201,7 +206,7 @@ public class Campaign
     l.setId( lid );
     return l;
   }
-  private Criterion cProximity( Double r, int lat, int lon ){
+  public Criterion cProximity( Double r, int lat, int lon ){
     GeoPoint gp = new GeoPoint();
     gp.setLatitudeInMicroDegrees(   lat );
     gp.setLongitudeInMicroDegrees(  lon );

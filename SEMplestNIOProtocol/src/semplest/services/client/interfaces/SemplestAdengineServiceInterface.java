@@ -37,8 +37,11 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines);
 	Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	
-	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;
+	// Validation methods
+	
 	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
+	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;	 
+	List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception;
 	
 	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
 	

@@ -202,12 +202,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
 	private static Gson gson = new Gson();
-	// THis needs to be read from the Database
+	
+	// TODO: This needs to be read from the Database
 	private final String email; // = "adwords@semplest.com";
 	private final String password; // = "ic0system";
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
-	private final boolean useSandbox; // = false; // true; // // true; //
+	private final boolean useSandbox; 
 
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
@@ -4036,6 +4037,69 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		operation.setOperand(campaignAdExtension);
 		operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.ADD);
 		return operation;
+	}
+	
+	public List<Criterion> getCriterionsForSettingGeoTargets(final String validationAccountID, final Long validationCampaignID, final List<GeoTargetObject> geoTargets) throws Exception 
+	{
+		final List<Criterion> criterions = new ArrayList<Criterion>();
+		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
+		final semplest.service.google.adwords.Campaign semplestCampaign = new semplest.service.google.adwords.Campaign(validationAccountID, validationCampaignID, user);
+		for (final GeoTargetObject geoTarget : geoTargets)
+	    {
+			final Double radius = geoTarget.getRadius();
+			final String addr = geoTarget.getAddress();
+			final String city = geoTarget.getCity();
+			final String state = geoTarget.getState();
+			final String zip = geoTarget.getZip();
+			final Criterion criterion;
+			if (radius <= 0)
+			{
+				criterion = semplestCampaign.cCriterion(state);
+			}
+			else
+			{
+				criterion = semplestCampaign.cCriterion(radius, addr, city, state, zip);
+			}
+			criterions.add(criterion);
+	    }
+		return criterions;
+	}
+	
+	public List<CampaignCriterionOperation> getCampaignCriterionOperations(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception 
+	{
+		final List<Criterion> criterions = getCriterionsForSettingGeoTargets(validationAccountID, validationCampaignId, geoTargets);
+		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+		for (final Criterion criterion : criterions)
+		{
+			final CampaignCriterion cc = new CampaignCriterion();
+		    cc.setCampaignId(validationCampaignId);
+		    cc.setCriterion(criterion);
+		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+		    operation.setOperand(cc);
+		    operation.setOperator(Operator.ADD);
+		    operations.add(operation);
+		}
+		return operations;
+	}
+	
+	@Override
+	public List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception 
+	{
+		logger.info("Will try to Validate Geo Targets using ValidationAccountID [" + validationAccountID + "], ValidationCampaignID [" + validationCampaignId + "], GeoTargets [" + geoTargets + "]");
+		final List<CampaignCriterionOperation> operationList = getCampaignCriterionOperations(validationAccountID, validationCampaignId, geoTargets);
+		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
+		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
+		final CampaignCriterionServiceInterface validationService = user.getValidationService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
+	    List<GoogleViolation> violations = null;
+		try
+		{
+			validationService.mutate(operations);
+		}
+		catch (ApiException e)
+		{
+			violations = getViolations(e);
+		}
+		return violations;
 	}
 		
 	@Override

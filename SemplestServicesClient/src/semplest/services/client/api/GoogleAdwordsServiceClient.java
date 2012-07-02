@@ -741,6 +741,14 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public List<GoogleViolation> validateUpdateGeoTargets(String validationAccountID, Long validationCampaignId, List<GeoTargetObject> geoTargets)
+			throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 }

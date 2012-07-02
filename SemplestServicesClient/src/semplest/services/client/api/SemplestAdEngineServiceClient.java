@@ -48,7 +48,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		//final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
 		
-	
+/*	
 		// validateGoogleAd
 		final String landingPageURL = "http://www.semplest.com";
 		final String displayURL = landingPageURL;
@@ -63,13 +63,18 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads);
 		if (validations != null)
 		{
-			logger.error("Google errors:\n" + SemplestUtils.getEasilyReadableString(validations));
+			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations));
 		}
-		/*
+*/
 		// validateGoogleRefreshSiteLinks
-		final Integer promotionID_RefreshSiteLinksForAd = 62;
-		final List<GoogleValidation> googleValidations = client.validateGoogleRefreshSiteLinks(promotionID_RefreshSiteLinksForAd);
-		logger.info("Google Validations:\n" + SemplestUtils.getEasilyReadableString(googleValidations));
+		final Integer promotionID_validateGoogleRefreshSiteLinks = 21;
+		final List<GoogleViolation> googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
+		logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
+/*	
+		// validateGoogleGeoTargets
+		final Integer promotionID_validateGoogleGeoTargets = 21;
+		final List<GoogleViolation> googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(promotionID_validateGoogleGeoTargets);
+		logger.info("Google Violations from validateGoogleGeoTargets:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleGeoTargets));
 
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
@@ -1221,15 +1226,37 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
 	{
-		final String methodName = "validateRefreshSiteLinks";
+		final String methodName = "validateGoogleRefreshSiteLinks";
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
-		jsonHash.put("promotionID", Integer.toString(promotionID));
+		jsonHash.put("promotionID", "" + promotionID);
 		final String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		try
 		{
 			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-			final List<GoogleViolation> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_GOOGLE_VALIDATIONS);
+			final List<GoogleViolation> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_GOOGLE_VIOLATIONS);
+			return result;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem performing " + methodName;
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
+
+	@Override
+	public List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception
+	{
+		final String methodName = "validateGoogleGeoTargets";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("promotionID", "" + promotionID);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final List<GoogleViolation> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_GOOGLE_VIOLATIONS);
 			return result;
 		}
 		catch (Exception e)

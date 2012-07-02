@@ -106,6 +106,7 @@ public interface GoogleAdwordsServiceInterface extends ServiceInitialize
 	ReportObject[] getReportForAccount(String accountID, String startDate, String endDate) throws Exception;
 
 	// GeoTargeting
+	List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception;
 	Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception;
 	Boolean updateGeoTargets(String accountId, Long campaignId, List<GeoTargetObject> geoTargets) throws Exception;	
 	 
