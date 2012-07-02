@@ -246,7 +246,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			Long adgroupID = 4766339711L;//3066603844L; // 
 			String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
-			String headline = "hello";
+			String headline = "shit";
 			String description1= "This is a test";
 			String description2 = "description2 ";
 
@@ -4141,11 +4141,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				if (error instanceof PolicyViolationError)
 				{
 					PolicyViolationError policyError = (PolicyViolationError) error;
-					err.setField(policyError.getFieldPath());
+					
 					err.setIsPolicyViolationError(true);
 					err.setPolicyDescription(policyError.getExternalPolicyDescription());
 					err.setPolicyName(policyError.getExternalPolicyName());
 					err.setViolatingText(policyError.getKey().getViolatingText());
+					String violatingField = null;
+					String violatingFieldText = policyError.getFieldPath();
+					if (violatingFieldText != null)
+					{
+						//split on period
+						String [] fields = violatingFieldText.split("[.]");
+						violatingField = fields[fields.length - 1];
+					}
+					
+					err.setField(violatingField);
 				}
 				else
 				{
