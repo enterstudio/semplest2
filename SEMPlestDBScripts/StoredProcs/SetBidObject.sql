@@ -18,6 +18,7 @@ CREATE PROCEDURE dbo.SetBidObject
 	@BidType				VARCHAR(25),
 	@AdvertisingEngine		VARCHAR(50),
 	@IsNegative				bit = 1,
+	@CompetitionType		varchar(20),
 	@ID int output
 )
 AS
@@ -85,27 +86,33 @@ BEGIN TRY
 				 --update the last bid with an end Date and set inactive
 				 UPDATE KeywordBid set EndDate = @currentTime, IsActive = 0 WHERE KeywordBidPK = @keywordBidPK
 				 --add new active keyword bid
-				 INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
-				 select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID
+				 INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID, CompetitionType)
+				 select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType
 					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK
-				SET @keywordBidPK = @@IDENTITY	 
+				SET @ID = @@IDENTITY	 
 				--make sure the associaition is active
 				update PromotionKeywordAssociation set IsActive = 1 where PromotionFK = @PromotionPK and KeywordFK = @keywordPK	
-			END		 
+			END	
+			ELSE  -- update competition parameters 
+			BEGIN
+				update KeywordBid set CompetitionType = @CompetitionType
+					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK
+				SET @ID = @keywordBidPK	
+			END	 
 	END	
 	
 	ELSE --New Bid on Keyword
 	  BEGIN
 			--create the keyword bid
 			select @keywordPK = k.KeywordPK from Keyword k where k.Keyword = @Keyword
-			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID)
-				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID)
-			SET @keywordBidPK = @@IDENTITY	
+			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID,CompetitionType)
+				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType)
+			SET @ID = @@IDENTITY	
 	  END
 	   		
 	COMMIT TRANSACTION	
 	
-	RETURN 	@keywordBidPK			 
+	RETURN @ID			 
 	
 END TRY
 BEGIN CATCH
