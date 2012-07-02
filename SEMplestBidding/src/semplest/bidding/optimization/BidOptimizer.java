@@ -119,7 +119,7 @@ public class BidOptimizer implements java.io.Serializable {
         Minimisation min = new Minimisation();
         
         //min.addConstraint(0, -1, wordList.get(i).getMinBid());
-        //min.addConstraint(0, -1, 0.05);
+        min.addConstraint(0, -1, 0.05);
         //min.addConstraint(0, +1, 4.00); // max bid allowed
         //min.setNrestartsMax(10);
 		
