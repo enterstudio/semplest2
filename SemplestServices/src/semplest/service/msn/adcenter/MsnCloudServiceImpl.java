@@ -2025,11 +2025,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			final Long keywordAdEngineID = bid.getKeywordAdEngineID();
 			final String matchType = bid.getMatchType();
 			final Long microBidAmountLong = bid.getMicroBidAmount();
-			Double microBidAmountDoubleTmp = null;
-			if(microBidAmountLong!=null) {
-				microBidAmountDoubleTmp=((double)microBidAmountLong) / 1000000;  
-			}
-			final Double microBidAmountDouble = new Double(microBidAmountDoubleTmp);
+			final Double microBidAmountDouble = (microBidAmountLong==null? null : new Double(((double)microBidAmountLong) / 1000000));
 			final Bid keywordBid = new Bid(microBidAmountDouble);
 			keyword.setId(keywordAdEngineID);
 			
