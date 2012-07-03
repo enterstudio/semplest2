@@ -4038,7 +4038,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
 		final CampaignCriterionServiceInterface validationService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
-		List<GoogleViolation> violations = null;
+		List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
 		try
 		{
 			validationService.mutate(operations);
@@ -4058,20 +4058,19 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
 		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(validationCampaignId, siteLinks);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
-		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user
-				.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 		List<GoogleViolation> validations = null;
 		try
 		{
-			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[] { addOperation });
+			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[]{addOperation});
 		}
-		catch (ApiException e)
+		catch (com.google.api.adwords.v201109_1.cm.ApiException e)
 		{
 			validations = getViolations(e);
 		}
 		return validations;
 	}
-
+	
 	public List<GoogleViolation> getViolations(ApiException e)
 	{
 		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
@@ -4099,6 +4098,47 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				final String externalPolicyName = policyError.getExternalPolicyName();
 				final String policyDescription = policyError.getExternalPolicyDescription();
 				final PolicyViolationKey policyViolationKey = policyError.getKey();
+				final String policyViolatingText = policyViolationKey.getViolatingText();
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription,
+						policyViolatingText);
+			}
+			else
+			{
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
+			}
+			violations.add(violation);
+		}
+		return violations;
+	}
+
+
+	public List<GoogleViolation> getViolations(com.google.api.adwords.v201109_1.cm.ApiException e)
+	{
+		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
+		final com.google.api.adwords.v201109_1.cm.ApiError[] errors = e.getErrors();
+		for (com.google.api.adwords.v201109_1.cm.ApiError error : errors)
+		{
+			final GoogleViolation violation;
+
+			final String errorType = error.getApiErrorType();
+			final String errorMessage = error.getErrorString();
+			final String fieldPath = error.getFieldPath();
+			final String shortFieldPath;
+			if (fieldPath != null && fieldPath.contains("."))
+			{
+				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
+				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
+			}
+			else
+			{
+				shortFieldPath = fieldPath;
+			}
+			if (error instanceof com.google.api.adwords.v201109_1.cm.PolicyViolationError)
+			{
+				final com.google.api.adwords.v201109_1.cm.PolicyViolationError policyError = (com.google.api.adwords.v201109_1.cm.PolicyViolationError) error;
+				final String externalPolicyName = policyError.getExternalPolicyName();
+				final String policyDescription = policyError.getExternalPolicyDescription();
+				final com.google.api.adwords.v201109_1.cm.PolicyViolationKey policyViolationKey = policyError.getKey();
 				final String policyViolatingText = policyViolationKey.getViolatingText();
 				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription,
 						policyViolatingText);

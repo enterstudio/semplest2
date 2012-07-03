@@ -65,17 +65,17 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		{
 			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations));
 		}
-
+*/
 		// validateGoogleRefreshSiteLinks
-		final Integer promotionID_validateGoogleRefreshSiteLinks = 21;
+		final Integer promotionID_validateGoogleRefreshSiteLinks = 23;
 		final List<GoogleViolation> googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
 		logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
-*/	
+/*
 		// validateGoogleGeoTargets
 		final Integer promotionID_validateGoogleGeoTargets = 33;
 		final List<GoogleViolation> googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(promotionID_validateGoogleGeoTargets);
 		logger.info("Google Violations from validateGoogleGeoTargets:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleGeoTargets));
-/*
+
 		// scheduleAddAds
 		final Integer customerID_ScheduleAddAds = 12;
 		final Integer promotionID_ScheduleAddAds = 62;
