@@ -414,8 +414,8 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		ArrayList<KeywordToolStats> keyWordIdeaList = new ArrayList<KeywordToolStats>();
 		while(countRep <= 1 && repeat){
 			try{
-				//keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
-				keyWordIdeaList = g.getGoogleKeywordIdeas(null, 30000); 
+				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
+				//keyWordIdeaList = g.getGoogleKeywordIdeas(null, 30000); 
 				repeat=false;
 				
 			}catch(ApiException e){
