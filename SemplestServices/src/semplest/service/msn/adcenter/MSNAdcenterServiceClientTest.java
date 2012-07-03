@@ -173,7 +173,12 @@ public class MSNAdcenterServiceClientTest {
 	
 			}
 			
-			test.updateKeywordBidsByIds(accountID, adGroupID, bids);
+			try {
+				test.updateKeywordBidsByIds(accountID, adGroupID, bids);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
