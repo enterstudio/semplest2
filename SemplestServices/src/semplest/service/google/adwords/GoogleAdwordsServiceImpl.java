@@ -202,13 +202,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(GoogleAdwordsServiceImpl.class);
 	private static Gson gson = new Gson();
-	
+
 	// TODO: This needs to be read from the Database
 	private final String email; // = "adwords@semplest.com";
 	private final String password; // = "ic0system";
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
-	private final boolean useSandbox; 
+	private final boolean useSandbox;
 
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
@@ -246,30 +246,33 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				object.wait();
 			}
-			String accountID = "2387614989";//"54104"; //
-			Long adgroupID = 4766339711L;//3066603844L; // 
+			String accountID = "2387614989";// "54104"; //
+			Long adgroupID = 4766339711L;// 3066603844L; //
 			String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
 			String headline = "hello";
-			String description1= "This is a test";
+			String description1 = "This is a test";
 			String description2 = "description2 ";
 
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			List<GoogleViolation> res = test.validateAd(accountID, adgroupID,landingPageURL, displayURL, headline, description1, description2);
+			List<GoogleViolation> res = test.validateAd(accountID, adgroupID, landingPageURL, displayURL, headline, description1, description2);
 			if (!res.isEmpty())
 			{
 				logger.info("Validations: " + SemplestUtils.getEasilyReadableString(res));
 			}
-			
+
 			/*
-			 * final GoogleAddAdRequest req = new GoogleAddAdRequest(75, "555555555frozen yogurt", "1111111any flavor", "33333333333healthy");
-			 
-			final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>();
-			addAdTextRequests.add(req);
-			final GoogleAddAdsRequest request = new GoogleAddAdsRequest("54104", 3066601739L, "http://www.aol.com", "http://www.weddingchannel.com",
-					addAdTextRequests);
-			test.addTextAds(request);
-			*/
+			 * final GoogleAddAdRequest req = new GoogleAddAdRequest(75,
+			 * "555555555frozen yogurt", "1111111any flavor",
+			 * "33333333333healthy");
+			 * 
+			 * final List<GoogleAddAdRequest> addAdTextRequests = new
+			 * ArrayList<GoogleAddAdRequest>(); addAdTextRequests.add(req);
+			 * final GoogleAddAdsRequest request = new
+			 * GoogleAddAdsRequest("54104", 3066601739L, "http://www.aol.com",
+			 * "http://www.weddingchannel.com", addAdTextRequests);
+			 * test.addTextAds(request);
+			 */
 			/*
 			 * GetAllPromotionDataSP getPromoDataSP = new
 			 * GetAllPromotionDataSP(); getPromoDataSP.execute(60); PromotionObj
@@ -565,8 +568,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
 			InfoSelector selector = new InfoSelector();
 			selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
-			selector.setClientCustomerIds(new long[]
-			{ accountID });
+			selector.setClientCustomerIds(new long[] { accountID });
 			String start = "";
 			String end = "";
 			if (startDate != null && endDate != null)
@@ -620,8 +622,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
 			InfoSelector selector = new InfoSelector();
 			selector.setApiUsageType(ApiUsageType.UNIT_COUNT);
-			selector.setClientCustomerIds(new long[]
-			{ accountID });
+			selector.setClientCustomerIds(new long[] { accountID });
 			String start = "";
 			String end = "";
 			if (startDate != null && endDate != null)
@@ -697,8 +698,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperand(account);
 			operation.setDescriptiveName(descriptiveName);
 			operation.setOperator(Operator.ADD);
-			final CreateAccountOperation[] operations = new CreateAccountOperation[]
-			{ operation };
+			final CreateAccountOperation[] operations = new CreateAccountOperation[] { operation };
 			final CreateAccountMutateRetriableGoogleOperation retriableOperation = new CreateAccountMutateRetriableGoogleOperation(
 					createAccountService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final Account[] result = retriableOperation.performOperation();
@@ -728,8 +728,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		final AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
 		final InfoServiceInterface infoService = user.getService(AdWordsService.V201109.INFO_SERVICE);
-		final String[] clientEmails = new String[]
-		{ email };
+		final String[] clientEmails = new String[] { email };
 		final InfoSelector selector = new InfoSelector();
 		selector.setApiUsageType(ApiUsageType.UNIT_COUNT_FOR_CLIENTS);
 		final String today = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -808,8 +807,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupOperation operation = new AdGroupOperation();
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.ADD);
-			final AdGroupOperation[] operations = new AdGroupOperation[]
-			{ operation };
+			final AdGroupOperation[] operations = new AdGroupOperation[] { operation };
 			final AdGroupMutateRetriableGoogleOperation retriableOperation = new AdGroupMutateRetriableGoogleOperation(adGroupService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupReturnValue result = retriableOperation.performOperation();
@@ -983,23 +981,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore", "FirstPageCpc", "SystemServingStatus" });
-			selector.setOrdering(new OrderBy[]
-			{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
-			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
-			{ adGroupID.toString() });
+			selector.setFields(new String[] { "Id", "KeywordText", "KeywordMatchType", "ApprovalStatus", "Status", "MaxCpc", "QualityScore",
+					"FirstPageCpc", "SystemServingStatus" });
+			selector.setOrdering(new OrderBy[] { new OrderBy("AdGroupId", SortOrder.ASCENDING) });
+			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { adGroupID.toString() });
 			if (ActiveOnly)
 			{
-				Predicate statusPredicate = new Predicate("Status", PredicateOperator.IN, new String[]
-				{ "ACTIVE" });
-				selector.setPredicates(new Predicate[]
-				{ adGroupIdPredicate, statusPredicate });
+				Predicate statusPredicate = new Predicate("Status", PredicateOperator.IN, new String[] { "ACTIVE" });
+				selector.setPredicates(new Predicate[] { adGroupIdPredicate, statusPredicate });
 			}
 			else
 			{
-				selector.setPredicates(new Predicate[]
-				{ adGroupIdPredicate });
+				selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 			}
 			final AdGroupCriterionGetRetriableGoogleOperation retriableOperation = new AdGroupCriterionGetRetriableGoogleOperation(
 					adGroupCriterionService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
@@ -1140,14 +1133,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			AdGroupAdServiceInterface adGroupAdService = user.getService(AdWordsService.V201109.ADGROUP_AD_SERVICE);
 			Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "Id", "AdGroupId", "Status" });
-			selector.setOrdering(new OrderBy[]
-			{ new OrderBy("AdGroupId", SortOrder.ASCENDING) });
-			Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
-			{ String.valueOf(adGroupId) });
-			selector.setPredicates(new Predicate[]
-			{ adGroupIdPredicate, adGroupIdPredicate });
+			selector.setFields(new String[] { "Id", "AdGroupId", "Status" });
+			selector.setOrdering(new OrderBy[] { new OrderBy("AdGroupId", SortOrder.ASCENDING) });
+			Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { String.valueOf(adGroupId) });
+			selector.setPredicates(new Predicate[] { adGroupIdPredicate, adGroupIdPredicate });
 			final AdGroupAdGetRetriableGoogleOperation retriableOperation = new AdGroupAdGetRetriableGoogleOperation(adGroupAdService, selector,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupAdPage page = retriableOperation.performOperation();
@@ -1279,8 +1268,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupOperation operation = new AdGroupOperation();
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.SET);
-			final AdGroupOperation[] operations = new AdGroupOperation[]
-			{ operation };
+			final AdGroupOperation[] operations = new AdGroupOperation[] { operation };
 			final AdGroupMutateRetriableGoogleOperation retriableOperation = new AdGroupMutateRetriableGoogleOperation(adGroupService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupReturnValue result = retriableOperation.performOperation();
@@ -1656,15 +1644,18 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests)
 			throws Exception
 	{
-		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size() + " GoogleAddKeywordRequests [<potentially to many to practically print>]");
+		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size()
+				+ " GoogleAddKeywordRequests [<potentially to many to practically print>]");
 		try
 		{
 			final Map<GoogleAddKeywordRequest, Long> requestToIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
 			final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests);
 			final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
-			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
-			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations
+					.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
+			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
+					adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupCriterionReturnValue regularKeywordResult = retriableOperation.performOperation();
 			if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
 			{
@@ -1683,7 +1674,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 							final GoogleAddKeywordRequest originalRequest = getGoogleAddKeywordRequest(requests, keywordText, keywordMatchType);
 							if (originalRequest == null)
 							{
-								logger.warn("Could not find original GoogleAddKeywordRequest for KeywordText [" + keywordText + "] and KeywordMatchType [" + keywordMatchType + "] from within the Keyword Criterions returned from Google");
+								logger.warn("Could not find original GoogleAddKeywordRequest for KeywordText [" + keywordText
+										+ "] and KeywordMatchType [" + keywordMatchType + "] from within the Keyword Criterions returned from Google");
 							}
 							else
 							{
@@ -1694,11 +1686,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 				if (requestToIdMap.size() != requests.size())
 				{
-					logger.warn("# of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size() + "] is NOT equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");
+					logger.warn("# of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size()
+							+ "] is NOT equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");
 				}
 				else
 				{
-					logger.warn("As expected, # of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size() + "] is equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");
+					logger.warn("As expected, # of GoogleAddKeywordRequest<->GoogleKeywordId mappings [" + requestToIdMap.size()
+							+ "] is equal to the # of original GoogleAddKeywordRequests [" + requests.size() + "]");
 				}
 			}
 			else
@@ -1709,7 +1703,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Problem Adding Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size() + " GoogleAddKeywordRequests [<potentially to many to practically print>]", e);
+			throw new Exception("Problem Adding Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size()
+					+ " GoogleAddKeywordRequests [<potentially to many to practically print>]", e);
 		}
 	}
 
@@ -1738,8 +1733,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupCriterionOperation keywordAdGroupCriterionOperation = new AdGroupCriterionOperation();
 			keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);
 			keywordAdGroupCriterionOperation.setOperator(Operator.ADD);
-			final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]
-			{ keywordAdGroupCriterionOperation };
+			final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] { keywordAdGroupCriterionOperation };
 			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
 					adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupCriterionReturnValue result = retriableOperation.performOperation();
@@ -1802,8 +1796,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final TargetingIdeaSelector selector = new TargetingIdeaSelector();
 		selector.setRequestType(RequestType.STATS);
 		selector.setIdeaType(IdeaType.KEYWORD);
-		selector.setRequestedAttributeTypes(new AttributeType[]
-		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION });
+		selector.setRequestedAttributeTypes(new AttributeType[] { AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES,
+				AttributeType.COMPETITION });
 		selector.setLocaleCode("US");
 		selector.setCurrencyCode("USD");
 		final Paging paging = new Paging();
@@ -1853,8 +1847,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Location loc = new Location();
 		loc.setId(new Long(2840)); // United States
 		final LocationSearchParameter locationSearchParameter = new LocationSearchParameter();
-		locationSearchParameter.setLocations(new Location[]
-		{ loc });
+		locationSearchParameter.setLocations(new Location[] { loc });
 		searchParamList.add(locationSearchParameter);
 		selector.setSearchParameters(searchParamList.toArray(new SearchParameter[searchParamList.size()]));
 		try
@@ -1950,8 +1943,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		TargetingIdeaSelector selector = new TargetingIdeaSelector();
 		selector.setRequestType(RequestType.IDEAS);
 		selector.setIdeaType(IdeaType.KEYWORD);
-		selector.setRequestedAttributeTypes(new AttributeType[]
-		{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,//
+		selector.setRequestedAttributeTypes(new AttributeType[] { AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES,
+				AttributeType.COMPETITION }); // AttributeType.APPROX_CONTENT_IMPRESSIONS_PER_DAY,//
 		// });
 
 		// Set selector paging (required for targeting idea service).
@@ -2011,8 +2004,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 		// matchType parameter
 		KeywordMatchTypeSearchParameter matchTypeParameter = new KeywordMatchTypeSearchParameter();
-		matchTypeParameter.setKeywordMatchTypes(new KeywordMatchType[]
-		{ KeywordMatchType.EXACT });
+		matchTypeParameter.setKeywordMatchTypes(new KeywordMatchType[] { KeywordMatchType.EXACT });
 		searchParamList.add(matchTypeParameter);
 
 		/*
@@ -2028,8 +2020,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		Location loc = new Location();
 		loc.setId(new Long(2840)); // United States
 		LocationSearchParameter locationSearchParameter = new LocationSearchParameter();
-		locationSearchParameter.setLocations(new Location[]
-		{ loc });
+		locationSearchParameter.setLocations(new Location[] { loc });
 		searchParamList.add(locationSearchParameter);
 
 		// set the selector
@@ -2274,8 +2265,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
 			operation.setOperand(biddableAdGroupCriterion);
 			operation.setOperator(Operator.SET);
-			AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[]
-			{ operation };
+			AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] { operation };
 			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
 					adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			AdGroupCriterionReturnValue result = retriableOperation.performOperation();
@@ -2347,8 +2337,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignCriterionOperation operation = new CampaignCriterionOperation();
 			operation.setOperand(negativeCampaignCriterion);
 			operation.setOperator(Operator.ADD);
-			final CampaignCriterionOperation[] operations =
-			{ operation };
+			final CampaignCriterionOperation[] operations = { operation };
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(
 					campaignCriterionService, operations, 10);
@@ -2430,8 +2419,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.ADD);
-			final CampaignOperation[] operations = new CampaignOperation[]
-			{ operation };
+			final CampaignOperation[] operations = new CampaignOperation[] { operation };
 			final CampaignMutateRetriableGoogleOperation retriableOperation = new CampaignMutateRetriableGoogleOperation(campaignService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignReturnValue result = retriableOperation.performOperation();
@@ -2477,20 +2465,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final AdGroupServiceInterface adGroupService = user.getService(AdWordsService.V201109.ADGROUP_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "Id", "Name" });
-			selector.setOrdering(new OrderBy[]
-			{ new OrderBy("Name", SortOrder.ASCENDING) });
-			final Predicate campaignIdPredicate = new Predicate("CampaignId", PredicateOperator.IN, new String[]
-			{ campaignID.toString() });
-			selector.setPredicates(new Predicate[]
-			{ campaignIdPredicate });
+			selector.setFields(new String[] { "Id", "Name" });
+			selector.setOrdering(new OrderBy[] { new OrderBy("Name", SortOrder.ASCENDING) });
+			final Predicate campaignIdPredicate = new Predicate("CampaignId", PredicateOperator.IN, new String[] { campaignID.toString() });
+			selector.setPredicates(new Predicate[] { campaignIdPredicate });
 			final AdGroupGetRetriableGoogleOperation retriableOperation = new AdGroupGetRetriableGoogleOperation(adGroupService, selector,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupPage page = retriableOperation.performOperation();
 			final AdGroup[] pages = page.getEntries();
-			GoogleAdGroupObject[] res =
-			{ new GoogleAdGroupObject() };
+			GoogleAdGroupObject[] res = { new GoogleAdGroupObject() };
 			if (pages.length > 0)
 			{
 				res = new GoogleAdGroupObject[pages.length];
@@ -2567,8 +2550,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.SET);
-			CampaignOperation[] operations = new CampaignOperation[]
-			{ operation };
+			CampaignOperation[] operations = new CampaignOperation[] { operation };
 			final CampaignMutateRetriableGoogleOperation retriableOperation = new CampaignMutateRetriableGoogleOperation(campaignService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			CampaignReturnValue result = retriableOperation.performOperation();
@@ -2607,8 +2589,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.SET);
-			final CampaignOperation[] operations = new CampaignOperation[]
-			{ operation };
+			final CampaignOperation[] operations = new CampaignOperation[] { operation };
 			final CampaignMutateRetriableGoogleOperation retriableOperation = new CampaignMutateRetriableGoogleOperation(campaignService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignReturnValue ret = retriableOperation.performOperation();
@@ -2877,11 +2858,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "Id", "KeywordText", "KeywordMatchType", "GeoPoint", "RadiusInUnits", "Address" });
+			selector.setFields(new String[] { "Id", "KeywordText", "KeywordMatchType", "GeoPoint", "RadiusInUnits", "Address" });
 			final List<Predicate> predicates = new ArrayList<Predicate>();
-			final Predicate adGroupIdPredicate = new Predicate("CampaignId", PredicateOperator.IN, new String[]
-			{ campaignId.toString() });
+			final Predicate adGroupIdPredicate = new Predicate("CampaignId", PredicateOperator.IN, new String[] { campaignId.toString() });
 			predicates.add(adGroupIdPredicate);
 			final Predicate[] predicateArray = predicates.toArray(new Predicate[predicates.size()]);
 			selector.setPredicates(predicateArray);
@@ -3085,8 +3064,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignOperation operation = new CampaignOperation();
 			operation.setOperand(campaign);
 			operation.setOperator(Operator.SET);
-			final CampaignOperation[] operations = new CampaignOperation[]
-			{ operation };
+			final CampaignOperation[] operations = new CampaignOperation[] { operation };
 			final CampaignMutateRetriableGoogleOperation retriableOperation = new CampaignMutateRetriableGoogleOperation(campaignService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignReturnValue ret = retriableOperation.performOperation();
@@ -3150,17 +3128,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			CampaignServiceInterface campaignService = user.getService(AdWordsService.V201109.CAMPAIGN_SERVICE);
 			Selector selectActiveAndPausedCampaigns = new Selector();
-			selectActiveAndPausedCampaigns.setFields(new String[]
-			{ "Id", "Name", "Status", "Amount", "StartDate" });
+			selectActiveAndPausedCampaigns.setFields(new String[] { "Id", "Name", "Status", "Amount", "StartDate" });
 			// TODO should only be returning Id, Name and Status from this
 			// method
 			// not Campaign[]
 
 			if (!includeDeleted)
 			{
-				selectActiveAndPausedCampaigns.setPredicates(new Predicate[]
-				{ new Predicate("Status", PredicateOperator.IN, new String[]
-				{ CampaignStatus.ACTIVE.getValue(), CampaignStatus.PAUSED.getValue() }) });
+				selectActiveAndPausedCampaigns.setPredicates(new Predicate[] { new Predicate("Status", PredicateOperator.IN, new String[] {
+						CampaignStatus.ACTIVE.getValue(), CampaignStatus.PAUSED.getValue() }) });
 			}
 			final CampaignGetRetriableGoogleOperation retriableOperation = new CampaignGetRetriableGoogleOperation(campaignService,
 					selectActiveAndPausedCampaigns, SemplestUtils.DEFAULT_RETRY_COUNT);
@@ -3243,8 +3219,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final CampaignOperation operation = new CampaignOperation();
 		operation.setOperand(campaign);
 		operation.setOperator(op);
-		return new CampaignOperation[]
-		{ operation };
+		return new CampaignOperation[] { operation };
 	}
 
 	public String GetRelatedKeywords(String json) throws Exception
@@ -3272,20 +3247,17 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final TargetingIdeaSelector selector = new TargetingIdeaSelector();
 			selector.setRequestType(RequestType.IDEAS);
 			selector.setIdeaType(IdeaType.KEYWORD);
-			selector.setRequestedAttributeTypes(new AttributeType[]
-			{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION });
+			selector.setRequestedAttributeTypes(new AttributeType[] { AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES,
+					AttributeType.COMPETITION });
 			final Paging paging = new Paging();
 			paging.setStartIndex(0);
 			paging.setNumberResults(numberResults);
 			selector.setPaging(paging);
 			final RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
-			relatedToKeywordSearchParameter.setKeywords(new Keyword[]
-			{ keywrd });
+			relatedToKeywordSearchParameter.setKeywords(new Keyword[] { keywrd });
 			final KeywordMatchTypeSearchParameter keywordMatchTypeSearchParameter = new KeywordMatchTypeSearchParameter();
-			keywordMatchTypeSearchParameter.setKeywordMatchTypes(new KeywordMatchType[]
-			{ matchType });
-			selector.setSearchParameters(new SearchParameter[]
-			{ relatedToKeywordSearchParameter, keywordMatchTypeSearchParameter });
+			keywordMatchTypeSearchParameter.setKeywordMatchTypes(new KeywordMatchType[] { matchType });
+			selector.setSearchParameters(new SearchParameter[] { relatedToKeywordSearchParameter, keywordMatchTypeSearchParameter });
 			final TargetingIdeaGetRetriableGoogleOperation retriableOperation = new TargetingIdeaGetRetriableGoogleOperation(targetingIdeaService,
 					selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final TargetingIdeaPage page = retriableOperation.performOperation();
@@ -3346,8 +3318,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final TargetingIdeaSelector selector = new TargetingIdeaSelector();
 			selector.setRequestType(RequestType.IDEAS);
 			selector.setIdeaType(IdeaType.KEYWORD);
-			selector.setRequestedAttributeTypes(new AttributeType[]
-			{ AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES, AttributeType.COMPETITION });
+			selector.setRequestedAttributeTypes(new AttributeType[] { AttributeType.CRITERION, AttributeType.AVERAGE_TARGETED_MONTHLY_SEARCHES,
+					AttributeType.COMPETITION });
 			final Paging paging = new Paging();
 			paging.setStartIndex(0);
 			paging.setNumberResults(numberResults);
@@ -3356,13 +3328,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			keywrd.setText(keyword);
 			keywrd.setMatchType(matchType);
 			final RelatedToKeywordSearchParameter relatedToKeywordSearchParameter = new RelatedToKeywordSearchParameter();
-			relatedToKeywordSearchParameter.setKeywords(new Keyword[]
-			{ keywrd });
+			relatedToKeywordSearchParameter.setKeywords(new Keyword[] { keywrd });
 			final RelatedToUrlSearchParameter relatedToUrlSearchParameter = new RelatedToUrlSearchParameter();
-			relatedToUrlSearchParameter.setUrls(new String[]
-			{ url });
-			selector.setSearchParameters(new SearchParameter[]
-			{ relatedToKeywordSearchParameter, relatedToUrlSearchParameter });
+			relatedToUrlSearchParameter.setUrls(new String[] { url });
+			selector.setSearchParameters(new SearchParameter[] { relatedToKeywordSearchParameter, relatedToUrlSearchParameter });
 			final TargetingIdeaGetRetriableGoogleOperation retriableOperation = new TargetingIdeaGetRetriableGoogleOperation(targetingIdeaService,
 					selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final TargetingIdeaPage page = retriableOperation.performOperation();
@@ -3420,8 +3389,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final List<AdGroupEstimateRequest> adGroupEstimateRequests = new ArrayList<AdGroupEstimateRequest>();
 			final ArrayList<KeywordEstimateRequest> keywordEstimateRequests = new ArrayList<KeywordEstimateRequest>();
 			final TrafficEstimatorServiceInterface trafficEstimatorService = user.getService(AdWordsService.V201109.TRAFFIC_ESTIMATOR_SERVICE);
-			final String[] keywords = newKeywordWithBid.keySet().toArray(new String[]
-			{});
+			final String[] keywords = newKeywordWithBid.keySet().toArray(new String[] {});
 			for (int i = 0; i < keywords.length; i++)
 			{
 				final String keyword = keywords[i];
@@ -3442,20 +3410,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				}
 			}
 			final AdGroupEstimateRequest adGroupEstimateRequest = new AdGroupEstimateRequest();
-			adGroupEstimateRequest.setKeywordEstimateRequests(keywordEstimateRequests.toArray(new KeywordEstimateRequest[]
-			{}));
+			adGroupEstimateRequest.setKeywordEstimateRequests(keywordEstimateRequests.toArray(new KeywordEstimateRequest[] {}));
 			adGroupEstimateRequests.add(adGroupEstimateRequest);
 			final CampaignEstimateRequest campaignEstimateRequest = new CampaignEstimateRequest();
-			campaignEstimateRequest.setAdGroupEstimateRequests(adGroupEstimateRequests.toArray(new AdGroupEstimateRequest[]
-			{}));
+			campaignEstimateRequest.setAdGroupEstimateRequests(adGroupEstimateRequests.toArray(new AdGroupEstimateRequest[] {}));
 			campaignEstimateRequest.setCampaignId(campaignID);
 			final Language english = new Language();
 			english.setId(1000L);
-			campaignEstimateRequest.setCriteria(new Criterion[]
-			{ english });
+			campaignEstimateRequest.setCriteria(new Criterion[] { english });
 			final TrafficEstimatorSelector selector = new TrafficEstimatorSelector();
-			selector.setCampaignEstimateRequests(new CampaignEstimateRequest[]
-			{ campaignEstimateRequest });
+			selector.setCampaignEstimateRequests(new CampaignEstimateRequest[] { campaignEstimateRequest });
 			final TrafficEstimatorGetRetriableGoogleOperation retriableOperation = new TrafficEstimatorGetRetriableGoogleOperation(
 					trafficEstimatorService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final TrafficEstimatorResult result = retriableOperation.performOperation();
@@ -3514,14 +3478,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "AdGroupId", "CriterionId", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc", "LocalImpressions" });
-			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
-			{ adGroupID.toString() });
-			final Predicate criterionIdPredicate = new Predicate("CriterionId", PredicateOperator.IN, new String[]
-			{ keywordID.toString() });
-			selector.setPredicates(new Predicate[]
-			{ adGroupIdPredicate, criterionIdPredicate });
+			selector.setFields(new String[] { "AdGroupId", "CriterionId", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
+					"LocalImpressions" });
+			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { adGroupID.toString() });
+			final Predicate criterionIdPredicate = new Predicate("CriterionId", PredicateOperator.IN, new String[] { keywordID.toString() });
+			selector.setPredicates(new Predicate[] { adGroupIdPredicate, criterionIdPredicate });
 			final DataServiceCriterionBidLandscapeGetRetriableGoogleOperation retriableOperation = new DataServiceCriterionBidLandscapeGetRetriableGoogleOperation(
 					dataService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CriterionBidLandscapePage page = retriableOperation.performOperation();
@@ -3583,13 +3544,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final DataServiceInterface dataService = user.getService(AdWordsService.V201109.DATA_SERVICE);
 			final Selector selector = new Selector();
-			selector.setFields(new String[]
-			{ "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks", "LocalCost", "MarginalCpc",
-					"LocalImpressions" });
-			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[]
-			{ adGroupID.toString() });
-			selector.setPredicates(new Predicate[]
-			{ adGroupIdPredicate });
+			selector.setFields(new String[] { "AdGroupId", "LandscapeType", "LandscapeCurrent", "StartDate", "EndDate", "Bid", "LocalClicks",
+					"LocalCost", "MarginalCpc", "LocalImpressions" });
+			final Predicate adGroupIdPredicate = new Predicate("AdGroupId", PredicateOperator.IN, new String[] { adGroupID.toString() });
+			selector.setPredicates(new Predicate[] { adGroupIdPredicate });
 			final DataServiceAdGroupBidLandscapeGetRetriableGoogleOperation retriableOperation = new DataServiceAdGroupBidLandscapeGetRetriableGoogleOperation(
 					dataService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupBidLandscapePage page = retriableOperation.performOperation();
@@ -3776,8 +3734,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupOperation operation = new AdGroupOperation();
 			operation.setOperand(adGroup);
 			operation.setOperator(Operator.SET);
-			final AdGroupOperation[] operations = new AdGroupOperation[]
-			{ operation };
+			final AdGroupOperation[] operations = new AdGroupOperation[] { operation };
 			final AdGroupMutateRetriableGoogleOperation retriableOperation = new AdGroupMutateRetriableGoogleOperation(adGroupService, operations,
 					SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupReturnValue result = retriableOperation.performOperation();
@@ -3821,8 +3778,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final BudgetOrderOperation budgetOrderOperation = new BudgetOrderOperation();
 		budgetOrderOperation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.ADD);
 		budgetOrderOperation.setOperand(budgetOrder);
-		final BudgetOrderOperation[] operations = new BudgetOrderOperation[]
-		{ budgetOrderOperation };
+		final BudgetOrderOperation[] operations = new BudgetOrderOperation[] { budgetOrderOperation };
 		final BudgetOrderMutateRetriableGoogleOperation retriableOperation = new BudgetOrderMutateRetriableGoogleOperation(budgetOrderService,
 				operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 		final BudgetOrderReturnValue result = retriableOperation.performOperation();
@@ -3868,18 +3824,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignAdExtensionServiceInterface campaignAdExtensionService = user
 					.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 			final com.google.api.adwords.v201109_1.cm.Selector selector = new com.google.api.adwords.v201109_1.cm.Selector();
-			selector.setFields(new String[]
-			{ "AdExtensionId", "CampaignId" });
-			selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[]
-			{ new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId", com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING) });
+			selector.setFields(new String[] { "AdExtensionId", "CampaignId" });
+			selector.setOrdering(new com.google.api.adwords.v201109_1.cm.OrderBy[] { new com.google.api.adwords.v201109_1.cm.OrderBy("AdExtensionId",
+					com.google.api.adwords.v201109_1.cm.SortOrder.ASCENDING) });
 			final com.google.api.adwords.v201109_1.cm.Predicate campaignIdPredicate = new com.google.api.adwords.v201109_1.cm.Predicate("CampaignId",
-					com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[]
-					{ campaignID.toString() });
+					com.google.api.adwords.v201109_1.cm.PredicateOperator.IN, new String[] { campaignID.toString() });
 			final com.google.api.adwords.v201109_1.cm.Predicate adExtensionStatusPredicate = new com.google.api.adwords.v201109_1.cm.Predicate(
-					"Status", com.google.api.adwords.v201109_1.cm.PredicateOperator.EQUALS, new String[]
-					{ status.toString() });
-			selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[]
-			{ campaignIdPredicate, adExtensionStatusPredicate });
+					"Status", com.google.api.adwords.v201109_1.cm.PredicateOperator.EQUALS, new String[] { status.toString() });
+			selector.setPredicates(new com.google.api.adwords.v201109_1.cm.Predicate[] { campaignIdPredicate, adExtensionStatusPredicate });
 			final CampaignAdExtensionGetRetriableGoogleOperation retriableOperation = new CampaignAdExtensionGetRetriableGoogleOperation(
 					campaignAdExtensionService, selector, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignAdExtensionPage page = retriableOperation.performOperation();
@@ -4031,14 +3983,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		operation.setOperator(com.google.api.adwords.v201109_1.cm.Operator.ADD);
 		return operation;
 	}
-	
-	public List<Criterion> getCriterionsForSettingGeoTargets(final String validationAccountID, final Long validationCampaignID, final List<GeoTargetObject> geoTargets) throws Exception 
+
+	public List<Criterion> getCriterionsForSettingGeoTargets(final String validationAccountID, final Long validationCampaignID,
+			final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		final List<Criterion> criterions = new ArrayList<Criterion>();
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
 		final semplest.service.google.adwords.Campaign semplestCampaign = new semplest.service.google.adwords.Campaign(validationAccountID, validationCampaignID, user);
 		for (final GeoTargetObject geoTarget : geoTargets)
-	    {
+		{
 			final Double radius = geoTarget.getRadius();
 			final String addr = geoTarget.getAddress();
 			final String city = geoTarget.getCity();
@@ -4054,36 +4007,38 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				criterion = semplestCampaign.cCriterion(radius, addr, city, state, zip);
 			}
 			criterions.add(criterion);
-	    }
+		}
 		return criterions;
 	}
-	
-	public List<CampaignCriterionOperation> getCampaignCriterionOperations(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception 
+
+	public List<CampaignCriterionOperation> getCampaignCriterionOperations(final String validationAccountID, final Long validationCampaignId,
+			final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		final List<Criterion> criterions = getCriterionsForSettingGeoTargets(validationAccountID, validationCampaignId, geoTargets);
 		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
 		for (final Criterion criterion : criterions)
 		{
 			final CampaignCriterion cc = new CampaignCriterion();
-		    cc.setCampaignId(validationCampaignId);
-		    cc.setCriterion(criterion);
-		    final CampaignCriterionOperation operation = new CampaignCriterionOperation();
-		    operation.setOperand(cc);
-		    operation.setOperator(Operator.ADD);
-		    operations.add(operation);
+			cc.setCampaignId(validationCampaignId);
+			cc.setCriterion(criterion);
+			final CampaignCriterionOperation operation = new CampaignCriterionOperation();
+			operation.setOperand(cc);
+			operation.setOperator(Operator.ADD);
+			operations.add(operation);
 		}
 		return operations;
 	}
-	
+
 	@Override
-	public List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId, final List<GeoTargetObject> geoTargets) throws Exception 
+	public List<GoogleViolation> validateUpdateGeoTargets(final String validationAccountID, final Long validationCampaignId,
+			final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		logger.info("Will try to Validate Geo Targets using ValidationAccountID [" + validationAccountID + "], ValidationCampaignID [" + validationCampaignId + "], GeoTargets [" + geoTargets + "]");
 		final List<CampaignCriterionOperation> operationList = getCampaignCriterionOperations(validationAccountID, validationCampaignId, geoTargets);
 		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
-		final CampaignCriterionServiceInterface validationService = user.getValidationService( AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE );
-	    List<GoogleViolation> violations = null;
+		final CampaignCriterionServiceInterface validationService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+		List<GoogleViolation> violations = null;
 		try
 		{
 			validationService.mutate(operations);
@@ -4094,19 +4049,21 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return violations;
 	}
-		
+
 	@Override
-	public List<GoogleViolation> validateRefreshSiteLinks(final String validationAccountID, final Long validationCampaignId, final GoogleRefreshSiteLinksRequest request) throws Exception
+	public List<GoogleViolation> validateRefreshSiteLinks(final String validationAccountID, final Long validationCampaignId,
+			final GoogleRefreshSiteLinksRequest request) throws Exception
 	{
 		logger.info("Will try to Validate Refresh SiteLinks for " + request.toStringPretty());
 		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
-		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(validationCampaignId, siteLinks);		
+		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(validationCampaignId, siteLinks);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
-		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user
+				.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 		List<GoogleViolation> validations = null;
 		try
 		{
-			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[]{addOperation});
+			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[] { addOperation });
 		}
 		catch (ApiException e)
 		{
@@ -4114,15 +4071,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return validations;
 	}
-	
+
 	public List<GoogleViolation> getViolations(ApiException e)
-	{						
+	{
 		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
-		final ApiError[] errors = e.getErrors(); 
+		final ApiError[] errors = e.getErrors();
 		for (ApiError error : errors)
 		{
 			final GoogleViolation violation;
-			
+
 			final String errorType = error.getApiErrorType();
 			final String errorMessage = error.getErrorString();
 			final String fieldPath = error.getFieldPath();
@@ -4130,7 +4087,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			if (fieldPath != null && fieldPath.contains("."))
 			{
 				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
-				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);				
+				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
 			}
 			else
 			{
@@ -4143,11 +4100,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				final String policyDescription = policyError.getExternalPolicyDescription();
 				final PolicyViolationKey policyViolationKey = policyError.getKey();
 				final String policyViolatingText = policyViolationKey.getViolatingText();
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription,
+						policyViolatingText);
 			}
 			else
 			{
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);					
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
 			}
 			violations.add(violation);
 		}
@@ -4162,7 +4120,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final Long campaignID = request.getCampaignID();
 		final List<SitelinksExtension> activeSitelinksExtensions = GetSitelinkExtensions(accountID, campaignID, CampaignAdExtensionStatus.ACTIVE);
 		final List<Long> existingActiveSitelinkIds = getIds(activeSitelinksExtensions);
-		logger.info("Existing Active SiteLink Ids for AccountID [" + accountID + "] and CampaignID [" + campaignID + "] which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");
+		logger.info("Existing Active SiteLink Ids for AccountID [" + accountID + "] and CampaignID [" + campaignID
+				+ "] which we'll remove from Google as part of the refresh: [" + existingActiveSitelinkIds + "]");
 		final List<CampaignAdExtensionOperation> removeOperationList = getRemoveSiteLinksOperations(campaignID, existingActiveSitelinkIds);
 		final List<GoogleSiteLink> siteLinks = request.getSiteLinks();
 		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(campaignID, siteLinks);
@@ -4190,9 +4149,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			return true;
 		}
 		final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
-		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
+		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user
+				.getService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
 		final CampaignAdExtensionOperation[] operations = combinedOperations.toArray(new CampaignAdExtensionOperation[combinedOperations.size()]);
-		final CampaignAdExtensionMutateRetriableGoogleOperation retriableOperation = new CampaignAdExtensionMutateRetriableGoogleOperation(campaignAdExtensionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final CampaignAdExtensionMutateRetriableGoogleOperation retriableOperation = new CampaignAdExtensionMutateRetriableGoogleOperation(
+				campaignAdExtensionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 		final CampaignAdExtensionReturnValue result = retriableOperation.performOperation();
 		if (result != null && result.getValue() != null)
 		{
@@ -4217,7 +4178,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public List<GoogleViolation> validateAd(String accountID,Long adgroupID, String landingPageURL, String displayURL, String headline, String description1, String description2) throws Exception
+	public List<GoogleViolation> validateAd(String accountID, Long adgroupID, String landingPageURL, String displayURL, String headline,
+			String description1, String description2) throws Exception
 	{
 		List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
 		AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
@@ -4241,8 +4203,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 
 		try
 		{
-			AdGroupAdReturnValue result = adGroupAdService.mutate(new AdGroupAdOperation[]
-			{ operation });
+			AdGroupAdReturnValue result = adGroupAdService.mutate(new AdGroupAdOperation[] { operation });
 
 		}
 		catch (ApiException e)
@@ -4252,5 +4213,4 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return validations;
 	}
 
-	
 }
