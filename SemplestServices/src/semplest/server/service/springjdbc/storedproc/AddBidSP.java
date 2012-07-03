@@ -25,8 +25,9 @@ public class AddBidSP extends StoredProcedure
 		declareParameter(new SqlParameter("AdvertisingEngine", Types.VARCHAR));
 		declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		declareParameter(new SqlParameter("CompetitionType", Types.VARCHAR));
-		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
 		declareParameter(new SqlParameter("IsDefaultValue", Types.BIT));
+		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
+		
 		
 		compile();
 	}
