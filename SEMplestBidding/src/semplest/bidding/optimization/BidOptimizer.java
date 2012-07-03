@@ -30,6 +30,7 @@ public class BidOptimizer implements java.io.Serializable {
 	private double [] bids;
 	private double tolDailyBudget = 1.0;
 	private int maxIter = 10000;
+	private double stepSize = 0.01;
 	
 	
 	public BidOptimizer(){
@@ -68,6 +69,7 @@ public class BidOptimizer implements java.io.Serializable {
 		HashMap<String,Double> bidData = new HashMap<String,Double>();
 	    ParametricFunction f = new GammaCurve();
 	    double [] input = new double[1];
+	    int progression = 0;
 
 	    bids = new double[wordList.size()];
 
@@ -91,9 +93,17 @@ public class BidOptimizer implements java.io.Serializable {
 
 			
 			if(totalDailyCost< dailyBudget){
-				targetCPC+=0.01;
+				targetCPC+=stepSize;
+				if(progression==-1){
+					stepSize=0.1*stepSize;
+				}
+				progression = 1;
 			} else{
-				targetCPC-=0.01;
+				targetCPC-=stepSize;
+				if(progression==1){
+					stepSize=0.1*stepSize;	
+				}
+				progression = -1;
 			} // if(totalDailyCost< dailyBudget)
 				
 			j++;
