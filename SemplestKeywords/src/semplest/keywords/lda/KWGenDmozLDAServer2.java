@@ -415,24 +415,23 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		while(countRep <= 1 && repeat){
 			try{
 				keyWordIdeaList = g.getGoogleKeywordIdeas(keywords, numberResults); 
-				//keyWordIdeaList = g.getGoogleKeywordIdeas(null, 30000); 
 				repeat=false;
 				
 			}catch(ApiException e){
 				logger.error(e.dumpToString(), e);
 				if(countRep <1) Thread.sleep(5000);
 				countRep++;
-				//Temporary solution, change to e-mails in database
 				if(countRep>1){
-				//	mail.SendEmail("getKeywords: Exception with Google API", "lluis@semplest.com", "lluis@semplest.com", e.dumpToString(), EmailType.PlanText.getEmailValue());
+					mail.SendEmail("getKeywords: Exception with Google API", "development@semplest.com", 
+							"development@semplest.com", e.dumpToString(), EmailType.PlanText.getEmailValue());
 				}
 			}catch(Exception e){
 				logger.error(e.toString(), e);
 				if(countRep <1) Thread.sleep(5000);
 				countRep++;
-				//Temporary solution, change to e-mails in database
 				if(countRep>1){
-				 //	mail.SendEmail("getKeywords: Exception with Google API", "lluis@semplest.com", 	"lluis@semplest.com", e.toString(), EmailType.PlanText.getEmailValue());
+				 	mail.SendEmail("getKeywords: Exception with Google API", "development@semplest.com",
+				 			"development@semplest.com", e.toString(), EmailType.PlanText.getEmailValue());
 				}
 			}
 		}
