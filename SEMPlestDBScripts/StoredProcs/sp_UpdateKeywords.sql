@@ -1,4 +1,5 @@
-USE [semplest]
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.sp_UpdateKeywords') AND type in (N'P', N'PC'))
+  DROP PROCEDURE dbo.sp_UpdateKeywords;
 GO
 
 /****** Object:  StoredProcedure [dbo].[sp_UpdateKeywords]    Script Date: 06/19/2012 00:13:51 ******/
@@ -18,17 +19,22 @@ CREATE PROCEDURE [dbo].[sp_UpdateKeywords]
 	@kwa dbo.PromotionKeywordTableType READONLY,
 	@PromotionId int
 AS
-BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
+BEGIN TRY
 	SET NOCOUNT ON;
+	DECLARE @ErrMsg VARCHAR(250)
+	
 	INSERT INTO Keyword (KeyWord)(
 	select keyword
 					from 
 					(
 						select k.KeywordPk, kwa.keyword 
 						from @kwa kwa  
-						LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) m)
+						LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) 
+						m group by Keyword)
+	
+	begin Transaction
 						
 	delete from PromotionKeywordAssociation where PromotionFK = @PromotionId
 						
@@ -38,11 +44,21 @@ BEGIN
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
 						from @kwa kwa  
-						INNER JOIN keyword k ON kwa.keyword = k.keyword )  n)
-												
+						INNER JOIN keyword k ON kwa.keyword = k.keyword)  n)
+						
+	commit transaction											
 	SELECT @@ROWCOUNT
-END
-
+END TRY
+BEGIN CATCH
+IF XACT_STATE() != 0 OR @@TRANCOUNT > 0
+    ROLLBACK TRANSACTION;
+	DECLARE @ErrMessage	nvarchar(4000),
+          @ErrorSeverity	int,
+          @ErrorState		int;
+	SELECT @ErrMessage = ERROR_MESSAGE(), @ErrorSeverity = ERROR_SEVERITY(), @ErrorState = ERROR_STATE();
+	RAISERROR (@ErrMessage, @ErrorSeverity, @ErrorState);
+END CATCH;
 GO
+
 
 
