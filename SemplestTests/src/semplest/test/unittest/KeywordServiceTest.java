@@ -12,12 +12,13 @@ import semplest.services.client.api.KeywordLDAServiceClient;
 public class KeywordServiceTest {
 
 	private int errorCounter = 0;
-	//private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";
-	private static String serviceURL = "http://VMJAVA1:9898/semplest";
+	//private static String serviceURL = "http://VMDEVJAVA1:9898/semplest";  //on DEV
+	//private static String serviceURL = "http://VMJAVA1:9898/semplest";  //on TEST
+	private static String serviceURL = "http://NY-semplestDev2:9898/semplest";  //on UAT
 	
 	public static void main(String args[]){
 		try{
-			KeywordLDAServiceClient client = new KeywordLDAServiceClient("http://172.18.9.22:9898/semplest");
+			KeywordLDAServiceClient client = new KeywordLDAServiceClient(serviceURL);
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getCategories:");		
 			long start = System.currentTimeMillis();

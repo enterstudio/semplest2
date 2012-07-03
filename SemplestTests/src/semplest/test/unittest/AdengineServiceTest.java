@@ -38,12 +38,11 @@ public class AdengineServiceTest extends BaseDB{
 	private int errorCounter = 0;
 	private int sleepTime = 1000;  //1s
 
-	boolean isDeleteHistoryTestData = true;
+	boolean isDeleteHistoryTestData = false;
 	
 	private String vMsg = "Verification FAILED! ";
 	
 	private String baseUrl = "http://172.18.9.26:9898/semplest";	
-	//private String baseUrl = "http://VMDEVJAVA1:9898/semplest";
 	
 	SemplestAdEngineServiceClient adEngine;
 	GoogleAdwordsServiceImpl google;
@@ -1838,8 +1837,8 @@ public class AdengineServiceTest extends BaseDB{
 		public Integer semplestPromotionId;
 		public String semplestPromotionName;
 		//public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google));
-		//public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.MSN));
-		public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google, ProtocolEnum.AdEngine.MSN));
+		public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.MSN));
+		//public ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google, ProtocolEnum.AdEngine.MSN));
 		
 		//Ad Engine Variables
 		public Integer googleAccountId = 54103;		

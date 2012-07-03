@@ -852,7 +852,7 @@ public class DatabaseTest extends BaseDB{
 			//*** Test GetAllPromotionDataSP(). Get promotion data from the database
 			/*
 			GetAllPromotionDataSP retpromo = new GetAllPromotionDataSP();
-			retpromo.execute(promotionID);
+			boolean ret = retpromo.execute(promotionID);
 			PromotionObj pd = retpromo.getPromotionData();
 			System.out.println("Promotions: -------------------");
 			System.out.println(ReflectionToStringBuilder.toString(pd));
@@ -875,7 +875,7 @@ public class DatabaseTest extends BaseDB{
 			Calendar cal = Calendar.getInstance();
 			cal.set(2011, 1, 1); Date start = cal.getTime();
 			cal.set(2012, 06, 01); Date end = cal.getTime();
-			updbudget.execute(promotionID, start, end);
+			Integer ret = updbudget.execute(promotionID, start, end);
 			//*/
 			
 		}

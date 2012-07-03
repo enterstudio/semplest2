@@ -88,12 +88,12 @@ public class InstallationSetup {
 				is.setEsb(SERVER_BOX.EXP);
 			}
 			
-			if(hostName.equals(ExpServiceServer)){				
+			if(hostName.equals(config.get(SERVER_BOX.EXP).serviceServer)){				
 				//Exp Services
 				is.setServices(SERVER_BOX.EXP);
 			}
 			
-			if(hostName.equals(ExpKeywordServer)){				
+			if(hostName.equals(config.get(SERVER_BOX.EXP).keywordServer)){
 				//Exp Keyword Service
 				is.setKeywordService(SERVER_BOX.EXP);
 			}
