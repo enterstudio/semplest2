@@ -75,6 +75,16 @@
             
         }
     </div>
+    
+                <div id="DirtyFormWindow" style="display: none">
+                <form name="hiddenDirtyForm" id="hiddenDirtyForm" action="DirtyForm" method="post">
+                        Your data has been modified. If you continue your current keyword selection will be deleted.
+                <div style="text-align: center">
+                    <input type="button" id="btnOkDF" value="OK" class="k-button" />
+                    <input type="button" id="btnCancelDF" value="Cancel" class="k-button" />
+                </div>
+                </form>
+            </div>
 </div>
 <script type="text/javascript">
     if ($('#currentMode').val() == "True") {
@@ -96,8 +106,24 @@
         }
     });
         //        enableDisable();
-        //        $("#tabstrip").children('.k-content').height(650);
-    var onActivate = function () {
+    //        $("#tabstrip").children('.k-content').height(650);
+    var onSelect = function (e) {
+
+        var formDirty = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+        if (formClean != formDirty && $('#IsNew').val() != 'True') {
+            var dirtyFormWindow = $('#DirtyFormWindow').kendoWindow({
+                    resizable: false,
+                    modal: true,
+                    title: "Unsaved Values"
+                }).data("kendoWindow");
+                $('#DirtyFormWindow').show();
+                dirtyFormWindow.center();
+                dirtyFormWindow.open();
+                e.preventDefault();
+        }
+
+    };
+    var onActivate = function (e) {
         //        var height = $(window).height();
         //        $("#tabstrip").children('.k-content').height(height - 225);
         //        //        $("#tabstrip").children('.k-content').height($("#tabstrip").outerHeight() - $('ul.k-tabstrip-items').outerHeight());
@@ -150,7 +176,7 @@
     };
 
     //Generate Tab
-    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate
+    var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate, select: onSelect
 
     }).data("kendoTabStrip");
 

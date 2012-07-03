@@ -1,5 +1,11 @@
 ﻿
+var formClean;
+
+
+
+
 $(document).ready(function () {
+    formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
     $('.street').live("keypress", function (e) {
@@ -272,6 +278,28 @@ $(document).ready(function () {
                 text: "View Keywords",
                 contentUrl: $('$ViewSelectedKeywordsUrl').val()
             });
+    });
+    $("#btnOkDF").click(function (event) {
+        //for now know submit lets just remove tabs
+        //$("#hiddenDirtyForm").submit();
+
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("Additional Links")'));
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("Negative Keywords")'));
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("Categories")'));
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("BillingLaunch")'));
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("View Keywords")'));
+        tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
+        formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+
+
+        $('#DirtyFormWindow').hide();
+        $('#DirtyFormWindow').data("kendoWindow").close();
+    });
+
+    $("#btnCancelDF").click(function (event) {
+        var dirtyWindow = $('#DirtyFormWindow').data("kendoWindow");
+        $('#DirtyFormWindow').hide();
+        dirtyWindow.close();
     });
 });
 

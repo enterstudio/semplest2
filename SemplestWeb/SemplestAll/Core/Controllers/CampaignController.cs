@@ -141,12 +141,13 @@ namespace Semplest.Core.Controllers
                     gv = _campaignRepository.ValidateGeotargeting(promoId);
                     if (gv.Length > 0)
                         return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    
-                    gv = _campaignRepository.ValidateSiteLinks(promoId);
-                    if (gv.Length > 0)
-                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    
-                    
+                    if (model.SiteLinks.Any())
+                    {
+                        gv = _campaignRepository.ValidateSiteLinks(promoId);
+                        if (gv.Length > 0)
+                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    }
+
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                     msg = String.Format(msg, model.ProductGroup.ProductGroupName,
