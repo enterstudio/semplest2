@@ -1096,7 +1096,7 @@ public class DatabaseTest extends BaseDB{
 		for(String k : kws){
 			BidElement be = new BidElement();
 			be.setKeyword(k);
-			be.setCompetitiveType(SemplestCompetitionType.NotSelected.name());
+			be.setCompetitionType(SemplestCompetitionType.NotSelected.name());
 			be.setKeywordAdEngineID(Long.valueOf(2000+i));
 			be.setMatchType(matchType);
 			be.setMicroBidAmount(12300L);

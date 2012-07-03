@@ -26,15 +26,17 @@ public class AddBidSP extends StoredProcedure
 		declareParameter(new SqlParameter("IsNegative", Types.BIT));
 		declareParameter(new SqlParameter("CompetitionType", Types.VARCHAR));
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
+		declareParameter(new SqlParameter("IsDefaultValue", Types.BIT));
+		
 		compile();
 	}
 
 	/*
 	 * returns KeywordBidPK
 	 */
-	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, AdEngine AdvertisingEngine, boolean IsNegative, String CompetitionType) throws Exception
+	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, AdEngine AdvertisingEngine, boolean IsNegative, String CompetitionType, boolean IsDefaultValue) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative, CompetitionType);
+		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative, CompetitionType, IsDefaultValue);
 		if (results.get("ID") == null)
 		{
 			return null;

@@ -1359,14 +1359,14 @@ public class BidGeneratorObj
 			
 			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
 			for(BidElement b : bidData){
-				System.out.println(b.getKeyword()+": "+b.getCompetitiveType()+", "+b.getMicroBidAmount());
-				b.setCompetitiveType(ProtocolEnum.SemplestCompetitionType.Comp.name());
+				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
+				b.setCompetitionType(ProtocolEnum.SemplestCompetitionType.Comp.name());
 			}
 			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
 			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
 
 			for(BidElement b : bidData){
-				System.out.println(b.getKeyword()+": "+b.getCompetitiveType()+", "+b.getMicroBidAmount());
+				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
 			}
 			*/
 			

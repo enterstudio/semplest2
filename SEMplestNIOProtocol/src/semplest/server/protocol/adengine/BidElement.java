@@ -8,7 +8,7 @@ public class BidElement
 	private String keyword;
 	private Long microBidAmount;
 	private String matchType;
-	private String competitiveType;
+	private String competitionType;
 	private Date startDate;
 	private Date endDate;
 	private Boolean isDefaultValue;
@@ -26,7 +26,7 @@ public class BidElement
 		this.keywordAdEngineID = keywordAdEngineID;
 		this.microBidAmount = microBidAmount;
 		this.matchType = matchType;
-		this.competitiveType = competitiveType;
+		this.competitionType = competitiveType;
 		this.isDefaultValue = isDefaultValue;
 		this.isNegative = isNegative;
 	}
@@ -55,15 +55,6 @@ public class BidElement
 	{
 		this.matchType = matchType;
 	}
-	public String getCompetitiveType()
-	{
-		return competitiveType;
-	}
-	public void setCompetitiveType(String competitiveType)
-	{
-		this.competitiveType = competitiveType;
-	}
-	
 	public Long getKeywordAdEngineID()
 	{
 		return keywordAdEngineID;
@@ -113,6 +104,16 @@ public class BidElement
 	public void setIsNegative(Boolean isNegative)
 	{
 		this.isNegative = isNegative;
+	}
+
+	public String getCompetitionType()
+	{
+		return competitionType;
+	}
+
+	public void setCompetitionType(String competitionType)
+	{
+		this.competitionType = competitionType;
 	}
 
 }

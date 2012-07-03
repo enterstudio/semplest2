@@ -22,7 +22,7 @@ public class AllBidRSExtactor implements ResultSetExtractor<HashMap<String,Array
 		{				
 			String keyword = rs.getString("Keyword");
 			BidElement bidEle = new BidElement();
-			bidEle.setCompetitiveType(rs.getString("CompetitionType"));
+			bidEle.setCompetitionType(rs.getString("CompetitionType"));
 			bidEle.setEndDate(rs.getTimestamp("EndDate"));
 			bidEle.setIsActive(rs.getBoolean("IsActive"));
 			bidEle.setIsDefaultValue(rs.getBoolean("IsDefaultValue"));
