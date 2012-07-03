@@ -19,6 +19,7 @@ CREATE PROCEDURE dbo.SetBidObject
 	@AdvertisingEngine		VARCHAR(50),
 	@IsNegative				bit = 1,
 	@CompetitionType		varchar(20),
+	@IsDefaultValue bit,
 	@ID int output
 )
 AS
@@ -86,8 +87,8 @@ BEGIN TRY
 				 --update the last bid with an end Date and set inactive
 				 UPDATE KeywordBid set EndDate = @currentTime, IsActive = 0 WHERE KeywordBidPK = @keywordBidPK
 				 --add new active keyword bid
-				 INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID, CompetitionType)
-				 select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType
+				 INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID, CompetitionType, IsDefaultValue)
+				 select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType, @IsDefaultValue
 					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK
 				SET @ID = @@IDENTITY	 
 				--make sure the associaition is active
@@ -95,7 +96,7 @@ BEGIN TRY
 			END	
 			ELSE  -- update competition parameters 
 			BEGIN
-				update KeywordBid set CompetitionType = @CompetitionType
+				update KeywordBid set CompetitionType = @CompetitionType, IsDefaultValue = @IsDefaultValue
 					from KeywordBid kb where kb.KeywordBidPK = @keywordBidPK
 				SET @ID = @keywordBidPK	
 			END	 
@@ -105,8 +106,8 @@ BEGIN TRY
 	  BEGIN
 			--create the keyword bid
 			select @keywordPK = k.KeywordPK from Keyword k where k.Keyword = @Keyword
-			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID,CompetitionType)
-				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType)
+			insert into KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID,CompetitionType,IsDefaultValue)
+				VALUES (@keywordPK,@AdEngineID,@PromotionPK,@currentTime,null,1,@BidTypeID,@MicroBidAmount,@KeywordAdEngineID, @CompetitionType,@IsDefaultValue)
 			SET @ID = @@IDENTITY	
 	  END
 	   		
