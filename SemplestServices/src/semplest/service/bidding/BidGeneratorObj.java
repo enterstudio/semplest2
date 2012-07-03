@@ -548,7 +548,7 @@ public class BidGeneratorObj
 
 
 			}
-			logger.info("Computed bids for rest of the keywords with first page cpc.");
+			logger.info("Computed bids for non-competitive keywords.");
 		}
 
 		/* ******************************************************************************************* */
@@ -620,18 +620,14 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 11. [google] Database call: write adgroup criterion
-		if (keywordDataObjs != null && keywordDataObjs.length > 0)
-		{
-			if (searchEngine == AdEngine.Google)
-			{
-				try
-				{
-					SemplestDB.storeKeywordDataObjects(promotionID, AdEngine.Google, new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
-				}
-				catch (Exception e)
-				{
-					logger.error("Failed to store Google adGroupCriterion data to database. " + e.getMessage(), e);
-					throw new Exception("Failed to store Google adGroupCriterion data to database. " + e.getMessage(), e);
+		if (keywordDataObjs != null && keywordDataObjs.length > 0) {
+			if (searchEngine == AdEngine.Google) {
+				logger.info("Trying to write adgroup criterion data to database for Google.");
+				try {
+					SemplestDB.storeKeywordDataObjects(promotionID,AdEngine.Google, new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
+				} catch (Exception e) {
+					logger.error("Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
+					throw new Exception("Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
 				}
 			} // if(searchEngine.equalsIgnoreCase(google))
 
@@ -642,6 +638,7 @@ public class BidGeneratorObj
 		// 12. Database call: write traffic estimator data
 
 		if (o != null) {
+			logger.info("Trying to write traffic estimator data to the database.");
 			try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, searchEngine,o);
 			} catch (Exception e) {
@@ -697,6 +694,7 @@ public class BidGeneratorObj
 
 		try {
 			if (bidsMatchType.size() > 0) {
+				logger.info("Trying to write the bid data to the database...");
 				SemplestDB.storeBidObjects(promotionID, searchEngine,
 						bidsMatchType);
 				logger.info("Stroed bid data to the databse for "
@@ -723,6 +721,7 @@ public class BidGeneratorObj
 
 		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine))
 		{
+			logger.info("Trying to write the default bid to the database.");
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 		}
@@ -734,6 +733,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
 		try {
+			logger.info("Trying ");
 			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine,
 					totalDailyCost, totalDailyClick.intValue());
 			logger.info("Stroed targeted daily budget data to the databse.");
@@ -1338,7 +1338,7 @@ public class BidGeneratorObj
 			
 			System.out.println("Testing inital bidding!");
 
-			BidGeneratorObj bidObject = new BidGeneratorObj();
+//			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
 //			Integer promotionID = new Integer(60);
@@ -1348,27 +1348,27 @@ public class BidGeneratorObj
 			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 			
 			
-			Integer promotionID = new Integer(31);
-			BudgetObject budgetData = new BudgetObject();
-			budgetData.setRemainingBudgetInCycle(45.0);
-			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
+//			Integer promotionID = new Integer(33);
+//			BudgetObject budgetData = new BudgetObject();
+//			budgetData.setRemainingBudgetInCycle(45.0);
+//			budgetData.setRemainingDays(31);
+//			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 
 			
-			/*
 			
-			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
-			for(BidElement b : bidData){
-				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
-				b.setCompetitionType(ProtocolEnum.SemplestCompetitionType.Comp.name());
-			}
-			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
-			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
-
-			for(BidElement b : bidData){
-				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
-			}
-			*/
+			
+//			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
+//			for(BidElement b : bidData){
+//				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
+//				b.setCompetitionType(ProtocolEnum.SemplestCompetitionType.Comp.name());
+//			}
+//			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
+//			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
+//
+//			for(BidElement b : bidData){
+//				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
+//			}
+			
 			
 			
 			/*
