@@ -72,9 +72,10 @@ namespace Semplest.SharedResources.Services
         }
 
 
-        public KeywordProbabilityObject[] GetKeywords(List<string> categories, string companyName, string[] searchEngines,
-                                string searchTerm, string description, string[] adds, string url,
-                                GeoTargetObject[] gt, Int32[] nGrams)
+        public KeywordProbabilityObject[] GetKeywords(List<string> categories, string companyName,
+                                                      string[] searchEngines,
+                                                      string searchTerm, string description, string[] adds, string url,
+                                                      GeoTargetObject[] gt, Int32[] nGrams)
         {
             string returnData = string.Empty;
             try
@@ -92,7 +93,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("gt", jsonGt);
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
-                nGrams = new[] { 300, 300, 100 };
+                nGrams = new[] {300, 300, 100};
                 //nGrams = new Int32[] { 1,2,3 };
                 string jsonNgrams = JsonConvert.SerializeObject(nGrams);
                 jsonHash.Add("nGrams", jsonNgrams);
@@ -120,7 +121,7 @@ namespace Semplest.SharedResources.Services
 
                 return listoflist;
             }
-            catch 
+            catch
             {
                 if (string.IsNullOrEmpty(returnData))
                     throw;
@@ -144,7 +145,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("adds", jsonAdds);
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
-                nGrams = new[] { 50, 50 };
+                nGrams = new[] {50, 50};
                 //nGrams = new Int32[] { 1,2,3 };
                 string jsonNgrams = JsonConvert.SerializeObject(nGrams);
                 jsonHash.Add("nGrams", jsonNgrams);
@@ -165,7 +166,7 @@ namespace Semplest.SharedResources.Services
 
                 return newstrlist;
             }
-            catch 
+            catch
             {
                 if (string.IsNullOrEmpty(returnData))
                     throw;
@@ -173,6 +174,8 @@ namespace Semplest.SharedResources.Services
                     throw new Exception(returnData);
             }
         }
+
+        #region AdEngine
 
         public bool schedulePromotion(int customerId, int promoId, string[] adds, bool shouldResume)
         {
@@ -189,7 +192,8 @@ namespace Semplest.SharedResources.Services
                 return runBooleanMethod(ADENGINESERVICE, "schedulePausePromotion", jsonstr);
         }
 
-        public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId, string[] adEngineList)
+        public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId,
+                                                   string[] adEngineList)
         {
             string returnData = string.Empty;
             var jsonHash = new Dictionary<string, string>();
@@ -202,7 +206,8 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr);
         }
 
-        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines, SEMplestConstants.PromotionAdAction actionType)
+        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines,
+                                SEMplestConstants.PromotionAdAction actionType)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
@@ -211,10 +216,10 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("adEngines", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(promotionAdIds, Formatting.Indented);
             jsonHash.Add("promotionAdIds", jsonAdds);
-            
+
             if (actionType == SEMplestConstants.PromotionAdAction.Add)
                 return runBooleanMethod(ADENGINESERVICE, "scheduleAddAds", JsonConvert.SerializeObject(jsonHash));
-            else if(actionType == SEMplestConstants.PromotionAdAction.Delete)
+            else if (actionType == SEMplestConstants.PromotionAdAction.Delete)
                 return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteAds", JsonConvert.SerializeObject(jsonHash));
             else
                 return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateAds", JsonConvert.SerializeObject(jsonHash));
@@ -230,7 +235,8 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleChangePromotionStartDate(int customerID, int promotionID, DateTime newStartDate, List<String> adEngines)
+        public bool scheduleChangePromotionStartDate(int customerID, int promotionID, DateTime newStartDate,
+                                                     List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
@@ -238,7 +244,8 @@ namespace Semplest.SharedResources.Services
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             jsonHash.Add("newStartDate", newStartDate.ToString("yyyymmdd"));
-            return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate",
+                                    JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool scheduleUpdateBudget(int customerID, int promotionID, Decimal changeInBudget, List<String> adEngines)
@@ -252,7 +259,9 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateBudget", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleNegativeKeywords(int customerID, int promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<String> adEngines, bool isAdd)
+        public bool scheduleNegativeKeywords(int customerID, int promotionID,
+                                             List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
+                                             List<String> adEngines, bool isAdd)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerID.ToString());
@@ -262,9 +271,11 @@ namespace Semplest.SharedResources.Services
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             if (isAdd)
-                return runBooleanMethod(ADENGINESERVICE, "scheduleAddNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
+                return runBooleanMethod(ADENGINESERVICE, "scheduleAddNegativeKeywords",
+                                        JsonConvert.SerializeObject(jsonHash));
             else
-                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteNegativeKeywords", JsonConvert.SerializeObject(jsonHash));
+                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteNegativeKeywords",
+                                        JsonConvert.SerializeObject(jsonHash));
         }
 
         public bool scheduleRefreshSiteLinks(int customerID, int promotionID, List<String> adEngines)
@@ -277,6 +288,51 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
         }
 
+        #endregion
+
+        #region validate
+
+        public GoogleViolation[] ValidateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
+        {
+            Dictionary<String, String> jsonHash = new Dictionary<String, String>();
+            jsonHash.Add("landingPageURL", landingPageURL);
+            jsonHash.Add("displayURL", displayURL);
+            String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
+            jsonHash.Add("ads", adsStr);
+            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
+                                          JsonConvert.SerializeObject(jsonHash), timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+            return listoflist;
+        }
+
+        public GoogleViolation[] validateGoogleRefreshSiteLinks(int promotionID)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("promotionID", promotionID.ToString());
+            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash), timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+            return listoflist;
+        }
+
+        public GoogleViolation[] validateGoogleGeoTargets(int promotionID)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("promotionID", promotionID.ToString());
+            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets", JsonConvert.SerializeObject(jsonHash), timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+            return listoflist;
+        }
+         
+        #endregion
         private Thread _workerThread;
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
@@ -572,10 +628,6 @@ namespace Semplest.SharedResources.Services
         public bool RemoveOpposite { get; set; }
     }
 
-
-
-
-
     public class CustomerObject
     { //this object is passed to the semplest CC API service
         public String FirstName { get; set; }
@@ -590,7 +642,6 @@ namespace Semplest.SharedResources.Services
         public String creditCardNumber { get; set; }
         public String ExpireDateMMYY { get; set; }
     }
-
 
     public class GatewayReturnObject
     { //this object is received from the semplest CC API service calls
@@ -614,6 +665,26 @@ namespace Semplest.SharedResources.Services
         public String remainingBalanceNoDecimal = null;
         //Profile
         public String CustomerRefNum = null;
+    }
+
+    public class GoogleAddAdRequest
+    {
+        public int promotionAdID { get; set; } //NOTE SET THIS TO null for validation
+        public String headline { get; set; }
+        public String description1 { get; set; }
+        public String description2 { get; set; }
+    }
+
+    public class GoogleViolation
+    {
+        public String errorType { get; set; }
+        public String errorMessage { get; set; }
+        public String fieldPath { get; set; }
+        public String shortFieldPath { get; set; }
+        public Boolean isPolicyViolationError { get; set; }
+        public String policyName { get; set; }
+        public String policyDescription { get; set; }
+        public string policyViolatingText { get; set; }
     }
 
 }

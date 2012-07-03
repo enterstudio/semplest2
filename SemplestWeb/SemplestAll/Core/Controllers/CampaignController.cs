@@ -124,9 +124,29 @@ namespace Semplest.Core.Controllers
                                         model.ProductGroup.ProductPromotionName);
                     var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
                     Logger.Write(logEnty);
-
+                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                         model.ProductGroup.ProductPromotionName);
                     _campaignRepository.SaveProductGroupAndCampaign(userid, model, (CampaignSetupModel)Session["CampaignSetupModel"]);
+                    
+                   
+                    List<GoogleAddAdRequest> verifyAds = model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
+                                                                                                                       {
+                                                                                                                           promotionAdID = promoId, headline = pad.AdTitle, description1 = pad.AdTextLine1, description2 = pad.AdTextLine2
+                                                                                                                       }).ToList();
 
+
+                    GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
+                    if (gv.Length > 0)
+                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    gv = _campaignRepository.ValidateGeotargeting(promoId);
+                    if (gv.Length > 0)
+                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    
+                    gv = _campaignRepository.ValidateSiteLinks(promoId);
+                    if (gv.Length > 0)
+                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    
+                    
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
                     msg = String.Format(msg, model.ProductGroup.ProductGroupName,
@@ -522,7 +542,6 @@ namespace Semplest.Core.Controllers
         [RequireRequestValue("promotionId")]
         public ActionResult Preview(int promotionId)
         {
-
             var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId, true);
             //set sitelinks in session
             //if (!string.IsNullOrEmpty(campaignSetupModel.ProductGroup.StartDate))
