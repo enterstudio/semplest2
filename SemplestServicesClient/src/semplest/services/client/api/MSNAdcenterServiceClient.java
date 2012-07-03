@@ -18,11 +18,14 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
+import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
@@ -1251,32 +1254,6 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 
 		return mngId;
 	}
-
-
-	@Override
-	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception
-	{
-		HashMap<String, String> jsonHash = new HashMap<String, String>();
-		String keywordsList = "";
-		for (int i = 0; i < keywords.length-1; i++){
-			keywordsList += gson.toJson(keywords[i]) + separator;
-		}
-		keywordsList += gson.toJson(keywords[keywords.length-1]);
-		jsonHash.put("accountId", Long.toString(accountId.longValue()));
-		jsonHash.put("adGroupId", Long.toString(adGroupId.longValue()));
-		jsonHash.put("keywords", keywordsList);
-		String json = gson.toJson(jsonHash);
-		
-		String returnData = runMethod(baseurl,SERVICEOFFERED, "createKeywords", json, timeoutMS);
-		long[] ret = gson.fromJson(returnData, long[].class);
-		if (ret == null)
-			return null;
-		for (long r:ret){
-			logger.debug("createKeywords: Id = " + r);
-		}
-		return ret;
-	}
-	
 	
 	public ReportObject[] getKeywordReport(Long accountId, Long campaignId, DateTime firstDay, DateTime lastDay) throws Exception
 	{
@@ -1315,6 +1292,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	{
 		// TODO Auto-generated method stub
 		
+	}
+	@Override
+	public MsnCreateKeywordsResponse createKeywords(Long accountId, Long adGroupId, Map<Keyword, Integer> keywordToPkMap) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

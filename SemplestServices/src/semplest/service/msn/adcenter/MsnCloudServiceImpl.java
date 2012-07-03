@@ -51,6 +51,7 @@ import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
 import semplest.server.protocol.msn.MsnAccountObject;
 import semplest.server.protocol.msn.MsnAdObject;
+import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.SemplestDB;
@@ -1812,29 +1813,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			throw new RemoteException(e2.dumpToString(), e2);
 		}
 	}
-
-	public String createKeywords(String json) throws Exception
-	{
-		logger.debug("call createKeywords(String json)" + json);
-		HashMap<String, String> data = protocolJson.getHashMapFromJson(json);
-		long[] ret = null;
-		String[] keywordsStr = data.get("keywords").split(separator);
-		Keyword[] keywords = new Keyword[keywordsStr.length];
-		for (int i = 0; i < keywordsStr.length; i++)
-		{
-			keywords[i] = gson.fromJson(keywordsStr[i], Keyword.class);
-		}
-		try
-		{
-			long[] ret1 = createKeywords(new Long(data.get("accountId")), new Long(data.get("adGroupId")), keywords);
-			ret = ret1;
-		}
-		catch (RemoteException e)
-		{
-			throw new Exception(e);
-		}
-		return gson.toJson(ret);
-	}
 	
 	public static String getKeywordsString(final Keyword... keywords)
 	{
@@ -1851,15 +1829,36 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		return sb.toString();
 	}
 	
-	public long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception
+	public Map<String, Long> getKeywordToMsnIdMap(final Keyword[] keywords, final long[] msnKeywordIds)
 	{
-		logger.info("Will try to Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywords.length + " Keywords [<potentially too many to list>]");
+		final Map<String, Long> keywordToMsnIdMap = new HashMap<String, Long>();
+		for (int i = 0; i < keywords.length; ++i)
+		{
+			final Keyword keyword = keywords[i];
+			final long msnId = msnKeywordIds[i];
+			final String keywordText = keyword.getText();
+			keywordToMsnIdMap.put(keywordText, msnId);
+		}
+		return keywordToMsnIdMap;
+	}
+	
+	@Override
+	public MsnCreateKeywordsResponse createKeywords(final Long accountId, final Long adGroupId, final Map<Keyword, Integer> keywordToPkMap) throws Exception
+	{
+		logger.info("Will try to Create Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + keywordToPkMap.size() + " Keywords<->PK map [<potentially too many to list>]");
 		final ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+		final Set<Keyword> keywordSet = keywordToPkMap.keySet();
+		final Keyword[] keywords = keywordSet.toArray(new Keyword[keywordSet.size()]);
 		final AddKeywordsRequest request = new AddKeywordsRequest(adGroupId, keywords);
-		final AddKeywordsRetriableMsnOperation retriableOperation = new AddKeywordsRetriableMsnOperation(campaignManagement, request, SemplestUtils.DEFAULT_RETRY_COUNT);
-		final AddKeywordsResponse response = retriableOperation.performOperation();		
+		final AddKeywordsRetriableMsnOperation retriableOperation = new AddKeywordsRetriableMsnOperation(campaignManagement, request, keywordToPkMap, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final AddKeywordsResponse response = retriableOperation.performOperation();
+		final Map<Integer, String> filteredOutKeywordPkToCommentMap = retriableOperation.getFilteredOutKeywordPkToCommentMap();
+		final AddKeywordsRequest latestFilteredRequest = retriableOperation.getAddKeywordsRequest();
+		final Keyword[] latestFilteredKeywords = latestFilteredRequest.getKeywords();
 		final long[] msnKeywordIds = response.getKeywordIds();
-		return msnKeywordIds;
+		final Map<String, Long> keywordToMsnIdMap = getKeywordToMsnIdMap(latestFilteredKeywords, msnKeywordIds);
+		final MsnCreateKeywordsResponse msnCreateKeywordsResponse = new MsnCreateKeywordsResponse(keywordToMsnIdMap, filteredOutKeywordPkToCommentMap);
+		return msnCreateKeywordsResponse;
 	}
 
 	public String getKeywordById(String json) throws Exception

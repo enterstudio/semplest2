@@ -78,7 +78,12 @@ public class SemplestDB extends BaseDB
 														  		     "AdvertisingEngine e " + 
 														     "where	  aea.PromotionAdsFK = ? " +  
 														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-														  	   "and   e.AdvertisingEngine = ?";										
+														  	   "and   e.AdvertisingEngine = ?";			
+	
+	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + 
+															 "set IsDeleted = 1, " + 
+																 "Comment = ? " + 
+														   "where KeywordFK = ?";	
 	/*
 	 * Configuration
 	 */
@@ -890,6 +895,18 @@ public class SemplestDB extends BaseDB
 		return deletedAdIdRowCountMap;
 	}
 	
+	public static Map<Entry<Integer, String>, Integer> getKeywordIdCommentToRowCountMap(final List<Entry<Integer, String>> entryList, int[] rowCounts)
+	{
+		final Map<Entry<Integer, String>, Integer> keywordIdCommentToRowCountMap = new HashMap<Entry<Integer, String>, Integer>();
+		for (int i = 0; i < rowCounts.length; ++i)
+		{
+			final int rowCount = rowCounts[i];
+			final Entry<Integer, String> entry = entryList.get(i);
+			keywordIdCommentToRowCountMap.put(entry, rowCount);
+		}
+		return keywordIdCommentToRowCountMap;
+	}
+	
 	public static Map<Entry<UpdateAdRequest, Long>, Integer> getOldNewAdIdRowCountMap(final List<Entry<UpdateAdRequest, Long>> updateRequestToNewAdIdList, int[] rowCounts)
 	{
 		final Map<Entry<UpdateAdRequest, Long>, Integer> idPairMap = new HashMap<Entry<UpdateAdRequest, Long>, Integer>();
@@ -932,6 +949,30 @@ public class SemplestDB extends BaseDB
 											              	}
 											             });
 		return getIdPairRowCountMap(idPairs, rowCounts);
+	}
+	
+	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap)
+	{
+		final Set<Entry<Integer, String>> entrySet = keywordIdToCommentMap.entrySet();
+		final List<Entry<Integer, String>> entryList = new ArrayList<Entry<Integer, String>>(entrySet);
+		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_MARK_KEYWORD_DELETED,
+	             new BatchPreparedStatementSetter() 
+				 {
+	              	public void setValues(PreparedStatement ps, int i) throws SQLException 
+	              	{
+	              		final Entry<Integer, String> entry = entryList.get(i);
+	              		final Integer keywordId = entry.getKey();
+	              		final String comment = entry.getValue();
+	              		ps.setString(1, comment);
+		                ps.setInt(2, keywordId);		                
+	              	}	
+	              
+	              	public int getBatchSize() 
+	              	{
+	              		return entryList.size();
+	              	}
+	             });
+		return getKeywordIdCommentToRowCountMap(entryList, rowCounts);
 	}
 	
 	public static Map<Entry<UpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<UpdateAdRequest, Long> oldToNewAdIdMap, final AdEngine advertisingEngine) throws Exception

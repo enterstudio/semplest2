@@ -6,8 +6,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.axis.types.UnsignedByte;
@@ -111,6 +113,34 @@ public final class SemplestUtils
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
+	
+	public static <T, S> List<Map<T, S>> getBatches(final Map<T, S> map, final int batchSize)
+	{
+		if (batchSize < 1)
+		{
+			throw new IllegalArgumentException("BatchSize [" + batchSize + "] cannot be less than 1");
+		}
+		final List<Map<T, S>> batches = new ArrayList<Map<T, S>>();
+		if (map == null)
+		{
+			return batches;
+		}
+		Map<T, S> currentBatch = new HashMap<T, S>();
+		for (final Entry<T, S> entry : map.entrySet())
+		{
+			currentBatch.entrySet().add(entry);
+			if (currentBatch.size() == batchSize)
+			{
+				batches.add(currentBatch);
+				currentBatch = new HashMap<T, S>();
+			}
+		}
+		if (!currentBatch.isEmpty())
+		{
+			batches.add(currentBatch);
+		}
+		return batches;
+	}
 	
 	public static <T> List<List<T>> getBatches(final List<T> list, final int batchSize)
 	{

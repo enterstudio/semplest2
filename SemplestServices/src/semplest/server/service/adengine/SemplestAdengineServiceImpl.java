@@ -48,6 +48,7 @@ import semplest.server.protocol.google.GoogleSiteLink;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
+import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
@@ -78,12 +79,13 @@ import com.google.gson.reflect.TypeToken;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.CampaignStatus;
+import com.microsoft.adcenter.v8.Keyword;
 
 public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInterface
 {
 	private static final Logger logger = Logger.getLogger(SemplestAdengineServiceImpl.class);
 	private static Gson gson = new Gson();
-	private SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+	private static SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	private static Calendar cal = Calendar.getInstance();
 	private static String ESBWebServerURL = null;
 	private static Long AdwordsValidationAccountID = null;
@@ -483,8 +485,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean DeleteKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds
-				+ "]");
+		logger.info("Will try to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
@@ -509,8 +510,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long adGroupId = adEngineData.getAdGroupID();
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, false, true);
-				final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = getKeywordProbabilitiesForKeywordIds(keywordProbabilities,
-						keywordIds);
+				final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = getKeywordProbabilitiesForKeywordIds(keywordProbabilities, keywordIds);
 				logger.info("Out of the following " + keywordProbabilities.size() + " KeywordProbabilities, found " + keywordProbabilitiesForKeywordIds.size() + " for KeywordIds [" + keywordIds + "]");
 				final List<BidElement> bids = SemplestDB.getLatestBids(promotionID, adEngine);
 				final List<Long> msnKeywordIds = new ArrayList<Long>();
@@ -540,12 +540,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Deleting Keywords (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
-			}
+			}			
 		}
+		final Map<Integer, String> keywordIdToCommentMap = new HashMap<Integer, String>();
+		for (final Integer keywordId : keywordIds)
+		{
+			keywordIdToCommentMap.put(keywordId, "deleted by request");
+		}
+		SemplestDB.markKeywordDeletedBulk(keywordIdToCommentMap);
 		if (!errorMap.isEmpty())
 		{
-			final String errMsg = "Summary of errors when trying to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines
-					+ "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
+			final String errMsg = "Summary of errors when trying to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -638,10 +643,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			
 			final List<KeywordProbabilityObject> regularKeywordProbabilities = getKeywordProbabilities(keywordList, false);
 			final List<KeywordProbabilityObject> negativeKeywordProbabilities = getKeywordProbabilities(keywordList, true);
-			final List<com.microsoft.adcenter.v8.Keyword> regularKeywords = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
+			final Map<com.microsoft.adcenter.v8.Keyword, Integer> regularKeywordsToPkMap = new HashMap<com.microsoft.adcenter.v8.Keyword, Integer>();
 			for (final KeywordProbabilityObject keyword : regularKeywordProbabilities)
 			{				
 				final String keywordText = keyword.getKeyword();
+				final Integer keywordPK = keyword.getKeywordPK();
 				final Bid bid = new Bid();
 				final Double bidAmount = SemplestUtils.MSN_DEFAULT_BID_AMOUNT;
 				bid.setAmount(bidAmount);
@@ -663,32 +669,29 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
 				}		
-				regularKeywords.add(msnKeyword);				
-			}			
+				regularKeywordsToPkMap.put(msnKeyword, keywordPK);				
+			}
 			// Add Positive Keywords
 			final int batchSize = 1000;
-			final List<List<com.microsoft.adcenter.v8.Keyword>> keywordBatches = SemplestUtils.getBatches(regularKeywords, batchSize);
-			logger.info("Out of " + regularKeywords.size() + " MSN keywords, created " + keywordBatches.size() + " batches of " + batchSize);
-			for (final List<com.microsoft.adcenter.v8.Keyword> batch : keywordBatches)
+			final List<Map<com.microsoft.adcenter.v8.Keyword, Integer>> keywordBatches = SemplestUtils.getBatches(regularKeywordsToPkMap, batchSize);
+			logger.info("Out of " + regularKeywordsToPkMap.size() + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);
+			for (final Map<com.microsoft.adcenter.v8.Keyword, Integer> batch : keywordBatches)
 			{
-				final com.microsoft.adcenter.v8.Keyword[] msnKeywordArray = batch.toArray(new com.microsoft.adcenter.v8.Keyword[batch.size()]);
-				final long[] keywordIds = msn.createKeywords(accId, adGroupID, msnKeywordArray);
-				if (keywordIds.length != msnKeywordArray.length)
+				final MsnCreateKeywordsResponse response = msn.createKeywords(accId, adGroupID, batch);
+				final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
+				final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
+				logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
+				// Persist MsnKeywordID in DB for Keywords that were added to MSN				
+				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
+				for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
 				{
-					logger.warn("# of keywordIds returned from MSN [" + keywordIds.length + "] is NOT the same as # of keywords requested to add [" + msnKeywordArray.length + "].  This is NOT expected.");
-				}
-				else
-				{
-					logger.info("# of keywordIds returned from MSN [" + keywordIds.length + "] is the same as # of keywords requested to add [" + msnKeywordArray.length + "]");
-				}
-				for (int i = 0; i < keywordIds.length; ++i)
-				{
-					final long keywordId = keywordIds[i]; 
-					com.microsoft.adcenter.v8.Keyword keyword = msnKeywordArray[i];
-					final String text = keyword.getText();
+					final String text = entry.getKey();
+					final Long keywordId = entry.getValue();
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);	
-				}	
+					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
+				}				
+				// Mark as Deleted in DB for Keywords that could not be added to MSN				
+				SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap);
 			}		
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
@@ -1728,27 +1731,25 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean AddKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds
-				+ "], AdEngines [" + adEngines + "]");
+		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		Boolean ret = getPromoDataSP.execute(promotionID);
+		final Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
 		final List<KeywordProbabilityObject> keywordProbabilitiesForIds = getFilteredKeywordProbabilities(keywordProbabilitiesAll, keywordIds);
 		if (keywordProbabilitiesForIds.size() != keywordIds.size())
 		{
-			logger.warn("# of keywords found " + keywordProbabilitiesForIds.size() + " is NOT the same as # of keywords Ids " + keywordIds.size()
-					+ " requested to add.");
+			logger.warn("# of keywords found " + keywordProbabilitiesForIds.size() + " is NOT the same as # of keywords Ids " + keywordIds.size() + " requested to add.");
 		}
 		else
 		{
 			logger.info("As expected, found " + keywordProbabilitiesForIds.size() + " keywords for " + keywordIds.size() + " ids");
 		}
-		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(
-				(String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
+		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
 		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines);
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
+		final AddBidSP addKeywordBidSP = new AddBidSP();
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
@@ -1769,7 +1770,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(adEngine);
 				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-				final List<com.microsoft.adcenter.v8.Keyword> msnKeywords = new ArrayList<com.microsoft.adcenter.v8.Keyword>();
+				final Map<Keyword, Integer> keywordToPkMap = new HashMap<Keyword, Integer>();
 				for (final KeywordProbabilityObject keywordProbabilitiesForId : keywordProbabilitiesForIds)
 				{
 					if (keywordProbabilitiesForId.getIsActive() && keywordProbabilitiesForId.getIsTargetMSN())
@@ -1777,6 +1778,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final String keywordText = keywordProbabilitiesForId.getKeyword();
 						com.microsoft.adcenter.v8.Keyword k = new com.microsoft.adcenter.v8.Keyword();
 						k.setText(keywordText);
+						final Integer keywordPK = keywordProbabilitiesForId.getKeywordPK();
 						final Bid bid = new Bid(SemplestUtils.MSN_DEFAULT_BID_AMOUNT);						
 						k.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
 						k.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
@@ -1798,18 +1800,32 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						{
 							throw new Exception("SemplestMatchType [" + semplestMatchType + "] is not recognized");
 						}
-						msnKeywords.add(k);
+						keywordToPkMap.put(k, keywordPK);
 					}
 				}
-				final com.microsoft.adcenter.v8.Keyword[] msnKeywordsArray = msnKeywords.toArray(new com.microsoft.adcenter.v8.Keyword[msnKeywords.size()]);
-				final long[] newKeywordIds = msn.createKeywords(accountId, adGroupId, msnKeywordsArray);
-				final AddBidSP addKeywordBidSP = new AddBidSP();
-				for (int i = 0; i < newKeywordIds.length; ++i)
+				// Add Positive Keywords
+				final int batchSize = 1000;
+				int counter = 0;
+				final List<Map<com.microsoft.adcenter.v8.Keyword, Integer>> keywordBatches = SemplestUtils.getBatches(keywordToPkMap, batchSize);
+				logger.info("Out of " + keywordToPkMap.size() + " MSN keywords, created " + keywordBatches.size() + " batches of max " + batchSize);
+				for (final Map<com.microsoft.adcenter.v8.Keyword, Integer> batch : keywordBatches)
 				{
-					final long msnKeywordId = newKeywordIds[i];
-					final com.microsoft.adcenter.v8.Keyword msnKeyword = msnKeywordsArray[i];
-					Integer r  = addKeywordBidSP.execute(promotionID, msnKeywordId, msnKeyword.getText(), SemplestUtils.MSN_DUMMY_MICROAMOUNT.intValue(), SemplestMatchType.Exact.name(), adEngine, false, null, true);
-				}
+					final MsnCreateKeywordsResponse response = msn.createKeywords(accountId, adGroupId, batch);
+					final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
+					final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
+					logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
+					// Persist MsnKeywordID in DB for Keywords that were added to MSN				
+					final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
+					for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
+					{
+						final String text = entry.getKey();
+						final Long keywordId = entry.getValue();
+						logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
+						Integer spRet = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
+					}				
+					// Mark as Deleted in DB for Keywords that could not be added to MSN				
+					SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap);
+				}	
 			}
 			else
 			{

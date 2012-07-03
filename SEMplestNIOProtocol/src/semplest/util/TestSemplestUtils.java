@@ -45,7 +45,8 @@ public class TestSemplestUtils
 	public void testGetBatches_ListNull()
 	{
 		final List<List<Object>> expectedBatches = new ArrayList<List<Object>>();
-		final List<List<Object>> actualBatches = SemplestUtils.getBatches(null, 5);
+		final List<Object> list = null;
+		final List<List<Object>> actualBatches = SemplestUtils.getBatches(list, 5);
 		Assert.assertEquals(expectedBatches, actualBatches);
 	}
 	

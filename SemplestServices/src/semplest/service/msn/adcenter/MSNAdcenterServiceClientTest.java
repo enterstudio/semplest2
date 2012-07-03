@@ -198,7 +198,7 @@ public class MSNAdcenterServiceClientTest {
 		AdGroup[] retad = test.getAdGroupsByCampaignId(accountID, campaignID);
 		adGroupID = retad[0].getId();
 	}
-	
+	/*
 	public void insertKeywords2(String filename) throws Exception{
 		
 		
@@ -245,8 +245,8 @@ public class MSNAdcenterServiceClientTest {
 	    	}
 	    }
 	    keywords = kw.toArray(new Keyword[]{}); 
-	    keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
-	}
+	   keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
+	}*/
 	
 	public void insertKeywords(String filename) throws Exception{
 		

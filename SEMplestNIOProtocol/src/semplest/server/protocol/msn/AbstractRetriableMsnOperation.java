@@ -2,8 +2,10 @@ package semplest.server.protocol.msn;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -65,15 +67,15 @@ public abstract class AbstractRetriableMsnOperation<T> implements RetriableOpera
 		filterRequest(msnList);
 	}
 	
-	public static Set<Integer> getIndexesOfBadItems(final List<MsnEditorialApiFaultDetail> msnList)
+	public static Map<Integer, String> getIndexToCommentMapOfBadItems(final List<MsnEditorialApiFaultDetail> msnList)
 	{
-		final Set<Integer> badIndeces = new HashSet<Integer>();
+		final Map<Integer, String> badIndexToCommentMap = new HashMap<Integer, String>();
 		for (final MsnEditorialApiFaultDetail faultDetail : msnList)
 		{
 			final Integer index = faultDetail.getIndex();
-			badIndeces.add(index);
+			badIndexToCommentMap.put(index, faultDetail.toString());
 		}
-		return badIndeces;
+		return badIndexToCommentMap;
 	}
 	
 	public List<MsnEditorialApiFaultDetail> getMsnEditorialApiFaultDetail(final EditorialApiFaultDetail e)

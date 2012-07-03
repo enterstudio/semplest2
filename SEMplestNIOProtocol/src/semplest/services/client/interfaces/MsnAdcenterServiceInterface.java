@@ -1,7 +1,5 @@
 package semplest.services.client.interfaces;
 
-
-import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,12 +12,11 @@ import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 
-import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.v8.Ad;
 import com.microsoft.adcenter.v8.AdGroup;
-import com.microsoft.adcenter.v8.ApiFaultDetail;
 import com.microsoft.adcenter.v8.Bid;
 import com.microsoft.adcenter.v8.BudgetLimitType;
 import com.microsoft.adcenter.v8.Campaign;
@@ -107,8 +104,8 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	// Keyword Methods
 	// ==================================
 	
-	long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception;	
-	long[] createKeywords(Long accountId, Long adGroupId, Keyword... keywords) throws Exception;	
+	long createKeyword(Long accountId, Long adGroupId, String text, MatchType matchType, Bid bid) throws Exception;
+	MsnCreateKeywordsResponse createKeywords(Long accountId, Long adGroupId, Map<Keyword, Integer> keywordToPkMap) throws Exception;	
 	Keyword getKeywordById(Long accountId, Long adGroupId, long keywordId) throws Exception;	
 	Keyword[] getKeywordByAdGroupId(Long accountId, Long adGroupId) throws Exception;	
 	void updateKeywordBidById(Long accountId, Long adGroupId, long keywordId, MatchType matchType, Bid bid) throws Exception;	

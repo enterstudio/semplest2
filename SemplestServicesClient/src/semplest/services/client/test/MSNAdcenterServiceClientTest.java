@@ -135,6 +135,7 @@ public class MSNAdcenterServiceClientTest {
 		AdGroup[] retad = test.getAdGroupsByCampaignId(accountID, campaignID);
 		adGroupID = retad[0].getId();
 	}
+	/*
 	public void insertKeywords2(String filename) throws Exception{
 		
 		
@@ -173,7 +174,7 @@ public class MSNAdcenterServiceClientTest {
 	    //Close the input stream
 	    in.close();
 	    keywordIDs = test.createKeywords(accountID, adGroupID, keywords);
-	}
+	}*/
 	
 	public void insertKeywords(String filename) throws Exception{
 		
