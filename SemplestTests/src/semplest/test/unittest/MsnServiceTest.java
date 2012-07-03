@@ -36,6 +36,7 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.api.MSNAdcenterServiceClient;
@@ -943,16 +944,20 @@ public class MsnServiceTest {
 				Bid broadMatchBid2 = new Bid();
 				broadMatchBid2.setAmount(3.01);
 				keywords[0].setBroadMatchBid(broadMatchBid1);						
-				keywords[1].setBroadMatchBid(broadMatchBid2);			
-				long[] kwids = test.createKeywords(accountId, adGroupId, keywords);
+				keywords[1].setBroadMatchBid(broadMatchBid2);		
+				Map<Keyword,Integer> keywordmap = new HashMap<Keyword,Integer>();				
+				keywordmap.put(keywords[0], 111);
+				keywordmap.put(keywords[1], 222);
+				MsnCreateKeywordsResponse ret = test.createKeywords(accountId, adGroupId, keywordmap);
 				System.out.println("OK");
-				for(long k: kwids){
+				Map<String, Long>  idMap = ret.getKeywordToMsnIdMap();
+				for(long k: idMap.values()){
 					System.out.println("keyword Id = " + k);
 				}
 				
 				//verify result
-				if(kwids.length != 2)
-					errorHandler(new Exception(vMsg + "No keyword IDs returned."));
+				if(idMap.size() != 2)
+					errorHandler(new Exception(vMsg + "Num keyword IDs returned is not correct - num returned id = " + idMap.size()));
 			}
 			catch(RemoteException e){
 				errorHandler(e);
@@ -1695,7 +1700,7 @@ public class MsnServiceTest {
 			catch(Exception e){
 				errorHandler(e);
 			}
-			
+			/*
 			//createKeywords
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createKeywords:");
@@ -1721,7 +1726,7 @@ public class MsnServiceTest {
 				errorHandler(e);
 			}
 			
-			
+			*/
 			//getKeywordByAdGroupId
 			System.out.println("------------------------------------------------------------");
 			System.out.println("getKeywordByAdGroupId:");
