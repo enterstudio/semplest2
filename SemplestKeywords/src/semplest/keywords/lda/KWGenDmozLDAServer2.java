@@ -160,7 +160,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			int num = 0;
 			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
 				for(KeywordProbabilityObject kw : list1){
-					kw.setKeyword(kw.getKeyword().replaceAll("\\p{Punct}", " ").trim());
+					kw.setKeyword(kw.getKeyword().replaceAll("\\p{Punct}", " ").trim().replaceAll(" s ", "'s "));
 					for(int n=0; n<srchE.size();n++){
 						SearchEngine se = srchE.get(n);
 						if(se.toString().equalsIgnoreCase("google")&& num>=numKw[n])
