@@ -733,7 +733,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
 		try {
-			logger.info("Trying ");
+			logger.info("Trying to store targeted daily budget data to the database.");
 			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine,
 					totalDailyCost, totalDailyClick.intValue());
 			logger.info("Stroed targeted daily budget data to the databse.");
@@ -743,7 +743,7 @@ public class BidGeneratorObj
 							+ e.getMessage(), e);
 			// e.printStackTrace();
 			throw new Exception(
-					"Failed to store targeted daily budget data to the database ."
+					"Failed to store targeted daily budget data to the database."
 							+ e.getMessage(), e);
 		}
 
@@ -751,6 +751,8 @@ public class BidGeneratorObj
 		// 16. SE API call: Update matchType, bid for keywords
 		if (searchEngine == AdEngine.Google)
 		{
+			logger.info("Trying to update bids with Google.");
+
 			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
 			for (final Entry<String, Long> entry : entrySet)
@@ -774,12 +776,14 @@ public class BidGeneratorObj
 		} 
 
 		if (searchEngine == AdEngine.MSN) {
+			
 			try {
 				for(BidElement b : bidsMatchType){
 					if(b.getIsDefaultValue()){
 						b.setMicroBidAmount(null);
 					}
 				}
+				logger.info("Trying to update bids with MSN.");
 				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidsMatchType);
 			} catch (Exception e) {
 				logger.error("ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
@@ -793,6 +797,8 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
 		if (searchEngine == AdEngine.Google){
+			logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+
 			k = 0;
 			while (true) {
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
@@ -814,6 +820,7 @@ public class BidGeneratorObj
 		}
 		if(searchEngine == AdEngine.MSN){
 			try{
+				logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
 				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, defaultMicroBid.doubleValue()*1e-6, 0.05, 0.05);
 			} catch(Exception e){
 				logger.error( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
