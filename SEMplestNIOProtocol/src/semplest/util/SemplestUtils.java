@@ -128,7 +128,7 @@ public final class SemplestUtils
 		Map<T, S> currentBatch = new HashMap<T, S>();
 		for (final Entry<T, S> entry : map.entrySet())
 		{
-			currentBatch.entrySet().add(entry);
+			currentBatch.put(entry.getKey(), entry.getValue());
 			if (currentBatch.size() == batchSize)
 			{
 				batches.add(currentBatch);
