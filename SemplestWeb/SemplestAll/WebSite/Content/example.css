@@ -1,5 +1,5 @@
 ﻿/*reset*/
-body, h1, h2, h3, .main-nav, .kendo-nav, #banner p, .browsers, .mobileOSs, #footer ul, #footer p, #nav-pager, #examples-list, #themeChooser, .widgetGrid ul
+body, h1, h2, h3, .main-nav, .kendo-nav, #banner p, .browsers, .mobileOSs, #nav-pager, #examples-list, #themeChooser, .widgetGrid ul
 {
     margin: 0;
     padding: 15px;
@@ -16,7 +16,7 @@ img
     border: 0;
 }
 
-#header a, li > a, h2 > a, h3 > a, #footer a, .get-kendoui
+#header a, li > a, h2 > a, h3 > a, .get-kendoui
 {
     text-decoration: none;
 }
@@ -553,53 +553,37 @@ html
     color: #e26b1d;
 }
 
-/*footer*/
+#footer h1
+{
+    margin: 15px 0 0 0;
+    padding: 25px 25px 40px 0;
+    border-bottom: 20px solid #fafafa;
+}
 
+#footer a, li > a, h2 > a, h3 > a, .get-kendoui
+{
+    text-decoration: none;
+}
 #footer
 {
-    background: #242424;
+    background: #d6d6d6; /* Old browsers */
+}
+#footer h1
+{
+    float: left;
+    height: 45px;
+    margin: 6px 0 0;
+    width: 134px;
+}
+#footer ul
+{
+    clear: right;
+    float: right;
 }
 
-.overview #footer
+#footer li
 {
-    margin-top: 3em;
-}
-
-#footer, #footer a
-{
-    color: #7f7f7f;
-}
-
-#footer .active a, #footer .bottom-nav a:hover
-{
-    color: #fff;
-}
-
-#footer .bottom-nav
-{
-    margin-bottom: 1em;
-    line-height: 52px;
-}
-
-.bottom-nav li
-{
-    display: inline;
-    margin-right: 16px;
-}
-
-#footer p
-{
-    line-height: 1;
-}
-
-#footer p a
-{
-    color: #e26b1d;
-}
-
-#footer p a:hover
-{
-    text-decoration: underline;
+    float: left;
 }
 
 #social
@@ -2563,4 +2547,63 @@ label
 span.k-tooltip
 {
     margin-left: 6px;
+}
+
+#footer .kendo-nav1
+{
+    list-style: none;
+    margin: 0;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 5px;
+    font-family: 'Arial';
+    margin-top: 5px;
+    float: left;
+    text-transform: uppercase;
+}
+.kendo-nav1 a
+{
+    -moz-transition: all 0.2s ease 0s;
+    -ms-transition: all 0.2s ease 0s;
+    -o-transition: all 0.2s ease 0s;
+    -webkit-transition: all 0.2s ease 0s;
+    transition: all 0.2s ease 0s;
+}
+.kendo-nav1 li
+{
+    margin-left: 10px;
+}
+.kendo-nav1 a
+{
+    color: gray;
+    display: block;
+    font-size: 10px;
+}
+.kendo-nav1 span
+{
+    color: gray;
+    display: block;
+    font-size: 10px;
+}
+.kendo-nav1 .active a
+{
+    color: #e26b1d;
+}
+.kendo-nav1 .active
+{
+    position: relative;
+}
+.kendo-nav1 .active:after
+{
+    border-color: #eb6f18 transparent;
+    border-style: solid;
+    border-width: 0 7px 7px;
+    content: " ";
+    display: block;
+    height: 0;
+    left: 50%;
+    margin: 0 0 0 -7px;
+    position: absolute;
+    top: 39px;
+    width: 0;
 }

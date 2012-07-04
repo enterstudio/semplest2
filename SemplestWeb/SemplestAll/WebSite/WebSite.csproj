@@ -171,6 +171,10 @@
       <Name>SharedResources</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Docs\SEMplest Privacy Policy.doc" />
+    <None Include="Docs\SEMplest WEBSITE Terms of Use.doc" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
