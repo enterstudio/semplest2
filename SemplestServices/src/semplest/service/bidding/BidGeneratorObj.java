@@ -821,7 +821,7 @@ public class BidGeneratorObj
 		if(searchEngine == AdEngine.MSN){
 			try{
 				logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
-				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, defaultMicroBid.doubleValue()*1e-6, 0.05, 0.05);
+				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, Math.max(defaultMicroBid.doubleValue()*1e-6, 0.05), 0.05, 0.05);
 			} catch(Exception e){
 				logger.error( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
 				throw new Exception( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
