@@ -101,6 +101,15 @@
                 }
             }
         });
+        var nonLivePromotionsDataSource = new kendo.data.DataSource({
+            transport: {
+                read: {
+                    url: '@Url.Action("GetFilterData")'
+                }, error: function (e) {
+                    alert(e.xhr.responseText);
+                }
+            }
+        });
         var livePromoCombo = $('#livePromotions').kendoComboBox({
             dataSource: livePromotionsDataSource,
             dataTextField: "PromotionName",
@@ -119,10 +128,10 @@
             }
         }).data("kendoComboBox");
         var nonLivePromoCombo = $('#nonLivePromotions').kendoComboBox({
-            dataSource: livePromotionsDataSource,
+            dataSource: nonLivePromotionsDataSource,
             dataTextField: "PromotionName",
             dataValueField: "PromotionId",
-            index: 0,
+            index: 1,
             change: function (e) {
                 var chart = $("#chart").data("kendoChart");
                 chart.options.series[1].field = nonLivePromoCombo.value();
@@ -143,7 +152,7 @@
 <table>
     <tr>
         <td>
-            <div class="chart-wrapper" style="margin-left: 5px; overflow: auto; height: 270px; width: 535px;">
+            <div class="chart-wrapper" style="margin-left: 5px; overflow: auto; height: 270px; width: 530px;">
                 <div id="chart" style="height: 250px">
                 </div>
             </div>
@@ -155,7 +164,9 @@
                     @Html.CheckBox(item.AdvertisingEnginePK.ToString(), true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
                     <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
                 }
+                <br />
                 <input id='datecombo' style='width: 80px;' />
+                <br />
                 <br />
                 <input id='livePromotions' />
                 <br/>
