@@ -21,6 +21,7 @@
             change: function (e) {
                 var totalitems = e.sender.total();
                 $('#chart').css('width', totalitems * 50);
+                //$('#chart').data('kendoChart').options.legend.offsetX = -(totalitems*25);
             },
             sort: {
                 field: "Date",
@@ -30,22 +31,19 @@
         createChart();
 
         function createChart() {
-
+            $('#title').html("Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + "");
             $("#chart").kendoChart({
                 theme: 'metro',
                 dataSource: dataSource,
-                title: {
-                    text: "Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + ""
-                    , position: "left"
-                },
                 legend: {
-                    position: "top"
+                    position: "top",
+                    offsetY: 0
                 },
                 series:
                         [{
                             field: "Impressions",
                             name: "Impressions",
-                            type: "line"
+                            type: "column"
                         }, {
                             field: "Clicks",
                             name: "Clicks",
@@ -56,7 +54,7 @@
                     axisCrossingValue: [0, 100]
                 },
                 valueAxis: [
-            
+
             {
                 labels: { format: "{0:N0}" },
                 title: { text: "Impressions" },
@@ -97,61 +95,76 @@
         var livePromotionsDataSource = new kendo.data.DataSource({
             transport: {
                 read: {
-                    url: '@Url.Action("GetLivePromotions")',
-                    data: {
-                        promotionFk: $("#PromotionFks").val(),
-                        advertisingEngineFk: $("#EngineFks").val(),
-                        startDate: $("#StartDate").val(),
-                        endDate: $("#EndDate").val()
-                    }
+                    url: '@Url.Action("GetFilterData")'
                 }, error: function (e) {
                     alert(e.xhr.responseText);
                 }
             }
         });
-        var nonLivePromotionsDataSource = new kendo.data.DataSource({
-            transport: {
-                read: {
-                    url: '@Url.Action("GetNonLivePromotions")',
-                    data: {
-                        promotionFk: $("#PromotionFks").val(),
-                        advertisingEngineFk: $("#EngineFks").val(),
-                        startDate: $("#StartDate").val(),
-                        endDate: $("#EndDate").val()
-                    }
-                }, error: function (e) {
-                    alert(e.xhr.responseText);
-                }
-            }
-        });
-        $('#livePromotions').kendoDropDownList({
+        var livePromoCombo = $('#livePromotions').kendoComboBox({
             dataSource: livePromotionsDataSource,
             dataTextField: "PromotionName",
             dataValueField: "PromotionId",
+            index: 0,
             change: function (e) {
-                alert(e.PromotionId);
+                var chart = $("#chart").data("kendoChart");
+                chart.options.series[0].field = livePromoCombo.value();
+                chart.options.series[0].name = livePromoCombo.text();
+                chart.options.valueAxis[0].title.text = livePromoCombo.text();
+                chart.options.valueAxis[0].max = Math.max.apply(Math, chart.options.series[0].data);
+                chart.options.valueAxis[0].min = Math.min.apply(Math, chart.options.series[0].data);
+                chart.options.valueAxis[0].majorUnit = chart.options.valueAxis[0].max / 10;
+                //chart.redraw();
+                chart.refresh();
             }
-        });
-        $('#nonLivePromotions').kendoDropDownList({
-            dataSource: nonLivePromotionsDataSource,
+        }).data("kendoComboBox");
+        var nonLivePromoCombo = $('#nonLivePromotions').kendoComboBox({
+            dataSource: livePromotionsDataSource,
             dataTextField: "PromotionName",
-            dataValueField: "PromotionId"
-        });
+            dataValueField: "PromotionId",
+            index: 0,
+            change: function (e) {
+                var chart = $("#chart").data("kendoChart");
+                chart.options.series[1].field = nonLivePromoCombo.value();
+                chart.options.series[1].name = nonLivePromoCombo.text();
+                chart.options.valueAxis[1].title.text = nonLivePromoCombo.text();
+                chart.options.valueAxis[1].max = Math.max.apply(Math, chart.options.series[1].data);
+                chart.options.valueAxis[1].min = Math.min.apply(Math, chart.options.series[1].data);
+                chart.options.valueAxis[1].majorUnit = chart.options.valueAxis[1].max / 10;
+                //chart.redraw();
+                chart.refresh();
+            }
+        }).data("kendoComboBox");
     });
 </script>
-<div>
- @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines) {
-    @Html.CheckBox(item.AdvertisingEnginePK.ToString(),true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK})
-    <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
- }
- <input id='datecombo' style='width:80px;' />
- <input id='livePromotions' />
- <input id='nonLivePromotions' />
+<div style="margin-left:10px;margin-top:10px;color:grey;">
+    <h3 id="title" class="greytext"  />
 </div>
-<div class="chart-wrapper" style="margin: auto; overflow: auto; height: 270px">
-    <div id="chart" style=" height: 250px">
-    </div>
-</div>
+<table>
+    <tr>
+        <td>
+            <div class="chart-wrapper" style="margin-left: 5px; overflow: auto; height: 270px; width: 535px;">
+                <div id="chart" style="height: 250px">
+                </div>
+            </div>
+        </td>
+        <td style="vertical-align: top;margin-top: 30px;">
+            <div style="margin-left: 10px;margin-top: 30px;">
+                @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+                {
+                    @Html.CheckBox(item.AdvertisingEnginePK.ToString(), true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                    <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
+                }
+                <input id='datecombo' style='width: 80px;' />
+                <br />
+                <input id='livePromotions' />
+                <br/>
+                <br/>
+                <input id='nonLivePromotions' />
+            </div>
+        </td>
+    </tr>
+</table>
 @Html.HiddenFor(t => t.PromotionFks)
 @Html.HiddenFor(t => t.EngineFks)
 @Html.HiddenFor(t => t.PromotionName)
@@ -160,3 +173,4 @@
 @Html.HiddenFor(t => t.EndDate)
 @Html.HiddenFor(t => t.Start)
 @Html.HiddenFor(t => t.End)
+

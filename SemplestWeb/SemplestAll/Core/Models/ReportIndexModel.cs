@@ -60,19 +60,19 @@ namespace Semplest.Core.Models
 
     }
 
+
     public class ReportChartModel
     {
         public string Date { get; set; }
         public double Clicks { get; set; }
         public double Impressions { get; set; }
-        public double LivePromotions { get; set; }
-        public double NonLivePromotions { get; set; }
-        public int PromotionId { get; set; }
-        public string PromotionName { get; set; }
+        public double AveragePosition { get; set; }
+        public decimal AverageCPC { get; set; }
     }
     public class PromotionModel
     {
-        public int PromotionId { get; set; }
+        public string PromotionId { get; set; }
         public string PromotionName { get; set; }
     }
+
 }
