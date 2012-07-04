@@ -26,7 +26,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 {
 	private static String SERVICEOFFERED = "semplest.service.bidding.BidGeneratorService";
 	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
-	private static String DEFAULTBIDTIMEOUT = "3600000";
+	private static String DEFAULTBIDTIMEOUT = "18000000";
 	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -77,6 +77,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		{
 			this.timeoutMS = timeoutMS;
 		}
+		logger.info("Timeout: " + timeoutMS);
 	}
 	@Override
 	public void initializeService(String input) throws Exception
@@ -156,6 +157,7 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		{
 			optionalTimeoutMS = timeoutMS;
 		}
+		logger.info("Will run method [" + method + "] with timeout [" + optionalTimeoutMS + "]");
 		return RunTask(this.getClass(), baseurl, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
