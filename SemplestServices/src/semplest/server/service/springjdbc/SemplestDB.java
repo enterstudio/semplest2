@@ -297,6 +297,7 @@ public class SemplestDB extends BaseDB
 			return;
 		}
 		Iterator<String> keywords = trafficData.keySet().iterator();
+		int counter = 0;
 		while (keywords.hasNext())
 		{
 			String keyword = keywords.next();
@@ -316,6 +317,11 @@ public class SemplestDB extends BaseDB
 						while (microbids.hasNext())
 						{
 							Long microBid = microbids.next();
+							++counter;
+							if (counter % 1000 == 0)
+							{
+								logger.info("Persisted Traffic Estimates for " + counter + " items");
+							}
 							// add the data to the DB
 							//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
 							//Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
