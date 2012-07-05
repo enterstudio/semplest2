@@ -19,6 +19,10 @@ import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleViolation;
 
+import com.google.api.adwords.v201109.cm.ApiError;
+import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109.cm.PolicyViolationError;
+import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.TextAd;
 import com.google.gson.reflect.TypeToken;
 import com.microsoft.adcenter.api.customermanagement.SignupCustomerResponse;
@@ -113,6 +117,84 @@ public final class SemplestUtils
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
+	
+	public static List<GoogleViolation> getGoogleViolations_v201109(ApiException e)
+	{
+		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
+		final ApiError[] errors = e.getErrors();
+		for (ApiError error : errors)
+		{
+			final GoogleViolation violation;
+
+			final String errorType = error.getApiErrorType();
+			final String errorMessage = error.getErrorString();
+			final String fieldPath = error.getFieldPath();
+			final String shortFieldPath;
+			if (fieldPath != null && fieldPath.contains("."))
+			{
+				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
+				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
+			}
+			else
+			{
+				shortFieldPath = fieldPath;
+			}
+			if (error instanceof PolicyViolationError)
+			{
+				final PolicyViolationError policyError = (PolicyViolationError) error;
+				final String externalPolicyName = policyError.getExternalPolicyName();
+				final String policyDescription = policyError.getExternalPolicyDescription();
+				final PolicyViolationKey policyViolationKey = policyError.getKey();
+				final String policyViolatingText = policyViolationKey.getViolatingText();
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
+			}
+			else
+			{
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
+			}
+			violations.add(violation);
+		}
+		return violations;
+	}
+	
+	public static List<GoogleViolation> getGoogleViolations_v201109_1(com.google.api.adwords.v201109_1.cm.ApiException e)
+	{
+		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
+		final com.google.api.adwords.v201109_1.cm.ApiError[] errors = e.getErrors();
+		for (com.google.api.adwords.v201109_1.cm.ApiError error : errors)
+		{
+			final GoogleViolation violation;
+
+			final String errorType = error.getApiErrorType();
+			final String errorMessage = error.getErrorString();
+			final String fieldPath = error.getFieldPath();
+			final String shortFieldPath;
+			if (fieldPath != null && fieldPath.contains("."))
+			{
+				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
+				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
+			}
+			else
+			{
+				shortFieldPath = fieldPath;
+			}
+			if (error instanceof com.google.api.adwords.v201109_1.cm.PolicyViolationError)
+			{
+				final com.google.api.adwords.v201109_1.cm.PolicyViolationError policyError = (com.google.api.adwords.v201109_1.cm.PolicyViolationError) error;
+				final String externalPolicyName = policyError.getExternalPolicyName();
+				final String policyDescription = policyError.getExternalPolicyDescription();
+				final com.google.api.adwords.v201109_1.cm.PolicyViolationKey policyViolationKey = policyError.getKey();
+				final String policyViolatingText = policyViolationKey.getViolatingText();
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
+			}
+			else
+			{
+				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
+			}
+			violations.add(violation);
+		}
+		return violations;
+	}
 	
 	public static <T, S> List<Map<T, S>> getBatches(final Map<T, S> map, final int batchSize)
 	{

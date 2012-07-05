@@ -36,7 +36,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; 
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; 
-	private static String timeoutMS = "300000";  //5 mins
+	private static String timeoutMS = "18000000";  //5 hours
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private String baseurl;

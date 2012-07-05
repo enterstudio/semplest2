@@ -637,7 +637,8 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 12. Database call: write traffic estimator data
 
-		if (o != null) {
+		if (o != null) 
+		{
 			logger.info("Trying to write traffic estimator data to the database.");
 			try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, searchEngine,o);

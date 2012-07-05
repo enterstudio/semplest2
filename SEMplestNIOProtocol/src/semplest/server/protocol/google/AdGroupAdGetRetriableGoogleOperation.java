@@ -1,6 +1,7 @@
 package semplest.server.protocol.google;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import com.google.api.adwords.v201109.cm.AdGroupAdPage;
 import com.google.api.adwords.v201109.cm.AdGroupAdServiceInterface;
@@ -22,5 +23,5 @@ public class AdGroupAdGetRetriableGoogleOperation extends AbstractRetriableGoogl
 	protected AdGroupAdPage porformCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
-	}		
+	}
 }

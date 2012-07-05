@@ -384,6 +384,7 @@ public class SemplestDB extends BaseDB
 				return trafficDataList.size();
 			}
 		});
+		logger.info("Persist complete");
 	}
 
 	public static void storeKeywordDataObjects(int promotionID, AdEngine adEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception

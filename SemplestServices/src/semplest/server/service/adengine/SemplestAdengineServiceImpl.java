@@ -284,6 +284,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
 			}
 		}
+		logger.info("Done");
 		return true;
 	}
 
@@ -307,8 +308,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 		listOfTasks.add(executeOngoinBiddingTask);
-		CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startTime, null,
-				ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
+		CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.Daily.name(), true, false, promotionID, null, null, null);
 		// *****TEST
 		// CreateSchedulerAndTask.createScheduleAndRun(listOfTasks,
 		// scheduleName, new Date(), null,

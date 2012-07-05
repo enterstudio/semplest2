@@ -38,6 +38,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.google.AdGroupAdGetRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupAdMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupCriterionGetRetriableGoogleOperation;
+import semplest.server.protocol.google.AdGroupCriterionMutateRetriableFilterableGoogleOperation;
 import semplest.server.protocol.google.AdGroupCriterionMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupGetRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupMutateRetriableGoogleOperation;
@@ -209,6 +210,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	private final String userAgent; // = "Icosystem";
 	private final String developerToken; // = "2H8l6aUm6K_Q44vDvxs3Og";
 	private final boolean useSandbox;
+	private Long AdwordsValidationAccountID = null;
+	private Long AdwordsValidationCampaignID = null;
+	private Long AdwordsValidationAdGroupID = null;
 
 	public GoogleAdwordsServiceImpl() throws Exception
 	{
@@ -222,6 +226,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			developerToken = (String) SemplestConfiguration.configData.get("AdwordsDeveloperToken");
 			useSandbox = (Boolean) SemplestConfiguration.configData.get("AdwordsUseSandbox");
 			logger.info("Initialized Google API sandbox=" + useSandbox);
+			AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
+			AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");  
+			AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 		}
 		catch (Exception e)
 		{
@@ -1639,23 +1646,57 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return null;
 	}
+	
+	public List<GoogleAddKeywordRequest> getValidatedGoogleAddKeywordRequests(final List<GoogleAddKeywordRequest> requests) throws Exception 
+	{
+		logger.info("Will try to validate adding " + requests.size() + " keywords");
+		
+		final AdWordsUser user = new AdWordsUser(email, password, "" + AdwordsValidationAccountID, userAgent, developerToken, useSandbox);
+		final AdGroupCriterionServiceInterface adGroupCriterionService = user.getValidationService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);		
+		final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(AdwordsValidationAdGroupID, requests);
+		final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
+		final AdGroupCriterionMutateRetriableFilterableGoogleOperation retriableFilterableOperation = new AdGroupCriterionMutateRetriableFilterableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
+		final AdGroupCriterionReturnValue regularKeywordResult = retriableFilterableOperation.performOperation();
+		final List<AdGroupCriterionOperation> operationsRemoved = retriableFilterableOperation.getRemovedOperations();
+		final List<GoogleAddKeywordRequest> requestsToRemove = new ArrayList<GoogleAddKeywordRequest>();
+		for (final AdGroupCriterionOperation operation : operationsRemoved)
+		{
+			final AdGroupCriterion adGroupCriterion = operation.getOperand();
+			final Criterion criterion = adGroupCriterion.getCriterion();
+			if (criterion instanceof Keyword)
+			{
+				final Keyword keyword = (Keyword)criterion;
+				final String keywordText = SemplestUtils.getTrimmedNonNullString(keyword.getText());
+				for (final GoogleAddKeywordRequest request : requests)
+				{
+					final String requestText = SemplestUtils.getTrimmedNonNullString(request.getKeyword());
+					if (requestText.toUpperCase().contains(keywordText.toUpperCase()))
+					{
+						requestsToRemove.add(request);
+					}
+				}
+			}
+		}		
+		requests.removeAll(requestsToRemove);
+		logger.info("Filtered out " + requestsToRemove.size() + " Requests, resulting in latest set of " + requests.size() + " requests.  Removed requests:\n" + SemplestUtils.getEasilyReadableString(requestsToRemove));
+		return requests;
+	}
 
 	@Override
-	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> requests)
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests)
 			throws Exception
 	{
-		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size()
-				+ " GoogleAddKeywordRequests [<potentially to many to practically print>]");
+		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + originalRequests.size()
+				+ " GoogleAddKeywordRequests:\n" + SemplestUtils.getEasilyReadableString(originalRequests));
 		try
 		{
+			final List<GoogleAddKeywordRequest> requests = getValidatedGoogleAddKeywordRequests(originalRequests);
 			final Map<GoogleAddKeywordRequest, Long> requestToIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
 			final List<AdGroupCriterionOperation> addKeywordOperations = getAddKeywordOperations(adGroupId, requests);
 			final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
-			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations
-					.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
-			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
-					adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
+			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupCriterionReturnValue regularKeywordResult = retriableOperation.performOperation();
 			if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
 			{
@@ -1703,7 +1744,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (Exception e)
 		{
-			throw new Exception("Problem Adding Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + requests.size()
+			throw new Exception("Problem Adding Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + originalRequests.size()
 					+ " GoogleAddKeywordRequests [<potentially to many to practically print>]", e);
 		}
 	}
@@ -1734,8 +1775,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			keywordAdGroupCriterionOperation.setOperand(keywordBiddableAdGroupCriterion);
 			keywordAdGroupCriterionOperation.setOperator(Operator.ADD);
 			final AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] { keywordAdGroupCriterionOperation };
-			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
-					adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupCriterionReturnValue result = retriableOperation.performOperation();
 			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
 			{
@@ -2266,8 +2306,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperand(biddableAdGroupCriterion);
 			operation.setOperator(Operator.SET);
 			AdGroupCriterionOperation[] operations = new AdGroupCriterionOperation[] { operation };
-			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(
-					adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			AdGroupCriterionReturnValue result = retriableOperation.performOperation();
 			// Display ad group criteria.
 			if (result != null && result.getValue() != null && (result.getValue(0) instanceof BiddableAdGroupCriterion))
@@ -4045,7 +4084,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ApiException e)
 		{
-			violations = getViolations(e);
+			violations = SemplestUtils.getGoogleViolations_v201109(e);
 		}
 		return violations;
 	}
@@ -4066,91 +4105,15 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (com.google.api.adwords.v201109_1.cm.ApiException e)
 		{
-			validations = getViolations(e);
+			validations = SemplestUtils.getGoogleViolations_v201109_1(e);
 		}
 		return validations;
 	}
 	
-	public List<GoogleViolation> getViolations(ApiException e)
-	{
-		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
-		final ApiError[] errors = e.getErrors();
-		for (ApiError error : errors)
-		{
-			final GoogleViolation violation;
-
-			final String errorType = error.getApiErrorType();
-			final String errorMessage = error.getErrorString();
-			final String fieldPath = error.getFieldPath();
-			final String shortFieldPath;
-			if (fieldPath != null && fieldPath.contains("."))
-			{
-				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
-				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
-			}
-			else
-			{
-				shortFieldPath = fieldPath;
-			}
-			if (error instanceof PolicyViolationError)
-			{
-				final PolicyViolationError policyError = (PolicyViolationError) error;
-				final String externalPolicyName = policyError.getExternalPolicyName();
-				final String policyDescription = policyError.getExternalPolicyDescription();
-				final PolicyViolationKey policyViolationKey = policyError.getKey();
-				final String policyViolatingText = policyViolationKey.getViolatingText();
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription,
-						policyViolatingText);
-			}
-			else
-			{
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
-			}
-			violations.add(violation);
-		}
-		return violations;
-	}
+	
 
 
-	public List<GoogleViolation> getViolations(com.google.api.adwords.v201109_1.cm.ApiException e)
-	{
-		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
-		final com.google.api.adwords.v201109_1.cm.ApiError[] errors = e.getErrors();
-		for (com.google.api.adwords.v201109_1.cm.ApiError error : errors)
-		{
-			final GoogleViolation violation;
-
-			final String errorType = error.getApiErrorType();
-			final String errorMessage = error.getErrorString();
-			final String fieldPath = error.getFieldPath();
-			final String shortFieldPath;
-			if (fieldPath != null && fieldPath.contains("."))
-			{
-				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
-				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
-			}
-			else
-			{
-				shortFieldPath = fieldPath;
-			}
-			if (error instanceof com.google.api.adwords.v201109_1.cm.PolicyViolationError)
-			{
-				final com.google.api.adwords.v201109_1.cm.PolicyViolationError policyError = (com.google.api.adwords.v201109_1.cm.PolicyViolationError) error;
-				final String externalPolicyName = policyError.getExternalPolicyName();
-				final String policyDescription = policyError.getExternalPolicyDescription();
-				final com.google.api.adwords.v201109_1.cm.PolicyViolationKey policyViolationKey = policyError.getKey();
-				final String policyViolatingText = policyViolationKey.getViolatingText();
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription,
-						policyViolatingText);
-			}
-			else
-			{
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
-			}
-			violations.add(violation);
-		}
-		return violations;
-	}
+	
 
 	@Override
 	public Boolean refreshSiteLinks(final GoogleRefreshSiteLinksRequest request) throws Exception
@@ -4248,7 +4211,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		catch (ApiException e)
 		{
-			validations = getViolations(e);
+			validations = SemplestUtils.getGoogleViolations_v201109(e);
 		}
 		return validations;
 	}
