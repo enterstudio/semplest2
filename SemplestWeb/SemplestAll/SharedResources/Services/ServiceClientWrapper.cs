@@ -336,9 +336,13 @@ namespace Semplest.SharedResources.Services
         private Thread _workerThread;
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
-            ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
-            _workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
-            _workerThread.Start(tData);
+            var dbContext = new SemplestModel.Semplest();
+            if (!dbContext.Configurations.First().DoNotLaunchAdServices.Value)
+            {
+                ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
+                _workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
+                _workerThread.Start(tData);
+            }
             return true;
         }
 
