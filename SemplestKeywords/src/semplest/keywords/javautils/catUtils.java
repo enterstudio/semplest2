@@ -24,7 +24,7 @@ public class catUtils {
   // Translating dmoz categories to semplest categories
   // Note: s == decode( code( s )) is not always true (depends on map file)
   private static final Logger logger = Logger.getLogger(catUtils.class);
-  HashMap<String,String> smap;        // Map from dmoz to semplest cats
+  Map<String,String> smap;        // Map from dmoz to semplest cats
   HashMap<String,String> ismap;       // Inverse ma from semplest to dmoz cats
 
   public catUtils (){
@@ -191,7 +191,7 @@ public class catUtils {
   }
 
   //- Descendants --------------------------------------------------
-  public static HashMap<String,String> catId( String file ){
+  public static Map<String,String> catId( String file ){
     return ioUtils.readPair( file );   
   }
   // [Note:] Is O(n). Would be faster to sort O(n log n), 
@@ -272,7 +272,7 @@ public class catUtils {
   // - -----------------------------------
   // given hashmap (with category key) return only those that 
   // have given category is parent
-  public static <V> HashMap<String,V> family( HashMap<String,V> maps, 
+  public static <V> HashMap<String,V> family( Map<String,V> maps, 
       String head){
     HashMap<String,V> omap = new HashMap<String,V>();
     for( Map.Entry<String,V> e: maps.entrySet() )
@@ -301,7 +301,7 @@ public class catUtils {
   //-------------------------------------------------------------
   public static void main (String[] args){
     String File = "/semplest/data/dmoz/all.cids";
-    HashMap<String,String> cid =  catId( File );
+    Map<String,String> cid =  catId( File );
 
     catUtils cu = new catUtils();
 

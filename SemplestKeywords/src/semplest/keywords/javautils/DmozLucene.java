@@ -117,7 +117,7 @@ public class DmozLucene {
 
   // Static Helpers ---------------
   public static void loadDesc( DmozLucene dl, String f){
-    HashMap<String,String> map = ioUtils.readDescs( f );
+    Map<String,String> map = ioUtils.readDescs( f );
     for(Map.Entry<String,String> e : map.entrySet())
       dl.add( e.getKey(), e.getValue() );
     dl.done();

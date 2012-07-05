@@ -8,7 +8,7 @@ public class sampleWords {
   final String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
   final String dfile = "dmoz/all/all.descs";
   
-  HashMap<String,String> wcs;
+  Map<String,String> wcs;
   DmozLucene dl;
 
   public sampleWords(){
@@ -17,7 +17,7 @@ public class sampleWords {
     loadDesc( dl, dfile);
   }
   private void loadDesc( DmozLucene dl, String f){
-    HashMap<String,String> map = ioUtils.readDescs( f );
+    Map<String,String> map = ioUtils.readDescs( f );
     for(Map.Entry<String,String> e : map.entrySet())
       dl.add( e.getKey(), e.getValue() );
     dl.done();
