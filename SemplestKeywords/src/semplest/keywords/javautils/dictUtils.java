@@ -20,9 +20,9 @@ public class dictUtils
   // the df is the log-frequency of word-appearances 
   // df( word) = log( # documents in which word appears)
   // SInce we have 300,000 docs, the max value is 18
-  static int DF_THRESHOLD = 15;
-  static int DF_NG_THRESHOLD = 13;
-  static int DF_DEFAULT   = 15;
+  static int DF_THRESHOLD = 16;
+  static int DF_NG_THRESHOLD = 16;
+  static int DF_DEFAULT   = 16;
 
   // Dictionaty utilities --------------------------
   // the dictionary is made up of three maps 
@@ -35,13 +35,13 @@ public class dictUtils
   static String docfile   = ProjectProperties.docfile;
   static String twfile    = ProjectProperties.twfile;
 
-  public static HashMap<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
+  public static Map<String,Integer> dicti = ioUtils.readFileIndex(dictfile, 1);
   public static Map<Integer,String> dictwi = invert(dicti);
-  public static HashMap<String,String> dict = ioUtils.readPair(dictfile);
-  public static HashMap<String,Integer> docsi =  ioUtils.readFileIndex(docfile);
+  public static Map<String,String> dict = ioUtils.readPair(dictfile);
+  public static Map<String,Integer> docsi =  ioUtils.readFileIndex(docfile);
   public static Map<Integer,String> docis = invert(docsi);
-  public static final HashMap<String,String> docs = ioUtils.topWords(twfile);
-  public static final HashMap<String,Integer> df = ioUtils.readCount(dffile);
+  public static final Map<String,String> docs = ioUtils.topWords(twfile);
+  public static final Map<String,Integer> df = ioUtils.readCount(dffile);
 
   // ********* [Note:] Temporary solution. Need to restructure
   public static final Set<String> cw = CommonWordSet();
