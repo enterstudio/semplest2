@@ -8,6 +8,7 @@ using Microsoft.Practices.EnterpriseLibrary.Logging;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using Semplest.SharedResources;
+using System.Data.Entity.Infrastructure;
 
 
 namespace Semplest.Core.Models.Repositories
@@ -883,6 +884,7 @@ namespace Semplest.Core.Models.Repositories
                 var parameters = new object[] {parameter, parameter2};
                 using (var dbcontext = new SemplestModel.Semplest())
                 {
+                    ((IObjectContextAdapter) dbcontext).ObjectContext.CommandTimeout = 100;
                     dbcontext.Database.ExecuteSqlCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
                     //set keyword id's back in the model
                     int userid =

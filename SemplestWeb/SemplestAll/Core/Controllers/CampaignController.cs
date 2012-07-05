@@ -124,10 +124,9 @@ namespace Semplest.Core.Controllers
                                         model.ProductGroup.ProductPromotionName);
                     var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
                     Logger.Write(logEnty);
-                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                         model.ProductGroup.ProductPromotionName);
                     _campaignRepository.SaveProductGroupAndCampaign(userid, model, (CampaignSetupModel)Session["CampaignSetupModel"]);
-                    
+                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                         model.ProductGroup.ProductPromotionName);                    
                    
                     List<GoogleAddAdRequest> verifyAds = model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
                                                                                                                        {
@@ -135,18 +134,21 @@ namespace Semplest.Core.Controllers
                                                                                                                        }).ToList();
 
 
-                    GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
-                    if (gv.Length > 0)
-                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    gv = _campaignRepository.ValidateGeotargeting(promoId);
-                    if (gv.Length > 0)
-                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    if (model.SiteLinks.Any())
-                    {
-                        gv = _campaignRepository.ValidateSiteLinks(promoId);
-                        if (gv.Length > 0)
-                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    }
+                    //GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
+                    //if (gv.Length > 0)
+                    //    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    //if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
+                    //{
+                    //    gv = _campaignRepository.ValidateGeotargeting(promoId);
+                    //    if (gv.Length > 0)
+                    //        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    //}
+                    //if (model.SiteLinks != null && model.SiteLinks.Any())
+                    //{
+                    //    gv = _campaignRepository.ValidateSiteLinks(promoId);
+                    //    if (gv.Length > 0)
+                    //        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    //}
 
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -458,8 +460,16 @@ namespace Semplest.Core.Controllers
         public ActionResult Categories(CampaignSetupModel model)
         {
             model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            if (model.AllCategories == null)
+            {
+                model = _campaignRepository.GetCategories((CampaignSetupModel)Session["CampaignSetupModel"]);
+                Session["CampaignSetupModel"] = model;
+                Session["AllCategories"] = model.AllCategories;
+            }
             return PartialView(model);
         }
+
+
 
         public ActionResult KeyWords(CampaignSetupModel model)
         {
