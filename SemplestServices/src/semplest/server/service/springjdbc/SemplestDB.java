@@ -1009,6 +1009,7 @@ public class SemplestDB extends BaseDB
 	
 	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap)
 	{
+		logger.info("Will try to mark " + keywordIdToCommentMap.size() + " keywords as deleted:\n" + SemplestUtils.getEasilyReadableString(keywordIdToCommentMap));
 		final Set<Entry<Integer, String>> entrySet = keywordIdToCommentMap.entrySet();
 		final List<Entry<Integer, String>> entryList = new ArrayList<Entry<Integer, String>>(entrySet);
 		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_MARK_KEYWORD_DELETED,

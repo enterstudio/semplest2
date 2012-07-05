@@ -576,7 +576,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		for (final KeywordProbabilityObject keywordProbability : keywordProbabilities)
 		{
 			final String keyword = keywordProbability.getKeyword();
-			final GoogleAddKeywordRequest request = new GoogleAddKeywordRequest(keyword, keywordMatchType, microBidAmount);
+			final Integer keywordPK = keywordProbability.getKeywordPK();
+			final GoogleAddKeywordRequest request = new GoogleAddKeywordRequest(keyword, keywordPK, keywordMatchType, microBidAmount);
 			addKeywordRequests.add(request);
 		}
 		return addKeywordRequests;
@@ -611,7 +612,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null,true);
 				Thread.sleep(1000); // Wait for google
 			}			
-			// Positive Keywords			
+			// Add Positive Keywords			
 			final List<GoogleAddKeywordRequest> positiveKeywordRequests = getAddKeywordRequests(regularKeywordProbabilities, keywordMatchType, 0L);
 			final List<List<GoogleAddKeywordRequest>> positiveKeywordRequestBatches = SemplestUtils.getBatches(positiveKeywordRequests, 500);
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();

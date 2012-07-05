@@ -3,7 +3,9 @@ package semplest.server.protocol.google;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -23,14 +25,14 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 	
 	private final AdGroupCriterionServiceInterface service;
 	private AdGroupCriterionOperation[] operations;
-	private final List<AdGroupCriterionOperation> operationsRemoved;
+	private final Map<AdGroupCriterionOperation, String> operationsRemovedToPkMap;
 
 	public AdGroupCriterionMutateRetriableFilterableGoogleOperation(final AdGroupCriterionServiceInterface service, final AdGroupCriterionOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;
 		this.operations = operations;
-		operationsRemoved = new ArrayList<AdGroupCriterionOperation>();
+		operationsRemovedToPkMap = new HashMap<AdGroupCriterionOperation, String>();
 	}
 	
 	@Override
@@ -68,7 +70,8 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 		logger.info("Will try to filter out these " + googleViolations.size() + " GoogleViolations from " + operations.length + " AdGroupCriterionOperations:\n" + googleViolations);		
 		final List<AdGroupCriterionOperation> operationListUmodifiable = Arrays.asList(operations);
 		final List<AdGroupCriterionOperation> operationList = new ArrayList<AdGroupCriterionOperation>(operationListUmodifiable);
-		final List<AdGroupCriterionOperation> operationsToRemove = new ArrayList<AdGroupCriterionOperation>(); 
+		final List<AdGroupCriterionOperation> operationsToRemove = new ArrayList<AdGroupCriterionOperation>();
+		final Map<AdGroupCriterionOperation, String> operationsToPkMapForRemoval = new HashMap<AdGroupCriterionOperation, String>(); 
 		for (final GoogleViolation googleViolation : googleViolations)
 		{
 			final String violatingText = googleViolation.getPolicyViolatingText();
@@ -83,19 +86,21 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 					final String violatingNonNullTrimmedText = SemplestUtils.getTrimmedNonNullString(violatingText);
 					if (keywordNonNullTrimmedText.toUpperCase().contains(violatingNonNullTrimmedText.toUpperCase()))
 					{
+						final String errMessage = googleViolation.getErrorMessage();
 						operationsToRemove.add(operation);
+						operationsToPkMapForRemoval.put(operation, errMessage);
 					}					
 				}
 			}			
 		}
 		operationList.removeAll(operationsToRemove);
-		operationsRemoved.addAll(operationsToRemove);
+		operationsRemovedToPkMap.putAll(operationsToPkMapForRemoval);
 		operations = operationList.toArray(new AdGroupCriterionOperation[operationList.size()]);
-		logger.info("Removed " + operationsToRemove.size() + " operations from original set of operations, resulting in latest " + operations.length + " operations");
+		logger.info("Removed the following " + operationsToPkMapForRemoval.size() + " operations from original set of operations, resulting in latest " + operations.length + " operations:\n" + SemplestUtils.getEasilyReadableString(operationsToPkMapForRemoval));
 	}		
 	
-	public List<AdGroupCriterionOperation> getRemovedOperations()
+	public Map<AdGroupCriterionOperation, String> getRemovedOperations()
 	{
-		return operationsRemoved;
+		return operationsRemovedToPkMap;
 	}
 }

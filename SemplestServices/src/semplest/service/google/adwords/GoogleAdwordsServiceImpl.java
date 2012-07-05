@@ -69,6 +69,7 @@ import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.google.KeywordToolStats;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.PromotionObj;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.server.service.springjdbc.storedproc.UpdateAdEngineAPIChargeSP;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
@@ -1657,10 +1658,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
 		final AdGroupCriterionMutateRetriableFilterableGoogleOperation retriableFilterableOperation = new AdGroupCriterionMutateRetriableFilterableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
 		final AdGroupCriterionReturnValue regularKeywordResult = retriableFilterableOperation.performOperation();
-		final List<AdGroupCriterionOperation> operationsRemoved = retriableFilterableOperation.getRemovedOperations();
+		final Map<AdGroupCriterionOperation, String> operationsRemoved = retriableFilterableOperation.getRemovedOperations();
 		final List<GoogleAddKeywordRequest> requestsToRemove = new ArrayList<GoogleAddKeywordRequest>();
-		for (final AdGroupCriterionOperation operation : operationsRemoved)
+		final Set<Entry<AdGroupCriterionOperation, String>> entrySet = operationsRemoved.entrySet();
+		for (final Entry<AdGroupCriterionOperation, String> entry : entrySet)
 		{
+			final AdGroupCriterionOperation operation = entry.getKey();
 			final AdGroupCriterion adGroupCriterion = operation.getOperand();
 			final Criterion criterion = adGroupCriterion.getCriterion();
 			if (criterion instanceof Keyword)
@@ -1681,6 +1684,46 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		logger.info("Filtered out " + requestsToRemove.size() + " Requests, resulting in latest set of " + requests.size() + " requests.  Removed requests:\n" + SemplestUtils.getEasilyReadableString(requestsToRemove));
 		return requests;
 	}
+	
+	public static List<GoogleAddKeywordRequest> getRequestsForKeywordOperations(final List<GoogleAddKeywordRequest> requests, final Map<AdGroupCriterionOperation, String> removedOperationToCommentMap)
+	{
+		final List<GoogleAddKeywordRequest> matchingRequests = new ArrayList<GoogleAddKeywordRequest>();
+		final Set<Entry<AdGroupCriterionOperation, String>> entrySet = removedOperationToCommentMap.entrySet();
+		for (final Entry<AdGroupCriterionOperation, String> entry : entrySet)
+		{
+			final AdGroupCriterionOperation operation = entry.getKey();
+			final AdGroupCriterion adGroupCriterion = operation.getOperand();
+			final Criterion criterion = adGroupCriterion.getCriterion();
+			if (criterion instanceof Keyword)
+			{
+				final Keyword keyword = (Keyword)criterion;
+				final String keywordText = SemplestUtils.getTrimmedNonNullString(keyword.getText());
+				for (final GoogleAddKeywordRequest request : requests)
+				{
+					final String requestKeyword = SemplestUtils.getTrimmedNonNullString(request.getKeyword());
+					if (keywordText.equals(requestKeyword))
+					{
+						final String comment = entry.getValue();
+						request.setComment(comment);
+						matchingRequests.add(request);
+					}
+				}
+			}
+		}
+		return matchingRequests;
+	}
+	
+	public static Map<Integer, String> getKeywordToIdMap(final List<GoogleAddKeywordRequest> requests)
+	{
+		final Map<Integer, String> keywordToIdMap = new HashMap<Integer, String>();
+		for (final GoogleAddKeywordRequest request : requests)
+		{
+			final String comment = request.getComment();
+			final Integer keywordPk = request.getKeywordPK();
+			keywordToIdMap.put(keywordPk, comment);
+		}
+		return keywordToIdMap;
+	}
 
 	@Override
 	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests)
@@ -1696,8 +1739,13 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
 			final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
 			final AdGroupCriterionOperation[] addKeywordOperationsArray = addKeywordOperations.toArray(new AdGroupCriterionOperation[addKeywordOperations.size()]);
-			final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
+			final AdGroupCriterionMutateRetriableFilterableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableFilterableGoogleOperation(adGroupCriterionService, addKeywordOperationsArray, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final AdGroupCriterionReturnValue regularKeywordResult = retriableOperation.performOperation();
+			final Map<AdGroupCriterionOperation, String> removedOperationToCommentMap = retriableOperation.getRemovedOperations();
+			final List<GoogleAddKeywordRequest> removedRequests = getRequestsForKeywordOperations(originalRequests, removedOperationToCommentMap);
+			logger.info("Original Request count [" + originalRequests + "], Original Operations count [" + addKeywordOperationsArray.length + "], Removed Request count [" + removedRequests.size() + "], Removed Operations count [" + removedOperationToCommentMap.size() + "]");
+			final Map<Integer, String> deletedKeywordIdToCommentMap = getKeywordToIdMap(removedRequests);
+			SemplestDB.markKeywordDeletedBulk(deletedKeywordIdToCommentMap);
 			if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
 			{
 				final AdGroupCriterion[] adGroupCriterions = regularKeywordResult.getValue();
