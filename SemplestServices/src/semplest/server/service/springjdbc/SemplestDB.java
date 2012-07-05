@@ -318,12 +318,12 @@ public class SemplestDB extends BaseDB
 						Iterator<Long> microbids = biddata.keySet().iterator();
 						while (microbids.hasNext())
 						{
-							Long microBid = microbids.next();
+							Long microBid = microbids.next();	
 							++counter;
 							if (counter % 1000 == 0)
 							{
-								logger.info("Persisted Traffic Estimates for " + counter + " items");
-							}
+								logger.info("Batched up " + counter + " traffic estimate items for eventual persisting to db");
+							}						
 							// add the data to the DB
 							//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
 							//Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
@@ -335,7 +335,7 @@ public class SemplestDB extends BaseDB
 							trafficDataObj.setAveNumberClicks(trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue());
 							trafficDataObj.setAvePosition(trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue());
 							trafficDataObj.setBidType(matchType);
-							trafficDataObj.setKeyword("personal wedding sites");
+							trafficDataObj.setKeyword(keyword);
 							trafficDataObj.setMicroBid(microBid.intValue());
 							trafficDataList.add(trafficDataObj);
 							/*
@@ -356,7 +356,7 @@ public class SemplestDB extends BaseDB
 	
 	private static void trafficEstimatorBatch(final List<TrafficDataObj> trafficDataList, final Timestamp ts) throws Exception
 	{
-
+		logger.info("Will try to persist " + trafficDataList.size() + " items of Traffic Data");
 		String sql = "{call AddTrafficEstimator(?,?,?,?,?,?,?,?,?,?)}";
 		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
 		{
