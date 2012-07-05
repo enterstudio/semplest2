@@ -275,13 +275,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final BudgetObject budgetData = new BudgetObject();
 				budgetData.setRemainingBudgetInCycle(budget);
 				budgetData.setRemainingDays(daysLeft);
+				logger.info("About to Set Initial Bids for " + advertisingEngine);
 				bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
+				logger.info("Done setting Initial Bids for " + advertisingEngine);
 				// Schedule ongoing bidding
 				final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
 				cal.setTime(new Date());
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				final Date startTime = cal.getTime();
-				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
+				logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
+				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);				
+				logger.info("Scheduled ongoing bidding for " + advertisingEngine);
 			}
 		}
 		logger.info("Done");
