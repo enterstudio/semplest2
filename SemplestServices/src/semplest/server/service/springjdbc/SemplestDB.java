@@ -84,7 +84,8 @@ public class SemplestDB extends BaseDB
 	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + 
 															 "set IsDeleted = 1, " + 
 																 "Comment = ? " + 
-														   "where KeywordFK = ?";	
+														   "where KeywordFK = ?" +
+														   "  and PromotionFK = ?";	
 	/*
 	 * Configuration
 	 */
@@ -1007,7 +1008,7 @@ public class SemplestDB extends BaseDB
 		return getIdPairRowCountMap(idPairs, rowCounts);
 	}
 	
-	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap)
+	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap, final Integer promotionID)
 	{
 		logger.info("Will try to mark " + keywordIdToCommentMap.size() + " keywords as deleted:\n" + SemplestUtils.getEasilyReadableString(keywordIdToCommentMap));
 		final Set<Entry<Integer, String>> entrySet = keywordIdToCommentMap.entrySet();
@@ -1021,7 +1022,8 @@ public class SemplestDB extends BaseDB
 	              		final Integer keywordId = entry.getKey();
 	              		final String comment = entry.getValue();
 	              		ps.setString(1, comment);
-		                ps.setInt(2, keywordId);		                
+		                ps.setInt(2, keywordId);	
+		                ps.setInt(3, promotionID);
 	              	}	
 	              
 	              	public int getBatchSize() 

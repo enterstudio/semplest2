@@ -714,7 +714,7 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
-	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests) throws Exception
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(String accountId, Long adGroupId, List<GoogleAddKeywordRequest> requests, final Integer promotionID) throws Exception
 	{
 		// TODO Auto-generated method stub
 		return null;

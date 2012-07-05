@@ -1726,7 +1726,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests)
+	public Map<GoogleAddKeywordRequest, Long> addKeywords(final String accountId, final Long adGroupId, final List<GoogleAddKeywordRequest> originalRequests, final Integer promotionID)
 			throws Exception
 	{
 		logger.info("Will try to Add Keywords for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], " + originalRequests.size()
@@ -1745,7 +1745,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final List<GoogleAddKeywordRequest> removedRequests = getRequestsForKeywordOperations(originalRequests, removedOperationToCommentMap);
 			logger.info("Original Request count [" + originalRequests.size() + "], Original Operations count [" + addKeywordOperationsArray.length + "], Removed Request count [" + removedRequests.size() + "], Removed Operations count [" + removedOperationToCommentMap.size() + "]");
 			final Map<Integer, String> deletedKeywordIdToCommentMap = getKeywordToIdMap(removedRequests);
-			SemplestDB.markKeywordDeletedBulk(deletedKeywordIdToCommentMap);
+			SemplestDB.markKeywordDeletedBulk(deletedKeywordIdToCommentMap, promotionID);
 			if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
 			{
 				final AdGroupCriterion[] adGroupCriterions = regularKeywordResult.getValue();

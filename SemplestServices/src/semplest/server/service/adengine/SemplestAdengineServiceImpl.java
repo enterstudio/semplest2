@@ -547,7 +547,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			keywordIdToCommentMap.put(keywordId, "deleted by request");
 		}
-		SemplestDB.markKeywordDeletedBulk(keywordIdToCommentMap);
+		SemplestDB.markKeywordDeletedBulk(keywordIdToCommentMap, promotionID);
 		if (!errorMap.isEmpty())
 		{
 			final String errMsg = "Summary of errors when trying to Delete Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
@@ -618,7 +618,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
 			for (final List<GoogleAddKeywordRequest> requestBatch : positiveKeywordRequestBatches)
 			{
-				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch);
+				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch, promotionID);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
 			}			
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
@@ -692,7 +692,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
 				}				
 				// Mark as Deleted in DB for Keywords that could not be added to MSN				
-				SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap);
+				SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap, promotionID);
 			}		
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
@@ -1825,7 +1825,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						Integer spRet = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
 					}				
 					// Mark as Deleted in DB for Keywords that could not be added to MSN				
-					SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap);
+					SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap, promotionID);
 				}	
 			}
 			else
