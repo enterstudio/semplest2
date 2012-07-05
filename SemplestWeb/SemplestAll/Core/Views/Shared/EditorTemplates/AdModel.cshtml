@@ -124,6 +124,10 @@
         if (originalValue.length == 0) {
             $('#AdModelProp_LandingUrl').val('http://');
         }
+        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+            $('#AdModelProp_LandingUrl').attr("disabled", true);
+            $('#AdModelProp_DisplayUrl').attr("disabled", true);
+        }
     });
     $('#getCategories').click(function () {
         enabledIsLaunched();

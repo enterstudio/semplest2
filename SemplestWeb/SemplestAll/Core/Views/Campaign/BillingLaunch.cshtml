@@ -251,6 +251,10 @@
 <script language="javascript">
     $(document).ready(function () {
         enableDisable();
+        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+            $('#getLaunchAdProduct').attr("disabled", true);
+            $('#agreecheckbox').attr("disabled", true);
+        }
         var creditCardWindow = $('#creditCardWindow').kendoWindow({
             modal: true,
             resizable: false,

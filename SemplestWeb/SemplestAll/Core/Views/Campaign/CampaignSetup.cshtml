@@ -104,6 +104,12 @@
                 openAllTabs(true);
             }
         }
+        if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
+            $('#ProductGroup_ProductGroupName').attr("disabled", true);
+            $('#ProductGroup_ProductPromotionName').attr("disabled", true);
+            $('#ProductGroup_Words').attr("disabled", true);
+            $('input[name*="ProductGroup.AdEnginesList"]').attr("disabled", true);
+        }
     });
         //        enableDisable();
     //        $("#tabstrip").children('.k-content').height(650);
