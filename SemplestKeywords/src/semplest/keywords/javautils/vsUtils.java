@@ -100,7 +100,7 @@ public class vsUtils {
     for( Map.Entry<String,Map<String,Integer>> wc: wcs.entrySet() ) {
       Map<String,Integer> swc = ngWc( wc.getValue() );     // ngram-ct to word-ct
       Double w = Math.PI/2.0 - cDist( swc,rv );  // the weight
-      System.out.printf("%s :: wt: %.3f sizes(%d,%d)\n", 
+      System.out.printf("%s :: wt: %.3f Wc sizes(cat,ref) :: (%d,%d)\n", 
           wc.getKey(), w*100.0, swc.size(), rv.size() );
       Map<String,Integer> nwc = cNormalize( wc.getValue() );
       for( Map.Entry<String,Integer> e: nwc.entrySet() )
