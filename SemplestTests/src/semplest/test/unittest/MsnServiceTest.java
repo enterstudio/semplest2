@@ -44,7 +44,7 @@ import semplest.services.client.api.MSNAdcenterServiceClient;
 
 public class MsnServiceTest {
 	
-	MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+	//
 	
 	private int errorCounter = 0;
 	
@@ -173,8 +173,9 @@ public class MsnServiceTest {
 	
 	public int Test_createAccount(){
 		
-		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		
 		try{
+			MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 			System.out.println("------------------------------------------------------------");
 			System.out.println("createAccount:");
 			SemplestString in = new SemplestString();		
@@ -1948,7 +1949,7 @@ public class MsnServiceTest {
 			System.out.println(" ");
 			System.out.println("------------------------------------------------------------");
 			System.out.println("clean up and finish the test...");
-			
+			MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 			Campaign[] allcp = test.getCampaignsByAccountId(accountId);
 			for(Campaign c : allcp){
 				test.deleteCampaignById(accountId, c.getId());

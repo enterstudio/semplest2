@@ -122,7 +122,7 @@ public class MSNAdcenterServiceClientTest {
 
 	}
 	
-	public HashMap<String,String[]> getSuggestedKeywordsfromarray(String[] kw) throws MsnCloudException{
+	public HashMap<String,String[]> getSuggestedKeywordsfromarray(String[] kw) throws Exception{
 		
 		HashMap<String,String[]> wordMap = new HashMap<String,String[]>();
 		// get the keyword volume info for this batch
@@ -135,7 +135,7 @@ public class MSNAdcenterServiceClientTest {
 	    }
 	    return wordMap;
 	}
-	public void deletaAllKeywords() throws RemoteException{
+	public void deletaAllKeywords() throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
 		long[] kwIds;
@@ -151,7 +151,7 @@ public class MSNAdcenterServiceClientTest {
 		test.deleteKeywordsById(accountID, adGroupID, keywordIDs);
 	}
 	
-	public void updateBidAllKeywords() throws RemoteException{
+	public void updateBidAllKeywords() throws Exception{
 		int kwLimit = 1000;
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);

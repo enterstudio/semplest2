@@ -21,11 +21,9 @@ public class MSNAdcenterService implements ServiceInterface
 		
 			try
 			{
-				AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
-				TimeServer timeServer = new TimeServerImpl();
 
 				logger.debug("Running MSN Service:" + methodName + ":" + jsonStr);
-				MsnCloudServiceImpl service = new MsnCloudServiceImpl(adCenterCredentials,timeServer);
+				MsnCloudServiceImpl service = new MsnCloudServiceImpl();
 				Class[] parameterTypes = new Class[] {String.class};
 				Method method = service.getClass().getMethod(methodName, parameterTypes);
 				return (String) method.invoke(service,jsonStr);

@@ -8,12 +8,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
+import semplest.other.AdCenterCredentialsSandbox;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.msn.MsnAccountObject;
+import semplest.server.service.SemplestConfiguration;
 import semplest.service.google.adwords.TestGoogleAdwords;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
@@ -46,13 +50,38 @@ public class TestMSN
 	 */
 	public static void main(String[] args)
 	{
-		AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
-		TimeServer timeServer = new TimeServerImpl();
-		MsnAdcenterServiceInterface msnCloudService = new MsnCloudServiceImpl(adCenterCredentials,timeServer);
-
-		TestMSN test = new TestMSN();
+		
+		
 		try
 		{
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
+			String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
+			String user = (String) SemplestConfiguration.configData.get("MSNApiUsername");
+			String pass = aes.decrypt((String) SemplestConfiguration.configData.get("MSNApiPassword"));
+			String userAccessKey = (String) SemplestConfiguration.configData.get("MSNUserAccessKey");
+			AdCenterCredentials adCenterCredentials = null;
+			Boolean useSandbox = (Boolean) SemplestConfiguration.configData.get("MSNUseSandbox");
+			if (useSandbox)
+			{
+				adCenterCredentials = new AdCenterCredentialsSandbox(user, pass, userAccessKey);
+			}
+			else
+			{
+				adCenterCredentials = new AdCenterCredentialsProduction(user, pass, userAccessKey);
+			}
+			TimeServer timeServer = new TimeServerImpl();
+			MsnAdcenterServiceInterface msnCloudService = new MsnCloudServiceImpl(adCenterCredentials,timeServer);
+
+			TestMSN test = new TestMSN();
 			test.MsnQueryCoreData(msnCloudService,  msnAccountId, 0L);
 		}
 		catch (Exception e)

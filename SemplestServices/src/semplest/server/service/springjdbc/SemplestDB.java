@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
@@ -286,7 +287,8 @@ public class SemplestDB extends BaseDB
 
 	public static void storeTrafficEstimatorData(int promotionID, AdEngine adEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
-		AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		//AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		List<TrafficDataObj> trafficDataList= new ArrayList<TrafficDataObj>();
 		java.util.Date date= new java.util.Date();
 		Timestamp ts = new Timestamp(date.getTime());
 
@@ -325,16 +327,63 @@ public class SemplestDB extends BaseDB
 							// add the data to the DB
 							//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
 							//Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
+							TrafficDataObj trafficDataObj = new TrafficDataObj();
+							trafficDataObj.setAdvertisingEngine(adEngine.name());
+							trafficDataObj.setPromotionID(promotionID);
+							trafficDataObj.setAveCPC(trafficEstimatorObj.getAveCPC(keyword, matchType, microBid).floatValue());
+							trafficDataObj.setAveMicroCost(trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue());
+							trafficDataObj.setAveNumberClicks(trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue());
+							trafficDataObj.setAvePosition(trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue());
+							trafficDataObj.setBidType(matchType);
+							trafficDataObj.setKeyword("personal wedding sites");
+							trafficDataObj.setMicroBid(microBid.intValue());
+							trafficDataList.add(trafficDataObj);
+							/*
 							Boolean ret =  addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid.intValue(),
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue(),
 									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue(),
 									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue(),
 									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid).floatValue(), ts);
+									*/
 						}
 					}
 				}
 			}
 		}
+		//call the batch add
+		trafficEstimatorBatch(trafficDataList, ts);
+	}
+	
+	private static void trafficEstimatorBatch(final List<TrafficDataObj> trafficDataList, final Timestamp ts) throws Exception
+	{
+
+		String sql = "{call AddTrafficEstimator(?,?,?,?,?,?,?,?,?,?)}";
+		jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
+		{
+
+			@Override
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				TrafficDataObj trafficData = trafficDataList.get(i);
+				ps.setInt(1, trafficData.getPromotionID());
+				ps.setString(2, trafficData.getKeyword());
+				ps.setString(3, trafficData.getAdvertisingEngine());
+
+				ps.setString(4, trafficData.getBidType());
+				ps.setInt(5, trafficData.getMicroBid());
+				ps.setFloat(6, trafficData.getAveMicroCost());
+				ps.setFloat(7, trafficData.getAveNumberClicks());
+				ps.setFloat(8, trafficData.getAvePosition());
+				ps.setFloat(9, trafficData.getAveCPC());
+				ps.setTimestamp(10, ts);
+			}
+
+			@Override
+			public int getBatchSize()
+			{
+				return trafficDataList.size();
+			}
+		});
 	}
 
 	public static void storeKeywordDataObjects(int promotionID, AdEngine adEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception

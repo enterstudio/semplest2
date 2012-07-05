@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,18 +33,18 @@ import org.joda.time.DateTime;
 
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
+import semplest.other.AdCenterCredentialsSandbox;
 import semplest.other.MsnManagementIds;
 import semplest.other.MsnTime;
 import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
+import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.ProtocolJSON;
-import semplest.server.protocol.RetriableOperation;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
-import semplest.server.protocol.google.MsnEditorialApiFaultDetail;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
@@ -54,13 +53,10 @@ import semplest.server.protocol.msn.MsnAdObject;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.protocol.msn.MsnKeywordObject;
 import semplest.server.service.SemplestConfiguration;
-import semplest.server.service.springjdbc.SemplestDB;
 import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
-import com.google.api.adwords.v201109.cm.ApiException;
-import com.google.api.adwords.v201109.cm.RateExceededError;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
@@ -96,7 +92,6 @@ import com.microsoft.adcenter.api.customermanagement.Entities.TimeZoneType;
 import com.microsoft.adcenter.api.customermanagement.Entities.User;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.*;
-import com.sun.rsasign.k;
 
 public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCloudService
 {
@@ -114,13 +109,15 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	private final static long NO_CUSTOMER_ID = Long.MIN_VALUE;
 
 	public static final int DEFAULT_TIMEOUT = 80000;
-	private NameServiceUniqueMsn uniqueMsnNameService = new NameServiceUniqueMsnPsuedoRandom();
-	private AdCenterCredentials adCenterCredentials = new AdCenterCredentialsProduction();
+	private NameServiceUniqueMsn uniqueMsnNameService = null; //new NameServiceUniqueMsnPsuedoRandom();
+	private AdCenterCredentials adCenterCredentials = null; //new AdCenterCredentialsProduction();
 	private int timeoutMillis = DEFAULT_TIMEOUT;
-	private TimeServer timeServer = new TimeServerImpl();
+	private TimeServer timeServer = null; //new TimeServerImpl();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
 	private static final Logger logger = Logger.getLogger(MsnCloudServiceImpl.class);
+	
+	private static Boolean useSandbox; 
 
 	private static String separator = "#";
 
@@ -145,6 +142,9 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		final double dailyBudget = 259.25925925925924d;
 		final double monthlyBudget = 10.0;
 		final CampaignStatus campaignStatus = CampaignStatus.Active;
+		
+		//
+		
 
 		final Long campaignId = test.createCampaign(accountId, campaignName, budgetLimitType, dailyBudget, monthlyBudget, campaignStatus);
 		logger.info("Campaign ID created [" + campaignId + "]");
@@ -236,11 +236,41 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		this.timeoutMillis = milliseconds;
 	}
 
-	public MsnCloudServiceImpl()
+	public MsnCloudServiceImpl() throws Exception
 	{
 
+		try
+		{
+			
+			//setup the encryption
+			String key = (String) SemplestConfiguration.configData.get("SemplestEncryptionkey");
+			AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
+			String user = (String) SemplestConfiguration.configData.get("MSNApiUsername");
+			String pass = aes.decrypt((String) SemplestConfiguration.configData.get("MSNApiPassword"));
+			String userAccessKey = (String) SemplestConfiguration.configData.get("MSNUserAccessKey");
+			
+			useSandbox = (Boolean) SemplestConfiguration.configData.get("MSNUseSandbox");
+			if (useSandbox)
+			{
+				adCenterCredentials = new AdCenterCredentialsSandbox(user, pass, userAccessKey);
+			}
+			else
+			{
+				adCenterCredentials = new AdCenterCredentialsProduction(user, pass, userAccessKey);
+			}
+			logger.info("Initialized MSN API sandbox=" + useSandbox);
+			this.uniqueMsnNameService = new NameServiceUniqueMsnPsuedoRandom();
+			this.timeServer = new TimeServerImpl();
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Unable to initialize MSN API";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
 	}
 
+	
 	public MsnCloudServiceImpl(AdCenterCredentials adCenterCredentials, TimeServer timeServer)
 	{
 		this(new NameServiceUniqueMsnPsuedoRandom(), adCenterCredentials, timeServer);
@@ -252,6 +282,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		this.adCenterCredentials = adCenterCredentials;
 		this.timeServer = timeServer;
 	}
+	
 
 	// ==================================
 	// Account Methods
@@ -3684,7 +3715,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		{
 			object.wait();
 		}
-
 	}
 
 	public String getKeywordReport(String json) throws Exception

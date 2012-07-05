@@ -10,7 +10,7 @@ import semplest.server.service.springjdbc.BaseDB;
 
 public class AddTrafficEstimatorSP extends StoredProcedure
 {
-	private static final String SPROC_NAME = " AddTrafficEstimator";
+	private static final String SPROC_NAME = "AddTrafficEstimator";
 
 	public  AddTrafficEstimatorSP()
 	{

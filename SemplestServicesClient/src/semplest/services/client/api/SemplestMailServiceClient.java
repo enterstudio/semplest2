@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class SemplestMailServiceClient extends ServiceRun implements SemplestMailServiceInterface, SchedulerTaskRunnerInterface
 {
 	private static String SERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
-	private static String BASEURLTEST = "http://172.18.9.26:9898/semplest"; // VMJAVA1
+	private static String BASEURLTEST = "http://vmdevjava1:9898/semplest"; // VMJAVA1
 	private static String timeoutMS = "40000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -28,8 +28,8 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 
 		try
 		{
-			SemplestMailServiceClient client = new SemplestMailServiceClient("http://VMDEVJAVA1:9898/semplest");
-			Boolean ret = client.SendEmail("Test", "mberg@semplest.com", "mitch@semplest.com", "Hello there", ProtocolEnum.EmailType.PlanText.name());
+			SemplestMailServiceClient client = new SemplestMailServiceClient("http://23.22.63.111:9898/semplest");
+			Boolean ret = client.SendEmail("Test", "mitch@seattlebergs.com", "mitch@semplest.com", "Hello from the cloud", "text/plain; charset=ISO-8859-1"); //ProtocolEnum.EmailType.PlanText.name());
 		}
 		catch (Exception e)
 		{

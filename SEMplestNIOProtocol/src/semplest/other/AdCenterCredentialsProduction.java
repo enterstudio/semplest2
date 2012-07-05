@@ -14,14 +14,17 @@ public class AdCenterCredentialsProduction implements AdCenterCredentials
 	private static final String AD_INTILLEGENCE_URL = "https://adcenterapi.microsoft.com/Api/Advertiser/v8/CampaignManagement/AdIntelligenceService.svc?wsdl";
 	private static final String AD_INTILLEGENCE_NAMESPACE = "https://adcenter.microsoft.com/v8";
 	private static final Long PARENT_CUSTOMER_ID = 694122L;
-	private final String apiUserName = "API_SEMplest";
-	private final String apiUserPassword = "1s3mpl3st";
-	private final String userAccessKey = "6LTW1JCMEKIUX3";
+	private final String apiUserName; // = "API_SEMplest";
+	private final String apiUserPassword; // = "1s3mpl3st";
+	private final String userAccessKey; // = "6LTW1JCMEKIUX3";
 	
 	private static final Logger log = Logger.getLogger(AdCenterCredentialsProduction.class);
 	
-	public AdCenterCredentialsProduction()
+	public AdCenterCredentialsProduction(String MSNApiUsername, String MSNApiPassword, String MSNUserAccessKey)
 	{
+		apiUserName = MSNApiUsername;
+		apiUserPassword = MSNApiPassword;
+		userAccessKey = MSNUserAccessKey;
 		log.info("Using: " + toString());
 	}
 	

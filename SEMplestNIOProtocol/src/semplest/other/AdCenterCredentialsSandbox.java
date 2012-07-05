@@ -10,14 +10,17 @@ public class AdCenterCredentialsSandbox implements AdCenterCredentials
 	public static final String CUSTOMER_MANAGEMENT_URL = "https://sharedservices-sbx.adcenterapi.microsoft.com/Api/CustomerManagement/v8/CustomerManagementService.svc?wsdl";
 	private static final String REPORTING_URL = "https://sandboxapi.adcenter.microsoft.com/Api/Advertiser/v8/Reporting/ReportingService.svc?wsdl";
 	//	private static final String AD_INTELLIGENCE_URL = "https://sandboxapi.adcenter.microsoft.com/Api/Advertiser/v8/CampaignManagement/AdIntelligenceService.svc?wsdl";
-	private final String apiUserName = "API_SEMplest_SB";
-	private final String apiUserPassword = "bing123";
-	private final String userAccessKey = "1B907FIJP42U";
+	private final String apiUserName; // //"API_SEMplest_SB";
+	private final String apiUserPassword;// = "bing123";
+	private final String userAccessKey;// = "1B907FIJP42U";
 	
 	private static final Logger log = Logger.getLogger(AdCenterCredentialsSandbox.class);
 	
-	public AdCenterCredentialsSandbox()
+	public AdCenterCredentialsSandbox(String MSNApiUsername, String MSNApiPassword, String MSNUserAccessKey)
 	{
+		apiUserName = MSNApiUsername;
+		apiUserPassword = MSNApiPassword;
+		userAccessKey = MSNUserAccessKey;
 		log.info("Using: " + toString());
 	}
 	
