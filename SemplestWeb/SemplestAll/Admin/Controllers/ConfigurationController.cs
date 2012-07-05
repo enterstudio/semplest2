@@ -52,6 +52,7 @@ namespace Semplest.Admin.Controllers
             c.OnErrorEmail = c2.OnErrorEmail;
             c.ESBWebServerURL = c2.ESBWebServerURL;
             c.DisplayTargetCPCLevel = c2.DisplayTargetCPCLevel;
+            c.DoNotLaunchAdServices = c2.DoNotLaunchAdServices;
             _dbContext.SaveChanges();
             return View(c);
         }

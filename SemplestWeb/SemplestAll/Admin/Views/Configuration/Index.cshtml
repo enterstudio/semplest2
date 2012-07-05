@@ -128,6 +128,11 @@ System Defaults
                 @Html.CheckBoxFor(model => model.DisplayTargetCPCLevel)
                 @Html.ValidationMessageFor(model => model.DisplayTargetCPCLevel)
             </li>
+                        <li >
+                @Html.LabelFor(model => model.DoNotLaunchAdServices)
+                @Html.EditorFor(model => model.DoNotLaunchAdServices)
+                @Html.ValidationMessageFor(model => model.DoNotLaunchAdServices)
+            </li>
             <li>
                 <input type="submit" value="Save" class="k-button" />
                 <input type="submit" value="Cancel" class="k-button" />
