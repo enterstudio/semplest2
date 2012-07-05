@@ -104,8 +104,8 @@ public class ioUtils {
     return arraybuf; 
   }
   // reads file and returns first two columns as a HashMap 
-  public static HashMap<String,String> readPair(String file){
-    HashMap<String,String> hash = new HashMap<String, String>();
+  public static Map<String,String> readPair(String file){
+    Map<String,String> hash = new HashMap<String, String>();
     try {
       InputStream fis = new FileInputStream(file);
       BufferedReader br = new BufferedReader(new InputStreamReader(fis, 
@@ -120,16 +120,16 @@ public class ioUtils {
     return hash; 
   }
   // reads file and returns first two columns as a HashMap 
-  public static HashMap<String,Integer> readCount(String file){
-    HashMap<String,String> pairs = readPair( file );
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+  public static Map<String,Integer> readCount(String file){
+    Map<String,String> pairs = readPair( file );
+    Map<String,Integer> map = new HashMap<String,Integer>();
     for( Map.Entry<String,String> e : pairs.entrySet())
       map.put( e.getKey(), Integer.decode( e.getValue()) );
     return map;
   }
   // reads file and returns it as a map of strings with index
-  public static HashMap<String,Integer> readFileIndex(String file){
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+  public static Map<String,Integer> readFileIndex(String file){
+    Map<String,Integer> map = new HashMap<String,Integer>();
     try {
       InputStream fis = new FileInputStream(file);
       BufferedReader br = new BufferedReader(new InputStreamReader(fis, 
@@ -145,8 +145,8 @@ public class ioUtils {
   }
 
   // same as readFileIndex but picks out a column in the file (indexed from 0)
-  public static HashMap<String,Integer> readFileIndex(String file, int col){
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+  public static Map<String,Integer> readFileIndex(String file, int col){
+    Map<String,Integer> map = new HashMap<String,Integer>();
     try {
       InputStream fis = new FileInputStream(file);
       BufferedReader br = new BufferedReader(new InputStreamReader(fis, 
@@ -164,8 +164,8 @@ public class ioUtils {
   }
 
   // Returns the dmoz descriptions as a Map<category><description> 
-  static HashMap<String,String> readDescs( String f){
-    HashMap<String,String> map = new HashMap<String,String>();
+  static Map<String,String> readDescs( String f){
+    Map<String,String> map = new HashMap<String,String>();
     try {
       BufferedReader r = new BufferedReader(new FileReader(f));
       String line;
@@ -181,8 +181,8 @@ public class ioUtils {
   }
 
   // Returns the dmoz wordcounts as a Map<category><counts> 
-  static HashMap<String,String> readWcounts( String f){
-    HashMap<String,String> map = new HashMap<String,String>();
+  static Map<String,String> readWcounts( String f){
+    Map<String,String> map = new HashMap<String,String>();
     try {
       BufferedReader r = new BufferedReader(new FileReader(f));
       String line;
@@ -201,16 +201,18 @@ public class ioUtils {
     return map;
   }
   // Returns the dmoz wordcounts as a Map<category, Map<word,count>> 
-  public static HashMap<String,HashMap<String,Integer>> readWcs( String f ){
-    HashMap<String,HashMap<String,Integer>> map = 
-      new HashMap<String,HashMap<String,Integer>>();
+  public static Map<String,Map<String,Integer>> readWcs( String f ){
+    Map<String,Map<String,Integer>> map = 
+      new HashMap<String,Map<String,Integer>>();
     try {
       BufferedReader r = new BufferedReader(new FileReader(f));
       String line;
       while(( line =  r.readLine()) != null ){
         String head = line.substring( 0, Math.max(0,line.indexOf(':'))).trim();
         String tail = line.substring( line.indexOf(':')+1 ).trim();
-        map.put( head, toWc( tail ) );
+        Map<String,Integer> wcs = toWc( tail );
+        if( head != "" && wcs.size() > 0 )
+          map.put( head, wcs );
       }
     } catch (Exception e) {
       logger.error("Problem", e);
@@ -218,9 +220,9 @@ public class ioUtils {
     return map;
   }
   // Returns the first n dmoz wordcounts as a Map<category, Map<word,count>> 
-  static HashMap<String,HashMap<String,Integer>> readWcs( String f, int n ){
-    HashMap<String,HashMap<String,Integer>> map = 
-      new HashMap<String,HashMap<String,Integer>>();
+  static Map<String,Map<String,Integer>> readWcs( String f, int n ){
+    Map<String,Map<String,Integer>> map = 
+      new HashMap<String,Map<String,Integer>>();
     try {
       BufferedReader r = new BufferedReader(new FileReader(f));
       String line;
@@ -228,7 +230,9 @@ public class ioUtils {
       while(( line =  r.readLine()) != null && count < n){
         String head = line.substring( 0, Math.max(0,line.indexOf(':'))).trim();
         String tail = line.substring( line.indexOf(':')+1 ).trim();
-        map.put( head, toWc( tail ) );
+        Map<String,Integer> wcs = toWc( tail );
+        if( head != "" && wcs.size() > 0 )
+          map.put( head, wcs );
         count++;
       }
     } catch (Exception e) {
@@ -236,8 +240,7 @@ public class ioUtils {
     }
     return map;
   }
-  //-------------------------------------------------- 
-  // Convert an array of strings to one string.
+  //-------------------------------------------------- // Convert an array of strings to one string.
   // Put the 'separator' string between each element.
   public static String mkString(String[] a, String separator) {
     StringBuffer result = new StringBuffer();
@@ -251,8 +254,8 @@ public class ioUtils {
     return result.toString();
   }
   // convert a semplest wordcount String to a Hashmap<String,Integer>
-  public static HashMap<String,Integer> toWc (String s){
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+  public static Map<String,Integer> toWc (String s){
+    Map<String,Integer> map = new HashMap<String,Integer>();
     String[] wcs = s.split("\\s+");
     for(String wc: wcs){
       String[] wca = wc.split(":");
@@ -393,12 +396,12 @@ public class ioUtils {
     return docv;
   }
   // return a map of the words and count
-  public static HashMap<String,Integer> docWordMap(String line){
+  public static Map<String,Integer> docWordMap(String line){
     String[] tokens = line.split("\\s+");
     if( tokens.length < 2) return null; 
 
     // words
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    Map<String,Integer> map = new HashMap<String,Integer>();
     for(int i = 1; i < tokens.length; i++){
       String[] wc = tokens[i].split(":");
       String word = wc[0];
@@ -421,14 +424,14 @@ public class ioUtils {
     if( tokens.length < 2) return null; 
 
     // words
-    HashMap<String,Integer> map = new HashMap<String,Integer>();
+    Map<String,Integer> map = new HashMap<String,Integer>();
     String words = "";
     for(int i = 1; i < tokens.length; i++)
       words += tokens[i].split(":")[0] + " ";
     return words;
   }
-  public static HashMap<String,String> topWords(String file ){
-    HashMap<String,String> map = new HashMap<String, String>();
+  public static Map<String,String> topWords(String file ){
+    Map<String,String> map = new HashMap<String, String>();
     try {
       BufferedReader br = new BufferedReader(new FileReader( file )); 
       String line;
@@ -590,7 +593,7 @@ public class ioUtils {
     /*
        String f = "/semplest/data/dmoz/all/hCounts.txt.tw";
        String h = "top/sports/equestrian/breeds/spanish_horses";
-       HashMap<String,String> wcs = readWcounts(f);
+       Map<String,String> wcs = readWcounts(f);
        System.out.println( wcs.get( h ));
      */
     try{
