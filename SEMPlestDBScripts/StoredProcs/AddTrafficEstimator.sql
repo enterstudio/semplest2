@@ -32,7 +32,7 @@ BEGIN TRY
 	if not exists (select * from PromotionKeywordAssociation pka inner join Keyword k on k.KeywordPK = pka.KeywordFK
 					where k.Keyword = @Keyword and pka.PromotionFK = @PromotionID)
 	BEGIN
-		SELECT @ErrMsg = 'The Selected keyword does not exist for the Promotion'; 
+		SELECT @ErrMsg = 'The Selected keyword [' + @Keyword + '] does not exist for Promotion [' + @PromotionID + ']'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;		
 	BEGIN TRANSACTION		
