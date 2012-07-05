@@ -4,7 +4,8 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.io.Console;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 /* 
  * Utilities to read manipulate dmoz keywords 
@@ -25,7 +26,7 @@ public class dmozUtils {
   final static String CATID_FILE = "/semplest/data/dmoz/all.cids";
   Map<String,String> cids = catUtils.catId( CATID_FILE ); 
  
-  final static String descfile = "/semplest/data/dmoz/all.descs";
+  final static String DESC_FILE = "/semplest/data/dmoz/all.descs";
   // ---------------------------------------------------------------------
   // ctr
   public dmozUtils(String d, String e){ 
@@ -120,56 +121,58 @@ public class dmozUtils {
   }
   
   // - Testing ----------------------------------------------------
-  public static void interactiveTest(){
+  public static void interactiveTest() throws Exception {
     String DIR = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/";
     String ENDING = ".2";
     int NUM_RESULTS = 50;
     dmozUtils du = new dmozUtils( DIR, ENDING );
+    BufferedReader br = new BufferedReader( new InputStreamReader( System.in));
     
     // Lucene
     DmozLucene dl = new DmozLucene();
-    DmozLucene.loadDesc(dl, descfile );
+    DmozLucene.loadDesc(dl, DESC_FILE );
 
     // Get Input from user in a loop
-    Console c = System.console();
     while (true) {
-      c.printf("Enter keywords : ");
-      String q = c.readLine();
-      c.printf("(Optional) Url : ");
-      String url = c.readLine();
+      System.out.printf("Enter keywords : ");
+      String q = br.readLine();
+      System.out.printf("(Optional) Url : ");
+      String url = br.readLine();
 
       // Get categories from Lucene, choose only thos in topl
       String[] cats = dl.search( TextUtils.stemvString( q )); 
       String[] fcats = cFilter( cats ); 
-      c.printf("Using %d of %d cats returned by Lucene\n", fcats.length, 
-          cats.length );
+      System.out.printf("Using %d of %d cats returned by Lucene\n", 
+          fcats.length, cats.length );
 
       // Add
       Map<String,Integer> res = du.ccombine( fcats );
       Map<String,Integer> fres = dFilter( res );
-      c.printf("\n--------------------------\n");
-      c.printf("\nKeeping %d of %d results \n", fres.size(), res.size() );
-      c.printf("Printing first %d results from summing %d categories\n",
+      System.out.printf("\n--------------------------\n");
+      System.out.printf("\nKeeping %d of %d results \n", 
+          fres.size(), res.size() );
+      System.out.printf("Printing first %d results from summing %d cats\n\n",
           NUM_RESULTS,  fcats.length);
       jUtils.printMap( jUtils.take( jUtils.smap( fres ), NUM_RESULTS) );
-      c.printf("\n--------------------------\n");
+      System.out.printf("\n--------------------------\n");
 
       // Combine
       if( TextUtils.isValidUrl( url )){
         Map<String,Integer> wres = du.ccombine( fcats, url );
         Map<String,Integer> fwres = dFilter( wres );
-        c.printf("\n--------------------------\n");
-        c.printf("\nKeeping %d of %d results \n", fwres.size(), wres.size() );
-        c.printf("First %d results combining relative to %s\n", 
+        System.out.printf("\n--------------------------\n");
+        System.out.printf("\nKeeping %d of %d results \n", 
+            fwres.size(), wres.size() );
+        System.out.printf("First %d results combining relative to %s\n\n", 
             NUM_RESULTS,  url);
         jUtils.printMap( jUtils.take( jUtils.smap( fwres ), NUM_RESULTS) );
-        c.printf("\n--------------------------\n");
+        System.out.printf("\n--------------------------\n");
       }
     }
   }
 
   // -------------------------
-  public static void main (String[] args){
+  public static void main (String[] args) throws Exception {
     interactiveTest();
   }
 }
