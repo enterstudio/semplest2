@@ -63,13 +63,13 @@ public class dmozUtils {
   Map<String,Integer> sumWc( String c ){
     String[] cats = catUtils.descendants( cids, c );
     System.out.print("Creating a single wc for " + c );
-    System.out.println(" which had " + cats.length + " : descendants..");
+    System.out.println(" " + cats.length + " descendants..");
     Map<String,Map<String,Integer>> t = 
       new HashMap<String,Map<String,Integer>>();
     for( String cat: cats )
       if( getWc( cat ) != null )
         t.put( cat, getWc( cat ));
-    System.out.println( "Summing : " + t.size() + " word-counts" );
+    System.out.println( "Summing " + t.size() + " word-counts" );
     return vsUtils.cSum( t );
   }
 
@@ -79,8 +79,7 @@ public class dmozUtils {
       new HashMap<String,Map<String,Integer>>();
     for( String cat: cats )
       t.put( cat, sumWc( cat ));
-    System.out.print( "Combining : " + cats.length + "cats" );
-    System.out.println("..returning " + t.size() + " vectors" );
+    System.out.print( "Adding : " + cats.length + " cats" );
     return vsUtils.cSum( t );
   }
   // combine the word-counts for an array of categories 
@@ -89,8 +88,7 @@ public class dmozUtils {
       new HashMap<String,Map<String,Integer>>();
     for( String cat: cats )
       t.put( cat, sumWc( cat ));
-    System.out.print( "Combining : " + cats.length + "cats with url" );
-    System.out.println("..returning " + t.size() + " vectors" );
+    System.out.print( "Combining : " + cats.length + " cats with url" );
     return vsUtils.cCombine( t, url );
   }
 
@@ -125,6 +123,7 @@ public class dmozUtils {
   public static void interactiveTest(){
     String DIR = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/";
     String ENDING = ".2";
+    int NUM_RESULTS = 50;
     dmozUtils du = new dmozUtils( DIR, ENDING );
     
     // Lucene
@@ -148,17 +147,23 @@ public class dmozUtils {
       // Add
       Map<String,Integer> res = du.ccombine( fcats );
       Map<String,Integer> fres = dFilter( res );
-      c.printf("Printing first %d(of %d) results from summing %d categories",
-          fres.size(), res.size(),  fcats.length);
-      jUtils.printMap( jUtils.take( jUtils.smap( fres ), 50) );
+      c.printf("\n--------------------------\n");
+      c.printf("\nKeeping %d of %d results \n", fres.size(), res.size() );
+      c.printf("Printing first %d results from summing %d categories\n",
+          NUM_RESULTS,  fcats.length);
+      jUtils.printMap( jUtils.take( jUtils.smap( fres ), NUM_RESULTS) );
+      c.printf("\n--------------------------\n");
 
       // Combine
       if( TextUtils.isValidUrl( url )){
         Map<String,Integer> wres = du.ccombine( fcats, url );
         Map<String,Integer> fwres = dFilter( wres );
-        c.printf("First %d(%d) results combining relative to %s",
-            fres.size(), res.size(),  url);
-        jUtils.printMap( jUtils.take( jUtils.smap( fwres ),50) );
+        c.printf("\n--------------------------\n");
+        c.printf("\nKeeping %d of %d results \n", fwres.size(), wres.size() );
+        c.printf("First %d results combining relative to %s\n", 
+            NUM_RESULTS,  url);
+        jUtils.printMap( jUtils.take( jUtils.smap( fwres ), NUM_RESULTS) );
+        c.printf("\n--------------------------\n");
       }
     }
   }
