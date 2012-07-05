@@ -52,7 +52,13 @@ public class VolumeMSN {
 	public static void main(String[] args) {
 		
 		
-		MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+		MsnCloudServiceImpl msn = null;
+		try {
+			msn = new MsnCloudServiceImpl();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 					
 		//String[] keywords = new String[]{"wedding bouquets","wedding flowers","wedding centerpieces"};
 		String[] keywords = new String[]{"reliably refer"};
