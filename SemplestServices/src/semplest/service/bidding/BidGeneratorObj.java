@@ -75,6 +75,7 @@ public class BidGeneratorObj
 	private Long adGroupID;
 	
 	private boolean isFirstCall = true;
+	private double clickFactor = 10.0;
 
 	private GoogleAdwordsServiceImpl clientGoogle;
 	private MsnCloudServiceImpl msnClient;
@@ -491,7 +492,7 @@ public class BidGeneratorObj
 			//public KeyWord(String name, double score, double[] bid, double[] Clicks,
 			//	      double[] CPC, double[] Pos, double[] DCost, Double cutoff, Double clickFactor)
 			bidOptimizer.addKeyWord(new KeyWord(s, (qualityScoreMap.get(s)==null ? 10.0 : qualityScoreMap.get(s).doubleValue()), bidArray, clickDataMap.get(s).getData(bidArray), 
-					cpcDataMap.get(s).getData(bidArray), null, costDataMap.get(s).getData(bidArray), 0.05 ,1.0));
+					cpcDataMap.get(s).getData(bidArray), null, costDataMap.get(s).getData(bidArray), 0.05 ,clickFactor));
 			//notSelectedKeywords.add(s);
 		}
 		//compKeywords.clear();
