@@ -101,6 +101,7 @@ public class catUtils {
     if( index == 0 ) return "";
     return toCat( java.util.Arrays.copyOfRange( nodes, 0, index ));
   }
+  public static String topl (String cat ){ return last( take( cat, 2) );}
   public static int nodes( String cat ){ return cat.split("/" ).length; }
   public static int size( String cat ){ return cat.split("/" ).length; }
   public static String parent( String cat ){ return init( cat );}
@@ -197,13 +198,13 @@ public class catUtils {
   // [Note:] Is O(n). Would be faster to sort O(n log n), 
   // find first and last indices O(log n), if repeated often. 
   // O(n) seems fast enougn (about 100 ms for 0.3 Million cats)
-  public static String[] descendants(HashMap<String,String> cids, String c){
+  public static String[] descendants(Map<String,String> cids, String c){
     ArrayList<String> res = new ArrayList<String>();
     for( Map.Entry<String,String> e: cids.entrySet())
       if( e.getKey().indexOf( c ) == 0 ) res.add( e.getKey() );
     return res.toArray( new String[]{});
   }
-  public static String[] descendants (HashMap<String,String> cids, String c, 
+  public static String[] descendants (Map<String,String> cids, String c, 
       int level){
     int cl = size( c ) + level;
     String[] d = descendants( cids, c );
@@ -212,7 +213,7 @@ public class catUtils {
       if( size( e ) == cl ) res.add( e );
     return res.toArray( new String[]{});
   }
-  public static String[] children(HashMap<String,String> cids, String c){
+  public static String[] children(Map<String,String> cids, String c){
     return descendants( cids, c, 1 ); 
   }
 
