@@ -20,34 +20,35 @@ import com.google.api.adwords.v201109.cm.Keyword;
 import com.google.api.adwords.v201109.cm.RateExceededError;
 
 public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends AbstractRetriableGoogleOperation<AdGroupCriterionReturnValue>
-{ 					
+{
 	private static final Logger logger = Logger.getLogger(AdGroupCriterionMutateRetriableFilterableGoogleOperation.class);
-	
+
 	private final AdGroupCriterionServiceInterface service;
 	private AdGroupCriterionOperation[] operations;
 	private final Map<AdGroupCriterionOperation, String> operationsRemovedToPkMap;
 
-	public AdGroupCriterionMutateRetriableFilterableGoogleOperation(final AdGroupCriterionServiceInterface service, final AdGroupCriterionOperation[] operations, final Integer maxRetries)
+	public AdGroupCriterionMutateRetriableFilterableGoogleOperation(final AdGroupCriterionServiceInterface service,
+			final AdGroupCriterionOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;
 		this.operations = operations;
 		operationsRemovedToPkMap = new HashMap<AdGroupCriterionOperation, String>();
 	}
-	
+
 	@Override
 	protected AdGroupCriterionReturnValue porformCustomOperation() throws ApiException, RemoteException
 	{
-		return service.mutate(operations);	
+		return service.mutate(operations);
 	}
-	
+
 	@Override
 	protected void handleApiException(final ApiException e) throws Exception
 	{
 		final String errMsg = "Problem performing operation: " + e.dumpToString();
-		logger.error(errMsg, e);		
+		logger.error(errMsg, e);
 		final RateExceededError rateExceededError = getRateExceededError(e);
-		final List<GoogleViolation> googleViolations = SemplestUtils.getGoogleViolations_v201109(e); 
+		final List<GoogleViolation> googleViolations = SemplestUtils.getGoogleViolations_v201109(e);
 		if (rateExceededError != null)
 		{
 			final Integer retryAfterSeconds = getRetryAfterSeconds(rateExceededError);
@@ -67,11 +68,12 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 
 	protected void filterRequest(final List<GoogleViolation> googleViolations) throws ApiException, RemoteException
 	{
-		logger.info("Will try to filter out these " + googleViolations.size() + " GoogleViolations from " + operations.length + " AdGroupCriterionOperations:\n" + googleViolations);		
+		logger.info("Will try to filter out these " + googleViolations.size() + " GoogleViolations from " + operations.length
+				+ " AdGroupCriterionOperations:\n" + googleViolations);
 		final List<AdGroupCriterionOperation> operationListUmodifiable = Arrays.asList(operations);
 		final List<AdGroupCriterionOperation> operationList = new ArrayList<AdGroupCriterionOperation>(operationListUmodifiable);
 		final List<AdGroupCriterionOperation> operationsToRemove = new ArrayList<AdGroupCriterionOperation>();
-		final Map<AdGroupCriterionOperation, String> operationsToPkMapForRemoval = new HashMap<AdGroupCriterionOperation, String>(); 
+		final Map<AdGroupCriterionOperation, String> operationsToPkMapForRemoval = new HashMap<AdGroupCriterionOperation, String>();
 		for (final GoogleViolation googleViolation : googleViolations)
 		{
 			final String violatingText = googleViolation.getPolicyViolatingText();
@@ -80,25 +82,27 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 				final Criterion criterion = operation.getOperand().getCriterion();
 				if (criterion instanceof Keyword)
 				{
-					final Keyword keyword = (Keyword)criterion;
+					final Keyword keyword = (Keyword) criterion;
 					final String keywordText = keyword.getText();
 					final String keywordNonNullTrimmedText = SemplestUtils.getTrimmedNonNullString(keywordText);
 					final String violatingNonNullTrimmedText = SemplestUtils.getTrimmedNonNullString(violatingText);
 					if (keywordNonNullTrimmedText.toUpperCase().contains(violatingNonNullTrimmedText.toUpperCase()))
 					{
-						final String errMessage = googleViolation.getErrorMessage();
+						final String errMessage = googleViolation.toString();
 						operationsToRemove.add(operation);
 						operationsToPkMapForRemoval.put(operation, errMessage);
-					}					
+					}
 				}
-			}			
+			}
 		}
 		operationList.removeAll(operationsToRemove);
 		operationsRemovedToPkMap.putAll(operationsToPkMapForRemoval);
 		operations = operationList.toArray(new AdGroupCriterionOperation[operationList.size()]);
-		logger.info("Removed the following " + operationsToPkMapForRemoval.size() + " operations from original set of operations, resulting in latest " + operations.length + " operations:\n" + SemplestUtils.getEasilyReadableString(operationsToPkMapForRemoval));
-	}		
-	
+		logger.info("Removed the following " + operationsToPkMapForRemoval.size()
+				+ " operations from original set of operations, resulting in latest " + operations.length + " operations:\n"
+				+ SemplestUtils.getEasilyReadableString(operationsToPkMapForRemoval));
+	}
+
 	public Map<AdGroupCriterionOperation, String> getRemovedOperations()
 	{
 		return operationsRemovedToPkMap;
