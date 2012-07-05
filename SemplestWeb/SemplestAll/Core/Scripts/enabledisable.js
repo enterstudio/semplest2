@@ -40,8 +40,10 @@ function openAllTabs(displayCategories) {
     }, tabStrip.tabGroup.children("li:last")).select();
 }
 function enableDisable() {
+    if ($('#IsCompleted').val() == 'True') {
         $(":input").attr("disabled", true);
         $(":button").attr("disabled", true);
+    }
 
 //    if ($('#IsLaunched').val() == 'True') {
 //        //alert($('#IsCompleted').val());

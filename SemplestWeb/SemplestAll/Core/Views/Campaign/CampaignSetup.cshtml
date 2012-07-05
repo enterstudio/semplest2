@@ -97,9 +97,9 @@
     }
     $(document).ready(function() {
         if ($('#IsNew').val() == 'False') {
+            enableDisable();
             if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
                 openAllTabs(false);
-                enableDisable();
             } else if ($('#IsLaunched').val() == 'False') {
                 openAllTabs(true);
             }

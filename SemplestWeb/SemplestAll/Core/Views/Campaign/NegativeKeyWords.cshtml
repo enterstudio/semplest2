@@ -31,6 +31,9 @@
     }
 </style>
 <script type="text/javascript">
+    $(document).ready(function () {
+        enableDisable();
+    });
     $('#back3').click(function () {
         tabChange();
     });
@@ -39,7 +42,7 @@
     });
     function tabChange(parameters) {
         var tab = tabStrip.select(),
-        otherTab = tab.prev();
+            otherTab = tab.prev();
         tabStrip.remove(tab);
         tabStrip.select(otherTab);
     }
