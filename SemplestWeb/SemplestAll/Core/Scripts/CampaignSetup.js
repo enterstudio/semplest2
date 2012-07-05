@@ -34,11 +34,11 @@ $(document).ready(function () {
         var originalValue = $('#AdModelProp_LandingUrl').val();
         var index = originalValue.indexOf('http://');
         if (index >= 0) {
-            //var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
-            var dispStr = $('#AdModelProp_LandingUrl').val();
-            //            if (dispStr.indexOf('/') >= 0) {
-            //                dispStr = dispStr.substring(0, dispStr.indexOf('/'));
-            //            }
+            var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
+            //var dispStr = $('#AdModelProp_LandingUrl').val();
+                        if (dispStr.indexOf('/') >= 0) {
+                            dispStr = dispStr.substring(0, dispStr.indexOf('/'));
+                        }
             if (dispStr.indexOf('?') >= 0) {
                 dispStr = dispStr.substring(0, dispStr.indexOf('?'));
             }
