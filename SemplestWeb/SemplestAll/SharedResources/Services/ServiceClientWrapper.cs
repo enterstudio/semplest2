@@ -337,7 +337,7 @@ namespace Semplest.SharedResources.Services
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
             var dbContext = new SemplestModel.Semplest();
-            if (!dbContext.Configurations.First().DoNotLaunchAdServices.Value)
+            if (!dbContext.Configurations.First().DoNotLaunchAdServices)
             {
                 ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
                 _workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));

@@ -113,5 +113,11 @@ namespace SemplestModel
         public Nullable<int> ServiceESBPingWaitMS { get; set; }
         public string AdwordsBillingAccount { get; set; }
         public Nullable<decimal> AdwordsAPICostPer1000 { get; set; }
+        public Nullable<long> AdwordsValidationAccountID { get; set; }
+        public Nullable<long> AdwordsValidationAdGroupID { get; set; }
+        public Nullable<long> AdWordsValidationCampaignID { get; set; }
+        public Nullable<int> ActivationValidForDays { get; set; }
+        public bool DoNotLaunchAdServices { get; set; }
+        public Nullable<bool> MSNUseSandbox { get; set; }
     }
 }

@@ -24,6 +24,7 @@ namespace SemplestModel
         public string CustomerRefNum { get; set; }
         public string AuthCode { get; set; }
         public string TxRefNum { get; set; }
+        public string ProfileNickname { get; set; }
     
         public virtual ICollection<CreditCardTransaction> CreditCardTransactions { get; set; }
     }
