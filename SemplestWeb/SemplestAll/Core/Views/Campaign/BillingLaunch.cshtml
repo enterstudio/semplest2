@@ -286,9 +286,10 @@
             $("#getLaunchAdProduct").attr('disabled', false);
         }
         else {
-            $("#getLaunchAdProduct").attr('disabled', true);
+            if (@Model.BillType == 2) {
+                $("#getLaunchAdProduct").attr('disabled', true);
+            }
         }
-
     });
 </script>
 <script type="text/javascript">
