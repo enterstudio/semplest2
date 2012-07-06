@@ -1016,6 +1016,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
+		final Map<AdEngine,AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
 		/*
 		 *  from Yesterday look back 5 days to get the transactions
 		 */
@@ -1030,36 +1031,38 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (adEngine == AdEngine.Google)
 			{
+				final AdEngineID adEngineData = adEngineMap.get(adEngine);
+				final Long accountId = adEngineData.getAccountID();
 				// go get the report from Google
 				SemplestString semplstStr = new SemplestString();
-				semplstStr.setSemplestString(promoObj.getAdvertisingEngineAccountPK().toString());
+				final String accountIdString = "" + accountId;
+				semplstStr.setSemplestString("" + accountId);
 				GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 				try
 				{
-					ReportObject[] getReportData = google.getReportForAccount(promoObj.getAdvertisingEngineAccountPK().toString(), YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
+					ReportObject[] getReportData = google.getReportForAccount(accountIdString, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
 					SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
 				}
 				catch (Exception e)
 				{
-					logger.error("Unable to download Report for account " + promoObj.getAdvertisingEngineAccountPK().toString() + ":"
+					logger.error("Unable to download Report for account " + accountIdString + ":"
 							+ e.getMessage(), e);
 				}
 				// update the API charges
 				try
 				{
-					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(promoObj.getAdvertisingEngineAccountPK(),
+					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId,
 							promoObj.getPromotionStartDate(), new Date());
 					if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
 					{
 						UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
-						Double newCost = updateApiSP.execute(promoObj.getAdvertisingEngineAccountPK(), adEngine, cumulativeUnitsUsedFromStart);
-						logger.info("Added additional API Cost of " + newCost + " to Google Account " + promoObj.getAdvertisingEngineAccountPK());
+						Double newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
+						logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId);
 					}
 				}
 				catch (Exception e)
 				{
-					logger.error("Error updating API charges for Google Account " + promoObj.getAdvertisingEngineAccountPK().toString() + ":"
-							+ e.getMessage(), e);
+					logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e);
 				}
 			}
 			else if (adEngine == AdEngine.MSN)
