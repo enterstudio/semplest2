@@ -1,6 +1,5 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.sp_UpdateKeywords') AND type in (N'P', N'PC'))
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.GetMondays') AND type in (N'P', N'PC'))
   DROP PROCEDURE dbo.GetMondays;
-USE [semplest]
 GO
 /****** Object:  StoredProcedure [dbo].[GetMondays]    Script Date: 07/06/2012 17:47:52 ******/
 SET ANSI_NULLS ON

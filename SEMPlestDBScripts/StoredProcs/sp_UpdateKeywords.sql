@@ -25,14 +25,29 @@ BEGIN TRY
 	SET NOCOUNT ON;
 	DECLARE @ErrMsg VARCHAR(250)
 	
+	
+	declare @kwa_withoutDups TABLE(
+	[Keyword] [varchar](250) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[IsDeleted] [bit] NOT NULL,
+	[IsNegative] [bit] NOT NULL,
+	[SemplestProbability] [float] NULL,
+	[IsTargetMSN] [bit] NOT NULL,
+	[IsTargetGoogle] [bit] NOT NULL
+	)
+	
+	insert into @kwa_withoutDups(IsActive,IsDeleted,IsNegative,IsTargetGoogle,IsTargetMSN,Keyword,SemplestProbability)
+	select k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN,k.Keyword,0 from @kwa k
+		group by k.IsActive,k.IsDeleted,k.IsNegative,k.IsTargetGoogle,k.IsTargetMSN,k.Keyword
+	
 	INSERT INTO Keyword (KeyWord)(
 	select keyword
 					from 
 					(
 						select k.KeywordPk, kwa.keyword 
-						from @kwa kwa  
+						from @kwa_withoutDups kwa  
 						LEFT OUTER JOIN keyword k ON kwa.keyword = k.keyword where KeywordPk is null) 
-						m group by Keyword)
+						m )
 	
 	begin Transaction
 						
@@ -43,7 +58,7 @@ BEGIN TRY
 					from 
 					(
 						select k.KeywordPk, @PromotionId as PromotionFK,getdate() as CreatedDate,kwa.IsActive,kwa.IsDeleted,kwa.IsNegative,kwa.SemplestProbability,kwa.IsTargetMSN,kwa.IsTargetGoogle
-						from @kwa kwa  
+						from @kwa_withoutDups kwa  
 						INNER JOIN keyword k ON kwa.keyword = k.keyword)  n)
 						
 	commit transaction											

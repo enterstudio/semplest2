@@ -13,7 +13,8 @@ CREATE PROCEDURE dbo.SetPromotionBidding
 (
 	@PromotionID			INT,
 	@AdvertisingEngine	varchar(25),
-	@PromotionBiddingType	varchar(25) = null
+	@PromotionBiddingType	varchar(25) = null,
+	@ID int output
 )
 AS
 BEGIN TRY
@@ -44,9 +45,10 @@ BEGIN TRY
 	END
 	select @AdvertisingEnginePK = a.AdvertisingEnginePK from AdvertisingEngine a where a.AdvertisingEngine = @AdvertisingEngine
 	
-	INSERT into PromotionBidding(PromotionFK,AdvertisingEngineFK,PromotionBiddingPK,BidCompleted)
+	INSERT into PromotionBidding(PromotionFK,AdvertisingEngineFK,SemplestBidTypeFK,BidCompleted)
 	VALUES (@PromotionID, @AdvertisingEnginePK, @PromotionBiddingTypePK, CURRENT_TIMESTAMP)
 	
+	set @ID = @@IDENTITY
 	
 	
 END TRY

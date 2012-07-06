@@ -1,6 +1,6 @@
-IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.sp_UpdateKeywords') AND type in (N'P', N'PC'))
+IF EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'dbo.GetMondayChart') AND type in (N'P', N'PC'))
   DROP PROCEDURE dbo.GetMondayChart;
-  
+go  
 CREATE PROCEDURE GetMondayChart(@StartDate DATETIME,@EndDate DATETIME) AS
 BEGIN TRY
 DECLARE @ErrMsg VARCHAR(250)
