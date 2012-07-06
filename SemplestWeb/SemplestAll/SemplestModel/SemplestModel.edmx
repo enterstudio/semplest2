@@ -2564,12 +2564,6 @@
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
-        <!--Errors Found During Generation:
-      warning 6005: The function 'sp_UpdateKeywords' has a parameter 'kwa' at parameter index 0 that has a data type 'table type' which is not supported. The function was excluded.
-      
-      <Function Name="sp_UpdateKeywords" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
-        <Parameter Name="PromotionId" Type="int" Mode="In" />
-      </Function>-->
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -2589,7 +2583,6 @@
           <EntitySet Name="BidTypes" EntityType="SemplestModel.BidType" />
           <EntitySet Name="BillTypes" EntityType="SemplestModel.BillType" />
           <EntitySet Name="BudgetCycles" EntityType="SemplestModel.BudgetCycle" />
-          <EntitySet Name="Configurations" EntityType="SemplestModel.Configuration" />
           <EntitySet Name="Credentials" EntityType="SemplestModel.Credential" />
           <EntitySet Name="CreditCardProfiles" EntityType="SemplestModel.CreditCardProfile" />
           <EntitySet Name="CreditCardTransactions" EntityType="SemplestModel.CreditCardTransaction" />
@@ -2939,6 +2932,7 @@
             <Parameter Name="StartDate" Mode="In" Type="DateTime" />
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
           </FunctionImport>
+          <EntitySet Name="Configurations" EntityType="SemplestModel.Configuration" />
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -3081,116 +3075,6 @@
           <Property Type="Int32" Name="BudgetCyclePK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Type="String" Name="BudgetCycle1" Nullable="false" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="Promotions" Relationship="SemplestModel.REL_BudgetCycle_Promotion_2" FromRole="BudgetCycle" ToRole="Promotion" />
-        </EntityType>
-        <EntityType Name="Configuration">
-          <Key>
-            <PropertyRef Name="ConfigurationPK" />
-          </Key>
-          <Property Type="Int32" Name="ConfigurationPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Type="Decimal" Name="CustomerMinOrderAmount" Nullable="false" Precision="19" Scale="4" />
-          <Property Type="Decimal" Name="CustomerDefaultMonthlyFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
-          <Property Type="Decimal" Name="CustomerDefaultPerCampaignFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
-          <Property Type="Decimal" Name="CustomerDefaultPerAdGroupFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
-          <Property Type="Decimal" Name="DefaultMediaComissionPercentage" Nullable="false" Precision="5" Scale="4" />
-          <Property Type="Decimal" Name="DefaultSalesPersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
-          <Property Type="Decimal" Name="MinSalespersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
-          <Property Type="Decimal" Name="MaxSalespersonCommissionPercentage" Precision="5" Scale="4" />
-          <Property Type="Decimal" Name="DefalutBudgetMixPercentageGoogle" Precision="5" Scale="4" />
-          <Property Type="Decimal" Name="DefalutBudgetMixPercentageBing" Precision="5" Scale="4" />
-          <Property Type="String" Name="DefaultSemplestBannerImageUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="DefaultSemplestStyleSheetUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="MaxNumberOfSitelinks" />
-          <Property Type="Int32" Name="LastAccountNumberUsed" />
-          <Property Type="Int32" Name="LastSEMplestEmployeeIDused" />
-          <Property Type="String" Name="DefaultEmailContactUs" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="DefalutEmailContactMe" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="DefaultProductGroupName" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="DefaultProductPromotionName" MaxLength="256" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="SamplestDevelopmentEmail" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="SemplestDefaultBudgetMarkUpOrDown" MaxLength="1" FixedLength="false" Unicode="true" />
-          <Property Type="Int32" Name="BillingDaysOffset" />
-          <Property Type="String" Name="OnErrorEmail" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Type="String" Name="MSNCampaignURL" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNCampagnNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNCustomerURL" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNCustomerNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNReportingURL" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNReportingNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNAdIntelligenceURL" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNAdIntelligenceNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="Int64" Name="MSNParentCustomerID" />
-          <Property Type="String" Name="MSNApiUsername" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNApiPassword" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="MSNUserAccessKey" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="AdwordsEmail" MaxLength="75" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="AdwordsPassword" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="AdwordsUserAgent" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="AdwordsDeveloperToken" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="OrbitalGatewaySalemPlatform" MaxLength="10" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="OrbitalGatewayMerchantID" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="OrbitalGatewayUsername" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="OrbitalGatewayPassword" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="SemplestClientAdwordsTimeoutMS" />
-          <Property Type="Int32" Name="SemplestClientKeywordTimeoutMS" />
-          <Property Type="Int32" Name="SemplestClientBiddingTimeoutMS" />
-          <Property Type="Int32" Name="SemplestClientMailTimeoutMS" />
-          <Property Type="Int32" Name="SemplestClientSchedulerTimeoutMS" />
-          <Property Type="Int32" Name="SemplestClientMSNTimeoutMS" />
-          <Property Type="Int32" Name="SemplestBiddingMaxRetry" />
-          <Property Type="Int32" Name="SemplestBiddingSleepPeriod" />
-          <Property Type="Int32" Name="SemplestBiddingSleepBackOffTime" />
-          <Property Type="Int64" Name="SemplestBiddingMaxMicroBid" />
-          <Property Type="Int64" Name="SemplestBiddingStepAboveFpCPC" />
-          <Property Type="Int64" Name="SemplestBiddingDefaultMicroBid" />
-          <Property Type="Int64" Name="SemplestBiddingMaxDefaultMicroBid" />
-          <Property Type="Int64" Name="SemplestBiddingStepFirst" />
-          <Property Type="Int64" Name="SemplestBiddingStepSecond" />
-          <Property Type="Int64" Name="SemplestBiddingStepRest" />
-          <Property Type="Int32" Name="SemplestBiddingGooglePercent" />
-          <Property Type="Int32" Name="ESBRegServicePort" />
-          <Property Type="String" Name="ESBBrokerName" MaxLength="25" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="ESBBrokerPort" />
-          <Property Type="String" Name="ESBBrokerIP" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="ESBWebServerPort" />
-          <Property Type="Int32" Name="ESBHeaderBufferSize" />
-          <Property Type="Int32" Name="ESBAsynchServletCorePoolSize" />
-          <Property Type="Int32" Name="ESBAsynchServletMaxPoolSize" />
-          <Property Type="Int32" Name="ESBAsynchServletMaxWorkInQueue" />
-          <Property Type="Int32" Name="ESBAsynchCallDefaultTimeoutMS" />
-          <Property Type="Int32" Name="ServiceESBServerPort" />
-          <Property Type="String" Name="ServiceESBServerIP" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="ServicePingFrequencyMS" />
-          <Property Type="Int32" Name="ServiceNumberServiceThreads" />
-          <Property Type="String" Name="ServiceSMTP" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="ESBWebServerURL" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="Boolean" Name="AdwordsUseSandbox" Nullable="false" />
-          <Property Type="String" Name="SemplestEncryptionkey" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsdictfile" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsdocfile" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordstwfile" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsdfile" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsbaseMultiWPath" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsnGramsSubC" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsnGramsC" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsvalidCat" MaxLength="300" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordslucenedfile" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordssmallhCounts" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="String" Name="SemplestKeywordsstoplist" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Type="Int32" Name="SemplestKeywordsnumTopics" />
-          <Property Type="Double" Name="SemplestKeywordsuserInfoWeight" />
-          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsGoogle" />
-          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsMSN" />
-          <Property Type="Int32" Name="SemplestKeywordsnumThreads" />
-          <Property Type="Boolean" Name="DisplayTargetCPCLevel" Nullable="false" />
-          <Property Type="Int32" Name="ServiceESBPingWaitMS" />
-          <Property Type="String" Name="AdwordsBillingAccount" MaxLength="20" FixedLength="false" Unicode="false" />
-          <Property Type="Decimal" Name="AdwordsAPICostPer1000" Precision="19" Scale="4" />
-          <Property Type="Int64" Name="AdwordsValidationAccountID" />
-          <Property Type="Int64" Name="AdwordsValidationAdGroupID" />
-          <Property Type="Int64" Name="AdWordsValidationCampaignID" />
-          <Property Type="Int32" Name="ActivationValidForDays" />
-          <Property Type="Boolean" Name="DoNotLaunchAdServices" />
-          <Property Type="Boolean" Name="MSNUseSandbox" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -4931,6 +4815,116 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Configuration">
+          <Key>
+            <PropertyRef Name="ConfigurationPK" />
+          </Key>
+          <Property Type="Int32" Name="ConfigurationPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Decimal" Name="CustomerMinOrderAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultMonthlyFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultPerCampaignFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="CustomerDefaultPerAdGroupFlatFeeAmount" Nullable="false" Precision="19" Scale="4" />
+          <Property Type="Decimal" Name="DefaultMediaComissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefaultSalesPersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="MinSalespersonCommissionPercentage" Nullable="false" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="MaxSalespersonCommissionPercentage" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefalutBudgetMixPercentageGoogle" Precision="5" Scale="4" />
+          <Property Type="Decimal" Name="DefalutBudgetMixPercentageBing" Precision="5" Scale="4" />
+          <Property Type="String" Name="DefaultSemplestBannerImageUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DefaultSemplestStyleSheetUrl" MaxLength="1024" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="MaxNumberOfSitelinks" />
+          <Property Type="Int32" Name="LastAccountNumberUsed" />
+          <Property Type="Int32" Name="LastSEMplestEmployeeIDused" />
+          <Property Type="String" Name="DefaultEmailContactUs" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DefalutEmailContactMe" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DefaultProductGroupName" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DefaultProductPromotionName" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SamplestDevelopmentEmail" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="SemplestDefaultBudgetMarkUpOrDown" MaxLength="1" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="BillingDaysOffset" />
+          <Property Type="String" Name="OnErrorEmail" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="MSNCampaignURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCampagnNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCustomerURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNCustomerNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNReportingURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNReportingNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNAdIntelligenceURL" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNAdIntelligenceNamespace" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int64" Name="MSNParentCustomerID" />
+          <Property Type="String" Name="MSNApiUsername" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNApiPassword" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="MSNUserAccessKey" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsEmail" MaxLength="75" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsPassword" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsUserAgent" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="AdwordsDeveloperToken" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewaySalemPlatform" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayMerchantID" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayUsername" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="OrbitalGatewayPassword" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="SemplestClientAdwordsTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientKeywordTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientBiddingTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientMailTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientSchedulerTimeoutMS" />
+          <Property Type="Int32" Name="SemplestClientMSNTimeoutMS" />
+          <Property Type="Int32" Name="SemplestBiddingMaxRetry" />
+          <Property Type="Int32" Name="SemplestBiddingSleepPeriod" />
+          <Property Type="Int32" Name="SemplestBiddingSleepBackOffTime" />
+          <Property Type="Int64" Name="SemplestBiddingMaxMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingStepAboveFpCPC" />
+          <Property Type="Int64" Name="SemplestBiddingDefaultMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingMaxDefaultMicroBid" />
+          <Property Type="Int64" Name="SemplestBiddingStepFirst" />
+          <Property Type="Int64" Name="SemplestBiddingStepSecond" />
+          <Property Type="Int64" Name="SemplestBiddingStepRest" />
+          <Property Type="Int32" Name="SemplestBiddingGooglePercent" />
+          <Property Type="Int32" Name="ESBRegServicePort" />
+          <Property Type="String" Name="ESBBrokerName" MaxLength="25" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ESBBrokerPort" />
+          <Property Type="String" Name="ESBBrokerIP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ESBWebServerPort" />
+          <Property Type="Int32" Name="ESBHeaderBufferSize" />
+          <Property Type="Int32" Name="ESBAsynchServletCorePoolSize" />
+          <Property Type="Int32" Name="ESBAsynchServletMaxPoolSize" />
+          <Property Type="Int32" Name="ESBAsynchServletMaxWorkInQueue" />
+          <Property Type="Int32" Name="ESBAsynchCallDefaultTimeoutMS" />
+          <Property Type="Int32" Name="ServiceESBServerPort" />
+          <Property Type="String" Name="ServiceESBServerIP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="ServicePingFrequencyMS" />
+          <Property Type="Int32" Name="ServiceNumberServiceThreads" />
+          <Property Type="String" Name="ServiceSMTP" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="ESBWebServerURL" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Boolean" Name="AdwordsUseSandbox" Nullable="false" />
+          <Property Type="String" Name="SemplestEncryptionkey" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdictfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdocfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordstwfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsdfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsbaseMultiWPath" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsnGramsSubC" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsnGramsC" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsvalidCat" MaxLength="300" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordslucenedfile" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordssmallhCounts" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="String" Name="SemplestKeywordsstoplist" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Type="Int32" Name="SemplestKeywordsnumTopics" />
+          <Property Type="Double" Name="SemplestKeywordsuserInfoWeight" />
+          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsGoogle" />
+          <Property Type="Int32" Name="SemplestKeywordsnumKeywordsMSN" />
+          <Property Type="Int32" Name="SemplestKeywordsnumThreads" />
+          <Property Type="Boolean" Name="DisplayTargetCPCLevel" Nullable="false" />
+          <Property Type="Int32" Name="ServiceESBPingWaitMS" />
+          <Property Type="String" Name="AdwordsBillingAccount" MaxLength="20" FixedLength="false" Unicode="false" />
+          <Property Type="Decimal" Name="AdwordsAPICostPer1000" Precision="19" Scale="4" />
+          <Property Type="Int64" Name="AdwordsValidationAccountID" />
+          <Property Type="Int64" Name="AdwordsValidationAdGroupID" />
+          <Property Type="Int64" Name="AdWordsValidationCampaignID" />
+          <Property Type="Int32" Name="ActivationValidForDays" />
+          <Property Type="Boolean" Name="MSNUseSandbox" />
+          <Property Type="Boolean" Name="DoNotLaunchAdServices" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5066,117 +5060,6 @@
               <MappingFragment StoreEntitySet="BudgetCycle">
                 <ScalarProperty Name="BudgetCycle1" ColumnName="BudgetCycle" />
                 <ScalarProperty Name="BudgetCyclePK" ColumnName="BudgetCyclePK" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Configurations">
-            <EntityTypeMapping TypeName="SemplestModel.Configuration">
-              <MappingFragment StoreEntitySet="Configuration">
-                <ScalarProperty Name="MSNUseSandbox" ColumnName="MSNUseSandbox" />
-                <ScalarProperty Name="DoNotLaunchAdServices" ColumnName="DoNotLaunchAdServices" />
-                <ScalarProperty Name="ActivationValidForDays" ColumnName="ActivationValidForDays" />
-                <ScalarProperty Name="AdWordsValidationCampaignID" ColumnName="AdWordsValidationCampaignID" />
-                <ScalarProperty Name="AdwordsValidationAdGroupID" ColumnName="AdwordsValidationAdGroupID" />
-                <ScalarProperty Name="AdwordsValidationAccountID" ColumnName="AdwordsValidationAccountID" />
-                <ScalarProperty Name="AdwordsAPICostPer1000" ColumnName="AdwordsAPICostPer1000" />
-                <ScalarProperty Name="AdwordsBillingAccount" ColumnName="AdwordsBillingAccount" />
-                <ScalarProperty Name="ServiceESBPingWaitMS" ColumnName="ServiceESBPingWaitMS" />
-                <ScalarProperty Name="DisplayTargetCPCLevel" ColumnName="DisplayTargetCPCLevel" />
-                <ScalarProperty Name="SemplestKeywordsnumThreads" ColumnName="SemplestKeywordsnumThreads" />
-                <ScalarProperty Name="SemplestKeywordsnumKeywordsMSN" ColumnName="SemplestKeywordsnumKeywordsMSN" />
-                <ScalarProperty Name="SemplestKeywordsnumKeywordsGoogle" ColumnName="SemplestKeywordsnumKeywordsGoogle" />
-                <ScalarProperty Name="SemplestKeywordsuserInfoWeight" ColumnName="SemplestKeywordsuserInfoWeight" />
-                <ScalarProperty Name="SemplestKeywordsnumTopics" ColumnName="SemplestKeywordsnumTopics" />
-                <ScalarProperty Name="SemplestKeywordsstoplist" ColumnName="SemplestKeywordsstoplist" />
-                <ScalarProperty Name="SemplestKeywordssmallhCounts" ColumnName="SemplestKeywordssmallhCounts" />
-                <ScalarProperty Name="SemplestKeywordslucenedfile" ColumnName="SemplestKeywordslucenedfile" />
-                <ScalarProperty Name="SemplestKeywordsvalidCat" ColumnName="SemplestKeywordsvalidCat" />
-                <ScalarProperty Name="SemplestKeywordsnGramsC" ColumnName="SemplestKeywordsnGramsC" />
-                <ScalarProperty Name="SemplestKeywordsnGramsSubC" ColumnName="SemplestKeywordsnGramsSubC" />
-                <ScalarProperty Name="SemplestKeywordsbaseMultiWPath" ColumnName="SemplestKeywordsbaseMultiWPath" />
-                <ScalarProperty Name="SemplestKeywordsdfile" ColumnName="SemplestKeywordsdfile" />
-                <ScalarProperty Name="SemplestKeywordstwfile" ColumnName="SemplestKeywordstwfile" />
-                <ScalarProperty Name="SemplestKeywordsdocfile" ColumnName="SemplestKeywordsdocfile" />
-                <ScalarProperty Name="SemplestKeywordsdictfile" ColumnName="SemplestKeywordsdictfile" />
-                <ScalarProperty Name="SemplestEncryptionkey" ColumnName="SemplestEncryptionkey" />
-                <ScalarProperty Name="AdwordsUseSandbox" ColumnName="AdwordsUseSandbox" />
-                <ScalarProperty Name="ESBWebServerURL" ColumnName="ESBWebServerURL" />
-                <ScalarProperty Name="ServiceSMTP" ColumnName="ServiceSMTP" />
-                <ScalarProperty Name="ServiceNumberServiceThreads" ColumnName="ServiceNumberServiceThreads" />
-                <ScalarProperty Name="ServicePingFrequencyMS" ColumnName="ServicePingFrequencyMS" />
-                <ScalarProperty Name="ServiceESBServerIP" ColumnName="ServiceESBServerIP" />
-                <ScalarProperty Name="ServiceESBServerPort" ColumnName="ServiceESBServerPort" />
-                <ScalarProperty Name="ESBAsynchCallDefaultTimeoutMS" ColumnName="ESBAsynchCallDefaultTimeoutMS" />
-                <ScalarProperty Name="ESBAsynchServletMaxWorkInQueue" ColumnName="ESBAsynchServletMaxWorkInQueue" />
-                <ScalarProperty Name="ESBAsynchServletMaxPoolSize" ColumnName="ESBAsynchServletMaxPoolSize" />
-                <ScalarProperty Name="ESBAsynchServletCorePoolSize" ColumnName="ESBAsynchServletCorePoolSize" />
-                <ScalarProperty Name="ESBHeaderBufferSize" ColumnName="ESBHeaderBufferSize" />
-                <ScalarProperty Name="ESBWebServerPort" ColumnName="ESBWebServerPort" />
-                <ScalarProperty Name="ESBBrokerIP" ColumnName="ESBBrokerIP" />
-                <ScalarProperty Name="ESBBrokerPort" ColumnName="ESBBrokerPort" />
-                <ScalarProperty Name="ESBBrokerName" ColumnName="ESBBrokerName" />
-                <ScalarProperty Name="ESBRegServicePort" ColumnName="ESBRegServicePort" />
-                <ScalarProperty Name="SemplestBiddingGooglePercent" ColumnName="SemplestBiddingGooglePercent" />
-                <ScalarProperty Name="SemplestBiddingStepRest" ColumnName="SemplestBiddingStepRest" />
-                <ScalarProperty Name="SemplestBiddingStepSecond" ColumnName="SemplestBiddingStepSecond" />
-                <ScalarProperty Name="SemplestBiddingStepFirst" ColumnName="SemplestBiddingStepFirst" />
-                <ScalarProperty Name="SemplestBiddingMaxDefaultMicroBid" ColumnName="SemplestBiddingMaxDefaultMicroBid" />
-                <ScalarProperty Name="SemplestBiddingDefaultMicroBid" ColumnName="SemplestBiddingDefaultMicroBid" />
-                <ScalarProperty Name="SemplestBiddingStepAboveFpCPC" ColumnName="SemplestBiddingStepAboveFpCPC" />
-                <ScalarProperty Name="SemplestBiddingMaxMicroBid" ColumnName="SemplestBiddingMaxMicroBid" />
-                <ScalarProperty Name="SemplestBiddingSleepBackOffTime" ColumnName="SemplestBiddingSleepBackOffTime" />
-                <ScalarProperty Name="SemplestBiddingSleepPeriod" ColumnName="SemplestBiddingSleepPeriod" />
-                <ScalarProperty Name="SemplestBiddingMaxRetry" ColumnName="SemplestBiddingMaxRetry" />
-                <ScalarProperty Name="SemplestClientMSNTimeoutMS" ColumnName="SemplestClientMSNTimeoutMS" />
-                <ScalarProperty Name="SemplestClientSchedulerTimeoutMS" ColumnName="SemplestClientSchedulerTimeoutMS" />
-                <ScalarProperty Name="SemplestClientMailTimeoutMS" ColumnName="SemplestClientMailTimeoutMS" />
-                <ScalarProperty Name="SemplestClientBiddingTimeoutMS" ColumnName="SemplestClientBiddingTimeoutMS" />
-                <ScalarProperty Name="SemplestClientKeywordTimeoutMS" ColumnName="SemplestClientKeywordTimeoutMS" />
-                <ScalarProperty Name="SemplestClientAdwordsTimeoutMS" ColumnName="SemplestClientAdwordsTimeoutMS" />
-                <ScalarProperty Name="OrbitalGatewayPassword" ColumnName="OrbitalGatewayPassword" />
-                <ScalarProperty Name="OrbitalGatewayUsername" ColumnName="OrbitalGatewayUsername" />
-                <ScalarProperty Name="OrbitalGatewayMerchantID" ColumnName="OrbitalGatewayMerchantID" />
-                <ScalarProperty Name="OrbitalGatewaySalemPlatform" ColumnName="OrbitalGatewaySalemPlatform" />
-                <ScalarProperty Name="AdwordsDeveloperToken" ColumnName="AdwordsDeveloperToken" />
-                <ScalarProperty Name="AdwordsUserAgent" ColumnName="AdwordsUserAgent" />
-                <ScalarProperty Name="AdwordsPassword" ColumnName="AdwordsPassword" />
-                <ScalarProperty Name="AdwordsEmail" ColumnName="AdwordsEmail" />
-                <ScalarProperty Name="MSNUserAccessKey" ColumnName="MSNUserAccessKey" />
-                <ScalarProperty Name="MSNApiPassword" ColumnName="MSNApiPassword" />
-                <ScalarProperty Name="MSNApiUsername" ColumnName="MSNApiUsername" />
-                <ScalarProperty Name="MSNParentCustomerID" ColumnName="MSNParentCustomerID" />
-                <ScalarProperty Name="MSNAdIntelligenceNamespace" ColumnName="MSNAdIntelligenceNamespace" />
-                <ScalarProperty Name="MSNAdIntelligenceURL" ColumnName="MSNAdIntelligenceURL" />
-                <ScalarProperty Name="MSNReportingNamespace" ColumnName="MSNReportingNamespace" />
-                <ScalarProperty Name="MSNReportingURL" ColumnName="MSNReportingURL" />
-                <ScalarProperty Name="MSNCustomerNamespace" ColumnName="MSNCustomerNamespace" />
-                <ScalarProperty Name="MSNCustomerURL" ColumnName="MSNCustomerURL" />
-                <ScalarProperty Name="MSNCampagnNamespace" ColumnName="MSNCampagnNamespace" />
-                <ScalarProperty Name="MSNCampaignURL" ColumnName="MSNCampaignURL" />
-                <ScalarProperty Name="OnErrorEmail" ColumnName="OnErrorEmail" />
-                <ScalarProperty Name="BillingDaysOffset" ColumnName="BillingDaysOffset" />
-                <ScalarProperty Name="SemplestDefaultBudgetMarkUpOrDown" ColumnName="SemplestDefaultBudgetMarkUpOrDown" />
-                <ScalarProperty Name="SamplestDevelopmentEmail" ColumnName="SamplestDevelopmentEmail" />
-                <ScalarProperty Name="DefaultProductPromotionName" ColumnName="DefaultProductPromotionName" />
-                <ScalarProperty Name="DefaultProductGroupName" ColumnName="DefaultProductGroupName" />
-                <ScalarProperty Name="DefalutEmailContactMe" ColumnName="DefalutEmailContactMe" />
-                <ScalarProperty Name="DefaultEmailContactUs" ColumnName="DefaultEmailContactUs" />
-                <ScalarProperty Name="LastSEMplestEmployeeIDused" ColumnName="LastSEMplestEmployeeIDused" />
-                <ScalarProperty Name="LastAccountNumberUsed" ColumnName="LastAccountNumberUsed" />
-                <ScalarProperty Name="MaxNumberOfSitelinks" ColumnName="MaxNumberOfSitelinks" />
-                <ScalarProperty Name="DefaultSemplestStyleSheetUrl" ColumnName="DefaultSemplestStyleSheetUrl" />
-                <ScalarProperty Name="DefaultSemplestBannerImageUrl" ColumnName="DefaultSemplestBannerImageUrl" />
-                <ScalarProperty Name="DefalutBudgetMixPercentageBing" ColumnName="DefalutBudgetMixPercentageBing" />
-                <ScalarProperty Name="DefalutBudgetMixPercentageGoogle" ColumnName="DefalutBudgetMixPercentageGoogle" />
-                <ScalarProperty Name="MaxSalespersonCommissionPercentage" ColumnName="MaxSalespersonCommissionPercentage" />
-                <ScalarProperty Name="MinSalespersonCommissionPercentage" ColumnName="MinSalespersonCommissionPercentage" />
-                <ScalarProperty Name="DefaultSalesPersonCommissionPercentage" ColumnName="DefaultSalesPersonCommissionPercentage" />
-                <ScalarProperty Name="DefaultMediaComissionPercentage" ColumnName="DefaultMediaComissionPercentage" />
-                <ScalarProperty Name="CustomerDefaultPerAdGroupFlatFeeAmount" ColumnName="CustomerDefaultPerAdGroupFlatFeeAmount" />
-                <ScalarProperty Name="CustomerDefaultPerCampaignFlatFeeAmount" ColumnName="CustomerDefaultPerCampaignFlatFeeAmount" />
-                <ScalarProperty Name="CustomerDefaultMonthlyFlatFeeAmount" ColumnName="CustomerDefaultMonthlyFlatFeeAmount" />
-                <ScalarProperty Name="CustomerMinOrderAmount" ColumnName="CustomerMinOrderAmount" />
-                <ScalarProperty Name="ConfigurationPK" ColumnName="ConfigurationPK" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
@@ -5917,6 +5800,117 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="GetMondayChart" FunctionName="SemplestModel.Store.GetMondayChart" />
+          <EntitySetMapping Name="Configurations">
+            <EntityTypeMapping TypeName="SemplestModel.Configuration">
+              <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="DoNotLaunchAdServices" ColumnName="DoNotLaunchAdServices" />
+                <ScalarProperty Name="MSNUseSandbox" ColumnName="MSNUseSandbox" />
+                <ScalarProperty Name="ActivationValidForDays" ColumnName="ActivationValidForDays" />
+                <ScalarProperty Name="AdWordsValidationCampaignID" ColumnName="AdWordsValidationCampaignID" />
+                <ScalarProperty Name="AdwordsValidationAdGroupID" ColumnName="AdwordsValidationAdGroupID" />
+                <ScalarProperty Name="AdwordsValidationAccountID" ColumnName="AdwordsValidationAccountID" />
+                <ScalarProperty Name="AdwordsAPICostPer1000" ColumnName="AdwordsAPICostPer1000" />
+                <ScalarProperty Name="AdwordsBillingAccount" ColumnName="AdwordsBillingAccount" />
+                <ScalarProperty Name="ServiceESBPingWaitMS" ColumnName="ServiceESBPingWaitMS" />
+                <ScalarProperty Name="DisplayTargetCPCLevel" ColumnName="DisplayTargetCPCLevel" />
+                <ScalarProperty Name="SemplestKeywordsnumThreads" ColumnName="SemplestKeywordsnumThreads" />
+                <ScalarProperty Name="SemplestKeywordsnumKeywordsMSN" ColumnName="SemplestKeywordsnumKeywordsMSN" />
+                <ScalarProperty Name="SemplestKeywordsnumKeywordsGoogle" ColumnName="SemplestKeywordsnumKeywordsGoogle" />
+                <ScalarProperty Name="SemplestKeywordsuserInfoWeight" ColumnName="SemplestKeywordsuserInfoWeight" />
+                <ScalarProperty Name="SemplestKeywordsnumTopics" ColumnName="SemplestKeywordsnumTopics" />
+                <ScalarProperty Name="SemplestKeywordsstoplist" ColumnName="SemplestKeywordsstoplist" />
+                <ScalarProperty Name="SemplestKeywordssmallhCounts" ColumnName="SemplestKeywordssmallhCounts" />
+                <ScalarProperty Name="SemplestKeywordslucenedfile" ColumnName="SemplestKeywordslucenedfile" />
+                <ScalarProperty Name="SemplestKeywordsvalidCat" ColumnName="SemplestKeywordsvalidCat" />
+                <ScalarProperty Name="SemplestKeywordsnGramsC" ColumnName="SemplestKeywordsnGramsC" />
+                <ScalarProperty Name="SemplestKeywordsnGramsSubC" ColumnName="SemplestKeywordsnGramsSubC" />
+                <ScalarProperty Name="SemplestKeywordsbaseMultiWPath" ColumnName="SemplestKeywordsbaseMultiWPath" />
+                <ScalarProperty Name="SemplestKeywordsdfile" ColumnName="SemplestKeywordsdfile" />
+                <ScalarProperty Name="SemplestKeywordstwfile" ColumnName="SemplestKeywordstwfile" />
+                <ScalarProperty Name="SemplestKeywordsdocfile" ColumnName="SemplestKeywordsdocfile" />
+                <ScalarProperty Name="SemplestKeywordsdictfile" ColumnName="SemplestKeywordsdictfile" />
+                <ScalarProperty Name="SemplestEncryptionkey" ColumnName="SemplestEncryptionkey" />
+                <ScalarProperty Name="AdwordsUseSandbox" ColumnName="AdwordsUseSandbox" />
+                <ScalarProperty Name="ESBWebServerURL" ColumnName="ESBWebServerURL" />
+                <ScalarProperty Name="ServiceSMTP" ColumnName="ServiceSMTP" />
+                <ScalarProperty Name="ServiceNumberServiceThreads" ColumnName="ServiceNumberServiceThreads" />
+                <ScalarProperty Name="ServicePingFrequencyMS" ColumnName="ServicePingFrequencyMS" />
+                <ScalarProperty Name="ServiceESBServerIP" ColumnName="ServiceESBServerIP" />
+                <ScalarProperty Name="ServiceESBServerPort" ColumnName="ServiceESBServerPort" />
+                <ScalarProperty Name="ESBAsynchCallDefaultTimeoutMS" ColumnName="ESBAsynchCallDefaultTimeoutMS" />
+                <ScalarProperty Name="ESBAsynchServletMaxWorkInQueue" ColumnName="ESBAsynchServletMaxWorkInQueue" />
+                <ScalarProperty Name="ESBAsynchServletMaxPoolSize" ColumnName="ESBAsynchServletMaxPoolSize" />
+                <ScalarProperty Name="ESBAsynchServletCorePoolSize" ColumnName="ESBAsynchServletCorePoolSize" />
+                <ScalarProperty Name="ESBHeaderBufferSize" ColumnName="ESBHeaderBufferSize" />
+                <ScalarProperty Name="ESBWebServerPort" ColumnName="ESBWebServerPort" />
+                <ScalarProperty Name="ESBBrokerIP" ColumnName="ESBBrokerIP" />
+                <ScalarProperty Name="ESBBrokerPort" ColumnName="ESBBrokerPort" />
+                <ScalarProperty Name="ESBBrokerName" ColumnName="ESBBrokerName" />
+                <ScalarProperty Name="ESBRegServicePort" ColumnName="ESBRegServicePort" />
+                <ScalarProperty Name="SemplestBiddingGooglePercent" ColumnName="SemplestBiddingGooglePercent" />
+                <ScalarProperty Name="SemplestBiddingStepRest" ColumnName="SemplestBiddingStepRest" />
+                <ScalarProperty Name="SemplestBiddingStepSecond" ColumnName="SemplestBiddingStepSecond" />
+                <ScalarProperty Name="SemplestBiddingStepFirst" ColumnName="SemplestBiddingStepFirst" />
+                <ScalarProperty Name="SemplestBiddingMaxDefaultMicroBid" ColumnName="SemplestBiddingMaxDefaultMicroBid" />
+                <ScalarProperty Name="SemplestBiddingDefaultMicroBid" ColumnName="SemplestBiddingDefaultMicroBid" />
+                <ScalarProperty Name="SemplestBiddingStepAboveFpCPC" ColumnName="SemplestBiddingStepAboveFpCPC" />
+                <ScalarProperty Name="SemplestBiddingMaxMicroBid" ColumnName="SemplestBiddingMaxMicroBid" />
+                <ScalarProperty Name="SemplestBiddingSleepBackOffTime" ColumnName="SemplestBiddingSleepBackOffTime" />
+                <ScalarProperty Name="SemplestBiddingSleepPeriod" ColumnName="SemplestBiddingSleepPeriod" />
+                <ScalarProperty Name="SemplestBiddingMaxRetry" ColumnName="SemplestBiddingMaxRetry" />
+                <ScalarProperty Name="SemplestClientMSNTimeoutMS" ColumnName="SemplestClientMSNTimeoutMS" />
+                <ScalarProperty Name="SemplestClientSchedulerTimeoutMS" ColumnName="SemplestClientSchedulerTimeoutMS" />
+                <ScalarProperty Name="SemplestClientMailTimeoutMS" ColumnName="SemplestClientMailTimeoutMS" />
+                <ScalarProperty Name="SemplestClientBiddingTimeoutMS" ColumnName="SemplestClientBiddingTimeoutMS" />
+                <ScalarProperty Name="SemplestClientKeywordTimeoutMS" ColumnName="SemplestClientKeywordTimeoutMS" />
+                <ScalarProperty Name="SemplestClientAdwordsTimeoutMS" ColumnName="SemplestClientAdwordsTimeoutMS" />
+                <ScalarProperty Name="OrbitalGatewayPassword" ColumnName="OrbitalGatewayPassword" />
+                <ScalarProperty Name="OrbitalGatewayUsername" ColumnName="OrbitalGatewayUsername" />
+                <ScalarProperty Name="OrbitalGatewayMerchantID" ColumnName="OrbitalGatewayMerchantID" />
+                <ScalarProperty Name="OrbitalGatewaySalemPlatform" ColumnName="OrbitalGatewaySalemPlatform" />
+                <ScalarProperty Name="AdwordsDeveloperToken" ColumnName="AdwordsDeveloperToken" />
+                <ScalarProperty Name="AdwordsUserAgent" ColumnName="AdwordsUserAgent" />
+                <ScalarProperty Name="AdwordsPassword" ColumnName="AdwordsPassword" />
+                <ScalarProperty Name="AdwordsEmail" ColumnName="AdwordsEmail" />
+                <ScalarProperty Name="MSNUserAccessKey" ColumnName="MSNUserAccessKey" />
+                <ScalarProperty Name="MSNApiPassword" ColumnName="MSNApiPassword" />
+                <ScalarProperty Name="MSNApiUsername" ColumnName="MSNApiUsername" />
+                <ScalarProperty Name="MSNParentCustomerID" ColumnName="MSNParentCustomerID" />
+                <ScalarProperty Name="MSNAdIntelligenceNamespace" ColumnName="MSNAdIntelligenceNamespace" />
+                <ScalarProperty Name="MSNAdIntelligenceURL" ColumnName="MSNAdIntelligenceURL" />
+                <ScalarProperty Name="MSNReportingNamespace" ColumnName="MSNReportingNamespace" />
+                <ScalarProperty Name="MSNReportingURL" ColumnName="MSNReportingURL" />
+                <ScalarProperty Name="MSNCustomerNamespace" ColumnName="MSNCustomerNamespace" />
+                <ScalarProperty Name="MSNCustomerURL" ColumnName="MSNCustomerURL" />
+                <ScalarProperty Name="MSNCampagnNamespace" ColumnName="MSNCampagnNamespace" />
+                <ScalarProperty Name="MSNCampaignURL" ColumnName="MSNCampaignURL" />
+                <ScalarProperty Name="OnErrorEmail" ColumnName="OnErrorEmail" />
+                <ScalarProperty Name="BillingDaysOffset" ColumnName="BillingDaysOffset" />
+                <ScalarProperty Name="SemplestDefaultBudgetMarkUpOrDown" ColumnName="SemplestDefaultBudgetMarkUpOrDown" />
+                <ScalarProperty Name="SamplestDevelopmentEmail" ColumnName="SamplestDevelopmentEmail" />
+                <ScalarProperty Name="DefaultProductPromotionName" ColumnName="DefaultProductPromotionName" />
+                <ScalarProperty Name="DefaultProductGroupName" ColumnName="DefaultProductGroupName" />
+                <ScalarProperty Name="DefalutEmailContactMe" ColumnName="DefalutEmailContactMe" />
+                <ScalarProperty Name="DefaultEmailContactUs" ColumnName="DefaultEmailContactUs" />
+                <ScalarProperty Name="LastSEMplestEmployeeIDused" ColumnName="LastSEMplestEmployeeIDused" />
+                <ScalarProperty Name="LastAccountNumberUsed" ColumnName="LastAccountNumberUsed" />
+                <ScalarProperty Name="MaxNumberOfSitelinks" ColumnName="MaxNumberOfSitelinks" />
+                <ScalarProperty Name="DefaultSemplestStyleSheetUrl" ColumnName="DefaultSemplestStyleSheetUrl" />
+                <ScalarProperty Name="DefaultSemplestBannerImageUrl" ColumnName="DefaultSemplestBannerImageUrl" />
+                <ScalarProperty Name="DefalutBudgetMixPercentageBing" ColumnName="DefalutBudgetMixPercentageBing" />
+                <ScalarProperty Name="DefalutBudgetMixPercentageGoogle" ColumnName="DefalutBudgetMixPercentageGoogle" />
+                <ScalarProperty Name="MaxSalespersonCommissionPercentage" ColumnName="MaxSalespersonCommissionPercentage" />
+                <ScalarProperty Name="MinSalespersonCommissionPercentage" ColumnName="MinSalespersonCommissionPercentage" />
+                <ScalarProperty Name="DefaultSalesPersonCommissionPercentage" ColumnName="DefaultSalesPersonCommissionPercentage" />
+                <ScalarProperty Name="DefaultMediaComissionPercentage" ColumnName="DefaultMediaComissionPercentage" />
+                <ScalarProperty Name="CustomerDefaultPerAdGroupFlatFeeAmount" ColumnName="CustomerDefaultPerAdGroupFlatFeeAmount" />
+                <ScalarProperty Name="CustomerDefaultPerCampaignFlatFeeAmount" ColumnName="CustomerDefaultPerCampaignFlatFeeAmount" />
+                <ScalarProperty Name="CustomerDefaultMonthlyFlatFeeAmount" ColumnName="CustomerDefaultMonthlyFlatFeeAmount" />
+                <ScalarProperty Name="CustomerMinOrderAmount" ColumnName="CustomerMinOrderAmount" />
+                <ScalarProperty Name="ConfigurationPK" ColumnName="ConfigurationPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5950,7 +5944,6 @@
         <EntityTypeShape EntityType="SemplestModel.BidType" Width="1.5" PointX="18.75" PointY="67.75" Height="1.7879850260416674" />
         <EntityTypeShape EntityType="SemplestModel.BillType" Width="1.5" PointX="0.75" PointY="50.375" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.BudgetCycle" Width="1.5" PointX="8.25" PointY="59.875" Height="1.5956835937499818" />
-        <EntityTypeShape EntityType="SemplestModel.Configuration" Width="1.5" PointX="0.75" PointY="0.75" Height="20.056621093749996" />
         <EntityTypeShape EntityType="SemplestModel.Credential" Width="1.5" PointX="7.5" PointY="62.875" Height="2.557190755208353" />
         <EntityTypeShape EntityType="SemplestModel.CreditCardProfile" Width="1.5" PointX="14.25" PointY="49.5" Height="2.1725878906249818" />
         <EntityTypeShape EntityType="SemplestModel.CreditCardTransaction" Width="1.5" PointX="16.5" PointY="49.125" Height="2.9417936197916674" />
@@ -6720,6 +6713,7 @@
           <ConnectorPoint PointX="11.65625" PointY="69.312246093749991" />
           <ConnectorPoint PointX="11.65625" PointY="68.605286458333353" />
         </AssociationConnector>
+        <EntityTypeShape EntityType="SemplestModel.Configuration" Width="1.5" PointX="9.375" PointY="8.75" Height="21.210429687499982" />
       </Diagram>
     </Diagrams>
   </Designer>

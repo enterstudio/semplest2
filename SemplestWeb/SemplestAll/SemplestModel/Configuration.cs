@@ -117,7 +117,7 @@ namespace SemplestModel
         public Nullable<long> AdwordsValidationAdGroupID { get; set; }
         public Nullable<long> AdWordsValidationCampaignID { get; set; }
         public Nullable<int> ActivationValidForDays { get; set; }
-        public Nullable<bool> DoNotLaunchAdServices { get; set; }
         public Nullable<bool> MSNUseSandbox { get; set; }
+        public bool DoNotLaunchAdServices { get; set; }
     }
 }
