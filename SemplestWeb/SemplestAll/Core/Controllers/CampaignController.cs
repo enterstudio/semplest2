@@ -134,21 +134,21 @@ namespace Semplest.Core.Controllers
                                                                                                                        }).ToList();
 
 
-                    //GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
-                    //if (gv.Length > 0)
-                    //    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    //if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
-                    //{
-                    //    gv = _campaignRepository.ValidateGeotargeting(promoId);
-                    //    if (gv.Length > 0)
-                    //        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    //}
-                    //if (model.SiteLinks != null && model.SiteLinks.Any())
-                    //{
-                    //    gv = _campaignRepository.ValidateSiteLinks(promoId);
-                    //    if (gv.Length > 0)
-                    //        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    //}
+                    GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
+                    if (gv.Length > 0)
+                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
+                    {
+                        gv = _campaignRepository.ValidateGeotargeting(promoId);
+                        if (gv.Length > 0)
+                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    }
+                    if (model.SiteLinks != null && model.SiteLinks.Any())
+                    {
+                        gv = _campaignRepository.ValidateSiteLinks(promoId);
+                        if (gv.Length > 0)
+                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                    }
 
                     msg =
                         "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -499,6 +499,8 @@ namespace Semplest.Core.Controllers
         public ActionResult BillingLaunch(CampaignSetupModel model)
         {
             model = (CampaignSetupModel)Session["CampaignSetupModel"];
+            if (model.AllKeywords != null)
+                model.BillingLaunch.KeywordsCount = model.AllKeywords.Count();
             return PartialView(model);
         }
 
