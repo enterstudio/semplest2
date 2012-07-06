@@ -791,7 +791,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final String accountID = request.getAccountID();
 		final Long adGroupID = request.getAdGroupID();
 		final String displayURL = request.getDisplayURL();
-		final String url = request.getDisplayURL();
+		final String url = request.getUrl();
 		try
 		{
 			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
