@@ -150,6 +150,7 @@ import com.google.api.adwords.v201109.cm.RateExceededError;
 import com.google.api.adwords.v201109.cm.Selector;
 import com.google.api.adwords.v201109.cm.SortOrder;
 import com.google.api.adwords.v201109.cm.TextAd;
+import com.google.api.adwords.v201109.cm.UserStatus;
 import com.google.api.adwords.v201109.info.ApiUsageInfo;
 import com.google.api.adwords.v201109.info.ApiUsageRecord;
 import com.google.api.adwords.v201109.info.ApiUsageType;
@@ -1475,7 +1476,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final String keywordString = request.getKeyword();
 			final KeywordMatchType matchType = request.getMatchType();
 			final Long microBidAmount = request.getMicroBidAmount();
-			final AdGroupCriterionOperation addKeywordOperation = getRegularKeywordAddOperation(adGroupId, keywordString, matchType, microBidAmount);
+			final AdGroupCriterionOperation addKeywordOperation = getRegularKeywordAddOperation(adGroupId, keywordString, matchType, microBidAmount, true);
 			addKeywordOperations.add(addKeywordOperation);
 		}
 		return addKeywordOperations;
@@ -2592,7 +2593,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 
-	public static AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId)
+	public static AdGroupCriterionOperation getRegularKeywordUpdateOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Long criterionId, Boolean isActive)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);
@@ -2601,6 +2602,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
 		keywordBiddableAdGroupCriterion.setCriterion(keyword);
+		keywordBiddableAdGroupCriterion.setUserStatus((isActive == true)? UserStatus.ACTIVE : UserStatus.PAUSED);
 		final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
 		final Money money = new Money();
 		money.setMicroAmount(microBidAmount);
@@ -2613,7 +2615,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		return operation;
 	}
 
-	public static AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount)
+	public static AdGroupCriterionOperation getRegularKeywordAddOperation(Long adGroupID, String keywordString, KeywordMatchType matchType, Long microBidAmount, Boolean isActive)
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(keywordString);
@@ -2621,6 +2623,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
 		keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
 		keywordBiddableAdGroupCriterion.setCriterion(keyword);
+		keywordBiddableAdGroupCriterion.setUserStatus((isActive == true)? UserStatus.ACTIVE : UserStatus.PAUSED);
 		final ManualCPCAdGroupCriterionBids bid = new ManualCPCAdGroupCriterionBids();
 		final Money money = new Money();
 		money.setMicroAmount(microBidAmount);
@@ -2642,6 +2645,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final KeywordProbabilityObject keywordProbability = entry.getKey();
 			final Boolean isNegativeKeyword = keywordProbability.getIsNegative();
 			final String keywordString = keywordProbability.getKeyword();
+			final Boolean isActive = keywordProbability.getIsActive();
 			final Boolean removeOpposite = entry.getValue();
 			if (isNegativeKeyword)
 			{
@@ -2681,11 +2685,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					{
 						throw new RuntimeException("CriterionID is null for Keyword [" + keywordString + "]");
 					}
-					regularKeywordAddUpdateOperation = getRegularKeywordUpdateOperation(adGroupID, keywordString, matchType, microBidAmount, criterionId);
+					regularKeywordAddUpdateOperation = getRegularKeywordUpdateOperation(adGroupID, keywordString, matchType, microBidAmount, criterionId, isActive);
 				}
 				else
 				{
-					regularKeywordAddUpdateOperation = getRegularKeywordAddOperation(adGroupID, keywordString, matchType, microBidAmount);
+					regularKeywordAddUpdateOperation = getRegularKeywordAddOperation(adGroupID, keywordString, matchType, microBidAmount, isActive);
 				}
 				regularKeywordOperations.add(regularKeywordAddUpdateOperation);
 				if (removeOpposite)
@@ -2859,7 +2863,82 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 					+ " KeywordProbabilities<->RemoveOpposite mappings (for details look in log)", e);
 		}
 	}
+	
+	public Boolean updateKeywordStatus(String accountID, Long campaignID, Long adGroupID, Map<Long,Boolean> kwCriterionIsActive) throws Exception
+	{
+		//Pause or activate keywords
+		logger.info("Will try to Add/Update Status (Active/Paused) Keywords for AccountID [" + accountID + "], AgGroupID [" + adGroupID + "], " +SemplestUtils.getEasilyReadableString(kwCriterionIsActive));
+		try
+		{
 
+		
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			if (kwCriterionIsActive.isEmpty())
+			{
+				logger.info("No keywords to work with");
+			}
+			else
+			{
+				logger.info("Will try to change status for " + kwCriterionIsActive.size() + " keywords");
+				ArrayList<AdGroupCriterionOperation> updateOperations = new ArrayList<AdGroupCriterionOperation>();
+				for(Long criterionId : kwCriterionIsActive.keySet()){
+					Boolean isActiveKeyword = kwCriterionIsActive.get(criterionId);
+					final Keyword keyword = new Keyword();
+					keyword.setId(criterionId);
+					final BiddableAdGroupCriterion keywordBiddableAdGroupCriterion = new BiddableAdGroupCriterion();
+					keywordBiddableAdGroupCriterion.setAdGroupId(adGroupID);
+					keywordBiddableAdGroupCriterion.setCriterion(keyword);
+					keywordBiddableAdGroupCriterion.setUserStatus((isActiveKeyword == true)? UserStatus.ACTIVE : UserStatus.PAUSED);
+					final AdGroupCriterionOperation operation = new AdGroupCriterionOperation();
+					operation.setOperand(keywordBiddableAdGroupCriterion);
+					operation.setOperator(Operator.SET);
+					updateOperations.add(operation);
+					
+				}
+				final AdGroupCriterionServiceInterface adGroupCriterionService = user.getService(AdWordsService.V201109.ADGROUP_CRITERION_SERVICE);
+				final AdGroupCriterionOperation[] updateKeywordOperations = updateOperations.toArray(new AdGroupCriterionOperation[updateOperations.size()]);
+				
+				int numUpdateKeywordResults=0;
+				final AdGroupCriterionMutateRetriableGoogleOperation retriableOperation = new AdGroupCriterionMutateRetriableGoogleOperation(adGroupCriterionService, updateKeywordOperations, SemplestUtils.DEFAULT_RETRY_COUNT);
+				final AdGroupCriterionReturnValue regularKeywordResult = retriableOperation.performOperation();
+				if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
+				{
+					final AdGroupCriterion[] adGroupCriterions = regularKeywordResult.getValue();
+					for (final AdGroupCriterion adGroupCriterion : adGroupCriterions)
+					{
+						if (adGroupCriterion instanceof BiddableAdGroupCriterion)
+						{
+							++numUpdateKeywordResults;
+						}
+					}
+					if (updateOperations.size() != numUpdateKeywordResults)
+					{
+						logger.warn("# of RegularKeyword Results [" + numUpdateKeywordResults + "] is NOT equal to the # we expected [" + updateOperations.size() + "]");
+					}
+					else
+					{
+						logger.warn("As expected, # of RegularKeyword Results [" + numUpdateKeywordResults + "] is equal to the # we expected [" + updateOperations.size() + "]");
+					}
+				}
+				else
+				{
+					logger.error("No results returned from Google when executing RegularKeyword operations.  This is NOT expected.");
+					return false;
+				}
+			}
+			
+			return true;
+		}
+		catch (ApiException e)
+		{
+			throw new Exception("Problem doing Add/Update Status (Active/Paused) Keywords for AccountID [" + accountID + "], AgGroupID [" + adGroupID + "], " +SemplestUtils.getEasilyReadableString(kwCriterionIsActive) + ": " + e.dumpToString(), e);
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem doing Add/Update Status (Active/Paused) Keywords for AccountID [" + accountID + "], AgGroupID [" + adGroupID + "], " +SemplestUtils.getEasilyReadableString(kwCriterionIsActive), e);
+		}
+	}
+	
 	public String changeCampaignBudget(String json) throws Exception
 	{
 		logger.debug("call changeCampaignStatus(String json): [" + json + "]");
