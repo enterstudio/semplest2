@@ -239,7 +239,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		String strSQL = "select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb " +
 				"left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK " +
 				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK " +
-				"where pb.PromotionFK = ? and ae.AdvertisingEngine = ?";
+				"where pb.PromotionFK = ? and ae.AdvertisingEngine = ? order by pb.BidCompleted DESC";
 		try
 		{
 			return jdbcTemplate.query(strSQL, new Object[]
