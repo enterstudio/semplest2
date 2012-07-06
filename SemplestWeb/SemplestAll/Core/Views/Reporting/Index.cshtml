@@ -1,4 +1,5 @@
-﻿@model Semplest.Core.Models.ReportIndexModel 
+﻿
+@model Semplest.Core.Models.ReportIndexModel 
 @section Title{ Reporting (@ViewBag.Title)}
 <script type="text/javascript">
     $(document).ready(function () {
@@ -52,7 +53,7 @@
             },
             onBlur: function (node) {
 
-            } 
+            }
         });
         $.getJSON($('#SideBarUrl').val(), {}, function (data) {
             var rootNode = $("#reportTreeView").dynatree("getRoot");

@@ -1,4 +1,5 @@
-﻿@model Semplest.Core.Models.ReportIndexModel
+﻿@using System.Globalization
+@model Semplest.Core.Models.ReportIndexModel
 @{
     ViewBag.Title = "ReportDetails";
 }
@@ -12,7 +13,12 @@
                         promotionFk: $("#PromotionFks").val(),
                         advertisingEngineFk: $("#EngineFks").val(),
                         startDate: $("#StartDate").val(),
-                        endDate: $("#EndDate").val()
+                        endDate: $("#EndDate").val(),
+                        mode: function () {
+                            if ($("#datecombo").val() != "")
+                                return $("#datecombo").val();
+                            return "1";
+                        }
                     }
                 }, error: function (e) {
                     alert(e.xhr.responseText);
@@ -20,8 +26,10 @@
             },
             change: function (e) {
                 var totalitems = e.sender.total();
-                $('#chart').css('width', totalitems * 50);
-                //$('#chart').data('kendoChart').options.legend.offsetX = -(totalitems*25);
+                var width = totalitems * 50;
+                if (width < 520)
+                    width = 520;
+                $('#chart').css('width', width);
             },
             sort: {
                 field: "Date",
@@ -29,7 +37,6 @@
             }
         });
         createChart();
-
         function createChart() {
             $('#title').html("Results for your " + $("#PromotionName").val() + " product group on " + $("#SearchEngineName").val() + " for " + $("#Start").val() + " - " + $("#End").val() + "");
             $("#chart").kendoChart({
@@ -87,10 +94,12 @@
             change: onDateChange
         });
         function onDateChange() {
-            var value = $("#datecombo").val();
-            //dataSource.query({filter :{ field:"Date",operator:"gte",value:value}});
-            //dataSource.fetch();
-            //dataSource.sync();
+            var chart = $("#chart").data("kendoChart");
+            var summaryGrid = $("#summaryGrid").data("kendoGrid");
+            var grid1 = $("#grid1").data("kendoGrid");
+            summaryGrid.refresh();
+            grid1.dataSource.fetch();
+            chart.dataSource.fetch();
         }
         var livePromotionsDataSource = new kendo.data.DataSource({
             transport: {
@@ -100,6 +109,16 @@
                     alert(e.xhr.responseText);
                 }
             }
+        });
+        $('.engnieBox').change(function () {
+            var selEngines = $.map($('.engnieBox'), function (node) { if (node.checked) return node.id; });
+            $("#EngineFks").val(selEngines);
+            var chart = $("#chart").data("kendoChart");
+            var summaryGrid = $("#summaryGrid").data("kendoGrid");
+            var grid1 = $("#grid1").data("kendoGrid");
+            summaryGrid.refresh();
+            grid1.refresh();
+            chart.refresh();
         });
         var nonLivePromotionsDataSource = new kendo.data.DataSource({
             transport: {
@@ -124,6 +143,10 @@
                 chart.options.valueAxis[0].min = Math.min.apply(Math, chart.options.series[0].data);
                 chart.options.valueAxis[0].majorUnit = chart.options.valueAxis[0].max / 10;
                 //chart.redraw();
+                var summaryGrid = $("#summaryGrid").data("kendoGrid");
+                var grid1 = $("#grid1").data("kendoGrid");
+                summaryGrid.refresh();
+                grid1.refresh();
                 chart.refresh();
             }
         }).data("kendoComboBox");
@@ -141,37 +164,68 @@
                 chart.options.valueAxis[1].min = Math.min.apply(Math, chart.options.series[1].data);
                 chart.options.valueAxis[1].majorUnit = chart.options.valueAxis[1].max / 10;
                 //chart.redraw();
+                var summaryGrid = $("#summaryGrid").data("kendoGrid");
+                var grid1 = $("#grid1").data("kendoGrid");
+                summaryGrid.refresh();
+                grid1.refresh();
                 chart.refresh();
             }
         }).data("kendoComboBox");
     });
 </script>
-<div style="margin-left:10px;margin-top:10px;color:grey;">
-    <h3 id="title" class="greytext"  />
+<div style="margin-left: 10px; margin-top: 10px; color: grey; overflow: auto;">
+    <h3 id="title" class="greytext" />
 </div>
 <table>
     <tr>
         <td>
-            <div class="chart-wrapper" style="margin-left: 5px; overflow: auto; height: 270px; width: 530px;">
+            <div class="chart-wrapper" style="margin-left: 5px; overflow: auto; height: 270px;
+                                                                              width: 520px;">
                 <div id="chart" style="height: 250px">
                 </div>
             </div>
         </td>
-        <td style="vertical-align: top;margin-top: 30px;">
-            <div style="margin-left: 10px;margin-top: 30px;">
-                @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
-                {
-                    @Html.CheckBox(item.AdvertisingEnginePK.ToString(), true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
-                    <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
-                }
-                <br />
-                <input id='datecombo' style='width: 80px;' />
-                <br />
-                <br />
-                <input id='livePromotions' />
-                <br/>
-                <br/>
-                <input id='nonLivePromotions' />
+        <td style="vertical-align: top; margin-top: 30px;">
+            <div style="margin-left: 10px; margin-top: 5px;">
+                <table>
+                    <tr>
+                        <td colspan="2">
+                            @foreach (SemplestModel.AdvertisingEngine item in Model.AdvertisingEngines)
+                            {
+                                @Html.CheckBox(item.AdvertisingEnginePK.ToString(CultureInfo.InvariantCulture), true, new { @class = "engnieBox", @id = item.AdvertisingEnginePK })
+                                <img src='@Url.Content("~/Content/" + item.LogoURL)' style="vertical-align: middle;" />
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 30px">
+                            <label style="text-align: left; width: 90px;">
+                                Format :</label>
+                        </td>
+                        <td style="text-align: left">
+                            <input id='datecombo' style='width: 80px;' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label style="text-align: left; width: 90px;">
+                                Left Y Axis :</label>
+                        </td>
+                        <td>
+                            <input id='livePromotions' />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label style="text-align: left; width: 90px;">
+                                Right Y Axis :</label>
+                        </td>
+                        <td>
+                            <input id='nonLivePromotions' />
+                        </td>
+                    </tr>
+                </table>
+                
             </div>
         </td>
     </tr>
@@ -184,4 +238,8 @@
 @Html.HiddenFor(t => t.EndDate)
 @Html.HiddenFor(t => t.Start)
 @Html.HiddenFor(t => t.End)
-
+<style>
+    td {
+        padding-bottom: 5px;
+    }
+</style>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -58,18 +59,20 @@ namespace Semplest.Core.Controllers
             return View(model);
         }
 
-        public ActionResult ReportDetailsGrid()
+        public ActionResult ReportDetailsGrid(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
             var dbContext = new SemplestModel.Semplest();
             var cred = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID]));
-            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
+            var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
+            var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
+            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate <= endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.Keyword, t.PromotionName });
             var reports = grp.Select(v => new vwPromotionChartModel
             {
                 AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC),
                 NumberImpressions = v.Sum(t => t.NumberImpressions),
                 KeyWord = v.Key.Keyword,
                 NumberClick = v.Sum(t => t.NumberClick),
-                SearchCTR = v.Sum(t => t.NumberClick * 100 / t.NumberImpressions),
+                SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
                 AveragePosition = v.Average(t => t.AveragePosition),
                 IsActive = v.FirstOrDefault().IsActive ? "Live" : "Paused"
@@ -77,20 +80,22 @@ namespace Semplest.Core.Controllers
             return Json(reports, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult ReportSummaryGrid()
+        public ActionResult ReportSummaryGrid(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
         {
             var dbContext = new SemplestModel.Semplest();
             var cred = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID]));
-            var grp = dbContext.vwPromotionCharts.Where(t => t.UserPK == cred.UsersFK).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
+            var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
+            var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
+            var grp = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && t.UserPK == cred.UsersFK && adFks.Contains(t.AdvertisingEngineFK) && t.TransactionDate >= startDate && t.TransactionDate <= endDate).OrderBy(t => t.Keyword).GroupBy(t => new { t.PromotionName });
             var reports = grp.Select(v => new vwPromotionChartModel
             {
                 AmountSpent = v.Sum(t => t.NumberClick * t.AverageCPC),
                 NumberImpressions = v.Sum(t => t.NumberImpressions),
                 KeyWord = v.FirstOrDefault().PromotionName,
                 NumberClick = v.Sum(t => t.NumberClick),
-                SearchCTR = v.Sum(t => t.NumberClick * 100 / t.NumberImpressions),
+                SearchCTR = v.Sum(t => t.NumberClick / t.NumberImpressions),
                 CPC = v.Sum(t => t.NumberClick) == 0 ? 0 : v.Sum(t => t.NumberClick * t.AverageCPC) / v.Sum(t => t.NumberClick),
-                AveragePosition = v.Sum(t => t.AveragePosition),
+                AveragePosition = v.Average(t => t.AveragePosition),
                 IsActive = v.FirstOrDefault().IsActive ? "Live" : "Paused"
             }).ToList();
             return Json(reports, JsonRequestBehavior.AllowGet);
@@ -106,29 +111,108 @@ namespace Semplest.Core.Controllers
             model.Configuration = dbContext.Configurations.FirstOrDefault();
             return PartialView(model);
         }
-        public ActionResult ReportGraph(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
+        public ActionResult ReportGraph(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate, string mode)
         {
             var dbContext = new SemplestModel.Semplest();
             var userid = ((Credential)(Session[SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
             var promotionFks = Array.ConvertAll(promotionFk.Split(','), int.Parse);
             var adFks = Array.ConvertAll(advertisingEngineFk.Split(','), int.Parse);
-            var reportData = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate);
+            List<vwPromotionChart> promotionCharts;
             var reports = new List<ReportChartModel>();
             var reports1 = new List<ReportChartModel>();
+            IEnumerable<IGrouping<DateTime, vwPromotionChart>> grp;
+            IEnumerable<IGrouping<string, vwPromotionChart>> grpa;
+            IEnumerable<IGrouping<string, ReportChartModel>> grp1;
+            switch (mode)
+            {
+                case "1":
+                    promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
 
-            var grp = reportData.GroupBy(t => new { t.PromotionFK, t.PromotionName, t.TransactionDate });
-            foreach (var data in grp)
-            {
-                var count = data.Count();
-                reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.TransactionDate.ToString("MM/dd"), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    grp = promotionCharts.GroupBy(t => t.TransactionDate);
+                    foreach (var data in grp)
+                    {
+                        var count = data.Count();
+                        reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString("MM/dd"), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    grp1 = reports.GroupBy(t => t.Date);
+                    foreach (var data in grp1)
+                    {
+                        var count = data.Count();
+                        reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    return Json(reports1, JsonRequestBehavior.AllowGet);
+                case "2":
+                    // Need to Un Comment After Addmin Function Import..
+
+                    //promotionCharts = dbContext.GetMondayChart(startDate, endDate).Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid).ToList();
+
+                    //grp = promotionCharts.GroupBy(t => t.TransactionDate);
+                    //foreach (var data in grp)
+                    //{
+                    //    var count = data.Count();
+                    //    reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString("MM/dd"), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    //}
+                    //grp1 = reports.GroupBy(t => t.Date);
+                    //foreach (var data in grp1)
+                    //{
+                    //    var count = data.Count();
+                    //    reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    //}
+                    //return Json(reports1, JsonRequestBehavior.AllowGet);
+
+
+                    // this Section Should be Removed.. After Addmin Function Import...
+
+                    promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
+
+                    grp = promotionCharts.GroupBy(t => t.TransactionDate);
+                    foreach (var data in grp)
+                    {
+                        var count = data.Count();
+                        reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString("MM/dd"), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    grp1 = reports.GroupBy(t => t.Date);
+                    foreach (var data in grp1)
+                    {
+                        var count = data.Count();
+                        reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    return Json(reports1, JsonRequestBehavior.AllowGet);
+                case "3":
+                    promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
+
+                    grpa = promotionCharts.GroupBy(t => (t.TransactionDate.Month) + "/" + (t.TransactionDate.Year));
+                    foreach (var data in grpa)
+                    {
+                        var count = data.Count();
+                        reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString(), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    grp1 = reports.GroupBy(t => t.Date);
+                    foreach (var data in grp1)
+                    {
+                        var count = data.Count();
+                        reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    return Json(reports1, JsonRequestBehavior.AllowGet);
+                case "4":
+                    promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
+
+                    grpa = promotionCharts.GroupBy(t => t.TransactionDate.Year.ToString());
+                    foreach (var data in grpa)
+                    {
+                        var count = data.Count();
+                        reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString(), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    grp1 = reports.GroupBy(t => t.Date);
+                    foreach (var data in grp1)
+                    {
+                        var count = data.Count();
+                        reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
+                    }
+                    return Json(reports1, JsonRequestBehavior.AllowGet);
             }
-            var grp1 = reports.GroupBy(t => new { t.Date });
-            foreach (var data in grp1)
-            {
-                var count = data.Count();
-                reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key.Date, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
-            }
-            return Json(reports1, JsonRequestBehavior.AllowGet);
+            return Json(null, JsonRequestBehavior.AllowGet);
+
         }
 
         public ActionResult GetFilterData(string promotionFk, string advertisingEngineFk, DateTime? startDate, DateTime? endDate)
