@@ -696,8 +696,8 @@
           <Property Name="AdwordsValidationAdGroupID" Type="bigint" />
           <Property Name="AdWordsValidationCampaignID" Type="bigint" />
           <Property Name="ActivationValidForDays" Type="int" />
-          <Property Name="DoNotLaunchAdServices" Type="bit" />
           <Property Name="MSNUseSandbox" Type="bit" />
+          <Property Name="DoNotLaunchAdServices" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -2450,6 +2450,14 @@
           <Parameter Name="AdvertisingEngine" Type="varchar" Mode="In" />
           <Parameter Name="Keyword" Type="nvarchar" Mode="In" />
         </Function>
+        <Function Name="GetMondayChart" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+        </Function>
+        <Function Name="GetMondays" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="StartDate" Type="datetime" Mode="In" />
+          <Parameter Name="EndDate" Type="datetime" Mode="In" />
+        </Function>
         <Function Name="GetNextJobToRun" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <Function Name="GetNextScheduleTime" ReturnType="datetime" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="true" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
           <Parameter Name="StartDateTime" Type="datetime" Mode="In" />
@@ -2556,6 +2564,12 @@
           <Parameter Name="EndDate" Type="datetime2" Mode="In" />
           <Parameter Name="ID" Type="int" Mode="InOut" />
         </Function>
+        <!--Errors Found During Generation:
+      warning 6005: The function 'sp_UpdateKeywords' has a parameter 'kwa' at parameter index 0 that has a data type 'table type' which is not supported. The function was excluded.
+      
+      <Function Name="sp_UpdateKeywords" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+        <Parameter Name="PromotionId" Type="int" Mode="In" />
+      </Function>-->
       </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
@@ -2921,6 +2935,10 @@
             <End Role="User" EntitySet="Users" />
             <End Role="UserRolesAssociation" EntitySet="UserRolesAssociations" />
           </AssociationSet>
+          <FunctionImport Name="GetMondayChart" EntitySet="vwPromotionCharts" ReturnType="Collection(SemplestModel.vwPromotionChart)">
+            <Parameter Name="StartDate" Mode="In" Type="DateTime" />
+            <Parameter Name="EndDate" Mode="In" Type="DateTime" />
+          </FunctionImport>
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -5898,6 +5916,7 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="GetMondayChart" FunctionName="SemplestModel.Store.GetMondayChart" />
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -5919,7 +5938,7 @@
     </Options>
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
-      <Diagram Name="SemplestModel" ZoomLevel="27">
+      <Diagram Name="SemplestModel" ZoomLevel="25">
         <EntityTypeShape EntityType="SemplestModel.Address" Width="1.5" PointX="6" PointY="38.5" Height="2.9417936197916674" />
         <EntityTypeShape EntityType="SemplestModel.AddressType" Width="1.5" PointX="6" PointY="48.25" Height="1.5956835937499818" />
         <EntityTypeShape EntityType="SemplestModel.AdvertisingEngine" Width="1.5" PointX="6" PointY="34.75" Height="2.7494921874999818" />

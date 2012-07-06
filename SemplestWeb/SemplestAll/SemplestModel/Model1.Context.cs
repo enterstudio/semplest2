@@ -106,5 +106,35 @@ namespace SemplestModel
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<sp_GetRigtsRolesInteraction_Result>("sp_GetRigtsRolesInteraction", roleIdParameter);
         }
+    
+        public virtual ObjectResult<vwPromotionChart> GetMondayChart(Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate)
+        {
+            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(vwPromotionChart).Assembly);
+    
+            var startDateParameter = startDate.HasValue ?
+                new ObjectParameter("StartDate", startDate) :
+                new ObjectParameter("StartDate", typeof(System.DateTime));
+    
+            var endDateParameter = endDate.HasValue ?
+                new ObjectParameter("EndDate", endDate) :
+                new ObjectParameter("EndDate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<vwPromotionChart>("GetMondayChart", startDateParameter, endDateParameter);
+        }
+    
+        public virtual ObjectResult<vwPromotionChart> GetMondayChart(Nullable<System.DateTime> startDate, Nullable<System.DateTime> endDate, MergeOption mergeOption)
+        {
+            ((IObjectContextAdapter)this).ObjectContext.MetadataWorkspace.LoadFromAssembly(typeof(vwPromotionChart).Assembly);
+    
+            var startDateParameter = startDate.HasValue ?
+                new ObjectParameter("StartDate", startDate) :
+                new ObjectParameter("StartDate", typeof(System.DateTime));
+    
+            var endDateParameter = endDate.HasValue ?
+                new ObjectParameter("EndDate", endDate) :
+                new ObjectParameter("EndDate", typeof(System.DateTime));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<vwPromotionChart>("GetMondayChart", mergeOption, startDateParameter, endDateParameter);
+        }
     }
 }
