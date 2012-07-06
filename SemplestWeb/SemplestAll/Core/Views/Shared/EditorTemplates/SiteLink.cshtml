@@ -1,14 +1,21 @@
-﻿
-@using Semplest.Core.Helpers
+﻿@using Semplest.Core.Helpers
+@using System.Web.Mvc
+
 @model SemplestModel.SiteLink
-<li class="sitelinks">
-    <label>
-        Name
-    </label>
-    @Html.TextBoxFor(t => t.LinkText, new { @class = "k-textbox" })
-    <label>
-        Url</label>
-    @Html.TextBoxFor(t => t.LinkURL, new { @class = "k-textbox" })
-    @Html.HiddenFor(x => x.Delete, new { @class = "mark-for-delete" })
-    @Html.LinkToRemoveNestedForm("Delete", "li.sitelinks", "input.mark-for-delete")
-</li>
+@{
+    ViewContext.FormContext = new FormContext();
+    <li class="sitelinks">
+        <label>
+            Name
+        
+        </label>
+        @Html.TextBoxFor(t => t.LinkText, new {@class = "k-textbox", @required = true, @validationmessage = "Please enter {0}"})
+        @Html.ValidationMessageFor(t => t.LinkText)
+        <label>
+            Url</label>
+        @Html.TextBoxFor(t => t.LinkURL, new {@class = "k-textbox", @required = true, @validationmessage = "Please enter {0}"})
+        @Html.ValidationMessageFor(t => t.LinkURL)
+        @Html.HiddenFor(x => x.Delete, new {@class = "mark-for-delete"})
+        @Html.LinkToRemoveNestedForm("Delete", "li.sitelinks", "input.mark-for-delete")
+    </li>
+}
