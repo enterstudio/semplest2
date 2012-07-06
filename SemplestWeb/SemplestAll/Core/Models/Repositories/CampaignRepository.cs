@@ -873,6 +873,8 @@ namespace Semplest.Core.Models.Repositories
                 dr["IsActive"] = "true";
                 dr["IsNegative"] = true;
                 dr["IsDeleted"] = false;
+                dr["IsTargetMSN"] = 0;
+                dr["IsTargetGoogle"] = 0;
                 stationIds.Rows.Add(dr);
             }
             if (stationIds.Rows.Count > 0)
