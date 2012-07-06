@@ -21,14 +21,15 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
-import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.SemplestBiddingHistory;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -44,9 +45,9 @@ import semplest.server.service.springjdbc.storedproc.AddKeywordBidDataSP;
 import semplest.server.service.springjdbc.storedproc.AddReportDataSP;
 import semplest.server.service.springjdbc.storedproc.AddScheduleSP;
 import semplest.server.service.springjdbc.storedproc.AddTaskSP;
-import semplest.server.service.springjdbc.storedproc.AddTrafficEstimatorSP;
 import semplest.server.service.springjdbc.storedproc.GetBiddableAdGroupCriteriaSP;
 import semplest.server.service.springjdbc.storedproc.GetLatestTrafficEstimatorSP;
+import semplest.server.service.springjdbc.storedproc.SetPromotionBiddingSP;
 import semplest.server.service.springjdbc.storedproc.UpdateDefaultBidForKeywordsSP;
 import semplest.util.SemplestUtils;
 
@@ -225,6 +226,41 @@ public class SemplestDB extends BaseDB
 	 * Bidding calls
 	 */
 
+	/*
+	 * select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb
+left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK
+inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK
+where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
+	 */
+	private static final RowMapper<SemplestBiddingHistory> semplestBiddingHistoryObjMapper = new BeanPropertyRowMapper<SemplestBiddingHistory>(SemplestBiddingHistory.class);
+
+	public static List<SemplestBiddingHistory> getSemplestBiddingHistory(int PromotionID, AdEngine advertisingEngine ) throws Exception
+	{
+		String strSQL = "select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb " +
+				"left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK " +
+				"where pb.PromotionFK = ? and ae.AdvertisingEngine = ?";
+		try
+		{
+			return jdbcTemplate.query(strSQL, new Object[]
+			{ PromotionID, advertisingEngine.name() }, semplestBiddingHistoryObjMapper);
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			return null;
+		}
+		catch (Exception e)
+		{
+			throw e;
+		}
+	}
+	public static void setSemplestBiddingHistory(Integer PromotionID, AdEngine advertisingEngine, PromotionBiddingType promotionBiddingType) throws Exception
+	{
+		SetPromotionBiddingSP setPromotionBiddingSP = new SetPromotionBiddingSP();
+		Integer res = setPromotionBiddingSP.execute(PromotionID, advertisingEngine.name(), promotionBiddingType.name());
+		logger.info("Added BiddingHistory for promoID=" + PromotionID + " AdEngine=" + advertisingEngine.name() + ":" + promotionBiddingType.name());
+	}
+	
 	public static Long getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
 	{
 		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  "

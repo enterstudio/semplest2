@@ -68,6 +68,10 @@ public class ProtocolEnum
 			return false;
 		}
 	}
+	public static enum PromotionBiddingType
+	{
+		Initial,Ongoing;
+	}
 	public static enum AdEngine
 	{
 		MSN,Google;

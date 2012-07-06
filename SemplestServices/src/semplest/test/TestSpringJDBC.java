@@ -37,23 +37,30 @@ public class TestSpringJDBC extends BaseDB
 			List<TrafficDataObj> trafficDataList = new ArrayList<TrafficDataObj>();
 
 			Long start = System.currentTimeMillis();
-			for (int i = 3000; i < 23000; i++)
+			for (int j = 1; j <= 4; j++)
 			{
-				TrafficDataObj o = new TrafficDataObj();
-				o.setAdvertisingEngine("Google");
-				o.setPromotionID(71);
-				o.setAveCPC(0.1f + .1f*i);
-				o.setAveMicroCost(0.5f + .1f*i);
-				o.setAveNumberClicks(1.0f + .1f*i);
-				o.setAvePosition(2.4f + .1f*i);
-				o.setBidType(ProtocolEnum.SemplestMatchType.Exact.name());
-				o.setKeyword("personal wedding sites");
-				o.setMicroBid(50000 + i);
-				trafficDataList.add(o);
+				for (int i = 83000; i < 88000; i++)
+				{
+					TrafficDataObj o = new TrafficDataObj();
+					o.setAdvertisingEngine("Google");
+					o.setPromotionID(71);
+					o.setAveCPC(0.1f + .1f * i);
+					o.setAveMicroCost(0.5f + .1f * i);
+					o.setAveNumberClicks(1.0f + .1f * i);
+					o.setAvePosition(2.4f + .1f * i);
+					o.setBidType(ProtocolEnum.SemplestMatchType.Exact.name());
+					o.setKeyword("personal wedding sites");
+					o.setMicroBid(50000 + i * j);
+					trafficDataList.add(o);
+				}
+				trafficEstimatorBatch(trafficDataList, ts);
+				trafficDataList.clear();
+				Long ms = System.currentTimeMillis() - start;
+				System.out.println("Took ms = " + j + ":"  + ms + " sec=" + ms / 1000.);
 			}
-			trafficEstimatorBatch(trafficDataList, ts);
+
 			Long ms = System.currentTimeMillis() - start;
-			System.out.println("Took ms = " + ms + " sec=" + ms/1000. );
+			System.out.println("Took ms = " + ms + " sec=" + ms / 1000.);
 			/*
 			 * GetAllPromotionDataSP sp = new GetAllPromotionDataSP();
 			 * sp.execute(60); // GetAdEngineAccountSP sp = new
