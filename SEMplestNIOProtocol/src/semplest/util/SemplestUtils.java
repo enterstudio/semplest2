@@ -531,7 +531,7 @@ public final class SemplestUtils
 		return sb.toString();
 	}
 	
-	public static String getMsnMetroAreaTargetBid(final MetroAreaTargetBid metroTargetBid)
+	public static String getMsnMetroAreaTargetBidString(final MetroAreaTargetBid metroTargetBid)
 	{
 		if (metroTargetBid == null)
 		{
@@ -557,7 +557,7 @@ public final class SemplestUtils
 			{
 				sb.append(",");
 			}
-			sb.append(getMsnMetroAreaTargetBid(metroTargetBid));
+			sb.append(getMsnMetroAreaTargetBidString(metroTargetBid));
 		}
 		return sb.toString();
 	}

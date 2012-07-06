@@ -2,8 +2,11 @@ package semplest.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import junit.framework.Assert;
 
@@ -12,7 +15,153 @@ import org.junit.Test;
 public class TestSemplestUtils
 {
 	@Test
-	public void testGetBatches()
+	public void testIsNullReturnBlank()
+	{
+		final String s = " ss EE   ";
+		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String expectedString = " ss EE   ";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testIsNullReturnBlank_Null()
+	{
+		final String s = null;
+		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testIsNullReturnBlank_Empty()
+	{
+		final String s = "";
+		final String actualString = SemplestUtils.IsNullReturnBlank(s);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetTrimmedNonNullString()
+	{
+		final String s = " ss EE   ";
+		final String actualString = SemplestUtils.getTrimmedNonNullString(s);
+		final String expectedString = "ss EE";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetTrimmedNonNullString_Empty()
+	{
+		final String s = "   ";
+		final String actualString = SemplestUtils.getTrimmedNonNullString(s);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetTrimmedNonNullString_Null()
+	{
+		final String s = null;
+		final String actualString = SemplestUtils.getTrimmedNonNullString(s);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetStringForArray()
+	{
+		final long[] longArray = new long[]{1L, 5L, 33L};
+		final String actualString = SemplestUtils.getStringForArray(longArray);
+		final String expectedString = "1, 5, 33";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetStringForArray_Empty()
+	{
+		final long[] longArray = new long[]{};
+		final String actualString = SemplestUtils.getStringForArray(longArray);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetStringForArray_Null()
+	{
+		final long[] longArray = null;
+		final String actualString = SemplestUtils.getStringForArray(longArray);
+		final String expectedString = "";
+		Assert.assertEquals(expectedString, actualString);
+	}
+	
+	@Test
+	public void testGetBatchesMap()
+	{
+		final Map<String, Integer> map = new HashMap<String, Integer>();
+		final String keyOne = "one";
+		final Integer valueOne = 1;
+		final String keyTwo = "two";
+		final Integer valueTwo = 2;
+		final String keyThree = "three";
+		final Integer valueThree = 3;
+		final String keyFour = "four";
+		final Integer valueFour = 4;
+		final String keyFive = "five";
+		final Integer valueFive = 5;
+		map.put(keyOne, valueOne);
+		map.put(keyTwo, valueTwo);
+		map.put(keyThree, valueThree);
+		map.put(keyFour, valueFour);
+		map.put(keyFive, valueFive);
+		final Map<String, Integer> expectedBatch1 = new HashMap<String, Integer>();
+		final Map<String, Integer> expectedBatch2 = new HashMap<String, Integer>();
+		final Map<String, Integer> expectedBatch3 = new HashMap<String, Integer>();		
+		final List<Map<String, Integer>> expectedBatches = new ArrayList<Map<String, Integer>>();
+		final Set<Entry<String, Integer>> entrySet = map.entrySet();		
+		final Iterator<Entry<String, Integer>> interator = entrySet.iterator();
+		final Entry<String, Integer> entry1 = interator.next();
+		final Entry<String, Integer> entry2 = interator.next();
+		final Entry<String, Integer> entry3 = interator.next();
+		final Entry<String, Integer> entry4 = interator.next();
+		final Entry<String, Integer> entry5 = interator.next();
+		expectedBatch1.put(entry1.getKey(), entry1.getValue());
+		expectedBatch1.put(entry2.getKey(), entry2.getValue());
+		expectedBatch2.put(entry3.getKey(), entry3.getValue());
+		expectedBatch2.put(entry4.getKey(), entry4.getValue());
+		expectedBatch3.put(entry5.getKey(), entry5.getValue());
+		expectedBatches.add(expectedBatch1);
+		expectedBatches.add(expectedBatch2);
+		expectedBatches.add(expectedBatch3);
+		final List<Map<String, Integer>> actualBatches = SemplestUtils.getBatches(map, 2);
+		Assert.assertEquals(expectedBatches, actualBatches);
+	}
+	
+	@Test
+	public void testGetBatchesMap_ListNull()
+	{
+		final List<Map<String, Integer>> expectedBatches = new ArrayList<Map<String, Integer>>();
+		final Map<String, Integer> map = null;
+		final List<Map<String, Integer>> actualBatches = SemplestUtils.getBatches(map, 5);
+		Assert.assertEquals(expectedBatches, actualBatches);
+	}
+	
+	@Test
+	public void testGetBatchesMap_BatchSizeLessThan1()
+	{
+		try
+		{
+			SemplestUtils.getBatches(new HashMap<String, Integer>(), 0);
+			Assert.fail("Exception should have been thrown because BatchSize is 0 (which is less than 1)");
+		}
+		catch (IllegalArgumentException e)
+		{
+			// expected
+		}
+	}
+	
+	@Test
+	public void testGetBatchesList()
 	{
 		final List<String> list = new ArrayList<String>();
 		final String one = "one";
@@ -42,7 +191,7 @@ public class TestSemplestUtils
 	}
 	
 	@Test
-	public void testGetBatches_ListNull()
+	public void testGetBatchesList_ListNull()
 	{
 		final List<List<Object>> expectedBatches = new ArrayList<List<Object>>();
 		final List<Object> list = null;
@@ -51,7 +200,7 @@ public class TestSemplestUtils
 	}
 	
 	@Test
-	public void testGetBatches_BatchSizeLessThan1()
+	public void testGetBatchesList_BatchSizeLessThan1()
 	{
 		try
 		{
