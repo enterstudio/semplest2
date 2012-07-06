@@ -289,6 +289,7 @@ public class SemplestDB extends BaseDB
 	public static void storeTrafficEstimatorData(int promotionID, AdEngine adEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
 		//AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		final int maxInBatch = 10000;
 		List<TrafficDataObj> trafficDataList= new ArrayList<TrafficDataObj>();
 		java.util.Date date= new java.util.Date();
 		Timestamp ts = new Timestamp(date.getTime());
@@ -339,6 +340,12 @@ public class SemplestDB extends BaseDB
 							trafficDataObj.setKeyword(keyword);
 							trafficDataObj.setMicroBid(microBid.intValue());
 							trafficDataList.add(trafficDataObj);
+							if (counter == maxInBatch)
+							{
+								trafficEstimatorBatch(trafficDataList, ts);
+								trafficDataList.clear();
+								counter = 0;
+							}
 							/*
 							Boolean ret =  addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid.intValue(),
 									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue(),
@@ -351,7 +358,7 @@ public class SemplestDB extends BaseDB
 				}
 			}
 		}
-		//call the batch add
+		//call the last batch add
 		trafficEstimatorBatch(trafficDataList, ts);
 	}
 	
