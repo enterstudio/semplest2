@@ -9,6 +9,7 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.google.GoogleSiteLink;
 
 import com.google.api.adwords.v201109_1.cm.Sitelink;
@@ -16,6 +17,40 @@ import com.google.api.adwords.v201109_1.cm.SitelinksExtension;
 
 public class TestGoogleAdwordsServiceImpl
 {
+	private final GoogleAdwordsServiceImpl googleImpl;
+	
+	public TestGoogleAdwordsServiceImpl() throws Exception
+	{
+		googleImpl = new GoogleAdwordsServiceImpl();
+	}
+	
+	@Test
+	public void testGetCriterionsForSettingGeoTargets() throws Exception 
+	{
+		final String validationAccountID = "123";
+		final Long validationCampaignID = 456L;		
+		final GeoTargetObject g1 = new GeoTargetObject();
+		g1.setAddress("123 Main St");
+		g1.setCity("Millburn");
+		g1.setLatitude(34.23);
+		g1.setLongitude(-76.13);
+		g1.setRadius(30.5);
+		g1.setState("NJ");
+		g1.setZip("07041");
+		final GeoTargetObject g2 = new GeoTargetObject();
+		g2.setAddress("1916 East 9 St");
+		g2.setCity("Brooklyn");
+		g2.setLatitude(94.23);
+		g2.setLongitude(-73.23);
+		g2.setRadius(30.5);
+		g2.setState("NY");
+		g2.setZip("11223");
+		final List<GeoTargetObject> geoTargets = new ArrayList<GeoTargetObject>();
+		geoTargets.add(g1);
+		geoTargets.add(g2);
+		googleImpl.getCriterionsForSettingGeoTargets(validationAccountID, validationCampaignID, geoTargets);
+	}
+	
 	@Test
 	public void testGetSitelinkIds_Empty() throws Exception
 	{

@@ -3049,5 +3049,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return res;
 	}
+	
+	public String checkStatus(String json) throws Exception
+	{
+		logger.debug("JSON: [" + json + "]");
+		final String statusResponse = checkStatus();
+		return gson.toJson(statusResponse);
+	}
+
+	@Override
+	public String checkStatus()
+	{
+		return SemplestUtils.STATUS_GOOD;
+	}
 
 }

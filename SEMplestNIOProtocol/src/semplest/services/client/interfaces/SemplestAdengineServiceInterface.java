@@ -37,6 +37,9 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines);
 	Boolean PauseProductGroups(List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception;
 	
+	// Check service status
+	String checkStatus() throws Exception;
+	
 	// Validation methods
 	
 	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;

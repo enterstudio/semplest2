@@ -1266,5 +1266,26 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 			throw new Exception(errMsg, e);
 		}
 	}
+
+	@Override
+	public String checkStatus() throws Exception
+	{
+		final String methodName = "checkStatus";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		jsonHash.put("checkingStatus", "hello");
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			return returnData;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem performing " + methodName;
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
 	
 }

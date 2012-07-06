@@ -117,6 +117,7 @@ public final class SemplestUtils
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
+	public static final String STATUS_GOOD = "STATUS GOOD";
 	
 	public static List<GoogleViolation> getGoogleViolations_v201109(ApiException e)
 	{
