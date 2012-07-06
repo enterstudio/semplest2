@@ -142,28 +142,7 @@ namespace Semplest.Core.Controllers
                     }
                     return Json(reports1, JsonRequestBehavior.AllowGet);
                 case "2":
-                    // Need to Un Comment After Addmin Function Import..
-
-                    //promotionCharts = dbContext.GetMondayChart(startDate, endDate).Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid).ToList();
-
-                    //grp = promotionCharts.GroupBy(t => t.TransactionDate);
-                    //foreach (var data in grp)
-                    //{
-                    //    var count = data.Count();
-                    //    reports.Add(new ReportChartModel { Clicks = data.Sum(t => t.NumberClick) / count, Impressions = data.Sum(t => t.NumberImpressions) / count, Date = data.Key.ToString("MM/dd"), AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
-                    //}
-                    //grp1 = reports.GroupBy(t => t.Date);
-                    //foreach (var data in grp1)
-                    //{
-                    //    var count = data.Count();
-                    //    reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
-                    //}
-                    //return Json(reports1, JsonRequestBehavior.AllowGet);
-
-
-                    // this Section Should be Removed.. After Addmin Function Import...
-
-                    promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
+                    promotionCharts = dbContext.GetMondayChart(startDate, endDate).Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid).ToList();
 
                     grp = promotionCharts.GroupBy(t => t.TransactionDate);
                     foreach (var data in grp)
@@ -178,6 +157,9 @@ namespace Semplest.Core.Controllers
                         reports1.Add(new ReportChartModel { Clicks = data.Sum(t => t.Clicks) / count, Impressions = data.Sum(t => t.Impressions) / count, Date = data.Key, AveragePosition = data.Sum(t => t.AveragePosition) / count, AverageCPC = data.Sum(t => t.AverageCPC) / count });
                     }
                     return Json(reports1, JsonRequestBehavior.AllowGet);
+
+
+                  
                 case "3":
                     promotionCharts = dbContext.vwPromotionCharts.Where(t => promotionFks.Contains(t.PromotionFK) && adFks.Contains(t.AdvertisingEngineFK) && t.UserPK == userid && t.TransactionDate >= startDate && t.TransactionDate <= endDate).ToList();
 
