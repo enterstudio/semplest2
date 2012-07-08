@@ -39,7 +39,16 @@ namespace Semplest.WebSite.Controllers
         {
             return View();
         }
-
+        public ActionResult TermsOfUse()
+        {
+            StaticModel vm = new StaticModel("TermsAndConditions");
+            return View("TermsOfUse", vm);
+        }
+        public ActionResult PrivacyPolicy()
+        {
+            StaticModel vm = new StaticModel("PrivacyPolicy");
+            return View("PrivacyPolicy", vm);
+        }
         [HttpPost]
         public ActionResult ContactUs(SEMCustomerDetail model)
         {
