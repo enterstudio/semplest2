@@ -280,6 +280,9 @@
     <Compile Include="WebContentQuestionMarkHelp.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="WebsiteWebContent.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EntityDeploy Include="SemplestModel.edmx">

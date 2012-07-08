@@ -87,6 +87,7 @@
           <EntitySet Name="Users" EntityType="SemplestModel.Store.Users" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContentQuestionMarkHelp" EntityType="SemplestModel.Store.WebContentQuestionMarkHelp" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="WebsiteWebContent" EntityType="SemplestModel.Store.WebsiteWebContent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="vwCreditCardTransactionDetail" EntityType="SemplestModel.Store.vwCreditCardTransactionDetail" store:Type="Views" store:Schema="dbo" store:Name="vwCreditCardTransactionDetail">
             <DefiningQuery>SELECT 
       [vwCreditCardTransactionDetail].[CreditCardProfilePK] AS [CreditCardProfilePK], 
@@ -1285,6 +1286,17 @@
           <Property Name="CustomerFK" Type="int" />
           <Property Name="Title" Type="varchar" MaxLength="100" />
           <Property Name="Copy" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="WebsiteWebContent">
+          <Key>
+            <PropertyRef Name="WebContentPK" />
+          </Key>
+          <Property Name="WebContentPK" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="FAQ" Type="nvarchar(max)" />
+          <Property Name="AboutUs" Type="nvarchar(max)" />
+          <Property Name="ContactUs" Type="nvarchar(max)" />
+          <Property Name="TermsAndConditions" Type="nvarchar(max)" />
+          <Property Name="PrivacyPolicy" Type="nvarchar(max)" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'semplest.dbo.vwCreditCardTransactionDetail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -2933,6 +2945,7 @@
             <Parameter Name="EndDate" Mode="In" Type="DateTime" />
           </FunctionImport>
           <EntitySet Name="Configurations" EntityType="SemplestModel.Configuration" />
+          <EntitySet Name="WebsiteWebContents" EntityType="SemplestModel.WebsiteWebContent" />
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -4925,6 +4938,17 @@
           <Property Type="Boolean" Name="MSNUseSandbox" />
           <Property Type="Boolean" Name="DoNotLaunchAdServices" Nullable="false" />
         </EntityType>
+        <EntityType Name="WebsiteWebContent">
+          <Key>
+            <PropertyRef Name="WebContentPK" />
+          </Key>
+          <Property Type="Int32" Name="WebContentPK" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="FAQ" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="AboutUs" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ContactUs" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TermsAndConditions" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PrivacyPolicy" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -5911,6 +5935,18 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="WebsiteWebContents">
+            <EntityTypeMapping TypeName="SemplestModel.WebsiteWebContent">
+              <MappingFragment StoreEntitySet="WebsiteWebContent">
+                <ScalarProperty Name="PrivacyPolicy" ColumnName="PrivacyPolicy" />
+                <ScalarProperty Name="TermsAndConditions" ColumnName="TermsAndConditions" />
+                <ScalarProperty Name="ContactUs" ColumnName="ContactUs" />
+                <ScalarProperty Name="AboutUs" ColumnName="AboutUs" />
+                <ScalarProperty Name="FAQ" ColumnName="FAQ" />
+                <ScalarProperty Name="WebContentPK" ColumnName="WebContentPK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -6714,6 +6750,7 @@
           <ConnectorPoint PointX="11.65625" PointY="68.605286458333353" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.Configuration" Width="1.5" PointX="9.375" PointY="8.75" Height="21.210429687499982" />
+        <EntityTypeShape EntityType="SemplestModel.WebsiteWebContent" Width="1.5" PointX="11.375" PointY="0.75" Height="2.1725878906249818" />
       </Diagram>
     </Diagrams>
   </Designer>
