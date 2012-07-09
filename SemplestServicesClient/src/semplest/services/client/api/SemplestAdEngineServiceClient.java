@@ -1275,4 +1275,11 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeout);
 		return ret;
 	}
+
+	@Override
+	public List<GoogleViolation> validateGoogleNegativeKeywords(
+			List<String> negativeKeywords) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
