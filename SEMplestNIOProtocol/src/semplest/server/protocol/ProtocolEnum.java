@@ -68,13 +68,29 @@ public class ProtocolEnum
 			return false;
 		}
 	}
+	
 	public static enum PromotionBiddingType
 	{
 		Initial,Ongoing;
 	}
+	
 	public static enum AdEngine
 	{
-		MSN,Google;
+		MSN    (1),
+		Google (2);
+		
+		private final int code;
+		
+		AdEngine(final int code)
+		{
+			this.code = code;
+		}
+		
+		public int getCode()
+		{
+			return code;
+		}
+		
 		public static boolean existsAdEngine(String adEngine)
 		{
 			if (adEngine != null)

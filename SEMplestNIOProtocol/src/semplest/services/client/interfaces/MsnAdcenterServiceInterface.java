@@ -1,5 +1,6 @@
 package semplest.services.client.interfaces;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,8 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	Long createCampaign(Long accountId, String campaignName, BudgetLimitType budgetLimitType, double dailyBudget, double monthlyBudget, CampaignStatus CampaignStatus) throws Exception;	
 	Campaign getCampaignById(Long accountId, Long campaignId) throws Exception;	
 	Campaign[] getCampaignsByAccountId(Long accountId) throws Exception;	
-	void pauseCampaignById(Long accountId, Long campaignId) throws Exception;	
+	void pauseCampaignById(Long accountId, Long campaignId) throws Exception;
+	void unpauseCampaignById(Long accountId, Long campaignId) throws RemoteException;
 	void pauseCampaignsByAccountId(Long accountId) throws Exception;	
 	void resumeCampaignById(Long accountId, Long campaignId) throws Exception;	
 	void deleteCampaignById(Long accountId, Long campaignId) throws Exception;	
