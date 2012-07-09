@@ -1108,7 +1108,6 @@ namespace Semplest.Core.Models.Repositories
         {
             using (var dbcontext = new SemplestModel.Semplest())
             {
-
                     var queryProdGrp =
                     from pgs in dbcontext.ProductGroups
                     join pms in dbcontext.Promotions on pgs.ProductGroupPK equals pms.ProductGroupFK

@@ -62,7 +62,6 @@
             <input type="hidden" id="IsLaunched" value="@Model.IsLaunched"/>
             <input type="hidden" id="IsCompleted" value="@Model.IsCompleted"/>
             @Html.HiddenFor(model => @Model.AdModelProp.IsNew)
-            <input type="hidden" id="" value="@ViewBag.IsNew"/>
             <img id="displayBox" style="display: none" />
             <div id="InvalidDescriptionWindow" style="display: none; text-align: center; font-weight: bold;">
                 <div class="InvalidDescriptionText">
@@ -96,7 +95,7 @@
         $("#btnThree").addClass('selected');
     }
     $(document).ready(function() {
-        if ($('#IsNew').val() == 'False') {
+        if ($('#AdModelProp_IsNew').val() == 'False') {
             enableDisable();
             if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True') {
                 openAllTabs(false);
@@ -116,7 +115,7 @@
     var onSelect = function (e) {
 
         var formDirty = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
-        if (formClean != formDirty && $('#IsNew').val() != 'True') {
+        if (formClean != formDirty && $('#AdModelProp_IsNew').val() != 'True') {
             var dirtyFormWindow = $('#DirtyFormWindow').kendoWindow({
                     resizable: false,
                     modal: true,
