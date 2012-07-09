@@ -888,6 +888,11 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 			}
 		}
 	}
+	@Override
+	public String checkStatus(String input) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 

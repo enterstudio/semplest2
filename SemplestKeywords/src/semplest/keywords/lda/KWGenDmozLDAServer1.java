@@ -921,6 +921,11 @@ public class KWGenDmozLDAServer1 implements SemplestKeywordLDAServiceInterface{
 			e.printStackTrace();
 		}
 	} */
+	@Override
+	public String checkStatus(String input) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 
