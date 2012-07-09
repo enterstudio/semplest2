@@ -19,7 +19,7 @@ public class TrafficEstimatorGetRetriableGoogleOperation extends AbstractRetriab
 		this.selector = selector;
 	}
 	
-	protected TrafficEstimatorResult porformCustomOperation() throws ApiException, RemoteException
+	protected TrafficEstimatorResult performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

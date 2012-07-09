@@ -19,7 +19,7 @@ public class CampaignCriterionGetRetriableGoogleOperation extends AbstractRetria
 		this.selector = selector;
 	}
 	
-	protected CampaignCriterionPage porformCustomOperation() throws ApiException, RemoteException
+	protected CampaignCriterionPage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

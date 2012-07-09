@@ -19,7 +19,7 @@ public class InfoServiceGetRetriableGoogleOperation extends AbstractRetriableGoo
 		this.selector = selector;
 	}
 	
-	protected ApiUsageInfo porformCustomOperation() throws ApiException, RemoteException
+	protected ApiUsageInfo performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}			

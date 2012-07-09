@@ -19,7 +19,7 @@ public class DataServiceCriterionBidLandscapeGetRetriableGoogleOperation extends
 		this.selector = selector;
 	}
 	
-	protected CriterionBidLandscapePage porformCustomOperation() throws ApiException, RemoteException
+	protected CriterionBidLandscapePage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.getCriterionBidLandscape(selector);	
 	}		

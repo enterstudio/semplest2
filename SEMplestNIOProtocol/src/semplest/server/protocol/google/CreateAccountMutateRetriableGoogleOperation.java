@@ -19,7 +19,7 @@ public class CreateAccountMutateRetriableGoogleOperation extends AbstractRetriab
 		this.operations = operations;
 	}
 	
-	protected Account[] porformCustomOperation() throws ApiException, RemoteException
+	protected Account[] performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.mutate(operations);	
 	}		

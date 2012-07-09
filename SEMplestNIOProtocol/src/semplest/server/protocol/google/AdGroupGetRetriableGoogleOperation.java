@@ -19,7 +19,7 @@ public class AdGroupGetRetriableGoogleOperation extends AbstractRetriableGoogleO
 		this.selector = selector;
 	}
 	
-	protected AdGroupPage porformCustomOperation() throws ApiException, RemoteException
+	protected AdGroupPage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

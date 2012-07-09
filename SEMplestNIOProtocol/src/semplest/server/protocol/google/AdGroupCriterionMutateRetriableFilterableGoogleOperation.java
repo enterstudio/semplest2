@@ -37,7 +37,7 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 	}
 
 	@Override
-	protected AdGroupCriterionReturnValue porformCustomOperation() throws ApiException, RemoteException
+	protected AdGroupCriterionReturnValue performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.mutate(operations);
 	}
@@ -46,18 +46,17 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 	protected void handleApiException(final ApiException e) throws Exception
 	{
 		final String errMsg = "Problem performing operation: " + e.dumpToString();
-		logger.error(errMsg, e);
 		final RateExceededError rateExceededError = getRateExceededError(e);
 		final List<GoogleViolation> googleViolations = SemplestUtils.getGoogleViolations_v201109(e);
 		if (rateExceededError != null)
 		{
 			final Integer retryAfterSeconds = getRetryAfterSeconds(rateExceededError);
-			logger.info("Encountered RateExceededError.  Will sleep for " + retryAfterSeconds + " seconds");
+			logger.info(errMsg + ".  Encountered RateExceededError.  Will sleep for " + retryAfterSeconds + " seconds");
 			Thread.sleep(retryAfterSeconds * SemplestUtils.SECOND);
 		}
 		else if (googleViolations != null)
 		{
-			logger.info("Encountered PolicyViolationError(s):\n" + SemplestUtils.getEasilyReadableString(googleViolations));
+			logger.info(errMsg + ".  Encountered PolicyViolationError(s):\n" + SemplestUtils.getEasilyReadableString(googleViolations));
 			filterRequest(googleViolations);
 		}
 		else

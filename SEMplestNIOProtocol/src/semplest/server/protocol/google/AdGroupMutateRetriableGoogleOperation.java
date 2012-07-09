@@ -19,7 +19,7 @@ public class AdGroupMutateRetriableGoogleOperation extends AbstractRetriableGoog
 		this.operations = operations;
 	}
 	
-	protected AdGroupReturnValue porformCustomOperation() throws ApiException, RemoteException
+	protected AdGroupReturnValue performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.mutate(operations);	
 	}		

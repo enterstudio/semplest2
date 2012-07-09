@@ -19,7 +19,7 @@ public class CampaignMutateRetriableGoogleOperation extends AbstractRetriableGoo
 		this.operations = operations;
 	}
 	
-	protected CampaignReturnValue porformCustomOperation() throws ApiException, RemoteException
+	protected CampaignReturnValue performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.mutate(operations);	
 	}		

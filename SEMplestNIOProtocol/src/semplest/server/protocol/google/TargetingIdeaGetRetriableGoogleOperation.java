@@ -19,7 +19,7 @@ public class TargetingIdeaGetRetriableGoogleOperation extends AbstractRetriableG
 		this.selector = selector;
 	}
 	
-	protected TargetingIdeaPage porformCustomOperation() throws ApiException, RemoteException
+	protected TargetingIdeaPage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

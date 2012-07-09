@@ -19,7 +19,7 @@ public class CampaignGetRetriableGoogleOperation extends AbstractRetriableGoogle
 		this.selector = selector;
 	}
 	
-	protected CampaignPage porformCustomOperation() throws ApiException, RemoteException
+	protected CampaignPage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

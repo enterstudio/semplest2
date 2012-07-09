@@ -19,7 +19,7 @@ public class DataServiceAdGroupBidLandscapeGetRetriableGoogleOperation extends A
 		this.selector = selector;
 	}
 	
-	protected AdGroupBidLandscapePage porformCustomOperation() throws ApiException, RemoteException
+	protected AdGroupBidLandscapePage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.getAdGroupBidLandscape(selector);	
 	}		

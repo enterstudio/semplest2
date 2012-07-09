@@ -30,7 +30,7 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 			try 
 			{
 				logger.info("Attempt #" + i);
-				return porformCustomOperation();					
+				return performCustomOperation();					
 			}
 			catch (ApiException e)
 			{
@@ -40,7 +40,7 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 		throw new Exception("Problem performing operation because maximum num of retries reached [" + maxRetries + "]");
 	}
 	
-	protected abstract T porformCustomOperation() throws ApiException, RemoteException;
+	protected abstract T performCustomOperation() throws ApiException, RemoteException;
 	
 	protected void handleApiException(final ApiException e) throws Exception
 	{

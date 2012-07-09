@@ -42,6 +42,7 @@ import semplest.server.protocol.google.AdGroupCriterionMutateRetriableFilterable
 import semplest.server.protocol.google.AdGroupCriterionMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupGetRetriableGoogleOperation;
 import semplest.server.protocol.google.AdGroupMutateRetriableGoogleOperation;
+import semplest.server.protocol.google.CampaignCriterionMutateRetriableFilterableGoogleOperation;
 import semplest.server.protocol.google.GoogleViolation;
 import semplest.server.protocol.google.BudgetOrderMutateRetriableGoogleOperation;
 import semplest.server.protocol.google.CampaignAdExtensionGetRetriableGoogleOperation;
@@ -2256,7 +2257,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			operation.setOperator(Operator.ADD);
 			final CampaignCriterionOperation[] operations = { operation };
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
-			final CampaignCriterionMutateRetriableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableGoogleOperation(campaignCriterionService, operations, 10);
+			final CampaignCriterionMutateRetriableFilterableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableFilterableGoogleOperation(campaignCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignCriterionReturnValue results = retriableOperation.performOperation();
 			final KeywordDataObject bidRes = new KeywordDataObject();
 			if (results != null && results.getValue() != null && (results.getValue(0) instanceof CampaignCriterion))

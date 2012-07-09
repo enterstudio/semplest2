@@ -19,7 +19,7 @@ public class AdGroupCriterionGetRetriableGoogleOperation extends AbstractRetriab
 		this.selector = selector;
 	}
 	
-	protected AdGroupCriterionPage porformCustomOperation() throws ApiException, RemoteException
+	protected AdGroupCriterionPage performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.get(selector);	
 	}		

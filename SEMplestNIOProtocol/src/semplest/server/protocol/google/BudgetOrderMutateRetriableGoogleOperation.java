@@ -16,7 +16,7 @@ public class BudgetOrderMutateRetriableGoogleOperation extends AbstractRetriable
 		this.operations = operations;
 	}
 	
-	protected com.google.api.adwords.v201109_1.billing.BudgetOrderReturnValue porformCustomOperation() throws ApiException, RemoteException
+	protected com.google.api.adwords.v201109_1.billing.BudgetOrderReturnValue performCustomOperation() throws ApiException, RemoteException
 	{
 		return service.mutate(operations);	
 	}		
