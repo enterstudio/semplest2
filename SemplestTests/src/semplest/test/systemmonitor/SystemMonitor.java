@@ -2,6 +2,8 @@ package semplest.test.systemmonitor;
 
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -17,9 +19,10 @@ import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.api.SemplestAdEngineServiceClient;
 import semplest.test.other.InstallationSetup.ServerConfiguration;
+import semplest.test.scalability.KeywordTestThread;
 import semplest.test.systemmonitor.MonitorData.SERVER;
 
-public class SystemMonitoring {	
+public class SystemMonitor {	
 	
 	//Configurations
 	private final static String DevEsbUrl = "http://VMDEVJAVA1:9898/semplest";		
@@ -28,21 +31,18 @@ public class SystemMonitoring {
 	
 	private static HashMap<SERVER, MonitorData> monitorDataTemplate = new HashMap<SERVER, MonitorData>();		
 	
-	
-	public void Monitor_BiddingService(){
+	public static void main(String[] args){		
+		
+		init();
+		
+		ExecutorService executor = Executors.newCachedThreadPool();
+		int interval = 1;		//check system status every 10 minutes	
+		
+		executor.execute(new AdEngineMonitorThread(interval, monitorDataTemplate));
 		
 	}
 	
-	public void Monitor_KeywordService(){
-		
-	}
-	
-	public void Monitor_SchedulerService(){
-		//Both Scheduler and Database are tested in this part
-		
-	}
-	
-	public void init(){
+	public static void init(){
 		try{
 			//Load configurations
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
