@@ -2013,6 +2013,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		keyword.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
 		keyword.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);
 		keyword.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
+		keyword.setStatus(KeywordStatus.Paused);
 		if (matchType == MatchType.Exact)
 		{
 			keyword.setExactMatchBid(bid);
@@ -2046,7 +2047,76 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			throw new RemoteException(e2.dumpToString());
 		}
 	}
+	
+	public Boolean updateKeywordStatus(Long accountID, Long adGroupID, Map<Long,Boolean> kwCriterionIsActive) throws Exception{
+		logger.info("Will try to Update Keyword Status by ID for KeywordId [" + SemplestUtils.getEasilyReadableString(kwCriterionIsActive) + "], " +
+				"AccountID [" + accountID + "], AdGroupId [" + adGroupID + "]");
+		ICampaignManagementService campaignManagement = getCampaignManagementService(accountID);
+		List<List<Long>> kwBatchPause = null;
+		List<List<Long>> kwBatchResume = null;
 
+		if(!kwCriterionIsActive.keySet().isEmpty()){
+			ArrayList<Long> kwListIdsPause = new ArrayList<Long>();
+			ArrayList<Long> kwListIdsResume = new ArrayList<Long>();
+			for(Long kwIdfromMap : kwCriterionIsActive.keySet()){
+				if(kwCriterionIsActive.get(kwIdfromMap)){
+					kwListIdsResume.add(kwIdfromMap);
+				}else if(!kwCriterionIsActive.get(kwIdfromMap)){
+					kwListIdsPause.add(kwIdfromMap);
+				}else{
+					throw new Exception("Not a valid value in Map for KewyordId ["+kwIdfromMap+"]");
+				}
+			}
+			
+			kwBatchResume = SemplestUtils.getBatches(kwListIdsResume, 1000);
+			kwBatchPause = SemplestUtils.getBatches(kwListIdsPause, 1000);
+		}else{
+			throw new Exception("The input map is empty");
+		}
+		try
+		{
+			for(List<Long> kwListPause : kwBatchPause){
+				if(!kwListPause.isEmpty()){
+					long[] kwIds = new long[kwListPause.size()];
+					int index = 0;
+					for(Long kw : kwListPause){
+						kwIds[index ++] = kw;
+					}
+					PauseKeywordsRequest pauseReq = new PauseKeywordsRequest();
+					pauseReq.setAdGroupId(adGroupID);
+					pauseReq.setKeywordIds(kwIds);
+					campaignManagement.pauseKeywords(pauseReq);
+				}
+			}
+			for(List<Long> kwListResume : kwBatchResume){
+				if(!kwListResume.isEmpty()){
+					long[] kwIds = new long[kwListResume.size()];
+					int index = 0;
+					for(Long kw : kwListResume){
+						kwIds[index ++] = kw;
+					}
+					ResumeKeywordsRequest resumeReq = new ResumeKeywordsRequest();
+					resumeReq.setAdGroupId(adGroupID);
+					resumeReq.setKeywordIds(kwIds);
+					campaignManagement.resumeKeywords(resumeReq);
+				}
+			}
+		}
+		catch (AdApiFaultDetail e1)
+		{
+			throw new RemoteException(e1.dumpToString());
+		}
+		catch (ApiFaultDetail e2)
+		{
+			throw new RemoteException(e2.dumpToString());
+		} 
+		catch (EditorialApiFaultDetail e3) 
+		{
+			throw new RemoteException(e3.dumpToString());
+		} 
+		return true;
+	}
+	
 	public List<Keyword> getKeywords(List<BidElement> bids)
 	{
 		final List<Keyword> keywords = new ArrayList<Keyword>();

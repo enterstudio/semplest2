@@ -19,10 +19,12 @@ import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
+import semplest.server.service.SemplestConfiguration;
 
 import com.microsoft.adcenter.v8.AdGroup;
 import com.microsoft.adcenter.v8.Bid;
@@ -43,7 +45,7 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "_WeddingHairReduced2";
+	String accountName = "-WeddingHairReduced2";
 	String accountNumber = "X1660053";
 	String url = "www.WeddingChannel.com";
 	String productSubcategory = "Wedding Hair";
@@ -78,6 +80,16 @@ public class MSNAdcenterServiceClientTest {
 		
 		try
 		{	
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
+		
 			BasicConfigurator.configure();
 			MSNAdcenterServiceClientTest msn = new MSNAdcenterServiceClientTest();
 			
@@ -86,14 +98,15 @@ public class MSNAdcenterServiceClientTest {
 			msn.getAccountID();
 			logger.info(msn.accountID);
 			msn.getIds();
+			msn.updateStatus(true);
 			
-			msn.setGeoTarget();
+			//msn.setGeoTarget();
 			/*Calendar cal = Calendar.getInstance();
 			MonthAndYear startMonth = new MonthAndYear();
 			startMonth.setMonth(cal.get(Calendar.MONTH) + 1);
 			startMonth.setYear(cal.get(Calendar.YEAR) - 1);
 			*/
-			//msn.insertKeywords("/semplest/data/biddingTest/StudioBloom/keywords.txt");
+			//msn.insertKeywords("/semplest/data/biddingTest/Recruiting/keywords.txt");
 			//msn.updateBidAllKeywords();
 			//msn.deletaAllKeywords();
 			//msn.insertKeywords2("/semplest/data/biddingTest/WeddingHair/msnSuggestedKw.txt");
@@ -135,6 +148,18 @@ public class MSNAdcenterServiceClientTest {
 	    }
 	    return wordMap;
 	}
+	
+	public void updateStatus(Boolean isActive) throws Exception{
+		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+		HashMap<Long, Boolean> map = new HashMap<Long,Boolean>();
+		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
+		for(Keyword kwrd : kw){
+			System.out.println(kwrd.getText()+" : "+isActive);
+			map.put(kwrd.getId(), isActive);
+		}
+		test.updateKeywordStatus(accountID, adGroupID, map);
+	}
+	
 	public void deletaAllKeywords() throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		Keyword[] kw =test.getKeywordByAdGroupId(accountID, adGroupID);
