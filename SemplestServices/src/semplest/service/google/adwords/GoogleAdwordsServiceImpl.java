@@ -5,6 +5,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
@@ -2238,15 +2239,12 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		KeywordDataObject res = addNegativeKeyWordToAdGroup(data.get("accountID"), adGroupID, data.get("keyword"), KeywordMatchType.fromString(data.get("matchType")));
 		return gson.toJson(res);
 	}
-
-	@Override
-	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception
+	
+	public static List<CampaignCriterionOperation> getNegativeKeywordOperations(String accountID, Long campaignID, List<String> keywords, KeywordMatchType matchType)
 	{
-		logger.info("Will try to Add Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], Keyword [" + keyword + "], KeywordMatchType [" + matchType + "]");
-		try
+		final List<CampaignCriterionOperation> operations = new ArrayList<CampaignCriterionOperation>();
+		for (final String keyword : keywords)
 		{
-			// Log SOAP XML request and response. AdWordsServiceLogger.log();
-			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
 			final Keyword keywrd = new Keyword();
 			keywrd.setText(keyword);
 			keywrd.setMatchType(matchType);
@@ -2256,7 +2254,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignCriterionOperation operation = new CampaignCriterionOperation();
 			operation.setOperand(negativeCampaignCriterion);
 			operation.setOperator(Operator.ADD);
-			final CampaignCriterionOperation[] operations = { operation };
+			operations.add(operation);
+		}		
+		return operations;
+	}
+
+	@Override
+	public KeywordDataObject addNegativeKeyWordToAdGroup(String accountID, Long campaignID, String keyword, KeywordMatchType matchType) throws Exception
+	{
+		logger.info("Will try to Add Negative Keyword for AccountID [" + accountID + "], CampaignID [" + campaignID + "], Keyword [" + keyword + "], KeywordMatchType [" + matchType + "]");
+		try
+		{
+			// Log SOAP XML request and response. AdWordsServiceLogger.log();
+			final AdWordsUser user = new AdWordsUser(email, password, accountID, userAgent, developerToken, useSandbox);
+			final List<String> keywords = Arrays.asList(new String[]{keyword});
+			final List<CampaignCriterionOperation> operationList = getNegativeKeywordOperations(accountID, campaignID, keywords, matchType);
+			final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
 			final CampaignCriterionServiceInterface campaignCriterionService = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
 			final CampaignCriterionMutateRetriableFilterableGoogleOperation retriableOperation = new CampaignCriterionMutateRetriableFilterableGoogleOperation(campaignCriterionService, operations, SemplestUtils.DEFAULT_RETRY_COUNT);
 			final CampaignCriterionReturnValue results = retriableOperation.performOperation();
@@ -3881,14 +3894,14 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
 		final CampaignCriterionServiceInterface validationService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
-		List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
+		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
 		try
 		{
 			validationService.mutate(operations);
 		}
 		catch (ApiException e)
 		{
-			violations = SemplestUtils.getGoogleViolations_v201109(e);
+			violations.addAll(SemplestUtils.getGoogleViolations_v201109(e));
 		}
 		return violations;
 	}
@@ -3901,14 +3914,34 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		final CampaignAdExtensionOperation addOperation = getAddSiteLinksOperation(validationCampaignId, siteLinks);
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
 		final CampaignAdExtensionServiceInterface campaignAdExtensionService = user.getValidationService(AdWordsService.V201109_1.CAMPAIGN_AD_EXTENSION_SERVICE);
-		List<GoogleViolation> validations = null;
+		final List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
 		try
 		{
 			campaignAdExtensionService.mutate(new CampaignAdExtensionOperation[] { addOperation });
 		}
 		catch (com.google.api.adwords.v201109_1.cm.ApiException e)
 		{
-			validations = SemplestUtils.getGoogleViolations_v201109_1(e);
+			validations.addAll(SemplestUtils.getGoogleViolations_v201109_1(e));
+		}
+		return validations;
+	}
+	
+	@Override
+	public List<GoogleViolation> validateNegativeKeywords(final String validationAccountID, final Long validationCampaignId, final List<String> negativeKeywords) throws Exception
+	{
+		logger.info("Will try to Validate Negative Keywords using ValidationAccountID [" + validationAccountID + "], ValidationCampaignID [" + validationCampaignId + "], NegativeKeywords [" + negativeKeywords + "]");
+		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
+		final List<CampaignCriterionOperation> operationList = getNegativeKeywordOperations(validationAccountID, validationCampaignId, negativeKeywords, KeywordMatchType.EXACT);
+		final CampaignCriterionOperation[] operations = operationList.toArray(new CampaignCriterionOperation[operationList.size()]);
+		final CampaignCriterionServiceInterface campaignCriterionService = user.getValidationService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+		final List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
+		try
+		{
+			campaignCriterionService.mutate(operations);
+		}
+		catch (com.google.api.adwords.v201109.cm.ApiException e)
+		{
+			validations.addAll(SemplestUtils.getGoogleViolations_v201109(e));
 		}
 		return validations;
 	}
@@ -4007,9 +4040,10 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return validations;
 	}
-	
+
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input) throws Exception 
+	{
 		return ServiceStatus.Good.getServiceStatusValue();
 	}
 }

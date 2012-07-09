@@ -751,6 +751,13 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 
 	@Override
+	public List<GoogleViolation> validateNegativeKeywords(String validationAccountID, Long validationCampaignId, List<String> negativeKeywords) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
 	public String checkStatus(String input) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("input", input);
@@ -758,7 +765,6 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
 		return ret;
 	}
-	
 
 }
 

@@ -2258,11 +2258,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	
 	public String validateGoogleRefreshSiteLinks(String json) throws Exception
 	{
-		logger.debug("call (String json)" + json);
+		logger.info("JSON [" + json + "]");
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.valueOf(data.get("promotionID"));
 		final List<GoogleViolation> res = validateGoogleRefreshSiteLinks(promotionID);
 		return gson.toJson(res);
+	}
+	
+	public String validateGoogleNegativeKeywords(String json) throws Exception
+	{
+		logger.info("JSON [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String negativeKeywordsString = data.get("negativeKeywords");
+		final List<String> negativeKeywords = gson.fromJson(negativeKeywordsString, SemplestUtils.TYPE_LIST_OF_STRINGS);
+		final List<GoogleViolation> googleValidations = validateGoogleNegativeKeywords(negativeKeywords);
+		return gson.toJson(googleValidations);
+	}
+	
+	@Override
+	public List<GoogleViolation> validateGoogleNegativeKeywords(final List<String> negativeKeywords) throws Exception
+	{
+		logger.info("Will try to Validate Google Negative Keywords [" + negativeKeywords + "]");
+		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);
+		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();				
+		final List<GoogleViolation> googleValidations = googleAdwordsService.validateNegativeKeywords(googleValidationAccount, AdwordsValidationCampaignID, negativeKeywords);
+		return googleValidations;
 	}
 	
 	@Override
@@ -2271,7 +2291,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Validate Refresh SiteLinks associated with PromotionID [" + promotionID + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
-		final List<GoogleViolation> validations = new ArrayList<GoogleViolation>();
 		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);
 		final GetSiteLinksForPromotionSP getSiteLinksForPromotionSP = new GetSiteLinksForPromotionSP();
 		Boolean r = getSiteLinksForPromotionSP.execute(promotionID);
@@ -2281,11 +2300,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Generated the following request to validate the update of Google SiteLinks: " + request.toStringPretty());
 		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();				
 		final List<GoogleViolation> googleValidations = googleAdwordsService.validateRefreshSiteLinks(googleValidationAccount, AdwordsValidationCampaignID, request);
-		if (googleValidations != null)
-		{
-			validations.addAll(googleValidations);
-		}
-		return validations;
+		return googleValidations;
 	}
 
 	public String RefreshSiteLinks(String json) throws Exception
@@ -3049,11 +3064,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			res.addAll(ret);
 		}
 		return res;
-	}	
+	}
 	
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input) throws Exception 
+	{
 		return ServiceStatus.Good.getServiceStatusValue();
 	}
+
 
 }

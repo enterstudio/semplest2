@@ -65,11 +65,18 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		{
 			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations));
 		}
-*/
+
 		// validateGoogleRefreshSiteLinks
 		final Integer promotionID_validateGoogleRefreshSiteLinks = 23;
 		final List<GoogleViolation> googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
 		logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
+*/
+		// validateGoogleNegativeKeywords
+		final List<String> negativeKeywords_validateGoogleNegativeKeywords = Arrays.asList("Prozac", "Cialis", "shit", "fuck");
+		final List<GoogleViolation> googleViolations_validateGoogleNegativeKeywords = client.validateGoogleNegativeKeywords(negativeKeywords_validateGoogleNegativeKeywords);
+		logger.info("Google Violations from validateGoogleNegativeKeywords:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleNegativeKeywords));
+		
+		
 /*
 		// validateGoogleGeoTargets
 		final Integer promotionID_validateGoogleGeoTargets = 33;
@@ -1188,8 +1195,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public void initializeService(String input) throws Exception
 	{
-		// TODO Auto-generated method stub
-		
+		// nothing to do
 	}
 
 	@Override
@@ -1266,13 +1272,38 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 			throw new Exception(errMsg, e);
 		}
 	}
-	
+
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input) throws Exception 
+	{
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
 		jsonHash.put("input", input);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
 		return ret;
 	}
+
+	@Override
+	public List<GoogleViolation> validateGoogleNegativeKeywords(List<String> negativeKeywords) throws Exception
+	{
+		final String methodName = "validateGoogleNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();
+		final String negativeKeywordsString = gson.toJson(negativeKeywords);
+		jsonHash.put("negativeKeywords", negativeKeywordsString);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		try
+		{
+			final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+			final List<GoogleViolation> result = gson.fromJson(returnData, SemplestUtils.TYPE_LIST_OF_GOOGLE_VIOLATIONS);
+			return result;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem performing " + methodName;
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
+	
 }
