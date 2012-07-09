@@ -16,14 +16,15 @@ import semplest.test.systemmonitor.MonitorData.SERVICE;
 public class Notification {
 	
 	private String emailFrom = "nan@semplest.com";
-	private String emailTo = "development@semplest.com";
+	private String emailTo = "nan@semplest.com";
+	//private String emailTo = "development@semplest.com";
 	
-	public void sendNotification(SERVER server, SERVICE service, boolean isServiceHealthy){
-		String downMsg = "[ServiceMonitor] Service Down! " + service.name() + "Service on " + server.name() + ".";
-		String upMsg = "[ServiceMonitor] Service Back to Normal. " + service.name() + "Service on " + server.name() + ".";		
+	public void sendNotification(SERVER server, SERVICE service, String errorMsg){
+		String downMsg = "[System Monitor] ALERT! " + service.name() + " Service on " + server.name() + " box is down!";
+		String upMsg = "[System Monitor] " + service.name() + " Service on " + server.name() + " box is back to normal.";		
 		
-		if(!isServiceHealthy){
-			sendEmail(downMsg, emailFrom, emailTo, downMsg);
+		if(errorMsg != null){
+			sendEmail(downMsg, emailFrom, emailTo, errorMsg);
 		}
 		else{
 			sendEmail(upMsg, emailFrom, emailTo, upMsg);

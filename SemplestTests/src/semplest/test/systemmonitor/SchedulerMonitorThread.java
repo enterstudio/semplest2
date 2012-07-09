@@ -4,20 +4,21 @@ import java.util.HashMap;
 
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.services.client.api.SemplestAdEngineServiceClient;
+import semplest.services.client.api.SemplestSchedulerServiceClient;
 import semplest.test.systemmonitor.MonitorData.SERVER;
 import semplest.test.systemmonitor.MonitorData.SERVICE;
 
-public class AdEngineMonitorThread implements Runnable {
+public class SchedulerMonitorThread implements Runnable {
 
 	private long sleep_time;
 	private HashMap<SERVER, MonitorData> monitorData;
 	private boolean stop = false;	
 	
-	private SERVICE service = SERVICE.AdEngine;
+	private SERVICE service = SERVICE.Scheduler;
 	private String clientTimeout = "30000"; 
 	private Notification alert = new Notification();
 
-	public AdEngineMonitorThread(long interval_min, HashMap<SERVER, MonitorData> monitorDataTemplate) {
+	public SchedulerMonitorThread(long interval_min, HashMap<SERVER, MonitorData> monitorDataTemplate) {
 		this.sleep_time = interval_min * 60 * 1000;		
 		monitorData = monitorDataTemplate;
 	}
@@ -28,9 +29,9 @@ public class AdEngineMonitorThread implements Runnable {
 			try {
 				for(SERVER s : SERVER.values()){
 					String esbUrl = monitorData.get(s).getEsbUrl();
-					SemplestAdEngineServiceClient adEngine = new SemplestAdEngineServiceClient(esbUrl);
+					SemplestSchedulerServiceClient scheduler = new SemplestSchedulerServiceClient(esbUrl);
 					try {
-						String ret = adEngine.checkStatus(clientTimeout);
+						String ret = scheduler.checkStatus(clientTimeout);
 						
 						System.out.println(service.name() + " is running fine on " + s.name());
 						monitorData.get(s).setServiceStatus(service, ServiceStatus.Good);
