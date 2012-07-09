@@ -746,7 +746,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
 						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
 						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ?";
+						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
 				{ promotionID, adEngine.name(), startDateSQL }, reportObjectjMapper);
 			}
@@ -762,7 +762,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
 						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
 						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.CreatedDate >= ? and aerd.CreatedDate <= ?";
+						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ? and aerd.TransactionDate <= ?";
 				return jdbcTemplate.query(strSQL, new Object[]
 				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, reportObjectjMapper);
 			}
