@@ -82,6 +82,13 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 		return gson.fromJson(returnData, Boolean.class);
 	}
 
-	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("input", input);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
+		return ret;
+	}
 
 }

@@ -29,7 +29,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 		 * client.resource("http://localhost:9898/semplest/TestMethod"); String
 		 * s = webResource.get(String.class); System.out.println(s);
 		 */
-		int numThreads = 4;
+		/*int numThreads = 4;
 		Thread[] threads = new Thread[numThreads];
 		for (int i= 0; i < numThreads; i++)
 		{
@@ -37,7 +37,10 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 			threads[i] = new Thread(test);
 			threads[i].start();
 			
-		}
+		}*/
+		
+		TestServiceClient test = new TestServiceClient();
+		test.TestMethod("test");
 		
 
 	}
@@ -112,6 +115,12 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 			logger.error("Problem", e);
 		}
 		
+	}
+
+	@Override
+	public String checkStatus(String input) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

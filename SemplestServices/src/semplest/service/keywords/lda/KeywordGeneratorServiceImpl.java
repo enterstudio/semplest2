@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import semplest.keywords.lda.KWGenDmozLDAServer2;
 import semplest.keywords.javautils.catUtils;
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.service.SemplestConfiguration;
@@ -102,6 +103,11 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 			keywords = new KeywordProbabilityObject[0];
 		}
 		return keywords;
+	}	
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
 	}
 	
 }

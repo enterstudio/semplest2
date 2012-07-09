@@ -186,7 +186,12 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 		runMethod(baseurl, SERVICEOFFERED, "getBidsUpdateNaive", json, timeoutMS);
 	}
 
-
-
-
+	@Override
+	public String checkStatus(String input) throws Exception {
+		HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("input", input);
+		String json = protocolJson.createJSONHashmap(jsonHash);
+		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
+		return ret;
+	}
 }

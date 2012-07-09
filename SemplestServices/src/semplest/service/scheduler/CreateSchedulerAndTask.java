@@ -46,7 +46,7 @@ public class CreateSchedulerAndTask
 		return taskObj;
 	}
 	
-	public static SemplestSchedulerTaskObject getSendMailTask(String subject, String from, String recipient, String msgTxt)
+	public static SemplestSchedulerTaskObject getSendMailTask(String subject, String from, String recipient, String msgTxt, String msgType)
 	{
 		SemplestSchedulerTaskObject taskObj = new SemplestSchedulerTaskObject();
 		//Client service name to call from scheduler
@@ -59,6 +59,7 @@ public class CreateSchedulerAndTask
 		jsonHash.put("from", from);
 		jsonHash.put("recipient", recipient);
 		jsonHash.put("msgTxt", msgTxt);
+		jsonHash.put("msgType", msgType);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		taskObj.setParameters(json);
 		//

@@ -28,6 +28,7 @@ import semplest.other.DateTimeFloored;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.keyword.KeywordMatchingType;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidSimulatorObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -4006,5 +4007,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		}
 		return validations;
 	}
-
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
+	}
 }

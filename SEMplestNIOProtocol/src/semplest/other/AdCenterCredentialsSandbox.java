@@ -5,14 +5,14 @@ import org.apache.log4j.Logger;
 
 public class AdCenterCredentialsSandbox implements AdCenterCredentials 
 {
-	private static final String URI_SAND = "https://sandboxapi.adcenter.microsoft.com";
-	private static final String CAMPAIGN_MANAGEMENT_URL = "https://sandboxapi.adcenter.microsoft.com/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";
-	public static final String CUSTOMER_MANAGEMENT_URL = "https://sharedservices-sbx.adcenterapi.microsoft.com/Api/CustomerManagement/v8/CustomerManagementService.svc?wsdl";
-	private static final String REPORTING_URL = "https://sandboxapi.adcenter.microsoft.com/Api/Advertiser/v8/Reporting/ReportingService.svc?wsdl";
-	//	private static final String AD_INTELLIGENCE_URL = "https://sandboxapi.adcenter.microsoft.com/Api/Advertiser/v8/CampaignManagement/AdIntelligenceService.svc?wsdl";
-	private final String apiUserName; // //"API_SEMplest_SB";
-	private final String apiUserPassword;// = "bing123";
-	private final String userAccessKey;// = "1B907FIJP42U";
+	private static final String URI_SAND = "https://sandbox-ui.adcenter.microsoft.com";
+	private static final String CAMPAIGN_MANAGEMENT_URL = "https://sandbox-api.adcenter.microsoft.com/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";
+	public static final String CUSTOMER_MANAGEMENT_URL = "https://sandbox-sharedservices-api.adcenter.microsoft.com/Api/CustomerManagement/v8/CustomerManagementService.svc?wsdl";
+	private static final String REPORTING_URL = "https://sandbox-api.adcenter.microsoft.com/Api/Advertiser/v8/Reporting/ReportingService.svc?wsdl";
+	//private static final String AD_INTELLIGENCE_URL = "https://sandbox-api.adcenter.microsoft.com/Api/Advertiser/v8/Reporting/ReportingService.svc?wsdl";
+	private final String apiUserName; 
+	private final String apiUserPassword;
+	private final String userAccessKey;
 	
 	private static final Logger log = Logger.getLogger(AdCenterCredentialsSandbox.class);
 	
@@ -67,6 +67,7 @@ public class AdCenterCredentialsSandbox implements AdCenterCredentials
 	@Override
 	public String getAdIntelligenceUrl() {
 		throw new Defect("No V8 Sandbox as of 9/26/2011");
+		//return AD_INTELLIGENCE_URL;
 	}
 	
 	@Override
@@ -76,22 +77,26 @@ public class AdCenterCredentialsSandbox implements AdCenterCredentials
 	
 	@Override
 	public String getCustomerManagementNamespace() {
-		throw new Defect("Unused in Sandbox");
+		//throw new Defect("Unused in Sandbox");
+		return URI_SAND;
 	}
 	
 	@Override
 	public String getCampaignManagementNamespace() {
-		throw new Defect("Unused in Sandbox");
+		//throw new Defect("Unused in Sandbox");
+		return URI_SAND;
 	}
 	
 	@Override
 	public String getAdIntelligenceNamespace() {
-		throw new Defect("Unused in Sandbox");
+		//throw new Defect("Unused in Sandbox");
+		return URI_SAND;
 	}
 	
 	@Override
 	public String getReportingNamespace() {
-		throw new Defect("Unused in Sandbox");
+		//throw new Defect("Unused in Sandbox");
+		return URI_SAND;
 	}
 
 	@Override

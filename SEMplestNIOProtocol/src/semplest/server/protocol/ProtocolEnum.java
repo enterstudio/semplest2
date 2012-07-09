@@ -226,6 +226,25 @@ public class ProtocolEnum
 
 	}
 	
+	public static enum ServiceStatus
+	{
+		Good("Good"), 
+		Bad("Bad");
+		
+		private String val;
+
+		public String getServiceStatusValue()
+		{
+			return val;
+		}
+
+		private ServiceStatus(String value)
+		{
+			val = value;
+		}
+
+	}
+	
 	public static void main(String [] args) {
 		try {
 			System.out.println(ProtocolEnum.SemplestMatchType.getSearchEngineMatchType("EXact", AdEngine.MSN));

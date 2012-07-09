@@ -19,6 +19,7 @@ import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.SemplestConfiguration;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
@@ -119,7 +120,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	{
 		
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-		SemplestSchedulerTaskObject mailTask = CreateSchedulerAndTask.getSendMailTask(subject, from, recipient, msgTxt);
+		SemplestSchedulerTaskObject mailTask = CreateSchedulerAndTask.getSendMailTask(subject, from, recipient, msgTxt, msgType);
 		listOfTasks.add(mailTask);
 		return CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, "EmailSchedule_" + getNextNumber() , new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, null, null, null);
 	}
@@ -134,4 +135,10 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 			return Integer.MIN_VALUE;
 		}
 	}
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
+	}
+	
 }

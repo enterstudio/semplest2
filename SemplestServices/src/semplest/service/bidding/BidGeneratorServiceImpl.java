@@ -12,6 +12,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.service.SemplestConfiguration;
@@ -291,8 +292,11 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 			logger.info("Problem", e);
 		}
 	}
-
 	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
+	}
 
 
 }

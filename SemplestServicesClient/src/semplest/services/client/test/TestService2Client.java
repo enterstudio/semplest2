@@ -111,4 +111,10 @@ public class TestService2Client extends ServiceRun implements TestService2Interf
 		return RunTask(this.getClass(), BASEURLTEST, SERVICEOFFERED, method, jsonParameters,optionalTimeoutMS);
 	}
 
+	@Override
+	public String checkStatus(String input) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

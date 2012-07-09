@@ -40,6 +40,7 @@ import semplest.other.TimeServer;
 import semplest.other.TimeServerImpl;
 import semplest.server.encryption.AESBouncyCastle;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.BidElement;
@@ -3901,5 +3902,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		ReportObject[] ret = new ReportObject[reportObjectList.size()];
 		reportObjectList.toArray(ret);
 		return ret;
+	}	
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
 	}
 }

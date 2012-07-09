@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.SemplestConfiguration;
 import semplest.service.scheduler.SemplestSchedulerService;
 import semplest.services.client.interfaces.TestServiceInterface;
@@ -57,6 +58,11 @@ public class TestService2Impl implements TestServiceInterface
 			object.wait();
 		}
 		
+	}
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
 	}
 
 }

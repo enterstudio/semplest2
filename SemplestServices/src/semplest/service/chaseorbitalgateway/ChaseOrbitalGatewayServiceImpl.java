@@ -8,6 +8,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.chaseorbitalgateway.GatewayReturnObject;
 import semplest.server.service.SemplestConfiguration;
@@ -709,5 +710,10 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 		final CustomerObject customerToCopy = customers.get(0);
 		final GatewayReturnObject response = CreateProfile(customerToCopy);
 		return response;
+	}	
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
 	}
 }

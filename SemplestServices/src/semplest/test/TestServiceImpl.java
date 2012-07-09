@@ -3,6 +3,7 @@ package semplest.test;
 import org.apache.log4j.Logger;
 
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.SemplestConfiguration;
 import semplest.services.client.interfaces.TestServiceInterface;
 
@@ -52,6 +53,9 @@ public class TestServiceImpl implements TestServiceInterface
 		}
 		
 	}
-
-
+		
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
+	}
 }

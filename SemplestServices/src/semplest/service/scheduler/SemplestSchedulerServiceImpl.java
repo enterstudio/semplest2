@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.storedproc.GetNextScheduleJobSP;
@@ -81,5 +82,9 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 		SemplestSchedulerServiceImpl.messageBroker.newMessageFromWebService(newschedule);
 		return true;
 	}
-
+	
+	@Override
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
+	}
 }

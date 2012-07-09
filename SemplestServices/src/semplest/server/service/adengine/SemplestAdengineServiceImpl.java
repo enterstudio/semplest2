@@ -24,6 +24,7 @@ import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.adengine.AdEngineAccountIdGroup;
@@ -3048,19 +3049,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			res.addAll(ret);
 		}
 		return res;
-	}
+	}	
 	
-	public String checkStatus(String json) throws Exception
-	{
-		logger.debug("JSON: [" + json + "]");
-		final String statusResponse = checkStatus();
-		return gson.toJson(statusResponse);
-	}
-
 	@Override
-	public String checkStatus()
-	{
-		return SemplestUtils.STATUS_GOOD;
+	public String checkStatus(String input) throws Exception {
+		return ServiceStatus.Good.getServiceStatusValue();
 	}
 
 }
