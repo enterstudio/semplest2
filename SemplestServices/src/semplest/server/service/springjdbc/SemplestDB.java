@@ -738,7 +738,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			if (endDate == null)
 			{
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
 						+ "from AdvertisingEngineReportData aerd "
 						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
 						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
@@ -754,7 +754,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
-						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost  "
+						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
 						+ "from AdvertisingEngineReportData aerd "
 						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
 						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
