@@ -255,22 +255,23 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				object.wait();
 			}
-			String accountID = "2387614989";// "54104"; //
-			Long adgroupID = 4766339711L;// 3066603844L; //
-			String landingPageURL = "http://www.semplest.com";
+			String accountID = "1419144853";// "54104"; //
+			Long campaignID = 80098839L;
+			Long adgroupID = 3407235519L;// 3066603844L; //
+			/*String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
 			String headline = "hello";
 			String description1 = "This is a test";
 			String description2 = "description2 ";
-
+			*/
 			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
-			List<GoogleViolation> res = test.validateAd(accountID, adgroupID, landingPageURL, displayURL, headline, description1, description2);
+			/*List<GoogleViolation> res = test.validateAd(accountID, adgroupID, landingPageURL, displayURL, headline, description1, description2);
 			if (!res.isEmpty())
 			{
 				logger.info("Validations: " + SemplestUtils.getEasilyReadableString(res));
 			}
 
-			/*
+			
 			 * final GoogleAddAdRequest req = new GoogleAddAdRequest(75, "555555555frozen yogurt", "1111111any flavor", "33333333333healthy");
 			 * 
 			 * final List<GoogleAddAdRequest> addAdTextRequests = new ArrayList<GoogleAddAdRequest>(); addAdTextRequests.add(req); final
@@ -454,7 +455,26 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			 * "QualityScore: " + t.getQualityScore()+ "; " + "ApprovalStatus: " + t.getApprovalStatus()+ "; " + "FirstPageCPC: " +
 			 * t.getFirstPageCPC()+ "; " + "TransactionDate: " + t.getTransactionDate()+ "; " + "AccountID: " + t.getAccountID()+ "; " +
 			 * "CampaignID: " + t.getCampaignID()+ "; " + "Cost: " + t.getMicroCost() + "; " ); } //
-			 */
+			 
+			
+			ArrayList<HashMap<String, String>> campaigns = test.getCampaignsByAccountId(accountID, false);
+			System.out.println("campaigns # " + campaigns.size());
+			HashMap<String,String> map =campaigns.get(0);
+			Set<String> kset = map.keySet();
+			for(String aux : kset){
+				System.out.println(aux+" : "+map.get(aux));
+			}
+			GoogleAdGroupObject[] adgrp = test.getAdGroupsByCampaignId(accountID, campaignID, false);
+			System.out.println("AdGroupId: "+adgrp[0].getAdGroupID());
+			*/
+			KeywordDataObject[] keywords= test.getAllBiddableAdGroupCriteria(accountID, adgroupID, false);
+			HashMap<Long, Boolean> map = new HashMap<Long,Boolean>();
+			for(KeywordDataObject kw : keywords){
+				System.out.println(kw.getKeyword()+" : "+kw.getBidID());
+				map.put(kw.getBidID(), true);
+			}
+			test.updateKeywordStatus(accountID, campaignID, adgroupID, map);
+			
 
 		}
 		catch (Exception e)
