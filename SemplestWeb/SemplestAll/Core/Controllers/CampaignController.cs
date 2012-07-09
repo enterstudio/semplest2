@@ -173,6 +173,12 @@ namespace Semplest.Core.Controllers
                             if (gv.Length > 0)
                                 return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                         }
+                        if (model.AdModelProp.NegativeKeywords.Any())
+                        {
+                            gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
+                            if (gv.Length > 0)
+                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        }
 
                         msg =
                             "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";

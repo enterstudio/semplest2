@@ -308,7 +308,7 @@ namespace Semplest.SharedResources.Services
             return listoflist;
         }
 
-        public GoogleViolation[] validateGoogleRefreshSiteLinks(int promotionID)
+        public GoogleViolation[] ValidateGoogleRefreshSiteLinks(int promotionID)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("promotionID", promotionID.ToString());
@@ -320,7 +320,7 @@ namespace Semplest.SharedResources.Services
             return listoflist;
         }
 
-        public GoogleViolation[] validateGoogleGeoTargets(int promotionID)
+        public GoogleViolation[] ValidateGoogleGeoTargets(int promotionID)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("promotionID", promotionID.ToString());
@@ -331,8 +331,22 @@ namespace Semplest.SharedResources.Services
             var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
             return listoflist;
         }
+
+        public GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
+            jsonHash.Add("negativeKeywords", negativeKeywordsStr);
+            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleNegativeKeywords", JsonConvert.SerializeObject(jsonHash), timeoutMS);
+            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+            List<string> lis = dict.Values.ToList();
+            string jsonstrlist = lis[0];
+            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+            return listoflist;
+        }
          
         #endregion
+
         private Thread _workerThread;
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {

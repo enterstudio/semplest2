@@ -45,5 +45,6 @@ namespace Semplest.Core.Models.Repositories
         GoogleViolation[] ValidateSiteLinks(int promoId);
         GoogleViolation[] ValidateGeotargeting(int promoId);
         GoogleViolation[] ValidateAds(string landingPageURL, string displayURL, List<GoogleAddAdRequest> ads);
+        GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords);
     }
 }

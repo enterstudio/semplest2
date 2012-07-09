@@ -1089,19 +1089,25 @@ namespace Semplest.Core.Models.Repositories
         public GoogleViolation[] ValidateSiteLinks(int promoId)
         {
             var sw = new ServiceClientWrapper();
-            return sw.validateGoogleRefreshSiteLinks(promoId);
+            return sw.ValidateGoogleRefreshSiteLinks(promoId);
         }
 
         public GoogleViolation[] ValidateGeotargeting(int promoId)
         {
             var sw = new ServiceClientWrapper();
-            return sw.validateGoogleGeoTargets(promoId);
+            return sw.ValidateGoogleGeoTargets(promoId);
         }
 
         public GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
         {
             var sw = new ServiceClientWrapper();
             return sw.ValidateGoogleAd(landingPageURL, displayURL, ads);
+        }
+
+        public GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords)
+        {
+            var sw = new ServiceClientWrapper();
+            return sw.ValidateGoogleNegativeKeywords(negativeKeywords);
         }
 
         public bool DoesPromotionExist(string prodGroup, string promotionName, int custFk)
