@@ -1,6 +1,7 @@
 package semplest.bidding.optimization;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -63,6 +64,29 @@ public class BidOptimizer implements java.io.Serializable {
 	}
 
 
+	public HashMap<String,Double> getCPCPercentilePoint(double percentileValue, double marginFactor){
+
+		HashMap<String,Double> bidData = new HashMap<String,Double>();
+		
+		double [] bidArray = new double[wordList.size()]; 
+
+	    ParametricFunction f = new GammaCurve();
+
+		for(int i=0;i<wordList.size();i++){
+			double [] cpcParam = wordList.get(i).getCPCInfo();
+			Double amplitude = f.getScalingCoeff(cpcParam);
+			bidData.put(wordList.get(i).getKeyWord(), getBidForTargetCPC(wordList.get(i).getCPCInfo(), amplitude*percentileValue/100.0));
+			bidArray[i]=bidData.get(wordList.get(i).getKeyWord());			
+		}
+
+		Arrays.sort(bidArray);
+		double medianBid = bidArray[bidArray.length/2];
+		for(int i=0;i<wordList.size();i++){
+			bidData.put(wordList.get(i).getKeyWord(),Math.min(bidData.get(wordList.get(i).getKeyWord()),medianBid*marginFactor));
+		}
+		
+		return bidData;
+	}
 	
 		
 	public HashMap<String,Double> optimizeBids(){

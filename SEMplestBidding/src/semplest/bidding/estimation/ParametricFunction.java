@@ -7,4 +7,6 @@ public interface ParametricFunction {
 	double derivative(double[] input, double[] parameters);
 
 	void setMinBid(double minBid);
+	
+	Double getScalingCoeff(double[] parameters);
 }

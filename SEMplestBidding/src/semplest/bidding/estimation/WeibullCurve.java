@@ -76,6 +76,26 @@ public class WeibullCurve implements ParametricFunction {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public Double getScalingCoeff(double[] parameters) {
+
+		double scaling;
+		switch (parameters.length){
+		case 2:
+			
+			return null;
+		case 3:
+			scaling = parameters[2];
+//			return Math.max(0.0, scaling*(1-Math.exp(-Math.pow((x/lambda),theta))));
+			return new Double(scaling);
+		case 4:
+			scaling = parameters[2];
+			return new Double(scaling);
+		default: 
+			return null;
+		}
+	}
 }
 
 //package semplest.bidding.estimation;

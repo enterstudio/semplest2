@@ -118,4 +118,15 @@ public class GammaCurve implements ParametricFunction {
     System.out.println("Expected: 2.398413, got: " + result);
   }
 
+@Override
+public Double getScalingCoeff(double[] parameters) {
+	double amplitude = 1.0;
+
+    // compute the result. will depend on how many parameters were provided
+    if (parameters.length >= 3) {
+      amplitude = parameters[2];
+    }
+    return new Double(amplitude);
+}
+
 }

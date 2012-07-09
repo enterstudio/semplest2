@@ -3,6 +3,8 @@ package semplest.bidding.test;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.log4j.BasicConfigurator;
+
 import semplest.bidding.optimization.BidOptimizer;
 import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
@@ -11,6 +13,11 @@ import semplest.bidding.optimization.KeyWord;
 public class TestBidAlgorithm {
 
 	public static void main(String[] args) {
+		
+		BasicConfigurator.configure();
+
+		
+		
 		ArrayList<String> lines;
 		int i, j;
 		

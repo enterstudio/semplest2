@@ -25,4 +25,9 @@ public class GaussPdf implements ParametricFunction {
 		
 	}
 
+	@Override
+	public Double getScalingCoeff(double[] parameters) {
+		return new Double(1.0);
+	}
+
 }
