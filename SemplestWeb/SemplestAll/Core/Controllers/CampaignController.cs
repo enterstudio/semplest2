@@ -115,7 +115,7 @@ namespace Semplest.Core.Controllers
                 else
                 {
                     var custFK = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
-                    if (_campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName, custFK))
+                    if (model.AdModelProp.IsNew && _campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName, custFK))
                     {
                         return Json("The promotion already exists.");
                     }
