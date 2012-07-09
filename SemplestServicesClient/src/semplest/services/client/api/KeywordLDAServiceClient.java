@@ -159,11 +159,11 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 	}
 
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String timeout) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("input", input);
+		jsonHash.put("input", timeout);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
+		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeout);
 		return ret;
 	}
 
