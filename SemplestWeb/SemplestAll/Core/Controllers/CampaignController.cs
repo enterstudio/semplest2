@@ -37,7 +37,7 @@ namespace Semplest.Core.Controllers
 
             if (command == "") command = "";
 
-            var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller" };
+            var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
             Logger.Write(logEnty);
             //var logService = new LogService();
             //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
@@ -53,7 +53,7 @@ namespace Semplest.Core.Controllers
             ViewBag.IsLaunched = false;
             ViewBag.IsCompleted = false;
             ViewBag.IsLaunchedAndCompleted = false;
-            ViewBag.IsNew = true;
+            cs.AdModelProp.IsNew = true;
 
             return View(cs);
         }
@@ -108,81 +108,103 @@ namespace Semplest.Core.Controllers
         {
             try
             {
-                if (ModelState.IsValid)
+                if (!ModelState.IsValid)
                 {
-                    model.SiteLinks = (List<SiteLink>)Session["SiteLinks"];
-                    model.AdModelProp.NegativeKeywords = (List<string>)Session["NegativeKeywords"];
-                    // we need save to database the ProductGroup and Promotion information
-                    //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
-                    int userid =
-                        ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-
-                    //int userid = 1; // for testing
-                    string msg =
-                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                        model.ProductGroup.ProductPromotionName);
-                    var logEnty = new LogEntry { ActivityId = Guid.NewGuid(), Message = msg };
-                    Logger.Write(logEnty);
-                    _campaignRepository.SaveProductGroupAndCampaign(userid, model, (CampaignSetupModel)Session["CampaignSetupModel"]);
-                    var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                         model.ProductGroup.ProductPromotionName);                    
-                   
-                    List<GoogleAddAdRequest> verifyAds = model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
-                                                                                                                       {
-                                                                                                                           promotionAdID = promoId, headline = pad.AdTitle, description1 = pad.AdTextLine1, description2 = pad.AdTextLine2
-                                                                                                                       }).ToList();
-
-
-                    GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl, model.AdModelProp.DisplayUrl, verifyAds);
-                    if (gv.Length > 0)
-                        return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) || !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
-                    {
-                        gv = _campaignRepository.ValidateGeotargeting(promoId);
-                        if (gv.Length > 0)
-                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    }
-                    if (model.SiteLinks != null && model.SiteLinks.Any())
-                    {
-                        gv = _campaignRepository.ValidateSiteLinks(promoId);
-                        if (gv.Length > 0)
-                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                    }
-
-                    msg =
-                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                        model.ProductGroup.ProductPromotionName);
-                    logEnty.Message = msg;
-                    Logger.Write(logEnty);
-
-                    msg =
-                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                        model.ProductGroup.ProductPromotionName);
-                    logEnty.Message = msg;
-                    Logger.Write(logEnty);
-
-                    // get the categoris from the web service
-                    model = _campaignRepository.GetCategories(model);
-
-                    msg =
-                        "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
-                    msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                        model.ProductGroup.ProductPromotionName);
-                    logEnty.Message = msg;
-                    Logger.Write(logEnty);
-
-                    // save this some how while getting the keywords this is becoming null
-                    Session.Add("AllCategories", model.AllCategories);
-                    //Session.Add("AdModelProp", model.AdModelProp);
-                    //Session.Add("ProductGroup", model.ProductGroup);
-                    return Json("Categories");
+                    return Json("ModelState Invalid required data is missing");
                 }
-                return Json("ModelState Invalid required data is missing");
+                else
+                {
+                    var custFK = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
+                    if (_campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName, custFK))
+                    {
+                        return Json("The promotion already exists.");
+                    }
+                    else
+                    {
+                        model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
+                        model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
+                        // we need save to database the ProductGroup and Promotion information
+                        //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                        int userid =
+                            ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
 
-                //return View(model);
+                        //int userid = 1; // for testing
+                        string msg =
+                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
+                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                            model.ProductGroup.ProductPromotionName);
+                        var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
+                        Logger.Write(logEnty);
+
+                        //Promotion promo = _campaignRepository.GetPromotionFromProductGroup(updateProdGrp, model.ProductGroup.ProductPromotionName);
+                        _campaignRepository.SaveProductGroupAndCampaign(userid, model,
+                                                                        (CampaignSetupModel)
+                                                                        Session["CampaignSetupModel"]);
+                        var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                                                         model.ProductGroup.ProductPromotionName);
+
+                        List<GoogleAddAdRequest> verifyAds =
+                            model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
+                                                                                          {
+                                                                                              promotionAdID = promoId,
+                                                                                              headline = pad.AdTitle,
+                                                                                              description1 =
+                                                                                                  pad.AdTextLine1,
+                                                                                              description2 =
+                                                                                                  pad.AdTextLine2
+                                                                                          }).ToList();
+
+
+                        GoogleViolation[] gv = _campaignRepository.ValidateAds(model.AdModelProp.LandingUrl,
+                                                                               model.AdModelProp.DisplayUrl, verifyAds);
+                        if (gv.Length > 0)
+                            return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        if (!string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Address) ||
+                            !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().City) ||
+                            !string.IsNullOrEmpty(model.AdModelProp.Addresses.First().Zip))
+                        {
+                            gv = _campaignRepository.ValidateGeotargeting(promoId);
+                            if (gv.Length > 0)
+                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        }
+                        if (model.SiteLinks != null && model.SiteLinks.Any())
+                        {
+                            gv = _campaignRepository.ValidateSiteLinks(promoId);
+                            if (gv.Length > 0)
+                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+                        }
+
+                        msg =
+                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
+                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                            model.ProductGroup.ProductPromotionName);
+                        logEnty.Message = msg;
+                        Logger.Write(logEnty);
+
+                        msg =
+                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
+                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                            model.ProductGroup.ProductPromotionName);
+                        logEnty.Message = msg;
+                        Logger.Write(logEnty);
+
+                        // get the categoris from the web service
+                        model = _campaignRepository.GetCategories(model);
+
+                        msg =
+                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
+                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
+                                            model.ProductGroup.ProductPromotionName);
+                        logEnty.Message = msg;
+                        Logger.Write(logEnty);
+
+                        // save this some how while getting the keywords this is becoming null
+                        Session.Add("AllCategories", model.AllCategories);
+                        //Session.Add("AdModelProp", model.AdModelProp);
+                        //Session.Add("ProductGroup", model.ProductGroup);
+                        return Json("Categories");
+                    }
+                }
             }
             catch (Exception ex)
             {

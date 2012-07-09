@@ -286,7 +286,10 @@ namespace Semplest.Core.Models.Repositories
             var dbcontext = InitializeContext();
             var promo = dbcontext.Promotions.FirstOrDefault(p => p.PromotionPK == promoId);
             //only let the user see their promo
-            int customerFk = ((Credential)(System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
+            int customerFk =
+                ((Credential)
+                 (System.Web.HttpContext.Current.Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).
+                    User.CustomerFK.Value;
             if (promo != null && promo.ProductGroup.CustomerFK != customerFk)
                 promo = null;
             // populate model from promotions
@@ -396,6 +399,9 @@ namespace Semplest.Core.Models.Repositories
             var semplestEntities = new SemplestModel.Semplest();
             return semplestEntities.vwProductPromotions.Where(t => t.UserPK == userid);
         }
+
+
+
 
         public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
@@ -744,7 +750,7 @@ namespace Semplest.Core.Models.Repositories
             }
             try
             {
-                
+
                 var adEngines = new List<string>();
                 var promoAds = new List<PromotionAd>();
                 List<int> deleteAds = new List<int>();
@@ -1092,11 +1098,28 @@ namespace Semplest.Core.Models.Repositories
             return sw.validateGoogleGeoTargets(promoId);
         }
 
-        public GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List <GoogleAddAdRequest> ads)
+        public GoogleViolation[] ValidateAds(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
         {
             var sw = new ServiceClientWrapper();
-            return sw.ValidateGoogleAd(landingPageURL, displayURL,  ads);
+            return sw.ValidateGoogleAd(landingPageURL, displayURL, ads);
         }
 
+        public bool DoesPromotionExist(string prodGroup, string promotionName, int custFk)
+        {
+            using (var dbcontext = new SemplestModel.Semplest())
+            {
+
+                    var queryProdGrp =
+                    from pgs in dbcontext.ProductGroups
+                    join pms in dbcontext.Promotions on pgs.ProductGroupPK equals pms.ProductGroupFK
+                    where (pgs.CustomerFK == custFk && pgs.ProductGroupName == prodGroup && pms.PromotionName == promotionName)
+                    select pms;
+
+                if (queryProdGrp.Any())
+                    return true;
+                else
+                    return false;
+            }
+        }
     }
 }

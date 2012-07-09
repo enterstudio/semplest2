@@ -67,7 +67,8 @@ namespace Semplest.Core.Models
 
         public bool IsLaunched { get; set; }
         public bool IsCompleted { get; set; }
-        
+
+
         //added by tudor
         public decimal PercentMedia { get; set; }
         public bool PromotionFeeOverRide  { get; set; }
@@ -98,6 +99,7 @@ namespace Semplest.Core.Models
         public string LandingUrl { get; set; }
         // display url limit 35 characters
         public string DisplayUrl { get; set; }
+        public bool IsNew { get; set; }
     }
 
     public class AdEngineSelectModel
