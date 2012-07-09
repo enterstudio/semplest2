@@ -7,7 +7,7 @@ import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.test.systemmonitor.MonitorData.SERVER;
 import semplest.test.systemmonitor.MonitorData.SERVICE;
 
-public class BiddingServiceMonitorThread implements Runnable {
+public class BiddingMonitorThread implements Runnable {
 
 	private long sleep_time;
 	private HashMap<SERVER, MonitorData> monitorData;
@@ -17,7 +17,7 @@ public class BiddingServiceMonitorThread implements Runnable {
 	private String clientTimeout = "30000"; 
 	private Notification alert = new Notification();
 
-	public BiddingServiceMonitorThread(long interval_min, HashMap<SERVER, MonitorData> monitorDataTemplate) {
+	public BiddingMonitorThread(long interval_min, HashMap<SERVER, MonitorData> monitorDataTemplate) {
 		this.sleep_time = interval_min * 60 * 1000;		
 		monitorData = monitorDataTemplate;
 	}

@@ -27,7 +27,9 @@ public class SystemMonitor {
 	//Configurations
 	private final static String DevEsbUrl = "http://VMDEVJAVA1:9898/semplest";		
 	private final static String TestEsbUrl = "http://VMJAVA1:9898/semplest";		
-	private final static String ProdEsbUrl = "http://VMDEVJAVA1:9898/semplest";			
+	private final static String ProdEsbUrl = "http://10.80.130.64:9898/semplest";	
+	
+	private static int monitorInterval = 10;  //check system status every 10 minutes	
 	
 	private static HashMap<SERVER, MonitorData> monitorDataTemplate = new HashMap<SERVER, MonitorData>();		
 	
@@ -36,9 +38,12 @@ public class SystemMonitor {
 		init();
 		
 		ExecutorService executor = Executors.newCachedThreadPool();
-		int interval = 1;		//check system status every 10 minutes	
 		
-		executor.execute(new AdEngineMonitorThread(interval, monitorDataTemplate));
+		executor.execute(new AdEngineMonitorThread(monitorInterval, monitorDataTemplate));
+		executor.execute(new BiddingMonitorThread(monitorInterval, monitorDataTemplate));
+		executor.execute(new KeywordMonitorThread(monitorInterval, monitorDataTemplate));
+		executor.execute(new SchedulerMonitorThread(monitorInterval, monitorDataTemplate));
+		executor.execute(new MailMonitorThread(monitorInterval, monitorDataTemplate));
 		
 	}
 	
