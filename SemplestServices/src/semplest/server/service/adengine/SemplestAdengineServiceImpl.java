@@ -36,6 +36,7 @@ import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
+import semplest.server.protocol.adengine.PromotionStatus;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestCampaignStatus;
 import semplest.server.protocol.adengine.SiteLink;
@@ -103,26 +104,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 
 			/*
-			 * GetKeywordForAdEngineSP getKeywords = new
-			 * GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
-			 * List<KeywordProbabilityObject> keywordList =
-			 * getKeywords.execute(4,
-			 * (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ?
-			 * true : false ,
-			 * (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true
-			 * : false); keywordList.size();
+			 * GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP(); String advertisingEngine = "Google";
+			 * List<KeywordProbabilityObject> keywordList = getKeywords.execute(4, (advertisingEngine.equalsIgnoreCase(AdEngine.Google.name())) ? true
+			 * : false , (advertisingEngine.equalsIgnoreCase(AdEngine.MSN.name())) ? true : false); keywordList.size();
 			 */
 			/*
-			 * GetAllPromotionDataSP getPromoDataSP = new
-			 * GetAllPromotionDataSP(); getPromoDataSP.execute(60);
-			 * List<GeoTargetObject> geoObjList =
-			 * getPromoDataSP.getGeoTargets(); GoogleAdwordsServiceImpl google =
-			 * new GoogleAdwordsServiceImpl(); for (GeoTargetObject geoObj :
-			 * geoObjList) { Thread.sleep(1000);
-			 * google.setGeoTarget("2387614989", 88453391L,
-			 * geoObj.getLatitude(), geoObj.getLongitude(), geoObj.getRadius(),
-			 * geoObj.getAddress(), geoObj.getCity(), geoObj.getState(),
-			 * geoObj.getZip()); logger.info("Added GeoTarget. Title=" +
+			 * GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP(); getPromoDataSP.execute(60); List<GeoTargetObject> geoObjList =
+			 * getPromoDataSP.getGeoTargets(); GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl(); for (GeoTargetObject geoObj :
+			 * geoObjList) { Thread.sleep(1000); google.setGeoTarget("2387614989", 88453391L, geoObj.getLatitude(), geoObj.getLongitude(),
+			 * geoObj.getRadius(), geoObj.getAddress(), geoObj.getCity(), geoObj.getState(), geoObj.getZip()); logger.info("Added GeoTarget. Title=" +
 			 * geoObj.getAddress());
 			 * 
 			 * }
@@ -137,11 +127,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			/*
-			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList);
-			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
-			*/
+			 * ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); SemplestSchedulerTaskObject
+			 * executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList); listOfTasks.add(executeOngoinBiddingTask);
+			 * CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,
+			 * ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			 */
 
 			final Integer customerID = 12;
 			final Integer productGroupID = 76;
@@ -149,9 +139,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final List<AdEngine> adEngineList = Arrays.asList(AdEngine.MSN);
 			adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
 
-			//adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
-			
-			//SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
+			// adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
+
+			// SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			// adEng.initializeService(null);
 			// Thread.sleep(1000);
 			// Long micro = adEng.calculateDailyMicroBudgetFromMonthly(new
@@ -176,8 +166,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public void initializeService(String input) throws Exception
 	{
 		/*
-		 * Read in the Config Data from DB into HashMap<key, Object>
-		 * SemplestConfiguation.configData
+		 * Read in the Config Data from DB into HashMap<key, Object> SemplestConfiguation.configData
 		 */
 		logger.info("InitializeService");
 		Object object = new Object();
@@ -190,7 +179,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
-		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");  
+		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 	}
 
@@ -203,28 +192,25 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
-		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings); 
+		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
 		AddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(true);
 	}
 
 	@Override
-	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngines)
-			throws Exception
+	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngines) throws Exception
 	{
-	  /*
-	 	TODO: break up this method into separate steps as per below
-	 	 
-		// 1. Create Account - AdWordsService.V201109.CREATE_ACCOUNT_SERVICE
-		// 2. Create Campaign - AdWordsService.V201109.CAMPAIGN_SERVICE
-		// 3. Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE
-		// 4. Create Ads - AdWordsService.V201109.ADGROUP_AD_SERVICE
-		// 5. Set GeoTargets - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE
-		// 6. Set Negative Keywords - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE
-		// 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE
-		// 8. Service call - semplest.service.bidding.BidGeneratorService#setBidsInitial
-		// 9. Schedule OnGoingBidding  
-	 */
+		logger.info("Will try to Add Promotion To AdEngines for CustomerID [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + PromotionID + "], AdEngines [" + adEngines + "]");
+		/*
+		 * TODO: break up this method into separate steps as per below
+		 * 
+		 * // 1. Create Account - AdWordsService.V201109.CREATE_ACCOUNT_SERVICE // 2. Create Campaign - AdWordsService.V201109.CAMPAIGN_SERVICE // 3.
+		 * Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE // 4. Create Ads - AdWordsService.V201109.ADGROUP_AD_SERVICE // 5. Set GeoTargets -
+		 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 6. Set Negative Keywords - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set
+		 * Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service call -
+		 * semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
+		 */
+		SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
 		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines);
 		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
@@ -285,9 +271,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				cal.add(Calendar.DAY_OF_MONTH, 1);
 				final Date startTime = cal.getTime();
 				logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
-				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);				
+				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
 				logger.info("Scheduled ongoing bidding for " + advertisingEngine);
 			}
+			SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
 		}
 		logger.info("Done");
 		return true;
@@ -354,25 +341,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "]");
+			logger.info("Will try to schedule task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "DeleteNegativeKeywords";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteNegativeKeywordTask(customerID, promotionID, keywordIds,
-					adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteNegativeKeywordTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], "
-					+ keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -393,8 +376,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean DeleteNegativeKeywords(Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds ["
-				+ keywordIds + "]");
+		logger.info("Will try to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], and KeywordIds [" + keywordIds + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
@@ -416,8 +398,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final KeywordMatchType keywordMatchType = KeywordMatchType.fromString(keywordMatchTypeString);
 				final List<KeywordProbabilityObject> keywordProbabilities = getKeywordForAdEngineSP.execute(promotionID, true, false);
 				final List<String> keywords = getKeywords(keywordProbabilities, keywordIds);
-				logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size()
-						+ " KeywordProbabilities that were found in database");
+				logger.info("Generated " + keywords.size() + " Keyword strings out of " + keywordProbabilities.size() + " KeywordProbabilities that were found in database");
 				final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 				googleAdwordsService.deleteNegativeKeywords(accountId, campaignId, keywords, keywordMatchType);
 			}
@@ -436,8 +417,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		if (!errorMap.isEmpty())
 		{
-			final String errMsg = "Summary of errors when trying to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines ["
-					+ adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
+			final String errMsg = "Summary of errors when trying to Delete Negative Keywords for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], KeywordIds [" + keywordIds + "]:\n" + SemplestUtils.getEasilyReadableString(errorMap);
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -472,8 +452,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return keywords;
 	}
 
-	public List<KeywordProbabilityObject> getKeywordProbabilitiesForKeywordIds(List<KeywordProbabilityObject> keywordProbabilities,
-			List<Integer> keywordIds)
+	public List<KeywordProbabilityObject> getKeywordProbabilitiesForKeywordIds(List<KeywordProbabilityObject> keywordProbabilities, List<Integer> keywordIds)
 	{
 		final List<KeywordProbabilityObject> keywordProbabilitiesForKeywordIds = new ArrayList<KeywordProbabilityObject>();
 		for (final KeywordProbabilityObject keywordProbability : keywordProbabilities)
@@ -545,7 +524,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Deleting Keywords (at least not yet)";
 				logger.error(errMsg);
 				errorMap.put(adEngine, errMsg);
-			}			
+			}
 		}
 		final Map<Integer, String> keywordIdToCommentMap = new HashMap<Integer, String>();
 		for (final Integer keywordId : keywordIds)
@@ -561,7 +540,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
-	
+
 	public List<KeywordProbabilityObject> getKeywordProbabilities(final List<KeywordProbabilityObject> keywordList, final Boolean isNegative)
 	{
 		final List<KeywordProbabilityObject> keywordProbabilities = new ArrayList<KeywordProbabilityObject>();
@@ -574,7 +553,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return keywordProbabilities;
 	}
-	
+
 	public List<GoogleAddKeywordRequest> getAddKeywordRequests(final List<KeywordProbabilityObject> keywordProbabilities, final KeywordMatchType keywordMatchType, final Long microBidAmount)
 	{
 		final List<GoogleAddKeywordRequest> addKeywordRequests = new ArrayList<GoogleAddKeywordRequest>();
@@ -588,13 +567,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return addKeywordRequests;
 	}
 
-	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine,
-			List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount) throws Exception
+	private void addKeywordsToAdGroup(String accountID, Long campaignID, Integer promotionID, Long adGroupID, AdEngine adEngine, List<KeywordProbabilityObject> keywordList, final String semplestMatchType, Long microBidAmount) throws Exception
 	{
-		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID ["
-				+ promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType
-				+ "], MicroBidAmount [" + microBidAmount + "], " + keywordList.size()
-				+ " Keywords [<not printing because can be way too many to realistically print>]");
+		logger.info("Will try to add keywords to ad group for AccountID [" + accountID + "], CampaignID [" + campaignID + "], PromotionID [" + promotionID + "], AdGroupID [" + adGroupID + "], AdEngine [" + adEngine + "], SemplestMatchType [" + semplestMatchType + "], MicroBidAmount ["
+				+ microBidAmount + "], " + keywordList.size() + " Keywords [<not printing because can be way too many to realistically print>]");
 		AddBidSP addKeywordBidSP = new AddBidSP();
 		if (adEngine == AdEngine.Google)
 		{
@@ -613,11 +589,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long keywordBidID = keywordDataObj.getBidID();
 				logger.info(++counter + ": will try to save in db Google Negative Keyword for GoogleID [" + keywordBidID + "], Text [" + negativeKeywordText + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + true + "]");
 				final Long microBidAmt = keywordDataObj.getMicroBidAmount();
-				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();  
-				Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null,true);
+				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
+				Integer ret = addKeywordBidSP.execute(promotionID, keywordDataObj.getBidID(), keywordDataObj.getKeyword(), microBidIntValue, keywordDataObj.getMatchType(), adEngine, true, null, true);
 				Thread.sleep(1000); // Wait for google
-			}			
-			// Add Positive Keywords			
+			}
+			// Add Positive Keywords
 			final List<GoogleAddKeywordRequest> positiveKeywordRequests = getAddKeywordRequests(regularKeywordProbabilities, keywordMatchType, 0L);
 			final List<List<GoogleAddKeywordRequest>> positiveKeywordRequestBatches = SemplestUtils.getBatches(positiveKeywordRequests, 500);
 			final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMap = new HashMap<GoogleAddKeywordRequest, Long>();
@@ -625,20 +601,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final Map<GoogleAddKeywordRequest, Long> requestToGoogleIdMapForBatch = google.addKeywords(accountID, adGroupID, requestBatch, promotionID);
 				requestToGoogleIdMap.putAll(requestToGoogleIdMapForBatch);
-			}			
+			}
 			logger.info("Generated total of " + requestToGoogleIdMap.size() + " GoogleAddKeywordRequest<->GoogleKeywordId mappings");
 			final Set<Entry<GoogleAddKeywordRequest, Long>> entrySet = requestToGoogleIdMap.entrySet();
 			counter = 0;
 			for (final Entry<GoogleAddKeywordRequest, Long> entry : entrySet)
 			{
 				final GoogleAddKeywordRequest request = entry.getKey();
-				final Long googleKeywordId = entry.getValue();				
+				final Long googleKeywordId = entry.getValue();
 				final String keyword = request.getKeyword();
 				final Long microBidAmt = request.getMicroBidAmount();
 				final int microBidIntValue = microBidAmt == null ? 0 : microBidAmt.intValue();
 				final String matchType = request.getMatchType().toString();
 				logger.info(++counter + ": will try to save in db Google Positive Keyword for GoogleID [" + googleKeywordId + "], Text [" + keyword + "], PromotionID [" + promotionID + "], SemplestMatchType [" + matchType + "], IsNegative [" + false + "]");
-				Integer ret = addKeywordBidSP.execute(promotionID, googleKeywordId, keyword, microBidIntValue, matchType, adEngine, false, null,true);
+				Integer ret = addKeywordBidSP.execute(promotionID, googleKeywordId, keyword, microBidIntValue, matchType, adEngine, false, null, true);
 			}
 		}
 		else if (AdEngine.MSN == adEngine)
@@ -646,12 +622,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long accId = Long.valueOf(accountID);
 			int counter = 0;
-			
+
 			final List<KeywordProbabilityObject> regularKeywordProbabilities = getKeywordProbabilities(keywordList, false);
 			final List<KeywordProbabilityObject> negativeKeywordProbabilities = getKeywordProbabilities(keywordList, true);
 			final Map<com.microsoft.adcenter.v8.Keyword, Integer> regularKeywordsToPkMap = new HashMap<com.microsoft.adcenter.v8.Keyword, Integer>();
 			for (final KeywordProbabilityObject keyword : regularKeywordProbabilities)
-			{				
+			{
 				final String keywordText = keyword.getKeyword();
 				final Integer keywordPK = keyword.getKeywordPK();
 				final Bid bid = new Bid();
@@ -674,8 +650,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				else
 				{
 					throw new Exception("[" + semplestMatchType + "] is not a known SemplestMatchType");
-				}		
-				regularKeywordsToPkMap.put(msnKeyword, keywordPK);				
+				}
+				regularKeywordsToPkMap.put(msnKeyword, keywordPK);
 			}
 			// Add Positive Keywords
 			final int batchSize = 1000;
@@ -687,18 +663,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
 				final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
 				logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
-				// Persist MsnKeywordID in DB for Keywords that were added to MSN				
+				// Persist MsnKeywordID in DB for Keywords that were added to MSN
 				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
 				for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
 				{
 					final String text = entry.getKey();
 					final Long keywordId = entry.getValue();
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
-				}				
-				// Mark as Deleted in DB for Keywords that could not be added to MSN				
+					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
+				}
+				// Mark as Deleted in DB for Keywords that could not be added to MSN
 				SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap, promotionID);
-			}		
+			}
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
 			{
@@ -712,7 +688,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception("AdEngine specified [" + adEngine + "] is not valid for Adding Keywords to AdGroup (at least not yet)");
 		}
 	}
-	
+
 	private List<String> getKywordTextList(final List<KeywordProbabilityObject> keywords)
 	{
 		final List<String> keywordTextList = new ArrayList<String>();
@@ -770,11 +746,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return nonDeletedAds;
 	}
 
-	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, AdEngine adEngine, AdGroupStatus status,
-			GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
+	private AdgroupData createAdGroupAndAds(String accountID, Long campaignID, AdEngine adEngine, AdGroupStatus status, GetAllPromotionDataSP getPromoDataSP, Long defaultMicroBid) throws Exception
 	{
-		logger.info("Will try AdGroup and Ads for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdEngine [" + adEngine
-				+ "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "]");
+		logger.info("Will try AdGroup and Ads for AccountID [" + accountID + "], CampaignID [" + campaignID + "], AdEngine [" + adEngine + "], AdGroupStatus [" + status + "], DefaultMicroBid [" + defaultMicroBid + "]");
 		AdgroupData adGrpData = new AdgroupData();
 		List<AdsObject> adList = getPromoDataSP.getAds();
 		PromotionObj promotionData = getPromoDataSP.getPromotionData();
@@ -888,14 +862,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	/*
 	 * Assumes Daily budget
 	 */
-	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount,
-			GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
+	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
 	{
 		if (monthlyBudgetAmount < 0)
 		{
-			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle + "] because MonthlyBudgetAmount [" + monthlyBudgetAmount + "] is less than 0");
+			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle
+					+ "] because MonthlyBudgetAmount [" + monthlyBudgetAmount + "] is less than 0");
 		}
-		final String campaignName = System.currentTimeMillis() + "_" +  getPromoDataSP.getPromotionData().getPromotionName();
+		final String campaignName = System.currentTimeMillis() + "_" + getPromoDataSP.getPromotionData().getPromotionName();
 		if (adEngine == AdEngine.Google)
 		{
 			// assume US dollars US timezone
@@ -912,9 +886,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 			final double monthlyBudget = monthlyBudgetAmount.doubleValue();
 			final CampaignStatus campaignStatus = com.microsoft.adcenter.v8.CampaignStatus.Active;
-			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName
-					+ "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailybudgetAmount + "], MonthlyBudget [" + monthlyBudget
-					+ "], CampaignStatus [" + campaignStatus + "]");
+			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailybudgetAmount + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus ["
+					+ campaignStatus + "]");
 			Long campaignID = msn.createCampaign(accountId, campaignName, budgetLimitType, dailybudgetAmount, monthlyBudget, campaignStatus);
 			return campaignID;
 		}
@@ -1017,14 +990,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
-		final Map<AdEngine,AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
+		final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
 		/*
-		 *  from Yesterday look back 5 days to get the transactions
+		 * from Yesterday look back 5 days to get the transactions
 		 */
 
 		Date now = new Date();
 		cal.setTime(now);
-		//get yesterday
+		// get yesterday
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		Date yesterday = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, -5);
@@ -1046,14 +1019,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				catch (Exception e)
 				{
-					logger.error("Unable to download Report for account " + accountIdString + ":"
-							+ e.getMessage(), e);
+					logger.error("Unable to download Report for account " + accountIdString + ":" + e.getMessage(), e);
 				}
 				// update the API charges
 				try
 				{
-					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId,
-							promoObj.getPromotionStartDate(), new Date());
+					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new Date());
 					if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
 					{
 						UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
@@ -1069,8 +1040,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			else if (adEngine == AdEngine.MSN)
 			{
 				logger.info("REPORT FOR MSN NOT YET IMPLEMENTED");
-				//get report and store
-				//SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
+				// get report and store
+				// SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
 			}
 			else
 			{
@@ -1128,25 +1099,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Update Geo Targeting for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Update Geo Targeting for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "UpdateGeoTargeting";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateGeoTargetingTask(customerID, promotionID, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateGeoTargetingTask(customerID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Geo Targetting for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Update Geo Targetting for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -1167,8 +1134,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final AdEngineID promotionAdEngineData = promotionAdEngineDataMap.get(adEngine);
 				final String accountId = "" + promotionAdEngineData.getAccountID();
 				final Long campaignId = promotionAdEngineData.getCampaignID();
-				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId + "]/Promotion["
-						+ promotionID + "] with the following GeoTargets: [" + geoTargets + "]");
+				logger.info("Will try to update within Google Adwords the Account[" + accountId + "]/CampaignId[" + campaignId + "]/Promotion[" + promotionID + "] with the following GeoTargets: [" + geoTargets + "]");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
 				googleAdwordsService.updateGeoTargets(accountId, campaignId, geoTargets);
 			}
@@ -1188,7 +1154,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final Double radius = geoTarget.getRadius();
 					final Double latitude = geoTarget.getLatitude();
 					final Double longitude = geoTarget.getLongitude();
-					final String country = "US"; 
+					final String country = "US";
 					msn.setGeoTarget(accountId, campaignId, latitude, longitude, radius, address, city, state, country, zip);
 				}
 			}
@@ -1202,8 +1168,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Update Geo Targetting for PromotionID [" + promotionID + "], AdEndinges ["
-					+ adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Update Geo Targetting for PromotionID [" + promotionID + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -1228,6 +1193,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<Integer> promotionIds = new ArrayList<Integer>();
 		promotionIds.add(promotionID);
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.ACTIVE);
+		SemplestDB.updatePromotionStatus(promotionID, adEngines, PromotionStatus.LIVE);
 		return true;
 	}
 
@@ -1249,25 +1215,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "PausePromotion";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPausePromotionTask(customerID, promotionID, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPausePromotionTask(customerID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -1290,6 +1252,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<Integer> promotionIds = new ArrayList<Integer>();
 		promotionIds.add(promotionID);
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
+		SemplestDB.updatePromotionStatus(promotionID, adEngines, PromotionStatus.PAUSED);
 		return true;
 	}
 
@@ -1316,9 +1279,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final List<Integer> promotionIdsForProductGroup = SemplestDB.getPromotionIdsForProductGroup(productGroupID);
 			promotionIds.addAll(promotionIdsForProductGroup);
 		}
-		logger.info("From the ProductGroupIDs [" + productGroupIds
-				+ "] found the associated PromotionIDs for which the Campaigns we'll need to Pause:\n"
-				+ SemplestUtils.getEasilyReadableString(promotionIds));
+		logger.info("From the ProductGroupIDs [" + productGroupIds + "] found the associated PromotionIDs for which the Campaigns we'll need to Pause:\n" + SemplestUtils.getEasilyReadableString(promotionIds));
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.PAUSED);
 		return true;
 	}
@@ -1361,15 +1322,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			if (AdEngine.Google == adEngine)
 			{
-				logger.info("Will try to Change Status of Google Campaigns to [" + newStatus + "] using AccountID [" + googleAccountId
-						+ "] and CampaignIds [" + googleCampaignIds + "])");
+				logger.info("Will try to Change Status of Google Campaigns to [" + newStatus + "] using AccountID [" + googleAccountId + "] and CampaignIds [" + googleCampaignIds + "])");
 				final GoogleAdwordsServiceImpl googleAdwordsService = new GoogleAdwordsServiceImpl();
-				final Boolean result = googleAdwordsService.changeCampaignsStatus(googleAccountId, googleCampaignIds,
-						newStatus.getGoogleCampaignStatus());
+				final Boolean result = googleAdwordsService.changeCampaignsStatus(googleAccountId, googleCampaignIds, newStatus.getGoogleCampaignStatus());
 				if (!result)
 				{
-					final String errMsg = "Request to Change Status of Google Campaigns for AccountID [" + googleAccountId + "] and CampaignIds ["
-							+ googleCampaignIds + "] failed";
+					final String errMsg = "Request to Change Status of Google Campaigns for AccountID [" + googleAccountId + "] and CampaignIds [" + googleCampaignIds + "] failed";
 					logger.info(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -1384,6 +1342,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						msn.pauseCampaignById(msnAccountId, msnCampaignId);
 					}
 				}
+				else if (newStatus == SemplestCampaignStatus.ACTIVE)
+				{
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					for (final Long msnCampaignId : msnCampaignIds)
+					{
+						msn.unpauseCampaignById(msnAccountId, msnCampaignId);
+					}
+				}
 			}
 			else
 			{
@@ -1395,8 +1361,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Change Status to [" + newStatus + "] for PromotionIds [" + promotionIds
-					+ "] and AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Change Status to [" + newStatus + "] for PromotionIds [" + promotionIds + "] and AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -1436,8 +1401,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Integer customerID = Integer.parseInt(data.get("customerID"));
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");
-		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString,
-				SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
 		final String adEnginesString = data.get("adEngines");
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
@@ -1447,36 +1411,30 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID,
-			List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "AddNegativeKeywords";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddNegativeKeywordsTask(customerID, promotionID,
-					keywordIdRemoveOppositePairs, adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddNegativeKeywordsTask(customerID, promotionID, keywordIdRemoveOppositePairs, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
 
-	public Map<KeywordProbabilityObject, Boolean> getKeywordProbabilityToRemoveOppositeMap(final List<KeywordProbabilityObject> keywordProbabilities,
-			final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs)
+	public Map<KeywordProbabilityObject, Boolean> getKeywordProbabilityToRemoveOppositeMap(final List<KeywordProbabilityObject> keywordProbabilities, final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs)
 	{
 		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = new HashMap<KeywordProbabilityObject, Boolean>();
 		for (final KeywordProbabilityObject currentKeywordProbability : keywordProbabilities)
@@ -1501,8 +1459,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
 		final String keywordIdRemoveOppositePairsString = data.get("keywordIdRemoveOppositePairs");
-		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString,
-				SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
+		final List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs = gson.fromJson(keywordIdRemoveOppositePairsString, SemplestUtils.TYPE_LIST_OF_KEYWORD_ID_REMOVE_OPPOSITE_PAIRS);
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
@@ -1511,27 +1468,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
-			throws Exception
+	public Boolean AddNegativeKeywords(Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size()
-				+ " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
+		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
-		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll,
-				keywordIdRemoveOppositePairs);
+		final Map<KeywordProbabilityObject, Boolean> keywordToRemoveOppositeMap = getKeywordProbabilityToRemoveOppositeMap(keywordProbabilitiesAll, keywordIdRemoveOppositePairs);
 		if (keywordToRemoveOppositeMap.size() != keywordIdRemoveOppositePairs.size())
 		{
-			logger.warn("# of keywords we'll work on as was found in db " + keywordToRemoveOppositeMap.size()
-					+ " is NOT the same as # of keywords requested to be worked on " + keywordIdRemoveOppositePairs.size());
+			logger.warn("# of keywords we'll work on as was found in db " + keywordToRemoveOppositeMap.size() + " is NOT the same as # of keywords requested to be worked on " + keywordIdRemoveOppositePairs.size());
 		}
 		else
 		{
-			logger.info("As expected, we'll work on " + keywordToRemoveOppositeMap.size() + " keywords which is the same as "
-					+ keywordIdRemoveOppositePairs.size() + " requested to be worked on");
+			logger.info("As expected, we'll work on " + keywordToRemoveOppositeMap.size() + " keywords which is the same as " + keywordIdRemoveOppositePairs.size() + " requested to be worked on");
 		}
 		final String esbServerTimeout = getTimeoutMS();
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, esbServerTimeout);
@@ -1557,8 +1509,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				else
 				{
-					errorMap.put(adEngine, "Problem doing Add/Update Negative Keywords for PromotionID [" + promotionID + "], "
-							+ keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "]");
+					errorMap.put(adEngine, "Problem doing Add/Update Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "]");
 				}
 			}
 			else if (AdEngine.MSN == adEngine)
@@ -1590,15 +1541,15 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 									final Long msnKeywordId = bid.getKeywordAdEngineID();
 									msnPositiveKeywordIdsToRemove.add(msnKeywordId);
 								}
-							}		
+							}
 						}
 					}
-				}				
+				}
 				final long[] msnPositiveKeywordIdsToRemoveArray = new long[msnPositiveKeywordIdsToRemove.size()];
 				for (int i = 0; i < msnPositiveKeywordIdsToRemove.size(); ++i)
 				{
 					msnPositiveKeywordIdsToRemoveArray[i] = msnPositiveKeywordIdsToRemove.get(i);
-				}				
+				}
 				logger.info("Will try to:\nDelete MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd Negative Keywords: [" + negativeKeywordsToAdd + "]");
 				msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
 				msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
@@ -1641,25 +1592,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "AddKeywords";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddKeywordsTask(customerID, promotionID, keywordIds, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddKeywordsTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds ["
-					+ keywordIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -1685,25 +1632,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task for Adding Ads for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Adding Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "AddAds";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddAdsTask(customerID, promotionID, promotionAdIds, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddAdsTask(customerID, promotionID, promotionAdIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds ["
-					+ promotionAdIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -1722,8 +1665,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return gson.toJson(true);
 	}
 
-	public List<KeywordProbabilityObject> getFilteredKeywordProbabilities(final List<KeywordProbabilityObject> keywordProbabilities,
-			final List<Integer> keywordIds)
+	public List<KeywordProbabilityObject> getFilteredKeywordProbabilities(final List<KeywordProbabilityObject> keywordProbabilities, final List<Integer> keywordIds)
 	{
 		final List<KeywordProbabilityObject> filteredKeywordProbabilities = new ArrayList<KeywordProbabilityObject>();
 		for (final KeywordProbabilityObject currentKeywordProbability : keywordProbabilities)
@@ -1788,13 +1730,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						com.microsoft.adcenter.v8.Keyword k = new com.microsoft.adcenter.v8.Keyword();
 						k.setText(keywordText);
 						final Integer keywordPK = keywordProbabilitiesForId.getKeywordPK();
-						final Bid bid = new Bid(SemplestUtils.MSN_DEFAULT_BID_AMOUNT);						
+						final Bid bid = new Bid(SemplestUtils.MSN_DEFAULT_BID_AMOUNT);
 						k.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
 						k.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
 						k.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
-						k.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);						
+						k.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);
 						if (SemplestMatchType.Broad.name().equals(semplestMatchType))
-						{							
+						{
 							k.setBroadMatchBid(bid);
 						}
 						else if (SemplestMatchType.Exact.name().equals(semplestMatchType))
@@ -1805,7 +1747,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						{
 							k.setPhraseMatchBid(bid);
 						}
-						else 
+						else
 						{
 							throw new Exception("SemplestMatchType [" + semplestMatchType + "] is not recognized");
 						}
@@ -1822,19 +1764,20 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final MsnCreateKeywordsResponse response = msn.createKeywords(accountId, adGroupId, batch);
 					final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
 					final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
-					logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
-					// Persist MsnKeywordID in DB for Keywords that were added to MSN				
+					logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n"
+							+ SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
+					// Persist MsnKeywordID in DB for Keywords that were added to MSN
 					final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
 					for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
 					{
 						final String text = entry.getKey();
 						final Long keywordId = entry.getValue();
 						logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
-						Integer spRet = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null,true);
-					}				
-					// Mark as Deleted in DB for Keywords that could not be added to MSN				
+						Integer spRet = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
+					}
+					// Mark as Deleted in DB for Keywords that could not be added to MSN
 					SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap, promotionID);
-				}	
+				}
 			}
 			else
 			{
@@ -1882,8 +1825,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return idPairs;
 	}
 
-	public Map<Entry<UpdateAdRequest, Long>, Integer> getUpdateRequestNewIdToRowCountMapWithBadRows(
-			final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap)
+	public Map<Entry<UpdateAdRequest, Long>, Integer> getUpdateRequestNewIdToRowCountMapWithBadRows(final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap)
 	{
 		final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRows = new HashMap<Entry<UpdateAdRequest, Long>, Integer>();
 		final Set<Entry<Entry<UpdateAdRequest, Long>, Integer>> entrySet = updateRequestNewIdToRowCountMap.entrySet();
@@ -1931,8 +1873,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return idPaidRowCountMapWithBadRowCounts;
 	}
 
-	public Map<GoogleAdIdSemplestAdIdPair, Integer> getIdPairRowCountMapWithBadRowCounts(
-			final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap)
+	public Map<GoogleAdIdSemplestAdIdPair, Integer> getIdPairRowCountMapWithBadRowCounts(final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap)
 	{
 		final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMapWithBadRowCounts = new HashMap<GoogleAdIdSemplestAdIdPair, Integer>();
 		final Set<Entry<GoogleAdIdSemplestAdIdPair, Integer>> entrySet = idPairRowCountMap.entrySet();
@@ -1951,8 +1892,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean AddAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Add Ads for PromotionID [" + promotionID + "], " + promotionAdIds.size() + " PromotionAdIds [" + promotionAdIds
-				+ "], AdEngines [" + adEngines + "]");
+		logger.info("Will try to Add Ads for PromotionID [" + promotionID + "], " + promotionAdIds.size() + " PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
@@ -1996,8 +1936,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMapWithBadRowCounts = getIdPairRowCountMapWithBadRowCounts(idPairRowCountMap);
 				if (!idPairRowCountMapWithBadRowCounts.isEmpty())
 				{
-					logger.warn("Problems updating db with the following GoogleAdID<->SemplestAdID pairs because row-counts were not 1:\n"
-							+ SemplestUtils.getEasilyReadableString(idPairRowCountMapWithBadRowCounts));
+					logger.warn("Problems updating db with the following GoogleAdID<->SemplestAdID pairs because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(idPairRowCountMapWithBadRowCounts));
 				}
 			}
 			else if (AdEngine.MSN == adEngine)
@@ -2023,8 +1962,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final Integer rowCount = SemplestDB.setAdIDForAdGroup(msnAdID, adEngine, promotionAdID);
 						if (rowCount != 1)
 						{
-							logger.warn("Problem updating db with the following MsnAdID<->SemplestAdID pair because rowcount from the update operation is not 1, but is "
-									+ rowCount + ": " + msnAdID + "<->" + promotionAdID);
+							logger.warn("Problem updating db with the following MsnAdID<->SemplestAdID pair because rowcount from the update operation is not 1, but is " + rowCount + ": " + msnAdID + "<->" + promotionAdID);
 						}
 					}
 				}
@@ -2066,19 +2004,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task for Deleting Ad for CUstomer [" + customerID + "], PromotionID [" + promotionID
-					+ "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Deleting Ad for CUstomer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String deleteAdPostFix = "DeleteAds";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteAdEngineAdTask(customerID, promotionID, promotionAdIds,
-					adEngines, deleteAdPostFix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteAdEngineAdTask(customerID, promotionID, promotionAdIds, adEngines, deleteAdPostFix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + deleteAdPostFix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			if (!taskScheduleSuccessful)
 			{
 				return false;
@@ -2092,8 +2027,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID ["
-					+ promotionAdIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2126,8 +2060,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean DeleteAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines
-				+ "]");
+		logger.info("Will try to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
@@ -2150,8 +2083,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		if (nonDeletedAdsForPromotionAdIds.isEmpty())
 		{
-			final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds ["
-					+ promotionAdIds + "], so nothing to delete.";
+			final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "], so nothing to delete.";
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -2171,22 +2103,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final int numDeletedAds = deletedGoogleAdIds.size();
 				if (numAdsToDelete != numDeletedAds)
 				{
-					logger.warn("# of ads we expected to delete [" + numAdsToDelete
-							+ "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "] in Google");
+					logger.warn("# of ads we expected to delete [" + numAdsToDelete + "] is not the same as the # of ads that were actually deleted [" + numDeletedAds + "] in Google");
 				}
 				final Map<Long, Integer> deletedAdIdRowCountMap = SemplestDB.markPromotionAdDeletedBulk(new java.util.Date(), deletedGoogleAdIds);
 				final Map<Long, Integer> deletedAdIdRowCountMapWithBadRowCounts = getDeletedAdIdRowCountMapWithBadRowCounts(deletedAdIdRowCountMap);
 				if (!deletedAdIdRowCountMapWithBadRowCounts.isEmpty())
 				{
-					logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n"
-							+ SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
+					logger.warn("Problems updating db with marking the following PromotionAdIds as deleted because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdIdRowCountMapWithBadRowCounts));
 				}
 				final Map<Integer, Integer> deletedAdMappingRowCountMap = SemplestDB.deleteAdIDForAdGroupBulk(promotionAdIds, adEngine);
 				final Map<Integer, Integer> deletedAdMappingRowCountMapWithBadRowCounts = getDeletedAdMappingRowCountMapWithBadRowCounts(deletedAdMappingRowCountMap);
 				if (!deletedAdMappingRowCountMapWithBadRowCounts.isEmpty())
 				{
-					logger.warn("Problems deleting these Google<->Semplest Ad ID mappings because row-counts were not 1:\n"
-							+ SemplestUtils.getEasilyReadableString(deletedAdMappingRowCountMapWithBadRowCounts));
+					logger.warn("Problems deleting these Google<->Semplest Ad ID mappings because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(deletedAdMappingRowCountMapWithBadRowCounts));
 				}
 			}
 			else if (AdEngine.MSN == adEngine)
@@ -2204,14 +2133,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final Integer rowCountMarkPromotionAdDeleted = SemplestDB.markPromotionAdDeleted(new java.util.Date(), msnAdID);
 					if (rowCountMarkPromotionAdDeleted != 1)
 					{
-						logger.warn("Rowcount returned from db when marking Semplest Ad as IsDeleted for MsnAdId [" + msnAdID
-								+ "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountMarkPromotionAdDeleted);
+						logger.warn("Rowcount returned from db when marking Semplest Ad as IsDeleted for MsnAdId [" + msnAdID + "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountMarkPromotionAdDeleted);
 					}
 					final Integer rowCountDeleteMapping = SemplestDB.deleteAdIDForAdGroup(adEngine, promotionAdsPK);
 					if (rowCountDeleteMapping != 1)
 					{
-						logger.warn("Rowcount returned from db when deleting MSN<->Semplest Ad ID mapping for MsnAdId [" + msnAdID
-								+ "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountDeleteMapping);
+						logger.warn("Rowcount returned from db when deleting MSN<->Semplest Ad ID mapping for MsnAdId [" + msnAdID + "] and SemplestAdID [" + promotionAdsPK + "] is not 1, but is " + rowCountDeleteMapping);
 					}
 				}
 			}
@@ -2225,14 +2152,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds ["
-					+ promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Delete Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
 		return true;
 	}
-	
+
 	public String validateGoogleGeoTargets(String json) throws Exception
 	{
 		logger.debug("call (String json)" + json);
@@ -2242,8 +2168,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<GoogleViolation> res = validateGoogleGeoTargets(promotionID);
 		return gson.toJson(res);
 	}
-	
-	@Override	 
+
+	@Override
 	public List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception
 	{
 		logger.info("Will try to Validate Google GeoTargets associated with PromotionID [" + promotionID + "]");
@@ -2251,11 +2177,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		final List<GeoTargetObject> geoTargets = getPromoDataSP.getGeoTargets();
 		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
-		final String validationAccountId =  "" + AdwordsValidationAccountID;				
+		final String validationAccountId = "" + AdwordsValidationAccountID;
 		final List<GoogleViolation> violations = googleAdwordsService.validateUpdateGeoTargets(validationAccountId, AdwordsValidationCampaignID, geoTargets);
 		return violations;
 	}
-	
+
 	public String validateGoogleRefreshSiteLinks(String json) throws Exception
 	{
 		logger.info("JSON [" + json + "]");
@@ -2264,7 +2190,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<GoogleViolation> res = validateGoogleRefreshSiteLinks(promotionID);
 		return gson.toJson(res);
 	}
-	
+
 	public String validateGoogleNegativeKeywords(String json) throws Exception
 	{
 		logger.info("JSON [" + json + "]");
@@ -2274,17 +2200,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<GoogleViolation> googleValidations = validateGoogleNegativeKeywords(negativeKeywords);
 		return gson.toJson(googleValidations);
 	}
-	
+
 	@Override
 	public List<GoogleViolation> validateGoogleNegativeKeywords(final List<String> negativeKeywords) throws Exception
 	{
 		logger.info("Will try to Validate Google Negative Keywords [" + negativeKeywords + "]");
 		final String googleValidationAccount = String.valueOf(AdwordsValidationAccountID);
-		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();				
+		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 		final List<GoogleViolation> googleValidations = googleAdwordsService.validateNegativeKeywords(googleValidationAccount, AdwordsValidationCampaignID, negativeKeywords);
 		return googleValidations;
 	}
-	
+
 	@Override
 	public List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception
 	{
@@ -2298,7 +2224,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<GoogleSiteLink> googleSiteLinks = getGoogleSiteLinks(siteLinks);
 		final GoogleRefreshSiteLinksRequest request = new GoogleRefreshSiteLinksRequest(googleValidationAccount, AdwordsValidationCampaignID, googleSiteLinks);
 		logger.info("Generated the following request to validate the update of Google SiteLinks: " + request.toStringPretty());
-		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();				
+		final GoogleAdwordsServiceInterface googleAdwordsService = new GoogleAdwordsServiceImpl();
 		final List<GoogleViolation> googleValidations = googleAdwordsService.validateRefreshSiteLinks(googleValidationAccount, AdwordsValidationCampaignID, request);
 		return googleValidations;
 	}
@@ -2355,8 +2281,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines ["
-					+ adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Refresh SiteLinks associated with PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -2384,25 +2309,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task for Adding Ad for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], promotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task for Adding Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], promotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "UpdateAds";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateAdsTask(customerID, promotionID, promotionAdIds, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateAdsTask(customerID, promotionID, promotionAdIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Ads for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Update Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2431,8 +2352,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String newDescription1 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine1());
 			final String newDescription2 = SemplestUtils.getTrimmedNonNullString(ad.getAdTextLine2());
 			final Integer promotionAdID = ad.getPromotionAdsPK();
-			final UpdateAdRequest updateRequest = new UpdateAdRequest(adId, newHeadline, newDescription1, newDescription2, newDisplayUrl, newUrl,
-					promotionAdID);
+			final UpdateAdRequest updateRequest = new UpdateAdRequest(adId, newHeadline, newDescription1, newDescription2, newDisplayUrl, newUrl, promotionAdID);
 			updateRequests.add(updateRequest);
 		}
 		return updateRequests;
@@ -2441,8 +2361,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean UpdateAds(Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
-		logger.info("Will try to Update Ad for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines
-				+ "]");
+		logger.info("Will try to Update Ad for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
@@ -2485,22 +2404,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info("# of Ads updated: " + numAdsUpdated);
 					if (numUpdateRequests != numAdsUpdated)
 					{
-						logger.warn("# of ads we expected to update [" + numUpdateRequests
-								+ "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
+						logger.warn("# of ads we expected to update [" + numUpdateRequests + "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
 					}
-					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(
-							requestToNewAdIdMap, adEngine);
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);
 					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
 					if (!updateRequestNewIdToRowCountMapWithBadRowCounts.isEmpty())
 					{
-						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n"
-								+ SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
+						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
 				}
 				else
 				{
-					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds ["
-							+ promotionAdIds + "] for Google";
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "] for Google";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -2537,22 +2452,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.info("# of Ads updated: " + numAdsUpdated);
 					if (numUpdateRequests != numAdsUpdated)
 					{
-						logger.warn("# of ads we expected to update [" + numUpdateRequests
-								+ "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
+						logger.warn("# of ads we expected to update [" + numUpdateRequests + "] is not the same as the # of ads that were actually updated [" + numAdsUpdated + "]");
 					}
-					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(
-							requestToNewAdIdMap, adEngine);
+					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMap = SemplestDB.updateAdIDForAdGroupBulk(requestToNewAdIdMap, adEngine);
 					final Map<Entry<UpdateAdRequest, Long>, Integer> updateRequestNewIdToRowCountMapWithBadRowCounts = getUpdateRequestNewIdToRowCountMapWithBadRows(updateRequestNewIdToRowCountMap);
 					if (!updateRequestNewIdToRowCountMapWithBadRowCounts.isEmpty())
 					{
-						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n"
-								+ SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
+						logger.warn("Problems updating db with updating AdEngineAdID for the following because row-counts were not 1:\n" + SemplestUtils.getEasilyReadableString(updateRequestNewIdToRowCountMapWithBadRowCounts));
 					}
 				}
 				else
 				{
-					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds ["
-							+ promotionAdIds + "] for Google";
+					final String errMsg = "Could not find non-deleted Ads in database for PromotionID [" + promotionID + "] and PromotionAdIds [" + promotionAdIds + "] for Google";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -2567,8 +2478,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Update Ads for PromotionID [" + promotionID + "], PromotionAdIds ["
-					+ promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Update Ads for PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -2612,13 +2522,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Long newBudgetAmountGoogleUnits = newBudgetDoubleGoogleUnits.longValue();
 				final Double oldBudgetDoubleGoogleUnits = oldBudgetAmount * SemplestUtils.GOOGLE_MONEY_UNIT;
 				final Long oldBudgetAmountGoogleUnits = oldBudgetDoubleGoogleUnits.longValue();
-				logger.info("Will try to update Old Budget [" + oldBudgetAmount + "] (" + oldBudgetAmountGoogleUnits
-						+ " in Google Units) with New Budget [" + newBudgetDouble + "] (" + newBudgetAmountGoogleUnits + " in Google Units)");
+				logger.info("Will try to update Old Budget [" + oldBudgetAmount + "] (" + oldBudgetAmountGoogleUnits + " in Google Units) with New Budget [" + newBudgetDouble + "] (" + newBudgetAmountGoogleUnits + " in Google Units)");
 				final Boolean processedSuccessully = googleAdwordsService.changeCampaignBudget(accountID, campaignID, newBudgetAmountGoogleUnits);
 				if (!processedSuccessully)
 				{
-					final String errMsg = "Problem processing budget change from Old Budget [" + oldBudgetAmount + "] to New Budget ["
-							+ newBudgetDouble + "] for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]";
+					final String errMsg = "Problem processing budget change from Old Budget [" + oldBudgetAmount + "] to New Budget [" + newBudgetDouble + "] for GoogleAccountID [" + accountID + "], CampaignID [" + campaignID + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -2639,7 +2547,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 				final Double oldMonthlyBudget = promotion.getPromotionBudgetAmount();
 				final Double oldDailyBudget = oldMonthlyBudget / 31;
-				final Double changeInBudgetDaily = changeInBudgetMonthly / 31;				
+				final Double changeInBudgetDaily = changeInBudgetMonthly / 31;
 				final double dailyBudget = oldDailyBudget + changeInBudgetDaily;
 				final double monthlyBudget = oldMonthlyBudget + changeInBudgetMonthly;
 				msn.updateCampaignBudget(accountId, campaignId, BudgetLimitType.DailyBudgetStandard, dailyBudget, monthlyBudget);
@@ -2654,8 +2562,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudgetMonthly
-					+ "] for AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Change Budget for PromotionID [" + promotionID + "] by [" + changeInBudgetMonthly + "] for AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -2696,8 +2603,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2735,8 +2641,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Boolean processedSuccessully = googleAdwordsService.ChangeCampaignStartDate(accountID, campaignID, newStartDate);
 				if (!processedSuccessully)
 				{
-					final String errMsg = "Problem changing StartDate in Google Campaign [" + campaignID + "] to [" + newStartDate
-							+ "] for GoogleAccountID [" + accountID + "]";
+					final String errMsg = "Problem changing StartDate in Google Campaign [" + campaignID + "] to [" + newStartDate + "] for GoogleAccountID [" + accountID + "]";
 					logger.error(errMsg);
 					errorMap.put(adEngine, errMsg);
 				}
@@ -2751,8 +2656,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (!errorMap.isEmpty())
 		{
 			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
-			final String errMsg = "Summary of errors when trying to Change StartDate for PromotionID [" + promotionID + "], AdEndinges [" + adEngines
-					+ "]:\n" + errorMapEasilyReadableString;
+			final String errMsg = "Summary of errors when trying to Change StartDate for PromotionID [" + promotionID + "], AdEndinges [" + adEngines + "]:\n" + errorMapEasilyReadableString;
 			logger.error(errMsg);
 			throw new Exception(errMsg);
 		}
@@ -2791,25 +2695,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID
-					+ "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "AddPromotionToAdEngine";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddPromotionToAdEngineTask(customerID, productGroupID, promotionID,
-					adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createAddPromotionToAdEngineTask(customerID, productGroupID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID
-					+ "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2833,25 +2733,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID + "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "UpdateBudget";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateBudgetTask(customerID, promotionID, changeInBudget,
-					adEngines, scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUpdateBudgetTask(customerID, promotionID, changeInBudget, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID + "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2874,25 +2770,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "UnpausePromotion";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUnpausePromotionTask(customerID, promotionID, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createUnpausePromotionTask(customerID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2917,25 +2809,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Delete Keyword for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Delete Keyword for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "DeleteKeywords";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteKeywordTask(customerID, promotionID, keywordIds, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createDeleteKeywordTask(customerID, promotionID, keywordIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Keywords for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Delete Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -2958,25 +2846,21 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "RefreshSiteLinks";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createRefreshSiteLinksForAdTask(customerID, promotionID, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createRefreshSiteLinksForAdTask(customerID, promotionID, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
 			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -3000,22 +2884,18 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			logger.info("Will try to schedule task to Pause ProductGroup for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds
-					+ "], AdEngines [" + adEngines + "]");
+			logger.info("Will try to schedule task to Pause ProductGroup for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]");
 			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			final String scheduleNamePostfix = "PauseProductGroups";
-			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupIds, adEngines,
-					scheduleNamePostfix);
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPauseProductGroupTask(customerID, productGroupIds, adEngines, scheduleNamePostfix);
 			listOfTasks.add(task);
 			final String scheduleName = "ProductGroups[" + productGroupIds + "]_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName,
-					new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, null, null);
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, null, customerID, null, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds
-					+ "], AdEngines [" + adEngines + "]", e);
+			logger.error("Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]", e);
 			return false;
 		}
 	}
@@ -3026,16 +2906,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		List<String> keywords = gson.fromJson(data.get("keywords"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		Integer numberResults = Integer.parseInt(data.get("numberResults"));
-		KeywordToolStats[] res  = getGoogleKeywordIdeas(keywords, numberResults);
+		KeywordToolStats[] res = getGoogleKeywordIdeas(keywords, numberResults);
 		return gson.toJson(res);
 	}
+
 	@Override
 	public KeywordToolStats[] getGoogleKeywordIdeas(List<String> keywords, int numberResults) throws Exception
 	{
 		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-		String[] keywordArr = new String[keywords.size()]; 
-		keywordArr = keywords.toArray(keywordArr); 
-		ArrayList<KeywordToolStats> res =  google.getGoogleKeywordIdeas(keywordArr, numberResults);
+		String[] keywordArr = new String[keywords.size()];
+		keywordArr = keywords.toArray(keywordArr);
+		ArrayList<KeywordToolStats> res = google.getGoogleKeywordIdeas(keywordArr, numberResults);
 		KeywordToolStats[] statsArr = new KeywordToolStats[res.size()];
 		return res.toArray(statsArr);
 	}
@@ -3046,31 +2927,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		String landingPageURL = data.get("landingPageURL");
 		String displayURL = data.get("displayURL");
-		Type type = new TypeToken<List<GoogleAddAdRequest>>(){}.getType();
+		Type type = new TypeToken<List<GoogleAddAdRequest>>()
+		{
+		}.getType();
 		List<GoogleAddAdRequest> ads = gson.fromJson(data.get("ads"), type);
-		List<GoogleViolation> res  = validateGoogleAd(landingPageURL, displayURL, ads);
+		List<GoogleViolation> res = validateGoogleAd(landingPageURL, displayURL, ads);
 		return gson.toJson(res);
 	}
-	
+
 	@Override
-	public List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads)
-			throws Exception
+	public List<GoogleViolation> validateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads) throws Exception
 	{
 		List<GoogleViolation> res = new ArrayList<GoogleViolation>();
 		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 		for (GoogleAddAdRequest oneAd : ads)
 		{
-			List<GoogleViolation> ret = google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL,oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
+			List<GoogleViolation> ret = google.validateAd(String.valueOf(AdwordsValidationAccountID), AdwordsValidationAdGroupID, landingPageURL, displayURL, oneAd.getHeadline(), oneAd.getDescription1(), oneAd.getDescription2());
 			res.addAll(ret);
 		}
 		return res;
 	}
-	
+
 	@Override
-	public String checkStatus(String input) throws Exception 
+	public String checkStatus(String input) throws Exception
 	{
 		return ServiceStatus.Good.getServiceStatusValue();
 	}
-
 
 }

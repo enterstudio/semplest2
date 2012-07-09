@@ -28,6 +28,7 @@ import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
+import semplest.server.protocol.adengine.PromotionStatus;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.SemplestBiddingHistory;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
@@ -54,63 +55,56 @@ import semplest.util.SemplestUtils;
 public class SemplestDB extends BaseDB
 {
 	private static final Logger logger = Logger.getLogger(SemplestDB.class);
+
+	public static final String SQL_SET_AD_ID_FOR_AD_GROUP = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) " + "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
+
+	public static final String SQL_MARK_AD_DELETED = "update  PromotionAds " + "set  IsDeleted = 1, " + "DeletedDate = ? " + "from  PromotionAds p, " + "AdvertisingEngineAds a " + "where  p.PromotionAdsPK = a.PromotionAdsFK " + "and  a.AdvertisingEngineAdPK = ?";
+
+	public static final String SQL_UPDATE_AD_ENGINE_AD_ID = "update   AdvertisingEngineAds " + "set	  AdvertisingEngineAdPK = ? " + "from	  AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? " + "and   aea.AdvertisingEngineAdPK = ? "
+			+ "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + "and   e.AdvertisingEngine = ?";
+
+	public static final String SQL_DELETE_AD_ENGINE_AD_ID = "delete   AdvertisingEngineAds " + "from	  AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? " + "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + "and   e.AdvertisingEngine = ?";
+
+	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + "set IsDeleted = 1, " + "Comment = ? " + "where KeywordFK = ?" + "  and PromotionFK = ?";
+
+	public static void updatePromotionStatus(final Integer promotionID, final List<AdEngine> adEngines, final PromotionStatus promotionStatus)
+	{
+		for (final AdEngine adEngine : adEngines)
+		{			
+			SemplestDB.updatePromotionStatus(promotionID, adEngine, promotionStatus);	
+		}
+	}
 	
-	public static final String SQL_SET_AD_ID_FOR_AD_GROUP = "insert into AdvertisingEngineAds(AdvertisingEngineAdPK, AdvertisingEngineFK, PromotionAdsFK) " +
-	        											    "select ?, ae.AdvertisingEnginePK, ? from AdvertisingEngine ae where ae.AdvertisingEngine = ?";
-	
-	public static final String SQL_MARK_AD_DELETED = "update  PromotionAds " +
-													    "set  IsDeleted = 1, " +
-															 "DeletedDate = ? " +
-													   "from  PromotionAds p, " +
-															 "AdvertisingEngineAds a " +
-													  "where  p.PromotionAdsPK = a.PromotionAdsFK " +
-														"and  a.AdvertisingEngineAdPK = ?";
-	
-	public static final String SQL_UPDATE_AD_ENGINE_AD_ID = "update   AdvertisingEngineAds " + 	
-															   "set	  AdvertisingEngineAdPK = ? " +  	
-														      "from	  AdvertisingEngineAds aea, " +  
-														  		     "AdvertisingEngine e " + 
-														     "where	  aea.PromotionAdsFK = ? " + 
-														       "and   aea.AdvertisingEngineAdPK = ? " + 
-														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-														  	   "and   e.AdvertisingEngine = ?";										
-	
-	public static final String SQL_DELETE_AD_ENGINE_AD_ID = "delete   AdvertisingEngineAds " + 	  	
-														      "from	  AdvertisingEngineAds aea, " +  
-														  		     "AdvertisingEngine e " + 
-														     "where	  aea.PromotionAdsFK = ? " +  
-														  	   "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + 
-														  	   "and   e.AdvertisingEngine = ?";			
-	
-	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + 
-															 "set IsDeleted = 1, " + 
-																 "Comment = ? " + 
-														   "where KeywordFK = ?" +
-														   "  and PromotionFK = ?";	
+	public static void updatePromotionStatus(final Integer promotionID, final AdEngine adEngine, final PromotionStatus promotionStatus)
+	{
+		logger.info("Will set PromotionStatus to [" + PromotionStatus.PENDING + "] for PromotionID [" + promotionID + "] and AdEngine [" + adEngine + "]");
+		jdbcTemplate.update("insert into PromotionAdEngineStatus (PromotionFK, PromotionStatusFK, AdvertisingEngineFK) values (?, ?, ?)", new Object[]{promotionID, promotionStatus.getPk(), adEngine.getCode()});
+	}
+
 	/*
 	 * Configuration
 	 */
-	public static HashMap<String,Object> loadConfigurationData() throws Exception
+	public static HashMap<String, Object> loadConfigurationData() throws Exception
 	{
 		final String strSQL = "select * from Configuration";
 		final List<Map<String, Object>> res = jdbcTemplate.queryForList(strSQL);
 		if (res != null)
 		{
-			return (HashMap<String,Object>) res.get(0);
+			return (HashMap<String, Object>) res.get(0);
 		}
 		else
 		{
 			return null;
 		}
 	}
-	
+
 	public static List<Integer> getPromotionIdsForProductGroup(final Integer ProductGroupID) throws Exception
 	{
 		final String strSQL = "select PromotionPK from Promotion where ProductGroupFK = ?";
 		final List<Integer> promotionIds = jdbcTemplate.queryForList(strSQL, Integer.class, ProductGroupID);
 		return promotionIds;
 	}
-	
+
 	/*
 	 * Customer
 	 */
@@ -119,8 +113,7 @@ public class SemplestDB extends BaseDB
 	public static List<CustomerObj> getAllCustomers() throws Exception
 	{
 
-		String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c "
-				+ "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
+		String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c " + "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
 				+ "inner join BillType bt on c.BillTypeFK = bt.BillTypePK";
 		try
 		{
@@ -134,7 +127,7 @@ public class SemplestDB extends BaseDB
 		{
 			throw e;
 		}// new
-																// CustomerRowMapper());
+			// CustomerRowMapper());
 	}
 
 	/*
@@ -148,11 +141,9 @@ public class SemplestDB extends BaseDB
 	{
 		try
 		{
-			String strSQL = "select t.ServiceName,t.MethodName,t.Parameters,s.SchedulePK,st.TaskExecutionOrder from Schedule s "
-					+ "inner join ScheduleTaskAssociation st on s.SchedulePK = st.ScheduleFK " + "inner join Task t on t.TaskPK = st.TaskFK "
-					+ "where s.SchedulePK = ? and s.IsEnabled = 1 " + "order by st.TaskExecutionOrder";
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ SchedulerPK }, new ScheduleTaskRowMapper());
+			String strSQL = "select t.ServiceName,t.MethodName,t.Parameters,s.SchedulePK,st.TaskExecutionOrder from Schedule s " + "inner join ScheduleTaskAssociation st on s.SchedulePK = st.ScheduleFK " + "inner join Task t on t.TaskPK = st.TaskFK " + "where s.SchedulePK = ? and s.IsEnabled = 1 "
+					+ "order by st.TaskExecutionOrder";
+			return jdbcTemplate.query(strSQL, new Object[] { SchedulerPK }, new ScheduleTaskRowMapper());
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -164,15 +155,13 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
-	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive,
-			Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
+	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
 
 		if (ScheduleFrequency.existsFrequency(Frequency))
 		{
 			AddScheduleSP addsched = new AddScheduleSP();
-			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID,
-					ProductGroupID, UserID);
+			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID, ProductGroupID, UserID);
 			return scheduleID;
 		}
 		else
@@ -183,29 +172,24 @@ public class SemplestDB extends BaseDB
 	}
 
 	/*
-	 * public static int getFrequencyID(String Frequency) { SqlFunction sf = new
-	 * SqlFunction(jdbcTemplate.getDataSource(),
-	 * "select FrequencyPK from Frequency f where f.Frequency = '" + Frequency +
-	 * "'"); sf.compile(); return sf.run();
+	 * public static int getFrequencyID(String Frequency) { SqlFunction sf = new SqlFunction(jdbcTemplate.getDataSource(),
+	 * "select FrequencyPK from Frequency f where f.Frequency = '" + Frequency + "'"); sf.compile(); return sf.run();
 	 * 
 	 * }
 	 */
 
 	public static void associateTaskToSchedule(int ScheduleFK, int TaskFK, int TaskExecutionOrder) throws Exception
 	{
-		jdbcTemplate.update("insert into ScheduleTaskAssociation(ScheduleFK,TaskFK,TaskExecutionOrder) values (?,?,?)", new Object[]
-		{ ScheduleFK, TaskFK, TaskExecutionOrder });
+		jdbcTemplate.update("insert into ScheduleTaskAssociation(ScheduleFK,TaskFK,TaskExecutionOrder) values (?,?,?)", new Object[] { ScheduleFK, TaskFK, TaskExecutionOrder });
 	}
 
 	public static void deleteTask(Integer taskID) throws Exception
 	{
-		jdbcTemplate.update("delete Task where TaskPK = ?", new Object[]
-		{ taskID });
+		jdbcTemplate.update("delete Task where TaskPK = ?", new Object[] { taskID });
 	}
 
 	/*
-	 * Note Task execution order is determined by order of
-	 * ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList
+	 * Note Task execution order is determined by order of ArrayList<SemplestSchedulerTaskObject> scheduleTaskObjList
 	 */
 	public static void createTaskAndAssociateToSchedule(int ScheduleFK, List<SemplestSchedulerTaskObject> scheduleTaskObjList) throws Exception
 	{
@@ -227,23 +211,19 @@ public class SemplestDB extends BaseDB
 	 */
 
 	/*
-	 * select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb
-left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK
-inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK
-where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
+	 * select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb left join SemplestBidType sbt on
+	 * sbt.SemplestBidTypePK = pb.SemplestBidTypeFK inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK where
+	 * pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 	 */
 	private static final RowMapper<SemplestBiddingHistory> semplestBiddingHistoryObjMapper = new BeanPropertyRowMapper<SemplestBiddingHistory>(SemplestBiddingHistory.class);
 
-	public static List<SemplestBiddingHistory> getSemplestBiddingHistory(int PromotionID, AdEngine advertisingEngine ) throws Exception
+	public static List<SemplestBiddingHistory> getSemplestBiddingHistory(int PromotionID, AdEngine advertisingEngine) throws Exception
 	{
-		String strSQL = "select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb " +
-				"left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK " +
-				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK " +
-				"where pb.PromotionFK = ? and ae.AdvertisingEngine = ? order by pb.BidCompleted DESC";
+		String strSQL = "select pb.PromotionFK,pb.BidCompleted, ae.AdvertisingEngine,sbt.SemplestBidType from PromotionBidding pb " + "left join SemplestBidType sbt on sbt.SemplestBidTypePK = pb.SemplestBidTypeFK "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = pb.AdvertisingEngineFK " + "where pb.PromotionFK = ? and ae.AdvertisingEngine = ? order by pb.BidCompleted DESC";
 		try
 		{
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ PromotionID, advertisingEngine.name() }, semplestBiddingHistoryObjMapper);
+			return jdbcTemplate.query(strSQL, new Object[] { PromotionID, advertisingEngine.name() }, semplestBiddingHistoryObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -254,24 +234,23 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			throw e;
 		}
 	}
+
 	public static void setSemplestBiddingHistory(Integer PromotionID, AdEngine advertisingEngine, PromotionBiddingType promotionBiddingType) throws Exception
 	{
 		SetPromotionBiddingSP setPromotionBiddingSP = new SetPromotionBiddingSP();
 		Integer res = setPromotionBiddingSP.execute(PromotionID, advertisingEngine.name(), promotionBiddingType.name());
 		logger.info("Added BiddingHistory for promoID=" + PromotionID + " AdEngine=" + advertisingEngine.name() + ":" + promotionBiddingType.name());
 	}
-	
+
 	public static Long getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
 	{
-		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  "
-				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
-				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
+		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  " + "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
 				+ "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
 
 		Integer defBid;
 		try
 		{
-			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]{ promotionID, adEngine.name() }, Integer.class);
+			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[] { promotionID, adEngine.name() }, Integer.class);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -291,43 +270,36 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 
 	}
-	
+
 	public static void storeDefaultBid(int promotionID, AdEngine adEngine, Long microDefaultBid) throws Exception
 	{
-		Integer microBid =  microDefaultBid.intValue();
-		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  " +
-				"from AdvertisingEnginePromotion aep  " +
-				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
-				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " +
-				"where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
+		Integer microBid = microDefaultBid.intValue();
+		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  " + "from AdvertisingEnginePromotion aep  " + "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " + "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
 
-		jdbcTemplate.update(sql, new Object[]
-		{ microBid, promotionID, adEngine.name() });
+		jdbcTemplate.update(sql, new Object[] { microBid, promotionID, adEngine.name() });
 
 	}
-	
+
 	public static void UpdateDefaultBidForKeywords(int promotionID, AdEngine adEngine) throws Exception
 	{
 		UpdateDefaultBidForKeywordsSP updateDefBiAmounts = new UpdateDefaultBidForKeywordsSP();
 		Boolean ret = updateDefBiAmounts.execute(promotionID, adEngine.name());
 	}
 
-	public static void storeTargetedDailyBudget(int promotionID, AdEngine adEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks)
-			throws Exception
+	public static void storeTargetedDailyBudget(int promotionID, AdEngine adEngine, Long TargetedDailyMicroBudget, Integer TargetedDailyClicks) throws Exception
 	{
-		jdbcTemplate.update(
-				"insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyMicroBudget,TargetedDailyClicks,CreatedDate) "
-						+ "select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[]
-				{ promotionID, TargetedDailyMicroBudget, TargetedDailyClicks, adEngine.name() });
+		jdbcTemplate.update("insert into TargetedDailyBudget(PromotionFK, AdvertisingEngineFK,TargetedDailyMicroBudget,TargetedDailyClicks,CreatedDate) " + "select ?,a.AdvertisingEnginePK,?,?,CURRENT_TIMESTAMP from AdvertisingEngine a where a.AdvertisingEngine = ?", new Object[] { promotionID,
+				TargetedDailyMicroBudget, TargetedDailyClicks, adEngine.name() });
 
 	}
 
 	public static void storeTrafficEstimatorData(int promotionID, AdEngine adEngine, TrafficEstimatorObject trafficEstimatorObj) throws Exception
 	{
-		//AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
+		// AddTrafficEstimatorSP addTrafficEstSP = new AddTrafficEstimatorSP();
 		final int maxInBatch = 10000;
-		List<TrafficDataObj> trafficDataList= new ArrayList<TrafficDataObj>();
-		java.util.Date date= new java.util.Date();
+		List<TrafficDataObj> trafficDataList = new ArrayList<TrafficDataObj>();
+		java.util.Date date = new java.util.Date();
 		Timestamp ts = new Timestamp(date.getTime());
 
 		HashMap<String, HashMap<String, HashMap<Long, BidData>>> trafficData = trafficEstimatorObj.getBidDataMap();
@@ -356,15 +328,15 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 						Iterator<Long> microbids = biddata.keySet().iterator();
 						while (microbids.hasNext())
 						{
-							Long microBid = microbids.next();	
+							Long microBid = microbids.next();
 							++counter;
 							if (counter % 1000 == 0)
 							{
 								logger.info("Batched up " + counter + " traffic estimate items for eventual persisting to db");
-							}						
+							}
 							// add the data to the DB
-							//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
-							//Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
+							// int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer MicroBid, Float AveMicroCost,
+							// Float AveNumberClicks, Float AvePosition, Float AveCPC, java.util.Date currentTime
 							TrafficDataObj trafficDataObj = new TrafficDataObj();
 							trafficDataObj.setAdvertisingEngine(adEngine.name());
 							trafficDataObj.setPromotionID(promotionID);
@@ -383,21 +355,21 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 								counter = 0;
 							}
 							/*
-							Boolean ret =  addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid.intValue(),
-									trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue(),
-									trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue(),
-									trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue(),
-									trafficEstimatorObj.getAveCPC(keyword, matchType, microBid).floatValue(), ts);
-									*/
+							 * Boolean ret = addTrafficEstSP.execute(promotionID, keyword, adEngine.name(), matchType, microBid.intValue(),
+							 * trafficEstimatorObj.getAveTotalDailyMicroCost(keyword, matchType, microBid).floatValue(),
+							 * trafficEstimatorObj.getAveClickPerDay(keyword, matchType, microBid).floatValue(),
+							 * trafficEstimatorObj.getAvePosition(keyword, matchType, microBid).floatValue(), trafficEstimatorObj.getAveCPC(keyword,
+							 * matchType, microBid).floatValue(), ts);
+							 */
 						}
 					}
 				}
 			}
 		}
-		//call the last batch add
+		// call the last batch add
 		trafficEstimatorBatch(trafficDataList, ts);
 	}
-	
+
 	private static void trafficEstimatorBatch(final List<TrafficDataObj> trafficDataList, final Timestamp ts) throws Exception
 	{
 		logger.info("Will try to persist " + trafficDataList.size() + " items of Traffic Data");
@@ -439,22 +411,21 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			for (int i = 0; i < keywordDataObjectList.size(); i++)
 			{
 				KeywordDataObject kdObj = keywordDataObjectList.get(i);
-				
+
 				Integer firstpgcpc = null;
 				if (kdObj.getFirstPageCpc() != null)
 				{
 					firstpgcpc = kdObj.getFirstPageCpc().intValue();
 				}
-				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + adEngine  + ":" + kdObj.getMatchType()  + ":" + kdObj.getQualityScore()  + ":" +
-						kdObj.getApprovalStatus() + ":" + firstpgcpc + ":" + kdObj.isIsEligibleForShowing());
-				//int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer FirstPageMicroCpc, Boolean IsEligibleForShowing
-				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), adEngine, kdObj.getMatchType(), kdObj.getQualityScore(),
-						kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
+				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + adEngine + ":" + kdObj.getMatchType() + ":" + kdObj.getQualityScore() + ":" + kdObj.getApprovalStatus() + ":" + firstpgcpc + ":" + kdObj.isIsEligibleForShowing());
+				// int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer
+				// FirstPageMicroCpc, Boolean IsEligibleForShowing
+				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), adEngine, kdObj.getMatchType(), kdObj.getQualityScore(), kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
 				if (res == null || res == 0)
 				{
 					logger.warn("KeywordBidData not stored for " + kdObj.getKeyword() + ":" + kdObj.getMatchType());
 				}
-					
+
 			}
 		}
 	}
@@ -463,18 +434,12 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	public static List<BidElement> getLatestBids(int promotionID, AdEngine searchEngine) throws Exception
 	{
-		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, " 
-				+ " kb.isActive, kb.isDefaultValue, pka.IsNegative from Promotion p  "
-				+ "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
-				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.keywordFK "
-				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-				+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " 
-				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-				+ "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
+		String strSQL = "select kb.KeywordAdEngineID, k.Keyword,kb.MicroBidAmount,bt.BidType [matchType],kb.CompetitionType, kb.StartDate, kb.EndDate, " + " kb.isActive, kb.isDefaultValue, pka.IsNegative from Promotion p  " + "inner join KeywordBid kb on kb.PromotionFK = p.PromotionPK "
+				+ "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.keywordFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
+				+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " + "where p.PromotionPK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.IsActive = 1";
 		try
 		{
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ promotionID, searchEngine.name() }, bidElementMapper);
+			return jdbcTemplate.query(strSQL, new Object[] { promotionID, searchEngine.name() }, bidElementMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -482,8 +447,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 	}
 
-	public static HashMap<String, ArrayList<BidElement>> getAllBids(int promotionID, AdEngine searchEngine, Date startDate, Date endDate)
-			throws Exception
+	public static HashMap<String, ArrayList<BidElement>> getAllBids(int promotionID, AdEngine searchEngine, Date startDate, Date endDate) throws Exception
 	{
 
 		try
@@ -492,26 +456,16 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
 			if (endDate == null)
 			{
-				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? "
-						+ "order by k.Keyword";
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, searchEngine.name(), startDateSQL }, new AllBidRSExtactor());
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " + "where kb.PromotionFK = ?  and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and kb.StartDate >= ? " + "order by k.Keyword";
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, searchEngine.name(), startDateSQL }, new AllBidRSExtactor());
 			}
 			else
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
-						+ "where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)"
-						+ "order by k.Keyword";
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, searchEngine.name(), startDateSQL, endDateSQL }, new AllBidRSExtactor());
+				strSQL = "select kb.KeywordAdEngineID, k.Keyword, kb.MicroBidAmount, bt.BidType, kb.CompetitionType,kb.StartDate, kb.EndDate, kb.IsDefaultValue, kb.IsActive from KeywordBid kb " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK " + "where kb.PromotionFK = ? and kb.MicroBidAmount != -1 and ae.AdvertisingEngine = ? and (kb.StartDate >= ? and kb.EndDate <= ?)" + "order by k.Keyword";
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, searchEngine.name(), startDateSQL, endDateSQL }, new AllBidRSExtactor());
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -525,11 +479,8 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	}
 
-	
-
 	/*
-	 * This get the last created KeywordBid Data for all keywords associated
-	 * with campaign
+	 * This get the last created KeywordBid Data for all keywords associated with campaign
 	 */
 	public static List<KeywordDataObject> getLatestBiddableAdGroupCriteria(Integer promotionID, AdEngine advertisingEngine) throws Exception
 	{
@@ -537,29 +488,20 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		return getLatestBiddableAdGroupCriteria.execute(promotionID, advertisingEngine);
 	}
 
-	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, AdEngine adEngine, Date startDate,
-			Date endDate) throws Exception
+	public static HashMap<String, ArrayList<KeywordDataObject>> getAllBiddableAdGroupCriteria(Integer promotionID, AdEngine adEngine, Date startDate, Date endDate) throws Exception
 	{
-		String strSQL= null;
+		String strSQL = null;
 		if (endDate == null)
 		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " +
-					"mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK " +
-					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"left join  (select kbd.KeywordBidFK,kbd.ApprovalStatus ,kbd.FirstPageMicroCPC,kbd.QualityScore,kbd.IsEligibleForShowing,kbd.CreatedDate from KeywordBidData kbd " +
-					"inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ?) mkbd " +
-					"on mkbd.KeywordBidFK = kb.KeywordBidPK " +
-					"where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
-			
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " + "mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK "
+					+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " + "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "left join  (select kbd.KeywordBidFK,kbd.ApprovalStatus ,kbd.FirstPageMicroCPC,kbd.QualityScore,kbd.IsEligibleForShowing,kbd.CreatedDate from KeywordBidData kbd "
+					+ "inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ?) mkbd "
+					+ "on mkbd.KeywordBidFK = kb.KeywordBidPK " + "where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
 
 			try
 			{
-				return jdbcTemplate.query(strSQL, new Object[]
-					{ promotionID, adEngine.name(),startDate,  promotionID, adEngine.name() }, new AllBiddableRSExtractor());
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDate, promotionID, adEngine.name() }, new AllBiddableRSExtractor());
 			}
 			catch (EmptyResultDataAccessException e)
 			{
@@ -572,21 +514,14 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		else
 		{
-			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " +
-					"mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK " +
-					"inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " +
-					"inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"left join  (select kbd.KeywordBidFK,kbd.ApprovalStatus ,kbd.FirstPageMicroCPC,kbd.QualityScore,kbd.IsEligibleForShowing,kbd.CreatedDate from KeywordBidData kbd " +
-					"inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK " +
-					"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
-					"where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ? and kbd.CreatedDate <= ?) mkbd " +
-					"on mkbd.KeywordBidFK = kb.KeywordBidPK " +
-					"where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
+			strSQL = "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,mkbd.ApprovalStatus, bt.BidType ,mkbd.FirstPageMicroCPC, " + "mkbd.QualityScore,mkbd.IsEligibleForShowing, pka.IsNegative,mkbd.CreatedDate from Keyword k inner join KeywordBid kb on k.KeywordPK = kb.KeywordFK "
+					+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK inner join Promotion p on p.PromotionPK = kb.PromotionFK " + "inner join PromotionKeywordAssociation pka on pka.PromotionFK = p.PromotionPK and pka.KeywordFK = kb.KeywordFK "
+					+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK " + "left join  (select kbd.KeywordBidFK,kbd.ApprovalStatus ,kbd.FirstPageMicroCPC,kbd.QualityScore,kbd.IsEligibleForShowing,kbd.CreatedDate from KeywordBidData kbd "
+					+ "inner join KeywordBid kb on kb.KeywordBidPK = kbd.KeywordBidFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+					+ "where kb.PromotionFK = ? and ae.AdvertisingEngine = ? and kb.IsActive = 1 and kbd.CreatedDate >= ? and kbd.CreatedDate <= ?) mkbd " + "on mkbd.KeywordBidFK = kb.KeywordBidPK " + "where kb.PromotionFK = ? and kb.IsActive = 1 and ae.AdvertisingEngine = ?";
 			try
 			{
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine.name(), startDate, endDate, promotionID, adEngine.name() }, new AllBiddableRSExtractor());
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDate, endDate, promotionID, adEngine.name() }, new AllBiddableRSExtractor());
 			}
 			catch (EmptyResultDataAccessException e)
 			{
@@ -599,59 +534,41 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 	}
 
-	
-
 	/*
-	 * This get the last created Traffic Estimator Data for one keyword
-	 * associated with campaign
+	 * This get the last created Traffic Estimator Data for one keyword associated with campaign
 	 */
-	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, AdEngine advertisingEngine)
-			throws Exception
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimatorForKeyword(Integer promotionID, String keyword, AdEngine advertisingEngine) throws Exception
 	{
 		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
 		return trafficEst.execute(promotionID, keyword, advertisingEngine);
 	}
-	
-	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimator(Integer promotionID, AdEngine advertisingEngine)
-			throws Exception
+
+	public static List<TrafficEstimatorDataObject> getLatestTrafficEstimator(Integer promotionID, AdEngine advertisingEngine) throws Exception
 	{
 		GetLatestTrafficEstimatorSP trafficEst = new GetLatestTrafficEstimatorSP();
 		return trafficEst.execute(promotionID, null, advertisingEngine);
 	}
 
 	/*
-	 * public static List<TrafficEstimatorDataObject>
-	 * getAllTrafficEstimatorForKeyword(Integer promotionID, String keyword,
-	 * String adEngine, Date startDate, Date endDate ) { String strSQL = null;
-	 * java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime()); if
-	 * (endDate == null) { strSQL =
+	 * public static List<TrafficEstimatorDataObject> getAllTrafficEstimatorForKeyword(Integer promotionID, String keyword, String adEngine, Date
+	 * startDate, Date endDate ) { String strSQL = null; java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime()); if (endDate == null) {
+	 * strSQL =
 	 * "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  "
-	 * + "from KeywordBid kb  " +
-	 * "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
-	 * +
-	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
-	 * + "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-	 * "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
-	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-	 * +
-	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? "
-	 * ;
+	 * + "from KeywordBid kb  " + "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
+	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
+	 * "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
+	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? " ;
 	 * 
-	 * return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword,
-	 * adEngine, startDateSQL },trafficEstDataObjMapper); } else { java.sql.Date
-	 * endDateSQL = new java.sql.Date(endDate.getTime()); strSQL =
+	 * return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword, adEngine, startDateSQL },trafficEstDataObjMapper); } else {
+	 * java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime()); strSQL =
 	 * "select kb.KeywordAdEngineID,k.Keyword,kb.MicroBidAmount,te.MicroBid, te.AveMicroCost, te.AveNumberClicks, te.AvePosition,te.AveCPC ,b.BidType,p.IsNegative, te.CreatedDate  "
-	 * + "from KeywordBid kb  " +
-	 * "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK "
-	 * +
-	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK "
-	 * + "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " +
-	 * "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
-	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-	 * +
-	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? and te.CreatedDate <= ?"
-	 * ; return jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword,
-	 * adEngine, startDateSQL, endDateSQL }, trafficEstDataObjMapper); } }
+	 * + "from KeywordBid kb  " + "inner join PromotionKeywordAssociation pka on pka.PromotionFK = kb.PromotionFK " +
+	 * "inner join Keyword k on k.KeywordPK = pka.KeywordFK inner join PromotionKeywordAssociation p on p.KeywordFK = k.KeywordPK " +
+	 * "inner join BidType b on b.BidTypePK = kb.BidTypeFK  " + "inner join TrafficEstimator te on te.KeywordBidFK = kb.KeywordBidPK " +
+	 * "inner join AdvertisingEngine a on a.AdvertisingEnginePK = kb.AdvertisingEngineFK " +
+	 * "where pka.PromotionFK = ?  and k.Keyword = ? and a.AdvertisingEngine = ? and te.CreatedDate >= ? and te.CreatedDate <= ?" ; return
+	 * jdbcTemplate.query(strSQL, new Object[] { promotionID, keyword, adEngine, startDateSQL, endDateSQL }, trafficEstDataObjMapper); } }
 	 */
 	private static final RowMapper<BudgetObject> BudgetObjMapper = new BeanPropertyRowMapper<BudgetObject>(BudgetObject.class);
 
@@ -661,8 +578,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		String strSQL = "select p.RemainingBudgetInCycle, DATEDIFF(dd,CURRENT_TIMESTAMP, p.CycleEndDate) [RemainingDays] from Promotion p where PromotionPK = ?";
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ promotionID }, BudgetObjMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[] { promotionID }, BudgetObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -705,16 +621,15 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 	public static void storeAdvertisingEngineReportData(Integer promotionID, AdEngine adEngine, ReportObject[] reportObjList) throws Exception
 	{
 		AddReportDataSP setReportSP = new AddReportDataSP();
-		for (int i=0; i < reportObjList.length; i++)
+		for (int i = 0; i < reportObjList.length; i++)
 		{
 			ReportObject rptObj = reportObjList[i];
-			//Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount, 
-			//Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String ApprovalStatus,
-			//Integer FirstPageMicroCpc, Integer MicroCost
-			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(),adEngine, rptObj.getTransactionDate(), 
-					rptObj.getMicroBidAmount().intValue(),  rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),rptObj.getBidMatchType(), 
-					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(),
-					rptObj.getMicroCost().intValue());
+			// Integer PromotionID, String Keyword,String AdvertisingEngine, Date TransactionDate, Integer MicroBidAmount,
+			// Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String
+			// ApprovalStatus,
+			// Integer FirstPageMicroCpc, Integer MicroCost
+			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(), adEngine, rptObj.getTransactionDate(), rptObj.getMicroBidAmount().intValue(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(), rptObj.getBidMatchType(),
+					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(), rptObj.getMicroCost().intValue());
 			if (id == 0)
 			{
 				logger.info(rptObj.getKeyword() + " already inserted");
@@ -728,8 +643,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	private static final RowMapper<ReportObject> reportObjectjMapper = new BeanPropertyRowMapper<ReportObject>(ReportObject.class);
 
-	public static List<ReportObject> getReportData(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate)
-			throws Exception
+	public static List<ReportObject> getReportData(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate) throws Exception
 	{
 		String strSQL = null;
 		try
@@ -739,32 +653,20 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			{
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
 						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
-						+ "from AdvertisingEngineReportData aerd "
-						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
-						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+						+ "from AdvertisingEngineReportData aerd " + "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK " + "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK " + "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
 						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ?";
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine.name(), startDateSQL }, reportObjectjMapper);
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDateSQL }, reportObjectjMapper);
 			}
 			else
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
 				strSQL = "select aep.AdvertisingEngineAccountFK [AccountID],aep.AdvertisingEngineCampaignPK [CampaignID],k.Keyword,aerd.TransactionDate,aerd.MicroBidAmount, "
 						+ "bt.BidType [BidMatchType],aerd.NumberImpressions, aerd.NumberClick,aerd.AveragePosition,aerd.AverageCPC,aerd.QualityScore,aerd.ApprovalStatus,aerd.FirstPageMicroCPC,aerd.CreatedDate,aerd.MicroCost, kb.KeywordAdEngineID [keywordID]  "
-						+ "from AdvertisingEngineReportData aerd "
-						+ "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK "
-						+ "inner join Keyword k on k.KeywordPK = kb.KeywordFK "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
-						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK "
-						+ "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK "
-						+ "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
+						+ "from AdvertisingEngineReportData aerd " + "inner join KeywordBid kb on kb.KeywordBidPK = aerd.KeywordBidFK " + "inner join Keyword k on k.KeywordPK = kb.KeywordFK " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK "
+						+ "inner join Promotion p on p.PromotionPK = kb.PromotionFK " + "inner join AdvertisingEnginePromotion aep on p.PromotionPK = aep.PromotionFK " + "inner join BidType bt on bt.BidTypePK = kb.BidTypeFK "
 						+ "where p.PromotionPK = ? and ae.AdvertisingEngine = ? and aerd.TransactionDate >= ? and aerd.TransactionDate <= ?";
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, reportObjectjMapper);
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDateSQL, endDateSQL }, reportObjectjMapper);
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -781,14 +683,12 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	public static TargetedDailyBudget getLatestTargetedDailyBudget(int promotionID, AdEngine adEngine) throws Exception
 	{
-		String strSQL = "select top 1 tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
-				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+		String strSQL = "select top 1 tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
 				+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? order by tdb.CreatedDate DESC";
 
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ promotionID, adEngine.name() }, targetedDailyBudgetMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[] { promotionID, adEngine.name() }, targetedDailyBudgetMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -800,8 +700,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 	}
 
-	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, AdEngine adEngine, java.util.Date startDate,
-			java.util.Date endDate) throws Exception
+	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, AdEngine adEngine, java.util.Date startDate, java.util.Date endDate) throws Exception
 	{
 		String strSQL = null;
 		try
@@ -809,22 +708,18 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			java.sql.Date startDateSQL = new java.sql.Date(startDate.getTime());
 			if (endDate == null)
 			{
-				strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+				strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
 						+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ?";
 
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine.name(), startDateSQL }, targetedDailyBudgetMapper);
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDateSQL }, targetedDailyBudgetMapper);
 			}
 			else
 			{
 				java.sql.Date endDateSQL = new java.sql.Date(endDate.getTime());
-				strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb "
-						+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
+				strSQL = "select tdb.TargetedDailyMicroBudget, tdb.TargetedDailyClicks,tdb.CreatedDate from TargetedDailyBudget tdb " + "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = tdb.AdvertisingEngineFK "
 						+ "where tdb.PromotionFK = ? and ae.AdvertisingEngine = ? and tdb.CreatedDate >= ? and tdb.CreatedDate <= ?";
 
-				return jdbcTemplate.query(strSQL, new Object[]
-				{ promotionID, adEngine.name(), startDateSQL, endDateSQL }, targetedDailyBudgetMapper);
+				return jdbcTemplate.query(strSQL, new Object[] { promotionID, adEngine.name(), startDateSQL, endDateSQL }, targetedDailyBudgetMapper);
 			}
 		}
 		catch (EmptyResultDataAccessException e)
@@ -844,14 +739,12 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	public static AdEngineID getAdEngineID(Integer promotionID, AdEngine adEngine) throws Exception
 	{
-		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], aep.AdvertisingEngineAdGroupID [AdGroupID] from Customer c "
-				+ "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
-				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK "
-				+ "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
+		String strSQL = "select aec.AdvertisingEngineAccountPK [AccountID], aep.AdvertisingEngineCampaignPK [CampaignID], aep.AdvertisingEngineAdGroupID [AdGroupID] from Customer c " + "inner join AdvertisingEngineAccount aec on aec.CustomerFK = c.CustomerPK "
+				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aec.AdvertisingEngineFK " + "inner join AdvertisingEnginePromotion aep on aec.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
 				+ "inner join Promotion p on aep.PromotionFK = p.PromotionPK where p.PromotionPK = ? and ae.AdvertisingEngine = ?";
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]{ promotionID, adEngine.name() }, adEngineObjMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[] { promotionID, adEngine.name() }, adEngineObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -863,13 +756,11 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(Long advertisingEngineAccountID) throws Exception
 	{
-		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID],"
-				+ "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.MicroDefaultBid,ap.AdvertisingEngineAdGroupID "
+		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID]," + "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.MicroDefaultBid,ap.AdvertisingEngineAdGroupID "
 				+ "from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
 		try
 		{
-			return jdbcTemplate.query(strSQL, new Object[]
-			{ advertisingEngineAccountID }, advertisingEnginePromotionObjMapper);
+			return jdbcTemplate.query(strSQL, new Object[] { advertisingEngineAccountID }, advertisingEnginePromotionObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -880,20 +771,18 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			throw e;
 		}
 	}
+
 	/*
-	 * Get campaign for a given 
+	 * Get campaign for a given
 	 */
 	public static AdvertisingEnginePromotionObj getAdvertisingEngineCampaign(Long advertisingEngineAccountID, int promotionID) throws Exception
 	{
-		String strSQL = "select aep.AdvertisingEngineAccountFK [AdvertisingEngineAccountID], aep.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID], " +
-				"p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid, aep.AdvertisingEngineAdGroupID from AdvertisingEnginePromotion aep " +
-				"inner join Promotion p on p.PromotionPK = aep.PromotionFK " +
-				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
-				"where aea.AdvertisingEngineAccountPK = ? and p.PromotionPK = ?";
+		String strSQL = "select aep.AdvertisingEngineAccountFK [AdvertisingEngineAccountID], aep.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID], "
+				+ "p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid, aep.AdvertisingEngineAdGroupID from AdvertisingEnginePromotion aep " + "inner join Promotion p on p.PromotionPK = aep.PromotionFK "
+				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " + "where aea.AdvertisingEngineAccountPK = ? and p.PromotionPK = ?";
 		try
 		{
-			return jdbcTemplate.queryForObject(strSQL, new Object[]
-			{ advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
+			return jdbcTemplate.queryForObject(strSQL, new Object[] { advertisingEngineAccountID, promotionID }, advertisingEnginePromotionObjMapper);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
@@ -904,33 +793,22 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			throw e;
 		}
 	}
-	
+
 	/*
 	 * return Hashmap - Keys: AccountID, CustomerName
 	 */
 	/*
-	public static List<Map<String, Object>> getAdEngineAccount(int customerID, String adEngine) throws Exception
-	{
-		String strSQL = "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c "
-				+ "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK "
-				+ "left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK "
-				+ "where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
-
-		try
-		{
-			return jdbcTemplate.queryForList(strSQL, new Object[]{customerID, adEngine.name()});
-		}
-		catch (EmptyResultDataAccessException e)
-		{
-			return null;
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-
-	}
-	*/
+	 * public static List<Map<String, Object>> getAdEngineAccount(int customerID, String adEngine) throws Exception { String strSQL =
+	 * "select a.AdvertisingEngineAccountPK [AccountID], c.Name [CustomerName] from Customer c " +
+	 * "left join AdvertisingEngineAccount a on c.CustomerPK = a.CustomerFK " +
+	 * "left join AdvertisingEngine ae on ae.AdvertisingEnginePK = a.AdvertisingEngineFK " +
+	 * "where c.CustomerPK = ? and (ae.AdvertisingEngine is null or ae.AdvertisingEngine = ?)";
+	 * 
+	 * try { return jdbcTemplate.queryForList(strSQL, new Object[]{customerID, adEngine.name()}); } catch (EmptyResultDataAccessException e) { return
+	 * null; } catch (Exception e) { throw e; }
+	 * 
+	 * }
+	 */
 
 	public static void addAdEngineAccountID(int customerID, String accountNumber, Long accountID, AdEngine adEngine) throws Exception
 	{
@@ -948,29 +826,25 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 
 	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID) "
-				+ "VALUES (?,?,?,?,?,?,?)";
+		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID) " + "VALUES (?,?,?,?,?,?,?)";
 
-		return jdbcTemplate.update(strSQL, new Object[]
-		{ adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0, advertisingEngineAdGroupID });
+		return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0, advertisingEngineAdGroupID });
 
 	}
 
-	public static Integer setAdvertisingEngineAdGroupID(Long adEngineCampaignID,Long advertisingEngineAdGroupID) throws Exception
+	public static Integer setAdvertisingEngineAdGroupID(Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
 	{
-		String strSQL = "update AdvertisingEnginePromotion set AdvertisingEngineAdGroupID = ? " +
-				"from AdvertisingEnginePromotion aep where aep.AdvertisingEngineCampaignPK = ?";
+		String strSQL = "update AdvertisingEnginePromotion set AdvertisingEngineAdGroupID = ? " + "from AdvertisingEnginePromotion aep where aep.AdvertisingEngineCampaignPK = ?";
 
-		return jdbcTemplate.update(strSQL, new Object[]
-		{ advertisingEngineAdGroupID, adEngineCampaignID });
+		return jdbcTemplate.update(strSQL, new Object[] { advertisingEngineAdGroupID, adEngineCampaignID });
 
 	}
-	
+
 	public static Integer setAdIDForAdGroup(Long advertisingEngineAdPK, AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
-	{		
-		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[]{advertisingEngineAdPK, promotionAdsFK, advertisingEngine.name()});
+	{
+		return jdbcTemplate.update(SQL_SET_AD_ID_FOR_AD_GROUP, new Object[] { advertisingEngineAdPK, promotionAdsFK, advertisingEngine.name() });
 	}
-		
+
 	public static Map<Integer, Integer> getDeletedAdMappingCountMap(final List<Integer> deletedAdIds, int[] rowCounts)
 	{
 		final Map<Integer, Integer> deletedAdIdRowCountMap = new HashMap<Integer, Integer>();
@@ -982,7 +856,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		return deletedAdIdRowCountMap;
 	}
-	
+
 	public static Map<Long, Integer> getDeletedAdIdRowCountMap(final List<Long> deletedAdIds, int[] rowCounts)
 	{
 		final Map<Long, Integer> deletedAdIdRowCountMap = new HashMap<Long, Integer>();
@@ -994,7 +868,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		return deletedAdIdRowCountMap;
 	}
-	
+
 	public static Map<Entry<Integer, String>, Integer> getKeywordIdCommentToRowCountMap(final List<Entry<Integer, String>> entryList, int[] rowCounts)
 	{
 		final Map<Entry<Integer, String>, Integer> keywordIdCommentToRowCountMap = new HashMap<Entry<Integer, String>, Integer>();
@@ -1006,7 +880,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		return keywordIdCommentToRowCountMap;
 	}
-	
+
 	public static Map<Entry<UpdateAdRequest, Long>, Integer> getOldNewAdIdRowCountMap(final List<Entry<UpdateAdRequest, Long>> updateRequestToNewAdIdList, int[] rowCounts)
 	{
 		final Map<Entry<UpdateAdRequest, Long>, Integer> idPairMap = new HashMap<Entry<UpdateAdRequest, Long>, Integer>();
@@ -1018,7 +892,7 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		return idPairMap;
 	}
-	
+
 	public static Map<GoogleAdIdSemplestAdIdPair, Integer> getIdPairRowCountMap(final List<GoogleAdIdSemplestAdIdPair> idPairs, int[] rowCounts)
 	{
 		final Map<GoogleAdIdSemplestAdIdPair, Integer> idPairRowCountMap = new HashMap<GoogleAdIdSemplestAdIdPair, Integer>();
@@ -1030,159 +904,149 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 		}
 		return idPairRowCountMap;
 	}
-	
+
 	public static Map<GoogleAdIdSemplestAdIdPair, Integer> setAdIDForAdGroupBulk(final List<GoogleAdIdSemplestAdIdPair> idPairs, final AdEngine advertisingEngine) throws Exception
-	{	
-		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_SET_AD_ID_FOR_AD_GROUP,
- 											             new BatchPreparedStatementSetter() 
-														 {
-											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
-											              	{
-												                ps.setLong(1, idPairs.get(i).getGoogleAdId());
-												                ps.setInt(2, idPairs.get(i).getSemplestAdId());
-												                ps.setString(3, advertisingEngine.name());
-											              	}	
-											              
-											              	public int getBatchSize() 
-											              	{
-											              		return idPairs.size();
-											              	}
-											             });
+	{
+		final int[] rowCounts = jdbcTemplate.batchUpdate(SQL_SET_AD_ID_FOR_AD_GROUP, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				ps.setLong(1, idPairs.get(i).getGoogleAdId());
+				ps.setInt(2, idPairs.get(i).getSemplestAdId());
+				ps.setString(3, advertisingEngine.name());
+			}
+
+			public int getBatchSize()
+			{
+				return idPairs.size();
+			}
+		});
 		return getIdPairRowCountMap(idPairs, rowCounts);
 	}
-	
+
 	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap, final Integer promotionID)
 	{
 		logger.info("Will try to mark " + keywordIdToCommentMap.size() + " keywords as deleted:\n" + SemplestUtils.getEasilyReadableString(keywordIdToCommentMap));
 		final Set<Entry<Integer, String>> entrySet = keywordIdToCommentMap.entrySet();
 		final List<Entry<Integer, String>> entryList = new ArrayList<Entry<Integer, String>>(entrySet);
-		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_MARK_KEYWORD_DELETED,
-	             new BatchPreparedStatementSetter() 
-				 {
-	              	public void setValues(PreparedStatement ps, int i) throws SQLException 
-	              	{
-	              		final Entry<Integer, String> entry = entryList.get(i);
-	              		final Integer keywordId = entry.getKey();
-	              		final String comment = entry.getValue();
-	              		ps.setString(1, comment);
-		                ps.setInt(2, keywordId);	
-		                ps.setInt(3, promotionID);
-	              	}	
-	              
-	              	public int getBatchSize() 
-	              	{
-	              		return entryList.size();
-	              	}
-	             });
+		final int[] rowCounts = jdbcTemplate.batchUpdate(SQL_MARK_KEYWORD_DELETED, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				final Entry<Integer, String> entry = entryList.get(i);
+				final Integer keywordId = entry.getKey();
+				final String comment = entry.getValue();
+				ps.setString(1, comment);
+				ps.setInt(2, keywordId);
+				ps.setInt(3, promotionID);
+			}
+
+			public int getBatchSize()
+			{
+				return entryList.size();
+			}
+		});
 		return getKeywordIdCommentToRowCountMap(entryList, rowCounts);
 	}
-	
+
 	public static Map<Entry<UpdateAdRequest, Long>, Integer> updateAdIDForAdGroupBulk(final Map<UpdateAdRequest, Long> oldToNewAdIdMap, final AdEngine advertisingEngine) throws Exception
 	{
 		final Set<Entry<UpdateAdRequest, Long>> entries = oldToNewAdIdMap.entrySet();
 		final List<Entry<UpdateAdRequest, Long>> entryList = new ArrayList<Entry<UpdateAdRequest, Long>>(entries);
-		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_UPDATE_AD_ENGINE_AD_ID,
- 											             new BatchPreparedStatementSetter() 
-														 {
-											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
-											              	{
-											              		final Entry<UpdateAdRequest, Long> entry = entryList.get(i);
-											              		final UpdateAdRequest updateRequest = entry.getKey();											              		
-											              		final Long newAdID = entry.getValue();	
-											              		final Integer promotionAdId = updateRequest.getPromotionAdID();
-											              		final Long oldAdID = updateRequest.getAdId();
-												                ps.setLong(1, newAdID);
-												                ps.setInt(2, promotionAdId);
-												                ps.setLong(3, oldAdID);
-												                ps.setString(4, advertisingEngine.name());
-											              	}	
-											              
-											              	public int getBatchSize() 
-											              	{
-											              		return oldToNewAdIdMap.size();
-											              	}
-											             });
+		final int[] rowCounts = jdbcTemplate.batchUpdate(SQL_UPDATE_AD_ENGINE_AD_ID, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				final Entry<UpdateAdRequest, Long> entry = entryList.get(i);
+				final UpdateAdRequest updateRequest = entry.getKey();
+				final Long newAdID = entry.getValue();
+				final Integer promotionAdId = updateRequest.getPromotionAdID();
+				final Long oldAdID = updateRequest.getAdId();
+				ps.setLong(1, newAdID);
+				ps.setInt(2, promotionAdId);
+				ps.setLong(3, oldAdID);
+				ps.setString(4, advertisingEngine.name());
+			}
+
+			public int getBatchSize()
+			{
+				return oldToNewAdIdMap.size();
+			}
+		});
 		return getOldNewAdIdRowCountMap(entryList, rowCounts);
 	}
-	
+
 	public static Integer updateAdIDForAdGroup(Long newAdvertisingEngineAdPK, Long oldAdvertisingEngineAdPK, String advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		return jdbcTemplate.update(SQL_UPDATE_AD_ENGINE_AD_ID, new Object[]{newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine});
+		return jdbcTemplate.update(SQL_UPDATE_AD_ENGINE_AD_ID, new Object[] { newAdvertisingEngineAdPK, promotionAdsFK, oldAdvertisingEngineAdPK, advertisingEngine });
 	}
-	
+
 	public static Integer deleteAdIDForAdGroup(AdEngine advertisingEngine, Integer promotionAdsFK) throws Exception
 	{
-		
-		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[]{promotionAdsFK, advertisingEngine.name()});
-	}	
-	
-	
-	public static Integer markPromotionAdDeleted(final java.util.Date date, final Long advertisingEngineAdID) throws Exception
-	{	
-		return jdbcTemplate.update(SQL_MARK_AD_DELETED, new Object[]{date, advertisingEngineAdID});
+
+		return jdbcTemplate.update(SQL_DELETE_AD_ENGINE_AD_ID, new Object[] { promotionAdsFK, advertisingEngine.name() });
 	}
-	
-	public static  Map<Integer, Integer> deleteAdIDForAdGroupBulk(final List<Integer> promotionAdIds, final AdEngine advertisingEngine) throws Exception
+
+	public static Integer markPromotionAdDeleted(final java.util.Date date, final Long advertisingEngineAdID) throws Exception
 	{
-		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_DELETE_AD_ENGINE_AD_ID,
-									             new BatchPreparedStatementSetter() 
-												 {
-									              	public void setValues(PreparedStatement ps, int i) throws SQLException 
-									              	{
-									              		final Integer promotionAdId = promotionAdIds.get(i);
-										                ps.setInt(1, promotionAdId);
-										                ps.setString(2, advertisingEngine.name());
-									              	}	
-									              
-									              	public int getBatchSize() 
-									              	{
-									              		return promotionAdIds.size();
-									              	}
-									             });
+		return jdbcTemplate.update(SQL_MARK_AD_DELETED, new Object[] { date, advertisingEngineAdID });
+	}
+
+	public static Map<Integer, Integer> deleteAdIDForAdGroupBulk(final List<Integer> promotionAdIds, final AdEngine advertisingEngine) throws Exception
+	{
+		final int[] rowCounts = jdbcTemplate.batchUpdate(SQL_DELETE_AD_ENGINE_AD_ID, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				final Integer promotionAdId = promotionAdIds.get(i);
+				ps.setInt(1, promotionAdId);
+				ps.setString(2, advertisingEngine.name());
+			}
+
+			public int getBatchSize()
+			{
+				return promotionAdIds.size();
+			}
+		});
 		return getDeletedAdMappingCountMap(promotionAdIds, rowCounts);
 	}
-	
+
 	public static Map<Long, Integer> markPromotionAdDeletedBulk(final java.util.Date date, final List<Long> deletedAdIds) throws Exception
-	{	
-		final int[] rowCounts =  jdbcTemplate.batchUpdate(SQL_MARK_AD_DELETED,
- 											             new BatchPreparedStatementSetter() 
-														 {
-											              	public void setValues(PreparedStatement ps, int i) throws SQLException 
-											              	{
-												                ps.setTimestamp(1, new Timestamp(date.getTime()));
-												                ps.setLong(2, deletedAdIds.get(i));
-											              	}	
-											              
-											              	public int getBatchSize() 
-											              	{
-											              		return deletedAdIds.size();
-											              	}
-											             });
+	{
+		final int[] rowCounts = jdbcTemplate.batchUpdate(SQL_MARK_AD_DELETED, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				ps.setTimestamp(1, new Timestamp(date.getTime()));
+				ps.setLong(2, deletedAdIds.get(i));
+			}
+
+			public int getBatchSize()
+			{
+				return deletedAdIds.size();
+			}
+		});
 		return getDeletedAdIdRowCountMap(deletedAdIds, rowCounts);
 	}
-	
+
 	public static Integer markPromotionAdDeleted(Integer promotionAdsPK, java.util.Date deletedDate) throws Exception
 	{
-		final String strSQL = "update   PromotionAds " + 
-								 "set   IsDeleted = 1,  " + 
-									   "DeletedDate = ?  " + 
-								"where	PromotionAdsPK = ?";
-		return jdbcTemplate.update(strSQL, new Object[]{deletedDate, promotionAdsPK});
+		final String strSQL = "update   PromotionAds " + "set   IsDeleted = 1,  " + "DeletedDate = ?  " + "where	PromotionAdsPK = ?";
+		return jdbcTemplate.update(strSQL, new Object[] { deletedDate, promotionAdsPK });
 	}
-	
-	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork,
-			Double AdvertisingEngineBudget) throws Exception
+
+	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork, Double AdvertisingEngineBudget) throws Exception
 	{
 		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
-		return jdbcTemplate.update(strSQL, new Object[]{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
+		return jdbcTemplate.update(strSQL, new Object[] { IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
 	}
-	
+
 	public static void logError(Exception e, String errorSource)
-	{		
+	{
 		try
 		{
 			final StackTraceElement[] ste = e.getStackTrace();
-			final StackTraceElement err = ste[ste.length-1];		
+			final StackTraceElement err = ste[ste.length - 1];
 			final String errorClass = err.getClassName();
 			final StringWriter sw = new StringWriter();
 			e.printStackTrace(new PrintWriter(sw));
@@ -1190,11 +1054,11 @@ where pb.PromotionFK = 4 and ae.AdvertisingEngine = 'Google'
 			final String errDetails = SemplestUtils.getTrimmedNonNullString(stackTraceString);
 			final String sql = "INSERT Error(ErrorSource,ErrorClass,ErrorMessage,ErrorDetails,CreatedDate) VALUES (?, ?, ?, ?, ?)";
 			final String errMsg = SemplestUtils.getTrimmedNonNullString(e.getMessage());
-			jdbcTemplate.update(sql, new Object[]{errorSource, errorClass, errMsg, errDetails, new java.util.Date()});
+			jdbcTemplate.update(sql, new Object[] { errorSource, errorClass, errMsg, errDetails, new java.util.Date() });
 		}
 		catch (Exception e1)
 		{
-			logger.error("logError: " + e1.getMessage() , e1);
+			logger.error("logError: " + e1.getMessage(), e1);
 		}
 	}
 

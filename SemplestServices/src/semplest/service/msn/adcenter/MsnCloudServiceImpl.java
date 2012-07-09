@@ -715,6 +715,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		return gson.toJson(0); // return 0 if successful
 	}
+	
+	@Override
+	public void unpauseCampaignById(Long accountId, Long campaignId) throws RemoteException
+	{
+		try
+		{
+			ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
+			final long[] campaignIds = new long[]{campaignId};
+			final ResumeCampaignsRequest request = new ResumeCampaignsRequest(accountId, campaignIds);
+			campaignManagement.resumeCampaigns(request);
+		}
+		catch (AdApiFaultDetail e1)
+		{
+			throw new RemoteException(e1.dumpToString(), e1);
+		}
+		catch (ApiFaultDetail e2)
+		{
+			throw new RemoteException(e2.dumpToString(), e2);
+		}
+	}
 
 	@Override
 	public void pauseCampaignById(Long accountId, Long campaignId) throws RemoteException
@@ -726,11 +746,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (AdApiFaultDetail e1)
 		{
-			throw new RemoteException(e1.dumpToString());
+			throw new RemoteException(e1.dumpToString(), e1);
 		}
 		catch (ApiFaultDetail e2)
 		{
-			throw new RemoteException(e2.dumpToString());
+			throw new RemoteException(e2.dumpToString(), e2);
 		}
 	}
 
@@ -744,7 +764,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		catch (RemoteException e)
 		{
-			throw new Exception(e);
+			throw new Exception("Problem pausing campaings by account ID for JSON [" + json + "]", e);
 		}
 		return gson.toJson(0); // return 0 if successful
 	}

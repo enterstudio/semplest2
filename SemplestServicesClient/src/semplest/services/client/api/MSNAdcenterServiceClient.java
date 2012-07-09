@@ -1,5 +1,6 @@
 package semplest.services.client.api;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1307,6 +1308,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
 		return ret;
+	}
+	@Override
+	public void unpauseCampaignById(Long accountId, Long campaignId) throws RemoteException
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }
