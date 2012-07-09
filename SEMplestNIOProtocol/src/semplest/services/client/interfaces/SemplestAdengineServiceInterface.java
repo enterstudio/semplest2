@@ -42,6 +42,7 @@ public interface SemplestAdengineServiceInterface extends ServiceInitialize
 	List<GoogleViolation> validateGoogleAd(String landingPageURL,String displayURL, List<GoogleAddAdRequest> ads) throws Exception;
 	List<GoogleViolation> validateGoogleRefreshSiteLinks(Integer promotionID) throws Exception;	 
 	List<GoogleViolation> validateGoogleGeoTargets(Integer promotionID) throws Exception;
+	List<GoogleViolation> validateGoogleNegativeKeywords(final List<String> negativeKeywords) throws Exception;
 	
 	// TODO: separate out schedule methods where possible into multiple schedules in order to avoid transactionality issues when 1 schedule would make multiple calls to Google/MSN
 	
