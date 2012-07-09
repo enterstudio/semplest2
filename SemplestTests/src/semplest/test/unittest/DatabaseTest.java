@@ -22,6 +22,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.SemplestCompetitionType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdsObject;
@@ -31,6 +32,7 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.SemplestBiddingHistory;
 import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
@@ -81,7 +83,7 @@ public class DatabaseTest extends BaseDB{
 		//test.Test_BidObject();	
 		//test.Test_TargetedDailyBudget();		
 		//test.Test_PromotionData();
-		//test.Test_Other();
+		test.Test_Other();
 		
 		System.out.println("*** DONE ***");
 	}	
@@ -870,12 +872,30 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** Test UpdateRemainingBudgetInCycleSP(). Update Remaining Budget In Cycle to the database.
-			///*
+			/*
 			UpdateRemainingBudgetInCycleSP updbudget = new UpdateRemainingBudgetInCycleSP();
 			Calendar cal = Calendar.getInstance();
 			cal.set(2011, 1, 1); Date start = cal.getTime();
 			cal.set(2012, 06, 01); Date end = cal.getTime();
 			Integer ret = updbudget.execute(promotionID, start, end);
+			*/
+			
+			/* ******************************************************************************************* */
+			//*** Test setSemplestBiddingHistory() and getSemplestBiddingHistory().
+			///*
+			//set
+			db.setSemplestBiddingHistory(71, AdEngine.Google, PromotionBiddingType.Initial);
+			db.setSemplestBiddingHistory(71, AdEngine.MSN, PromotionBiddingType.Ongoing);
+			//get
+			List<SemplestBiddingHistory> gRet = db.getSemplestBiddingHistory(71, AdEngine.Google);
+			List<SemplestBiddingHistory> mRet = db.getSemplestBiddingHistory(71, AdEngine.MSN);
+			//print
+			for(SemplestBiddingHistory sb : gRet){
+				System.out.println("PromotionFK = " + sb.getPromotionFK() + "; AdvertisingEngine = " + sb.getAdvertisingEngine() + "; SemplestBidType = " + sb.getSemplestBidType() + "; BidCompleted = " + sb.getBidCompleted());
+			}
+			for(SemplestBiddingHistory sb : mRet){
+				System.out.println("PromotionFK = " + sb.getPromotionFK() + "; AdvertisingEngine = " + sb.getAdvertisingEngine() + "; SemplestBidType = " + sb.getSemplestBidType() + "; BidCompleted = " + sb.getBidCompleted());
+			}
 			//*/
 			
 		}
