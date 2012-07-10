@@ -294,55 +294,91 @@ namespace Semplest.SharedResources.Services
 
         public GoogleViolation[] ValidateGoogleAd(String landingPageURL, String displayURL, List<GoogleAddAdRequest> ads)
         {
+            String returnData = string.Empty;
+            try
+            {
             Dictionary<String, String> jsonHash = new Dictionary<String, String>();
             jsonHash.Add("landingPageURL", landingPageURL);
             jsonHash.Add("displayURL", displayURL);
             String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
             jsonHash.Add("ads", adsStr);
-            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
+            returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
                                           JsonConvert.SerializeObject(jsonHash), timeoutMS);
             var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
             List<string> lis = dict.Values.ToList();
             string jsonstrlist = lis[0];
             var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
             return listoflist;
+                        }
+            catch(Exception ex)
+            {
+                throw new Exception(returnData + ex.ToString());
+            }
         }
 
         public GoogleViolation[] ValidateGoogleRefreshSiteLinks(int promotionID)
         {
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("promotionID", promotionID.ToString());
-            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash), timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
-            return listoflist;
+            String returnData = string.Empty;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("promotionID", promotionID.ToString());
+                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks",
+                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+                return listoflist;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(returnData + ex.ToString());
+            }
         }
 
         public GoogleViolation[] ValidateGoogleGeoTargets(int promotionID)
         {
-            var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("promotionID", promotionID.ToString());
-            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets", JsonConvert.SerializeObject(jsonHash), timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
-            return listoflist;
+            String returnData = string.Empty;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                jsonHash.Add("promotionID", promotionID.ToString());
+                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets",
+                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+                return listoflist;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(returnData + ex.ToString());
+            }
         }
 
         public GoogleViolation[] ValidateGoogleNegativeKeywords(List<string> negativeKeywords)
         {
-            var jsonHash = new Dictionary<string, string>();
-            String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
-            jsonHash.Add("negativeKeywords", negativeKeywordsStr);
-            String returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleNegativeKeywords", JsonConvert.SerializeObject(jsonHash), timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
-            return listoflist;
+            String returnData = string.Empty;
+            try
+            {
+                var jsonHash = new Dictionary<string, string>();
+                String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
+                jsonHash.Add("negativeKeywords", negativeKeywordsStr);
+                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleNegativeKeywords",
+                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+
+                return listoflist;
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(returnData + ex.ToString());
+            }
         }
          
         #endregion

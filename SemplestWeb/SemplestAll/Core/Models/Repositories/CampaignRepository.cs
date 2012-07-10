@@ -298,10 +298,10 @@ namespace Semplest.Core.Models.Repositories
                 model.ProductGroup.ProductGroupName = promo.ProductGroup.ProductGroupName;
                 model.ProductGroup.ProductPromotionName = promo.PromotionName;
                 model.ProductGroup.Budget = promo.PromotionBudgetAmount;
-                model.ProductGroup.StartDate = promo.ProductGroup.StartDate.ToString("MM/dd/yyyy",
+                model.ProductGroup.StartDate = promo.PromotionStartDate.ToString("MM/dd/yyyy",
                                                                                      new CultureInfo("en-Us"));
-                model.ProductGroup.EndDate = promo.ProductGroup.EndDate.HasValue
-                                                 ? promo.ProductGroup.EndDate.Value.ToString("MM/dd/yyyy",
+                model.ProductGroup.EndDate = promo.PromotionEndDate.HasValue
+                                                 ? promo.PromotionEndDate.Value.ToString("MM/dd/yyyy",
                                                                                              CultureInfo.
                                                                                                  InvariantCulture)
                                                  : String.Empty;
@@ -527,8 +527,7 @@ namespace Semplest.Core.Models.Repositories
             updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,
                                                                     new CultureInfo("en-Us"));
-            updatePromotion.CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us"));
-            updatePromotion.CycleEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate)
+            updatePromotion.PromotionEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate)
                                                ? Convert.ToDateTime(model.ProductGroup.StartDate,
                                                                     new CultureInfo("en-Us")).AddMonths(1)
                                                : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us"));
