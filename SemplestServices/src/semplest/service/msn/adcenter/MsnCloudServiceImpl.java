@@ -2030,10 +2030,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		Keyword keyword = new Keyword();
 		keyword.setId(keywordId);
-		keyword.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
+		keyword.setExactMatchBid(null);
+		keyword.setBroadMatchBid(null);
+		keyword.setContentMatchBid(null);
+		keyword.setPhraseMatchBid(null);
 		keyword.setStatus(KeywordStatus.Paused);
 		if (matchType == MatchType.Exact)
 		{
@@ -2151,10 +2151,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			final Bid keywordBid = new Bid(microBidAmountDouble);
 			keyword.setId(keywordAdEngineID);
 			
-			keyword.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
-			keyword.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
-			keyword.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
-			keyword.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);
+			keyword.setBroadMatchBid(null);
+			keyword.setPhraseMatchBid(null);
+			keyword.setExactMatchBid(null);
+			keyword.setContentMatchBid(null);
 			
 			if (SemplestMatchType.Broad.name().equals(matchType))
 			{

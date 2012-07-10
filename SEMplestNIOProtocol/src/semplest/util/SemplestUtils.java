@@ -111,9 +111,6 @@ public final class SemplestUtils
 	public static final Long MSN_DEFAULT_BID_MIRCOAMOUNT = 50000L ;
 	public static final Double GOOGLE_DEFAULT_BID_AMOUNT = null;
 	public static final Random RANDOM = new Random();
-	public static final Double MSN_DUMMY_AMOUNT = 0.0;
-	public static final Long MSN_DUMMY_MICROAMOUNT = 0L;
-	public static final Bid MSN_DUMMY_BID = new Bid(MSN_DUMMY_AMOUNT);
 	public static final Integer SECOND = 1000;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
