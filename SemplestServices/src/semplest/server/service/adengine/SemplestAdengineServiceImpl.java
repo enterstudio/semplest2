@@ -332,6 +332,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleDeleteNegativeKeywords(customerID, promotionID, keywordIds, adEngines);
 		return gson.toJson(result);
 	}
@@ -1090,6 +1094,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleUpdateGeoTargeting(customerID, promotionID, adEngines);
 		return gson.toJson(res);
 	}
@@ -1174,6 +1182,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg);
 		}
 		return true;
+	}
+	
+	public String scheduleEndPromotion(String json) throws Exception
+	{
+		logger.debug("call scheduleEndPromotion(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AdEngine.validateAdEngines(adEngineStrings);
+		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
+		final Boolean result = scheduleEndPromotion(customerID, promotionID, adEngines);
+		return gson.toJson(result);
 	}
 	
 	public Boolean scheduleEndPromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
@@ -1384,6 +1409,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = schedulePausePromotion(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
@@ -1585,6 +1614,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleAddNegativeKeywords(customerID, promotionID, keywordIdRemoveOppositePairs, adEngines);
 		return gson.toJson(res);
 	}
@@ -1763,6 +1796,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleAddKeywords(customerID, promotionID, keywordIds, adEngines);
 		return gson.toJson(res);
 	}
@@ -1802,8 +1839,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
 		final String adEnginesString = data.get("adEngines");
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
-		AdEngine.validateAdEngines(adEngineStrings);
+		AdEngine.validateAdEngines(adEngineStrings);		
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleAddAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
@@ -2177,6 +2218,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleDeleteAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
@@ -2483,6 +2528,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean res = scheduleUpdateAds(customerID, promotionID, promotionAdIds, adEngines);
 		return gson.toJson(res);
 	}
@@ -2764,6 +2813,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleChangePromotionStartDate(customerID, promotionID, newStartDate, adEngines);
 		return gson.toJson(result);
 	}
@@ -2871,6 +2924,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleAddPromotionToAdEngine(customerID, productGroupID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
@@ -2910,6 +2967,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleUpdateBudget(customerID, promotionID, changeInBudget, adEngines);
 		return gson.toJson(result);
 	}
@@ -2948,6 +3009,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleUnpausePromotion(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
@@ -2988,6 +3053,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleDeleteKeywords(customerID, promotionID, keywordIds, adEngines);
 		return gson.toJson(result);
 	}
@@ -3026,6 +3095,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = scheduleRefreshSiteLinks(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
@@ -3065,6 +3138,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
 		final Boolean result = schedulePauseProductGroups(customerID, productGroupIds, adEngines);
 		return gson.toJson(result);
 	}

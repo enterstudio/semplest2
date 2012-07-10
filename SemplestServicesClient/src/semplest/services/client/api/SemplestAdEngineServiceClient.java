@@ -56,11 +56,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads); if (validations != null) {
 		 * logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations)); }
 		 */
-		// validateGoogleRefreshSiteLinks
-		final Integer promotionID_validateGoogleRefreshSiteLinks = 23;
-		final List<GoogleViolation> googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
-		logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" + SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
+
 		/*
+		 * // validateGoogleRefreshSiteLinks final Integer promotionID_validateGoogleRefreshSiteLinks = 23; final List<GoogleViolation>
+		 * googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
+		 * logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" +
+		 * SemplestUtils.getEasilyReadableString(googleViolations_validateGoogleRefreshSiteLinks));
+		 * 
 		 * // validateGoogleGeoTargets final Integer promotionID_validateGoogleGeoTargets = 33; final List<GoogleViolation>
 		 * googleViolations_validateGoogleGeoTargets = client.validateGoogleGeoTargets(promotionID_validateGoogleGeoTargets);
 		 * logger.info("Google Violations from validateGoogleGeoTargets:\n" +
@@ -118,11 +120,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * // UpdateBudget final Integer promotionID_UpdateBudget = 62; final Double changeInBudget_UpdateBudget = -5.25; final List<String>
 		 * adEngines_UpdateBudget = Arrays.asList(AdEngine.Google.name()); client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget,
 		 * adEngines_UpdateBudget);
-		 * 
-		 * // schedulePausePromotion final Integer customerID_schedulePausePromotion = 12; final Integer promotionID_schedulePausePromotion = 62;
-		 * final List<String> adEngines_schedulePausePromotion = Arrays.asList(AdEngine.Google.name());
-		 * client.schedulePausePromotion(customerID_schedulePausePromotion, promotionID_schedulePausePromotion, adEngines_schedulePausePromotion);
-		 * 
+		 */
+		// schedulePausePromotion
+		final Integer customerID_schedulePausePromotion = 17;
+		final Integer promotionID_schedulePausePromotion = 78;
+		final List<AdEngine> adEngines_schedulePausePromotion = Arrays.asList(AdEngine.Google, AdEngine.MSN);
+		client.PausePromotion(promotionID_schedulePausePromotion, adEngines_schedulePausePromotion);
+		/*
 		 * // schedulePausePromotion final Integer promotionID_PausePromotion = 62; final List<String> adEngines_PausePromotion =
 		 * Arrays.asList(AdEngine.Google.name()); client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
 		 * 
@@ -1014,7 +1018,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		}
 		catch (Exception e)
 		{
-			final String errMsg = "Problem scheduling Pause Product Group for CustomerID [" + customerID + "], ProductGroupID [" +productGroupID + "], AdEngines [" + adEngineList + "]";
+			final String errMsg = "Problem scheduling Pause Product Group for CustomerID [" + customerID + "], ProductGroupID [" + productGroupID + "], AdEngines [" + adEngineList + "]";
 			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
@@ -1140,7 +1144,9 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		logger.info("JSON [" + json + "]");
 		String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
-		Type type = new TypeToken<List<GoogleViolation>>(){}.getType();
+		Type type = new TypeToken<List<GoogleViolation>>()
+		{
+		}.getType();
 		return gson.fromJson(returnData, type);
 	}
 
@@ -1161,7 +1167,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		catch (Exception e)
 		{
 			final String errMsg = "Problem Validating Google Refresh SiteLinks for PromotionID [" + promotionID + "]";
-			logger.error(errMsg, e);			
+			logger.error(errMsg, e);
 			throw new Exception(errMsg, e);
 		}
 	}
