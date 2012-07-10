@@ -33,7 +33,7 @@ import semplest.server.protocol.adengine.KeywordProbabilityObject;
 import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 import cc.mallet.types.InstanceList;
 
-public class KWGenDmozLDAdataVS implements SemplestKeywordLDAServiceInterface{
+public class KWGenDmozLDAdataVS{// implements SemplestKeywordLDAServiceInterface{
 	
 	private static final Logger logger = Logger.getLogger(KWGenDmozLDAdataVS.class);
 	//Search index for categories
@@ -45,7 +45,7 @@ public class KWGenDmozLDAdataVS implements SemplestKeywordLDAServiceInterface{
 	public KWGenDmozLDAdataVS(HashMap<String,Object> configDataIn) {
 		configData = configDataIn;
 	}
-	@Override
+
 	public ArrayList<String> getCategories(String companyName, String searchTerm, String description, String[] adds, String url) throws Exception {
 		try{
 			if(searchTerm!=null && searchTerm.length()>0) searchTerm = searchTerm.toLowerCase().replaceAll("\\p{Punct}", " ");
@@ -89,7 +89,7 @@ public class KWGenDmozLDAdataVS implements SemplestKeywordLDAServiceInterface{
 		}
 	}
 	
-	@Override
+
 	public KeywordProbabilityObject[] getKeywords(ArrayList<String> categories,String companyName,  String[] searchEngines,
 			String searchTerm, String description, String[] adds, String url, GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		try{
@@ -698,7 +698,7 @@ public class KWGenDmozLDAdataVS implements SemplestKeywordLDAServiceInterface{
 		return totaldata;
 	}
 	
-	@Override
+
 	public void initializeService(String str) throws Exception {
 		try{
 			data = new KWGenDmozLDAdata3(configData);
