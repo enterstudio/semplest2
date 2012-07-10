@@ -73,7 +73,7 @@ namespace Semplest.Core.Models
         public decimal PercentMedia { get; set; }
         public bool PromotionFeeOverRide  { get; set; }
         public decimal? PromotionFeeOverRideAmount { get; set; }
-        public int BillType;
+        public int BillType { get; set; }
         //added by tudor 
 
     }

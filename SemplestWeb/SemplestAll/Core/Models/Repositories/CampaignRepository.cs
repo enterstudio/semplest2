@@ -389,7 +389,7 @@ namespace Semplest.Core.Models.Repositories
                 model.PromotionFeeOverRide = firstOrDefault.PromotionFeeOverride;
                 model.PromotionFeeOverRideAmount = firstOrDefault.PromotionFeeAmount;
             }
-            model.BillType = dbcontext.Users.Where(key => key.UserPK == userid).First().Customer.BillTypeFK;
+            model.BillType = dbcontext.Users.First(key => key.UserPK == userid).Customer.BillTypeFK;
 
             return model;
         }
