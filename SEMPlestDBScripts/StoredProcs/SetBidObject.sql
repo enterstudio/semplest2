@@ -50,7 +50,7 @@ BEGIN TRY
 	if EXISTS (select * from PromotionKeywordAssociation pka 
 				inner join Keyword k on k.KeywordPK = pka.KeywordFK where pka.PromotionFK = @PromotionPK and k.Keyword = @Keyword and (pka.IsActive = 0 OR pka.IsDeleted = 1))
 	BEGIN
-		SELECT @ErrMsg = 'The Selected keyword [' + @Keyword + '] is either Inactive or Deleted for the Promotion [' + @PromotionPK + ']'; 
+		SELECT @ErrMsg = 'The Selected keyword [' + @Keyword + '] is either Inactive or Deleted for the Promotion [' + convert(varchar(10),@PromotionPK) + ']'; 
 		RAISERROR (@ErrMsg, 16, 1);
 	END;			
 	select @AdEngineID = a.AdvertisingEnginePK from AdvertisingEngine a where a.AdvertisingEngine = @AdvertisingEngine
