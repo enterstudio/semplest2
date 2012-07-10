@@ -19,7 +19,8 @@ public class PingService implements Runnable
 	ProtocolSocketDataObject pingData = null;
 	private ProtocolJSON json = new ProtocolJSON();
 	private ServiceShutdown shutdown = null;
-	static final Logger logger = Logger.getLogger(PingService.class);
+	//static final Logger logger = Logger.getLogger(PingService.class);
+	static final Logger logger = Logger.getLogger("PingLogger");
 	
 	/*
 	 * parameters for reconnecting to the ActiveMQ on TCP failure

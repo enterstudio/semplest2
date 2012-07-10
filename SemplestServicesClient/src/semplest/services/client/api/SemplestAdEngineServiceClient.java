@@ -48,16 +48,21 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
 
-		/*
-		 * // validateGoogleAd final String landingPageURL = "http://www.semplest.com"; final String displayURL = landingPageURL; final String
-		 * headline = "shit"; final String description1= "This is a test"; final String description2 = "description2 "; final List<GoogleAddAdRequest>
-		 * ads = new ArrayList<GoogleAddAdRequest>(); final GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1,
-		 * description2); final GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2); ads.add(ad1); ads.add(ad2);
-		 * final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads); if (validations != null) {
-		 * logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations)); }
-		 */
-
-		/*
+		// validateGoogleAd 
+		final String landingPageURL = "http://www.semplest.com"; 
+		final String displayURL = landingPageURL; final String
+		headline = "shit"; final String description1= "This is a test"; 
+		final String description2 = "description2 "; 
+		final List<GoogleAddAdRequest>
+		ads = new ArrayList<GoogleAddAdRequest>(); 
+		final GoogleAddAdRequest ad1 = new GoogleAddAdRequest(null, headline, description1, description2); 
+		final GoogleAddAdRequest ad2 = new GoogleAddAdRequest(null, "shit", description1, description2); ads.add(ad1); ads.add(ad2);
+		final List<GoogleViolation> validations = client.validateGoogleAd(landingPageURL, displayURL, ads); 
+		if (validations != null) 
+		{
+			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations)); 
+		}
+		/* 
 		 * // validateGoogleRefreshSiteLinks final Integer promotionID_validateGoogleRefreshSiteLinks = 23; final List<GoogleViolation>
 		 * googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
 		 * logger.info("Google Violations from validateGoogleRefreshSiteLinks:\n" +
@@ -120,13 +125,13 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		 * // UpdateBudget final Integer promotionID_UpdateBudget = 62; final Double changeInBudget_UpdateBudget = -5.25; final List<String>
 		 * adEngines_UpdateBudget = Arrays.asList(AdEngine.Google.name()); client.UpdateBudget(promotionID_UpdateBudget, changeInBudget_UpdateBudget,
 		 * adEngines_UpdateBudget);
-		 */
+		 
 		// schedulePausePromotion
 		final Integer customerID_schedulePausePromotion = 17;
 		final Integer promotionID_schedulePausePromotion = 78;
 		final List<AdEngine> adEngines_schedulePausePromotion = Arrays.asList(AdEngine.Google, AdEngine.MSN);
 		client.PausePromotion(promotionID_schedulePausePromotion, adEngines_schedulePausePromotion);
-		/*
+		
 		 * // schedulePausePromotion final Integer promotionID_PausePromotion = 62; final List<String> adEngines_PausePromotion =
 		 * Arrays.asList(AdEngine.Google.name()); client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
 		 * 
