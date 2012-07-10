@@ -10,8 +10,10 @@ import java.util.Vector;
 import org.apache.log4j.Logger;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.TaskOutput;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.mail.SemplestMailClient;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TaskRunnerObj;
@@ -44,6 +46,7 @@ public class SemplestScheduler extends Thread
 	public static final String PROPSFILE = "bin/system.properties";
 	public static final String LOG4JPROPSFILE = "properties/log4j_server.properties";
 	private static String url = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
+	private static String DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 	//private static String url = "http://localhost:9898/semplest";
 
 	public static ClassPathXmlApplicationContext appContext = null;
@@ -424,13 +427,14 @@ public class SemplestScheduler extends Thread
 		try
 		{
 			List<TaskRunnerObj> listofTasks = SemplestDB.getScheduleTasks(SchedulePK);
+			TaskRunnerObj taskObj = null;
 			if (!listofTasks.isEmpty())
 			{
 				try
 				{
 					for (int i = 0; i < listofTasks.size(); i++)
 					{
-						TaskRunnerObj taskObj = listofTasks.get(i);
+						taskObj = listofTasks.get(i);
 						logger.debug("Running Task: " + taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters());
 						Class taskClass = Class.forName(taskObj.getServiceName());
 						Constructor taskConstructor = taskClass.getDeclaredConstructor(String.class);
@@ -458,8 +462,24 @@ public class SemplestScheduler extends Thread
 					errorOutput.setErrorMessage(e.getMessage());
 					previousTaskOutput = errorOutput;
 					logger.error(e.getMessage(), e);			
-					SemplestErrorHandler.logToDatabase(e);
-					//TODO: send email is successful = false
+					try
+					{
+						SemplestErrorHandler.logToDatabase(e);
+					}
+					catch (Exception e1)
+					{
+						logger.error("Failed to log to DB - Skipping " + e.getMessage(), e);
+					}
+					try
+					{
+						//TODO: send email is successful = false
+						String msg = "ScheduleID= " + taskObj.getSchedulePK() + " Task Failed: " + taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters();
+						SemplestMailClient.sendMailFromService(url,"Error Running Schedule - scheduleJobPK=" + scheduleJobPK,DevelopmentEmail,DevelopmentEmail,msg,ProtocolEnum.EmailType.PlanText.name() );
+					}
+					catch (Exception e1)
+					{
+						logger.error("Failed to send mail - Skipping " + e1.getMessage(), e1);
+					}
 				}				 
 				
 			}
