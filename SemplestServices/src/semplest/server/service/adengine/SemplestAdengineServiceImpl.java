@@ -1301,8 +1301,24 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
+	
+	public String scheduleDeletePromotion(String json) throws Exception
+	{
+		logger.debug("call scheduleDeletePromotion(String json): [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer customerID = Integer.parseInt(data.get("customerID"));
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AdEngine.validateAdEngines(adEngineStrings);
+		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		if (adEngines.isEmpty())
+		{
+			throw new Exception("No AdEngines specified");
+		}
+		final Boolean result = scheduleDeletePromotion(customerID, promotionID, adEngines);
+		return gson.toJson(result);
+	}
 
-	// only if the user has not hit the launch button yet
 	public Boolean scheduleDeletePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
