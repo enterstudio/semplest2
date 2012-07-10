@@ -1161,7 +1161,7 @@ public class BidGeneratorObj
 		double bid = 0.25;
 		while(bid<10){
 			b.add(bid);
-			bid+=0.25;
+			bid+=1.00;
 		}
 		
 		Long[] bidsMoney = new Long[b.size()]; 
