@@ -1819,10 +1819,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
-		keyword.setBroadMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setExactMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setContentMatchBid(SemplestUtils.MSN_DUMMY_BID);
-		keyword.setPhraseMatchBid(SemplestUtils.MSN_DUMMY_BID);
+		keyword.setBroadMatchBid(null);
+		keyword.setExactMatchBid(null);
+		keyword.setContentMatchBid(null);
+		keyword.setPhraseMatchBid(null);
 		if (matchType == MatchType.Exact)
 		{
 			keyword.setExactMatchBid(bid);
