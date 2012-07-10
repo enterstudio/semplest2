@@ -18,6 +18,7 @@ import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 
+import com.google.api.adwords.v201109.cm.KeywordMatchType;
 import com.microsoft.adcenter.v8.AdGroup;
 import com.microsoft.adcenter.v8.Campaign;
 import com.microsoft.adcenter.v8.Keyword;
@@ -62,6 +63,15 @@ public class MSNReportTools {
 
 	}
 	
+	public ArrayList<Long> createMicroBids(double start, double end, double step){
+		ArrayList<Long> bids = new ArrayList<Long>();
+		Double bid = start;
+		while(bid<end){
+			bids.add((new Double(bid*1000000)).longValue());
+			bid = bid+step;
+		}
+		return bids;
+	}
 	public MSNReportTools(String acName, int campaignIndex) throws Exception{
 		msn = new MsnCloudServiceImpl();
 		
@@ -76,6 +86,37 @@ public class MSNReportTools {
 
 	}
 	
+	
+	public  ArrayList<String> storeTrafficEstimatorDataMSN(String keyword, KeywordMatchType matchType, Long[] bids) throws Exception{
+		//Put in an ArrayList<String> all the TrafficEstimator information
+		ArrayList<String> lines = new ArrayList<String>();
+		lines.add(keyword+", AveClickPerDay, AveCPC, AvePosition, AveTotalDailyMicroCost");
+		MatchType mtype = MatchType.Exact;
+		if(matchType.getValue().equalsIgnoreCase(KeywordMatchType.PHRASE.toString())){
+			mtype = MatchType.Phrase;
+		}else if(matchType.getValue().equalsIgnoreCase(KeywordMatchType.BROAD.toString())){
+			mtype = MatchType.Broad;
+		}
+		TrafficEstimatorObject te = msn.getKeywordEstimateByBids(this.accountId, new String[] {keyword}, bids, mtype);
+		bids = te.getBidList(keyword, mtype.getValue());
+		Arrays.sort(bids);
+		for(Long bid : bids){
+			String newLine = bid+", ";
+			HashMap<String, Long> map = new HashMap<String, Long>();
+			map.put(keyword, bid);
+			if(te!=null){
+			newLine = newLine+te.getAveClickPerDay(keyword, mtype.getValue(), bid)+", ";
+			newLine = newLine+te.getAveCPC(keyword, mtype.getValue(), bid)+", ";
+			newLine = newLine+te.getAvePosition(keyword, mtype.getValue(), bid)+", ";
+			newLine = newLine+te.getAveTotalDailyMicroCost(keyword, mtype.getValue(), bid)+", ";
+			}else{
+				newLine= newLine+"-1.0, -1.0, -1.0, -1.0,";
+			}
+			lines.add(newLine);
+		}
+		
+		return lines;
+	}
 	
 	public ReportObject[] getKeywordReportObjects(String firstDayStr, String lastDayStr) throws Exception{
 
