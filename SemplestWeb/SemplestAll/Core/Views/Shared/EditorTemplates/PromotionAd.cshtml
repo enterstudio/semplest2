@@ -21,7 +21,7 @@
                     @Html.TextBoxFor(m => m.AdTextLine1, new { @class = "k-textbox k-textboxAdDescrition alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
                     <label class="hint grey-text">
                         35 characters max.</label>
-                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAdDescrition hint alpha", @maxlength = 35 })
+                    @Html.TextBoxFor(m => m.AdTextLine2, new { @class = "k-textbox k-textboxAdDescrition hint alpha", @required = true, @validationmessage = "Please enter Ad Text", @maxlength = 35 })
                     <label class="hint grey-text">
                         35 characters max.</label>
                 </li>
