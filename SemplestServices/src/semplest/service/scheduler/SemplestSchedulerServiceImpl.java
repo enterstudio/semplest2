@@ -85,6 +85,6 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 	
 	@Override
 	public String checkStatus(String input) throws Exception {
-		return ServiceStatus.Good.getServiceStatusValue();
+		return ServiceStatus.Up.getServiceStatusValue();
 	}
 }

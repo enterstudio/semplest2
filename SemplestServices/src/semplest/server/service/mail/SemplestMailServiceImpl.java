@@ -138,7 +138,7 @@ public class SemplestMailServiceImpl implements SemplestMailServiceInterface
 	
 	@Override
 	public String checkStatus(String input) throws Exception {
-		return ServiceStatus.Good.getServiceStatusValue();
+		return ServiceStatus.Up.getServiceStatusValue();
 	}
 	
 }

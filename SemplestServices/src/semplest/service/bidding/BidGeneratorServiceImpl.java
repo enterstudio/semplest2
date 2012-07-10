@@ -295,7 +295,7 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	
 	@Override
 	public String checkStatus(String input) throws Exception {
-		return ServiceStatus.Good.getServiceStatusValue();
+		return ServiceStatus.Up.getServiceStatusValue();
 	}
 
 

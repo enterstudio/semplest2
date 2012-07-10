@@ -107,7 +107,7 @@ public class KeywordGeneratorServiceImpl implements SemplestKeywordLDAServiceInt
 	
 	@Override
 	public String checkStatus(String input) throws Exception {
-		return ServiceStatus.Good.getServiceStatusValue();
+		return ServiceStatus.Up.getServiceStatusValue();
 	}
 	
 }

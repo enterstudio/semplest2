@@ -62,7 +62,7 @@ public class TestService2Impl implements TestServiceInterface
 	
 	@Override
 	public String checkStatus(String input) throws Exception {
-		return ServiceStatus.Good.getServiceStatusValue();
+		return ServiceStatus.Up.getServiceStatusValue();
 	}
 
 }
