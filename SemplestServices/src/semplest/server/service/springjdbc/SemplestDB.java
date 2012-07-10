@@ -60,8 +60,8 @@ public class SemplestDB extends BaseDB
 
 	public static final String SQL_MARK_AD_DELETED = "update  PromotionAds " + "set  IsDeleted = 1, " + "DeletedDate = ? " + "from  PromotionAds p, " + "AdvertisingEngineAds a " + "where  p.PromotionAdsPK = a.PromotionAdsFK " + "and  a.AdvertisingEngineAdPK = ?";
 
-	public static final String SQL_UPDATE_AD_ENGINE_AD_ID = "update   AdvertisingEngineAds " + "set	  AdvertisingEngineAdPK = ? " + "from	  AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? " + "and   aea.AdvertisingEngineAdPK = ? "
-			+ "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + "and   e.AdvertisingEngine = ?";
+	public static final String SQL_UPDATE_AD_ENGINE_AD_ID = "update AdvertisingEngineAds " + "set AdvertisingEngineAdPK = ? " + "from AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? "
+			+ "and aea.AdvertisingEngineAdPK = ? and aea.AdvertisingEngineFK = e.AdvertisingEnginePK and e.AdvertisingEngine = ?";
 
 	public static final String SQL_DELETE_AD_ENGINE_AD_ID = "delete   AdvertisingEngineAds " + "from	  AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? " + "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + "and   e.AdvertisingEngine = ?";
 
@@ -70,15 +70,49 @@ public class SemplestDB extends BaseDB
 	public static void updatePromotionStatus(final Integer promotionID, final List<AdEngine> adEngines, final PromotionStatus promotionStatus)
 	{
 		for (final AdEngine adEngine : adEngines)
-		{			
-			SemplestDB.updatePromotionStatus(promotionID, adEngine, promotionStatus);	
+		{
+			SemplestDB.updatePromotionStatus(promotionID, adEngine, promotionStatus);
 		}
 	}
 	
+	public static Map<AdEngine, PromotionStatus> getPromotionStatus(Integer promotionID, List<AdEngine> adEngines)
+	{
+		final Map<AdEngine, PromotionStatus> promotionStatusMap = new HashMap<AdEngine, PromotionStatus>();
+		for (final AdEngine adEngine : adEngines)
+		{
+			final PromotionStatus promotionStatus = getPromotionStatus(promotionID, adEngine);
+			promotionStatusMap.put(adEngine, promotionStatus);
+		}
+		return promotionStatusMap;
+	}
+
+	public static PromotionStatus getPromotionStatus(Integer promotionID, AdEngine adEngine)
+	{
+		final Integer promotionStatusCode = jdbcTemplate.queryForInt("select PromotionStatusFK from PromotionAdEngineStatus where PromotionFK = ? and AdvertisingEngineFK = ?", new Object[] { promotionID, adEngine.getCode() });
+		if (PromotionStatus.isValidPromotionStatus(promotionStatusCode))
+		{
+			return PromotionStatus.fromValue(promotionStatusCode);	
+		}
+		else
+		{
+			return null;
+		}		
+	}
+
 	public static void updatePromotionStatus(final Integer promotionID, final AdEngine adEngine, final PromotionStatus promotionStatus)
 	{
-		logger.info("Will set PromotionStatus to [" + PromotionStatus.PENDING + "] for PromotionID [" + promotionID + "] and AdEngine [" + adEngine + "]");
-		jdbcTemplate.update("insert into PromotionAdEngineStatus (PromotionFK, PromotionStatusFK, AdvertisingEngineFK) values (?, ?, ?)", new Object[]{promotionID, promotionStatus.getPk(), adEngine.getCode()});
+		logger.info("Will set PromotionStatus to [" + promotionStatus + "] for PromotionID [" + promotionID + "] and AdEngine [" + adEngine + "]");
+		final Integer promotionStatusCode = promotionStatus.getPk();
+		final Integer adEngineCode = adEngine.getCode();		
+		jdbcTemplate.update("if exists(select 1 from PromotionAdEngineStatus where PromotionFK = ? and AdvertisingEngineFK = ?) " +
+							"begin " +
+								"update PromotionAdEngineStatus set PromotionStatusFK = ? where PromotionFK = ? and AdvertisingEngineFK = ? " +
+							"end " +
+							"else " +
+							"begin " +
+								"insert into PromotionAdEngineStatus (PromotionFK, PromotionStatusFK, AdvertisingEngineFK) values (?, ?, ?) " + 
+							"end",
+							new Object[] {promotionID, adEngineCode, promotionStatusCode, promotionID, adEngineCode, promotionID, promotionStatusCode, adEngineCode});
 	}
 
 	/*

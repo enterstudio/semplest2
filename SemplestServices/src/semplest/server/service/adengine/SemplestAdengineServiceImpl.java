@@ -337,7 +337,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines)
+	public Boolean scheduleDeleteNegativeKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -355,8 +355,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Delete Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -900,9 +901,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	private Long calculateDailyMicroBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
 	{
-		Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
-		// calculate
-		BigDecimal bd = new BigDecimal(daily);
+		final Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
+		final BigDecimal bd = new BigDecimal(daily);
 		return (bd.longValue() * 10000L);
 	}
 
@@ -1095,7 +1095,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleUpdateGeoTargeting(Integer customerID, Integer promotionID, List<AdEngine> adEngines)
+	public Boolean scheduleUpdateGeoTargeting(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -1113,8 +1113,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Geo Targetting for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Update Geo Targetting for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -1174,6 +1175,182 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
+	
+	public Boolean scheduleEndPromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
+	{
+		try
+		{
+			logger.info("Will try to schedule task to End Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final String scheduleNamePostfix = "EndPromotion";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createEndPromotionTask(customerID, promotionID, adEngines, scheduleNamePostfix);
+			listOfTasks.add(task);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			Boolean ret = getPromoDataSP.execute(promotionID);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			return taskScheduleSuccessful;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem scheduling task to End Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
+	
+	public String EndPromotion(String json) throws Exception
+	{
+		logger.debug("JSON [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer PromotionID = Integer.parseInt(data.get("promotionID"));
+		final List<String> adEngineStrings = gson.fromJson(data.get("adEngines"), SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AdEngine.validateAdEngines(adEngineStrings);
+		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		EndPromotion(PromotionID, adEngines);
+		return gson.toJson(true);
+	}
+	
+	public Boolean EndPromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception
+	{
+		logger.info("Will try to End Promotion for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
+		
+		// can only end promotion if it's live or paused
+		final Map<AdEngine, PromotionStatus> promotionStatusMap = SemplestDB.getPromotionStatus(promotionID, adEngines);
+		final Set<Entry<AdEngine, PromotionStatus>> entrySet = promotionStatusMap.entrySet();
+		for (final Entry<AdEngine, PromotionStatus> entry : entrySet)
+		{
+			final AdEngine entryAdEngine = entry.getKey();
+			final PromotionStatus entryPromotionStatus = entry.getValue();
+			if (!(entryPromotionStatus == PromotionStatus.LIVE || entryPromotionStatus == PromotionStatus.PENDING))
+			{
+				throw new Exception("Cannot End Promotion for PromotionID [" + promotionID + "] and AdEngine [" + entryAdEngine + "] because it's currently in Status [" + entryPromotionStatus.getName() + "], but can only End Promotions when they are in Status [" + PromotionStatus.LIVE.getName() + "] or [" + PromotionStatus.PENDING.getName() + "]");
+			}
+		}		
+		final GetAllPromotionDataSP getAllPromotionDataSP = new GetAllPromotionDataSP();
+		final Boolean result = getAllPromotionDataSP.execute(promotionID);
+		for (final AdEngine adEngine : adEngines)
+		{
+			if (adEngine == AdEngine.Google)
+			{
+				final Map<AdEngine, AdEngineID> adengineDataMap = getAllPromotionDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = adengineDataMap.get(adEngine);
+				final String accountID = "" + adEngineData.getAccountID();
+				final Long campaignID = adEngineData.getCampaignID();
+				final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+				final Boolean deleteCampaignSuccessful = google.deleteCampaign(accountID, campaignID);
+				if (!deleteCampaignSuccessful)
+				{
+					errorMap.put(adEngine, "Problem Ending Promotion for PromotionID [" + promotionID + "], AdEngine [" + adEngine + "] because Google's response from delete call is empty");
+				}
+				else
+				{
+					SemplestDB.updatePromotionStatus(promotionID, adEngine, PromotionStatus.ENDED);
+				}
+			}
+			else if (adEngine == AdEngine.MSN)
+			{
+				final Map<AdEngine, AdEngineID> adengineDataMap = getAllPromotionDataSP.getPromotionAdEngineID(promotionID);
+				final AdEngineID adEngineData = adengineDataMap.get(adEngine);
+				final Long accountID = adEngineData.getAccountID();
+				final Long campaignID = adEngineData.getCampaignID();
+				final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+				msn.deleteCampaignById(accountID, campaignID);
+				SemplestDB.updatePromotionStatus(promotionID, adEngine, PromotionStatus.ENDED);
+			}
+			else
+			{
+				final String errMsg = "AdEngine specified [" + adEngine + "] is not valid for Ending Promotion (at least not yet)";
+				logger.error(errMsg);
+				errorMap.put(adEngine, errMsg);
+			}
+		}
+		if (!errorMap.isEmpty())
+		{
+			final String errorMapEasilyReadableString = SemplestUtils.getEasilyReadableString(errorMap);
+			final String errMsg = "Summary of errors when trying to End Promotion for PromotionID [" + promotionID + "] and AdEngines [" + adEngines + "]:\n" + errorMapEasilyReadableString;
+			logger.error(errMsg);
+			throw new Exception(errMsg);
+		}
+		return true;
+	}
+
+	// only if the user has not hit the launch button yet
+	public Boolean scheduleDeletePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
+	{
+		try
+		{
+			logger.info("Will try to schedule task to Delete Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+			final List<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final String scheduleNamePostfix = "DeletePromotion";
+			final SemplestSchedulerTaskObject task = CreateSchedulerAndTask.createPausePromotionTask(customerID, promotionID, adEngines, scheduleNamePostfix);
+			listOfTasks.add(task);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			Boolean ret = getPromoDataSP.execute(promotionID);
+			final PromotionObj promotion = getPromoDataSP.getPromotionData();
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, null, null);
+			return taskScheduleSuccessful;
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem scheduling task to Delete Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+	}
+
+	public String DeletePromotion(String json) throws Exception
+	{
+		logger.debug("JSON [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final String adEnginesString = data.get("adEngines");
+		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
+		AdEngine.validateAdEngines(adEngineStrings);
+		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
+		DeletePromotion(promotionID, adEngines);
+		return gson.toJson(true);
+	}
+
+	public static String getShortDescription(final Map<AdEngine, PromotionStatus> promotionStatusMap)
+	{
+		final StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		final Set<Entry<AdEngine, PromotionStatus>> entrySet = promotionStatusMap.entrySet();
+		for (final Entry<AdEngine, PromotionStatus> entry : entrySet)
+		{
+			final AdEngine adEngine = entry.getKey();
+			final PromotionStatus promotionStatus = entry.getValue();
+			final String adEngineName = adEngine.name();
+			final String promotionStatusName = promotionStatus.getName();
+			if (sb.length() <= 1)
+			{
+				sb.append(", ");
+			}
+			sb.append(adEngineName).append("->").append(promotionStatusName);
+		}
+		sb.append(")");
+		return sb.toString();
+	}
+
+	public Boolean DeletePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception
+	{
+		logger.info("Will try to Delete Promotion for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
+		final Map<AdEngine, PromotionStatus> promotionStatusMap = SemplestDB.getPromotionStatus(promotionID, adEngines);
+		if (promotionStatusMap.isEmpty())
+		{
+			SemplestDB.updatePromotionStatus(promotionID, adEngines, PromotionStatus.DELETED);
+			return true;
+		}
+		else
+		{
+			final String shortDescription = getShortDescription(promotionStatusMap);
+			throw new Exception("Cannot delete Promotion for ID [" + promotionID + "] because it has already been launched: " + shortDescription);
+		}
+	}
 
 	public String UnpausePromotion(String json) throws Exception
 	{
@@ -1190,6 +1367,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean UnpausePromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
+		logger.info("Will try to Un-Pause Promotion for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final List<Integer> promotionIds = new ArrayList<Integer>();
 		promotionIds.add(promotionID);
 		ChangePromotionsStatus(promotionIds, adEngines, SemplestCampaignStatus.ACTIVE);
@@ -1211,7 +1389,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines)
+	public Boolean schedulePausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -1229,8 +1407,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Pause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -1411,7 +1590,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines)
+	public Boolean scheduleAddNegativeKeywords(Integer customerID, Integer promotionID, List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -1429,8 +1608,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Add Negative Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -1588,7 +1768,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines)
+	public Boolean scheduleAddKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -1606,8 +1786,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Add Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -1628,7 +1809,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines)
+	public Boolean scheduleAddAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -1646,8 +1827,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Add Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2000,7 +2182,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines)
+	public Boolean scheduleDeleteAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2027,8 +2209,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Delete Ad for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdID [" + promotionAdIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2305,7 +2488,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines)
+	public Boolean scheduleUpdateAds(Integer customerID, Integer promotionID, List<Integer> promotionAdIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2323,8 +2506,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Update Ads for Customer [" + customerID + "], PromotionID [" + promotionID + "], PromotionAdIds [" + promotionAdIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2585,7 +2769,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleChangePromotionStartDate(Integer customerID, Integer promotionID, Date newStartDate, List<AdEngine> adEngines)
+	public Boolean scheduleChangePromotionStartDate(Integer customerID, Integer promotionID, Date newStartDate, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2603,8 +2787,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Change Promotion StartDate for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2691,7 +2876,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer promotionID, List<AdEngine> adEngines)
+	public Boolean scheduleAddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2709,8 +2894,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Add Promotion To AdEngine for Customer [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2729,7 +2915,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<AdEngine> adEngines)
+	public Boolean scheduleUpdateBudget(Integer customerID, Integer promotionID, Double changeInBudget, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2747,8 +2933,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID + "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Update Budget for Customer [" + customerID + "], PromotionID [" + promotionID + "], ChangeInBudget [" + changeInBudget + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2766,7 +2953,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines)
+	public Boolean scheduleUnpausePromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2784,8 +2971,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Unpause Promotion for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2805,7 +2993,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines)
+	public Boolean scheduleDeleteKeywords(Integer customerID, Integer promotionID, List<Integer> keywordIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2823,8 +3011,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Delete Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Delete Keywords for Customer [" + customerID + "], PromotionID [" + promotionID + "], KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2842,7 +3031,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<AdEngine> adEngines)
+	public Boolean scheduleRefreshSiteLinks(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2860,8 +3049,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Refresh SiteLinks for Customer [" + customerID + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2880,7 +3070,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	}
 
 	@Override
-	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines)
+	public Boolean schedulePauseProductGroups(Integer customerID, List<Integer> productGroupIds, List<AdEngine> adEngines) throws Exception
 	{
 		try
 		{
@@ -2895,8 +3085,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]", e);
-			return false;
+			final String errMsg = "Problem scheduling task to Pause ProductGroups for Customer [" + customerID + "], ProductGroupIds [" + productGroupIds + "], AdEngines [" + adEngines + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
 		}
 	}
 
@@ -2927,9 +3118,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		String landingPageURL = data.get("landingPageURL");
 		String displayURL = data.get("displayURL");
-		Type type = new TypeToken<List<GoogleAddAdRequest>>()
-		{
-		}.getType();
+		Type type = new TypeToken<List<GoogleAddAdRequest>>(){}.getType();
 		List<GoogleAddAdRequest> ads = gson.fromJson(data.get("ads"), type);
 		List<GoogleViolation> res = validateGoogleAd(landingPageURL, displayURL, ads);
 		return gson.toJson(res);
