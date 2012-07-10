@@ -246,8 +246,8 @@ public class ProtocolEnum
 	
 	public static enum ServiceStatus
 	{
-		Good("Good"), 
-		Bad("Bad");
+		Up("Up"), 
+		Down("Down");
 		
 		private String val;
 
