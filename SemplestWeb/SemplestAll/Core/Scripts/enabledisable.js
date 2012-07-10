@@ -41,8 +41,8 @@ function openAllTabs(displayCategories) {
 }
 function enableDisable() {
     if ($('#IsCompleted').val() == 'True') {
-        $(":input").attr("disabled", true);
-        $(":button").attr("disabled", true);
+        $(":input").attr("readonly", true);
+        $(":button").attr("readonly", true);
     }
 
 //    if ($('#IsLaunched').val() == 'True') {

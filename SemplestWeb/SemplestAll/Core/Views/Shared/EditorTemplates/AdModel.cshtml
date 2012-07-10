@@ -125,8 +125,8 @@
             $('#AdModelProp_LandingUrl').val('http://');
         }
         if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-            $('#AdModelProp_LandingUrl').attr("disabled", true);
-            $('#AdModelProp_DisplayUrl').attr("disabled", true);
+            $('#AdModelProp_LandingUrl').attr("readonly", true);
+            $('#AdModelProp_DisplayUrl').attr("readonly", true);
         }
     });
     $('#getCategories').click(function () {

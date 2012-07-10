@@ -104,10 +104,10 @@
             }
         }
         if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
-            $('#ProductGroup_ProductGroupName').attr("disabled", true);
-            $('#ProductGroup_ProductPromotionName').attr("disabled", true);
-            $('#ProductGroup_Words').attr("disabled", true);
-            $('input[name*="ProductGroup.AdEnginesList"]').attr("disabled", true);
+            $('#ProductGroup_ProductGroupName').attr("readonly", true);
+            $('#ProductGroup_ProductPromotionName').attr("readonly", true);
+            $('#ProductGroup_Words').attr("readonly", true);
+            $('input[name*="ProductGroup.AdEnginesList"]').attr("readonly", true);
         }
     });
         //        enableDisable();
