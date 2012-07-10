@@ -1,62 +1,62 @@
 package semplest.test.systemmonitor;
 
-import java.util.HashMap;
-
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
-import semplest.services.client.api.SemplestAdEngineServiceClient;
 import semplest.services.client.api.SemplestMailServiceClient;
-import semplest.test.systemmonitor.MonitorData.SERVER;
-import semplest.test.systemmonitor.MonitorData.SERVICE;
+import semplest.test.systemmonitor.MonitorObject.SERVER;
+import semplest.test.systemmonitor.MonitorObject.SERVICE;
 
 public class MailMonitorThread implements Runnable {
 
-	private long sleep_time;
-	private HashMap<SERVER, MonitorData> monitorData;
-	private boolean stop = false;	
-	
-	private SERVICE service = SERVICE.Mail;
-	private String clientTimeout = "30000"; 
+	private SERVICE service = SERVICE.Mail;	
 	private Notification alert = new Notification();
-
-	public MailMonitorThread(long interval_min, HashMap<SERVER, MonitorData> monitorDataTemplate) {
-		this.sleep_time = interval_min * 60 * 1000;		
-		monitorData = monitorDataTemplate;
-	}
+	private MonitorObject monitor = new MonitorObject();	
 	
 	@Override
 	public void run() {		
-		while(!stop){	
+		while(!monitor.isStop()){	
 			try {
-				for(SERVER s : SERVER.values()){
-					String esbUrl = monitorData.get(s).getEsbUrl();
-					SemplestMailServiceClient mail = new SemplestMailServiceClient(esbUrl);
-					try {
-						String ret = mail.checkStatus(clientTimeout);
+				monitor.loadConfig();
+				
+				for(SERVER server : SERVER.values()){
+					if(monitor.isMonitorServer(server)){
+						String esbUrl = monitor.getServerEsbUrl(server);
+						SemplestMailServiceClient mailService = new SemplestMailServiceClient(esbUrl);
 						
-						System.out.println(service.name() + " is running fine on " + s.name());
-						monitorData.get(s).setServiceStatus(service, ServiceStatus.Good);
-						if(monitorData.get(s).getServiceStatus(service).goesUp()){
-							//if the service used to be down, but just came back up, send notification
-							alert.sendNotification(s, service, null);
+						try {
+							String ret = mailService.checkStatus(monitor.getClientTimeout());
+							
+							if(ret.equals(ServiceStatus.Up)){
+								System.out.println(service.name() + " is running fine on " + server.name());
+								monitor.setServerServiceStatus(server, ServiceStatus.Up);
+								if(monitor.isServerServiceUp(server)){
+									//if the service used to be down, but just came back up, send notification
+									alert.sendNotification(server, service, null);
+								}
+							}
+							else{							
+								onError(server, new Exception("Service Status - " + ret));
+							}
+						} 
+						catch (Exception e) {
+							onError(server, e);
 						}
-					} 
-					catch (Exception e) {
-						e.printStackTrace();
-						System.out.println(service.name() + " is not running on " + s.name());						
-						//The service is not healthy
-						monitorData.get(s).setServiceStatus(service, ServiceStatus.Bad);				
-						if(monitorData.get(s).getServiceStatus(service).goesDown()){
-							//if the service just went down. send notification
-							alert.sendNotification(s, service, e.getMessage());
-						}
-					}	
+					}						
 				}				
 				
-				Thread.sleep(sleep_time);	
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				Thread.sleep(monitor.getSleepTime());	
+			} catch (Exception e) {
 				e.printStackTrace();
 			}	
 		}			
 	}		
+	
+	private void onError(SERVER server, Exception e){
+		System.out.println(service.name() + " is not running on " + server.name() + " - " + e.getMessage());						
+		//The service is not healthy
+		monitor.setServerServiceStatus(server, ServiceStatus.Down);				
+		if(monitor.isServerServiceDown(server)){
+			//if the service just went down. send notification
+			alert.sendNotification(server, service, e.getMessage());
+		}
+	}
 }

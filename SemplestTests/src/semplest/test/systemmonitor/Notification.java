@@ -10,8 +10,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import semplest.test.systemmonitor.MonitorData.SERVER;
-import semplest.test.systemmonitor.MonitorData.SERVICE;
+import semplest.test.systemmonitor.MonitorObject.SERVER;
+import semplest.test.systemmonitor.MonitorObject.SERVICE;
 
 public class Notification {
 	
