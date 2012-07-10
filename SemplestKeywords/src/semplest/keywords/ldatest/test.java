@@ -21,8 +21,9 @@ public class test {
 		//TextUtils.changeKeywordMatchtoExact("/semplest/data/biddingTest/WeddingHair/msnSuggestedKw.txt");
 		//TextUtils.getUniqueKeywords(new String[]{"/semplest/lluis/PiperHallTest/keywords.txt",
 		//		"/semplest/lluis/PiperHallTest/msnSuggestedKw.txt"},"/semplest/lluis/PiperHallTest/total.txt");
-		String cat = "top/business/insurance/unitedstates";
-		System.out.println(catUtils.take(cat, 2));
+		String input = "/semplest/data/dmoz/all.cats";
+		String output = "/semplest/data/dmoz/usaStates.txt";
+		catUtils.usaStates(input, output);
 	}
 
 

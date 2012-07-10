@@ -287,7 +287,16 @@ public class ioUtils {
     return map;
   }
 
-
+  public static HashMap<String, String> loadStates(String f) throws IOException{
+	  HashMap<String, String> states = new HashMap<String, String>();
+	  BufferedReader r = new BufferedReader(new FileReader(f));
+      String line;
+      while(( line =  r.readLine()) != null ){
+    	  String[] stateElem = line.split("/");
+    	  states.put(stateElem[1].trim(), stateElem[0].trim());
+      }
+      return states;
+  }
   // read a matrix of numbers
   public static double[][] readMatrix(String file){
 

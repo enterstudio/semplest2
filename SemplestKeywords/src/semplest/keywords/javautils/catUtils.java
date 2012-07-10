@@ -1,13 +1,20 @@
 package semplest.keywords.javautils;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
@@ -68,6 +75,43 @@ public class catUtils {
     if( nodes.length == 0) return "";
     return nodes[0];
   }
+  
+  // revert order of nodes in category
+  public static String revert( String cat ){
+    String newCat ="";
+  	String[] nodes = cat.split("/");
+    if( nodes.length == 0) return "";
+    if(nodes.length>0){
+	    for(int i=0; i< nodes.length-1; i++){
+	    	newCat = newCat+nodes[nodes.length-1-i]+"/";
+	    }
+	    newCat = newCat+nodes[0];
+    }
+    	
+    return newCat;
+  }
+  
+  // get all the states in USA in regional
+  public static ArrayList<String> usaStates(String categoryFilePath, String outputFile) throws FileNotFoundException{
+	  ArrayList<String> states = new ArrayList<String>();
+	  HashSet<String> statesSet = new HashSet<String>();
+	  PrintStream pr = new PrintStream(new FileOutputStream(outputFile));
+	  Scanner scan = new Scanner(new FileInputStream(categoryFilePath));
+	  while(scan.hasNextLine()){
+		  String line = scan.nextLine();
+		  if(line.indexOf("top/regional/north_america/united_states/") == 0){
+			  line = line.replaceAll("top/regional/north_america/united_states/","");
+			  String state = head(line);
+			  statesSet.add(state);
+		  }
+	  }
+	  for( String state : statesSet.toArray(new String[statesSet.size()])){
+		  pr.println(state);
+		  states.add(state);
+	  }
+	  return states;
+  }
+  
   // returns tail (everything but the head)
   // (/recreation/pets/dogs/breeds/herding_group/welsh_corgi/pembroke/pets)
   public static String tail( String cat ){
