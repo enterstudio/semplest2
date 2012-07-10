@@ -9,7 +9,7 @@ GO
 -- | Purpose - 						|
 -- +----------------------------------------------------------------------------------------------------------------+
 
-CREATE PROCEDURE dbo.SetBidObject
+CREATE PROCEDURE dbo.SetBidObject   
 (
 	@PromotionPK            INT,
 	@KeywordAdEngineID      BIGINT,
