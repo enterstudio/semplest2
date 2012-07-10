@@ -81,7 +81,7 @@ BEGIN TRY
 						 and kb.BidTypeFK = @BidTypeID
 						 and (k.Keyword = @Keyword or kb.KeywordAdEngineID = @KeywordAdEngineID)
 		
-			if (@MicroBidAmount != @currentMicroBidAmt)
+			if (@MicroBidAmount != @currentMicroBidAmt) 
 			BEGIN
 				 --update the last bid with an end Date and set inactive
 				 UPDATE KeywordBid set EndDate = @currentTime, IsActive = 0 WHERE KeywordBidPK = @keywordBidPK
