@@ -1179,8 +1179,13 @@ public class BidGeneratorObj
 	    	i++;
 	    	
 	    	if(keywords.size()==1000 || i==kwList.length){
-	    		o2 = msnClient.getKeywordEstimateByBids(msnAccountID, 
-	    				keywords.toArray(new String[keywords.size()]), bidsMoney, MatchType.Exact);
+	    		try{
+	    			o2 = msnClient.getKeywordEstimateByBids(msnAccountID, 
+	    					keywords.toArray(new String[keywords.size()]), bidsMoney, MatchType.Exact);
+	    		} catch (Exception e){
+	    			logger.error( "Failed to get traffic estimator data via MSN API. " + e.getMessage(), e);
+					throw new Exception( "Failed to get traffic estimator data via MSN API. " + e.getMessage(), e);
+	    		}
 	    		o.addGoogleTrafficEstimatorObject(o2, MatchType.Exact.toString());
 	        	keywords = new ArrayList<String>();
 	    	} 
