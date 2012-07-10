@@ -11,5 +11,14 @@ namespace Semplest.SharedResources
         public const string SESSION_LOGINATTEMPTS = "loginAttempts";
 
        public enum PromotionAdAction { Add, Update, Delete }
+
+        public enum SchedulePromotionType
+        {
+            Pause,
+            Unpause,
+            Delete,
+            End
+        }
+
     }
-}
+ }

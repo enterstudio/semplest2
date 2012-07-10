@@ -13,6 +13,8 @@ namespace Semplest.SharedResources.Services
 {
     public class ServiceClientWrapper
     {
+
+
         private static string ADENGINESERVICE = "semplest.server.service.adengine.SemplestAdengineService";
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
         private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
@@ -177,7 +179,7 @@ namespace Semplest.SharedResources.Services
 
         #region AdEngine
 
-        public bool schedulePromotion(int customerId, int promoId, string[] adds, bool shouldResume)
+        public bool schedulePromotion(int customerId, int promoId, string[] adds, SEMplestConstants.SchedulePromotionType st)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerId.ToString());
@@ -185,11 +187,23 @@ namespace Semplest.SharedResources.Services
             string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
+            string requestedService;
+            switch(st)
+            {
+                case SEMplestConstants.SchedulePromotionType.Unpause: requestedService="scheduleUnpausePromotion";
+                    break;
+                case SEMplestConstants.SchedulePromotionType.Pause: requestedService= "schedulePausePromotion";
+                    break;
+                case SEMplestConstants.SchedulePromotionType.Delete: requestedService= "scheduleDeletePromotion";
+                    break;
+                case SEMplestConstants.SchedulePromotionType.End: requestedService= "scheduleEndPromotion";
+                    break;
+                default:
+                    throw new Exception("Invalid Promotion Schedule Type");
+                    break;
+            }
+            return runBooleanMethod(ADENGINESERVICE, requestedService, jsonstr);
 
-            if (shouldResume)
-                return runBooleanMethod(ADENGINESERVICE, "scheduleUnpausePromotion", jsonstr);
-            else
-                return runBooleanMethod(ADENGINESERVICE, "schedulePausePromotion", jsonstr);
         }
 
         public bool scheduleAddPromotionToAdEngine(int customerID, int productGroupId, int promoId,
