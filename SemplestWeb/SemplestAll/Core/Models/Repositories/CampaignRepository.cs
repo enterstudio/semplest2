@@ -699,13 +699,17 @@ namespace Semplest.Core.Models.Repositories
             if (model.SiteLinks != null)
                 foreach (var sitelink in model.SiteLinks)
                 {
-                    var slink = new SiteLink
-                                    {
-                                        LinkText = sitelink.LinkText,
-                                        LinkURL = sitelink.LinkURL,
-                                        PromotionFK = promo.PromotionPK
-                                    };
-                    promo.SiteLinks.Add(slink);
+                    //TODO remove when the validation is added
+                    if (!string.IsNullOrEmpty(sitelink.LinkText) && !string.IsNullOrEmpty((sitelink.LinkURL)))
+                    {
+                        var slink = new SiteLink
+                                        {
+                                            LinkText = sitelink.LinkText,
+                                            LinkURL = sitelink.LinkURL,
+                                            PromotionFK = promo.PromotionPK
+                                        };
+                        promo.SiteLinks.Add(slink);
+                    }
                 }
             try
             {
