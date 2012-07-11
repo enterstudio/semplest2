@@ -9,6 +9,8 @@ import semplest.util.SemplestUtils;
 
 import com.google.api.adwords.v201109.cm.ApiError;
 import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109.cm.PolicyViolationError;
+import com.google.api.adwords.v201109.cm.PolicyViolationKey;
 import com.google.api.adwords.v201109.cm.RateExceededError;
 
 public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOperation<T>
@@ -29,8 +31,26 @@ public abstract class AbstractRetriableGoogleOperation<T> implements RetriableOp
 		{
 			try 
 			{
-				logger.info("Attempt #" + i);
-				return performCustomOperation();					
+				logger.info("Attempt #" + i);	
+				
+				// this for testing only
+				/*if (this instanceof AdGroupCriterionMutateRetriableFilterableGoogleOperation)
+				{
+					if (SemplestUtils.getRandomIntBetween0AndSpecifiedInt(2) == 0)
+					{
+						final ApiError apiError = new PolicyViolationError("fieldPath1", "Test Trigger", "This is a simulated error", "apiErrorType1", new PolicyViolationKey("policyName1", "best medical care"), "externalPolicyName1", "externalPolicyUrl1", "externalPolicyDescription1", Boolean.TRUE,null);
+						final ApiError[] apiErrors = new ApiError[]{apiError};
+						throw new ApiException("Randomly generated exception for testing", "this is only for testing", apiErrors);
+					}
+					else
+					{
+						return performCustomOperation();
+					}
+				}
+				else
+				{*/
+					return performCustomOperation();
+				//}
 			}
 			catch (ApiException e)
 			{

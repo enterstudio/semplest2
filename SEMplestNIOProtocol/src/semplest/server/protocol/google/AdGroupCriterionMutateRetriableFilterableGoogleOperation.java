@@ -27,8 +27,7 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 	private AdGroupCriterionOperation[] operations;
 	private final Map<AdGroupCriterionOperation, String> operationsRemovedToPkMap;
 
-	public AdGroupCriterionMutateRetriableFilterableGoogleOperation(final AdGroupCriterionServiceInterface service,
-			final AdGroupCriterionOperation[] operations, final Integer maxRetries)
+	public AdGroupCriterionMutateRetriableFilterableGoogleOperation(final AdGroupCriterionServiceInterface service, final AdGroupCriterionOperation[] operations, final Integer maxRetries)
 	{
 		super(maxRetries);
 		this.service = service;
@@ -67,8 +66,7 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 
 	protected void filterRequest(final List<GoogleViolation> googleViolations) throws ApiException, RemoteException
 	{
-		logger.info("Will try to filter out these " + googleViolations.size() + " GoogleViolations from " + operations.length
-				+ " AdGroupCriterionOperations:\n" + googleViolations);
+		logger.info("Will try to filter out these " + googleViolations.size() + " GoogleViolations from " + operations.length + " AdGroupCriterionOperations:\n" + googleViolations);
 		final List<AdGroupCriterionOperation> operationListUmodifiable = Arrays.asList(operations);
 		final List<AdGroupCriterionOperation> operationList = new ArrayList<AdGroupCriterionOperation>(operationListUmodifiable);
 		final List<AdGroupCriterionOperation> operationsToRemove = new ArrayList<AdGroupCriterionOperation>();
@@ -97,9 +95,7 @@ public class AdGroupCriterionMutateRetriableFilterableGoogleOperation extends Ab
 		operationList.removeAll(operationsToRemove);
 		operationsRemovedToPkMap.putAll(operationsToPkMapForRemoval);
 		operations = operationList.toArray(new AdGroupCriterionOperation[operationList.size()]);
-		logger.info("Removed the following " + operationsToPkMapForRemoval.size()
-				+ " operations from original set of operations, resulting in latest " + operations.length + " operations:\n"
-				+ SemplestUtils.getEasilyReadableString(operationsToPkMapForRemoval));
+		logger.info("Removed the following " + operationsToPkMapForRemoval.size() + " operations from original set of operations, resulting in latest " + operations.length + " operations:\n" + SemplestUtils.getEasilyReadableString(operationsToPkMapForRemoval));
 	}
 
 	public Map<AdGroupCriterionOperation, String> getRemovedOperations()

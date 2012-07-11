@@ -120,37 +120,40 @@ public final class SemplestUtils
 	{
 		final List<GoogleViolation> violations = new ArrayList<GoogleViolation>();
 		final ApiError[] errors = e.getErrors();
-		for (ApiError error : errors)
+		if (errors != null)
 		{
-			final GoogleViolation violation;
-
-			final String errorType = error.getApiErrorType();
-			final String errorMessage = error.getErrorString();
-			final String fieldPath = error.getFieldPath();
-			final String shortFieldPath;
-			if (fieldPath != null && fieldPath.contains("."))
+			for (ApiError error : errors)
 			{
-				final int lastIndexOfDot = fieldPath.lastIndexOf(".");
-				shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
+				final GoogleViolation violation;
+	
+				final String errorType = error.getApiErrorType();
+				final String errorMessage = error.getErrorString();
+				final String fieldPath = error.getFieldPath();
+				final String shortFieldPath;
+				if (fieldPath != null && fieldPath.contains("."))
+				{
+					final int lastIndexOfDot = fieldPath.lastIndexOf(".");
+					shortFieldPath = fieldPath.substring(lastIndexOfDot + 1);
+				}
+				else
+				{
+					shortFieldPath = fieldPath;
+				}
+				if (error instanceof PolicyViolationError)
+				{
+					final PolicyViolationError policyError = (PolicyViolationError) error;
+					final String externalPolicyName = policyError.getExternalPolicyName();
+					final String policyDescription = policyError.getExternalPolicyDescription();
+					final PolicyViolationKey policyViolationKey = policyError.getKey();
+					final String policyViolatingText = policyViolationKey.getViolatingText();
+					violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
+				}
+				else
+				{
+					violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
+				}
+				violations.add(violation);
 			}
-			else
-			{
-				shortFieldPath = fieldPath;
-			}
-			if (error instanceof PolicyViolationError)
-			{
-				final PolicyViolationError policyError = (PolicyViolationError) error;
-				final String externalPolicyName = policyError.getExternalPolicyName();
-				final String policyDescription = policyError.getExternalPolicyDescription();
-				final PolicyViolationKey policyViolationKey = policyError.getKey();
-				final String policyViolatingText = policyViolationKey.getViolatingText();
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath, externalPolicyName, policyDescription, policyViolatingText);
-			}
-			else
-			{
-				violation = new GoogleViolation(errorType, errorMessage, fieldPath, shortFieldPath);
-			}
-			violations.add(violation);
 		}
 		return violations;
 	}
@@ -705,6 +708,11 @@ public final class SemplestUtils
 		final String customerNumber = signupCustomerResponse.getCustomerNumber();
 		final Long userId = signupCustomerResponse.getUserId();
 		return "SignupCustomerResponse[AccountID [" + accountId + "], AccountNumber [" + accountNumber + "], CustomerID [" + customerId + "], CustomerNumber [" + customerNumber + "], UserID [" + userId + "]]";
+	}
+	
+	public static Integer getRandomIntBetween0AndSpecifiedInt(final int max)
+	{
+		return RANDOM.nextInt(max);
 	}
 	
 	public static String getRandomAllowedChars(final int lengthGap, List<Character> allowedChars)
