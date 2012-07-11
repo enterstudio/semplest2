@@ -871,6 +871,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	 */
 	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
 	{
+		logger.info("Will try to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], MonthlyBudgetAmount [" + monthlyBudgetAmount + "], RemainingDaysInCycle [" + remainingDaysInCycle + "]");
 		if (monthlyBudgetAmount < 0)
 		{
 			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle
@@ -914,7 +915,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	private Double calculateDailyBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
 	{
-		Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
+		Double daily = (7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue();
 		return daily;
 	}
 
