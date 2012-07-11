@@ -93,6 +93,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationAccountID = null;
 	private static Long AdwordsValidationCampaignID = null;
 	private static Long AdwordsValidationAdGroupID = null;
+	
+	private static Double BudgetMultFactor = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -181,6 +183,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
+		
+		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("BudgetMultFactor");
+
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
@@ -908,14 +913,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	private Long calculateDailyMicroBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
 	{
-		final Double daily = ((7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
+		final Double daily = ((BudgetMultFactor * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
 		final BigDecimal bd = new BigDecimal(daily);
 		return (bd.longValue() * 10000L);
 	}
 
 	private Double calculateDailyBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
 	{
-		Double daily = (7.0 * monthlyBudget) / remainingDaysInCycle.doubleValue();
+		Double daily = (BudgetMultFactor * monthlyBudget) / remainingDaysInCycle.doubleValue();
 		return daily;
 	}
 
