@@ -1612,9 +1612,11 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final AdGroupCriterionReturnValue regularKeywordResult = retriableOperation.performOperation();
 			final Map<AdGroupCriterionOperation, String> removedOperationToCommentMap = retriableOperation.getRemovedOperations();
 			final List<GoogleAddKeywordRequest> removedRequests = getRequestsForKeywordOperations(originalRequests, removedOperationToCommentMap);
-			logger.info("Original Request count [" + originalRequests.size() + "], Original Operations count [" + addKeywordOperationsArray.length + "], Removed Request count [" + removedRequests.size() + "], Removed Operations count [" + removedOperationToCommentMap.size() + "]");
+			logger.info("Original Request count [" + originalRequests.size() + "], Original Operations count [" + addKeywordOperationsArray.length + "], Removed Request count [" + removedRequests.size() + "], Removed Operations count [" + removedOperationToCommentMap.size() + "]");			
 			final Map<Integer, String> deletedKeywordIdToCommentMap = getKeywordToIdMap(removedRequests);
-			SemplestDB.markKeywordDeletedBulk(deletedKeywordIdToCommentMap, promotionID);
+			SemplestDB.removeKeywordFromAdEngine(deletedKeywordIdToCommentMap, promotionID, AdEngine.Google);
+			//originalRequests.removeAll(removedRequests);			
+			//logger.info("New Request count after removing the deleted keywords: " + originalRequests.size());
 			if (regularKeywordResult != null && regularKeywordResult.getValue() != null)
 			{
 				final AdGroupCriterion[] adGroupCriterions = regularKeywordResult.getValue();

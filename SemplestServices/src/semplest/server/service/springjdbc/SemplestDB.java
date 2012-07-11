@@ -957,6 +957,36 @@ public class SemplestDB extends BaseDB
 		});
 		return getIdPairRowCountMap(idPairs, rowCounts);
 	}
+	
+	public static Map<Entry<Integer, String>, Integer> removeKeywordFromAdEngine(final Map<Integer, String> keywordIdToCommentMap, final Integer promotionID, final AdEngine adEngine)
+	{
+		logger.info("Will try to remove " + keywordIdToCommentMap.size() + " keywords from AdEngine [" + adEngine + "]:\n" + SemplestUtils.getEasilyReadableString(keywordIdToCommentMap));
+		final Set<Entry<Integer, String>> entrySet = keywordIdToCommentMap.entrySet();
+		final List<Entry<Integer, String>> entryList = new ArrayList<Entry<Integer, String>>(entrySet);
+		final String sql = "update 	PromotionKeywordAssociation " + 
+						      "set 	IsTarget" + adEngine.name() + " = 0, " + 
+				               	   "Comment = ? " + 
+				            "where  KeywordFK = ?" + 
+				              "and  PromotionFK = ?";
+		final int[] rowCounts = jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter()
+		{
+			public void setValues(PreparedStatement ps, int i) throws SQLException
+			{
+				final Entry<Integer, String> entry = entryList.get(i);
+				final Integer keywordId = entry.getKey();
+				final String comment = entry.getValue();
+				ps.setString(1, comment);
+				ps.setInt(2, keywordId);
+				ps.setInt(3, promotionID);
+			}
+
+			public int getBatchSize()
+			{
+				return entryList.size();
+			}
+		});
+		return getKeywordIdCommentToRowCountMap(entryList, rowCounts);
+	}
 
 	public static Map<Entry<Integer, String>, Integer> markKeywordDeletedBulk(final Map<Integer, String> keywordIdToCommentMap, final Integer promotionID)
 	{

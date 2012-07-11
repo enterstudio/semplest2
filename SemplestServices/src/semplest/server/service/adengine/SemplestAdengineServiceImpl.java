@@ -668,17 +668,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Map<String, Long> keywordToMsnIdMap = response.getKeywordToMsnIdMap();
 				final Map<Integer, String> filteredOutKeywordIdsToCommentMap = response.getFilteredOutKeywordPkToCommentMap();
 				logger.info("Successfully created Keywords in MSN (KeywordText<->MsnID):\n" + SemplestUtils.getEasilyReadableString(keywordToMsnIdMap) + "\n\nCould not create these Keywords in MSN (KeywordPK<->Comment):\n" + SemplestUtils.getEasilyReadableString(filteredOutKeywordIdsToCommentMap));
+				// Mark as Deleted in DB for Keywords that could not be added to MSN
+				SemplestDB.removeKeywordFromAdEngine(filteredOutKeywordIdsToCommentMap, promotionID, adEngine);
 				// Persist MsnKeywordID in DB for Keywords that were added to MSN
-				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
+				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();				
 				for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
 				{
 					final String text = entry.getKey();
 					final Long keywordId = entry.getValue();
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
-				}
-				// Mark as Deleted in DB for Keywords that could not be added to MSN
-				SemplestDB.markKeywordDeletedBulk(filteredOutKeywordIdsToCommentMap, promotionID);
+				}				
 			}
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
