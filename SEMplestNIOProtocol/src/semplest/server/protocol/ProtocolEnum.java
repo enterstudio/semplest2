@@ -50,7 +50,7 @@ public class ProtocolEnum
 	}
 	public static enum ScheduleFrequency
 	{
-		Now, Daily, Weekly, Monthly, TenMinutes;
+		Now, Daily, Weekly, Monthly, TenMinutes,Hour, TwoHour, ThreeHour, SixHour ;
 		public static boolean existsFrequency(String freq)
 		{
 			if (freq != null)
