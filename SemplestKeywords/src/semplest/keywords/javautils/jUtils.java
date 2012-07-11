@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Comparator;
 
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 /*
  * Java Language and data-structure Utilities 
@@ -74,9 +76,19 @@ public class jUtils {
     return svmap;
   }
 
+  // - Date ----------------
+  public Calendar gCal ( String date ){
+    SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+    Calendar c = Calendar.getInstance();
+    try {
+      c.setTime( df.parse( date ));
+    } catch (Exception e ){ e.printStackTrace(); }
+    return c;
+  }
 
+
+  // --------------------------------------------------------------------------
   public static void main( String[] args){
-
   }
 
 }
