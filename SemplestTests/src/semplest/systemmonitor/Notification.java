@@ -20,8 +20,8 @@ public class Notification {
 	private static String emailTo = "development@semplest.com";
 	
 	public static void sendNotification(SERVER server, SERVICE service, String errorMsg){
-		String downMsg = "[System Monitor] ALERT! " + service.name() + " Service on " + server.name() + " server is down!";
-		String upMsg = "[System Monitor] " + service.name() + " Service on " + server.name() + " server is back to normal.";		
+		String downMsg = "[System Monitor] ALERT! " + service.name() + " Service on " + server.name() + " Server is down!";
+		String upMsg = "[System Monitor] " + service.name() + " Service on " + server.name() + " Server is back to normal.";		
 		
 		if(errorMsg != null){
 			sendEmail(downMsg, emailFrom, emailTo, errorMsg);
@@ -34,8 +34,8 @@ public class Notification {
 	private static void sendEmail(String subject, String from, String to, String msg)
 	{			
 		String host = "smtp.gmail.com";
-	    String username = "nan@semplest.com";
-	    String password = "semplest";
+	    String username = "devuser@semplest.com";
+	    String password = "devuser2012";
 	    Properties props = new Properties();
 	    props.put("mail.smtps.auth", "true");
 	    
