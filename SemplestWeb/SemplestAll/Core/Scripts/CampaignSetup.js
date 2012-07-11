@@ -36,9 +36,9 @@ $(document).ready(function () {
         if (index >= 0) {
             var dispStr = $('#AdModelProp_LandingUrl').val().substring(index + 7);
             //var dispStr = $('#AdModelProp_LandingUrl').val();
-                        if (dispStr.indexOf('/') >= 0) {
-                            dispStr = dispStr.substring(0, dispStr.indexOf('/'));
-                        }
+            if (dispStr.indexOf('/') >= 0) {
+                dispStr = dispStr.substring(0, dispStr.indexOf('/'));
+            }
             if (dispStr.indexOf('?') >= 0) {
                 dispStr = dispStr.substring(0, dispStr.indexOf('?'));
             }
@@ -161,11 +161,12 @@ $(document).ready(function () {
             $('#lblbudgetdisplay').html('/ Promotion');
             $("#ProductGroup_EndDate").removeClass("enddate");
             $("#ProductGroup_EndDate").kendoDatePicker({
-                change: endChange
+                //change: endChange
             }).data("kendoDatePicker");
         } else {
             $('#lblbudgetdisplay').html('/ Month');
             $("#ProductGroup_EndDate").addClass("enddate");
+            $("#ProductGroup_EndDate").val('');
             disposeDatePicker();
         }
 
@@ -197,7 +198,16 @@ $(document).ready(function () {
     var dropdownlist = $("#dropDownPeriodList").kendoDropDownList({
         select: onSelect
     });
-
+    if ($("#ProductGroup_EndDate").val() == '')
+        $("#dropDownPeriodList").data("kendoDropDownList").select(0);
+    else {
+        $("#dropDownPeriodList").data("kendoDropDownList").select(1);
+        $('#lblbudgetdisplay').html('/ Promotion');
+        $("#ProductGroup_EndDate").removeClass("enddate");
+        $("#ProductGroup_EndDate").kendoDatePicker({
+            //change: endChange
+        }).data("kendoDatePicker");
+    }
     // detach select event handler via unbind()
     //dropdownlist.data("dropDownPeriodList").unbind("select", onSelect);
 

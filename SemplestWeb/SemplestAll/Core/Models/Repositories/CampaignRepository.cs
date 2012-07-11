@@ -494,12 +494,9 @@ namespace Semplest.Core.Models.Repositories
                                 PromotionDescription = model.ProductGroup.Words,
                                 PromotionBudgetAmount = model.ProductGroup.Budget,
                                 BudgetCycleFK = GetBudgetCycleId("Monthly"),
-                                CycleStartDate =
-                                    Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
-                                CycleEndDate =
+                                PromotionEndDate =
                                     string.IsNullOrEmpty(model.ProductGroup.EndDate)
-                                        ? Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")).
-                                              AddMonths(1)
+                                        ? (DateTime?)null
                                         : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us")),
                                 StartBudgetInCycle = model.ProductGroup.Budget - customerDefaultPerCampaignFlatFeeAmount,
                                 RemainingBudgetInCycle =
@@ -528,8 +525,7 @@ namespace Semplest.Core.Models.Repositories
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,
                                                                     new CultureInfo("en-Us"));
             updatePromotion.PromotionEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate)
-                                               ? Convert.ToDateTime(model.ProductGroup.StartDate,
-                                                                    new CultureInfo("en-Us")).AddMonths(1)
+                                               ? (DateTime?)null
                                                : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us"));
             updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget -
                                                  configuration.CustomerDefaultPerCampaignFlatFeeAmount;
