@@ -16,7 +16,7 @@ public class AdEngineMonitorThread implements Runnable {
 		while(!monitor.isStop()){	
 			try {
 				monitor.loadConfig();
-				System.out.println(monitor.isStop());
+				System.out.println("* IsStop is - " + monitor.isStop());
 				
 				for(SERVER server : SERVER.values()){
 					if(monitor.isMonitorServer(server)){

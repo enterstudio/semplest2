@@ -3,7 +3,7 @@ package semplest.systemmonitor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SystemMonitor {			
+public class SemplestSystemMonitor {			
 	
 	public static void main(String[] args){				
 		ExecutorService executor = Executors.newCachedThreadPool();
