@@ -500,9 +500,24 @@ namespace Semplest.Core.Controllers
             model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
             if (model.AllCategories == null)
             {
-                model = _campaignRepository.GetCategories((CampaignSetupModel)Session["CampaignSetupModel"]);
+                model = _campaignRepository.GetCategories((CampaignSetupModel) Session["CampaignSetupModel"]);
                 Session["CampaignSetupModel"] = model;
                 Session["AllCategories"] = model.AllCategories;
+                int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                                                         model.ProductGroup.ProductPromotionName);
+                var dbContext = new SemplestModel.Semplest();
+                var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId );
+                var i = 0;
+                if (cats.Any())
+                {
+                    foreach (Semplest.Core.Models.CampaignSetupModel.CategoriesModel cm in model.AllCategories)
+                    {
+                        if (cats.Any(x => x.KeywordCategory1 == cm.Name))
+                            model.CategoryIds.Add(i);
+                        i += 1;
+                    }
+                }
             }
             return PartialView(model);
         }

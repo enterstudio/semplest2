@@ -82,7 +82,7 @@ public static class MvcCheckBoxList_Extensions_Model
                 while (enumerator.MoveNext())
                 {
 
-                    if ((string)enumerator.Current == option.Value)
+                    if (enumerator.Current.ToString() == option.Value)
                     {
 
                         builder.MergeAttribute("checked", "checked");
