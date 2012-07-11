@@ -94,7 +94,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationCampaignID = null;
 	private static Long AdwordsValidationAdGroupID = null;
 	
-	private static Double BudgetMultFactor = null;
+	private static Integer BudgetMultFactor = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -184,7 +184,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 		
-		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("BudgetMultFactor");
+		BudgetMultFactor = (Integer) SemplestConfiguration.configData.get("BudgetMultFactor");
 
 	}
 
