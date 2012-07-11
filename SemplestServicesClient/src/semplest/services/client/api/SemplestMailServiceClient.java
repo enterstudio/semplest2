@@ -28,8 +28,12 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 
 		try
 		{
-			SemplestMailServiceClient client = new SemplestMailServiceClient("http://23.22.63.111:9898/semplest");
-			Boolean ret = client.SendEmail("Test", "mitch@seattlebergs.com", "mitch@semplest.com", "Hello from the cloud", "text/plain; charset=ISO-8859-1"); //ProtocolEnum.EmailType.PlanText.name());
+			SemplestMailServiceClient client = new SemplestMailServiceClient(BASEURLTEST);
+			String msgSubject = "Error Running Schedule - scheduleJobPK=12185";
+			String emailFrom = "development@semplest.com";
+			String emailTo = "development@semplest.com";
+			String msgTxt = "ScheduleID= 1122 Task Failed: semplest.services.client.api.SemplestAdEngineServiceClient:AddPromotionToAdEngine:{\"productGroupID\":\"289\",\"adEngines\":\"[\\\"Google\\\"]\",\"customerID\":\"48\",\"promotionID\":\"309\"}";
+			Boolean ret = client.SendEmail(msgSubject, emailFrom, emailTo, msgTxt, "text/plain; charset=ISO-8859-1"); //ProtocolEnum.EmailType.PlanText.name());
 		}
 		catch (Exception e)
 		{
@@ -90,11 +94,11 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 	}
 	
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String timeout) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("input", input);
+		jsonHash.put("input", timeout);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
+		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeout);
 		return ret;
 	}
 }
