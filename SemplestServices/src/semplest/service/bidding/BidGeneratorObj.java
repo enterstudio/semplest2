@@ -145,6 +145,9 @@ public class BidGeneratorObj
 		stepFirst = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepFirst");
 		stepSecond = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepSecond");
 		stepRest = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepRest");
+		
+		msnAccountID = (Long) SemplestConfiguration.configData.get("MSNTrafficEstAccountID");
+		 
 
 		wordIDMap = new HashMap<String, Long>();
 		wordBidMap = new HashMap<String, Long>();
@@ -279,7 +282,7 @@ public class BidGeneratorObj
 		
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
-			if(r.getAveragePosition()<5){
+			if(r.getAveragePosition()<=4){
 				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), true);
 				pausedSet.add(r.getKeyword());
 				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
@@ -289,7 +292,7 @@ public class BidGeneratorObj
 					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 				}
 			} else {
-				wordBidMap.put(r.getKeyword(), (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,r.getAveragePosition()/2)))/10000L) * 10000L);
+				wordBidMap.put(r.getKeyword(), (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
 				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(wordBidMap.get(r.getKeyword()));
 				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 			}
@@ -300,7 +303,7 @@ public class BidGeneratorObj
 				continue;
 			}
 			if(!b.getIsDefaultValue() && b.getIsActive()){
-				wordBidMap.put(b.getKeyword(),(((long) (b.getMicroBidAmount()* Math.pow(1.1,5)))/10000L) * 10000L);
+				wordBidMap.put(b.getKeyword(),(((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
 				b.setMicroBidAmount(wordBidMap.get(b.getKeyword()));
 			}
 		}
@@ -555,7 +558,7 @@ public class BidGeneratorObj
 				if (keywordDataObj.getFirstPageCpc() == null)
 				{
 					// logger.info((i+1)+": Received no firstPageCPC info for "+keywordDataObj.getKeyword());
-					noInfoKeywords.add(keywordDataObj.getKeyword());
+					//noInfoKeywords.add(keywordDataObj.getKeyword());
 				}
 				else
 				{
@@ -564,6 +567,7 @@ public class BidGeneratorObj
 					// keywordDataObj.getQualityScore());
 					firstPageCPCMap.put(keywordDataObj.getKeyword(), new Long(keywordDataObj.getFirstPageCpc()));
 					qualityScoreMap.put(keywordDataObj.getKeyword(), new Double(Math.pow(keywordDataObj.getQualityScore(), 1)));
+					/*
 					if (keywordDataObj.isIsEligibleForShowing())
 					{
 						compKeywords.add(keywordDataObj.getKeyword());
@@ -572,10 +576,11 @@ public class BidGeneratorObj
 					{
 						nonCompKeywords.add(keywordDataObj.getKeyword());
 					}
+					*/
 				} // if(keywordDataObj.getFirstPageCpc()==null)
 			} // for(int i=0; i<keywordDataObjs.length; i++)
 
-			logger.info("Decided competitive keywords");
+			logger.info("Created maps for FP CPC and QS.");
 		} // if(searchEngine.equalsIgnoreCase(google))
 
 		/* ******************************************************************************************* */
@@ -588,6 +593,36 @@ public class BidGeneratorObj
 
 		if (searchEngine == AdEngine.Google)
 		{
+			
+			try{ 
+				Keyword[] kwList = new Keyword[keywordDataObjs.length]; //msnClient.getKeywordByAdGroupId(msnAccountID, adGroupID);
+				for(int i=0; i<keywordDataObjs.length; i++){
+					kwList[i] = new Keyword();
+					kwList[i].setText(keywordDataObjs[i].getKeyword());
+				}
+				o = getTrafficEstimatorDataForMSN(kwList);
+				
+				String [] keyListTE = o.getListOfKeywords();
+				for(String s : keyListTE){
+					compKeywords.add(s);
+				}
+				for(Keyword kw : kwList){
+					String s = kw.getText();
+					//wordIDMap.put(s, kw.getId());
+					if(!compKeywords.contains(s)){
+						nonCompKeywords.add(s);
+					}
+				}
+				
+			} catch (Exception e) {
+				logger.error("Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
+				throw new Exception("Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
+			}
+			
+			
+			
+			
+			/*
 			if (compKeywords.size() > 0) {
 				try {
 					logger.info("Attenpting to get traffic estimator info.");
@@ -601,6 +636,7 @@ public class BidGeneratorObj
 			}else {
 				logger.info("No traffic estimator data to be fetched.");
 			}
+			*/
 		} // if(searchEngine.equalsIgnoreCase(google))
 
 		/* *************************************** */
@@ -804,17 +840,17 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 7. [google] Compute bids for competitive keywords which optimizer didn't select
 		// a. Bid $0.5 above firstPage CPC if below $3.00
-		if (notSelectedKeywords.size() > 0)
-		{
-			for (String s : notSelectedKeywords){
-				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
-				//wordBidMap.put(s, defaultMicroBid);
-				wordBidMap.put(s, null);
-				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
-
-			}
-			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
-		}
+//		if (notSelectedKeywords.size() > 0)
+//		{
+//			for (String s : notSelectedKeywords){
+//				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
+//				//wordBidMap.put(s, defaultMicroBid);
+//				wordBidMap.put(s, null);
+//				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+//
+//			}
+//			logger.info("Computed bids for competitive keywords which optimizer didn't select for bidding.");
+//		}
 
 		/* ******************************************************************************************* */
 		// 8. Compute bits for all other keywords with firstPage CPC
@@ -836,16 +872,16 @@ public class BidGeneratorObj
 		// 9. For the rest of keywords without firstPage CPC leave out for
 		// bidding with default bid
 
-		if (noInfoKeywords.size() > 0)
-		{
-			for (String s : noInfoKeywords)
-			{
-				wordBidMap.put(s, null); // bid using default bid
-				logger.info("Microbid for keyword "+s+" is "+defaultMicroBid);
-
-			}
-			logger.info("Left the remaining keywords for default bidding");
-		}
+//		if (noInfoKeywords.size() > 0)
+//		{
+//			for (String s : noInfoKeywords)
+//			{
+//				wordBidMap.put(s, null); // bid using default bid
+//				logger.info("Microbid for keyword "+s+" is "+defaultMicroBid);
+//
+//			}
+//			logger.info("Left the remaining keywords for default bidding");
+//		}
 
 		/* ******************************************************************************************* */
 		// 10. Use traffic estimator to compute average CPC based on these bids
@@ -1637,24 +1673,24 @@ public class BidGeneratorObj
 			
 			//System.out.println("Testing inital bidding!");
 
-//			BidGeneratorObj bidObject = new BidGeneratorObj();
+			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(70);
+			Integer promotionID = new Integer(90);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 			
-			AdEngine searchEngine = AdEngine.Google;
-			
-			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
-			String accountID = String.valueOf(adEngineInfo.getAccountID());
-
-			long campaignID = adEngineInfo.getCampaignID();
-			long adGroupID = adEngineInfo.getAdGroupID();
-			
-			System.out.println(accountID+" "+campaignID+" "+adGroupID);
+//			AdEngine searchEngine = AdEngine.Google;
+//			
+//			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+//			String accountID = String.valueOf(adEngineInfo.getAccountID());
+//
+//			long campaignID = adEngineInfo.getCampaignID();
+//			long adGroupID = adEngineInfo.getAdGroupID();
+//			
+//			System.out.println(accountID+" "+campaignID+" "+adGroupID);
 			
 			
 
