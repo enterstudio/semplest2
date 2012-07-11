@@ -591,7 +591,7 @@ public class BidGeneratorObj
 			if (compKeywords.size() > 0) {
 				try {
 					logger.info("Attenpting to get traffic estimator info.");
-					o = getTrafficEstimatorDataForGoogle();
+					//o = getTrafficEstimatorDataForGoogle();
 				}
 				catch (Exception e) {
 					logger.error("Failed to get Google traffic estimator data. " + e.getMessage(), e);
