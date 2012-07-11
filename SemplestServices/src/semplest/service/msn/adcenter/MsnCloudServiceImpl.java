@@ -589,7 +589,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			// MsnDomainObjects.aNew().campaign().withName(campaignName).with(campaignStatus).with(budgetLimitType).withDailyBudget(dailyBudget).withMonthlyBudget(monthlyBudget).build();
 
 			final Campaign newCampaign = new Campaign();
-			newCampaign.setBudgetType(BudgetLimitType.MonthlyBudgetSpendUntilDepleted);
+			newCampaign.setBudgetType(budgetLimitType);
 			newCampaign.setConversionTrackingEnabled(true);
 			newCampaign.setDailyBudget(dailyBudget);
 			newCampaign.setDaylightSaving(true);
