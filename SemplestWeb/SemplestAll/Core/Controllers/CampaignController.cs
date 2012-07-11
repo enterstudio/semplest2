@@ -54,7 +54,11 @@ namespace Semplest.Core.Controllers
             ViewBag.IsCompleted = false;
             ViewBag.IsLaunchedAndCompleted = false;
             cs.AdModelProp.IsNew = true;
-
+            var dbContext = new SemplestModel.Semplest();
+            var userid =
+                ((Credential)System.Web.HttpContext.Current.Session[SharedResources.SEMplestConstants.SESSION_USERID]).
+                    UsersFK;
+            cs.BillType = dbContext.Users.First(key => key.UserPK == userid).Customer.BillTypeFK;
             return View(cs);
         }
 
@@ -63,17 +67,7 @@ namespace Semplest.Core.Controllers
         public ActionResult CampaignSetup(int promotionId)
         {
 
-            //var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = "Loading CampaignSetup Controller"};
-            //Logger.Write(logEnty);
-            //var logService = new LogService();
-            //logService.AddToLog(1, "Campaign Setup Accessed", "CampaignSetup//CampaignSetup//CampaignSetup", 1);
-            //var scw = new ServiceClientWrapper();
-            //scw.SendEmail("subject", "manik@agencystrategies.com", "andre@agencystrategies.com", "test mail");
-
-            //var ds = new SemplestDataService();
             var campaignSetupModel = _campaignRepository.GetCampaignSetupModelForPromotionId(promotionId);
-
-            // for ads
             var i = 1;
             campaignSetupModel.AdModelProp.Ads.ForEach(t => t.SerailNo = i++);
 
@@ -114,8 +108,12 @@ namespace Semplest.Core.Controllers
                 }
                 else
                 {
-                    var custFK = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
-                    if (model.AdModelProp.IsNew && _campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName, custFK))
+                    var custFK =
+                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.
+                            CustomerFK.Value;
+                    if (model.AdModelProp.IsNew &&
+                        _campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName,
+                                                               model.ProductGroup.ProductPromotionName, custFK))
                     {
                         return Json("The promotion already exists.");
                     }
@@ -183,7 +181,7 @@ namespace Semplest.Core.Controllers
                             if (gv.Length > 0)
                                 return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                         }
-                        if (model.AdModelProp.NegativeKeywords !=null && model.AdModelProp.NegativeKeywords.Any())
+                        if (model.AdModelProp.NegativeKeywords != null && model.AdModelProp.NegativeKeywords.Any())
                         {
                             gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
                             if (gv.Length > 0)
@@ -225,7 +223,9 @@ namespace Semplest.Core.Controllers
             catch (Exception ex)
             {
                 if (ex.Message.Contains("Not a valid description"))
-                    return Json("Invalid Description<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
+                    return
+                        Json(
+                            "Invalid Description<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
                 else
                     return Json(ex.ToString());
 
@@ -495,28 +495,30 @@ namespace Semplest.Core.Controllers
             return PartialView(model);
         }
 
-        public ActionResult Categories(CampaignSetupModel model)
+        public ActionResult Categories()
         {
-            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>)Session["AllCategories"];
+            CampaignSetupModel model = (CampaignSetupModel)Session["CampaignSetupModel"];
+            model.AllCategories = (List<CampaignSetupModel.CategoriesModel>) Session["AllCategories"];
             if (model.AllCategories == null)
             {
+                model.AllCategories =new List<CampaignSetupModel.CategoriesModel>();
                 model = _campaignRepository.GetCategories((CampaignSetupModel) Session["CampaignSetupModel"]);
                 Session["CampaignSetupModel"] = model;
                 Session["AllCategories"] = model.AllCategories;
-                int userid = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
-                var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
-                                                                         model.ProductGroup.ProductPromotionName);
-                var dbContext = new SemplestModel.Semplest();
-                var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId );
-                var i = 0;
-                if (cats.Any())
+            }
+            int userid = ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+            var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
+                                                             model.ProductGroup.ProductPromotionName);
+            var dbContext = new SemplestModel.Semplest();
+            var cats = dbContext.KeywordCategories.Where(x => x.PromotionFK == promoId);
+            var i = 0;
+            if (cats.Any())
+            {
+                foreach (Semplest.Core.Models.CampaignSetupModel.CategoriesModel cm in model.AllCategories)
                 {
-                    foreach (Semplest.Core.Models.CampaignSetupModel.CategoriesModel cm in model.AllCategories)
-                    {
-                        if (cats.Any(x => x.KeywordCategory1 == cm.Name))
-                            model.CategoryIds.Add(i);
-                        i += 1;
-                    }
+                    if (cats.Any(x => x.KeywordCategory1 == cm.Name))
+                        model.CategoryIds.Add(i);
+                    i += 1;
                 }
             }
             return PartialView(model);
