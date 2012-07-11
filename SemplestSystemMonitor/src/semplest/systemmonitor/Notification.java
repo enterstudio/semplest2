@@ -16,8 +16,8 @@ import semplest.systemmonitor.MonitorObject.SERVICE;
 public class Notification {
 	
 	private static String emailFrom = "system@semplest.com";
-	private static String emailTo = "nan@semplest.com";
-	//private static String emailTo = "development@semplest.com";
+	//private static String emailTo = "nan@semplest.com";
+	private static String emailTo = "development@semplest.com";
 	
 	public static void sendNotification(SERVER server, SERVICE service, String errorMsg){
 		String downMsg = "[System Monitor] ALERT! " + service.name() + " Service on " + server.name() + " server is down!";
