@@ -63,6 +63,8 @@ import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.BasicHttpBinding_ICustomerManagementServiceStub;
 import com.microsoft.adcenter.api.customermanagement.CustomerManagementServiceLocator;
+import com.microsoft.adcenter.api.customermanagement.DeleteAccountRequest;
+import com.microsoft.adcenter.api.customermanagement.DeleteAccountResponse;
 import com.microsoft.adcenter.api.customermanagement.GetAccountRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountResponse;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoRequest;
@@ -469,6 +471,30 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		catch (RemoteException e)
 		{
 			throw new MsnCloudException("Problem getting Account IDs", e);
+		}
+	}
+	
+	public boolean deleteAccount(Long accountId) throws MsnCloudException
+	{
+		try
+		{
+			ICustomerManagementService customerManagementService = getCustomerManagementService();
+			DeleteAccountRequest req = new DeleteAccountRequest();
+			req.setAccountId(accountId);
+			DeleteAccountResponse  res = customerManagementService.deleteAccount(req);
+			return true;
+		}
+		catch (AdApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.dumpToString(), e);
+		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.dumpToString(), e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.getMessage(), e);
 		}
 	}
 
