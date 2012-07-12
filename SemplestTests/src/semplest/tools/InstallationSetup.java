@@ -1,4 +1,4 @@
-package semplest.test.other;
+package semplest.tools;
 
 import java.io.BufferedWriter;
 import java.io.FileInputStream;
