@@ -498,11 +498,14 @@ namespace Semplest.Core.Models.Repositories
                                     string.IsNullOrEmpty(model.ProductGroup.EndDate)
                                         ? (DateTime?)null
                                         : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us")),
+                                        CycleEndDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")).AddMonths(1),
                                 StartBudgetInCycle = model.ProductGroup.Budget - customerDefaultPerCampaignFlatFeeAmount,
                                 RemainingBudgetInCycle =
                                     model.ProductGroup.Budget - customerDefaultPerCampaignFlatFeeAmount,
                                 PromotionStartDate =
                                     Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
+                                CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")),
+
                                 IsPaused = false,
                                 IsCompleted = false,
                                 IsLaunched = false,
@@ -524,9 +527,13 @@ namespace Semplest.Core.Models.Repositories
             updatePromotion.PromotionBudgetAmount = model.ProductGroup.Budget;
             updatePromotion.PromotionStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,
                                                                     new CultureInfo("en-Us"));
+            updatePromotion.CycleStartDate = Convert.ToDateTime(model.ProductGroup.StartDate,
+                                                                    new CultureInfo("en-Us"));
             updatePromotion.PromotionEndDate = string.IsNullOrEmpty(model.ProductGroup.EndDate)
                                                ? (DateTime?)null
                                                : Convert.ToDateTime(model.ProductGroup.EndDate, new CultureInfo("en-Us"));
+            updatePromotion.CycleEndDate =
+                Convert.ToDateTime(model.ProductGroup.StartDate, new CultureInfo("en-Us")).AddMonths(1);
             updatePromotion.StartBudgetInCycle = model.ProductGroup.Budget -
                                                  configuration.CustomerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget -
