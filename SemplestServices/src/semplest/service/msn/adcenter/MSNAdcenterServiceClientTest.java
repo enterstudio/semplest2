@@ -96,9 +96,9 @@ public class MSNAdcenterServiceClientTest {
 			
 			//msn.createCampaign();
 			msn.getAccountID();
-			logger.info(msn.accountID);
-			msn.getIds();
-			msn.updateStatus(true);
+			//logger.info(msn.accountID);
+			//msn.getIds();
+			//msn.updateStatus(true);
 			
 			//msn.setGeoTarget();
 			/*Calendar cal = Calendar.getInstance();

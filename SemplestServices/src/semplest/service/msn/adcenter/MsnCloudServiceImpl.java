@@ -3682,7 +3682,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	// ==================================
 	// Helper Methods
 	// ==================================
-	private ICustomerManagementService getCustomerManagementService()
+	public ICustomerManagementService getCustomerManagementService()
 	{
 		try
 		{
