@@ -818,7 +818,8 @@ public class BidGeneratorObj
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 			double percentileValue = 85.0;
 			double marginFactor = 2.0;
-			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor);
+			double maxBid = 3.0; // CHANGE ***********************************************************
+			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor,maxBid);
 			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
 			totalDailyCost = new Double(bidOptimizer.getTotalDailyCost()*1e6).longValue();
 			totalDailyClick = new Float(bidOptimizer.getTotalDailyClicks());
@@ -1676,7 +1677,7 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(90);
+			Integer promotionID = new Integer(100);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
