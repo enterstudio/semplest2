@@ -5,7 +5,8 @@ import org.apache.log4j.Logger;
 public class AdCenterCredentialsProduction implements AdCenterCredentials 
 {
 	private static final String URI_PROD = "https://adcenterapi.microsoft.com";	
-	private static final String CAMPAIGN_MANAGEMENT_URL = "https://adcenterapi.microsoft.com/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";
+	private static final String CAMPAIGN_MANAGEMENT_URL = "https://adcenterapi.microsoft.com/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";	
+	//private static final String CAMPAIGN_MANAGEMENT_URL = "http://localhost:7777/Api/Advertiser/v8/CampaignManagement/CampaignManagementService.svc?wsdl";	
 	private static final String CAMPAIGN_MANAGEMENT_NAMESPACE = "https://adcenter.microsoft.com/v8";
 	public static final String CUSTOMER_MANAGEMENT_URL = "https://sharedservices.adcenterapi.microsoft.com/Api/CustomerManagement/v8/CustomerManagementService.svc?wsdl";
 	private static final String CUSTOMER_MANAGEMENT_NAMESPACE = "https://adcenter.microsoft.com/api/customermanagement";
