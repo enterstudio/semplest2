@@ -114,6 +114,40 @@ public class SemplestDB extends BaseDB
 							"end",
 							new Object[] {promotionID, adEngineCode, promotionStatusCode, promotionID, adEngineCode, promotionID, promotionStatusCode, adEngineCode});
 	}
+	
+	public static void SetCurrentDailyBudget(Double currentDailyBudget, Integer promotionID, String adEngine) throws Exception
+	{
+		String strSQL = "update AdvertisingEnginePromotion set CurrentDailyBudget = ? " +
+				"from AdvertisingEnginePromotion aep  " +
+				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " +
+				"where ae.AdvertisingEngine = ? and aep.PromotionFK = ?";
+		jdbcTemplate.update(strSQL, new Object[] { currentDailyBudget,adEngine, promotionID });
+		
+	}
+	
+	public static Double GetCurrentDailyBudget(Integer promotionID, String adEngine) throws Exception
+	{
+		String strSQL = "select aep.CurrentDailyBudget from AdvertisingEnginePromotion aep " +
+				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
+				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " +
+				"where ae.AdvertisingEngine = ? and aep.PromotionFK = ?";
+		Double CurrentDailyBudget;
+		try
+		{
+			CurrentDailyBudget = (Double) jdbcTemplate.queryForObject(strSQL, new Object[] { promotionID, adEngine }, Double.class);
+		}
+		catch (EmptyResultDataAccessException e)
+		{
+			return null;
+		}
+		catch (Exception e)
+		{
+			throw e;
+		}
+		return CurrentDailyBudget;
+		
+	}
 
 	/*
 	 * Configuration
@@ -790,7 +824,7 @@ public class SemplestDB extends BaseDB
 
 	public static List<AdvertisingEnginePromotionObj> getAdvertisingEnginePromotion(Long advertisingEngineAccountID) throws Exception
 	{
-		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID]," + "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.MicroDefaultBid,ap.AdvertisingEngineAdGroupID "
+		String strSQL = "Select ap.AdvertisingEngineAccountFK [AdvertisingEngineAccountID],ap.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID]," + "ap.PromotionFK [PromotionID], ap.IsSearchNetwork,ap.IsDisplayNetwork,ap.MicroDefaultBid,ap.AdvertisingEngineAdGroupID, ap.AdvertisingEngineBudget, ap.CurrentDailyBudget "
 				+ "from AdvertisingEnginePromotion ap where ap.AdvertisingEngineAccountFK = ?";
 		try
 		{
@@ -812,7 +846,7 @@ public class SemplestDB extends BaseDB
 	public static AdvertisingEnginePromotionObj getAdvertisingEngineCampaign(Long advertisingEngineAccountID, int promotionID) throws Exception
 	{
 		String strSQL = "select aep.AdvertisingEngineAccountFK [AdvertisingEngineAccountID], aep.AdvertisingEngineCampaignPK [AdvertisingEngineCampaignID], "
-				+ "p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid, aep.AdvertisingEngineAdGroupID from AdvertisingEnginePromotion aep " + "inner join Promotion p on p.PromotionPK = aep.PromotionFK "
+				+ "p.PromotionPK [PromotionID], aep.IsSearchNetwork, aep.IsDisplayNetwork, aep.MicroDefaultBid, aep.AdvertisingEngineAdGroupID,  aep.AdvertisingEngineBudget, aep.CurrentDailyBudget from AdvertisingEnginePromotion aep " + "inner join Promotion p on p.PromotionPK = aep.PromotionFK "
 				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " + "where aea.AdvertisingEngineAccountPK = ? and p.PromotionPK = ?";
 		try
 		{
@@ -858,11 +892,11 @@ public class SemplestDB extends BaseDB
 
 	}
 
-	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
+	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID, Double advertisingEngineBudget, Double currentDailyBudget) throws Exception
 	{
-		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID) " + "VALUES (?,?,?,?,?,?,?)";
+		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID, CurrentDailyBudget) " + "VALUES (?,?,?,?,?,?,?,?)";
 
-		return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, 0.0, advertisingEngineAdGroupID });
+		return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, advertisingEngineBudget, advertisingEngineAdGroupID, currentDailyBudget });
 
 	}
 
@@ -1099,10 +1133,10 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(strSQL, new Object[] { deletedDate, promotionAdsPK });
 	}
 
-	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork, Double AdvertisingEngineBudget) throws Exception
+	public static Integer updatePromotionToAdEngineAccountID(Long adEngineCampaignID, boolean IsSearchNetwork, boolean IsDisplayNetwork, Double AdvertisingEngineBudget, Double currentDailyBudget) throws Exception
 	{
-		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ? where AdvertisingEngineCampaignPK = ?";
-		return jdbcTemplate.update(strSQL, new Object[] { IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID });
+		String strSQL = "update AdvertisingEnginePromotion set IsSearchNetwork = ?, IsDisplayNetwork = ?,AdvertisingEngineBudget = ?,  CurrentDailyBudget = ? where AdvertisingEngineCampaignPK = ?";
+		return jdbcTemplate.update(strSQL, new Object[] { IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID, currentDailyBudget });
 	}
 
 	public static void logError(Exception e, String errorSource)

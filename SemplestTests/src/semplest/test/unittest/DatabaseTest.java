@@ -628,7 +628,7 @@ public class DatabaseTest extends BaseDB{
 				System.out.println("addPromotionToAdEngineAccountID:");
 				
 				Long advertisingEngineAdGroupID = 1234567L;
-				db.addPromotionToAdEngineAccountID(promotionID, test_accountId, test_campaignId, advertisingEngineAdGroupID);
+				db.addPromotionToAdEngineAccountID(promotionID, test_accountId, test_campaignId, advertisingEngineAdGroupID, 0.0, 0.0);
 				System.out.println("OK");
 				
 				//--- verification
@@ -783,7 +783,7 @@ public class DatabaseTest extends BaseDB{
 				System.out.println("updatePromotionToAdEngineAccountID:");
 				
 				Double AdvertisingEngineBudget = 50.00;
-				db.updatePromotionToAdEngineAccountID(test_campaignId, true, true, AdvertisingEngineBudget);
+				db.updatePromotionToAdEngineAccountID(test_campaignId, true, true, AdvertisingEngineBudget, 0.0);
 				System.out.println("OK");
 				
 				//--- verification

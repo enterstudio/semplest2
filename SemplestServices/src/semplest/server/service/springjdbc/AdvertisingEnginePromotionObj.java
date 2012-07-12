@@ -10,6 +10,9 @@ public class AdvertisingEnginePromotionObj
 	private Double MicroDefaultBid;
 	private Long AdvertisingEngineAdGroupID; 
 	
+	private Double AdvertisingEngineBudget;
+	private Double CurrentDailyBudget;
+	
 	
 	public Integer getPromotionID()
 	{
@@ -67,6 +70,22 @@ public class AdvertisingEnginePromotionObj
 	public void setAdvertisingEngineAdGroupID(Long advertisingEngineAdGroupID)
 	{
 		AdvertisingEngineAdGroupID = advertisingEngineAdGroupID;
+	}
+	public Double getAdvertisingEngineBudget()
+	{
+		return AdvertisingEngineBudget;
+	}
+	public void setAdvertisingEngineBudget(Double advertisingEngineBudget)
+	{
+		AdvertisingEngineBudget = advertisingEngineBudget;
+	}
+	public Double getCurrentDailyBudget()
+	{
+		return CurrentDailyBudget;
+	}
+	public void setCurrentDailyBudget(Double currentDailyBudget)
+	{
+		CurrentDailyBudget = currentDailyBudget;
 	}
 
 }

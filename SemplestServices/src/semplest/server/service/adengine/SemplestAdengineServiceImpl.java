@@ -254,7 +254,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Double budget = (Double) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingBudgetInCycle");
 				final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
 				final Long campaignID = createCampaign(String.valueOf(accountID), PromotionID, customerID, advertisingEngine, budget, getPromoDataSP, daysLeft);
-				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null);
+				//addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID, Double advertisingEngineBudget, Double currentDailyBudget)
+				//NEED TO PUT Double advertisingEngineBudget, Double currentDailyBudget HERE FROM CALL TO BIDCLIENT
+				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, 0.0,0.0);
 				// Create Ad group and Ads
 				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
 				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
