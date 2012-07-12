@@ -227,7 +227,10 @@ namespace Semplest.Core.Controllers
                         Json(
                             "Invalid Description<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
                 else
+                {
                     return Json(ex.ToString());
+                    Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
+                }
 
             }
         }
