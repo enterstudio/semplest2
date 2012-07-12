@@ -30,6 +30,7 @@ import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_Campaign
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
 import org.joda.time.DateTime;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.AdCenterCredentials;
 import semplest.other.AdCenterCredentialsProduction;
@@ -122,9 +123,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 
 	private static String separator = "#";
 
+
 	public static void main(String[] args) throws Exception
 	{
-		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
+
 		/*
 		 * // ApplicationToken [], DeveloperToken [6LTW1JCMEKIUX3], UserName
 		 * [API_SEMplest], Password [1s3mpl3st], CustomerAccountID [7079395] //
@@ -136,82 +138,59 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		// [Used Golf Clubs], BudgetLimitType [DailyBudgetStandard], DailyBudget
 		// [259.25925925925924], MonthlyBudget [10.0], CampaignStatus [Active]
 
-		final Long accountId = 5079839L;
 		// final Long accountId = 1629687L;
 		final String campaignName = "1223_Used Golf Clubs";
 		final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 		final double dailyBudget = 259.25925925925924d;
 		final double monthlyBudget = 10.0;
 		final CampaignStatus campaignStatus = CampaignStatus.Active;
-		
+
 		//
-		
-
-		final Long campaignId = test.createCampaign(accountId, campaignName, budgetLimitType, dailyBudget, monthlyBudget, campaignStatus);
-		logger.info("Campaign ID created [" + campaignId + "]");
-
-		test.pauseCampaignById(accountId, campaignId);
-		test.updateCampaignBudget(accountId, campaignId, budgetLimitType, dailyBudget, monthlyBudget);
 
 		// DateTime firstDay = new DateTime(2011,1,1,0,0,0,0);
 		// DateTime lastDay = new DateTime(2012,4,30,0,0,0,0);
 		try
 		{
-			/*
-			 * //Pipper Hall Long accountID = 1613923L; Long campaignID =
-			 * 120123568L; Long adGroupID = 728133376L; String addr =
-			 * null;//"2157 Diamond St"; String city = null;//"San Diego";
-			 * String state = "US"; String country = null;//"US"; String zip =
-			 * null;//"92109"; Double radius = null;//30.0; Double latitude =
-			 * null; //35.707984924316406; Double longitude = null;
-			 * //-80.00623321533203;
-			 * 
-			 * Keyword[] keywords = test.getKeywordByAdGroupId(accountID,
-			 * adGroupID);
-			 * 
-			 * System.out.print(keywords[0].getEditorialStatus().getValue());
-			 * System.out.print(keywords[0].getStatus().getValue());
-			 * 
-			 * test.updateAdGroupDefaultBids(accountID, campaignID, adGroupID,
-			 * 2.0, 2.0, 2.0);
-			 * 
-			 * //test.deleteAllTargetsInCampaign(accountID, campaignID);
-			 * //Boolean res = test.setGeoTarget(accountID, campaignID,
-			 * latitude, longitude, radius, addr, city, state, country, zip);
-			 * //Traffic Estimator //logger.info("Running traffic estimator");
-			 * //TrafficEstimatorObject obj =
-			 * test.getKeywordEstimateByBids(1633818L, new String[]
-			 * {"wedding art portrait photo event"}, new Long[]{100000L} ,
-			 * MatchType.Exact);
-			 * 
-			 * //HashMap<String,Double> map =test.getAccountIDs();
-			 * //System.out.println(map.get("_ParkWinters"));
-			 * //System.out.println(map.get("_StudioBloom")); //String ret1 =
-			 * test.requestKeywordReport(1617082L, 110138069L, firstDay,
-			 * lastDay, ReportAggregation.Weekly);
-			 * //test.printReportToConsole(ret1, 1595249L); /*
-			 * ArrayList<ReportObject> ret = test.getKeywordReport(1617082L,
-			 * 110138069L, firstDay, lastDay, ReportAggregation.Daily);
-			 * for(ReportObject t: ret){ logger.info("Keyword = " +
-			 * t.getKeyword()); logger.info("BidAmount = " +
-			 * t.getMicroBidAmount()); logger.info("BidMatchType = " +
-			 * t.getBidMatchType()); logger.info("NumberImpressions = " +
-			 * t.getNumberImpressions()); logger.info("NumberClick = " +
-			 * t.getNumberClick()); logger.info("AveragePosition = " +
-			 * t.getAveragePosition()); logger.info("QualityScore = " +
-			 * t.getQualityScore()); logger.info("AverageCPC = " +
-			 * t.getAverageCPC()); logger.info("CreatedDate = " +
-			 * t.getTransactionDate()); logger.info("MicroCost = " +
-			 * t.getMicroCost()); logger.info("==========================="); }
-			 */
-			/*
-			 * String ret1 = test.requestKeywordReport(1617082L, 110138069L,
-			 * firstDay, lastDay, ReportAggregation.Daily); //getReportData
-			 * Map<String, String[]> ret2 = test.getReportData(ret1, 1617082L);
-			 * for(String s: ret2.keySet()){ logger.info(s); String[] data =
-			 * ret2.get(s); for(String d: data){ logger.info(d); }
-			 * logger.info("============="); }
-			 */
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}
+			final Long accountId = 1745721L;
+			Long adGroupID = 709082613L;
+			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+			final Map<Keyword, Integer> keywordToPkMap = new HashMap<Keyword, Integer>();
+			final String keywordText = "MyTest1";
+			final Integer keywordPK = 0;
+			final Bid bid = new Bid();
+			final Double bidAmount = SemplestUtils.MSN_DEFAULT_BID_AMOUNT;
+			bid.setAmount(bidAmount);
+			final SemplestMatchType semplestMatchTypeEnum = SemplestMatchType.Exact;
+			final com.microsoft.adcenter.v8.Keyword msnKeyword;
+			if (semplestMatchTypeEnum == SemplestMatchType.Broad)
+			{
+				msnKeyword = msn.getKeyword(accountId, adGroupID, keywordText, MatchType.Broad, bid);
+			}
+			else if (semplestMatchTypeEnum == SemplestMatchType.Exact)
+			{
+				msnKeyword = msn.getKeyword(accountId, adGroupID, keywordText, MatchType.Exact, bid);
+			}
+			else if (semplestMatchTypeEnum == SemplestMatchType.Phrase)
+			{
+				msnKeyword = msn.getKeyword(accountId, adGroupID, keywordText, MatchType.Phrase, bid);
+			}
+			else
+			{
+				throw new Exception("is not a known SemplestMatchType");
+			}
+			keywordToPkMap.put(msnKeyword, keywordPK);
+			MsnCreateKeywordsResponse res = msn.createKeywords(accountId, adGroupID, keywordToPkMap);
+
+			System.out.println("Done");
 
 		}
 		catch (Exception e)
@@ -1819,29 +1798,34 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
-		keyword.setBroadMatchBid(null);
-		keyword.setExactMatchBid(null);
-		keyword.setContentMatchBid(null);
-		keyword.setPhraseMatchBid(null);
+		//NoBid
+		Bid noBid = new Bid();
+		noBid.setAmount(0.0);
+		keyword.setBroadMatchBid(noBid);
+		keyword.setExactMatchBid(noBid);
+		keyword.setContentMatchBid(noBid);
+		keyword.setPhraseMatchBid(noBid);
+		//Override noBid
 		if (matchType == MatchType.Exact)
 		{
 			keyword.setExactMatchBid(bid);
 		}
 		else if (matchType == MatchType.Broad)
 		{
-			keyword.setBroadMatchBid(bid);	
+			keyword.setBroadMatchBid(bid);
 		}
 		else if (matchType == MatchType.Phrase)
 		{
-			keyword.setPhraseMatchBid(bid);	
+			keyword.setPhraseMatchBid(bid);
 		}
 		else if (matchType == MatchType.Content)
 		{
-			keyword.setPhraseMatchBid(bid);	
-		}	 
-		else 
+			keyword.setPhraseMatchBid(bid);
+		}
+		else
 		{
-			throw new Exception("Problem creating MSN keyword for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Text [" + text + "], Bid [" + bid + "] because the MatchType specified [" + matchType + "] is not known");
+			throw new Exception("Problem creating MSN keyword for AccountID [" + accountId + "], AdGroupID [" + adGroupId + "], Text [" + text
+					+ "], Bid [" + bid + "] because the MatchType specified [" + matchType + "] is not known");
 		}
 		return keyword;
 	}
