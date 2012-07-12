@@ -182,9 +182,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
-		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
-		
-		BudgetMultFactor = (Integer) SemplestConfiguration.configData.get("BudgetMultFactor");
+		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");		
+		BudgetMultFactor = (Integer) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 
 	}
 
