@@ -64,7 +64,7 @@ public class BidOptimizer implements java.io.Serializable {
 	}
 
 
-	public HashMap<String,Double> getCPCPercentilePoint(double percentileValue, double marginFactor){
+	public HashMap<String,Double> getCPCPercentilePoint(double percentileValue, double marginFactor, double maxBid){
 
 		HashMap<String,Double> bidData = new HashMap<String,Double>();
 		
@@ -81,8 +81,9 @@ public class BidOptimizer implements java.io.Serializable {
 
 		Arrays.sort(bidArray);
 		double medianBid = bidArray[bidArray.length/2];
+		double upperBound = Math.min(maxBid, medianBid*marginFactor);
 		for(int i=0;i<wordList.size();i++){
-			bidData.put(wordList.get(i).getKeyWord(),Math.min(bidData.get(wordList.get(i).getKeyWord()),medianBid*marginFactor));
+			bidData.put(wordList.get(i).getKeyWord(),Math.min(bidData.get(wordList.get(i).getKeyWord()),upperBound));
 		}
 		
 		totalDailyCost = 0;
