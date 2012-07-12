@@ -52,7 +52,7 @@ public interface MsnAdcenterServiceInterface extends ServiceInitialize {
 	 */
 	MsnManagementIds createAccount(SemplestString name) throws Exception;  	
 	Account getAccountById(Long accountId) throws Exception;	
-	HashMap<String,Double> getAccountIDs() throws Exception;
+	HashMap<String,Long> getAccountIDs() throws Exception;
 	
 	// ==================================
 	// GeoTargeting Methods

@@ -510,12 +510,12 @@ public class MSNAdcenterServiceClient extends ServiceRun implements MsnAdcenterS
 	}
 
 	@Override
-	public HashMap<String,Double> getAccountIDs() throws Exception
+	public HashMap<String,Long> getAccountIDs() throws Exception
 	{
 		String json = " ";
 		
 		String returnData = runMethod(baseurl,SERVICEOFFERED, "getAccountIDs", json, timeoutMS);
-		HashMap<String,Double> ret = gson.fromJson(returnData, HashMap.class);
+		HashMap<String,Long> ret = gson.fromJson(returnData, HashMap.class);
 		return ret;
 	}
 

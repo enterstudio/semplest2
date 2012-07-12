@@ -389,7 +389,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	public String getAccountIDs(String json) throws Exception
 	{
 		logger.debug("call getAccountIDs(String json)" + json);
-		HashMap<String, Double> ret = null;
+		HashMap<String, Long> ret = null;
 		try
 		{
 			ret = getAccountIDs();
@@ -440,12 +440,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	}
 
 	@Override
-	public HashMap<String, Double> getAccountIDs() throws MsnCloudException
+	public HashMap<String, Long> getAccountIDs() throws MsnCloudException
 	{
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();
-			HashMap<String, Double> accountIDs = new HashMap<String, Double>();
+			HashMap<String, Long> accountIDs = new HashMap<String, Long>();
 			GetAccountsInfoRequest req = new GetAccountsInfoRequest();
 			GetAccountsInfoResponse signupCustomerResponse = customerManagementService.getAccountsInfo(req);
 			AccountInfo[] acInf = signupCustomerResponse.getAccountsInfo();
@@ -456,7 +456,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 				String accountNumber = acInf[i].getNumber();
 				logger.debug("accountNumber: " + accountNumber);
 				logger.debug("accountID: " + accountID);
-				accountIDs.put(accountNumber, accountID.doubleValue());
+				accountIDs.put(accountNumber, accountID);
 			}
 			return accountIDs;
 		}

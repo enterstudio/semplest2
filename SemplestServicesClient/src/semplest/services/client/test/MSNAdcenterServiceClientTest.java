@@ -124,7 +124,7 @@ public class MSNAdcenterServiceClientTest {
 	
 	public void getAccountID() throws Exception{
 		MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);
-		 HashMap<String,Double> accounts = test.getAccountIDs();
+		 HashMap<String,Long> accounts = test.getAccountIDs();
 		 accountID =  accounts.get(accountName).longValue();
 	}
 	public void getIds() throws Exception{
