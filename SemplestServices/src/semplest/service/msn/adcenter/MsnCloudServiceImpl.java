@@ -474,7 +474,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 	}
 	
-	public boolean deleteAccount(Long accountId) throws MsnCloudException
+	public boolean deleteAccountById(Long accountId) throws MsnCloudException
 	{
 		try
 		{
