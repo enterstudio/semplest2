@@ -330,6 +330,9 @@ public class BidGeneratorObj
 		HashMap<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		HashSet<String> pausedSet = new HashSet<String>();
 		
+		Long maxBid = new Long(new Double(SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95*1e6).longValue() /10000L*10000L);
+
+		
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
 			if(r.getAveragePosition()<=4){
@@ -342,7 +345,8 @@ public class BidGeneratorObj
 					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 				}
 			} else {
-				wordBidMap.put(r.getKeyword(), (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+				long b = Math.min(maxBid, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+				wordBidMap.put(r.getKeyword(), b);
 				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(wordBidMap.get(r.getKeyword()));
 				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 			}
@@ -353,7 +357,8 @@ public class BidGeneratorObj
 				continue;
 			}
 			if(!b.getIsDefaultValue() && b.getIsActive()){
-				wordBidMap.put(b.getKeyword(),(((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
+				long bMax = Math.min(maxBid, (((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
+				wordBidMap.put(b.getKeyword(),bMax);
 				b.setMicroBidAmount(wordBidMap.get(b.getKeyword()));
 			}
 		}
@@ -375,7 +380,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 6. Database call: compute and update default bid of the adgroup
 		long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
-		defaultMicroBid = (((long) (presentDefaultMicroBid * Math.pow(1.1,5))) / 10000L) * 10000L;
+		defaultMicroBid = Math.min(maxBid, (((long) (presentDefaultMicroBid * Math.pow(1.1,2))) / 10000L) * 10000L);
 		
 		try {
 			logger.info("Trying to write the default bid to the database.");
