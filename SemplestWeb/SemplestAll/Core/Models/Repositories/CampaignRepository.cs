@@ -352,7 +352,7 @@ namespace Semplest.Core.Models.Repositories
                 if (!preview)
                 {
                     model.AllKeywords.AddRange(
-                        promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted).Select(
+                        promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
                             key =>
                             new CampaignSetupModel.KeywordsModel
                                 {Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK}));
