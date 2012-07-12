@@ -87,10 +87,11 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 	
 	@Override
-	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngines) throws Exception 
+	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngines, Double totalMonthlyBudget) throws Exception 
 	{	
 		final HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("promotionID", String.valueOf(promotionID));
+		jsonHash.put("totalMonthlyBudget", String.valueOf(totalMonthlyBudget));
 		final String searchEngStr = gson.toJson(searchEngines);
 		jsonHash.put("searchEngine", searchEngStr);
 		final String json = protocolJson.createJSONHashmap(jsonHash);

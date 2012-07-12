@@ -10,7 +10,7 @@ import semplest.server.protocol.adengine.BudgetObject;
 public interface SemplestBiddingInterface extends ServiceInitialize 
 {	
 	Map<AdEngine, Double> GetMonthlyBudgetPercentPerSE(Integer promotionID, List<AdEngine> searchEngine) throws Exception;
-	Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception;
+	Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine, Double totalMonthlyBudget) throws Exception;
 	Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception;
 	Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception;
 

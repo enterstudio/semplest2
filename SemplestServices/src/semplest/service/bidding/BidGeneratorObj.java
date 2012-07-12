@@ -72,6 +72,10 @@ public class BidGeneratorObj
 	private Long stepFirst;// = 100000L;
 	private Long stepSecond;// = 600000L;
 	private Long stepRest;// = 800000L;
+	
+	Double googlePercent;
+	Float budgetFactor;
+	
 
 	private String googleAccountID = null;
 	private Long msnAccountID = null;
@@ -147,6 +151,11 @@ public class BidGeneratorObj
 		stepRest = (Long) SemplestConfiguration.configData.get("SemplestBiddingStepRest");
 		
 		msnAccountID = (Long) SemplestConfiguration.configData.get("MSNTrafficEstAccountID");
+		
+		googlePercent =  (Double) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");
+		budgetFactor =  (Float) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
+		
+
 		 
 
 		wordIDMap = new HashMap<String, Long>();
@@ -174,18 +183,59 @@ public class BidGeneratorObj
 		cpcDataMap = new HashMap<String, EstimatorData>();
 	}
 
-	public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception
+	//public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception
+	public Map<AdEngine, AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine, Double totalMonthlyBudget) throws Exception
 	{
+		
+		// Right now always split 70-30 or 100 -- to be changed later -- controlled via database now
+		HashSet<AdEngine> setSE = new HashSet<AdEngine>(); 
+		for (AdEngine s : searchEngine){
+			if(setSE.contains(s)){
+				throw new Exception("Ad engine "+s+" appears twice!!");
+			} else {
+				setSE.add(s);
+			}
+		}
+
+		HashMap<AdEngine,Double> budgetMap = new HashMap<AdEngine,Double>();
+
+		switch (searchEngine.size()) {
+			case 2:
+				if(searchEngine.get(0) == AdEngine.Google && searchEngine.get(1) == AdEngine.MSN ||
+				   searchEngine.get(0) == AdEngine.MSN && searchEngine.get(1) == AdEngine.Google)  
+				{
+					budgetMap.put(AdEngine.Google, new Double(googlePercent));
+					budgetMap.put(AdEngine.MSN, new Double(100.0-googlePercent));
+					break;
+				}
+				throw new Exception("Invalid combination of Ad engine options!");
+			case 1:
+				budgetMap.put(searchEngine.get(0), new Double(100.0));
+				break;
+			default:
+				throw new Exception("Invalid number of Ad engines.. Received "+searchEngine.size()+" Ad engine names!");
+		}
+
+		
 		final Map<AdEngine, AdEngineInitialData> initValues = new HashMap<AdEngine, AdEngineInitialData>();
 		for (AdEngine se : searchEngine)
 		{
 			// Long defaultMicroBid = 1000000L; // $1.00
 			AdEngineInitialData adEngineInitialDataObject = new AdEngineInitialData();
 			adEngineInitialDataObject.setSemplestMatchType(ProtocolEnum.SemplestMatchType.Exact.name());
-			adEngineInitialDataObject.setDefaultMicroBid(defaultMicroBid);
 			adEngineInitialDataObject.setNetworkSetting(networkSetting);
-			// adEngineInitialDataObject.setBiddingMethod(biddingMethod)
-			// SemplestDB.storeDefaultBid(promotionID, se, defaultMicroBid);
+			
+			double seMonthlyBudget = totalMonthlyBudget*budgetMap.get(se)/100.0;
+			double seDailyBudget = seMonthlyBudget/30*budgetFactor;
+			
+			adEngineInitialDataObject.setMonthlyBudget(seMonthlyBudget);
+			adEngineInitialDataObject.setDailyBudget(seDailyBudget);
+			
+			long defBid = Math.min(defaultMicroBid, (new Double(seDailyBudget*0.95*1e-6)).longValue()/10000L * 10000L);
+			
+			adEngineInitialDataObject.setDefaultMicroBid(defBid);
+
+			//SemplestDB.storeDefaultBid(promotionID, se, defBid);
 			initValues.put(se, adEngineInitialDataObject);
 		}
 		return initValues;
@@ -818,7 +868,7 @@ public class BidGeneratorObj
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 			double percentileValue = 85.0;
 			double marginFactor = 2.0;
-			double maxBid = 3.0; // CHANGE ***********************************************************
+			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95;
 			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor,maxBid);
 			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
 			totalDailyCost = new Double(bidOptimizer.getTotalDailyCost()*1e6).longValue();

@@ -75,18 +75,19 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 		logger.debug("call  setInitialDefaultBid(String json)" + json);
 		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		final Integer promotionID = Integer.parseInt(data.get("promotionID"));
+		final Double totalMonthlyBudget = Double.parseDouble(data.get("totalMonthlyBudget"));
 		final List<String> searchEngineStrings = gson.fromJson(data.get("searchEngine"), SemplestUtils.TYPE_LIST_OF_STRINGS);
 		AdEngine.validateAdEngines(searchEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(searchEngineStrings);
-		final Map<AdEngine,AdEngineInitialData> res = getInitialValues(promotionID, adEngines);
+		final Map<AdEngine,AdEngineInitialData> res = getInitialValues(promotionID, adEngines, totalMonthlyBudget);
 		return gson.toJson(res);
 	}
 	
 	@Override
-	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine) throws Exception 
+	public Map<AdEngine,AdEngineInitialData> getInitialValues(Integer promotionID, List<AdEngine> searchEngine, Double totalMonthlyBudget) throws Exception 
 	{
 		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		return bidGeneratorObj.getInitialValues(promotionID, searchEngine);
+		return bidGeneratorObj.getInitialValues(promotionID, searchEngine, totalMonthlyBudget);
 	}
 	
 	public String setBidsInitial(String json) throws Exception
