@@ -12,17 +12,9 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class WebContent
+    public partial class SemplestBidType
     {
-        public int WebContentPK { get; set; }
-        public Nullable<int> CustomerFK { get; set; }
-        public string FAQ { get; set; }
-        public string AboutUs { get; set; }
-        public string ContactUs { get; set; }
-        public string TermsAndConditions { get; set; }
-        public string PrivacyPolicy { get; set; }
-        public string ServicesAgreement { get; set; }
-    
-        public virtual Customer Customer { get; set; }
+        public int SemplestBidTypePK { get; set; }
+        public string SemplestBidType1 { get; set; }
     }
 }

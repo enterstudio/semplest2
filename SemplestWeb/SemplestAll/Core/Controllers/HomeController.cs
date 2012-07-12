@@ -87,6 +87,12 @@ namespace SemplestWebApp.Controllers
             return View("Static", vm);
         }
 
+        public ActionResult ServicesAgreement()
+        {
+            StaticModel vm = new StaticModel(StaticPages.ServicesAgreement);
+            return View("Static", vm);
+        }
+
         public ActionResult SearchKeywords()
         {
             return View();

@@ -29,6 +29,9 @@ namespace SemplestModel
             this.Schedules = new HashSet<Schedule>();
             this.WebContents = new HashSet<WebContent>();
             this.Users = new HashSet<User>();
+            this.CreditCardNickNames = new HashSet<CreditCardNickName>();
+            this.InvoiceTransactions = new HashSet<InvoiceTransaction>();
+            this.CreditCardProfiles = new HashSet<CreditCardProfile>();
         }
     
         public int CustomerPK { get; set; }
@@ -61,5 +64,8 @@ namespace SemplestModel
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<WebContent> WebContents { get; set; }
         public virtual ICollection<User> Users { get; set; }
+        public virtual ICollection<CreditCardNickName> CreditCardNickNames { get; set; }
+        public virtual ICollection<InvoiceTransaction> InvoiceTransactions { get; set; }
+        public virtual ICollection<CreditCardProfile> CreditCardProfiles { get; set; }
     }
 }

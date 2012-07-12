@@ -45,24 +45,28 @@ namespace Semplest.Core.Models
                 switch (pageType)
                 {
                     case StaticPages.About:
-                        Text = entities.WebContents.FirstOrDefault().AboutUs;
+                        Text = Queryable.FirstOrDefault(entities.WebContents).AboutUs;
                         Title = "About Us";
                         break;
                     case StaticPages.FAQ:
-                        Text = entities.WebContents.FirstOrDefault().FAQ;
+                        Text = Queryable.FirstOrDefault(entities.WebContents).FAQ;
                         Title = "FAQs";
                         break;
                     case StaticPages.Contact:
-                        Text = entities.WebContents.FirstOrDefault().ContactUs;
+                        Text = Queryable.FirstOrDefault(entities.WebContents).ContactUs;
                         Title = "Contact Us";
                         break;
                     case StaticPages.PrivacyPolicy:
-                        Text = entities.WebContents.FirstOrDefault().PrivacyPolicy;
+                        Text = Queryable.FirstOrDefault(entities.WebContents).PrivacyPolicy;
                         Title = "Privacy Policy";
                         break;
                     case StaticPages.TermsAndConditions:
-                        Text = entities.WebContents.FirstOrDefault().TermsAndConditions;
+                        Text = Queryable.FirstOrDefault(entities.WebContents).TermsAndConditions;
                         Title = "Terms and Conditions";
+                        break;
+                    case StaticPages.ServicesAgreement:
+                        Text = Queryable.FirstOrDefault(entities.WebContents).ServicesAgreement;
+                        Title = "Services Agreement";
                         break;
                     default:
                         Text = "No such Page";
@@ -86,5 +90,5 @@ namespace Semplest.Core.Models
         }
     }
 
-    public enum StaticPages { About, FAQ, Contact, PrivacyPolicy, TermsAndConditions }
+    public enum StaticPages { About, FAQ, Contact, PrivacyPolicy, TermsAndConditions, ServicesAgreement }
 }

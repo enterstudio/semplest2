@@ -38,7 +38,6 @@ namespace SemplestModel
         public DbSet<BillType> BillTypes { get; set; }
         public DbSet<BudgetCycle> BudgetCycles { get; set; }
         public DbSet<Credential> Credentials { get; set; }
-        public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
         public DbSet<CreditCardTransaction> CreditCardTransactions { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<CustomerAddressAssociation> CustomerAddressAssociations { get; set; }
@@ -96,6 +95,11 @@ namespace SemplestModel
         public DbSet<vwPromotionChart> vwPromotionCharts { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
         public DbSet<WebsiteWebContent> WebsiteWebContents { get; set; }
+        public DbSet<CreditCardNickName> CreditCardNickNames { get; set; }
+        public DbSet<InvoiceTransaction> InvoiceTransactions { get; set; }
+        public DbSet<PromotionBidding> PromotionBiddings { get; set; }
+        public DbSet<SemplestBidType> SemplestBidTypes { get; set; }
+        public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

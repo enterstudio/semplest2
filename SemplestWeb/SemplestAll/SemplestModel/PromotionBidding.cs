@@ -12,17 +12,15 @@ namespace SemplestModel
     using System;
     using System.Collections.Generic;
     
-    public partial class WebContent
+    public partial class PromotionBidding
     {
-        public int WebContentPK { get; set; }
-        public Nullable<int> CustomerFK { get; set; }
-        public string FAQ { get; set; }
-        public string AboutUs { get; set; }
-        public string ContactUs { get; set; }
-        public string TermsAndConditions { get; set; }
-        public string PrivacyPolicy { get; set; }
-        public string ServicesAgreement { get; set; }
+        public int PromotionBiddingPK { get; set; }
+        public int PromotionFK { get; set; }
+        public int AdvertisingEngineFK { get; set; }
+        public System.DateTime BidCompleted { get; set; }
+        public Nullable<int> SemplestBidTypeFK { get; set; }
     
-        public virtual Customer Customer { get; set; }
+        public virtual AdvertisingEngine AdvertisingEngine { get; set; }
+        public virtual Promotion Promotion { get; set; }
     }
 }

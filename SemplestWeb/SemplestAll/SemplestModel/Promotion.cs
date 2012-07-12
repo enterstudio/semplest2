@@ -27,6 +27,7 @@ namespace SemplestModel
             this.Schedules = new HashSet<Schedule>();
             this.SiteLinks = new HashSet<SiteLink>();
             this.TargetedDailyBudgets = new HashSet<TargetedDailyBudget>();
+            this.PromotionBiddings = new HashSet<PromotionBidding>();
         }
     
         public int PromotionPK { get; set; }
@@ -66,5 +67,6 @@ namespace SemplestModel
         public virtual ICollection<Schedule> Schedules { get; set; }
         public virtual ICollection<SiteLink> SiteLinks { get; set; }
         public virtual ICollection<TargetedDailyBudget> TargetedDailyBudgets { get; set; }
+        public virtual ICollection<PromotionBidding> PromotionBiddings { get; set; }
     }
 }
