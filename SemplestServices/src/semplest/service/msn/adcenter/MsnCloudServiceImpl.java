@@ -474,6 +474,37 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 	}
 	
+	public ArrayList<Long> getActiveAccountIDs() throws MsnCloudException
+	{
+		try
+		{
+			ICustomerManagementService customerManagementService = getCustomerManagementService();
+			ArrayList<Long> accountIDs = new ArrayList<Long>();
+			GetAccountsInfoRequest req = new GetAccountsInfoRequest();
+			GetAccountsInfoResponse signupCustomerResponse = customerManagementService.getAccountsInfo(req);
+			AccountInfo[] acInf = signupCustomerResponse.getAccountsInfo();
+			
+			for(AccountInfo accInfo : acInf){
+				if(accInfo.getAccountLifeCycleStatus().getValue().equalsIgnoreCase("active")){
+					accountIDs.add(accInfo.getId());
+				}
+			}
+			return accountIDs;
+		}
+		catch (AdApiFaultDetail e)
+		{
+			throw new MsnCloudException("Problem getting Account IDs", e);
+		}
+		catch (ApiFault e)
+		{
+			throw new MsnCloudException("Problem getting Account IDs", e);
+		}
+		catch (RemoteException e)
+		{
+			throw new MsnCloudException("Problem getting Account IDs", e);
+		}
+	}
+	
 	public boolean deleteAccountById(Long accountId) throws MsnCloudException
 	{
 		try
