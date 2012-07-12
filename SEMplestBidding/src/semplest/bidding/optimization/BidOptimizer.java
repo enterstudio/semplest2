@@ -97,7 +97,7 @@ public class BidOptimizer implements java.io.Serializable {
 
 		} // for(int i=0;i<wordList.size();i++)
 		
-		targetCPC = totalDailyCost/totalDailyClicks;
+		targetCPC = Math.min(maxBid, totalDailyCost/totalDailyClicks);
 		
 		return bidData;
 	}
