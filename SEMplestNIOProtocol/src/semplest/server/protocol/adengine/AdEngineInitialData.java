@@ -7,6 +7,8 @@ public class AdEngineInitialData
 	private Long defaultMicroBid;
 	private String semplestMatchType;
 	private String networkSetting;
+	private Double monthlyBudget;
+	private Double dailyBudget;
 
 	public String getNetworkSetting() {
 		return networkSetting;
@@ -31,21 +33,32 @@ public class AdEngineInitialData
 	{
 		this.semplestMatchType = semplestMatchType;
 	}
+	
+	public Double getMonthlyBudget() {
+		return monthlyBudget;
+	}
+	public void setMonthlyBudget(Double monthlyBudget) {
+		this.monthlyBudget = monthlyBudget;
+	}
+	public Double getDailyBudget() {
+		return dailyBudget;
+	}
+	public void setDailyBudget(Double dailyBudget) {
+		this.dailyBudget = dailyBudget;
+	}
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((defaultMicroBid == null) ? 0 : defaultMicroBid.hashCode());
-		result = prime * result
-				+ ((networkSetting == null) ? 0 : networkSetting.hashCode());
-		result = prime
-				* result
-				+ ((semplestMatchType == null) ? 0 : semplestMatchType
-						.hashCode());
+		result = prime * result + ((defaultMicroBid == null) ? 0 : defaultMicroBid.hashCode());
+		result = prime * result + ((networkSetting == null) ? 0 : networkSetting.hashCode());
+		result = prime * result	+ ((semplestMatchType == null) ? 0 : semplestMatchType.hashCode());
+		result = prime * result	+ ((monthlyBudget == null) ? 0 : monthlyBudget.hashCode());
+		result = prime * result	+ ((dailyBudget == null) ? 0 : dailyBudget.hashCode());
 		return result;
 	}
-	@Override
+	@Override  // comment by subhojit: this will not work since other.field is not visible from here
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -69,13 +82,26 @@ public class AdEngineInitialData
 				return false;
 		} else if (!semplestMatchType.equals(other.semplestMatchType))
 			return false;
+		if (monthlyBudget == null) {
+			if (other.monthlyBudget != null)
+				return false;
+		} else if (!monthlyBudget.equals(other.monthlyBudget))
+			return false;
+		if (dailyBudget == null) {
+			if (other.dailyBudget != null)
+				return false;
+		} else if (!dailyBudget.equals(other.dailyBudget))
+			return false;
 		return true;
 	}
 	@Override
 	public String toString() {
 		return "AdEngineInitialData [defaultMicroBid=" + defaultMicroBid
 				+ ", semplestMatchType=" + semplestMatchType
+				+ ", monthlyBudget=" + monthlyBudget
+				+ ", dailyBudget=" + dailyBudget
 				+ ", networkSetting=" + networkSetting + "]";
+				
 	}
 	
 	
