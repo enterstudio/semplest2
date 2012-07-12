@@ -22,14 +22,12 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class CleanUpMsnAccounts extends BaseDB{	
 	
-	private static SERVER cleanUpRange = SERVER.DEV; 
-	private static boolean useReportData = false;
-	
+	private static SERVER cleanUpRange = SERVER.TEST; 
+	private static boolean useReportData = true;	
 	private static String reportListPath = "Z:\\nan\\msnActiveAccounts.txt";
 	private static String whiteListPath = "Z:\\nan\\msnWhiteListedAccounts.txt";
 	
-	private MsnCloudServiceImpl msn;
-	
+	private MsnCloudServiceImpl msn;	
 	private static enum SERVER {DEV, TEST};	
 	
 	public static void main(String[] args){
@@ -38,8 +36,9 @@ public class CleanUpMsnAccounts extends BaseDB{
 			cleanUp.init();
 			
 			ArrayList<Long> toDeleteAccounts = cleanUp.getToDeleteAccounts();
+			//cleanUp.deleteAccountsFromMsn(toDeleteAccounts);
 			ArrayList<Integer> promotionIDs = cleanUp.getToDeletePromotions(toDeleteAccounts);
-			cleanUp.deletePromotionsFromDB(promotionIDs);
+			//cleanUp.deletePromotionsFromDB(promotionIDs);
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -71,24 +70,15 @@ public class CleanUpMsnAccounts extends BaseDB{
 		return deletedAccounts;
 	}
 	
-	private void deletePromotionsFromDB(ArrayList<Integer> promotionIDs){
-		ArrayList<Integer> deletedPromotions = new ArrayList<Integer>();
-		
+	private void deletePromotionsFromDB(ArrayList<Integer> promotionIDs){		
 		System.out.println("Deleting Active Promotions from Database...");
-		
+		String sql;
 		for(Integer Id : promotionIDs){
-			String sql = "SELECT pas.PromotionAdengineStatusPK FROM PromotionAdengineStatus pas WHERE pas.PromotionFK = ?";			
-			List<Map<String, Object>> ret = jdbcTemplate.queryForList(sql, new Object[]
+			sql = "UPDATE PromotionAdengineStatus SET PromotionStatusFK = 5 WHERE PromotionFK = ? AND AdvertisingEngineFK = 1";
+			jdbcTemplate.update(sql, new Object[]
 					{Id});
-			if(ret.size() != 0){
-				System.out.println(Id);
-				for(Map<String, Object> map : ret){
-					for(String s : map.keySet()){						
-						System.out.println(s + " - " + map.get(s));
-					}
-				}
-			}
 		}
+		System.out.println("Done");
 	}
 	
 	private ArrayList<Integer> getToDeletePromotions(ArrayList<Long> accounts) throws Exception{
