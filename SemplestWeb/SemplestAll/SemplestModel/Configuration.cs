@@ -120,10 +120,10 @@ namespace SemplestModel
         public Nullable<bool> MSNUseSandbox { get; set; }
         public bool DoNotLaunchAdServices { get; set; }
         public string DevelopmentEmail { get; set; }
-        public Nullable<int> SemplestBiddingBudgetMultFactor { get; set; }
         public Nullable<float> SemplestBiddingInitialBidBoostFactor { get; set; }
         public Nullable<int> SemplestBiddingPercentileValue { get; set; }
         public Nullable<double> SemplestBiddingMarginFactor { get; set; }
         public Nullable<long> MSNTrafficEstAccountID { get; set; }
+        public Nullable<double> SemplestBiddingBudgetMultFactor { get; set; }
     }
 }

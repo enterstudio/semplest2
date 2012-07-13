@@ -22,6 +22,7 @@ namespace SemplestModel
         public decimal AdvertisingEngineBudget { get; set; }
         public int MicroDefaultBid { get; set; }
         public Nullable<long> AdvertisingEngineAdGroupID { get; set; }
+        public Nullable<decimal> CurrentDailyBudget { get; set; }
     
         public virtual AdvertisingEngineAccount AdvertisingEngineAccount { get; set; }
         public virtual Promotion Promotion { get; set; }
