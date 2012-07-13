@@ -19,7 +19,7 @@ public class CampaignInfo {
   Long cid = null;
   AdWordsUser user = null;
   CampaignServiceInterface cs = null;
-  Campaign c = null;
+  com.google.api.adwords.v201109.cm.Campaign c = null;
 
   // Interface ---------
   public CampaignInfo( String clientid, Long caid ) throws Exception {
@@ -42,7 +42,7 @@ public class CampaignInfo {
 
   // privates --------------------------------------------------------------
   // - getters ----------------------------------
-  private Campaign gCriteria() throws Exception {
+  private com.google.api.adwords.v201109.cm.Campaign gCriteria() throws Exception {
     Selector s = new Selector();
     s.setFields( fields );
 
@@ -51,19 +51,19 @@ public class CampaignInfo {
     s.setPredicates( new Predicate[]{ cp }); 
 
     // get Campaigns
-    Campaign[] cas = filter( cs.get( s ).getEntries() );
+    com.google.api.adwords.v201109.cm.Campaign[] cas = filter( cs.get( s ).getEntries() );
     if( cas.length > 0 ) return cas[0];
     else return null;
   }
   
   //- helpers ------------------------------------------------
   //-- filter ------------------------------------------------
-  private Campaign[] filter( Campaign[] es ){
-    ArrayList<Campaign> ccs = new ArrayList<Campaign>();
+  private com.google.api.adwords.v201109.cm.Campaign[] filter( com.google.api.adwords.v201109.cm.Campaign[] es ){
+    ArrayList<com.google.api.adwords.v201109.cm.Campaign> ccs = new ArrayList<com.google.api.adwords.v201109.cm.Campaign>();
     if( es != null )
-      for( Campaign c: es )
+      for( com.google.api.adwords.v201109.cm.Campaign c: es )
         if( c != null ) ccs.add( c );
-    return ccs.toArray( new Campaign[]{} );
+    return ccs.toArray( new com.google.api.adwords.v201109.cm.Campaign[]{} );
   }
 
   // ---------------------------------------------------------------------------
