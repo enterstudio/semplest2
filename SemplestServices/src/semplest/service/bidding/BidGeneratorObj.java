@@ -152,7 +152,8 @@ public class BidGeneratorObj
 		
 		msnAccountID = (Long) SemplestConfiguration.configData.get("MSNTrafficEstAccountID");
 		
-		googlePercent =  (Double) SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");
+		final Integer googlePercentInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");		
+		googlePercent =  Double.valueOf("" + googlePercentInteger);
 		budgetFactor =  (Float) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		
 
