@@ -570,27 +570,27 @@ public class SemplestDB extends BaseDB
 		logger.info("Persist complete");
 	}
 
-	public static void storeKeywordDataObjects(int promotionID, AdEngine adEngine, ArrayList<KeywordDataObject> keywordDataObjectList) throws Exception
+	public static void storeKeywordDataObjects(int promotionID, AdEngine adEngine, List<KeywordDataObject> keywordDataObjectList) throws Exception
 	{
-		AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
-		if (keywordDataObjectList != null && keywordDataObjectList.size() > 0)
+		final AddKeywordBidDataSP addKeywordBidDataSP = new AddKeywordBidDataSP();
+		Integer counter = 0;
+		if (keywordDataObjectList != null && !keywordDataObjectList.isEmpty())
 		{
-			for (int i = 0; i < keywordDataObjectList.size(); i++)
+			final int size = keywordDataObjectList.size();
+			for (final KeywordDataObject kdObj : keywordDataObjectList)
 			{
-				KeywordDataObject kdObj = keywordDataObjectList.get(i);
-
 				Integer firstpgcpc = null;
 				if (kdObj.getFirstPageCpc() != null)
 				{
 					firstpgcpc = kdObj.getFirstPageCpc().intValue();
 				}
-				logger.debug(promotionID + ":" + kdObj.getKeyword() + ":" + adEngine + ":" + kdObj.getMatchType() + ":" + kdObj.getQualityScore() + ":" + kdObj.getApprovalStatus() + ":" + firstpgcpc + ":" + kdObj.isIsEligibleForShowing());
+				logger.debug(++counter + " of " + size + ": PromotionID [" + promotionID + "] " + kdObj);
 				// int PromotionID, String Keyword, String AdvertisingEngine, String BidType, Integer QualityScore, String ApprovalStatus, Integer
 				// FirstPageMicroCpc, Boolean IsEligibleForShowing
-				Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), adEngine, kdObj.getMatchType(), kdObj.getQualityScore(), kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
+				final Integer res = addKeywordBidDataSP.execute(promotionID, kdObj.getKeyword(), adEngine, kdObj.getMatchType(), kdObj.getQualityScore(), kdObj.getApprovalStatus(), firstpgcpc, kdObj.isIsEligibleForShowing());
 				if (res == null || res == 0)
 				{
-					logger.warn("KeywordBidData not stored for " + kdObj.getKeyword() + ":" + kdObj.getMatchType());
+					logger.warn("KeywordBidData not stored for " + kdObj);
 				}
 
 			}

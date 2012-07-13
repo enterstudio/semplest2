@@ -103,4 +103,12 @@ public class KeywordDataObject implements java.io.Serializable
 		IsEligibleForShowing = isEligibleForShowing;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return "KeywordDataObject [keywordAdEngineID=" + keywordAdEngineID + ", keyword=" + keyword + ", microBidAmount=" + microBidAmount + ", approvalStatus=" + approvalStatus + ", matchType=" + matchType + ", firstPageCpc=" + firstPageCpc + ", qualityScore=" + qualityScore
+				+ ", IsEligibleForShowing=" + IsEligibleForShowing + ", isNegative=" + isNegative + ", createdDate=" + createdDate + "]";
+	}
+	
+	
 }
