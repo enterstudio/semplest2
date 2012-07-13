@@ -11,6 +11,7 @@ namespace Semplest.Core.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [RequireHttpsHelper]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class ReportingController : Controller
     {

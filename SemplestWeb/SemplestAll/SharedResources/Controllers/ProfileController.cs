@@ -11,6 +11,7 @@ using Semplest.SharedResources.Encryption;
 namespace Semplest.SharedResources.Controllers
 {
     [ExceptionHelper]
+    [RequireHttpsHelper]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
     public class ProfileController : Controller
     {

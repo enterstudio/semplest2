@@ -14,6 +14,7 @@ namespace SemplestWebApp.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
+    [RequireHttpsHelper]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class HomeController : Controller
     {
