@@ -332,7 +332,14 @@ public class BidGeneratorObj
 		HashMap<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		HashSet<String> pausedSet = new HashSet<String>();
 		
-		Long maxBid = new Long(new Double(SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95*1e6).longValue() /10000L*10000L);
+		//Long maxBid = new Long(new Double(SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95*1e6).longValue() /10000L*10000L);
+		
+		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name());
+		if(maxBid<=0.05) {
+			logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
+			throw new Exception("Daily budget is too low to do anything with this adgroup...");
+		}
+		Long maxBidL = new Long(new Double(maxBid*0.95*1e6).longValue() /10000L*10000L);
 
 		
 		for (ReportObject r : reportObjListYesterday){
@@ -347,7 +354,7 @@ public class BidGeneratorObj
 					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 				}
 			} else {
-				long b = Math.min(maxBid, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+				long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
 				wordBidMap.put(r.getKeyword(), b);
 				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(wordBidMap.get(r.getKeyword()));
 				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
@@ -359,7 +366,7 @@ public class BidGeneratorObj
 				continue;
 			}
 			if(!b.getIsDefaultValue() && b.getIsActive()){
-				long bMax = Math.min(maxBid, (((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
+				long bMax = Math.min(maxBidL, (((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
 				wordBidMap.put(b.getKeyword(),bMax);
 				b.setMicroBidAmount(wordBidMap.get(b.getKeyword()));
 			}
@@ -382,7 +389,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 6. Database call: compute and update default bid of the adgroup
 		long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
-		defaultMicroBid = Math.min(maxBid, (((long) (presentDefaultMicroBid * Math.pow(1.1,2))) / 10000L) * 10000L);
+		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(1.1,2))) / 10000L) * 10000L);
 		
 		try {
 			logger.info("Trying to write the default bid to the database.");
@@ -1740,11 +1747,11 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(114);
+			Integer promotionID = new Integer(116);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
+			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 			
 //			AdEngine searchEngine = AdEngine.Google;
 //			
