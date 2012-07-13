@@ -52,6 +52,7 @@ import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.MsnCreateKeywordsResponse;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.mail.SemplestMailClient;
 import semplest.server.service.springjdbc.AdEngineAccountObj;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.PromotionObj;
@@ -93,6 +94,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationAccountID = null;
 	private static Long AdwordsValidationCampaignID = null;
 	private static Long AdwordsValidationAdGroupID = null;
+	private static String DevelopmentEmail = null;
 	
 	private static Double BudgetMultFactor = null;
 
@@ -184,7 +186,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");		
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
-
+		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
@@ -205,6 +207,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngines) throws Exception
 	{
 		logger.info("Will try to Add Promotion To AdEngines for CustomerID [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + PromotionID + "], AdEngines [" + adEngines + "]");
+		final Long timeStart = System.currentTimeMillis();
 		/*
 		 * TODO: break up this method into separate steps as per below
 		 * 
@@ -289,7 +292,22 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 			SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
 		}
-		logger.info("Done");
+		logger.info("Sending success email");
+		final Long timeEnd = System.currentTimeMillis();
+		final Long timeDuration = timeEnd - timeStart;
+		final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
+		final String content = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
+		try
+		{
+			SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+		}
+		catch (Exception e)
+		{
+			logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.");
+		}
+		logger.info("------------------------------------------");
+		logger.info("------------------ Done ------------------");
+		logger.info("------------------------------------------");
 		return true;
 	}
 
