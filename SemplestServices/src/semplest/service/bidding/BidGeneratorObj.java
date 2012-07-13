@@ -154,7 +154,8 @@ public class BidGeneratorObj
 		
 		final Integer googlePercentInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");		
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
-		budgetFactor =  (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
+		final Integer budgetFactorInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
+		budgetFactor = Double.valueOf("" + budgetFactorInteger); 
 		
 
 		 
