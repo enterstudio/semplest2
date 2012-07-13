@@ -875,7 +875,13 @@ public class BidGeneratorObj
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 			double percentileValue = 85.0;
 			double marginFactor = 2.0;
-			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95;
+			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name());
+			if(maxBid<=0.05) {
+				logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
+				throw new Exception("Daily budget is too low to do anything with this adgroup...");
+			}
+			maxBid*=0.95;
+			
 			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor,maxBid);
 			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
 			totalDailyCost = new Double(bidOptimizer.getTotalDailyCost()*1e6).longValue();
@@ -1734,11 +1740,11 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(100);
+			Integer promotionID = new Integer(114);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 			
 //			AdEngine searchEngine = AdEngine.Google;
 //			
