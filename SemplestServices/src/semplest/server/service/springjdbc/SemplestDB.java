@@ -224,8 +224,9 @@ public class SemplestDB extends BaseDB
 		
 	}
 	
-	public static Double GetCurrentDailyBudget(Integer promotionID, String adEngine) throws Exception
+	public static Double GetCurrentDailyBudget(Integer promotionID, AdEngine adEngine) throws Exception
 	{
+		logger.info("Will try to get current daily budget for PromotionID [" + promotionID + "], AdEngine [" + adEngine + "]");
 		String strSQL = "select aep.CurrentDailyBudget from AdvertisingEnginePromotion aep " +
 				"inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK " +
 				"inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK " +

@@ -154,8 +154,8 @@ public class BidGeneratorObj
 		
 		final Integer googlePercentInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");		
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
-		final Integer budgetFactorInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
-		budgetFactor = Double.valueOf("" + budgetFactorInteger); 
+		budgetFactor = (Double)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
+		//budgetFactor = Double.valueOf("" + budgetFactorInteger); 
 		
 
 		 
@@ -332,14 +332,15 @@ public class BidGeneratorObj
 		HashMap<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		HashSet<String> pausedSet = new HashSet<String>();
 		
-		//Long maxBid = new Long(new Double(SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name())*0.95*1e6).longValue() /10000L*10000L);
-		
-		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name());
+				
+		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 		if(maxBid<=0.05) {
 			logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
 			throw new Exception("Daily budget is too low to do anything with this adgroup...");
 		}
-		Long maxBidL = new Long(new Double(maxBid*0.95*1e6).longValue() /10000L*10000L);
+		final Double maxBidDouble = new Double(maxBid * 0.95 * 1e6);
+		final Long maxBidDoubleLong = maxBidDouble.longValue();
+		Long maxBidL = new Long(maxBidDoubleLong / 10000L * 10000L);
 
 		
 		for (ReportObject r : reportObjListYesterday){
@@ -574,6 +575,9 @@ public class BidGeneratorObj
 		// 2. Database call: get remaining days and budget
 		// now get it as function argument
 		// BudgetObject budgetData = SemplestDB.getBudget(promotionID);
+		
+		
+		// **** THE VALUE WE ARE GETTING FROM ADENGINE IS INCORRECT *****
 		Double remBudget = budgetData.getRemainingBudgetInCycle();
 		Integer remDays = budgetData.getRemainingDays();
 		double targetDailyBudget = (remBudget / remDays) * 7; // use weekly
@@ -882,7 +886,7 @@ public class BidGeneratorObj
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 			double percentileValue = 85.0;
 			double marginFactor = 2.0;
-			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine.name());
+			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 			if(maxBid<=0.05) {
 				logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
 				throw new Exception("Daily budget is too low to do anything with this adgroup...");
@@ -1027,19 +1031,16 @@ public class BidGeneratorObj
 
 		if (o != null) 
 		{
-			logger.info("Trying to write traffic estimator data to the database.");
+			logger.info("Trying to write traffic estimator data to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 			try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, searchEngine,o);
 			} catch (Exception e) {
-				logger.error(
-						"Failed to write traffic estimator data "
-								+ e.getMessage(), e);
-				// e.printStackTrace();
+				logger.error("Failed to write traffic estimator data for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]" + e.getMessage(), e);
 				throw new Exception("Failed to write traffic estimator data "+ e.getMessage(), e);
 			}
-			logger.info("Stored traffic estimator data to database");
+			logger.info("Stored traffic estimator data to database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 		} else {
-			logger.info("No traffic estimator data to write to the database");
+			logger.info("No traffic estimator data to write to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 		}
 
 
@@ -1747,11 +1748,11 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(116);
+			Integer promotionID = new Integer(114);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 			
 //			AdEngine searchEngine = AdEngine.Google;
 //			

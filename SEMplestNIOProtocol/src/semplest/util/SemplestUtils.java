@@ -94,6 +94,7 @@ public final class SemplestUtils
 	public static final DateFormat DATE_FORMAT_YYYYMMDD_HHmmss = new SimpleDateFormat("yyyyMMdd HHmmss");
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
 	public static final Double MICRO_AMOUNT_FACTOR = 1000000d;
+	public static final Long DOUBLE_TO_LONG_MICRO_DIVISOR_HELPER = 10000L;
 	public static final String LINE_SEPARATOR = System.getProperty("line.separator");
 	public static final Type TYPE_LIST_OF_STRINGS = new TypeToken<List<String>>(){}.getType();
 	public static final Type TYPE_LIST_OF_INTEGERS = new TypeToken<List<Integer>>(){}.getType();
@@ -115,6 +116,12 @@ public final class SemplestUtils
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
 	public static final String STATUS_GOOD = "STATUS GOOD";
+	
+	public static Long getLongMicroAmount(final Double d)
+	{
+		final Double dMicroDouble = d * SemplestUtils.MICRO_AMOUNT_FACTOR;
+		return dMicroDouble.longValue() / SemplestUtils.DOUBLE_TO_LONG_MICRO_DIVISOR_HELPER * SemplestUtils.DOUBLE_TO_LONG_MICRO_DIVISOR_HELPER;
+	}
 	
 	public static List<GoogleViolation> getGoogleViolations_v201109(ApiException e)
 	{

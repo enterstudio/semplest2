@@ -258,9 +258,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			else
 			{
 				// Create Campaign
-				final Double budget = (Double) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingBudgetInCycle");
 				final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
-				final Long campaignID = createCampaign(String.valueOf(accountID), PromotionID, customerID, advertisingEngine, budget, getPromoDataSP, daysLeft);
+				final String accountId = String.valueOf(accountID);
+				final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft);
 				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
 				// Create Ad group and Ads
 				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
@@ -271,7 +271,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
 				// Set initial bidding
 				final BudgetObject budgetData = new BudgetObject();
-				budgetData.setRemainingBudgetInCycle(budget);
+				budgetData.setRemainingBudgetInCycle(monthlyBudget);
 				budgetData.setRemainingDays(daysLeft);
 				
 				logger.info("About to Set Initial Bids for " + advertisingEngine);
@@ -882,7 +882,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	/*
 	 * Assumes Daily budget
 	 */
-	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
+	private Long createCampaign(String accountID, Integer promotionID, Integer customerID, AdEngine adEngine, Double monthlyBudgetAmount, Double dailyBudget, GetAllPromotionDataSP getPromoDataSP, Integer remainingDaysInCycle) throws Exception
 	{
 		logger.info("Will try to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], MonthlyBudgetAmount [" + monthlyBudgetAmount + "], RemainingDaysInCycle [" + remainingDaysInCycle + "]");
 		if (monthlyBudgetAmount < 0)
@@ -894,22 +894,19 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		if (adEngine == AdEngine.Google)
 		{
 			// assume US dollars US timezone
-			GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-			Long microbudgetAmount = calculateDailyMicroBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
-			Campaign campaign = google.CreateOneCampaignForAccount(accountID, campaignName, com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, microbudgetAmount);
+			final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			final Long dailyBudgetMicroLong = SemplestUtils.getLongMicroAmount(dailyBudget);
+			final Campaign campaign = google.CreateOneCampaignForAccount(accountID, campaignName, com.google.api.adwords.v201109.cm.CampaignStatus.ACTIVE, BudgetBudgetPeriod.DAILY, dailyBudgetMicroLong);
 			return campaign.getId();
 		}
 		else if (adEngine == AdEngine.MSN)
 		{
-			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			double dailybudgetAmount = calculateDailyBudgetFromMonthly(monthlyBudgetAmount, remainingDaysInCycle);
+			final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			final Long accountId = Long.valueOf(accountID);
 			final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
-			final double monthlyBudget = monthlyBudgetAmount.doubleValue();
 			final CampaignStatus campaignStatus = com.microsoft.adcenter.v8.CampaignStatus.Active;
-			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailybudgetAmount + "], MonthlyBudget [" + monthlyBudget + "], CampaignStatus ["
-					+ campaignStatus + "]");
-			Long campaignID = msn.createCampaign(accountId, campaignName, budgetLimitType, dailybudgetAmount, monthlyBudget, campaignStatus);
+			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailyBudget + "], MonthlyBudget [" + monthlyBudgetAmount + "], CampaignStatus [" + campaignStatus + "]");
+			final Long campaignID = msn.createCampaign(accountId, campaignName, budgetLimitType, dailyBudget, monthlyBudgetAmount, campaignStatus);
 			return campaignID;
 		}
 		else
