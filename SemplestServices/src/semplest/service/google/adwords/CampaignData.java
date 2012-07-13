@@ -13,9 +13,9 @@ import semplest.server.protocol.adengine.GeoTargetObject;
 import semplest.server.protocol.google.CampaignCriterionMutateRetriableGoogleOperation;
 import semplest.util.SemplestUtils;
 
-public class Campaign 
+public class CampaignData 
 {
-  private static final Logger logger = Logger.getLogger(semplest.service.google.adwords.Campaign.class);  
+  private static final Logger logger = Logger.getLogger(semplest.service.google.adwords.CampaignData.class);  
   static String[] fields = {"Id","CampaignId","LocationName","DisplayType", "RadiusInUnits","GeoPoint","Address"};
   String clid = "";
   Long cid = null;
@@ -23,7 +23,7 @@ public class Campaign
   CampaignCriterionServiceInterface ccs = null;
 
   // Interface ---------
-  public Campaign( String clientid, Long caid, AdWordsUser user ) 
+  public CampaignData( String clientid, Long caid, AdWordsUser user ) 
     throws Exception 
   {
     clid  =  clientid;
@@ -258,7 +258,7 @@ public class Campaign
       AdWordsUser user = null; 
       // new AdWordsUser(email, password, accountId, userAgent, 
       // developerToken, useSandbox);
-      Campaign c = new Campaign( clientId, campaignId, user );
+      CampaignData c = new CampaignData( clientId, campaignId, user );
       long ra = c.setGeoLoc( radius, addr, city, state, zip );
       long rs = c.setGeoLoc( "NY" );
       long rz = c.setGeoLoc( radius, lat, lon );

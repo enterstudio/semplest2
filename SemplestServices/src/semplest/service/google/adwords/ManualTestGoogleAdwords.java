@@ -71,7 +71,7 @@ public class ManualTestGoogleAdwords
 			System.out.println(tl.getCampaignId() + ", " + tl.getTargetListType());
 		}*/
 		
-		final Campaign c = new Campaign(accountId, campaignId, user);
+		final CampaignData c = new CampaignData(accountId, campaignId, user);
 		final String[] locations = c.getGeoLocs();
 		for (int i = 0; i < locations.length; ++i)
 		{

@@ -3564,7 +3564,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Boolean setGeoTarget(String accountId, Long campaignId, Double latitude, Double longitude, Double radius, String addr, String city, String state, String zip) throws Exception
 	{
 		AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
-		semplest.service.google.adwords.Campaign c = new semplest.service.google.adwords.Campaign(accountId, campaignId, user);
+		semplest.service.google.adwords.CampaignData c = new semplest.service.google.adwords.CampaignData(accountId, campaignId, user);
 		long res = 0;
 		if (radius <= 0)
 			res = c.setGeoLoc(state);
@@ -3579,7 +3579,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	public Boolean updateGeoTargets(final String accountId, final Long campaignId, final List<GeoTargetObject> geoTargets) throws Exception
 	{
 		final AdWordsUser user = new AdWordsUser(email, password, accountId, userAgent, developerToken, useSandbox);
-		final semplest.service.google.adwords.Campaign semplestCampaign = new semplest.service.google.adwords.Campaign(accountId, campaignId, user);
+		final semplest.service.google.adwords.CampaignData semplestCampaign = new semplest.service.google.adwords.CampaignData(accountId, campaignId, user);
 		semplestCampaign.removeAllGeoLoc(campaignId);
 		semplestCampaign.addGeoLoc(geoTargets);
 		return true;
@@ -3845,7 +3845,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	{
 		final List<Criterion> criterions = new ArrayList<Criterion>();
 		final AdWordsUser user = new AdWordsUser(email, password, validationAccountID, userAgent, developerToken, useSandbox);
-		final semplest.service.google.adwords.Campaign semplestCampaign = new semplest.service.google.adwords.Campaign(validationAccountID, validationCampaignID, user);
+		final semplest.service.google.adwords.CampaignData semplestCampaign = new semplest.service.google.adwords.CampaignData(validationAccountID, validationCampaignID, user);
 		for (final GeoTargetObject geoTarget : geoTargets)
 		{
 			final Double radius = geoTarget.getRadius();
