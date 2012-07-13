@@ -15,11 +15,16 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.springframework.batch.retry.RetryCallback;
+import org.springframework.batch.retry.RetryContext;
+import org.springframework.batch.retry.policy.SimpleRetryPolicy;
+import org.springframework.batch.retry.support.RetryTemplate;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
+import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
@@ -66,7 +71,94 @@ public class SemplestDB extends BaseDB
 	public static final String SQL_DELETE_AD_ENGINE_AD_ID = "delete   AdvertisingEngineAds " + "from	  AdvertisingEngineAds aea, " + "AdvertisingEngine e " + "where	  aea.PromotionAdsFK = ? " + "and	  aea.AdvertisingEngineFK = e.AdvertisingEnginePK " + "and   e.AdvertisingEngine = ?";
 
 	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + "set IsDeleted = 1, " + "Comment = ? " + "where KeywordFK = ?" + "  and PromotionFK = ?";
+		
+	public static <T> T executeRetryOnDeadlock(final CustomOperation<T> customOperation, final int maxNumRetries) throws Exception
+	{
+		final SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+		final List<Class<? extends Throwable>> retryableExceptionClasses = new ArrayList<Class<? extends Throwable>>();
+		retryableExceptionClasses.add(org.springframework.dao.DeadlockLoserDataAccessException.class);		
+		final RetryTemplate template = new RetryTemplate();		
+		retryPolicy.setRetryableExceptionClasses(retryableExceptionClasses);
+		retryPolicy.setMaxAttempts(maxNumRetries);
+		template.setRetryPolicy(retryPolicy);		
+		try
+		{
+			final T results = template.execute(new RetryCallback<T>() 
+												 {
+													    public T doWithRetry(RetryContext context) throws Exception
+													    {
+													        logger.info("Attempt #" + context.getRetryCount() + 1);													        
+															final T results = customOperation.performCustomOperation();
+													        return results;
+													    }								    
+												 });
+			return results;
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem performing operation even after max " + maxNumRetries + " retries", e);
+		}
+	}
+	
+	public static void testDeadlockHandling() throws Exception
+	{
+		/*
+		final String sql1 = "begin tran " + 
+								"update TableA set name = 'krish' where id = 1 " + 
+								"waitfor delay '00:00:10' " + 
+								"update TableB set name = 'krishna' where id = 2 " + 
+							"commit";
+							*/
+		final String sql2 = "begin tran " + 
+								"update TableB set name = 'krishna' where id = 2 " + 
+								"waitfor delay '00:00:10' " + 
+								"update TableA set name = 'krish' where id = 1 " + 
+							"commit";
+		
+		final int maxRetries = 4;
+		final SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
+		final List<Class<? extends Throwable>> retryableExceptionClasses = new ArrayList<Class<? extends Throwable>>();
+		retryableExceptionClasses.add(org.springframework.dao.DeadlockLoserDataAccessException.class);
+		
+		final RetryTemplate template = new RetryTemplate();		
+		retryPolicy.setRetryableExceptionClasses(retryableExceptionClasses);
+		retryPolicy.setMaxAttempts(maxRetries);
+		template.setRetryPolicy(retryPolicy);		
+		try
+		{
+			/*
+			 Run this manually in SQL Management Studio, then run this method, which would cause a deadlock
+			 
+			 	begin tran
+				update TableA set name = 'krish' where id = 1
+				waitfor delay '00:00:10'
+				update TableB set name = 'krishna' where id = 2
+				commit
 
+			 */
+			template.execute(new RetryCallback<Object>() 
+							 {
+								    public Object doWithRetry(RetryContext context) throws Exception
+								    {
+								        logger.info("Attempt #" + context.getRetryCount() + 1);
+								        /*
+									        final Thread t1 = new Thread(new Runnable() {public void run(){logger.info("Running thread 1"); jdbcTemplate.execute(sql1);}});				
+											final Thread t2 = new Thread(new Runnable() {public void run(){logger.info("Running thread 2"); jdbcTemplate.execute(sql2);}}); 
+											t1.start();
+											t2.start();
+										*/								        
+								        jdbcTemplate.execute(sql2);
+								        //throw new DeadlockLoserDataAccessException("some error message", new Exception("this is the cause"));
+										return new Object();
+								    }
+							 });
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Problem performing operations even after max " + maxRetries + " retries", e);
+		}
+	}
+		
 	public static void updatePromotionStatus(final Integer promotionID, final List<AdEngine> adEngines, final PromotionStatus promotionStatus)
 	{
 		for (final AdEngine adEngine : adEngines)
@@ -75,7 +167,7 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
-	public static Map<AdEngine, PromotionStatus> getPromotionStatus(Integer promotionID, List<AdEngine> adEngines)
+	public static Map<AdEngine, PromotionStatus> getPromotionStatus(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		final Map<AdEngine, PromotionStatus> promotionStatusMap = new HashMap<AdEngine, PromotionStatus>();
 		for (final AdEngine adEngine : adEngines)
@@ -86,9 +178,15 @@ public class SemplestDB extends BaseDB
 		return promotionStatusMap;
 	}
 
-	public static PromotionStatus getPromotionStatus(Integer promotionID, AdEngine adEngine)
+	public static PromotionStatus getPromotionStatus(final Integer promotionID, final AdEngine adEngine) throws Exception
 	{
-		final Integer promotionStatusCode = jdbcTemplate.queryForInt("select PromotionStatusFK from PromotionAdEngineStatus where PromotionFK = ? and AdvertisingEngineFK = ?", new Object[] { promotionID, adEngine.getCode() });
+		final Integer promotionStatusCode = executeRetryOnDeadlock(new CustomOperation<Integer>()
+									{
+										public Integer performCustomOperation()
+										{
+											return jdbcTemplate.queryForInt("select PromotionStatusFK from PromotionAdEngineStatus where PromotionFK = ? and AdvertisingEngineFK = ?", new Object[] { promotionID, adEngine.getCode() });			
+										}
+									}, SemplestUtils.DEFAULT_RETRY_COUNT);
 		if (PromotionStatus.isValidPromotionStatus(promotionStatusCode))
 		{
 			return PromotionStatus.fromValue(promotionStatusCode);	
@@ -114,7 +212,7 @@ public class SemplestDB extends BaseDB
 							"end",
 							new Object[] {promotionID, adEngineCode, promotionStatusCode, promotionID, adEngineCode, promotionID, promotionStatusCode, adEngineCode});
 	}
-	
+
 	public static void SetCurrentDailyBudget(Double currentDailyBudget, Integer promotionID, String adEngine) throws Exception
 	{
 		String strSQL = "update AdvertisingEnginePromotion set CurrentDailyBudget = ? " +

@@ -215,13 +215,16 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		 * semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
 		 */
 		SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);
+		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+		getPromoDataSP.execute(PromotionID);
+		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
-		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines);
+		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
 		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 		final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
 		String companyName = null;
-		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(PromotionID);
+		
 		for (final AdEngine advertisingEngine : adEngines)
 		{
 			Long accountID = null;
@@ -393,11 +396,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final String esbServerTimeout = getTimeoutMS();
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, esbServerTimeout);
-		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines);
+		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines, startBudgetInCycle);
 		for (final AdEngine adEngine : adEngines)
 		{
 			if (AdEngine.Google == adEngine)
@@ -1711,6 +1716,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Negative Keywords for PromotionID [" + promotionID + "], " + keywordIdRemoveOppositePairs.size() + " KeywordIdRemoveOppositePairs [" + keywordIdRemoveOppositePairs + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
+		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final Map<AdEngine, AdEngineID> promotionAdEngineDataMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
@@ -1725,7 +1732,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		final String esbServerTimeout = getTimeoutMS();
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, esbServerTimeout);
-		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines);
+		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines, startBudgetInCycle);
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		for (final AdEngine adEngine : adEngines)
 		{
@@ -1933,6 +1940,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		logger.info("Will try to Add Keywords for PromotionID [" + promotionID + "], " + keywordIds.size() + " KeywordIds [" + keywordIds + "], AdEngines [" + adEngines + "]");
 		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		final Boolean ret = getPromoDataSP.execute(promotionID);
+		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
 		final Map<AdEngine, AdEngineID> promotionAdEngineData = getPromoDataSP.getPromotionAdEngineID(promotionID);
 		final GetKeywordForAdEngineSP getKeywordForAdEngineSP = new GetKeywordForAdEngineSP();
 		final List<KeywordProbabilityObject> keywordProbabilitiesAll = getKeywordForAdEngineSP.execute(promotionID, true, false);
@@ -1946,7 +1955,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			logger.info("As expected, found " + keywordProbabilitiesForIds.size() + " keywords for " + keywordIds.size() + " ids");
 		}
 		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient((String) SemplestConfiguration.configData.get("ESBWebServerURL"), getTimeoutMS());
-		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines);
+		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(promotionID, adEngines, startBudgetInCycle);
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
 		final AddBidSP addKeywordBidSP = new AddBidSP();
 		for (final AdEngine adEngine : adEngines)

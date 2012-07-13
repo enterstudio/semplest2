@@ -2324,10 +2324,6 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			campaign.setStatus(campaignStatus);
 			campaign.setBiddingStrategy(new ManualCPC());
 			final Budget budget = new Budget();
-			if (period == null)
-			{
-				period = BudgetBudgetPeriod.MONTHLY;
-			}
 			/*
 			 * Default network is Google Search ONLY
 			 */

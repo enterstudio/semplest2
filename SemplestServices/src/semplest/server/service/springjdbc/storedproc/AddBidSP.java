@@ -7,8 +7,11 @@ import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.SqlParameter;
 import org.springframework.jdbc.object.StoredProcedure;
 
+import semplest.server.protocol.CustomOperation;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.service.springjdbc.BaseDB;
+import semplest.server.service.springjdbc.SemplestDB;
+import semplest.util.SemplestUtils;
 
 public class AddBidSP extends StoredProcedure
 {
@@ -27,17 +30,24 @@ public class AddBidSP extends StoredProcedure
 		declareParameter(new SqlParameter("CompetitionType", Types.VARCHAR));
 		declareParameter(new SqlParameter("IsDefaultValue", Types.BIT));
 		declareParameter(new SqlOutParameter("ID", Types.INTEGER));
-		
-		
+
 		compile();
 	}
 
 	/*
 	 * returns KeywordBidPK
 	 */
-	public Integer execute(int PromotionPK, Long KeywordAdEngineID, String Keyword, Integer MicroBidAmount, String BidType, AdEngine AdvertisingEngine, boolean IsNegative, String CompetitionType, boolean IsDefaultValue) throws Exception
+	public Integer execute(final int PromotionPK, final Long KeywordAdEngineID, final String Keyword, final Integer MicroBidAmount, final String BidType, final AdEngine AdvertisingEngine, final boolean IsNegative, final String CompetitionType, final boolean IsDefaultValue) throws Exception
 	{
-		Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative, CompetitionType, IsDefaultValue);
+		//Map<String, Object> results = super.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative, CompetitionType, IsDefaultValue);
+		final StoredProcedure sp = this;
+		Map<String, Object> results = SemplestDB.executeRetryOnDeadlock(new CustomOperation<Map<String, Object>>()
+					{
+						public Map<String, Object> performCustomOperation()
+						{
+							return sp.execute(PromotionPK, KeywordAdEngineID, Keyword,  MicroBidAmount,BidType, AdvertisingEngine.name(),IsNegative, CompetitionType, IsDefaultValue);			
+						}
+					}, SemplestUtils.DEFAULT_RETRY_COUNT);
 		if (results.get("ID") == null)
 		{
 			return null;
