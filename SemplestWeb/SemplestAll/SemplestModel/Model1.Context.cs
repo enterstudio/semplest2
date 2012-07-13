@@ -100,6 +100,7 @@ namespace SemplestModel
         public DbSet<SemplestBidType> SemplestBidTypes { get; set; }
         public DbSet<CreditCardProfile> CreditCardProfiles { get; set; }
         public DbSet<Configuration> Configurations { get; set; }
+        public DbSet<SchedulerView> SchedulerViews { get; set; }
     
         public virtual ObjectResult<sp_GetRigtsRolesInteraction_Result> sp_GetRigtsRolesInteraction(Nullable<int> roleId)
         {

@@ -12,10 +12,10 @@ namespace Semplest.Admin.Controllers
 {
     [ExceptionHelper]
     [AuthorizeRole]
-    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")] 
+    [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class HomeController : Controller
     {
-         //public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
+        //public ActionResult Index(string usersearch, string accountnumbersearch, string emailsearch, FormCollection form)
         public ActionResult Index()
         {
 
@@ -72,6 +72,46 @@ namespace Semplest.Admin.Controllers
 
             //return View(viewModel);
             return View();
+        }
+
+        public ActionResult SchedulerView()
+        {
+            var dbContext = new SemplestModel.Semplest();
+            var
+            svmc  = new SchedulerViewModelCollection();
+            foreach (SchedulerView svm in dbContext.SchedulerViews)
+            {
+                svmc.SVM.Add(new SchedulerViewModel{ CustomerName = svm.CustomerName, ExecutionStartTime = svm.ExecutionStartTime, Frequency = svm.Frequency, IsComplete = svm.IsComplete, IsEnabled = svm.IsEnabled, IsInactive = svm.IsInactive, IsSuccessful = svm.IsSuccessful, PromotionName = svm.PromotionName, ScheduleJobPK = svm.ScheduleJobPK, ScheduleName = svm.ScheduleName, SchedulePK = svm.SchedulePK});
+            }
+            svmc.Status = "All";
+            return View(svmc);
+        }
+
+        [HttpPost]
+        public ActionResult SchedulerView(SchedulerViewModelCollection svmc)
+        {
+            var dbContext = new SemplestModel.Semplest();
+            var
+            svmcNew = new SchedulerViewModelCollection();
+            List<SchedulerView> lsvc;
+            switch (svmc.Status)
+            {
+                case "IsEnabled" :
+                    lsvc = dbContext.SchedulerViews.Where(x => x.IsEnabled == true).ToList();
+                    break;
+                case "IsDisabled" :
+                    lsvc = dbContext.SchedulerViews.Where(x => x.IsEnabled == false).ToList();
+                    break;
+                default:
+                    lsvc = dbContext.SchedulerViews.ToList();
+                    break;
+            }
+            foreach (SchedulerView svm in lsvc)
+            {
+                svmcNew.SVM.Add(new SchedulerViewModel { CustomerName = svm.CustomerName, ExecutionStartTime = svm.ExecutionStartTime, Frequency = svm.Frequency, IsComplete = svm.IsComplete, IsEnabled = svm.IsEnabled, IsInactive = svm.IsInactive, IsSuccessful = svm.IsSuccessful, PromotionName = svm.PromotionName, ScheduleJobPK = svm.ScheduleJobPK, ScheduleName = svm.ScheduleName, SchedulePK = svm.SchedulePK });
+            }
+            svmcNew.Status = svmc.Status;
+            return View(svmcNew);
         }
 
         //public ActionResult GetUsers(string query)

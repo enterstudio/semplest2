@@ -229,6 +229,9 @@
     <Compile Include="ScheduleLog.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
+    <Compile Include="SchedulerView.cs">
+      <DependentUpon>Model1.tt</DependentUpon>
+    </Compile>
     <Compile Include="ScheduleTaskAssociation.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>

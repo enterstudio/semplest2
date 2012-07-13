@@ -93,6 +93,21 @@
           <EntitySet Name="WebContent" EntityType="SemplestModel.Store.WebContent" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebContentQuestionMarkHelp" EntityType="SemplestModel.Store.WebContentQuestionMarkHelp" store:Type="Tables" Schema="dbo" />
           <EntitySet Name="WebsiteWebContent" EntityType="SemplestModel.Store.WebsiteWebContent" store:Type="Tables" Schema="dbo" />
+          <EntitySet Name="SchedulerView" EntityType="SemplestModel.Store.SchedulerView" store:Type="Views" store:Schema="dbo" store:Name="SchedulerView">
+            <DefiningQuery>SELECT 
+      [SchedulerView].[CustomerName] AS [CustomerName], 
+      [SchedulerView].[PromotionName] AS [PromotionName], 
+      [SchedulerView].[ScheduleName] AS [ScheduleName], 
+      [SchedulerView].[SchedulePK] AS [SchedulePK], 
+      [SchedulerView].[Frequency] AS [Frequency], 
+      [SchedulerView].[ExecutionStartTime] AS [ExecutionStartTime], 
+      [SchedulerView].[IsComplete] AS [IsComplete], 
+      [SchedulerView].[IsSuccessful] AS [IsSuccessful], 
+      [SchedulerView].[IsEnabled] AS [IsEnabled], 
+      [SchedulerView].[IsInactive] AS [IsInactive], 
+      [SchedulerView].[ScheduleJobPK] AS [ScheduleJobPK]
+      FROM [dbo].[SchedulerView] AS [SchedulerView]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vwCreditCardTransactionDetail" EntityType="SemplestModel.Store.vwCreditCardTransactionDetail" store:Type="Views" store:Schema="dbo" store:Name="vwCreditCardTransactionDetail">
             <DefiningQuery>SELECT 
       [vwCreditCardTransactionDetail].[CreditCardProfilePK] AS [CreditCardProfilePK], 
@@ -1382,6 +1397,34 @@
           <Property Name="ContactUs" Type="nvarchar(max)" />
           <Property Name="TermsAndConditions" Type="nvarchar(max)" />
           <Property Name="PrivacyPolicy" Type="nvarchar(max)" />
+        </EntityType>
+        <!--Errors Found During Generation:
+      warning 6002: The table/view 'semplest.dbo.SchedulerView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
+      -->
+        <EntityType Name="SchedulerView">
+          <Key>
+            <PropertyRef Name="CustomerName" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="SchedulePK" />
+            <PropertyRef Name="Frequency" />
+            <PropertyRef Name="ExecutionStartTime" />
+            <PropertyRef Name="IsComplete" />
+            <PropertyRef Name="IsSuccessful" />
+            <PropertyRef Name="IsEnabled" />
+            <PropertyRef Name="IsInactive" />
+            <PropertyRef Name="ScheduleJobPK" />
+          </Key>
+          <Property Name="CustomerName" Type="nvarchar" Nullable="false" MaxLength="200" />
+          <Property Name="PromotionName" Type="nvarchar" Nullable="false" MaxLength="150" />
+          <Property Name="ScheduleName" Type="nvarchar" MaxLength="100" />
+          <Property Name="SchedulePK" Type="int" Nullable="false" />
+          <Property Name="Frequency" Type="nchar" Nullable="false" MaxLength="20" />
+          <Property Name="ExecutionStartTime" Type="datetime2" Nullable="false" />
+          <Property Name="IsComplete" Type="bit" Nullable="false" />
+          <Property Name="IsSuccessful" Type="bit" Nullable="false" />
+          <Property Name="IsEnabled" Type="bit" Nullable="false" />
+          <Property Name="IsInactive" Type="bit" Nullable="false" />
+          <Property Name="ScheduleJobPK" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'semplest.dbo.vwCreditCardTransactionDetail' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -3149,6 +3192,7 @@
             <End Role="CreditCardProfile" EntitySet="CreditCardProfiles" />
           </AssociationSet>
           <EntitySet Name="Configurations" EntityType="SemplestModel.Configuration" />
+          <EntitySet Name="SchedulerViews" EntityType="SemplestModel.SchedulerView" />
           </EntityContainer>
         <ComplexType Name="sp_GetRigtsRolesInteraction_Result">
           <Property Type="Int32" Name="RolesFK" Nullable="true" />
@@ -5272,6 +5316,31 @@
           <Property Type="Int64" Name="MSNTrafficEstAccountID" />
           <Property Type="Double" Name="SemplestBiddingBudgetMultFactor" />
         </EntityType>
+        <EntityType Name="SchedulerView">
+          <Key>
+            <PropertyRef Name="CustomerName" />
+            <PropertyRef Name="PromotionName" />
+            <PropertyRef Name="SchedulePK" />
+            <PropertyRef Name="Frequency" />
+            <PropertyRef Name="ExecutionStartTime" />
+            <PropertyRef Name="IsComplete" />
+            <PropertyRef Name="IsSuccessful" />
+            <PropertyRef Name="IsEnabled" />
+            <PropertyRef Name="IsInactive" />
+            <PropertyRef Name="ScheduleJobPK" />
+          </Key>
+          <Property Type="String" Name="CustomerName" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="PromotionName" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ScheduleName" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="SchedulePK" Nullable="false" />
+          <Property Type="String" Name="Frequency" Nullable="false" MaxLength="20" FixedLength="true" Unicode="true" />
+          <Property Type="DateTime" Name="ExecutionStartTime" Nullable="false" />
+          <Property Type="Boolean" Name="IsComplete" Nullable="false" />
+          <Property Type="Boolean" Name="IsSuccessful" Nullable="false" />
+          <Property Type="Boolean" Name="IsEnabled" Nullable="false" />
+          <Property Type="Boolean" Name="IsInactive" Nullable="false" />
+          <Property Type="Int32" Name="ScheduleJobPK" Nullable="false" />
+        </EntityType>
         </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -6326,6 +6395,23 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="SchedulerViews">
+            <EntityTypeMapping TypeName="SemplestModel.SchedulerView">
+              <MappingFragment StoreEntitySet="SchedulerView">
+                <ScalarProperty Name="ScheduleJobPK" ColumnName="ScheduleJobPK" />
+                <ScalarProperty Name="IsInactive" ColumnName="IsInactive" />
+                <ScalarProperty Name="IsEnabled" ColumnName="IsEnabled" />
+                <ScalarProperty Name="IsSuccessful" ColumnName="IsSuccessful" />
+                <ScalarProperty Name="IsComplete" ColumnName="IsComplete" />
+                <ScalarProperty Name="ExecutionStartTime" ColumnName="ExecutionStartTime" />
+                <ScalarProperty Name="Frequency" ColumnName="Frequency" />
+                <ScalarProperty Name="SchedulePK" ColumnName="SchedulePK" />
+                <ScalarProperty Name="ScheduleName" ColumnName="ScheduleName" />
+                <ScalarProperty Name="PromotionName" ColumnName="PromotionName" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -7187,6 +7273,7 @@
           <ConnectorPoint PointX="8.875" PointY="41.5619896875" />
         </AssociationConnector>
         <EntityTypeShape EntityType="SemplestModel.Configuration" Width="1.5" PointX="9.375" PointY="8.75" Height="22.364238281249982" />
+        <EntityTypeShape EntityType="SemplestModel.SchedulerView" Width="1.5" PointX="11.375" PointY="3.75" Height="3.1340950520833246" />
       </Diagram>
     </Diagrams>
   </Designer>
