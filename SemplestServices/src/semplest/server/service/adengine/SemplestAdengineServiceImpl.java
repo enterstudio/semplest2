@@ -229,6 +229,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			Long accountID = null;
 			final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
+			
+			final Double monthlyBudget = adEngineInitialData.getMonthlyBudget();
+			final Double dailyBudget = adEngineInitialData.getDailyBudget();
+			
 			logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
 			GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
 			AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
@@ -257,9 +261,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				final Double budget = (Double) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingBudgetInCycle");
 				final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
 				final Long campaignID = createCampaign(String.valueOf(accountID), PromotionID, customerID, advertisingEngine, budget, getPromoDataSP, daysLeft);
-				//addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID, Double advertisingEngineBudget, Double currentDailyBudget)
-				//NEED TO PUT Double advertisingEngineBudget, Double currentDailyBudget HERE FROM CALL TO BIDCLIENT
-				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, 0.0,0.0);
+				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
 				// Create Ad group and Ads
 				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
 				storeAdGroupData(advertisingEngine, campaignID, adGroupData);

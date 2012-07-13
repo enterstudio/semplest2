@@ -993,9 +993,7 @@ public class SemplestDB extends BaseDB
 	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID, Long advertisingEngineAdGroupID, Double advertisingEngineBudget, Double currentDailyBudget) throws Exception
 	{
 		String strSQL = "insert into AdvertisingEnginePromotion(AdvertisingEngineCampaignPK,PromotionFK,AdvertisingEngineAccountFK,IsSearchNetwork,IsDisplayNetwork,AdvertisingEngineBudget, AdvertisingEngineAdGroupID, CurrentDailyBudget) " + "VALUES (?,?,?,?,?,?,?,?)";
-
 		return jdbcTemplate.update(strSQL, new Object[] { adEngineCampaignID, promotionID, adEngineAccountID, 1, 0, advertisingEngineBudget, advertisingEngineAdGroupID, currentDailyBudget });
-
 	}
 
 	public static Integer setAdvertisingEngineAdGroupID(Long adEngineCampaignID, Long advertisingEngineAdGroupID) throws Exception
