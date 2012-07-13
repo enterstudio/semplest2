@@ -3325,6 +3325,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final CampaignEstimateRequest campaignEstimateRequest = new CampaignEstimateRequest();
 			campaignEstimateRequest.setAdGroupEstimateRequests(adGroupEstimateRequests.toArray(new AdGroupEstimateRequest[] {}));
 			campaignEstimateRequest.setCampaignId(campaignID);
+			campaignEstimateRequest.setDailyBudget( new Money(null, CampaignInfo.get(user , campaignID, "budget") * 10000L));  // needed for TE -Raj
 			final Language english = new Language();
 			english.setId(1000L);
 			campaignEstimateRequest.setCriteria(new Criterion[] { english });
