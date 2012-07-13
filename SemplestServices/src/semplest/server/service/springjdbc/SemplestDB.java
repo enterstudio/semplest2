@@ -233,7 +233,7 @@ public class SemplestDB extends BaseDB
 		Double CurrentDailyBudget;
 		try
 		{
-			CurrentDailyBudget = (Double) jdbcTemplate.queryForObject(strSQL, new Object[] { promotionID, adEngine }, Double.class);
+			CurrentDailyBudget = (Double) jdbcTemplate.queryForObject(strSQL, new Object[] { adEngine.toString(), promotionID }, Double.class);
 		}
 		catch (EmptyResultDataAccessException e)
 		{
