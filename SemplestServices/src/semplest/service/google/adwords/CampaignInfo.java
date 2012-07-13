@@ -14,35 +14,22 @@ public class CampaignInfo {
       semplest.service.google.adwords.CampaignInfo.class);  
   static String[] fields = {"Id","Name","Status","Amount", "BiddingStrategy",
     "TargetGoogleSearch","EnhancedCpcEnabled"};
- 
-  String clid = "";
-  Long cid = null;
-  AdWordsUser user = null;
-  CampaignServiceInterface cs = null;
-  com.google.api.adwords.v201109.cm.Campaign c = null;
 
-  // Interface ---------
-  public CampaignInfo( String clientid, Long caid ) throws Exception {
-    clid        =  clientid;
-    cid         =  caid;
-    user        =  new AdWordsUser("adwords@semplest.com","ic0system", 
-                    clid, "Icosystem", "2H8l6aUm6K_Q44vDvxs3Og");
-    cs          = user.getService( AdWordsService.V201109.CAMPAIGN_SERVICE );
-    c           = gCriteria();
-  }
-
-  // Get
-  // Note budget is in cents
-  public int get( String field ){
+  // - Static Interface ---------
+  // Note: budget is in cents
+  public static int get( AdWordsUser user, Long caid, String field ) 
+    throws Exception {
+    Campaign c = gCriteria( user, caid);
     String f = field.toLowerCase();
     if( f.equals( "budget")) 
       return (int)( c.getBudget().getAmount().getMicroAmount() / 10000);
     return 0;
   }
 
+
   // privates --------------------------------------------------------------
   // - getters ----------------------------------
-  private com.google.api.adwords.v201109.cm.Campaign gCriteria() throws Exception {
+  private static Campaign gCriteria( AdWordsUser u, Long cid) throws Exception{
     Selector s = new Selector();
     s.setFields( fields );
 
@@ -51,27 +38,21 @@ public class CampaignInfo {
     s.setPredicates( new Predicate[]{ cp }); 
 
     // get Campaigns
-    com.google.api.adwords.v201109.cm.Campaign[] cas = filter( cs.get( s ).getEntries() );
+    CampaignServiceInterface cs = u.getService( 
+        AdWordsService.V201109.CAMPAIGN_SERVICE );
+    Campaign[] cas = cs.get( s ).getEntries();
     if( cas.length > 0 ) return cas[0];
     else return null;
   }
   
-  //- helpers ------------------------------------------------
-  //-- filter ------------------------------------------------
-  private com.google.api.adwords.v201109.cm.Campaign[] filter( com.google.api.adwords.v201109.cm.Campaign[] es ){
-    ArrayList<com.google.api.adwords.v201109.cm.Campaign> ccs = new ArrayList<com.google.api.adwords.v201109.cm.Campaign>();
-    if( es != null )
-      for( com.google.api.adwords.v201109.cm.Campaign c: es )
-        if( c != null ) ccs.add( c );
-    return ccs.toArray( new com.google.api.adwords.v201109.cm.Campaign[]{} );
-  }
-
   // ---------------------------------------------------------------------------
   public static void main(String[] args) throws Exception {
     String clientId = "8982168071";
     long campaignId   = 82853361L;
-    CampaignInfo ci = new CampaignInfo( clientId, campaignId );
-    System.out.println( ci.get( "budget" ));
+    AdWordsUser user  =  new AdWordsUser("adwords@semplest.com","ic0system", 
+                    clientId, "Icosystem", "2H8l6aUm6K_Q44vDvxs3Og");
+    int ci = CampaignInfo.get( user, campaignId, "budget" );
+    System.out.println( ci );
   }
 }
 
