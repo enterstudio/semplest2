@@ -193,7 +193,7 @@ public class BidGeneratorObj
 		HashSet<AdEngine> setSE = new HashSet<AdEngine>(); 
 		for (AdEngine s : searchEngine){
 			if(setSE.contains(s)){
-				throw new Exception("Ad engine "+s+" appears twice!!");
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Ad engine "+s+" appears twice!!");
 			} else {
 				setSE.add(s);
 			}
@@ -210,12 +210,12 @@ public class BidGeneratorObj
 					budgetMap.put(AdEngine.MSN, new Double(100.0-googlePercent));
 					break;
 				}
-				throw new Exception("Invalid combination of Ad engine options!");
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Invalid combination of Ad engine options!");
 			case 1:
 				budgetMap.put(searchEngine.get(0), new Double(100.0));
 				break;
 			default:
-				throw new Exception("Invalid number of Ad engines.. Received "+searchEngine.size()+" Ad engine names!");
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Invalid number of Ad engines.. Received "+searchEngine.size()+" Ad engine names!");
 		}
 
 		
@@ -244,7 +244,7 @@ public class BidGeneratorObj
 	}
 	
 	public Boolean setBidsInitialWeek(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
-		logger.info("setBidsInitialWeek called for ad engine " + searchEngine);
+		logger.info("[PromotionID: "+promotionID+ "]" + "setBidsInitialWeek called for ad engine " + searchEngine);
 		
 		/* ******************************************************************************************* */
 		// 1. Database call: get campaign specific IDs
@@ -259,14 +259,14 @@ public class BidGeneratorObj
 			campaignID = adEngineInfo.getCampaignID();
 			adGroupID = adEngineInfo.getAdGroupID();
 		} catch (Exception e) {
-			logger.error( "Failed to get AdEngineID from the database. " + e.getMessage(), e);
-			throw new Exception("Failed to get AdEngineID from the database. " + e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "]" +  "Failed to get AdEngineID from the database. " + e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get AdEngineID from the database. " + e.getMessage(), e);
 		}
 
 		if (searchEngine == AdEngine.Google) {
-			logger.info("Got campaign related IDs from the database" + " Google Account " + googleAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got campaign related IDs from the database" + " Google Account " + googleAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
 		} else if (searchEngine == AdEngine.MSN) {
-			logger.info("Got campaign related IDs from the database" + " MSN Account " + msnAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got campaign related IDs from the database" + " MSN Account " + msnAccountID + ":" + "CampaignID = " + campaignID + ":" + adGroupID);
 		}
 		
 		
@@ -277,13 +277,13 @@ public class BidGeneratorObj
 		// get present bid status from database
 		ArrayList<BidElement> bidData;
 		try {
-			logger.info("Trying to get the bid data from the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to get the bid data from the database.");
 			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, searchEngine);
-			logger.info("Got bid data from the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got bid data from the database.");
 		} catch (Exception e) {
-			logger.error("ERROR: Unable to get the bid data from the database. "+ e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to get the bid data from the database. "+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to get the bid data from the database. "+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get the bid data from the database. "+ e.getMessage(), e);
 		}
 		
 		// create a hash map for faster access
@@ -311,13 +311,13 @@ public class BidGeneratorObj
 		// get report from the database
 		List<ReportObject> reportObjListYesterday;
 		try {
-			logger.info("Trying to get the report data from the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to get the report data from the database.");
 			reportObjListYesterday = SemplestDB.getReportData(promotionID, searchEngine, startDate, startDate);
-			logger.info("Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
 		} catch (Exception e) {
-			logger.error("ERROR: Unable to get the report data from the database. "+ e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to get the report data from the database. "+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to get the report data from the database. "+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get the report data from the database. "+ e.getMessage(), e);
 		}
 				
 		
@@ -335,8 +335,8 @@ public class BidGeneratorObj
 				
 		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 		if(maxBid<=0.05) {
-			logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
-			throw new Exception("Daily budget is too low to do anything with this adgroup...");
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Daily budget is too low to do anything with this adgroup...");
 		}
 		final Double maxBidDouble = new Double(maxBid * 0.95 * 1e6);
 		final Long maxBidDoubleLong = maxBidDouble.longValue();
@@ -376,14 +376,14 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 5. Database call: store bid data
 		try {
-			logger.info("Trying to write the bid data to the database...");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write the bid data to the database...");
 			SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
-			logger.info("Stroed bid data to the database for "+ bidData.size() + " keywords.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Stroed bid data to the database for "+ bidData.size() + " keywords.");
 
 		} catch (Exception e) {
-			logger.error("ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to store bid data to the database. "+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to store bid data to the database. "+ e.getMessage(), e);
 		}
 		
 		
@@ -393,22 +393,22 @@ public class BidGeneratorObj
 		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(1.1,2))) / 10000L) * 10000L);
 		
 		try {
-			logger.info("Trying to write the default bid to the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write the default bid to the database.");
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
-			logger.info("Written default bid to the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Written default bid to the database.");
 
 		} catch (Exception e) {
-			logger.error("ERROR: Unable to write the default bid to the database. "+ e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to write the default bid to the database. "+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to write the default bid to the database. "+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to write the default bid to the database. "+ e.getMessage(), e);
 		}
 		
 		/* ******************************************************************************************* */
 		// 7. SE API call: Update matchType, bid for keywords
 		if (searchEngine == AdEngine.Google)
 		{
-			logger.info("Trying to update bids with Google.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update bids with Google.");
 
 			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
@@ -425,7 +425,7 @@ public class BidGeneratorObj
 			}
 			final int batchSize = 500;
 			final List<List<GoogleSetBidForKeywordRequest>> requestBatches = SemplestUtils.getBatches(requests, batchSize);
-			logger.info("Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
 			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
 			{
 				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
@@ -440,21 +440,21 @@ public class BidGeneratorObj
 						b.setMicroBidAmount(null);
 					}
 				}
-				logger.info("Trying to update bids with MSN.");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update bids with MSN.");
 				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
 			} catch (Exception e) {
-				logger.error("ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
-				throw new Exception("Failed to update bids to MSN. "+ e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
 			}
 
 		} // if(searchEngine.equalsIgnoreCase(msn))
 
-		logger.info("Updated bids and match type for keywords via the search engine API.");
+		logger.info("[PromotionID: "+promotionID+ "]" + "Updated bids and match type for keywords via the search engine API.");
 
 		/* ******************************************************************************************* */
 		// 8. SE API call: Update default bid for campaign
 		if (searchEngine == AdEngine.Google){
-			logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
 
 			int k = 0;
 			while (true) {
@@ -465,34 +465,34 @@ public class BidGeneratorObj
 				} catch (Exception e) {
 					if (k <= maxRetry) {
 						// e.printStackTrace();
-						logger.error("Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
+						logger.error("[PromotionID: "+promotionID+ "]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
 						k++;
 					} else {
 						// e.printStackTrace();
-						logger.error( "Failed to update default microBid via Google API. " + e.getMessage(), e);
-						throw new Exception( "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						logger.error( "[PromotionID: "+promotionID+ "]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						throw new Exception( "[PromotionID: "+promotionID+ "]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
 		}
 		if(searchEngine == AdEngine.MSN){
 			try{
-				logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
 				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, Math.max(defaultMicroBid.doubleValue()*1e-6, 0.05), 0.05, 0.05);
 			} catch(Exception e){
-				logger.error( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
-				throw new Exception( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
 			}
 		}
 		
-		logger.info("Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
+		logger.info("[PromotionID: "+promotionID+ "]" + "Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
 		
 		/* ******************************************************************************************* */
 		// 9. SE API call: Pause the selected keywords 
 		
 		if( pauseMap.size()>0){
 		if (searchEngine == AdEngine.Google){
-			logger.info("Trying to pause " + pauseMap.size() + " keywords");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to pause " + pauseMap.size() + " keywords");
 			int k = 0;
 			while (true) {
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
@@ -502,27 +502,27 @@ public class BidGeneratorObj
 				} catch (Exception e) {
 					if (k <= maxRetry) {
 						// e.printStackTrace();
-						logger.error("Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
+						logger.error("[PromotionID: "+promotionID+ "]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
 						k++;
 					} else {
 						// e.printStackTrace();
-						logger.error( "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
-						throw new Exception( "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+						logger.error( "[PromotionID: "+promotionID+ "]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+						throw new Exception("[PromotionID: "+promotionID+ "]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
 		}
 		if(searchEngine == AdEngine.MSN){
 			try{
-				logger.info("Trying to pause " + pauseMap.size() + " keywords");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to pause " + pauseMap.size() + " keywords");
 				msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
 			} catch(Exception e){
-				logger.error( "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
-				throw new Exception( "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
 			}
 		}
 		} else {
-			logger.info("No keywords to pause at this time.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "No keywords to pause at this time.");
 		}
 					
 		return true;
@@ -538,7 +538,7 @@ public class BidGeneratorObj
 		int k;
 		TrafficEstimatorObject o = null;
 
-		logger.info("setBidsInitial called for ad engine " + searchEngine);
+		logger.info("[PromotionID: "+promotionID+ "]" + "setBidsInitial called for ad engine " + searchEngine);
 
 
 		/* ******************************************************************************************* */
@@ -554,19 +554,19 @@ public class BidGeneratorObj
 			campaignID = adEngineInfo.getCampaignID();
 			adGroupID = adEngineInfo.getAdGroupID();
 		} catch (Exception e) {
-			logger.error(
+			logger.error("[PromotionID: "+promotionID+ "]" + 
 					"Failed to get AdEngineID from the database. "
 							+ e.getMessage(), e);
-			throw new Exception("Failed to get AdEngineID from the database. "
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get AdEngineID from the database. "
 					+ e.getMessage(), e);
 		}
 
 		if (searchEngine == AdEngine.Google) {
-			logger.info("Got campaign related IDs from the database"
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got campaign related IDs from the database"
 					+ " Google Account " + googleAccountID + ":"
 					+ "CampaignID = " + campaignID + ":" + adGroupID);
 		} else if (searchEngine == AdEngine.MSN) {
-			logger.info("Got campaign related IDs from the database"
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got campaign related IDs from the database"
 					+ " MSN Account " + msnAccountID + ":" + "CampaignID = "
 					+ campaignID + ":" + adGroupID);
 		}
@@ -597,12 +597,12 @@ public class BidGeneratorObj
 					break;
 				} catch (Exception e) {
 					if (k <= maxRetry) {
-						logger.error("Received exception getAllBiddableAdGroupCriteria AccountID = "
+						logger.error("[PromotionID: "+promotionID+ "]" + "Received exception getAllBiddableAdGroupCriteria AccountID = "
 								+ googleAccountID + " AdGroupID = "+ String.valueOf(adGroupID)+ ": will retry..., k=" + k
 								+ e.getMessage(), e);
 						k++;
 					} else {
-						logger.error("Failed to get BiddableAdGroupCriteria from Google after "+ k + " efforts " + e.getMessage(), e);
+						logger.error("[PromotionID: "+promotionID+ "]" + "Failed to get BiddableAdGroupCriteria from Google after "+ k + " efforts " + e.getMessage(), e);
 						throw new Exception("Failed to get BiddableAdGroupCriteria from Google after "+ k + " efforts " + e.getMessage(), e);
 					}
 				} // try-catch
@@ -613,7 +613,7 @@ public class BidGeneratorObj
 				wordIDMap.put(b.getKeyword(), b.getBidID());
 			}
 
-			logger.info("Got biddable adgroup criterion from Google.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Got biddable adgroup criterion from Google.");
 		} // if(searchEngine.equalsIgnoreCase(google))
 
 		/* ******************************************************************************************* */
@@ -683,8 +683,8 @@ public class BidGeneratorObj
 				}
 				
 			} catch (Exception e) {
-				logger.error("Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
-				throw new Exception("Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" + "Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get MSN traffic estimator data for using in Google campaign. " + e.getMessage(), e);
 			}
 			
 			
@@ -728,8 +728,8 @@ public class BidGeneratorObj
 				}
 				
 			} catch (Exception e) {
-				logger.error("Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
-				throw new Exception("Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" + "Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to get MSN keywords and traffic estimator data. " + e.getMessage(), e);
 			}
 		} // if(searchEngine.equalsIgnoreCase(msn))
 		
@@ -888,8 +888,8 @@ public class BidGeneratorObj
 			double marginFactor = 2.0;
 			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 			if(maxBid<=0.05) {
-				logger.error("ERROR: Daily budget is too low to do anything with this adgroup...");
-				throw new Exception("Daily budget is too low to do anything with this adgroup...");
+				logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Daily budget is too low to do anything with this adgroup...");
 			}
 			maxBid*=0.95;
 			
@@ -903,13 +903,13 @@ public class BidGeneratorObj
 			while (wordIT.hasNext()){
 				String s = wordIT.next();
 				wordBidMap.put(s, (new Double(bidData.get(s)*1e6).longValue())/10000L*10000L);
-				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+				logger.info("[PromotionID: "+promotionID+ "]" + "Microbid for keyword "+s+" is "+wordBidMap.get(s));
 			}
 			
 		}
 		
 
-		logger.info("Computed bids for competitive keywords.");
+		logger.info("[PromotionID: "+promotionID+ "]" + "Computed bids for competitive keywords.");
 		//logger.info("No competitive keywords.");
 
 		/* ******************************************************************************************* */
@@ -936,11 +936,11 @@ public class BidGeneratorObj
 				//wordBidMap.put(s, Math.min(firstPageCPCMap.get(s) + stepAboveFpCPC, maxMicroBid));
 				//wordBidMap.put(s, defaultMicroBid);
 				wordBidMap.put(s, null);
-				logger.info("Microbid for keyword "+s+" is "+wordBidMap.get(s));
+				logger.info("[PromotionID: "+promotionID+ "]" + "Microbid for keyword "+s+" is "+wordBidMap.get(s));
 
 
 			}
-			logger.info("Computed bids for non-competitive keywords.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Computed bids for non-competitive keywords.");
 		}
 
 		/* ******************************************************************************************* */
@@ -1014,16 +1014,16 @@ public class BidGeneratorObj
 		// 11. [google] Database call: write adgroup criterion
 		if (keywordDataObjs != null && keywordDataObjs.length > 0) {
 			if (searchEngine == AdEngine.Google) {
-				logger.info("Trying to write adgroup criterion data to database for Google.");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write adgroup criterion data to database for Google.");
 				try {
 					SemplestDB.storeKeywordDataObjects(promotionID,AdEngine.Google, new ArrayList<KeywordDataObject>(Arrays.asList(keywordDataObjs)));
 				} catch (Exception e) {
-					logger.error("Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
-					throw new Exception("Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
+					logger.error("[PromotionID: "+promotionID+ "]" + "Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to store Google adGroupCriterion data to database. "+ e.getMessage(), e);
 				}
 			} // if(searchEngine.equalsIgnoreCase(google))
 
-			logger.info("Stored adgroup criterion data to database for Google");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Stored adgroup criterion data to database for Google");
 		}
 		
 		/* ******************************************************************************************* */
@@ -1031,16 +1031,16 @@ public class BidGeneratorObj
 
 		if (o != null) 
 		{
-			logger.info("Trying to write traffic estimator data to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write traffic estimator data to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 			try {
 				SemplestDB.storeTrafficEstimatorData(promotionID, searchEngine,o);
 			} catch (Exception e) {
-				logger.error("Failed to write traffic estimator data for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]" + e.getMessage(), e);
-				throw new Exception("Failed to write traffic estimator data "+ e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" + "Failed to write traffic estimator data for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]" + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to write traffic estimator data "+ e.getMessage(), e);
 			}
-			logger.info("Stored traffic estimator data to database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Stored traffic estimator data to database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 		} else {
-			logger.info("No traffic estimator data to write to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
+			logger.info("[PromotionID: "+promotionID+ "]" + "No traffic estimator data to write to the database for PromotionID [" + promotionID + "], AdEngine [" + searchEngine + "]");
 		}
 
 
@@ -1073,7 +1073,7 @@ public class BidGeneratorObj
 				competitiveType = ProtocolEnum.SemplestCompetitionType.NoInfo
 						.name();
 			} else {
-				throw new Exception(
+				throw new Exception("[PromotionID: "+promotionID+ "]" + 
 						"Unknown competition type. Internal error in bidding service!");
 			}
 			bidsMatchType.add(new BidElement(word, wordIDMap.get(word),
@@ -1084,19 +1084,19 @@ public class BidGeneratorObj
 
 		try {
 			if (bidsMatchType.size() > 0) {
-				logger.info("Trying to write the bid data to the database...");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write the bid data to the database...");
 				SemplestDB.storeBidObjects(promotionID, searchEngine,
 						bidsMatchType);
-				logger.info("Stroed bid data to the databse for "
+				logger.info("[PromotionID: "+promotionID+ "]" + "Stroed bid data to the databse for "
 						+ bidsMatchType.size() + " keywords.");
 			} else {
-				logger.info("No bid data to write to the databse");
+				logger.info("[PromotionID: "+promotionID+ "]" + "No bid data to write to the databse");
 			}
 		} catch (Exception e) {
-			logger.error("ERROR: Unable to store bid data to the database. "
+			logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to store bid data to the database. "
 					+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("Failed to store bid data to the database. "
+			throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to store bid data to the database. "
 					+ e.getMessage(), e);
 		}
 		
@@ -1111,28 +1111,28 @@ public class BidGeneratorObj
 
 		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine))
 		{
-			logger.info("Trying to write the default bid to the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to write the default bid to the database.");
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 		}
 
-		logger.info("Stroed default bid " + defaultMicroBid + " to databse and requested for updating all bids for keywords with default bid.");
+		logger.info("[PromotionID: "+promotionID+ "]" + "Stroed default bid " + defaultMicroBid + " to databse and requested for updating all bids for keywords with default bid.");
 		
 		
 
 		/* ******************************************************************************************* */
 		// 15. Database call: write targeted daily budget etc
 		try {
-			logger.info("Trying to store targeted daily budget data to the database.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to store targeted daily budget data to the database.");
 			SemplestDB.storeTargetedDailyBudget(promotionID, searchEngine,
 					totalDailyCost, totalDailyClick.intValue());
-			logger.info("Stroed targeted daily budget data to the databse.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Stroed targeted daily budget data to the databse.");
 		} catch (Exception e) {
-			logger.error(
+			logger.error("[PromotionID: "+promotionID+ "]" + 
 					"ERROR: Unable to store targeted daily budget data to the database. "
 							+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception(
+			throw new Exception("[PromotionID: "+promotionID+ "]" + 
 					"Failed to store targeted daily budget data to the database."
 							+ e.getMessage(), e);
 		}
@@ -1141,7 +1141,7 @@ public class BidGeneratorObj
 		// 16. SE API call: Update matchType, bid for keywords
 		if (searchEngine == AdEngine.Google)
 		{
-			logger.info("Trying to update bids with Google.");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update bids with Google.");
 
 			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
@@ -1158,7 +1158,7 @@ public class BidGeneratorObj
 			}
 			final int batchSize = 500;
 			final List<List<GoogleSetBidForKeywordRequest>> requestBatches = SemplestUtils.getBatches(requests, batchSize);
-			logger.info("Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
 			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
 			{
 				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
@@ -1173,21 +1173,21 @@ public class BidGeneratorObj
 						b.setMicroBidAmount(null);
 					}
 				}
-				logger.info("Trying to update bids with MSN.");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update bids with MSN.");
 				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidsMatchType);
 			} catch (Exception e) {
-				logger.error("ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
-				throw new Exception("Failed to update bids to MSN. "+ e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
 			}
 
 		} // if(searchEngine.equalsIgnoreCase(msn))
 
-		logger.info("Updated bids and match type for keywords via the search engine API.");
+		logger.info("[PromotionID: "+promotionID+ "]" + "Updated bids and match type for keywords via the search engine API.");
 
 		/* ******************************************************************************************* */
 		// 17. SE API call: Update default bid for campaign
 		if (searchEngine == AdEngine.Google){
-			logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+			logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
 
 			k = 0;
 			while (true) {
@@ -1198,27 +1198,27 @@ public class BidGeneratorObj
 				} catch (Exception e) {
 					if (k <= maxRetry) {
 						// e.printStackTrace();
-						logger.error("Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
+						logger.error("[PromotionID: "+promotionID+ "]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
 						k++;
 					} else {
 						// e.printStackTrace();
-						logger.error( "Failed to update default microBid via Google API. " + e.getMessage(), e);
-						throw new Exception( "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						logger.error("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						throw new Exception("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via Google API. " + e.getMessage(), e);
 					}
 				} // try-catch
 			} // while(true)
 		}
 		if(searchEngine == AdEngine.MSN){
 			try{
-				logger.info("Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+				logger.info("[PromotionID: "+promotionID+ "]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
 				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, Math.max(defaultMicroBid.doubleValue()*1e-6, 0.05), 0.05, 0.05);
 			} catch(Exception e){
-				logger.error( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
-				throw new Exception( "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				logger.error("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				throw new Exception("[PromotionID: "+promotionID+ "]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
 			}
 		}
 		
-		logger.info("Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
+		logger.info("[PromotionID: "+promotionID+ "]" + "Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
 
 		return new Boolean(true);
 
@@ -1230,31 +1230,31 @@ public class BidGeneratorObj
 
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		isFirstCall = false;
-		logger.info("setBidsUpdate called!!");
+		logger.info("[PromotionID: "+promotionID+ "]" + "setBidsUpdate called!!");
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(promotionID);
 		PromotionObj promotion = getPromoDataSP.getPromotionData();
-		logger.info("Promotion creation date: " + promotion.getCreatedDate());
-		logger.info("Promotion start date: "
+		logger.info("[PromotionID: "+promotionID+ "]" + "Promotion creation date: " + promotion.getCreatedDate());
+		logger.info("[PromotionID: "+promotionID+ "]" + "Promotion start date: "
 				+ promotion.getPromotionStartDate());
 		Date d = promotion.getPromotionStartDate();
 		Date today = new Date();
 		Long diff = today.getTime() - d.getTime();
 		long age = diff / (1000 * 60 * 60 * 24);
 
-		logger.info("The campaign started " + age + " day(s) ago.");
+		logger.info("[PromotionID: "+promotionID+ "]" + "The campaign started " + age + " day(s) ago.");
 
 		if (age <=10 ) {
 			if(age%2==0){
-				logger.info("Executing update bids method...");
+				logger.info("[PromotionID: "+promotionID+ "]" + "Executing update bids method...");
 				return setBidsInitialWeek(promotionID, searchEngine, budgetData);
 			} else {
-				logger.info("setBidsUpdate not doing anything TODAY!!");
+				logger.info("[PromotionID: "+promotionID+ "]" + "setBidsUpdate not doing anything TODAY!!");
 				return new Boolean(true);
 			}
 		} else {
-			logger.info("Logic to bid after 10th day is not implemented yet!!");
+			logger.info("[PromotionID: "+promotionID+ "]" + "Logic to bid after 10th day is not implemented yet!!");
 			return new Boolean(true);
 		}
 	} // setBidsUpdate()
@@ -1748,21 +1748,22 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(114);
+			Integer promotionID = new Integer(117);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
+			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
+			//bidObject.setBidsUpdate(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 			
-//			AdEngine searchEngine = AdEngine.Google;
-//			
-//			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
-//			String accountID = String.valueOf(adEngineInfo.getAccountID());
-//
-//			long campaignID = adEngineInfo.getCampaignID();
-//			long adGroupID = adEngineInfo.getAdGroupID();
-//			
-//			System.out.println(accountID+" "+campaignID+" "+adGroupID);
+			AdEngine searchEngine = AdEngine.Google;
+			
+			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+			String accountID = String.valueOf(adEngineInfo.getAccountID());
+
+			long campaignID = adEngineInfo.getCampaignID();
+			long adGroupID = adEngineInfo.getAdGroupID();
+			
+			System.out.println(accountID+" "+campaignID+" "+adGroupID);
 			
 			
 
@@ -1797,14 +1798,14 @@ public class BidGeneratorObj
 			
 			
 			
-//			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-//			Date now = new Date();
-//			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-//			Calendar cal = Calendar.getInstance();
-//			cal.setTime(now);
-//			cal.add(Calendar.DAY_OF_MONTH, -30);
-//			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-//			System.out.println("Number of report entries: "+reportObjList.length);
+			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+			Date now = new Date();
+			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(now);
+			cal.add(Calendar.DAY_OF_MONTH, -0);
+			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			System.out.println("Number of report entries: "+reportObjList.length);
 			
 			
 			/*
