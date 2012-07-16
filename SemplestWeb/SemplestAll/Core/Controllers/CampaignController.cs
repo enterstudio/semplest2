@@ -314,6 +314,7 @@ namespace Semplest.Core.Controllers
             }
             catch (Exception ex)
             {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
                 if (ex.Message.Contains("Not enough data provided"))
                     return Json("Invalid words/phrases, URL or ADs<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
                 else
