@@ -67,14 +67,14 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 			if(description==null || description.length()<=0) throw new Exception("No description data provided");
 			description = description.toLowerCase().replaceAll("\\p{Punct}", " ");
 			if(url!=null) url = TextUtils.formURL(url);
-			ArrayList<String> categories = this.getCategories(description);
+			ArrayList<String> categories = this.getCategories(description, geo);
 			return categories;
 		}catch(Exception e){
 			logger.error(e.toString());
 			throw e;
 		}
 	}
-	public ArrayList<String> getCategories(String searchTerm) throws Exception {
+	public ArrayList<String> getCategories(String searchTerm, GeoTargetObject geo) throws Exception {
 		//Get category results from dmoz query
 		try{
 			String qs="";
@@ -84,18 +84,28 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 			ArrayList<String> optInitial = new ArrayList<String>();
 			int numresults = 100; // Number of results from the query
 			qs=searchTerm;
+			int iter = 0 ;
 			String qsStem = this.stemvString( qs, data.dict );
 			if(qsStem !=null && qsStem.length()>0){
 				logger.debug(qsStem);
-				res = data.dl.search(qsStem,numresults);
-				for(int i=0; i<res.length; i++){
-					categories = res[i].replaceAll("\\s+", "");
-					if(catUtils.validcat(categories))
-							optInitial.add(categories);
-							//logger.debug(categories);
+				while(optInitial.size()<numresults && iter<3 ){
+					res = data.dl.search(qsStem,numresults*iter+1);
+					for(int i=0; i<res.length; i++){
+						categories = res[i].replaceAll("\\s+", "");
+						if(catUtils.validcat(categories)){
+							if(geo.getState()!=null && !geo.getState().isEmpty() && categories.contains("top/regional")){
+								if(categories.contains("top/regional/north_america/united_states/"+data.states.get(geo.getState()))){
+									optInitial.add(categories);
+								}
+							}else{
+								optInitial.add(categories);
+							}
+						}
+					}
+					iter++;
 				}
 				//Select repeated patterns
-				optList= selectOptions(optInitial);
+				optList= selectOptions(optInitial, geo);
 			}
 			return optList;
 		}catch(Exception e){
@@ -155,7 +165,7 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 		    	if(numKw[i]>numkw)
 		    		numkw=numKw[i];
 		    }
-			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, nGrams);
+			ArrayList<ArrayList<KeywordProbabilityObject>> keywords = this.getKeywords(categories, description, stemdata1, numkw, srchE, gt, nGrams);
 			HashMap<KeywordProbabilityObject, Double> map = new HashMap<KeywordProbabilityObject, Double>();
 			int num = 0;
 			for(ArrayList<KeywordProbabilityObject> list1 : keywords){
@@ -184,7 +194,7 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 	
 
 	public ArrayList<ArrayList<KeywordProbabilityObject>> getKeywords(ArrayList<String> categories, String searchTerm, String data1,  
-			int numkw, ArrayList<SearchEngine> srchE, Integer[] nGrams) throws Exception {
+			int numkw, ArrayList<SearchEngine> srchE, GeoTargetObject[] gt,Integer[] nGrams) throws Exception {
 		try{
 			//Create a ArrayList of the categories that satisfy options selected by the user and ArrayList
 			//with data form those categories
@@ -201,12 +211,16 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 					if(cataux.indexOf("top/regional")==0){
 						cataux = cataux.replaceAll("top/regional/", "");
 						String cattail = catUtils.revert(cataux);
-						if(label.contains("top/regional")&& label.contains(cattail)){
+						if(gt[0].getState()!=null && !gt[0].getState().isEmpty()){
+							if(label.contains("top/regional/north_america/united_states/"+data.states.get(gt[0].getState()))&& label.contains(cattail)){
+								optCateg.add(label);
+								trainLines.add(data.TrainingData.get(label));
+							}
+						}else if(label.contains("top/regional")&& label.contains(cattail)){
 							optCateg.add(label);
 							trainLines.add(data.TrainingData.get(label));
 						}
-					}
-					if( label.indexOf( cataux ) == 0 ) {
+					}else if( label.indexOf( cataux ) == 0 ) {
 						//logger.debug(label);
 	    				optCateg.add(label);
 	    				//Gather training data
@@ -554,6 +568,15 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 					keywords.add(kProb);
 			    	i++;
 		    }
+		    System.out.println("Bigrams:");
+		    
+		    if(nGrams==2){
+		    	PrintStream pr = new PrintStream(new FileOutputStream("/semplest/data/biddingTest/keywords100.txt"));
+		    	for(KeywordProbabilityObject kw : keywords){
+		    		pr.println(kw.getKeyword());
+		    	}
+		    }
+		    
 		    return keywords;
 		
 	}
@@ -584,15 +607,23 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 	}
 	
 	
-	private static ArrayList<String> selectOptions(ArrayList<String> optKeys) throws IOException{
+	private static ArrayList<String> selectOptions(ArrayList<String> optKeys, GeoTargetObject geo) throws IOException{
 		//Selects patterns from top categories list to generate options for the user based on pre-defined crieteria
-
+		ArrayList<String> categories = new ArrayList<String>();
+		
 		for(int n=0; n<optKeys.size(); n++){
 			if(optKeys.get(n).contains("top/regional")){
-				//String newName = cat.code(optKeys.get(n));
-				String newName = optKeys.get(n).replaceAll("top/regional/", "");
-				newName = "top/regional/"+catUtils.revert(newName);
-				optKeys.set(n, newName);
+				if(geo.getState()== null || geo.getState().isEmpty()){
+					String newName = optKeys.get(n).replaceAll("top/regional/", "");
+					newName = "top/regional/"+catUtils.revert(newName);
+					optKeys.set(n, newName);
+				}else{
+					String newName = optKeys.get(n).replaceAll("top/regional/north_america/united_states/"+data.states.get(geo.getState()), "");
+					newName = "top/regional/"+catUtils.revert(newName);
+					optKeys.set(n, newName);
+				}
+				
+
 			}
 		}
 
@@ -638,7 +669,7 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 		    		}
 		    	}
 	    	}else{
-	    		if(numNodes>=4  && numrepeat >3){
+	    		if(numNodes>=4  && numrepeat >=3){
 		    		if(catUtils.last(optKey).length()>1){
 			    		if(!optList2.containsKey(catUtils.take(optKey, numNEval))){
 			    			optList2.put(catUtils.take(optKey, numNEval),new Double(numNodes));
@@ -658,7 +689,6 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 	    	numtop=5;
 	    else
 	    	numtop=4;
-	    numtop=0;
 	    int numresults=0;
 	    for(int i=0; i<optKeys.size(); i++){
 	    	if(numresults>=numtop) break;
@@ -892,8 +922,8 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 			
 			
 			Double startTime = new Long(System.currentTimeMillis()).doubleValue();
-			Integer[] nGrams = {300,300,100};
-			KeywordProbabilityObject[] kw = kwGen.getKeywords(categories,null, new String[] {"Google","MSN"}, uInf, searchTerm[0], adds, url, null ,nGrams);
+			Integer[] nGrams = {100,300,100};
+			KeywordProbabilityObject[] kw = kwGen.getKeywords(categories,null, new String[] {"Google","MSN"}, uInf, searchTerm[0], adds, url, new GeoTargetObject[] {geo} ,nGrams);
 			Double endTime =  new Long(System.currentTimeMillis()).doubleValue();
 			System.out.println("Time for keywords: "+(endTime-startTime));
 			for(KeywordProbabilityObject k: kw){
