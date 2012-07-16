@@ -118,7 +118,7 @@ public class TestServiceClient extends ServiceRun implements TestServiceInterfac
 	}
 
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input1, String input2) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

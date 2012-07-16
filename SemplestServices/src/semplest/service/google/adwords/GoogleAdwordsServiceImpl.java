@@ -4059,7 +4059,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 	}
 
 	@Override
-	public String checkStatus(String input) throws Exception 
+	public String checkStatus(String input1, String input2) throws Exception 
 	{
 		return ServiceStatus.Up.getServiceStatusValue();
 	}

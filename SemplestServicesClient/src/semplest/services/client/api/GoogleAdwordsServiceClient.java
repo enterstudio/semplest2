@@ -758,9 +758,9 @@ public class GoogleAdwordsServiceClient extends ServiceRun implements GoogleAdwo
 	}
 	
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input1, String input2) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("input", input);
+		jsonHash.put("input", input1);
 		String json = protocolJson.createJSONHashmap(jsonHash);
 		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
 		return ret;

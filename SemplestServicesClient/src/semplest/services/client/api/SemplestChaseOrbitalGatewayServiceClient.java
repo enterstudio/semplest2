@@ -170,11 +170,11 @@ public class SemplestChaseOrbitalGatewayServiceClient extends ServiceRun impleme
 	}
 
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String esbUrl, String timeout) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("input", input);
+		jsonHash.put("input", esbUrl);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeoutMS);
+		String ret = runMethod(esbUrl, SERVICEOFFERED, "checkStatus", json, timeout);
 		return ret;
 	}
 }

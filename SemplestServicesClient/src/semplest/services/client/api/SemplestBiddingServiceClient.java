@@ -188,11 +188,11 @@ public class SemplestBiddingServiceClient extends ServiceRun implements Semplest
 	}
 
 	@Override
-	public String checkStatus(String timeout) throws Exception {
+	public String checkStatus(String esbUrl, String timeout) throws Exception {
 		HashMap<String, String> jsonHash = new HashMap<String, String>();		
-		jsonHash.put("input", timeout);
+		jsonHash.put("input", esbUrl);
 		String json = protocolJson.createJSONHashmap(jsonHash);
-		String ret = runMethod(baseurl,SERVICEOFFERED, "checkStatus", json, timeout);
+		String ret = runMethod(esbUrl,SERVICEOFFERED, "checkStatus", json, timeout);
 		return ret;
 	}
 }
