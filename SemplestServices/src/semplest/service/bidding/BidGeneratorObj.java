@@ -75,7 +75,7 @@ public class BidGeneratorObj
 	private Long stepRest;// = 800000L;
 	
 	Double googlePercent;
-	Double budgetFactor;
+	Float budgetFactor;
 	
 
 	private String googleAccountID = null;
@@ -159,7 +159,7 @@ public class BidGeneratorObj
 		
 		final Integer googlePercentInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");		
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
-		budgetFactor = (Double)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
+		budgetFactor = (Float)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		
 		
 		final Double budgetBoostFactorDouble = (Double) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
