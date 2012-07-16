@@ -37,6 +37,7 @@ import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.service.SemplestConfiguration;
@@ -84,6 +85,10 @@ public class BidGeneratorObj
 	
 	private boolean isFirstCall = true;
 	private double clickFactor = 10.0;
+	
+	double percentileValue;
+	double marginFactor=1.0;
+	double budgetBoost=1.0;
 
 	private GoogleAdwordsServiceImpl clientGoogle;
 	private MsnCloudServiceImpl msnClient;
@@ -155,7 +160,17 @@ public class BidGeneratorObj
 		final Integer googlePercentInteger = (Integer)SemplestConfiguration.configData.get("SemplestBiddingGooglePercent");		
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
 		budgetFactor = (Double)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
-		//budgetFactor = Double.valueOf("" + budgetFactorInteger); 
+		
+		
+		final Double budgetBoostFactorDouble = (Double) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
+		budgetBoost = budgetBoostFactorDouble.doubleValue();
+		
+		final Integer percentileValInteger = (Integer) SemplestConfiguration.configData.get("SemplestBiddingPercentileValue"); 
+		percentileValue = percentileValInteger.doubleValue();
+		
+		final Double marginFactorDouble = (Double) SemplestConfiguration.configData.get("SemplestBiddingMarginFactor"); 
+		marginFactor = marginFactorDouble.doubleValue();
+		
 		
 
 		 
@@ -227,7 +242,7 @@ public class BidGeneratorObj
 			adEngineInitialDataObject.setSemplestMatchType(ProtocolEnum.SemplestMatchType.Exact.name());
 			adEngineInitialDataObject.setNetworkSetting(networkSetting);
 			
-			double seMonthlyBudget = totalMonthlyBudget*budgetMap.get(se)/100.0;
+			double seMonthlyBudget = totalMonthlyBudget*budgetMap.get(se)/100.0 * budgetBoost;
 			double seDailyBudget = seMonthlyBudget/30*budgetFactor;
 			
 			adEngineInitialDataObject.setMonthlyBudget(seMonthlyBudget);
@@ -884,14 +899,19 @@ public class BidGeneratorObj
 		if(compKeywords.size()>0){
 			bidOptimizer.setDailyBudget(targetDailyBudget);
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
-			double percentileValue = 85.0;
-			double marginFactor = 2.0;
+			
+			
 			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 			if(maxBid<=0.05) {
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Daily budget is too low to do anything with this adgroup...");
 			}
 			maxBid*=0.95;
+			
+			
+			BiddingParameters  bidParams = SemplestDB.getBiddingParameters();
+			percentileValue = bidParams.getSemplestBiddingPercentileValue().doubleValue();
+			marginFactor = bidParams.getSemplestBiddingMarginFactor().doubleValue();
 			
 			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor,maxBid);
 			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
