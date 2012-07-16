@@ -123,26 +123,35 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 */
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 
-			ArrayList<String> adEngList = new ArrayList<String>();
-			adEngList.add("Google");
-			String scheduleName = "Test_OnGoingBidding2";
+			
 			// Schedule for next day at the same time
 
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			/*
-			 * ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); SemplestSchedulerTaskObject
-			 * executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(60, adEngList); listOfTasks.add(executeOngoinBiddingTask);
-			 * CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,
-			 * ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
-			 */
-
+			
+			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN, AdEngine.Google);
+			String scheduleName = "Test_OnGoingBidding3";
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
+			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(10, adEngines); 
+			listOfTasks.add(executeOngoinBiddingTask);
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			 
+/*
 			final Integer customerID = 12;
 			final Integer productGroupID = 76;
 			final Integer PromotionID = 62;
 			final List<AdEngine> adEngineList = Arrays.asList(AdEngine.MSN);
 			adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
-
+*/
+			
+			/*
+			final Integer promotionID = 999;
+			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN, AdEngine.Google);
+			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
+			listOfTasks.add(executeOngoinBiddingTask);
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new java.util.Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
+			*/
 			// adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
 
 			// SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();

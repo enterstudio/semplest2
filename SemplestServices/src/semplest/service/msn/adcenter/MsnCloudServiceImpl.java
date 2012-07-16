@@ -2909,6 +2909,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	public TrafficEstimatorObject getKeywordEstimateByBids(Long accountId, String[] keywords, Long[] microBidAmount, MatchType matchType)
 			throws MsnCloudException
 	{
+		logger.info("Will try to get Keyword Estimate by Bids using AccountID [" + accountId + "], " + keywords.length + " Keywords, " + microBidAmount.length + " MicroBidAmounts, MatchType [" + matchType + "]");
+		final List<String> keywordList = Arrays.asList(keywords);
+		final List<Long> microBidAmountList = Arrays.asList(microBidAmount);
+		logger.info("Keywords:\n" + SemplestUtils.getEasilyReadableString(keywordList));
+		logger.info("MicroBidAmounts:\n" + SemplestUtils.getEasilyReadableString(microBidAmountList));
 		TrafficEstimatorObject ret = new TrafficEstimatorObject();
 		try
 		{
