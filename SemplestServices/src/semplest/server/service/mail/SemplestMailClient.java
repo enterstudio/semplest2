@@ -18,7 +18,7 @@ public class SemplestMailClient
 		}
 		catch (Exception e)
 		{
-			logger.error("Error Sending Email: " + subject + ":" + from + ":" + recipient + ":" + msgTxt);
+			logger.error("Error Sending Email: " + subject + ":" + from + ":" + recipient + ":" + msgTxt, e);
 			throw e;
 		}
 	}
