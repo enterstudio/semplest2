@@ -1264,18 +1264,20 @@ public class BidGeneratorObj
 
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "The campaign started " + age + " day(s) ago.");
 
-		if (age <=10 ) {
-			if(age%2==0){
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
-				return setBidsInitialWeek(promotionID, searchEngine, budgetData);
-			} else {
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate not doing anything TODAY!!");
-				return new Boolean(true);
-			}
-		} else {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Logic to bid after 10th day is not implemented yet!!");
-			return new Boolean(true);
-		}
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
+		return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+//		if (age <=10 ) {
+//			if(age%2==0){
+//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
+//				return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+//			} else {
+//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate not doing anything TODAY!!");
+//				return new Boolean(true);
+//			}
+//		} else {
+//			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Logic to bid after 10th day is not implemented yet!!");
+//			return new Boolean(true);
+//		}
 	} // setBidsUpdate()
 
 	

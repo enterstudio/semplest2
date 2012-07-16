@@ -129,12 +129,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN, AdEngine.Google);
-			String scheduleName = "Test_OnGoingBidding3";
+			final Integer promotionID = 125;
+			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
+			String scheduleName = "Manual_OnGoingBidding_Promo_125";
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(10, adEngines); 
+			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines); 
 			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, 60, null, null, null);
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
 			 
 /*
 			final Integer customerID = 12;
@@ -1031,6 +1032,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	@Override
 	public Boolean ExecuteBidProcess(Integer PromotionID, List<AdEngine> adEngineList) throws Exception
 	{
+		logger.info("Will try to execute bid process for PromotionID [" + PromotionID + "], AdEngines [" + adEngineList + "]");
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
