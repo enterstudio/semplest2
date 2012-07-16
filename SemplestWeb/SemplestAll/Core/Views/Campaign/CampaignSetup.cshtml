@@ -168,6 +168,8 @@
                 }
                 break;
             case "BillingLaunch":
+                tabStrip.reload(tabStrip.tabGroup.children('li:contains("BillingLaunch")'));
+                break;
             case "View Keywords":
                 if ($('#currentMode').val() != "True") {
                     $("#btnOne").removeClass('unselected');
@@ -267,7 +269,7 @@
         }
         else {
             if (id.name == "Keywords") {
-                //alert('in id.name');
+                alert('in ' + id.name);
                 $('#KeywordCount').html(id.count);
                 tab = tabStrip.select();
                 var otherTab1 = tab.prev();
