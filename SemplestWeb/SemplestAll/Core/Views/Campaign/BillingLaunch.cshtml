@@ -259,7 +259,7 @@
         enableDisable();
         if ($('#IsCompleted').val() == 'False' && $('#IsLaunched').val() == 'True') {
             $('#getLaunchAdProduct').attr("readonly", true);
-            $('#agreecheckbox').attr("readonly", true);
+            $('#agreecheckbox').attr("disabled", true);
         }
         var creditCardWindow = $('#creditCardWindow').kendoWindow({
             modal: true,

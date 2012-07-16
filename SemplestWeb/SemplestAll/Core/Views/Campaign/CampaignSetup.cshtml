@@ -301,6 +301,9 @@
         //$("#tabstrip").children('.k-content').height(650);
     }
 
+    $('input[name*="ProductGroup.AdEnginesList"]').click(function (event) {
+        event.preventDefault();
+    });
     $("#btnCancelInvalid").click(function (event) {
         var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
         $('#InvalidDescriptionWindow').hide();
