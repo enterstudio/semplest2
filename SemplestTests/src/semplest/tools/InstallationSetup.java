@@ -12,6 +12,14 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
+/*
+ * How to deploy the InstallationSetup:
+ * 		1) Export latest version of all the 3 projects: 'SEMplestProtocol', 'SemplestService' and 'SemplestServicesClient' as 'SemplestAll.jar'
+			to the /lib folder of SemplestTests project.
+ * 		2) Export the 'SemplestTests' project with Main-class 'InstallationSetup' as a Runnable Jar, to /semplest/nan folder. 
+ * 			All the shortcuts on the server machines would pick up this latest version then.
+ */
+
 public class InstallationSetup {
 	
 	//Configurations
@@ -39,7 +47,13 @@ public class InstallationSetup {
 	private final static String UatServiceServer = "NY-semplestDev2";
 	private final static String UatKeywordServer = "NY-semplestDev2";
 	
-	private enum SERVER_BOX {DEV, TEST, EXP, UAT};
+	//PRODUCTION
+	private final static String ProdJdbc = "jdbc:jtds:sqlserver://10.118.218.132/semplest";
+	private final static String ProdEsbServer = "10.80.130.64";
+	private final static String ProdServiceServer = "10.60.9.49";
+	private final static String ProdKeywordServer = "10.62.79.139";
+	
+	private enum SERVER_BOX {DEV, TEST, EXP, UAT, PROD};
 	
 	private static HashMap<SERVER_BOX, ServerConfiguration> config = new HashMap<SERVER_BOX, ServerConfiguration>();
 	
@@ -51,39 +65,51 @@ public class InstallationSetup {
 		
 		try {
 			InetAddress ownIP = InetAddress.getLocalHost();
-			String hostName = ownIP.getHostName();			
+			String hostName = ownIP.getHostName();		
+						
+			/* =================================== */
+			/*         Development Servers         */
+			/* =================================== */
 			
-			if(hostName.equals(DevEsbServer)){
+			if(hostName.equals(config.get(SERVER_BOX.DEV).esbServer)){
 				//DEV Box ESB
 				is.setEsb(SERVER_BOX.DEV);
 			}
 			
-			if(hostName.equals(DevServiceServer)){
+			if(hostName.equals(config.get(SERVER_BOX.DEV).serviceServer)){
 				//DEV Box Services
 				is.setServices(SERVER_BOX.DEV);
 			}
 			
-			if(hostName.equals(DevKeywordServer)){
+			if(hostName.equals(config.get(SERVER_BOX.DEV).keywordServer)){
 				//DEV Box Keyword Service
 				is.setKeywordService(SERVER_BOX.DEV);
 			}
 			
-			if(hostName.equals(TestEsbServer)){
+			/* =================================== */
+			/*             Test Servers            */
+			/* =================================== */
+			
+			if(hostName.equals(config.get(SERVER_BOX.TEST).esbServer)){
 				//TEST Box ESB
 				is.setEsb(SERVER_BOX.TEST);
 			}
 			
-			if(hostName.equals(TestServiceServer)){
+			if(hostName.equals(config.get(SERVER_BOX.TEST).serviceServer)){
 				//TEST Box Services
 				is.setServices(SERVER_BOX.TEST);
 			}			
 			
-			if(hostName.equals(TestKeywordServer)){
+			if(hostName.equals(config.get(SERVER_BOX.TEST).keywordServer)){
 				//TEST Box Keyword Service
 				is.setKeywordService(SERVER_BOX.TEST);
 			}			
 			
-			if(ownIP.getHostAddress().equalsIgnoreCase(ExpEsbServer)){
+			/* =================================== */
+			/*          Experiment Servers         */
+			/* =================================== */
+			
+			if(ownIP.getHostAddress().equalsIgnoreCase(config.get(SERVER_BOX.EXP).esbServer)){
 				//Exp Box ESB
 				is.setEsb(SERVER_BOX.EXP);
 			}
@@ -98,6 +124,10 @@ public class InstallationSetup {
 				is.setKeywordService(SERVER_BOX.EXP);
 			}
 			
+			/* =================================== */
+			/*             UAT Servers             */
+			/* =================================== */
+			
 			if(hostName.equals(config.get(SERVER_BOX.UAT).esbServer)){				
 				//UAT Box ESB
 				is.setEsb(SERVER_BOX.UAT);
@@ -109,8 +139,27 @@ public class InstallationSetup {
 			}
 			
 			if(hostName.equals(config.get(SERVER_BOX.UAT).keywordServer)){				
-				//UAT Box Keyword Service
+				//UAT Box Keyword service
 				is.setKeywordService(SERVER_BOX.UAT);
+			}
+			
+			/* =================================== */
+			/*          Production Servers         */
+			/* =================================== */			
+						
+			if(ownIP.getHostAddress().equalsIgnoreCase(config.get(SERVER_BOX.PROD).esbServer)){				
+				//PROD Box ESB
+				is.setEsb(SERVER_BOX.PROD);
+			}
+			
+			if(ownIP.getHostAddress().equalsIgnoreCase(config.get(SERVER_BOX.PROD).serviceServer)){				
+				//PROD Box Services
+				is.setServices(SERVER_BOX.PROD);
+			}
+			
+			if(ownIP.getHostAddress().equalsIgnoreCase(config.get(SERVER_BOX.PROD).keywordServer)){				
+				//PROD Box Keyword Service
+				is.setKeywordService(SERVER_BOX.PROD);
 			}
 			
 		} catch (Exception e) {
@@ -223,6 +272,10 @@ public class InstallationSetup {
 		//for UAT box
 		ServerConfiguration uatConfig = new ServerConfiguration(UatJdbc, UatEsbServer, UatServiceServer, UatKeywordServer);
 		config.put(SERVER_BOX.UAT, uatConfig);
+		
+		//for PRODUCTION box
+		ServerConfiguration prodConfig = new ServerConfiguration(ProdJdbc, ProdEsbServer, ProdServiceServer, ProdKeywordServer);
+		config.put(SERVER_BOX.PROD, prodConfig);
 		
 	}
 	

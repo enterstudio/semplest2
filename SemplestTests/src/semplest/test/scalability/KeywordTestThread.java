@@ -174,6 +174,7 @@ public class KeywordTestThread implements Runnable {
 						writer.flush();
 						
 						//noError = false;
+						Thread.sleep(sleep_time);		
 					}
 					catch(Exception e1){
 						e1.printStackTrace();

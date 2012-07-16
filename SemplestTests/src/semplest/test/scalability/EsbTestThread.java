@@ -109,7 +109,8 @@ public class EsbTestThread implements Runnable{
 							}		
 							writer.append('\n');
 							writer.flush();
-							noError = false;
+							noError = false;							
+							Thread.sleep(sleep_time);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
