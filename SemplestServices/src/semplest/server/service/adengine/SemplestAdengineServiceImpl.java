@@ -908,7 +908,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new IllegalArgumentException("Cannot process request to create campaign for AccountID [" + accountID + "], PromotionID [" + promotionID + "], CustomerID [" + customerID + "], AdEngine [" + adEngine + "], RemainingDaysInCycle [" + remainingDaysInCycle
 					+ "] because MonthlyBudgetAmount [" + monthlyBudgetAmount + "] is less than 0");
 		}
-		final String campaignName = System.currentTimeMillis() + "_" + getPromoDataSP.getPromotionData().getPromotionName();
+		final String campaignName = promotionID + "_" + System.currentTimeMillis() + "_" + getPromoDataSP.getPromotionData().getPromotionName();
 		if (adEngine == AdEngine.Google)
 		{
 			// assume US dollars US timezone

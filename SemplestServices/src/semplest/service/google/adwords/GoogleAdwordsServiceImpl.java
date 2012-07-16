@@ -267,7 +267,22 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			String description1 = "This is a test";
 			String description2 = "description2 ";
 			*/
-			GoogleAdwordsServiceImpl test = new GoogleAdwordsServiceImpl();
+			final String email = "adwords@semplest.com";
+			//final String password = "7ylZJTlhuCG4loTC6Qllrw==";
+			//final String password = "ic0system";
+			String key = "12345678901234567890123456789044";
+			AESBouncyCastle aes = AESBouncyCastle.getInstance(key);
+			final String password = aes.decrypt("7ylZJTlhuCG4loTC6Qllrw==");
+			final String clientID = null;
+			final String userAgent = "Icosystem";
+			final String developerToken = "2H8l6aUm6K_Q44vDvxs3Og";
+			final Boolean useSandbox = false;
+			logger.info("Will try to get AdWordsUser for Email [" + email + "], Password [" + password + "], ClientID [" + clientID + "], UserAgent [" + userAgent + "], DeveloperToken [" + developerToken + "], UseSandbox [" + useSandbox + "]");
+			final AdWordsUser user = new AdWordsUser(email, password, clientID, userAgent, developerToken, useSandbox);
+			// AdWordsUser user = new
+			// AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
+			// Get the TargetingIdeaService
+			final TargetingIdeaServiceInterface targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
 			/*List<GoogleViolation> res = test.validateAd(accountID, adgroupID, landingPageURL, displayURL, headline, description1, description2);
 			if (!res.isEmpty())
 			{
@@ -470,6 +485,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			GoogleAdGroupObject[] adgrp = test.getAdGroupsByCampaignId(accountID, campaignID, false);
 			System.out.println("AdGroupId: "+adgrp[0].getAdGroupID());
 			*/
+			/*
 			KeywordDataObject[] keywords= test.getAllBiddableAdGroupCriteria(accountID, adgroupID, false);
 			HashMap<Long, Boolean> map = new HashMap<Long,Boolean>();
 			for(KeywordDataObject kw : keywords){
@@ -477,7 +493,7 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 				map.put(kw.getBidID(), true);
 			}
 			test.updateKeywordStatus(accountID, campaignID, adgroupID, map);
-			
+			*/
 
 		}
 		catch (Exception e)
@@ -1868,7 +1884,9 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 		 */
 		try
 		{
-			final AdWordsUser user = new AdWordsUser(email, password, null, userAgent, developerToken, useSandbox);
+			final String clientID = null;
+			logger.info("Will try to get AdWordsUser for Email [" + email + "], Password [" + password + "], ClientID [" + clientID + "], UserAgent [" + userAgent + "], DeveloperToken [" + developerToken + "], UseSandbox [" + useSandbox + "]");
+			final AdWordsUser user = new AdWordsUser(email, password, clientID, userAgent, developerToken, useSandbox);
 			// AdWordsUser user = new
 			// AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
 			// Get the TargetingIdeaService
