@@ -161,15 +161,14 @@ public class BidGeneratorObj
 		googlePercent =  Double.valueOf("" + googlePercentInteger);
 		budgetFactor = (Double)SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		
-		
-		final Float budgetBoostFactorFloat = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
-		budgetBoost = budgetBoostFactorFloat.doubleValue();
+		final Float budgetBoostFactorDouble = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
+		budgetBoost = budgetBoostFactorDouble.doubleValue();
 		
 		final Integer percentileValInteger = (Integer) SemplestConfiguration.configData.get("SemplestBiddingPercentileValue"); 
 		percentileValue = percentileValInteger.doubleValue();
 		
-		final Float marginFactorFloat = (Double) SemplestConfiguration.configData.get("SemplestBiddingMarginFactor"); 
-		marginFactor = marginFactorFloat.doubleValue();
+		final Double marginFactorDouble = (Double) SemplestConfiguration.configData.get("SemplestBiddingMarginFactor"); 
+		marginFactor = marginFactorDouble.doubleValue();
 		
 		
 
