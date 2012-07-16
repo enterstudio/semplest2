@@ -204,7 +204,7 @@ public class dmozUtils {
   public static void interactiveTest() throws Exception {
     String DIR = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/";
     String ENDING = ".2";
-    int NUM_RESULTS = 50;
+    int NUM_RESULTS = 100;
     dmozUtils du = new dmozUtils( DIR, ENDING );
     BufferedReader br = new BufferedReader( new InputStreamReader( System.in));
     
@@ -255,7 +255,7 @@ public class dmozUtils {
  public static void interactiveTest2() throws Exception {
    String DIR = "/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/";
    String ENDING = ".2";
-   int NUM_RESULTS = 50;
+   int NUM_RESULTS = 100;
    dmozUtils du = new dmozUtils( DIR, ENDING );
    BufferedReader br = new BufferedReader( new InputStreamReader( System.in));
    
@@ -270,10 +270,14 @@ public class dmozUtils {
      System.out.printf("(Optional) Url : ");
      String url = br.readLine();
 
-     // Get categories from Lucene, choose only thos in topl
+     // Get categories from Lucene, choose only those in topl
      String[] cats = dl.search( TextUtils.stemvString( q ),100); 
-     
-     ArrayList<String> catsL = selectOptions(new ArrayList<String>(Arrays.asList(cats)));
+     ArrayList<String> optInitial = new ArrayList<String>();
+     for(String cat: cats){
+			if(catUtils.validcat(cat.replaceAll("\\s+", "")))
+					optInitial.add(cat);
+     }
+     ArrayList<String> catsL = selectOptions(optInitial);
      int index =0;
      for(String catSt : catsL){
     	 System.out.println(index+" - "+catSt);
@@ -301,7 +305,7 @@ public class dmozUtils {
          fres.size(), res.size() );
      System.out.printf("Printing first %d results from summing %d cats\n\n",
          NUM_RESULTS,  fcats.length);
-     jUtils.printMap( jUtils.take( jUtils.smap( fres ), NUM_RESULTS) );
+     jUtils.printMap( jUtils.take( jUtils.smap( fres ), NUM_RESULTS), NUM_RESULTS );
      System.out.printf("\n--------------------------\n");
 
      // Combine
@@ -313,7 +317,7 @@ public class dmozUtils {
            fwres.size(), wres.size() );
        System.out.printf("First %d results combining relative to %s\n\n", 
            NUM_RESULTS,  url);
-       jUtils.printMap( jUtils.take( jUtils.smap( fwres ), NUM_RESULTS) );
+       jUtils.printMap( jUtils.take( jUtils.smap( fwres ), NUM_RESULTS) , NUM_RESULTS);
        System.out.printf("\n--------------------------\n");
      }
    }
