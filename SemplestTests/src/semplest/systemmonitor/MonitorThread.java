@@ -8,7 +8,7 @@ import semplest.systemmonitor.MonitorObject.SERVICE;
 public class MonitorThread implements Runnable {
 	
 	private MonitorObject monitor = new MonitorObject();	
-	private SystemMonitorDB db = new SystemMonitorDB();
+	private MonitorDB db = new MonitorDB();
 	
 	private SERVICE service;	
 	private ServiceInitialize serviceObject;

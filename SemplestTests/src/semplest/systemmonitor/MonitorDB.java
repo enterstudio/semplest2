@@ -7,7 +7,7 @@ import semplest.server.service.springjdbc.BaseDB;
 import semplest.systemmonitor.MonitorObject.SERVER;
 import semplest.systemmonitor.MonitorObject.SERVICE;
 
-public class SystemMonitorDB extends BaseDB {
+public class MonitorDB extends BaseDB {
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
 	
 	public void storeServerServiceStatus(SERVER server, SERVICE service, ServiceStatus status){
