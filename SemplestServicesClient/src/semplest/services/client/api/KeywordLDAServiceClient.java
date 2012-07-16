@@ -15,7 +15,7 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	private static String BASEURLTEST = "http://vmdevjava1:9898/semplest";  //VMJAVA1
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111NY-semplestDev2
 	private static String timeoutMS = "60000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -29,7 +29,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			boolean flag = true;
+			boolean flag = false;
 			while(flag){
 				System.out.println("**************DEV MACHINE 1*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
@@ -50,7 +50,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 						"Lobster Dinners", "lobster, lobster dinners, lobster salad, take out, seafood, fresh fish, fish", 
-						null, "http://www.thelobsterhouse.com/home", null ,new Integer[]{50,50});
+						null, "http://www.thelobsterhouse.com/home", null ,new Integer[]{300,100,100});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds.  Number keywords=" +  kw.length);
 				
@@ -81,7 +81,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				System.out.println("Selected:"+res.get(5));
 				
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
-						"peanut butter", "peanut butter", null, "http://peanutbutterlovers.com/", null ,new Integer[]{50,50});
+						"peanut butter", "peanut butter", null, "http://peanutbutterlovers.com/", null ,new Integer[]{300,100,100});
 				sec = (double) (System.currentTimeMillis() - start)/1000.0;
 				System.out.println("keywords took " + sec + " seconds.  Number keywords=" +  kw.length);
 				
