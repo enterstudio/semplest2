@@ -129,9 +129,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			final Integer promotionID = 125;
+			final Integer promotionID = 128;
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
-			String scheduleName = "Manual_OnGoingBidding_Promo_125";
+			String scheduleName = "Manual_OnGoingBidding_Promo_" + promotionID;
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines); 
 			listOfTasks.add(executeOngoinBiddingTask);

@@ -802,6 +802,7 @@ public class SemplestDB extends BaseDB
 			// Integer NumberImpressions, Integer NumberClick, Float AveragePosition, Long AverageCPC,String BidType, Integer QualityScore, String
 			// ApprovalStatus,
 			// Integer FirstPageMicroCpc, Integer MicroCost
+			logger.info("Will try to save [" + rptObj + "]");
 			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(), adEngine, rptObj.getTransactionDate(), rptObj.getMicroBidAmount().intValue(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(), rptObj.getBidMatchType(),
 					rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(), rptObj.getMicroCost().intValue());
 			if (id == 0)
