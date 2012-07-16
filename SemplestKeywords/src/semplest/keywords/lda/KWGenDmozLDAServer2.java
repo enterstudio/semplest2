@@ -889,7 +889,7 @@ public class KWGenDmozLDAServer2 implements SemplestKeywordLDAServiceInterface{
 		}
 	}
 	@Override
-	public String checkStatus(String input) throws Exception {
+	public String checkStatus(String input1, String input2) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}
