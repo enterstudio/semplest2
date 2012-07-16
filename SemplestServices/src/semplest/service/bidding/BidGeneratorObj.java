@@ -359,7 +359,7 @@ public class BidGeneratorObj
 		
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
-			if(r.getAveragePosition()<=4){
+			if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
 				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), true);
 				pausedSet.add(r.getKeyword());
 				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
@@ -1767,7 +1767,7 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(117);
+			Integer promotionID = new Integer(125);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
@@ -1817,14 +1817,14 @@ public class BidGeneratorObj
 			
 			
 			
-			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-			Date now = new Date();
-			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(now);
-			cal.add(Calendar.DAY_OF_MONTH, -0);
-			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-			System.out.println("Number of report entries: "+reportObjList.length);
+//			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+//			Date now = new Date();
+//			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(now);
+//			cal.add(Calendar.DAY_OF_MONTH, -0);
+//			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+//			System.out.println("Number of report entries: "+reportObjList.length);
 			
 			
 			/*
