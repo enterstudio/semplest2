@@ -40,6 +40,7 @@ import semplest.server.protocol.adengine.TargetedDailyBudget;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
+import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.protocol.google.GoogleAdIdSemplestAdIdPair;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.service.springjdbc.helper.AllBidRSExtactor;
@@ -271,7 +272,13 @@ public class SemplestDB extends BaseDB
 		final List<Integer> promotionIds = jdbcTemplate.queryForList(strSQL, Integer.class, ProductGroupID);
 		return promotionIds;
 	}
-
+	
+	private static final RowMapper<BiddingParameters> BiddingParametersObjMapper = new BeanPropertyRowMapper<BiddingParameters>(BiddingParameters.class);
+	public static BiddingParameters getBiddingParameters() throws Exception
+	{
+		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor from Configuration c";
+		return jdbcTemplate.queryForObject(strSQL, BiddingParametersObjMapper);
+	}
 	/*
 	 * Customer
 	 */
