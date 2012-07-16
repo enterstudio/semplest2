@@ -13,11 +13,13 @@ import com.microsoft.adapi.AdApiFaultDetail;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoRequest;
 import com.microsoft.adcenter.api.customermanagement.GetAccountsInfoResponse;
 import com.microsoft.adcenter.api.customermanagement.ICustomerManagementService;
+import com.microsoft.adcenter.api.customermanagement.Entities.Account;
 import com.microsoft.adcenter.api.customermanagement.Entities.AccountInfo;
 import com.microsoft.adcenter.api.customermanagement.Exception.ApiFault;
 import com.microsoft.adcenter.v8.Campaign;
 
 import semplest.server.service.SemplestConfiguration;
+import semplest.service.msn.adcenter.MsnCloudException;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class ReportActiveCampaigns {
@@ -26,8 +28,8 @@ public class ReportActiveCampaigns {
 	PrintStream pr;
 	public static void main(String[] args) throws Exception{
 		ReportActiveCampaigns rep = new ReportActiveCampaigns();
-		rep.getAccountsAndActiveCampaigns();
-		
+		//rep.getAccountsAndActiveCampaigns();
+		rep.getAccountbyAccountId(800609L);
 	}
 	public ReportActiveCampaigns() throws Exception{
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
@@ -46,6 +48,14 @@ public class ReportActiveCampaigns {
 		pr = new PrintStream(new FileOutputStream("/semplest/data/msnActiveCampaignsReport2.txt"));
 		
 	}
+	
+	public void getAccountbyAccountId(Long accountId) throws MsnCloudException{
+		Account ac= msn.getAccountById(accountId);
+		System.out.println(ac.getName());
+		System.out.println(ac.getNumber());
+		System.out.println(ac.getAccountLifeCycleStatus());
+	}
+	
 	public void getAccountsAndActiveCampaigns() throws AdApiFaultDetail, ApiFault, RemoteException{
 		ICustomerManagementService customerManagementService = msn.getCustomerManagementService();
 		HashMap<String, Double> accountIDs = new HashMap<String, Double>();
