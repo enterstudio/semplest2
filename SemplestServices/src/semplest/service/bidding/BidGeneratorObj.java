@@ -561,6 +561,7 @@ public class BidGeneratorObj
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
 				try {
 					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Paused " + pauseMap.size() + " keywords");
 					break;
 				} catch (Exception e) {
 					if (k <= maxRetry) {
@@ -579,6 +580,8 @@ public class BidGeneratorObj
 			try{
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
 				msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Paused " + pauseMap.size() + " keywords");
+
 			} catch(Exception e){
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
