@@ -6,10 +6,19 @@ public class BudgetObject
 	private Integer remainingDays;
 	//private Double budgetSplit;
 	
+	public BudgetObject(){}
+	
+	public BudgetObject(Double remainingBudgetInCycle, Integer remainingDays) {
+		super();
+		this.remainingBudgetInCycle = remainingBudgetInCycle;
+		this.remainingDays = remainingDays;
+	}
+	
 	public Double getRemainingBudgetInCycle()
 	{
 		return remainingBudgetInCycle;
 	}
+	
 	public void setRemainingBudgetInCycle(Double remainingBudgetInCycle)
 	{
 		this.remainingBudgetInCycle = remainingBudgetInCycle;
