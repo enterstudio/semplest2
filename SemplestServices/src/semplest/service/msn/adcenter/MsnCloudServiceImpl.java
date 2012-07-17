@@ -505,27 +505,28 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 	}
 	
-	public boolean deleteAccountById(Long accountId) throws MsnCloudException
+	public boolean deleteAccountById(Account account) throws MsnCloudException
 	{
 		try
 		{
 			ICustomerManagementService customerManagementService = getCustomerManagementService();
 			DeleteAccountRequest req = new DeleteAccountRequest();
-			req.setAccountId(accountId);
+			req.setAccountId(account.getId());
+			req.setTimeStamp(account.getTimeStamp());
 			DeleteAccountResponse  res = customerManagementService.deleteAccount(req);
 			return true;
 		}
 		catch (AdApiFaultDetail e)
 		{
-			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.dumpToString(), e);
+			throw new MsnCloudException("Problem deleting Account [" + account.getId() + "] - " + e.dumpToString(), e);
 		}
 		catch (ApiFault e)
 		{
-			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.dumpToString(), e);
+			throw new MsnCloudException("Problem deleting Account [" + account.getId() + "] - " + e.dumpToString(), e);
 		}
 		catch (RemoteException e)
 		{
-			throw new MsnCloudException("Problem deleting Account [" + accountId + "] - " + e.getMessage(), e);
+			throw new MsnCloudException("Problem deleting Account [" + account.getId() + "] - " + e.getMessage(), e);
 		}
 	}
 
