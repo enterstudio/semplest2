@@ -1,11 +1,11 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.service.springjdbc.BaseDB;
-import semplest.systemmonitor.MonitorObject.SERVER;
-import semplest.systemmonitor.MonitorObject.SERVICE;
+import semplest.system.monitor.MonitorObject.SERVER;
+import semplest.system.monitor.MonitorObject.SERVICE;
 
 public class MonitorDB extends BaseDB {
 	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	

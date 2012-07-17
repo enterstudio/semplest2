@@ -252,6 +252,7 @@ public class MsnServiceTest {
 				System.out.println("Account Id = " + acc.getId());
 				System.out.println("Customer Id = " + acc.getParentCustomerId());
 				System.out.println("User Id = " + acc.getPrimaryUserId());
+				System.out.println("Account Number = " + acc.getNumber());
 				
 				//verify result
 				if((acc == null) || (acc.getName() == null) || (acc.getId() == null))

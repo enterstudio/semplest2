@@ -1,4 +1,4 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import java.util.Properties;
 
@@ -10,8 +10,8 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import semplest.systemmonitor.MonitorObject.SERVER;
-import semplest.systemmonitor.MonitorObject.SERVICE;
+import semplest.system.monitor.MonitorObject.SERVER;
+import semplest.system.monitor.MonitorObject.SERVICE;
 
 public class Notification {
 	

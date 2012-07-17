@@ -1,4 +1,4 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import java.util.HashMap;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;

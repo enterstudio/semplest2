@@ -26,7 +26,7 @@ import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.MailSessionObject;
 
 
-public class UnitTests {
+public class UnitTest {
 	
 	private static String now = "";
 	
@@ -92,20 +92,21 @@ public class UnitTests {
 			}
 			
 			//Test Msn Service
-			MsnServiceTest msnServiceTest = new MsnServiceTest();
-			numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
+			//MsnServiceTest msnServiceTest = new MsnServiceTest();
+			//numMsnStandaloneError = msnServiceTest.Test_MsnServices_Standalone();	
 			//numMsnServiceError = msnServiceTest.Test_MsnReport();  //Test only Report through ESB
 			
 			
 			//Test Google Service
 			/* Google is charging money for each request. So only test when the configuration points to SANDBOX! */			
+			/*
 			Boolean useSandbox = (Boolean) configDB.configData.get("AdwordsUseSandbox");
 			if(useSandbox){
 				GoogleServiceTest googleServiceTest = new GoogleServiceTest();
 				numGoogleStandaloneError = googleServiceTest.Test_GoogleService_Impl();
 				//numGoogleServiceError = googleServiceTest.Test_getReportForAccount();  //Test only Report through ESB
 			}		
-			
+			*/
 			
 			//Test Keyword Service		
 			KeywordServiceTest keywordServiceTest = new KeywordServiceTest();
@@ -148,7 +149,7 @@ public class UnitTests {
 				+ numBiddingStandaloneError + numBiddingServiceError 
 				+ numDatabaseError;
 		
-		UnitTests unitTest = new UnitTests();
+		UnitTest unitTest = new UnitTest();
 		String summary = unitTest.reportSummary();
 		
 		System.out.println(" ");

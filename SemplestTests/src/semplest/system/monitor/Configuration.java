@@ -1,4 +1,4 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

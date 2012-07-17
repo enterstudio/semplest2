@@ -1,9 +1,9 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.services.client.interfaces.ServiceInitialize;
-import semplest.systemmonitor.MonitorObject.SERVER;
-import semplest.systemmonitor.MonitorObject.SERVICE;
+import semplest.system.monitor.MonitorObject.SERVER;
+import semplest.system.monitor.MonitorObject.SERVICE;
 
 public class MonitorThread implements Runnable {
 	

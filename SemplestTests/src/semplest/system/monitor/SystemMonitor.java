@@ -1,4 +1,4 @@
-package semplest.systemmonitor;
+package semplest.system.monitor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -8,7 +8,7 @@ import semplest.services.client.api.SemplestAdEngineServiceClient;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.api.SemplestMailServiceClient;
 import semplest.services.client.api.SemplestSchedulerServiceClient;
-import semplest.systemmonitor.MonitorObject.SERVICE;
+import semplest.system.monitor.MonitorObject.SERVICE;
 
 public class SystemMonitor {			
 	
