@@ -343,6 +343,9 @@ public class BidGeneratorObj
 		
 		// map to store bids that need to go to search engine
 		HashMap<String,Long> wordBidMap = new HashMap<String,Long>();
+		
+		// data that needs to change in the database
+		ArrayList<BidElement> bidDataToDatabase = new ArrayList<BidElement>();
 
 
 		// keywords that need to be paused
@@ -365,7 +368,8 @@ public class BidGeneratorObj
 		bidBoostFactor = bidParams.getSemplestBiddingInitialBidBoostFactor().doubleValue();
 		
 
-		
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to read the report for all the keywords that had impressions.");
+
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
@@ -373,31 +377,39 @@ public class BidGeneratorObj
 				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), false);
 				pausedSet.add(r.getKeyword());
 				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
+				bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Pausing keyword " + r.getKeyword());
 				
 				if(kwBidElementMap.get(r.getKeyword()).getIsDefaultValue()){ // if the KW is running on default bid, update the bid value before pausing
-					wordBidMap.put(r.getKeyword(), kwBidElementMap.get(r.getKeyword()).getMicroBidAmount());
+					wordBidMap.put(r.getKeyword(), r.getMicroBidAmount());
+					kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(r.getMicroBidAmount());
 					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
 				}
 			} else if (kwBidElementMap.get(r.getKeyword()).getIsActive()) {
 				long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
 				wordBidMap.put(r.getKeyword(), b);
-				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(wordBidMap.get(r.getKeyword()));
+				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(b);
 				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
+				bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + r.getKeyword() +" to "+ wordBidMap.get(r.getKeyword()));
 			}
 		}
 		
-		for(BidElement b : bidData){
-			if(pausedSet.contains(b.getKeyword()) || wordBidMap.containsKey(b.getKeyword())){
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Done with all the keywords that had impressions.");
+		
+		
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to look into the keywords that didn't have impressions.");
+		for(BidElement bData : bidData){
+			if(pausedSet.contains(bData.getKeyword()) || wordBidMap.containsKey(bData.getKeyword())){
 				continue;
 			}
-			if(!b.getIsDefaultValue() && b.getIsActive()){
-				long bMax = Math.min(maxBidL, (((long) (b.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L);
-				wordBidMap.put(b.getKeyword(),bMax);
-				b.setMicroBidAmount(wordBidMap.get(b.getKeyword()));
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + b.getKeyword() +" to "+ wordBidMap.get(b.getKeyword()));
+			if(!bData.getIsDefaultValue() && bData.getIsActive()){
+				long b = Math.min(maxBidL, (((long) (bData.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L);
+				wordBidMap.put(bData.getKeyword(),b);
+				bData.setMicroBidAmount(b);
+				bidDataToDatabase.add(bData);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + bData.getKeyword() +" to "+ wordBidMap.get(bData.getKeyword()));
 			}
 		}
 		
@@ -405,8 +417,10 @@ public class BidGeneratorObj
 		// 5. Database call: store bid data
 		try {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the bid data to the database...");
-			SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidData.size() + " keywords.");
+			SemplestDB.storeBidObjects(promotionID, searchEngine,bidDataToDatabase);
+			//SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidDataToDatabase.size() + " keywords.");
+			//logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidData.size() + " keywords.");
 
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
@@ -436,7 +450,7 @@ public class BidGeneratorObj
 		// 7. SE API call: Update matchType, bid for keywords
 		if (searchEngine == AdEngine.Google)
 		{
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with Google.");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with Google for " + wordBidMap.size() + " keywords.");
 
 			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
@@ -465,13 +479,28 @@ public class BidGeneratorObj
 		if (searchEngine == AdEngine.MSN) {
 			
 			try {
-				for(BidElement b : bidData){
+				ArrayList<BidElement> bidDataToMSN = new ArrayList<BidElement>();
+				final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
+				for (final Entry<String, Long> entry : entrySet){
+					final String word = entry.getKey();
+					bidDataToMSN.add(kwBidElementMap.get(word));
+					if(kwBidElementMap.get(word).getIsDefaultValue()){
+						kwBidElementMap.get(word).setMicroBidAmount(null);
+					}
+				}
+				
+				/*
+				//for(BidElement b : bidData){
+				for(BidElement b : bidDataToDatabase){
 					if(b.getIsDefaultValue()){
 						b.setMicroBidAmount(null);
 					}
 				}
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with MSN.");
-				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
+				*/
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with MSN for " + bidDataToMSN.size() + " keywords.");
+				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
+				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToDatabase);
+				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToMSN);
 			} catch (Exception e) {
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
