@@ -95,7 +95,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationCampaignID = null;
 	private static Long AdwordsValidationAdGroupID = null;
 	private static String DevelopmentEmail = null;
-	
+
 	private static Double BudgetMultFactor = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
@@ -123,36 +123,31 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 */
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 
-			
 			// Schedule for next day at the same time
 
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-			
+
 			final Integer promotionID = 128;
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
 			String scheduleName = "Manual_OnGoingBidding_Promo_" + promotionID;
-			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>(); 
-			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines); 
-			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL,listOfTasks, scheduleName, new Date(), null,ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
-			 
-/*
-			final Integer customerID = 12;
-			final Integer productGroupID = 76;
-			final Integer PromotionID = 62;
-			final List<AdEngine> adEngineList = Arrays.asList(AdEngine.MSN);
-			adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
-*/
-			
-			/*
-			final Integer promotionID = 999;
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
-			final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN, AdEngine.Google);
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new java.util.Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
-			*/
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
+
+			/*
+			 * final Integer customerID = 12; final Integer productGroupID = 76; final Integer PromotionID = 62; final List<AdEngine> adEngineList =
+			 * Arrays.asList(AdEngine.MSN); adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
+			 */
+
+			/*
+			 * final Integer promotionID = 999; ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
+			 * final List<AdEngine> adEngines = Arrays.asList(AdEngine.MSN, AdEngine.Google); SemplestSchedulerTaskObject executeOngoinBiddingTask =
+			 * CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines); listOfTasks.add(executeOngoinBiddingTask);
+			 * CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new java.util.Date(), null,
+			 * ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
+			 */
 			// adEng.scheduleOngoingBidding(scheduleName, 60, adEngList, startTime);
 
 			// SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
@@ -194,7 +189,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ESBWebServerURL = (String) SemplestConfiguration.configData.get("ESBWebServerURL");
 		AdwordsValidationAccountID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAccountID");
 		AdwordsValidationCampaignID = (Long) SemplestConfiguration.configData.get("AdwordsValidationCampaignID");
-		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");		
+		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 	}
@@ -217,108 +212,127 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngines) throws Exception
 	{
 		logger.info("Will try to Add Promotion To AdEngines for CustomerID [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + PromotionID + "], AdEngines [" + adEngines + "]");
-		final Long timeStart = System.currentTimeMillis();
-		/*
-		 * TODO: break up this method into separate steps as per below
-		 * 
-		 * // 1. Create Account - AdWordsService.V201109.CREATE_ACCOUNT_SERVICE // 2. Create Campaign - AdWordsService.V201109.CAMPAIGN_SERVICE // 3.
-		 * Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE // 4. Create Ads - AdWordsService.V201109.ADGROUP_AD_SERVICE // 5. Set GeoTargets -
-		 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 6. Set Negative Keywords - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set
-		 * Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service call -
-		 * semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
-		 */
-		SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);
-		final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		getPromoDataSP.execute(PromotionID);
-		final PromotionObj promotionData = getPromoDataSP.getPromotionData();
-		final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
-		final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
-		final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
-		final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
-		final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
-		String companyName = null;
-		
-		for (final AdEngine advertisingEngine : adEngines)
-		{
-			Long accountID = null;
-			final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
-			
-			final Double monthlyBudget = adEngineInitialData.getMonthlyBudget();
-			final Double dailyBudget = adEngineInitialData.getDailyBudget();
-			
-			logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
-			GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
-			AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
-			companyName = AdEngineAccoutRow.getCustomerName();
-			if (AdEngineAccoutRow.getAccountID() == null)
-			{
-				final AdEngineAccountIdGroup idGroup = createAdEngineAccount(advertisingEngine, companyName);
-				accountID = idGroup.getAccountId();
-				final String accountNumber = idGroup.getAccountNumber();
-				SemplestDB.addAdEngineAccountID(customerID, accountNumber, accountID, advertisingEngine);
-				logger.info("Created Account for " + companyName + ":" + idGroup);
-			}
-			else
-			{
-				accountID = AdEngineAccoutRow.getAccountID();
-				logger.info("Found Account for " + companyName + ":" + String.valueOf(accountID));
-			}
-			final AdvertisingEnginePromotionObj promotionDataList = SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);
-			if (promotionDataList != null)
-			{
-				throw new Exception("A Campaign has already been created for the Promotion " + PromotionID);
-			}
-			else
-			{
-				// Create Campaign
-				final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
-				final String accountId = String.valueOf(accountID);
-				final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft);
-				SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
-				// Create Ad group and Ads
-				final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
-				storeAdGroupData(advertisingEngine, campaignID, adGroupData);
-				// Keywords
-				final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
-				final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-				addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
-				// Set initial bidding
-				final BudgetObject budgetData = new BudgetObject();
-				budgetData.setRemainingBudgetInCycle(monthlyBudget);
-				budgetData.setRemainingDays(daysLeft);
-				
-				logger.info("About to Set Initial Bids for " + advertisingEngine);
-				bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
-				logger.info("Done setting Initial Bids for " + advertisingEngine);
-				
-				// Schedule ongoing bidding
-				final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
-				cal.setTime(new Date());
-				cal.add(Calendar.DAY_OF_MONTH, 1);
-				final Date startTime = cal.getTime();
-				logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
-				scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
-				logger.info("Scheduled ongoing bidding for " + advertisingEngine);
-			}
-			SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
-		}
-		logger.info("Sending success email");
-		final Long timeEnd = System.currentTimeMillis();
-		final Long timeDuration = timeEnd - timeStart;
-		final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
-		final String content = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
 		try
 		{
-			SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+			final Long timeStart = System.currentTimeMillis();
+			/*
+			 * TODO: break up this method into separate steps as per below
+			 * 
+			 * // 1. Create Account - AdWordsService.V201109.CREATE_ACCOUNT_SERVICE // 2. Create Campaign - AdWordsService.V201109.CAMPAIGN_SERVICE //
+			 * 3. Create AdGroup - AdWordsService.V201109.ADGROUP_SERVICE // 4. Create Ads - AdWordsService.V201109.ADGROUP_AD_SERVICE // 5. Set
+			 * GeoTargets - AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 6. Set Negative Keywords -
+			 * AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE // 7. Set Keywords - AdWordsService.V201109.ADGROUP_CRITERION_SERVICE // 8. Service
+			 * call - semplest.service.bidding.BidGeneratorService#setBidsInitial // 9. Schedule OnGoingBidding
+			 */
+			SemplestDB.updatePromotionStatus(PromotionID, adEngines, PromotionStatus.PENDING);
+			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			getPromoDataSP.execute(PromotionID);
+			final PromotionObj promotionData = getPromoDataSP.getPromotionData();
+			final Double startBudgetInCycle = promotionData.getStartBudgetInCycle();
+			final SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
+			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
+			final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
+			final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
+			String companyName = null;
+
+			for (final AdEngine advertisingEngine : adEngines)
+			{
+				Long accountID = null;
+				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
+
+				final Double monthlyBudget = adEngineInitialData.getMonthlyBudget();
+				final Double dailyBudget = adEngineInitialData.getDailyBudget();
+
+				logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
+				GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
+				AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
+				companyName = AdEngineAccoutRow.getCustomerName();
+				if (AdEngineAccoutRow.getAccountID() == null)
+				{
+					final AdEngineAccountIdGroup idGroup = createAdEngineAccount(advertisingEngine, companyName);
+					accountID = idGroup.getAccountId();
+					final String accountNumber = idGroup.getAccountNumber();
+					SemplestDB.addAdEngineAccountID(customerID, accountNumber, accountID, advertisingEngine);
+					logger.info("Created Account for " + companyName + ":" + idGroup);
+				}
+				else
+				{
+					accountID = AdEngineAccoutRow.getAccountID();
+					logger.info("Found Account for " + companyName + ":" + String.valueOf(accountID));
+				}
+				final AdvertisingEnginePromotionObj promotionDataList = SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);
+				if (promotionDataList != null)
+				{
+					throw new Exception("A Campaign has already been created for the Promotion " + PromotionID);
+				}
+				else
+				{
+					// Create Campaign
+					final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
+					final String accountId = String.valueOf(accountID);
+					final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft);
+					SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
+					// Create Ad group and Ads
+					final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
+					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
+					// Keywords
+					final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
+					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
+					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
+					// Set initial bidding
+					final BudgetObject budgetData = new BudgetObject();
+					budgetData.setRemainingBudgetInCycle(monthlyBudget);
+					budgetData.setRemainingDays(daysLeft);
+
+					logger.info("About to Set Initial Bids for " + advertisingEngine);
+					bidClient.setBidsInitial(PromotionID, advertisingEngine, budgetData);
+					logger.info("Done setting Initial Bids for " + advertisingEngine);
+
+					// Schedule ongoing bidding
+					final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
+					cal.setTime(new Date());
+					cal.add(Calendar.DAY_OF_MONTH, 1);
+					final Date startTime = cal.getTime();
+					logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
+					scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
+					logger.info("Scheduled ongoing bidding for " + advertisingEngine);
+				}
+				SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
+			}
+			logger.info("Sending success email");
+			final Long timeEnd = System.currentTimeMillis();
+			final Long timeDuration = timeEnd - timeStart;
+			final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
+			final String content = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
+			try
+			{
+				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+			}
+			catch (Exception e)
+			{
+				logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.", e);
+			}
+			logger.info("---------------------------------------------------------------------------");
+			logger.info("---------- Promotion [" + PromotionID + "] finished with SUCCESS ----------");
+			logger.info("---------------------------------------------------------------------------");
+			return true;
 		}
 		catch (Exception e)
 		{
-			logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.");
+			final String content = "Error while trying to create Promotion [" + PromotionID + "]: " + e.getMessage();
+			try
+			{
+				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+			}
+			catch (Exception e2)
+			{
+				logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.", e2);
+			}
+			logger.info("-------------------------------------------------------------------------");
+			logger.info("------- Promotion [" + PromotionID + "] finished with ***ERROR*** -------");
+			logger.info("-------------------------------------------------------------------------");
+			throw new Exception(content, e);
 		}
-		logger.info("------------------------------------------");
-		logger.info("------------------ Done ------------------");
-		logger.info("------------------------------------------");
-		return true;
 	}
 
 	private String getTimeoutMS()
@@ -714,14 +728,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				// Mark as Deleted in DB for Keywords that could not be added to MSN
 				SemplestDB.removeKeywordFromAdEngine(filteredOutKeywordIdsToCommentMap, promotionID, adEngine);
 				// Persist MsnKeywordID in DB for Keywords that were added to MSN
-				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();				
+				final Set<Entry<String, Long>> keywordToMsnIdEntrySet = keywordToMsnIdMap.entrySet();
 				for (final Entry<String, Long> entry : keywordToMsnIdEntrySet)
 				{
 					final String text = entry.getKey();
 					final Long keywordId = entry.getValue();
 					logger.info(++counter + ": will try to save in db MSN Keyword for MsnKeywordID [" + keywordId + "], Text [" + text + "], PromotionID [" + promotionID + "], SemplestMatchType [" + semplestMatchType + "], IsNegative [" + false + "]");
 					Integer ret = addKeywordBidSP.execute(promotionID, keywordId, text, SemplestUtils.MSN_DEFAULT_BID_MIRCOAMOUNT.intValue(), semplestMatchType, adEngine, false, null, true);
-				}				
+				}
 			}
 			// Add Negative Keywords
 			if (!negativeKeywordProbabilities.isEmpty())
@@ -933,7 +947,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Long accountId = Long.valueOf(accountID);
 			final BudgetLimitType budgetLimitType = BudgetLimitType.DailyBudgetStandard;
 			final CampaignStatus campaignStatus = com.microsoft.adcenter.v8.CampaignStatus.Active;
-			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailyBudget + "], MonthlyBudget [" + monthlyBudgetAmount + "], CampaignStatus [" + campaignStatus + "]");
+			logger.info("About to call CreateCampaign on MSN implementation with AccountID [" + accountId + "], campaignName [" + campaignName + "], BudgetLimitType [" + budgetLimitType + "], DailyBudgetAmount [" + dailyBudget + "], MonthlyBudget [" + monthlyBudgetAmount + "], CampaignStatus ["
+					+ campaignStatus + "]");
 			final Long campaignID = msn.createCampaign(accountId, campaignName, budgetLimitType, dailyBudget, monthlyBudgetAmount, campaignStatus);
 			return campaignID;
 		}
@@ -1073,20 +1088,29 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					logger.error("Unable to download Report for account " + accountIdString + ":" + e.getMessage(), e);
 				}
 				// update the API charges
+				/*
 				try
 				{
 					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new Date());
 					if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
 					{
-						UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
-						Double newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
+						Double newCost = null;
+						try
+						{
+							UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
+							newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
+						}
+						catch (Exception e)
+						{
+							logger.info("Problem doing UpdateAdEngineAPICharge (Stored proc).  Logging, but otherwise continuing");
+						}
 						logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId);
 					}
 				}
 				catch (Exception e)
 				{
 					logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e);
-				}
+				}*/
 			}
 			else if (adEngine == AdEngine.MSN)
 			{
@@ -1137,8 +1161,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 			}
 			if (res.size() > 0)
-			{	
-				return (ReportObject[]) res.toArray();
+			{
+				return res.toArray(new ReportObject[res.size()]);
 			}
 			else
 			{
@@ -1146,6 +1170,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			}
 		}
 	}
+
 	public String UpdateGeoTargeting(String json) throws Exception
 	{
 		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");
@@ -1257,7 +1282,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
-	
+
 	public String scheduleEndPromotion(String json) throws Exception
 	{
 		logger.debug("call scheduleEndPromotion(String json): [" + json + "]");
@@ -1274,7 +1299,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final Boolean result = scheduleEndPromotion(customerID, promotionID, adEngines);
 		return gson.toJson(result);
 	}
-	
+
 	public Boolean scheduleEndPromotion(Integer customerID, Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		try
@@ -1298,7 +1323,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			throw new Exception(errMsg, e);
 		}
 	}
-	
+
 	public String EndPromotion(String json) throws Exception
 	{
 		logger.debug("JSON [" + json + "]");
@@ -1310,12 +1335,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		EndPromotion(PromotionID, adEngines);
 		return gson.toJson(true);
 	}
-	
+
 	public Boolean EndPromotion(Integer promotionID, List<AdEngine> adEngines) throws Exception
 	{
 		logger.info("Will try to End Promotion for PromotionID [" + promotionID + "], AdEngines [" + adEngines + "]");
 		final Map<AdEngine, String> errorMap = new HashMap<AdEngine, String>();
-		
+
 		// can only end promotion if it's live or paused
 		final Map<AdEngine, PromotionStatus> promotionStatusMap = SemplestDB.getPromotionStatus(promotionID, adEngines);
 		final Set<Entry<AdEngine, PromotionStatus>> entrySet = promotionStatusMap.entrySet();
@@ -1325,9 +1350,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final PromotionStatus entryPromotionStatus = entry.getValue();
 			if (!(entryPromotionStatus == PromotionStatus.LIVE || entryPromotionStatus == PromotionStatus.PENDING))
 			{
-				throw new Exception("Cannot End Promotion for PromotionID [" + promotionID + "] and AdEngine [" + entryAdEngine + "] because it's currently in Status [" + entryPromotionStatus.getName() + "], but can only End Promotions when they are in Status [" + PromotionStatus.LIVE.getName() + "] or [" + PromotionStatus.PENDING.getName() + "]");
+				throw new Exception("Cannot End Promotion for PromotionID [" + promotionID + "] and AdEngine [" + entryAdEngine + "] because it's currently in Status [" + entryPromotionStatus.getName() + "], but can only End Promotions when they are in Status [" + PromotionStatus.LIVE.getName()
+						+ "] or [" + PromotionStatus.PENDING.getName() + "]");
 			}
-		}		
+		}
 		final GetAllPromotionDataSP getAllPromotionDataSP = new GetAllPromotionDataSP();
 		final Boolean result = getAllPromotionDataSP.execute(promotionID);
 		for (final AdEngine adEngine : adEngines)
@@ -1375,7 +1401,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		return true;
 	}
-	
+
 	public String scheduleDeletePromotion(String json) throws Exception
 	{
 		logger.debug("call scheduleDeletePromotion(String json): [" + json + "]");
@@ -1931,7 +1957,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<Integer> promotionAdIds = gson.fromJson(promotionAdIdsString, SemplestUtils.TYPE_LIST_OF_INTEGERS);
 		final String adEnginesString = data.get("adEngines");
 		final List<String> adEngineStrings = gson.fromJson(adEnginesString, SemplestUtils.TYPE_LIST_OF_STRINGS);
-		AdEngine.validateAdEngines(adEngineStrings);		
+		AdEngine.validateAdEngines(adEngineStrings);
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
 		if (adEngines.isEmpty())
 		{
@@ -3289,7 +3315,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
 		String landingPageURL = data.get("landingPageURL");
 		String displayURL = data.get("displayURL");
-		Type type = new TypeToken<List<GoogleAddAdRequest>>(){}.getType();
+		Type type = new TypeToken<List<GoogleAddAdRequest>>()
+		{
+		}.getType();
 		List<GoogleAddAdRequest> ads = gson.fromJson(data.get("ads"), type);
 		List<GoogleViolation> res = validateGoogleAd(landingPageURL, displayURL, ads);
 		return gson.toJson(res);
