@@ -440,7 +440,7 @@ namespace Semplest.SharedResources.Services
                 stemp.Append(returnData);
                 stemp.Append(Environment.NewLine);
                 stemp.Append(ex.ToString());
-                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(stemp.ToString()); 
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString())); 
             }
             
         }

@@ -557,7 +557,7 @@ namespace Semplest.Core.Models.Repositories
             }
             catch (Exception ex)
             {
-                SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
+                SharedResources.Helpers.ExceptionHelper.LogException(ex);
             }
 
             // update Geotargeting
@@ -690,7 +690,7 @@ namespace Semplest.Core.Models.Repositories
 
                         catch (Exception ex)
                         {
-                            SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
+                            SharedResources.Helpers.ExceptionHelper.LogException(ex);
                         }
                     }
                 }
@@ -727,7 +727,7 @@ namespace Semplest.Core.Models.Repositories
             }
             catch (Exception ex)
             {
-                SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
+                SharedResources.Helpers.ExceptionHelper.LogException(ex);
             }
         }
 
@@ -795,7 +795,7 @@ namespace Semplest.Core.Models.Repositories
             }
             catch (Exception ex)
             {
-                SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString());
+                SharedResources.Helpers.ExceptionHelper.LogException(ex);
             }
             return adAds;
         }

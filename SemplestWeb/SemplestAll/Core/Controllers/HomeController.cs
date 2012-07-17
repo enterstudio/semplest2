@@ -251,7 +251,7 @@ namespace SemplestWebApp.Controllers
                 dbContext.Promotions.First(x => x.PromotionPK == promotionId).IsDeleted = sw.schedulePromotion(customerId, promotionId, dbContext.Promotions.First(x => x.PromotionPK == promotionId).PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1).ToArray(), SEMplestConstants.SchedulePromotionType.Delete);
                 dbContext.SaveChanges();
             }
-            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
             return RedirectToAction("Index2");
         }
 
@@ -270,7 +270,7 @@ namespace SemplestWebApp.Controllers
                 p.IsPaused = sw.schedulePromotion(customerId, promotionIdP, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
                 dbContext.SaveChanges();
             }
-            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
             return RedirectToAction("Index2");
         }
 
@@ -289,7 +289,7 @@ namespace SemplestWebApp.Controllers
                 p.IsPaused = !sw.schedulePromotion(customerId, promotionIdR, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
                 dbContext.SaveChanges();
             }
-            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
             return RedirectToAction("Index2");
         }
 
@@ -308,7 +308,7 @@ namespace SemplestWebApp.Controllers
                 p.IsCompleted = sw.schedulePromotion(customerId, promotionIdE, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.End);
                 dbContext.SaveChanges();
             }
-            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
             return RedirectToAction("Index2");
         }
 

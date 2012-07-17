@@ -208,7 +208,7 @@ namespace Semplest.SharedResources.Encryption
                 }
             }
             catch (Exception ex)
-            { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex.ToString()); }
+            { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
         }
     }
 }
