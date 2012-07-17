@@ -1053,6 +1053,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				final AdEngineID adEngineData = adEngineMap.get(adEngine);
 				final Long accountId = adEngineData.getAccountID();
+				Long campaignID = adEngineData.getCampaignID();
 				// go get the report from Google
 				SemplestString semplstStr = new SemplestString();
 				final String accountIdString = "" + accountId;
@@ -1061,7 +1062,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				try
 				{
 					ReportObject[] getReportData = google.getReportForAccount(accountIdString, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
-					SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
+					ReportObject[] filterReportDatabyCampaignID = filterReportData(getReportData, campaignID);
+					if (filterReportDatabyCampaignID != null)
+					{
+						SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
+					}
 				}
 				catch (Exception e)
 				{
@@ -1114,6 +1119,33 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return true;
 	}
 
+	private ReportObject[] filterReportData(ReportObject[] reportData, Long campaignID)
+	{
+		if (reportData == null || reportData.length == 0)
+		{
+			return reportData;
+		}
+		else
+		{
+			List<ReportObject> res = new ArrayList<ReportObject>();
+			List<ReportObject> reportDataList = Arrays.asList(reportData);
+			for (ReportObject reportdata : reportDataList)
+			{
+				if (reportdata.getCampaignID().equals(campaignID))
+				{
+					res.add(reportdata);
+				}
+			}
+			if (res.size() > 0)
+			{	
+				return (ReportObject[]) res.toArray();
+			}
+			else
+			{
+				return null;
+			}
+		}
+	}
 	public String UpdateGeoTargeting(String json) throws Exception
 	{
 		logger.debug("call UpdateGeoTargeting(String json): [" + json + "]");

@@ -3,15 +3,15 @@ package semplest.test;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.BasicConfigurator;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
-import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.service.springjdbc.BaseDB;
+import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TrafficDataObj;
 
 public class TestSpringJDBC extends BaseDB
@@ -31,9 +31,13 @@ public class TestSpringJDBC extends BaseDB
 			 * new FileInputStream(PROPSFILE); properties.load(is); is.close();
 			 */
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
+			BiddingParameters p = SemplestDB.getBiddingParameters();
+			System.out.println(p.getSemplestBiddingBudgetMultFactor() + ":" + p.getSemplestBiddingInitialBidBoostFactor() + ";" + p.getSemplestBiddingMarginFactor() + ";" + p.getSemplestBiddingPercentileValue());
+			/*
 			java.util.Date date = new java.util.Date();
 			Timestamp ts = new Timestamp(date.getTime());
 
+			
 			List<TrafficDataObj> trafficDataList = new ArrayList<TrafficDataObj>();
 
 			Long start = System.currentTimeMillis();
@@ -58,9 +62,10 @@ public class TestSpringJDBC extends BaseDB
 				Long ms = System.currentTimeMillis() - start;
 				System.out.println("Took ms = " + j + ":"  + ms + " sec=" + ms / 1000.);
 			}
+			
 
 			Long ms = System.currentTimeMillis() - start;
-			System.out.println("Took ms = " + ms + " sec=" + ms / 1000.);
+			System.out.println("Took ms = " + ms + " sec=" + ms / 1000.);*/
 			/*
 			 * GetAllPromotionDataSP sp = new GetAllPromotionDataSP();
 			 * sp.execute(60); // GetAdEngineAccountSP sp = new
