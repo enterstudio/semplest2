@@ -123,6 +123,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * 
 			 * }
 			 */
+			
+			/*
 			BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 
@@ -132,7 +134,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adEng.initializeService(null);
 			
 			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google, AdEngine.MSN));
-	
+	*/
+			
 			/*
 			Date now = new Date();
 			cal.setTime(now);

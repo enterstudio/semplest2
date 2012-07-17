@@ -297,7 +297,7 @@ public class BidGeneratorObj
 		try {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the bid data from the database.");
 			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, searchEngine);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got " + bidData.size() + "bid data from the database.");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got " + bidData.size() + " bid data from the database.");
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the bid data from the database. "+ e.getMessage(), e);
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the bid data from the database. "+ e.getMessage(), e);
@@ -343,10 +343,9 @@ public class BidGeneratorObj
 		
 		// map to store bids that need to go to search engine
 		HashMap<String,Long> wordBidMap = new HashMap<String,Long>();
-		
+
 		// data that needs to change in the database
 		ArrayList<BidElement> bidDataToDatabase = new ArrayList<BidElement>();
-
 
 		// keywords that need to be paused
 		HashMap<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
@@ -369,7 +368,7 @@ public class BidGeneratorObj
 		
 
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to read the report for all the keywords that had impressions.");
-
+		
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
@@ -561,7 +560,6 @@ public class BidGeneratorObj
 				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
 				try {
 					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
-					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Paused " + pauseMap.size() + " keywords");
 					break;
 				} catch (Exception e) {
 					if (k <= maxRetry) {
@@ -580,8 +578,6 @@ public class BidGeneratorObj
 			try{
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
 				msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Paused " + pauseMap.size() + " keywords");
-
 			} catch(Exception e){
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
