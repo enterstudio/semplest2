@@ -30,8 +30,8 @@ public class SecureFTPUsingSSH
 	private String host = null;
 	private int port = 22;
 	// location of private public keys
-	private final String publicKeyPath = "KeyFiles/id_dsa.pub";
-	private final String privateKeyPath = "KeyFiles/id_dsa.pub";
+	private final String publicKeyPath = "KeyFiles/semplest_dsa.pub";
+	private final String privateKeyPath = "KeyFiles/semplest_dsa.pub";
 	/**
 	 * Password that grants access to private key file.
 	 */
