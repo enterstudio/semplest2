@@ -69,6 +69,7 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.service.scheduler.CreateSchedulerAndTask;
 import semplest.services.client.api.SemplestBiddingServiceClient;
+import semplest.services.client.api.SemplestMailServiceClient;
 import semplest.services.client.interfaces.GoogleAdwordsServiceInterface;
 import semplest.services.client.interfaces.SemplestAdengineServiceInterface;
 import semplest.util.SemplestUtils;
@@ -129,7 +130,10 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
+			
+			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google));
 	
+			/*
 			Date now = new Date();
 			cal.setTime(now);
 			// get yesterday
@@ -156,8 +160,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			{
 				logger.info(report);
 			}
-			
-/*
+			*/
+
+			/*
 			final Integer promotionID = 128;
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
 			String scheduleName = "Manual_OnGoingBidding_Promo_" + promotionID;
@@ -166,6 +171,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			listOfTasks.add(executeOngoinBiddingTask);
 			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
 */
+			
+			
 			/*
 			 * final Integer customerID = 12; final Integer productGroupID = 76; final Integer PromotionID = 62; final List<AdEngine> adEngineList =
 			 * Arrays.asList(AdEngine.MSN); adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
@@ -336,7 +343,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String content = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
 			try
 			{
-				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.getEmailValue());
 			}
 			catch (Exception e)
 			{
@@ -352,7 +359,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final String content = "Error while trying to create Promotion [" + PromotionID + "]: " + e.getMessage();
 			try
 			{
-				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.name());
+				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.getEmailValue());
 			}
 			catch (Exception e2)
 			{
@@ -989,19 +996,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 
 	}
 
-	private Long calculateDailyMicroBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
-	{
-		final Double daily = ((BudgetMultFactor * monthlyBudget) / remainingDaysInCycle.doubleValue()) * 100.;
-		final BigDecimal bd = new BigDecimal(daily);
-		return (bd.longValue() * 10000L);
-	}
-
-	private Double calculateDailyBudgetFromMonthly(Double monthlyBudget, Integer remainingDaysInCycle)
-	{
-		Double daily = (BudgetMultFactor * monthlyBudget) / remainingDaysInCycle.doubleValue();
-		return daily;
-	}
-
 	private AdEngineAccountIdGroup createAdEngineAccount(AdEngine adEngine, String companyName) throws Exception
 	{
 		logger.info("Will try to Create AdEngine Account with AdEngine [" + adEngine + "], CompanyName [" + companyName + "]");
@@ -1078,6 +1072,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean ExecuteBidProcess(Integer PromotionID, List<AdEngine> adEngineList) throws Exception
 	{
 		logger.info("Will try to execute bid process for PromotionID [" + PromotionID + "], AdEngines [" + adEngineList + "]");
+		final StringBuilder emailSubject = new StringBuilder();
+		emailSubject.append("ExecuteBidProcess Summary: Promotion ID (" + PromotionID + "), Ad Engines (" + adEngineList + ")");
+		final StringBuilder emailContent = new StringBuilder();
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
@@ -1095,88 +1092,136 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		cal.add(Calendar.DAY_OF_MONTH, -5);
 		final String reportStartDate = YYYYMMDD.format(cal.getTime());
 		final String reportEndDate = YYYYMMDD.format(yesterday);
-		for (AdEngine adEngine : adEngineList)
+		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(cal.getTime())).append("\n")
+        		    .append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(yesterday)).append("\n\n");
+		try
 		{
-			if (adEngine == AdEngine.Google)
+			for (AdEngine adEngine : adEngineList)
 			{
-				final AdEngineID adEngineData = adEngineMap.get(adEngine);
-				final Long accountId = adEngineData.getAccountID();
-				Long campaignID = adEngineData.getCampaignID();
-				// go get the report from Google
-				SemplestString semplstStr = new SemplestString();
-				final String accountIdString = "" + accountId;
-				semplstStr.setSemplestString("" + accountId);
-				GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
-				try
+				if (adEngine == AdEngine.Google)
 				{
-					logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
-					ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
-					logger.info("Got report of size " + reportData.length);
-					ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
-					logger.info("Got report (filtered for CampaignID [" + campaignID + "]) of size " + reportData.length);
-					if (filterReportDatabyCampaignID != null)
+					emailContent.append(adEngine).append("\n");
+					final AdEngineID adEngineData = adEngineMap.get(adEngine);
+					final Long accountId = adEngineData.getAccountID();
+					Long campaignID = adEngineData.getCampaignID();
+					// go get the report from Google
+					SemplestString semplstStr = new SemplestString();
+					final String accountIdString = "" + accountId;
+					semplstStr.setSemplestString(accountIdString);
+					GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+					try
 					{
-						SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
+						logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
+						ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
+						logger.info("Got report of size " + reportData.length);
+						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
+						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
+						logger.info("Got report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
+						emailContent.append("\tAccount ID: ").append(accountIdString).append("\n")
+									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
+									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
+						if (filterReportDatabyCampaignID != null)
+						{
+							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
+							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
+						}
 					}
-				}
-				catch (Exception e)
-				{
-					logger.error("Unable to download Report for account " + accountIdString + ":" + e.getMessage(), e);
-				}
-				// update the API charges
-				/*
-				try
-				{
-					Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new Date());
-					if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
+					catch (Exception e)
 					{
-						Double newCost = null;
-						try
-						{
-							UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
-							newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
-						}
-						catch (Exception e)
-						{
-							logger.info("Problem doing UpdateAdEngineAPICharge (Stored proc).  Logging, but otherwise continuing");
-						}
-						logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId);
+						final String errMsg = "Unable to download Report for account " + accountIdString + ":" + e.getMessage();
+						// updating emailContent will be done in the enclosing try-catch
+						throw new Exception(errMsg, e);
 					}
+					// update the API charges
+					/*
+					try
+					{
+						Long cumulativeUnitsUsedFromStart = google.getSpentAPIUnitsPerAccountID(accountId, promoObj.getPromotionStartDate(), new Date());
+						if (cumulativeUnitsUsedFromStart != null && cumulativeUnitsUsedFromStart > 0)
+						{
+							Double newCost = null;
+							try
+							{
+								UpdateAdEngineAPIChargeSP updateApiSP = new UpdateAdEngineAPIChargeSP();
+								newCost = updateApiSP.execute(accountId, adEngine, cumulativeUnitsUsedFromStart);
+							}
+							catch (Exception e)
+							{
+								logger.info("Problem doing UpdateAdEngineAPICharge (Stored proc).  Logging, but otherwise continuing");
+							}
+							logger.info("Added additional API Cost of " + newCost + " to Google Account " + accountId);
+						}
+					}
+					catch (Exception e)
+					{
+						logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e);
+					}*/
 				}
-				catch (Exception e)
+				else if (adEngine == AdEngine.MSN)
 				{
-					logger.error("Error updating API charges for Google Account " + accountIdString + ":" + e.getMessage(), e);
-				}*/
+					emailContent.append(adEngine).append("\n");
+					final String warnMsg = "REPORT FOR MSN NOT YET IMPLEMENTED";
+					logger.warn(warnMsg);
+					emailContent.append("\t").append(warnMsg).append("\n\n");
+					// get report and store
+					// SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
+				}
+				else
+				{
+					emailContent.append(adEngine).append("\n");
+					final String warnMsg = "NO SUPPORT FOR ADENGINE " + adEngine;
+					logger.warn(warnMsg);
+					emailContent.append("\t").append(warnMsg).append("\n\n");
+				}
 			}
-			else if (adEngine == AdEngine.MSN)
+		
+			// CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
+			UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
+			Integer res = updateBudgetSP.execute(PromotionID, promoObj.getPromotionStartDate(), new Date());
+			// Call bidding service to split the budget
+			SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
+			// setup the budget for each ad engine
+			Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
+			// call setBidsUpdate
+			for (AdEngine adEngine : adEngineList)
 			{
-				logger.info("REPORT FOR MSN NOT YET IMPLEMENTED");
-				// get report and store
-				// SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
-			}
-			else
-			{
-				logger.error("NO SUPPORT FOR ADENGINE " + adEngine);
+				Double budget = (Double) remainingBudgetDaysMap.get(adEngine).get("RemainingBudgetInCycle");
+				Integer daysLeft = (Integer) remainingBudgetDaysMap.get(adEngine).get("RemainingDays");
+				BudgetObject budgetData = new BudgetObject();
+				budgetData.setRemainingBudgetInCycle(budget);
+				budgetData.setRemainingDays(daysLeft);
+				bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
 			}
 		}
-		// CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
-		UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
-		Integer res = updateBudgetSP.execute(PromotionID, promoObj.getPromotionStartDate(), new Date());
-		// Call bidding service to split the budget
-		SemplestBiddingServiceClient bidClient = new SemplestBiddingServiceClient(ESBWebServerURL, getTimeoutMS());
-		// setup the budget for each ad engine
-		Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngineList, bidClient);
-		// call setBidsUpdate
-		for (AdEngine adEngine : adEngineList)
+		catch (Exception e)
 		{
-			Double budget = (Double) remainingBudgetDaysMap.get(adEngine).get("RemainingBudgetInCycle");
-			Integer daysLeft = (Integer) remainingBudgetDaysMap.get(adEngine).get("RemainingDays");
-			BudgetObject budgetData = new BudgetObject();
-			budgetData.setRemainingBudgetInCycle(budget);
-			budgetData.setRemainingDays(daysLeft);
-			bidClient.setBidsUpdate(PromotionID, adEngine, budgetData);
+			final String errMsg = "Problem updating bids: " + e.getMessage();
+			logger.error(errMsg, e);
+			emailContent.append("\t").append(errMsg).append("\n\n");
+			emailSubject.append("--").append("ERROR");
+			final String emailSubjectString = emailSubject.toString();
+			final String emailContentString = emailContent.toString();
+			sendEmail(emailSubjectString, emailContentString);
+			throw new Exception(errMsg, e);
 		}
+		emailContent.append("\n\n");
+		emailSubject.append("--").append("SUCCESS");
+		final String emailSubjectString = emailSubject.toString();
+		final String emailContentString = emailContent.toString();
+		sendEmail(emailSubjectString, emailContentString);
 		return true;
+	}
+	
+	public static void sendEmail(final String subject, final String content)
+	{
+		try
+		{
+			SemplestMailClient.sendMailFromService(ESBWebServerURL, subject, DevelopmentEmail, DevelopmentEmail, content, ProtocolEnum.EmailType.PlanText.getEmailValue());
+		}
+		catch (Exception e2)
+		{
+			logger.error("Problem sending email with subject [" + subject + "] and content [" + content + "].  Logging, but otherwise continuing processing.", e2);
+		}
 	}
 
 	private static ReportObject[] filterReportData(ReportObject[] reportData, Long campaignID)

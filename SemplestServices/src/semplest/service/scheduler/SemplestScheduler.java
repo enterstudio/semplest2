@@ -474,7 +474,7 @@ public class SemplestScheduler extends Thread
 					{
 						//TODO: send email is successful = false
 						String msg = "ScheduleID= " + taskObj.getSchedulePK() + " Task Failed: " + taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters();
-						SemplestMailClient.sendMailFromService(url,"Error Running Schedule - scheduleJobPK=" + scheduleJobPK,DevelopmentEmail,DevelopmentEmail,msg,ProtocolEnum.EmailType.PlanText.name() );
+						SemplestMailClient.sendMailFromService(url,"Error Running Schedule - scheduleJobPK=" + scheduleJobPK,DevelopmentEmail,DevelopmentEmail,msg,ProtocolEnum.EmailType.PlanText.getEmailValue());
 					}
 					catch (Exception e1)
 					{

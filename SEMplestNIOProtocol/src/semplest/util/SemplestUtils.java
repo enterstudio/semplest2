@@ -91,6 +91,7 @@ import com.microsoft.adcenter.v8.Target;
 public final class SemplestUtils
 {
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+	public static final DateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	public static final DateFormat DATE_FORMAT_YYYYMMDD_HHmmss = new SimpleDateFormat("yyyyMMdd HHmmss");
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
 	public static final Double MICRO_AMOUNT_FACTOR = 1000000d;

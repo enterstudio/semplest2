@@ -29,10 +29,12 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		try
 		{
 			SemplestMailServiceClient client = new SemplestMailServiceClient(BASEURLTEST);
-			String msgSubject = "Error Running Schedule - scheduleJobPK=12185";
+			//String msgSubject = "Error Running Schedule - scheduleJobPK=12185";
+			String msgSubject = "ExecuteBidProcess Summary: Promotion ID (128), Ad Engines ([Google])--SUCCESS";
 			String emailFrom = "development@semplest.com";
 			String emailTo = "development@semplest.com";
-			String msgTxt = "ScheduleID= 1122 Task Failed: semplest.services.client.api.SemplestAdEngineServiceClient:AddPromotionToAdEngine:{\"productGroupID\":\"289\",\"adEngines\":\"[\\\"Google\\\"]\",\"customerID\":\"48\",\"promotionID\":\"309\"}";
+			//String msgTxt = "ScheduleID= 1122 Task Failed: semplest.services.client.api.SemplestAdEngineServiceClient:AddPromotionToAdEngine:{\"productGroupID\":\"289\",\"adEngines\":\"[\\\"Google\\\"]\",\"customerID\":\"48\",\"promotionID\":\"309\"}";
+			String msgTxt = "hello\n\n\tanother hello";
 			Boolean ret = client.SendEmail(msgSubject, emailFrom, emailTo, msgTxt, "text/plain; charset=ISO-8859-1"); //ProtocolEnum.EmailType.PlanText.name());
 		}
 		catch (Exception e)
@@ -52,6 +54,7 @@ public class SemplestMailServiceClient extends ServiceRun implements SemplestMai
 		{
 			this.baseurl = baseurl;
 		}
+		logger.info("Using Base URL [" + baseurl + "]");
 	}
 
 	@Override
