@@ -5,6 +5,7 @@ using SemplestModel.Validations;
 using System.Linq;
 using Semplest.SharedResources.Services;
 using System;
+using SharedResources.Models;
 
 
 namespace Semplest.Core.Models

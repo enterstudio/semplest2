@@ -5,6 +5,7 @@ using System.Web;
 using System.ComponentModel.DataAnnotations;
 using SemplestModel;
 using SharedResources.Helpers;
+using SharedResources.Models;
 
 namespace Semplest.SharedResources.Models
 {

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using SemplestModel;
+using SharedResources.Models;
 
 namespace Semplest.Core.Models
 {

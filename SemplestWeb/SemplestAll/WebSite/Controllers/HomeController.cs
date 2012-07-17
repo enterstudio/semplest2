@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using System.Net.Mail;
 using Semplest.WebSite.Models;
 using SemplestModel;
+using SharedResources.Models;
 
 namespace Semplest.WebSite.Controllers
 {
@@ -41,12 +42,12 @@ namespace Semplest.WebSite.Controllers
         }
         public ActionResult TermsOfUse()
         {
-            StaticModel vm = new StaticModel("TermsAndConditions");
+            StaticModel vm = new StaticModel(StaticPages.TermsAndConditions);
             return View("TermsOfUse", vm);
         }
         public ActionResult PrivacyPolicy()
         {
-            StaticModel vm = new StaticModel("PrivacyPolicy");
+            StaticModel vm = new StaticModel(StaticPages.PrivacyPolicy);
             return View("PrivacyPolicy", vm);
         }
         [HttpPost]

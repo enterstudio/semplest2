@@ -6,7 +6,7 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.ComponentModel;
-using SemplestModel;
+using SharedResources.Models;
 
 namespace Semplest.Core.Models
 {

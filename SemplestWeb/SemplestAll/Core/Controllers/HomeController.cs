@@ -4,11 +4,11 @@ using System.Reflection;
 using System.Web.Mvc;
 using Semplest.Core.Models;
 using Semplest.SharedResources;
-using SemplestWebApp.Services;
 using Semplest.SharedResources.Helpers;
 using Semplest.SharedResources.Services;
 using SemplestModel;
 using System.Linq;
+using SharedResources.Models;
 
 namespace SemplestWebApp.Controllers
 {
