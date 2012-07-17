@@ -429,7 +429,9 @@ public class BidGeneratorObj
 			for (final Entry<String, Long> entry : entrySet)
 			{
 				final String word = entry.getKey();
-				final Long keywordID = wordIDMap.get(word);
+				//final Long keywordID = wordIDMap.get(word);
+				final Long keywordID = kwBidElementMap.get(word).getKeywordAdEngineID();
+
 				final Long microBidAmount = wordBidMap.get(word);
 				if(microBidAmount==null){
 					continue; // don't write via API is the bid is null
