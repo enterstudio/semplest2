@@ -370,7 +370,7 @@ public class BidGeneratorObj
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
 			if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
-				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), true);
+				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), false);
 				pausedSet.add(r.getKeyword());
 				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Pausing keyword " + r.getKeyword());
