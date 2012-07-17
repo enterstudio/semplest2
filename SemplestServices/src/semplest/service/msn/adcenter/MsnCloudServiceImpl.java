@@ -156,7 +156,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 				object.wait();
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			
+			msn.createKeyword(1758634L, 709270153L, "Sneakers", MatchType.Exact, new Bid(0.55));
 			//1758634L
 			//1714527L
 			//final List<AccountMigrationStatusesInfo> statuses = msn.getAccountMigrationStatuses(1707019L, 16L);
@@ -1844,14 +1844,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	{
 		final Keyword keyword = new Keyword();
 		keyword.setText(text);
-		// NoBid
-		Bid noBid = new Bid();
-		noBid.setAmount(0.0);
+		//Bid noBid = new Bid();
+		//noBid.setAmount(0.0);
+		/*
 		keyword.setBroadMatchBid(noBid);
 		keyword.setExactMatchBid(noBid);
 		keyword.setContentMatchBid(noBid);
 		keyword.setPhraseMatchBid(noBid);
-		// Override noBid
+		*/
+		/*
+		keyword.setBroadMatchBid(null);
+		keyword.setExactMatchBid(null);
+		keyword.setContentMatchBid(null);
+		keyword.setPhraseMatchBid(null);
+		*/
+		/*
+		keyword.setBroadMatchBid(new Bid(null));
+		keyword.setExactMatchBid(new Bid(null));
+		keyword.setContentMatchBid(new Bid(null));
+		keyword.setPhraseMatchBid(new Bid(null));
+		*/
 		if (matchType == MatchType.Exact)
 		{
 			keyword.setExactMatchBid(bid);
