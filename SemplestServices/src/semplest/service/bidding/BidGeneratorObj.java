@@ -296,7 +296,6 @@ public class BidGeneratorObj
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got bid data from the database.");
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the bid data from the database. "+ e.getMessage(), e);
-			// e.printStackTrace();
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the bid data from the database. "+ e.getMessage(), e);
 		}
 		
@@ -1267,19 +1266,19 @@ public class BidGeneratorObj
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "The campaign started " + age + " day(s) ago.");
 
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
-		return setBidsInitialWeek(promotionID, searchEngine, budgetData);
-//		if (age <=10 ) {
-//			if(age%2==0){
-//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
-//				return setBidsInitialWeek(promotionID, searchEngine, budgetData);
-//			} else {
-//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate not doing anything TODAY!!");
-//				return new Boolean(true);
-//			}
-//		} else {
-//			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Logic to bid after 10th day is not implemented yet!!");
-//			return new Boolean(true);
-//		}
+		//return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+		if (age <=10 ) {
+			if(age%2==0){
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
+				return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			} else {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate not doing anything TODAY!!");
+				return new Boolean(true);
+			}
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Logic to bid after 10th day is not implemented yet!!");
+			return new Boolean(true);
+		}
 	} // setBidsUpdate()
 
 	

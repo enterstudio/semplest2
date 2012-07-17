@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -888,36 +889,39 @@ public class SemplestDB extends BaseDB
 
 	public static void storeAdvertisingEngineReportData(Integer promotionID, AdEngine adEngine, ReportObject[] reportObjList) throws Exception
 	{
+		logger.info("Will try to store AdEngine Bid Performance Report for PormotionID [" + promotionID + "], AdEngine [" + adEngine + "], <Report Items>");
 		if (reportObjList == null || reportObjList.length == 0)
 		{
+			logger.info("Report is empty, nothing to do");
 			return;
 		}
 		else
 		{
-
-			AddReportDataSP setReportSP = new AddReportDataSP();
-			for (int i = 0; i < reportObjList.length; i++)
+			logger.info("Report data to store:\n" + SemplestUtils.getEasilyReadableString(Arrays.asList(reportObjList)));
+		}
+		AddReportDataSP setReportSP = new AddReportDataSP();
+		for (int i = 0; i < reportObjList.length; i++)
+		{
+			ReportObject rptObj = reportObjList[i];
+			// Integer PromotionID, String Keyword,String AdvertisingEngine,
+			// Date TransactionDate, Integer MicroBidAmount,
+			// Integer NumberImpressions, Integer NumberClick, Float
+			// AveragePosition, Long AverageCPC,String BidType, Integer
+			// QualityScore, String
+			// ApprovalStatus,
+			// Integer FirstPageMicroCpc, Integer MicroCost
+			logger.info("Will try to insert: " + rptObj);
+			Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(), adEngine, rptObj.getTransactionDate(), rptObj.getMicroBidAmount()
+					.intValue(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),
+					rptObj.getBidMatchType(), rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(), rptObj
+							.getMicroCost().intValue());
+			if (id == 0)
 			{
-				ReportObject rptObj = reportObjList[i];
-				// Integer PromotionID, String Keyword,String AdvertisingEngine,
-				// Date TransactionDate, Integer MicroBidAmount,
-				// Integer NumberImpressions, Integer NumberClick, Float
-				// AveragePosition, Long AverageCPC,String BidType, Integer
-				// QualityScore, String
-				// ApprovalStatus,
-				// Integer FirstPageMicroCpc, Integer MicroCost
-				Integer id = setReportSP.execute(promotionID, rptObj.getKeyword(), adEngine, rptObj.getTransactionDate(), rptObj.getMicroBidAmount()
-						.intValue(), rptObj.getNumberImpressions(), rptObj.getNumberClick(), rptObj.getAveragePosition(), rptObj.getAverageCPC(),
-						rptObj.getBidMatchType(), rptObj.getQualityScore(), rptObj.getApprovalStatus(), rptObj.getFirstPageCPC().intValue(), rptObj
-								.getMicroCost().intValue());
-				if (id == 0)
-				{
-					logger.info(rptObj.getKeyword() + " already inserted");
-				}
-				else
-				{
-					logger.info(rptObj.getKeyword() + " inserted ID = " + id);
-				}
+				logger.info("Already inserted");
+			}
+			else
+			{
+				logger.info("Inserted ID = " + id);
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -121,13 +122,42 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * 
 			 * }
 			 */
+			BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 
 			// Schedule for next day at the same time
 
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
-
+	
+			Date now = new Date();
+			cal.setTime(now);
+			// get yesterday
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			Date yesterday = cal.getTime();
+			cal.add(Calendar.DAY_OF_MONTH, -5);
+			//final String accountIdString = "2397832336";
+			final GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
+			final String startDateString = YYYYMMDD.format(cal.getTime());
+			final String endDateString = YYYYMMDD.format(yesterday);			
+			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
+			final Integer promotionID = 128;
+			Boolean ret = getPromoDataSP.execute(promotionID);
+			final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(promotionID);
+			final AdEngineID adEngineData = adEngineMap.get(AdEngine.Google);
+			final Long accountId = adEngineData.getAccountID();
+			final String accountIdString = "" + accountId;
+			Long campaignID = adEngineData.getCampaignID();
+			ReportObject[] getReportData = google.getReportForAccount(accountIdString, startDateString, endDateString);
+			logger.info("Account [" + accountIdString + "], StartDate [" + startDateString + "], EndDate [" + endDateString + "], CampaignID [" + campaignID + "], Report Data size [" + getReportData.length + "]");
+			ReportObject[] filterReportDatabyCampaignID = filterReportData(getReportData, campaignID);
+			logger.info("Filtered Data size: " + filterReportDatabyCampaignID.length);
+			for (final ReportObject report : filterReportDatabyCampaignID)
+			{
+				logger.info(report);
+			}
+			
+/*
 			final Integer promotionID = 128;
 			final List<AdEngine> adEngines = Arrays.asList(AdEngine.Google);
 			String scheduleName = "Manual_OnGoingBidding_Promo_" + promotionID;
@@ -135,7 +165,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 			listOfTasks.add(executeOngoinBiddingTask);
 			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
-
+*/
 			/*
 			 * final Integer customerID = 12; final Integer productGroupID = 76; final Integer PromotionID = 62; final List<AdEngine> adEngineList =
 			 * Arrays.asList(AdEngine.MSN); adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
@@ -1052,6 +1082,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
 		final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
+		
 		/*
 		 * from Yesterday look back 5 days to get the transactions
 		 */
@@ -1062,6 +1093,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		Date yesterday = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, -5);
+		final String reportStartDate = YYYYMMDD.format(cal.getTime());
+		final String reportEndDate = YYYYMMDD.format(yesterday);
 		for (AdEngine adEngine : adEngineList)
 		{
 			if (adEngine == AdEngine.Google)
@@ -1076,8 +1109,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 				try
 				{
-					ReportObject[] getReportData = google.getReportForAccount(accountIdString, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(yesterday));
-					ReportObject[] filterReportDatabyCampaignID = filterReportData(getReportData, campaignID);
+					logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
+					ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
+					logger.info("Got report of size " + reportData.length);
+					ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
+					logger.info("Got report (filtered for CampaignID [" + campaignID + "]) of size " + reportData.length);
 					if (filterReportDatabyCampaignID != null)
 					{
 						SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
@@ -1143,7 +1179,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		return true;
 	}
 
-	private ReportObject[] filterReportData(ReportObject[] reportData, Long campaignID)
+	private static ReportObject[] filterReportData(ReportObject[] reportData, Long campaignID)
 	{
 		if (reportData == null || reportData.length == 0)
 		{
