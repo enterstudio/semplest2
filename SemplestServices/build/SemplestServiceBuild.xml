@@ -154,11 +154,11 @@
 	</target>
 	
 	<target name="depJars" depends="compileProtocol" description="Make Jars for dependencies">
-		<!-- Copy the PGPFiles folder -->
+		<!-- Copy the KeyFiles folder -->
 		<echo message="Copying PGPFiles folder..."/>	 	  	 	
-  	 	<mkdir dir="${dist}/PGPFiles"/>
-  	 	<copydir src="${semplest.protocol.dir}/PGPFiles"
-  	 		dest="${dist}/PGPFiles"
+  	 	<mkdir dir="${dist}/KeyFiles"/>
+  	 	<copydir src="${semplest.protocol.dir}/KeyFiles"
+  	 		dest="${dist}/KeyFiles"
   	 	    includes="**/*.*"
   	 	/>
 		
