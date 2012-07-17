@@ -131,7 +131,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google));
+			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google, AdEngine.MSN));
 	
 			/*
 			Date now = new Date();
