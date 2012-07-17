@@ -297,7 +297,7 @@ public class BidGeneratorObj
 		try {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the bid data from the database.");
 			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, searchEngine);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got bid data from the database.");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got " + bidData.size() + "bid data from the database.");
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the bid data from the database. "+ e.getMessage(), e);
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the bid data from the database. "+ e.getMessage(), e);
@@ -416,7 +416,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 5. Database call: store bid data
 		try {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the bid data to the database...");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write " +bidDataToDatabase.size() + "  bid data to the database...");
 			SemplestDB.storeBidObjects(promotionID, searchEngine,bidDataToDatabase);
 			//SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidDataToDatabase.size() + " keywords.");
@@ -435,7 +435,7 @@ public class BidGeneratorObj
 		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
 		
 		try {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid to the database.");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid of " + defaultMicroBid + " to the database.");
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
 			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Written default bid to the database.");
@@ -474,6 +474,8 @@ public class BidGeneratorObj
 			{
 				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
 			}
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with Google for " + wordBidMap.size() + " keywords.");
+
 		} 
 
 		if (searchEngine == AdEngine.MSN) {
@@ -501,6 +503,8 @@ public class BidGeneratorObj
 				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
 				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToDatabase);
 				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToMSN);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with MSN for " + bidDataToMSN.size() + " keywords.");
+
 			} catch (Exception e) {
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
