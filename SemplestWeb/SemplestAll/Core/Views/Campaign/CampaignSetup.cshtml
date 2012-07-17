@@ -282,7 +282,7 @@
                 var stitle, sbody;
                 if (arr.length > 1) {
                     sbody = arr[1];
-                    stitle = "Google Data Violation Error";
+                    stitle = arr[0];
                 }
                 else {
                     sbody = arr[0];
@@ -297,7 +297,6 @@
                 $('#InvalidDescriptionWindow').show();
                 pausePromotionWindow.center();
                 pausePromotionWindow.open();
-                event.preventDefault();
             }
         }
         //$("#tabstrip").children('.k-content').height(650);

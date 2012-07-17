@@ -227,6 +227,12 @@ namespace Semplest.Core.Controllers
                     return
                         Json(
                             "Invalid Description<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
+                else if(ex.Message.ToLower().Contains("no service for"))
+                {
+                    return
+                        Json(
+                            "Services not available<~>Sorry, the Ad Engine Services are currently not available. Please try again in a few minutes. If this problem continues, please contact SEMplest.");
+                }
                 else
                 {
                     Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);

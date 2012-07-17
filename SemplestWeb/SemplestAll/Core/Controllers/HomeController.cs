@@ -212,22 +212,22 @@ namespace SemplestWebApp.Controllers
                     //List<string> catList = model.AllCategories.Select(m => m.Name).Where(
                     //List<string> keywords = scw.GetKeywords(catList, null, "coffee machine", null, null, "http://www.wholelattelove.com", null);
                     var addcopies = new[] { model.AdCopy };
-                    List<string> keywords = scw.GetKeywords(catList, null, model.Product, model.Description, addcopies,
-                                                            model.LandingPage, null);
-                    if (keywords != null && keywords.Count > 0)
-                    {
-                        int i = 0;
-                        foreach (string key in keywords)
-                        {
-                            var kwm = new SearchKeywordsModel.KeywordsModel();
-                            kwm.Name = key;
-                            model.AllKeywords.Add(kwm);
-                        }
-                    }
-                    else
-                    {
+                    //List<string> keywords = scw.GetKeywords(catList, null, model.Product, model.Description, addcopies,
+                    //                                        model.LandingPage, null);
+                    //if (keywords != null && keywords.Count > 0)
+                    //{
+                    //    int i = 0;
+                    //    foreach (string key in keywords)
+                    //    {
+                    //        var kwm = new SearchKeywordsModel.KeywordsModel();
+                    //        kwm.Name = key;
+                    //        model.AllKeywords.Add(kwm);
+                    //    }
+                    //}
+                    //else
+                    //{
                         CreateDummyModel(model);
-                    }
+                    //}
                 }
 
                 return View(model);

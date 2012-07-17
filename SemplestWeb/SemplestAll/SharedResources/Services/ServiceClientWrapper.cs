@@ -13,8 +13,6 @@ namespace Semplest.SharedResources.Services
 {
     public class ServiceClientWrapper
     {
-
-
         private static string ADENGINESERVICE = "semplest.server.service.adengine.SemplestAdengineService";
         private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
         private static String MAILSERVICEOFFERED = "semplest.server.service.mail.SemplestMailService";
@@ -41,27 +39,12 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
                 string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-                returnData = string.Empty;
-                try
-                {
-                    returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
-                }
-                catch (Exception ex)
-                {
-                    string errmsg = ex.Message;
-                    throw;
-                }
-                //return JsonConvert.DeserializeObject<List<string>>(returnData);
+                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getCategories", jsonstr, timeoutMS);
 
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
-                if (jsonstrlist == "Service Timeout")
-                {
 
-                    throw new Exception("Service Timeout for GetCategories");
-                }
                 return JsonConvert.DeserializeObject<List<string>>(jsonstrlist);
             }
             catch
@@ -77,7 +60,7 @@ namespace Semplest.SharedResources.Services
         public KeywordProbabilityObject[] GetKeywords(List<string> categories, string companyName,
                                                       string[] searchEngines,
                                                       string searchTerm, string description, string[] adds, string url,
-                                                      GeoTargetObject[] gt, Int32[] nGrams)
+                                                      GeoTargetObject[] gt)
         {
             string returnData = string.Empty;
             try
@@ -95,7 +78,7 @@ namespace Semplest.SharedResources.Services
                 jsonHash.Add("gt", jsonGt);
                 jsonHash.Add("description", description);
                 jsonHash.Add("url", url);
-                nGrams = new[] {300, 300, 100};
+                Int32[] nGrams = new[] {300, 300, 100};
                 //nGrams = new Int32[] { 1,2,3 };
                 string jsonNgrams = JsonConvert.SerializeObject(nGrams);
                 jsonHash.Add("nGrams", jsonNgrams);
@@ -106,13 +89,6 @@ namespace Semplest.SharedResources.Services
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
-                if (jsonstrlist == "Service Timeout")
-                {
-                    throw new Exception("Service Timeout for GetKeywords");
-                }
-
-                //var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-                //var listoflist = JsonConvert.DeserializeObject<List<KeywordProbabilityObject>>(jsonstrlist);
                 var listoflist = JsonConvert.DeserializeObject<KeywordProbabilityObject[]>(jsonstrlist);
 
                 foreach (var kpolis in listoflist)
@@ -132,54 +108,10 @@ namespace Semplest.SharedResources.Services
             }
         }
 
-        public List<string> GetKeywords(List<string> categories, string companyName, string searchTerm,
-                                        string description, string[] adds, string url, Int32[] nGrams)
-        {
-            string returnData = string.Empty;
-            try
-            {
-                var jsonHash = new Dictionary<string, string>();
-                String jsonCategories = JsonConvert.SerializeObject(categories);
-                jsonHash.Add("categories", jsonCategories);
-                jsonHash.Add("companyName", companyName);
-                jsonHash.Add("searchTerm", searchTerm);
-                string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
-                jsonHash.Add("adds", jsonAdds);
-                jsonHash.Add("description", description);
-                jsonHash.Add("url", url);
-                nGrams = new[] {50, 50};
-                //nGrams = new Int32[] { 1,2,3 };
-                string jsonNgrams = JsonConvert.SerializeObject(nGrams);
-                jsonHash.Add("nGrams", jsonNgrams);
-                string jsonstr = JsonConvert.SerializeObject(jsonHash);
-
-                returnData = runMethod(_baseURLTest, SERVICEOFFERED, "getKeywords", jsonstr, timeoutMS);
-                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-                List<string> lis = dict.Values.ToList();
-                string jsonstrlist = lis[0];
-
-                var listoflist = JsonConvert.DeserializeObject<List<List<string>>>(jsonstrlist);
-                var newstrlist = new List<string>();
-
-                foreach (var strlis in listoflist)
-                {
-                    newstrlist.AddRange(strlis);
-                }
-
-                return newstrlist;
-            }
-            catch
-            {
-                if (string.IsNullOrEmpty(returnData))
-                    throw;
-                else
-                    throw new Exception(returnData);
-            }
-        }
-
         #region AdEngine
 
-        public bool schedulePromotion(int customerId, int promoId, string[] adds, SEMplestConstants.SchedulePromotionType st)
+        public bool schedulePromotion(int customerId, int promoId, string[] adds,
+                                      SEMplestConstants.SchedulePromotionType st)
         {
             var jsonHash = new Dictionary<string, string>();
             jsonHash.Add("customerID", customerId.ToString());
@@ -188,15 +120,19 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("adEngines", jsonAdds);
             string jsonstr = JsonConvert.SerializeObject(jsonHash);
             string requestedService;
-            switch(st)
+            switch (st)
             {
-                case SEMplestConstants.SchedulePromotionType.Unpause: requestedService="scheduleUnpausePromotion";
+                case SEMplestConstants.SchedulePromotionType.Unpause:
+                    requestedService = "scheduleUnpausePromotion";
                     break;
-                case SEMplestConstants.SchedulePromotionType.Pause: requestedService= "schedulePausePromotion";
+                case SEMplestConstants.SchedulePromotionType.Pause:
+                    requestedService = "schedulePausePromotion";
                     break;
-                case SEMplestConstants.SchedulePromotionType.Delete: requestedService= "scheduleDeletePromotion";
+                case SEMplestConstants.SchedulePromotionType.Delete:
+                    requestedService = "scheduleDeletePromotion";
                     break;
-                case SEMplestConstants.SchedulePromotionType.End: requestedService= "scheduleEndPromotion";
+                case SEMplestConstants.SchedulePromotionType.End:
+                    requestedService = "scheduleEndPromotion";
                     break;
                 default:
                     throw new Exception("Invalid Promotion Schedule Type");
@@ -311,20 +247,20 @@ namespace Semplest.SharedResources.Services
             String returnData = string.Empty;
             try
             {
-            Dictionary<String, String> jsonHash = new Dictionary<String, String>();
-            jsonHash.Add("landingPageURL", landingPageURL);
-            jsonHash.Add("displayURL", displayURL);
-            String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
-            jsonHash.Add("ads", adsStr);
-            returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
-                                          JsonConvert.SerializeObject(jsonHash), timeoutMS);
-            var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
-            List<string> lis = dict.Values.ToList();
-            string jsonstrlist = lis[0];
-            var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
-            return listoflist;
-                        }
-            catch(Exception ex)
+                Dictionary<String, String> jsonHash = new Dictionary<String, String>();
+                jsonHash.Add("landingPageURL", landingPageURL);
+                jsonHash.Add("displayURL", displayURL);
+                String adsStr = JsonConvert.SerializeObject(ads, Formatting.Indented);
+                jsonHash.Add("ads", adsStr);
+                returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleAd",
+                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                List<string> lis = dict.Values.ToList();
+                string jsonstrlist = lis[0];
+                var listoflist = JsonConvert.DeserializeObject<GoogleViolation[]>(jsonstrlist);
+                return listoflist;
+            }
+            catch (Exception ex)
             {
                 throw new Exception(returnData + ex.ToString());
             }
@@ -338,7 +274,7 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("promotionID", promotionID.ToString());
                 returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleRefreshSiteLinks",
-                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -359,7 +295,7 @@ namespace Semplest.SharedResources.Services
                 var jsonHash = new Dictionary<string, string>();
                 jsonHash.Add("promotionID", promotionID.ToString());
                 returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleGeoTargets",
-                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -381,7 +317,7 @@ namespace Semplest.SharedResources.Services
                 String negativeKeywordsStr = JsonConvert.SerializeObject(negativeKeywords, Formatting.Indented);
                 jsonHash.Add("negativeKeywords", negativeKeywordsStr);
                 returnData = runMethod(_baseURLTest, ADENGINESERVICE, "validateGoogleNegativeKeywords",
-                                              JsonConvert.SerializeObject(jsonHash), timeoutMS);
+                                       JsonConvert.SerializeObject(jsonHash), timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
@@ -389,15 +325,16 @@ namespace Semplest.SharedResources.Services
 
                 return listoflist;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(returnData + ex.ToString());
             }
         }
-         
+
         #endregion
 
         private Thread _workerThread;
+
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
             var dbContext = new SemplestModel.Semplest();
@@ -417,15 +354,17 @@ namespace Semplest.SharedResources.Services
             string returnData = string.Empty;
             try
             {
-                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr, timeoutMS);
+                returnData = runMethod(_baseURLTest, param.ServiceRequested, param.MethodRequested, param.JsonStr,
+                                       timeoutMS);
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
                 string jsonstrlist = lis[0];
                 //this should be the case but we are always going to return true so this line has been commented out
-                if(!bool.Parse(lis[0]))
+                if (!bool.Parse(lis[0]))
                     throw new Exception("Json Call returned a false");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 System.Text.StringBuilder stemp = new System.Text.StringBuilder();
                 stemp.Append("Json Passed:");
                 stemp.Append(param.JsonStr);
@@ -440,14 +379,14 @@ namespace Semplest.SharedResources.Services
                 stemp.Append(returnData);
                 stemp.Append(Environment.NewLine);
                 stemp.Append(ex.ToString());
-                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString())); 
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
             }
-            
+
         }
 
-         private class ThreadData
+        private class ThreadData
         {
-            public string ServiceRequested{get;set;}
+            public string ServiceRequested { get; set; }
             public string MethodRequested { get; set; }
             public string JsonStr { get; set; }
 
@@ -475,7 +414,9 @@ namespace Semplest.SharedResources.Services
                 try
                 {
 
-                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest", "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService", "CreateProfile", jsonstr, "0");
+                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest",
+                                           "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService",
+                                           "CreateProfile", jsonstr, "0");
                 }
                 catch (Exception ex)
                 {
@@ -489,7 +430,8 @@ namespace Semplest.SharedResources.Services
 
 
 
-                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
+                var objval =
+                    JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
 
                 ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
                 ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
@@ -528,7 +470,9 @@ namespace Semplest.SharedResources.Services
                 try
                 {
 
-                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest", "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService", "AuthorizeAndCapture", jsonstr, "0");
+                    returnData = runMethod("http://VMDEVJAVA1:9898/semplest",
+                                           "semplest.service.chaseorbitalgateway.ChaseOrbitalGatewayService",
+                                           "AuthorizeAndCapture", jsonstr, "0");
                 }
                 catch (Exception ex)
                 {
@@ -540,7 +484,8 @@ namespace Semplest.SharedResources.Services
                 var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
                 List<string> lis = dict.Values.ToList();
 
-                var objval = JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
+                var objval =
+                    JsonConvert.DeserializeObject<Dictionary<string, string>>((dict.Values.ToList()[0].ToString()));
 
                 ReturnGatewayReturnObject.isGood = Convert.ToBoolean(objval["isGood"]);
                 ReturnGatewayReturnObject.isError = Convert.ToBoolean(objval["isError"]);
@@ -583,176 +528,219 @@ namespace Semplest.SharedResources.Services
                 string boolResult = dict.Values.First();
                 return Convert.ToBoolean(boolResult);
             }
-            catch  { }
+            catch
+            {
+            }
             return false;
         }
 
         public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS)
         {
-            jsonStr = HttpUtility.UrlEncode(jsonStr);
-            var client = new WebClient();
-            client.QueryString.Add("jsonStr", jsonStr);
-            client.QueryString.Add("service", serviceName);
-            client.QueryString.Add("method", methodName);
-
-            if (timeoutMS != null)
+            string returnData = string.Empty;
+            try
             {
-                client.QueryString.Add("timeout", timeoutMS);
+                jsonStr = HttpUtility.UrlEncode(jsonStr);
+                var client = new WebClient();
+                client.QueryString.Add("jsonStr", jsonStr);
+                client.QueryString.Add("service", serviceName);
+                client.QueryString.Add("method", methodName);
+
+                if (timeoutMS != null)
+                {
+                    client.QueryString.Add("timeout", timeoutMS);
+                }
+
+                client.BaseAddress = baseURL;
+                string qs = client.QueryString.ToString();
+                Stream data = client.OpenRead(baseURL);
+                var reader = new StreamReader(data);
+                returnData = reader.ReadToEnd();
+                if (returnData.ToLower().Contains("service timeout"))
+                    throw new Exception("Service Timeout");
+                if (returnData.ToLower().Contains("no service for"))
+                    throw new Exception("Service not available");
+                return returnData;
+            }
+            catch (Exception ex)
+            {
+                {
+                    var stemp = new System.Text.StringBuilder();
+                    stemp.Append(ex.Message);
+                    stemp.Append("Json Passed:");
+                    stemp.Append(jsonStr);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Service Requested:");
+                    stemp.Append(serviceName);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Method Requested:");
+                    stemp.Append(methodName);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Json Returned:");
+                    stemp.Append(returnData);
+                    stemp.Append(Environment.NewLine);
+                    throw new Exception(stemp.ToString());
+                }
             }
 
-            client.BaseAddress = baseURL;
-            string qs = client.QueryString.ToString();
-            Stream data = client.OpenRead(baseURL);
-            var reader = new StreamReader(data);
-            string s = reader.ReadToEnd();
-
-            //WebResource webResource = client.resource(baseURL);
-            //return webResource.queryParams(queryParams).get(String.class);
-            return s;
         }
-
     }
 
     public class GeoTargetObject
-    {
-        private String address;
-        private String city;
-        private String state;
-        private String zip;
-        private Double latitude;
-        private Double longitude;
-        private Double radius;
-        public String getAddress()
         {
-            return address;
-        }
-        public void setAddress(String address)
-        {
-            this.address = address;
-        }
-        public String getCity()
-        {
-            return city;
-        }
-        public void setCity(String city)
-        {
-            this.city = city;
-        }
-        public String getState()
-        {
-            return state;
-        }
-        public void setState(String state)
-        {
-            this.state = state;
-        }
-        public String getZip()
-        {
-            return zip;
-        }
-        public void setZip(String zip)
-        {
-            this.zip = zip;
-        }
-        public Double getLatitude()
-        {
-            return latitude;
-        }
-        public void setLatitude(Double latitude)
-        {
-            this.latitude = latitude;
-        }
-        public Double getLongitude()
-        {
-            return longitude;
-        }
-        public void setLongitude(Double longitude)
-        {
-            this.longitude = longitude;
-        }
-        public Double getRadius()
-        {
-            return radius;
-        }
-        public void setRadius(Double radius)
-        {
-            this.radius = radius;
-        }
-    }
+            private String address;
+            private String city;
+            private String state;
+            private String zip;
+            private Double latitude;
+            private Double longitude;
+            private Double radius;
 
-    public class KeywordProbabilityObject 
-    {
-        public int id { get; set; }
-        public string keyword { get; set; }
-        public double semplestProbability { get; set; }
-        public bool isTargetMSN { get; set; }
-        public bool isTargetGoogle { get; set; }
-        public bool isDeleted { get; set; }
-    }
+            public String getAddress()
+            {
+                return address;
+            }
 
-    public class KeywordIdRemoveOppositePair
-    {
-        public int KeywordId { get; set; }
-        public bool RemoveOpposite { get; set; }
-    }
+            public void setAddress(String address)
+            {
+                this.address = address;
+            }
 
-    public class CustomerObject
-    { //this object is passed to the semplest CC API service
-        public String FirstName { get; set; }
-        public String LastName { get; set; }
-        public String Address1 { get; set; }
-        //public String Address2 { get; set; }
-        public String City { get; set; }
-        public String StateAbbr { get; set; }
-        public String ZipCode { get; set; }
-        public String Email { get; set; }
-        public String Phone { get; set; }
-        public String creditCardNumber { get; set; }
-        public String ExpireDateMMYY { get; set; }
-    }
+            public String getCity()
+            {
+                return city;
+            }
 
-    public class GatewayReturnObject
-    { //this object is received from the semplest CC API service calls
-        public String xmlReturn = null;
-        public Boolean isGood;
-        public Boolean isError;
-        public Boolean isQuickResponse;
-        public Boolean isApproved;
-        public Boolean isDeclined;
-        public String AuthCode;
-        public String TxRefNum;
-        public String ResponseCode;
-        public String Status;
-        public String Message;
-        public String AVSCode;
-        public String CVV2ResponseCode;
-        //New Order
-        public String OrderID = null;
-        public String amountRequestedNoDecimal = null;
-        public String amountRedeemedNoDecimal = null;
-        public String remainingBalanceNoDecimal = null;
-        //Profile
-        public String CustomerRefNum = null;
-    }
+            public void setCity(String city)
+            {
+                this.city = city;
+            }
 
-    public class GoogleAddAdRequest
-    {
-        public int promotionAdID { get; set; } //NOTE SET THIS TO null for validation
-        public String headline { get; set; }
-        public String description1 { get; set; }
-        public String description2 { get; set; }
-    }
+            public String getState()
+            {
+                return state;
+            }
 
-    public class GoogleViolation
-    {
-        public String errorType { get; set; }
-        public String errorMessage { get; set; }
-        public String fieldPath { get; set; }
-        public String shortFieldPath { get; set; }
-        public Boolean isPolicyViolationError { get; set; }
-        public String policyName { get; set; }
-        public String policyDescription { get; set; }
-        public string policyViolatingText { get; set; }
-    }
+            public void setState(String state)
+            {
+                this.state = state;
+            }
 
-}
+            public String getZip()
+            {
+                return zip;
+            }
+
+            public void setZip(String zip)
+            {
+                this.zip = zip;
+            }
+
+            public Double getLatitude()
+            {
+                return latitude;
+            }
+
+            public void setLatitude(Double latitude)
+            {
+                this.latitude = latitude;
+            }
+
+            public Double getLongitude()
+            {
+                return longitude;
+            }
+
+            public void setLongitude(Double longitude)
+            {
+                this.longitude = longitude;
+            }
+
+            public Double getRadius()
+            {
+                return radius;
+            }
+
+            public void setRadius(Double radius)
+            {
+                this.radius = radius;
+            }
+        }
+
+        public class KeywordProbabilityObject
+        {
+            public int id { get; set; }
+            public string keyword { get; set; }
+            public double semplestProbability { get; set; }
+            public bool isTargetMSN { get; set; }
+            public bool isTargetGoogle { get; set; }
+            public bool isDeleted { get; set; }
+        }
+
+        public class KeywordIdRemoveOppositePair
+        {
+            public int KeywordId { get; set; }
+            public bool RemoveOpposite { get; set; }
+        }
+
+        public class CustomerObject
+        {
+            //this object is passed to the semplest CC API service
+            public String FirstName { get; set; }
+            public String LastName { get; set; }
+            public String Address1 { get; set; }
+            //public String Address2 { get; set; }
+            public String City { get; set; }
+            public String StateAbbr { get; set; }
+            public String ZipCode { get; set; }
+            public String Email { get; set; }
+            public String Phone { get; set; }
+            public String creditCardNumber { get; set; }
+            public String ExpireDateMMYY { get; set; }
+        }
+
+        public class GatewayReturnObject
+        {
+            //this object is received from the semplest CC API service calls
+            public String xmlReturn = null;
+            public Boolean isGood;
+            public Boolean isError;
+            public Boolean isQuickResponse;
+            public Boolean isApproved;
+            public Boolean isDeclined;
+            public String AuthCode;
+            public String TxRefNum;
+            public String ResponseCode;
+            public String Status;
+            public String Message;
+            public String AVSCode;
+            public String CVV2ResponseCode;
+            //New Order
+            public String OrderID = null;
+            public String amountRequestedNoDecimal = null;
+            public String amountRedeemedNoDecimal = null;
+            public String remainingBalanceNoDecimal = null;
+            //Profile
+            public String CustomerRefNum = null;
+        }
+
+        public class GoogleAddAdRequest
+        {
+            public int promotionAdID { get; set; } //NOTE SET THIS TO null for validation
+            public String headline { get; set; }
+            public String description1 { get; set; }
+            public String description2 { get; set; }
+        }
+
+        public class GoogleViolation
+        {
+            public String errorType { get; set; }
+            public String errorMessage { get; set; }
+            public String fieldPath { get; set; }
+            public String shortFieldPath { get; set; }
+            public Boolean isPolicyViolationError { get; set; }
+            public String policyName { get; set; }
+            public String policyDescription { get; set; }
+            public string policyViolatingText { get; set; }
+        }
+
+    }

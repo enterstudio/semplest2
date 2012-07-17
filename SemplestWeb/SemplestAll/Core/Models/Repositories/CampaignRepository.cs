@@ -82,7 +82,7 @@ namespace Semplest.Core.Models.Repositories
                                            model.AdModelProp.Ads.Select(
                                                pad => pad.AdTitle + " " + pad.AdTextLine1 + " " + pad.AdTextLine2).
                                                ToArray(), model.AdModelProp.LandingUrl,
-                                           SerializeToGeoTargetObjectArray(model).ToArray(), null);
+                                           SerializeToGeoTargetObjectArray(model).ToArray());
 
 
             if (keywords != null && keywords.Length > 0)
