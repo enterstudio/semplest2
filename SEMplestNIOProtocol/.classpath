@@ -28,5 +28,7 @@
 	<classpathentry kind="lib" path="lib/msn_adcenter_v8r3.jar"/>
 	<classpathentry kind="lib" path="lib/adwords-api-8.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.10.jar"/>
+	<classpathentry kind="lib" path="lib/jsch-0.1.48.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
