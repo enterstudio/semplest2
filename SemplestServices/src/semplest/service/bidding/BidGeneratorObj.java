@@ -89,6 +89,7 @@ public class BidGeneratorObj
 	double percentileValue;
 	double marginFactor=1.0;
 	double budgetBoost=1.0;
+	double bidBoostFactor=1.1;
 
 	private GoogleAdwordsServiceImpl clientGoogle;
 	private MsnCloudServiceImpl msnClient;
@@ -163,6 +164,9 @@ public class BidGeneratorObj
 		
 		final Float budgetBoostFactorDouble = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor"); 
 		budgetBoost = budgetBoostFactorDouble.doubleValue();
+		
+		final Float bidBoostFactorFloat = (Float) SemplestConfiguration.configData.get("SemplestBiddingInitialBidBoostFactor");
+		bidBoostFactor = bidBoostFactorFloat.doubleValue();
 		
 		final Integer percentileValInteger = (Integer) SemplestConfiguration.configData.get("SemplestBiddingPercentileValue"); 
 		percentileValue = percentileValInteger.doubleValue();
@@ -349,29 +353,39 @@ public class BidGeneratorObj
 		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
 		if(maxBid<=0.05) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
-			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Daily budget is too low to do anything with this adgroup...");
+			return true;
+			//throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Daily budget is too low to do anything with this adgroup...");
 		}
 		final Double maxBidDouble = new Double(maxBid * 0.95 * 1e6);
 		final Long maxBidDoubleLong = maxBidDouble.longValue();
 		Long maxBidL = new Long(maxBidDoubleLong / 10000L * 10000L);
+		
+		
+		BiddingParameters  bidParams = SemplestDB.getBiddingParameters();
+		bidBoostFactor = bidParams.getSemplestBiddingInitialBidBoostFactor().doubleValue();
+		
 
 		
 		for (ReportObject r : reportObjListYesterday){
 			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
 			if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
 				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), true);
 				pausedSet.add(r.getKeyword());
 				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Pausing keyword " + r.getKeyword());
 				
-				if(!kwBidElementMap.get(r.getKeyword()).getIsActive()){ // if the KW is running on default bid, update the bid value before pausing
+				if(kwBidElementMap.get(r.getKeyword()).getIsDefaultValue()){ // if the KW is running on default bid, update the bid value before pausing
 					wordBidMap.put(r.getKeyword(), kwBidElementMap.get(r.getKeyword()).getMicroBidAmount());
 					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
 				}
-			} else {
-				long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(1.1,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+			} else if (kwBidElementMap.get(r.getKeyword()).getIsActive()) {
+				long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
 				wordBidMap.put(r.getKeyword(), b);
 				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(wordBidMap.get(r.getKeyword()));
 				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + r.getKeyword() +" to "+ wordBidMap.get(r.getKeyword()));
 			}
 		}
 		
@@ -380,9 +394,10 @@ public class BidGeneratorObj
 				continue;
 			}
 			if(!b.getIsDefaultValue() && b.getIsActive()){
-				long bMax = Math.min(maxBidL, (((long) (b.getMicroBidAmount()* Math.pow(1.1,4)))/10000L) * 10000L);
+				long bMax = Math.min(maxBidL, (((long) (b.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L);
 				wordBidMap.put(b.getKeyword(),bMax);
 				b.setMicroBidAmount(wordBidMap.get(b.getKeyword()));
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + b.getKeyword() +" to "+ wordBidMap.get(b.getKeyword()));
 			}
 		}
 		
@@ -403,7 +418,7 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 6. Database call: compute and update default bid of the adgroup
 		long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
-		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(1.1,2))) / 10000L) * 10000L);
+		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
 		
 		try {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid to the database.");
@@ -1770,12 +1785,14 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(125);
+			Integer promotionID = new Integer(128);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 			//bidObject.setBidsUpdate(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			bidObject.setBidsInitialWeek(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+
 			
 			AdEngine searchEngine = AdEngine.Google;
 			
