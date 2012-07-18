@@ -339,6 +339,13 @@ public class SemplestDB extends BaseDB
 		}
 	}
 
+	public static Integer disableSchedule(Integer ScheduleID ) throws Exception
+	{
+		String strSQL = "update Schedule set IsEnabled = 0 from Schedule s where s.SchedulePK = ?";
+
+		return jdbcTemplate.update(strSQL, new Object[]
+		{ ScheduleID });
+	}
 	public static Integer addSchedule(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive,
 			Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
