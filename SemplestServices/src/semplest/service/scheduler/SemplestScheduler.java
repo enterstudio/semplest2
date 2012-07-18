@@ -32,6 +32,7 @@ public class SemplestScheduler extends Thread
 	private boolean cancel = false;
 	private boolean scheduleRunning = false;
 	private static final Logger logger = Logger.getLogger(SemplestScheduler.class);
+	private final String runMode; 
 
 	private Vector<SchedulerRecord> recordMessageList = null;
 
@@ -39,6 +40,8 @@ public class SemplestScheduler extends Thread
 	{
 		this.recordMessageList = recordMessageList;
 		lock = synchLock;
+		runMode = (String)SemplestConfiguration.configData.get("RunMode");
+
 	}
 	/*
 	 * TEST
@@ -474,7 +477,7 @@ public class SemplestScheduler extends Thread
 					{
 						//TODO: send email is successful = false
 						String msg = "ScheduleID= " + taskObj.getSchedulePK() + " Task Failed: " + taskObj.getServiceName() + ":" + taskObj.getMethodName() + ":" + taskObj.getParameters();
-						SemplestMailClient.sendMailFromService(url,"Error Running Schedule - scheduleJobPK=" + scheduleJobPK,DevelopmentEmail,DevelopmentEmail,msg,ProtocolEnum.EmailType.PlanText.getEmailValue());
+						SemplestMailClient.sendMailFromService(url, runMode + " -- Error Running Schedule - scheduleJobPK=" + scheduleJobPK,DevelopmentEmail,DevelopmentEmail,msg,ProtocolEnum.EmailType.PlanText.getEmailValue());
 					}
 					catch (Exception e1)
 					{

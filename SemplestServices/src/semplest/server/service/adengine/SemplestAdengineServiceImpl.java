@@ -231,16 +231,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 		RunMode = (String) SemplestConfiguration.configData.get("RunMode");
-		
-		logger.info("Will use these properties:\n" +
-				"ESBWebServerURL: " + ESBWebServerURL + "\n" + 
-				"AdwordsValidationAccountID: " + AdwordsValidationAccountID + "\n" +  
-				"AdwordsValidationCampaignID: " + AdwordsValidationCampaignID + "\n" + 
-				"AdwordsValidationAdGroupID: " + AdwordsValidationAdGroupID + "\n" + 
-				"BudgetMultFactor: " + BudgetMultFactor + "\n" + 				
-				"DevelopmentEmail: " + DevelopmentEmail + "\n" + 
-				"RunMode: " + RunMode				
-		);
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
