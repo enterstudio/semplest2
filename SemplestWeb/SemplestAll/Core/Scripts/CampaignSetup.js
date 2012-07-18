@@ -5,7 +5,7 @@ var formClean;
 
 
 $(document).ready(function () {
-    
+
     formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
     //Proximity TextBox To Numeric TextBox
     $("#Proxmity").kendoNumericTextBox();
@@ -30,7 +30,7 @@ $(document).ready(function () {
             $('#AdModelProp_DisplayUrl').val(dispStr);
         }
     });
-    
+
     $('#AdModelProp_LandingUrl').live("keyup", function (e) {
         var originalValue = $('#AdModelProp_LandingUrl').val();
         var index = originalValue.indexOf('http://');
@@ -64,7 +64,7 @@ $(document).ready(function () {
                 $('#AdModelProp_DisplayUrl').val(landStr);
             }
         }
-    }); 
+    });
     var budjet = $("#ProductGroup_Budget").kendoNumericTextBox({ format: "#", decimals: 0, min: 0 }).data("kendoNumericTextBox");
     budjet.wrapper.find(".k-numeric-wrap").addClass("expand-padding").find(".k-select").hide();
     budjet.wrapper.find(".k-link")
@@ -234,11 +234,12 @@ $(document).ready(function () {
             start.max(endDate);
         }
     }
-    var date = new Date();
-    var d = date.getDate();
-    var m = date.getMonth();
-    var y = date.getFullYear();
-    var toDay = new Date(y, m, d);
+    var dateArray = $("#ProductGroup_StartDate").val().split("/");
+    var toDay = new Date();
+    if (dateArray.length >1)
+    toDay = new Date(dateArray[2], parseInt(dateArray[0]) - 1, dateArray[1]);
+
+
     var start = $("#ProductGroup_StartDate").kendoDatePicker({
         change: startChange, value: toDay, format: "MM-dd-yyyy"
     }).data("kendoDatePicker");
