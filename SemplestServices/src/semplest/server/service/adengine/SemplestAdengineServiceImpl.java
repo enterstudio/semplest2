@@ -97,6 +97,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationCampaignID = null;
 	private static Long AdwordsValidationAdGroupID = null;
 	private static String DevelopmentEmail = null;
+	private static String RunMode = null;
 
 	private static Double BudgetMultFactor = null;
 
@@ -124,7 +125,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			 * }
 			 */
 			
-			/*
+			
 			BasicConfigurator.configure();
 			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 
@@ -134,7 +135,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adEng.initializeService(null);
 			
 			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google, AdEngine.MSN));
-	*/
 			
 			/*
 			Date now = new Date();
@@ -172,10 +172,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 			SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 			listOfTasks.add(executeOngoinBiddingTask);
-			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);
-*/
-			
-			
+			CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, null, null, null);		
+			*/
 			/*
 			 * final Integer customerID = 12; final Integer productGroupID = 76; final Integer PromotionID = 62; final List<AdEngine> adEngineList =
 			 * Arrays.asList(AdEngine.MSN); adEng.AddPromotionToAdEngine(customerID, productGroupID, PromotionID, adEngineList);
@@ -232,6 +230,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		AdwordsValidationAdGroupID = (Long) SemplestConfiguration.configData.get("AdwordsValidationAdGroupID");
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
+		RunMode = (String) SemplestConfiguration.configData.get("RunMode");
+		
+		logger.info("Will use these properties:\n" +
+				"ESBWebServerURL: " + ESBWebServerURL + "\n" + 
+				"AdwordsValidationAccountID: " + AdwordsValidationAccountID + "\n" +  
+				"AdwordsValidationCampaignID: " + AdwordsValidationCampaignID + "\n" + 
+				"AdwordsValidationAdGroupID: " + AdwordsValidationAdGroupID + "\n" + 
+				"BudgetMultFactor: " + BudgetMultFactor + "\n" + 				
+				"DevelopmentEmail: " + DevelopmentEmail + "\n" + 
+				"RunMode: " + RunMode				
+		);
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
@@ -339,19 +348,12 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				}
 				SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
 			}
-			logger.info("Sending success email");
 			final Long timeEnd = System.currentTimeMillis();
 			final Long timeDuration = timeEnd - timeStart;
 			final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
-			final String content = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
-			try
-			{
-				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.getEmailValue());
-			}
-			catch (Exception e)
-			{
-				logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.", e);
-			}
+			final String emailSubject = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
+			final String emailBody = emailSubject + "\n\nRegards,\nSemplest Dev";
+			sendEmail(emailSubject, emailBody);			
 			logger.info("---------------------------------------------------------------------------");
 			logger.info("---------- Promotion [" + PromotionID + "] finished with SUCCESS ----------");
 			logger.info("---------------------------------------------------------------------------");
@@ -359,19 +361,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			final String content = "Error while trying to create Promotion [" + PromotionID + "]: " + e.getMessage();
-			try
-			{
-				SemplestMailClient.sendMailFromService(ESBWebServerURL, content, DevelopmentEmail, DevelopmentEmail, content + "\n\nRegards,\nSemplest Dev", ProtocolEnum.EmailType.PlanText.getEmailValue());
-			}
-			catch (Exception e2)
-			{
-				logger.error("Problem sending email with content '" + content + "'.  Logging, but otherwise continuing processing.", e2);
-			}
+			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "]: " + e.getMessage();
+			final String emailBody = emailSubject + "\n\nRegards,\nSemplest Dev";
+			sendEmail(emailSubject, emailBody);			
 			logger.info("-------------------------------------------------------------------------");
 			logger.info("------- Promotion [" + PromotionID + "] finished with ***ERROR*** -------");
 			logger.info("-------------------------------------------------------------------------");
-			throw new Exception(content, e);
+			throw new Exception(emailSubject, e);
 		}
 	}
 
@@ -1177,7 +1173,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					emailContent.append("\t").append(warnMsg).append("\n\n");
 				}
 			}
-		
+			
 			// CALL A SP TO UPDATE THE REMAINING CYCLE BUDGET
 			UpdateRemainingBudgetInCycleSP updateBudgetSP = new UpdateRemainingBudgetInCycleSP();
 			Integer res = updateBudgetSP.execute(PromotionID, promoObj.getPromotionStartDate(), new Date());
@@ -1200,7 +1196,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		{
 			final String errMsg = "Problem updating bids: " + e.getMessage();
 			logger.error(errMsg, e);
-			emailContent.append("\t").append(errMsg).append("\n\n");
+			emailContent.append("Error details\n").append("\t").append(errMsg).append("\n\n");
 			emailSubject.append("--").append("ERROR");
 			final String emailSubjectString = emailSubject.toString();
 			final String emailContentString = emailContent.toString();
@@ -1219,7 +1215,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	{
 		try
 		{
-			SemplestMailClient.sendMailFromService(ESBWebServerURL, subject, DevelopmentEmail, DevelopmentEmail, content, ProtocolEnum.EmailType.PlanText.getEmailValue());
+			SemplestMailClient.sendMailFromService(ESBWebServerURL, RunMode + " -- " + subject, DevelopmentEmail, DevelopmentEmail, content, ProtocolEnum.EmailType.PlanText.getEmailValue());
 		}
 		catch (Exception e2)
 		{
@@ -3149,8 +3145,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 			Boolean ret = getPromoDataSP.execute(promotionID);
 			final PromotionObj promotion = getPromoDataSP.getPromotionData();
-			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;
-			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, new Date(), null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
+			final String scheduleName = promotion.getPromotionName() + "_" + scheduleNamePostfix;			
+			final java.util.Date startDate =  promotion.getPromotionStartDate();			
+			final Boolean taskScheduleSuccessful = CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startDate, null, ProtocolEnum.ScheduleFrequency.Now.name(), true, false, promotionID, customerID, productGroupID, null);
 			return taskScheduleSuccessful;
 		}
 		catch (Exception e)
