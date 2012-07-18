@@ -303,7 +303,8 @@
     }
 
     $('input[name*="ProductGroup.AdEnginesList"]').click(function (event) {
-        event.preventDefault();
+        if ($('#IsCompleted').val() == 'True' || $('#IsLaunched').val() == 'True')
+            event.preventDefault();
     });
     $("#btnCancelInvalid").click(function (event) {
         var pausePromotionWindow = $('#InvalidDescriptionWindow').data("kendoWindow");
