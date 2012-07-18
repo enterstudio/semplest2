@@ -125,5 +125,6 @@ namespace SemplestModel
         public Nullable<double> SemplestBiddingMarginFactor { get; set; }
         public Nullable<long> MSNTrafficEstAccountID { get; set; }
         public Nullable<double> SemplestBiddingBudgetMultFactor { get; set; }
+        public string RunMode { get; set; }
     }
 }

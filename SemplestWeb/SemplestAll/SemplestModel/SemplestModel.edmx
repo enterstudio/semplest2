@@ -754,6 +754,7 @@
           <Property Name="SemplestBiddingMarginFactor" Type="float" />
           <Property Name="MSNTrafficEstAccountID" Type="bigint" />
           <Property Name="SemplestBiddingBudgetMultFactor" Type="float" />
+          <Property Name="RunMode" Type="varchar" MaxLength="20" />
         </EntityType>
         <EntityType Name="Credential">
           <Key>
@@ -5315,6 +5316,7 @@
           <Property Type="Double" Name="SemplestBiddingMarginFactor" />
           <Property Type="Int64" Name="MSNTrafficEstAccountID" />
           <Property Type="Double" Name="SemplestBiddingBudgetMultFactor" />
+          <Property Type="String" Name="RunMode" MaxLength="20" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="SchedulerView">
           <Key>
@@ -6281,6 +6283,7 @@
           <EntitySetMapping Name="Configurations">
             <EntityTypeMapping TypeName="SemplestModel.Configuration">
               <MappingFragment StoreEntitySet="Configuration">
+                <ScalarProperty Name="RunMode" ColumnName="RunMode" />
                 <ScalarProperty Name="SemplestBiddingBudgetMultFactor" ColumnName="SemplestBiddingBudgetMultFactor" />
                 <ScalarProperty Name="MSNTrafficEstAccountID" ColumnName="MSNTrafficEstAccountID" />
                 <ScalarProperty Name="SemplestBiddingMarginFactor" ColumnName="SemplestBiddingMarginFactor" />
