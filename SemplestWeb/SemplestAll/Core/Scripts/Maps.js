@@ -1,4 +1,4 @@
-﻿var HOST_URL = 'http://www.mapquestapi.com';
+﻿var HOST_URL = 'https://www.mapquestapi.com';
 var APP_KEY = 'Fmjtd%7Cluua2q6anl%2C7s%3Do5-hzbxq';
 var SAMPLE_ADVANCED_POST = HOST_URL + '/geocoding/v1/address?key=YOUR_KEY_HERE&callback=renderOptions';
 var advancedOptions = '';
