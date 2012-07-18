@@ -1141,16 +1141,8 @@ public class SemplestDB extends BaseDB
 
 	public static void addAdEngineAccountID(int customerID, String accountNumber, Long accountID, AdEngine adEngine) throws Exception
 	{
-		try
-		{
-			AddAdvertisingEngineAccountSP addAccount = new AddAdvertisingEngineAccountSP();
-			Boolean r = addAccount.execute(accountID, adEngine.name(), customerID, accountNumber);
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-
+		AddAdvertisingEngineAccountSP addAccount = new AddAdvertisingEngineAccountSP();
+		Boolean r = addAccount.execute(accountID, adEngine.name(), customerID, accountNumber);
 	}
 
 	public static Integer addPromotionToAdEngineAccountID(int promotionID, Long adEngineAccountID, Long adEngineCampaignID,

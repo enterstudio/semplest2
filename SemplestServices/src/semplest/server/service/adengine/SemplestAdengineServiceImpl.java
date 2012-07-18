@@ -135,6 +135,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			adEng.initializeService(null);
 			
 			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google, AdEngine.MSN));
+			//adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 			
 			/*
 			Date now = new Date();
@@ -251,6 +252,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	public Boolean AddPromotionToAdEngine(Integer customerID, Integer productGroupID, Integer PromotionID, List<AdEngine> adEngines) throws Exception
 	{
 		logger.info("Will try to Add Promotion To AdEngines for CustomerID [" + customerID + "], ProductGroupID [" + productGroupID + "], PromotionID [" + PromotionID + "], AdEngines [" + adEngines + "]");
+		final StringBuilder emailMessageSB = new StringBuilder();
 		try
 		{
 			final Long timeStart = System.currentTimeMillis();
@@ -272,25 +274,28 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Map<AdEngine, AdEngineInitialData> adEngineInitialMap = bidClient.getInitialValues(PromotionID, adEngines, startBudgetInCycle);
 			final GetKeywordForAdEngineSP getKeywords = new GetKeywordForAdEngineSP();
 			final Map<AdEngine, HashMap<String, Object>> remainingBudgetDaysMap = setupAdEngineBudget(PromotionID, adEngines, bidClient);
-			String companyName = null;
-
+			String companyName = null;			
 			for (final AdEngine advertisingEngine : adEngines)
 			{
+				emailMessageSB.append(advertisingEngine).append("\n");
 				Long accountID = null;
 				final AdEngineInitialData adEngineInitialData = adEngineInitialMap.get(advertisingEngine);
-
 				final Double monthlyBudget = adEngineInitialData.getMonthlyBudget();
+				emailMessageSB.append("\t").append("Monthly Budget: ").append(monthlyBudget).append("\n");
 				final Double dailyBudget = adEngineInitialData.getDailyBudget();
-
+				emailMessageSB.append("\t").append("Daily Budget: ").append(dailyBudget).append("\n");
 				logger.info("AdEngine Initial Data found: [" + adEngineInitialData + "]");
 				GetAdEngineAccountSP getAdEngineAccount = new GetAdEngineAccountSP();
 				AdEngineAccountObj AdEngineAccoutRow = getAdEngineAccount.execute(customerID, advertisingEngine);
 				companyName = AdEngineAccoutRow.getCustomerName();
+				emailMessageSB.append("\t").append("Customer Name: ").append(companyName).append("\n");
 				if (AdEngineAccoutRow.getAccountID() == null)
 				{
 					final AdEngineAccountIdGroup idGroup = createAdEngineAccount(advertisingEngine, companyName);
-					accountID = idGroup.getAccountId();
+					accountID = idGroup.getAccountId();					
 					final String accountNumber = idGroup.getAccountNumber();
+					emailMessageSB.append("\t").append("Created AdEngine Account ID: ").append(accountID).append("\n");
+					emailMessageSB.append("\t").append("Created AdEngine Account Number: ").append(accountNumber).append("\n");
 					SemplestDB.addAdEngineAccountID(customerID, accountNumber, accountID, advertisingEngine);
 					logger.info("Created Account for " + companyName + ":" + idGroup);
 				}
@@ -298,6 +303,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					accountID = AdEngineAccoutRow.getAccountID();
 					logger.info("Found Account for " + companyName + ":" + String.valueOf(accountID));
+					emailMessageSB.append("\t").append("Using Existing AdEngine Account: ").append(accountID).append("\n");
 				}
 				final AdvertisingEnginePromotionObj promotionDataList = SemplestDB.getAdvertisingEngineCampaign(accountID, PromotionID);
 				if (promotionDataList != null)
@@ -310,14 +316,17 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final Integer daysLeft = (Integer) remainingBudgetDaysMap.get(advertisingEngine).get("RemainingDays");
 					final String accountId = String.valueOf(accountID);
 					final Long campaignID = createCampaign(accountId, PromotionID, customerID, advertisingEngine, monthlyBudget, dailyBudget, getPromoDataSP, daysLeft);
+					emailMessageSB.append("\t").append("Created AdEngine Campaign ID: ").append(campaignID).append("\n");
 					SemplestDB.addPromotionToAdEngineAccountID(PromotionID, accountID, campaignID, null, monthlyBudget, dailyBudget);
 					// Create Ad group and Ads
 					final AdgroupData adGroupData = createAdGroupAndAds(String.valueOf(accountID), campaignID, advertisingEngine, AdGroupStatus.ENABLED, getPromoDataSP, adEngineInitialData.getDefaultMicroBid());
+					final Long adGroupId = adGroupData.getAdGroupID();
+					emailMessageSB.append("\t").append("Created AdEngine AdGroup ID: ").append(adGroupId).append("\n");
 					storeAdGroupData(advertisingEngine, campaignID, adGroupData);
 					// Keywords
 					final List<KeywordProbabilityObject> keywordList = getKeywords.execute(PromotionID, advertisingEngine == AdEngine.Google, advertisingEngine == AdEngine.MSN);
 					final String semplestMatchType = adEngineInitialData.getSemplestMatchType();
-					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupData.getAdGroupID(), advertisingEngine, keywordList, semplestMatchType, null);
+					addKeywordsToAdGroup(String.valueOf(accountID), campaignID, PromotionID, adGroupId, advertisingEngine, keywordList, semplestMatchType, null);
 					// Set initial bidding
 					final BudgetObject budgetData = new BudgetObject();
 					budgetData.setRemainingBudgetInCycle(monthlyBudget);
@@ -342,7 +351,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Long timeDuration = timeEnd - timeStart;
 			final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
 			final String emailSubject = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
-			final String emailBody = emailSubject + "\n\nRegards,\nSemplest Dev";
+			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString();
 			sendEmail(emailSubject, emailBody);			
 			logger.info("---------------------------------------------------------------------------");
 			logger.info("---------- Promotion [" + PromotionID + "] finished with SUCCESS ----------");
@@ -351,8 +360,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "]: " + e.getMessage();
-			final String emailBody = emailSubject + "\n\nRegards,\nSemplest Dev";
+			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "]";
+			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString() + "\n\n" + "Error details\n\t" + e.getMessage();
 			sendEmail(emailSubject, emailBody);			
 			logger.info("-------------------------------------------------------------------------");
 			logger.info("------- Promotion [" + PromotionID + "] finished with ***ERROR*** -------");
