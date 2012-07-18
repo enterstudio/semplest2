@@ -36,7 +36,7 @@ namespace Semplest.SharedResources.Helpers
                 _dbContext.Errors.Add(er);
                 _dbContext.SaveChanges();
                 var scw = new ServiceClientWrapper();
-                scw.SendEmail("WebSite Error Message", "website@semplest.com",
+                scw.SendEmail(_dbContext.Configurations.First().RunMode + "WebSite Error Message", "website@semplest.com",
                               _dbContext.Configurations.First().OnErrorEmail, er.ErrorMessage);
             }
             catch (Exception ex)

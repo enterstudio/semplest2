@@ -517,7 +517,7 @@ namespace Semplest.SharedResources.Services
             try
             {
                 var jsonHash = new Dictionary<string, string>();
-                jsonHash.Add("subject", Environment.MachineName + ": " + subject);
+                jsonHash.Add("subject", subject);
                 jsonHash.Add("from", from);
                 jsonHash.Add("recipient", recipient);
                 jsonHash.Add("msgTxt", msgTxt);
