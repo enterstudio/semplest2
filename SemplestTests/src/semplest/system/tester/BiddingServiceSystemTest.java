@@ -1,8 +1,5 @@
 package semplest.system.tester;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 
@@ -14,42 +11,59 @@ import semplest.services.client.interfaces.SemplestBiddingInterface;
 
 public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 	
+	private String serviceName = "Bidding";
 	private int errorCounter = 0;
-	private String vMsg = "Verification FAILED! ";
 	
-	SemplestBiddingServiceClient biddingService;
+	private SemplestBiddingServiceClient biddingService;
 
 	public int Test_BiddingService(String serviceURL){	
 		try{
+			SystemTestFunc.PrintServiceHead(serviceName);			
+			errorCounter = 0;
+			
 			biddingService = new SemplestBiddingServiceClient(serviceURL, null);
 			
+			/* ***** List of Methods ***** */
+			GetMonthlyBudgetPercentPerSE(null, null);
+			getInitialValues(null, null, null);
+			setBidsInitial(null, null, null);
+			setBidsUpdate(null, null, null);
 			
+			/* ***** End of List of Methods ***** */
 			
 		}
 		catch(Exception e){
-			System.out.println("------------------------------------------------------------");
-			System.out.println("Other Error: ");
-			errorHandler(e);
+			SystemTestFunc.PrintLineSeperator();
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
 		}
 		
-		String result = errorCounter > 0 ? "FAILED" : "PASSED";		
-		System.out.println(" ");
-		System.out.println("####################################################################################");
-		System.out.println("#                      Bidding Service (Client) Test "+result+"!                       #");
-		System.out.println("####################################################################################");
-		
-		
+		SystemTestFunc.PrintServiceEnd(serviceName, errorCounter);		
 		return errorCounter;
 	}
 	
 	@Override
 	public Map<AdEngine, Double> GetMonthlyBudgetPercentPerSE(
 			Integer promotionID, List<AdEngine> searchEngine) throws Exception {
-		
-		Map<AdEngine, Double> ret = biddingService.GetMonthlyBudgetPercentPerSE(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
-		
-		for(AdEngine a : ret.keySet()){
-			System.out.println();
+		SystemTestFunc.PrintLineSeperator();
+		try{
+			System.out.println("GetMonthlyBudgetPercentPerSE(" + SystemTestDataModel.semplestPromotionId + ", " + SystemTestDataModel.adEngineList + ")");
+			Map<AdEngine, Double> ret = biddingService.GetMonthlyBudgetPercentPerSE(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
+			
+			for(AdEngine a : ret.keySet()){
+				System.out.println("AdEngine = " + a);
+				System.out.println("	- MonthlyBudgetPercent = " + ret.get(a));
+			}
+			
+			//Verification
+			if(ret.size() != SystemTestDataModel.adEngineList.size()){
+				SystemTestFunc.ErrorHandler("MonthlyBudgetPercentPerSE not returned for all the AdEngines.");
+				errorCounter++;
+			}
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
 		}
 		
 		return null;
@@ -59,43 +73,118 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 	public Map<AdEngine, AdEngineInitialData> getInitialValues(
 			Integer promotionID, List<AdEngine> searchEngine,
 			Double totalMonthlyBudget) throws Exception {
-		// TODO Auto-generated method stub
+		SystemTestFunc.PrintLineSeperator();
+		try{
+			System.out.println("getInitialValues(" + SystemTestDataModel.semplestPromotionId + ", " + SystemTestDataModel.adEngineList + ", " + SystemTestDataModel.bidding_TotalMonthlyBudget + ")");
+			Map<AdEngine, AdEngineInitialData> ret = biddingService.getInitialValues(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList, SystemTestDataModel.bidding_TotalMonthlyBudget);
+			
+			for(AdEngine a : ret.keySet()){
+				System.out.println("AdEngine = " + a);
+				AdEngineInitialData d = ret.get(a);
+				System.out.println("	- " + d.toString());
+			}
+			
+			//Verification
+			if(ret.size() != SystemTestDataModel.adEngineList.size()){
+				SystemTestFunc.ErrorHandler("InitialValues not returned for all the AdEngines.");
+				errorCounter++;
+			}
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}
 		return null;
 	}
 
 	@Override
 	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine,
 			BudgetObject budgetData) throws Exception {
-		// TODO Auto-generated method stub
+		SystemTestFunc.PrintLineSeperator();		
+		try{
+			for(AdEngine adEngine : SystemTestDataModel.adEngineList){		
+				System.out.println("Using AdEngine - " + adEngine);
+				
+				System.out.println("setBidsInitial(" + SystemTestDataModel.semplestPromotionId + ", " + adEngine + ", " + budgetData + ")");
+				boolean ret = biddingService.setBidsInitial(SystemTestDataModel.semplestPromotionId, adEngine, budgetData);
+				
+				//Verification
+				if(!ret){
+					SystemTestFunc.ErrorHandler("SetBidsInitial failed.");
+					errorCounter++;
+				}
+			}			
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}
 		return null;
 	}
 
 	@Override
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine,
 			BudgetObject budgetData) throws Exception {
-		// TODO Auto-generated method stub
+		SystemTestFunc.PrintLineSeperator();		
+		try{
+			for(AdEngine adEngine : SystemTestDataModel.adEngineList){		
+				System.out.println("Using AdEngine - " + adEngine);
+				
+				System.out.println("setBidsUpdate(" + SystemTestDataModel.semplestPromotionId + ", " + adEngine + ", " + budgetData + ")");
+				boolean ret = biddingService.setBidsUpdate(SystemTestDataModel.semplestPromotionId, adEngine, budgetData);
+				
+				//Verification
+				if(!ret){
+					SystemTestFunc.ErrorHandler("SetBidsUpdate failed.");
+					errorCounter++;
+				}
+			}	
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}
 		return null;
 	}
 
 	@Override
 	public Map<String, Double> getBid(String accountID, Long campaignID,
 			Long adGroupID, List<String> keywords) throws Exception {
-		// TODO Auto-generated method stub
+		SystemTestFunc.PrintLineSeperator();		
+		try{
+			
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}
 		return null;
 	}
 
 	@Override
 	public void getBidsInitialNaive(String accountID, Long campaignID,
 			Long adGroupID, AdEngine searchEngine) throws Exception {
-		// TODO Auto-generated method stub
-		
+		SystemTestFunc.PrintLineSeperator();		
+		try{
+			
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}		
 	}
 
 	@Override
 	public void getBidsUpdateNaive(String accountID, Long campaignID,
 			Long adGroupID, AdEngine searchEngine) throws Exception {
-		// TODO Auto-generated method stub
-		
+		SystemTestFunc.PrintLineSeperator();		
+		try{
+			
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
+		}
 	}
 	
 	//unrelated methods
@@ -106,20 +195,5 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 	@Override
 	public String checkStatus(String input1, String input2) throws Exception {
 		return null;
-	}
-
-	private void errorHandler(Exception e){
-		e.printStackTrace();
-		System.out.println("////////////////////////////////////////////////////");	
-		System.out.println("ERROR:");
-		System.out.println(e.getMessage());
-		System.out.println();
-		Writer error = new StringWriter();
-	    PrintWriter printWriter = new PrintWriter(error);
-	    e.printStackTrace(printWriter);
-	    System.out.println(error.toString());
-		System.out.println("////////////////////////////////////////////////////");			
-		
-		errorCounter++;
 	}
 }

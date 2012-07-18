@@ -1,8 +1,5 @@
 package semplest.system.tester;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 
 import semplest.server.protocol.adengine.GeoTargetObject;
@@ -12,21 +9,16 @@ import semplest.services.client.interfaces.SemplestKeywordLDAServiceInterface;
 
 public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterface{
 	
+	private String serviceName = "Keyword";
 	private int errorCounter = 0;
-	private String vMsg = "Verification FAILED! ";
 	
-	KeywordLDAServiceClient keywordService;
-	ArrayList<String> categories;
+	private KeywordLDAServiceClient keywordService;
+	private ArrayList<String> categories;
 	
 	public int Test_KeywordService(String serviceURL){
 		try{
+			SystemTestFunc.PrintServiceHead(serviceName);			
 			errorCounter = 0;
-			
-			System.out.println("####################################################################################");
-			System.out.println("#                                                                                  #");
-			System.out.println("#                          Keyword Service (Client) Test                           #");
-			System.out.println("#                                                                                  #");
-			System.out.println("####################################################################################");	
 			
 			keywordService = new KeywordLDAServiceClient(serviceURL);
 			
@@ -39,18 +31,12 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 			
 		}
 		catch(Exception e){
-			System.out.println("------------------------------------------------------------");
-			System.out.println("Other Error: ");
-			errorHandler(e);
+			SystemTestFunc.PrintLineSeperator();
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
 		}
 		
-		String result = errorCounter > 0 ? "FAILED" : "PASSED";		
-		System.out.println(" ");
-		System.out.println("####################################################################################");
-		System.out.println("#                      Keyword Service (Client) Test "+result+"!                       #");
-		System.out.println("####################################################################################");
-		
-		
+		SystemTestFunc.PrintServiceEnd(serviceName, errorCounter);		
 		return errorCounter;
 	}
 
@@ -59,13 +45,11 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 			String searchTerm, String description, String[] adds, String url)
 			throws Exception {
 		
-		System.out.println("------------------------------------------------------------");
-		System.out.println("getCategories:");		
-		
+		SystemTestFunc.PrintLineSeperator();			
 		try{			
 			long start = System.currentTimeMillis();
 			
-			//Make the call
+			System.out.println("getCategories(null, " + SystemTestDataModel.keyword_SearchTerm + ", " + SystemTestDataModel.keyword_Description + ", null, null)");		
 			categories = keywordService.getCategories(null, SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, null);
 			
 			double sec = (double) (System.currentTimeMillis() - start)/1000.0;
@@ -77,11 +61,13 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 			//Verification
 			if(categories.size() < 1){
 				//no category is returned
-				errorHandler(new Exception(vMsg + "No category has been returned."));
+				SystemTestFunc.ErrorHandler("No category has been returned.");
+				errorCounter++;
 			}
 		}
 		catch(Exception e){
-			errorHandler(e);
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
 		}		
 		
 		return null;
@@ -93,19 +79,16 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 			String description, String[] adds, String url,
 			GeoTargetObject[] gt, Integer[] nGrams) throws Exception {
 		
-		System.out.println("------------------------------------------------------------");
-		System.out.println("getKeywords:");		
-		
-		ArrayList<String> selectCateg = new ArrayList<String>();
-		selectCateg.add(categories.get(1));
-		System.out.println("Selected:"+categories.get(1));
-		
-		try{
-			System.out.println("------------------------------------------------------------");
-			System.out.println("getKeywords:");		
+		SystemTestFunc.PrintLineSeperator();		
+		try{			
+			ArrayList<String> selectCateg = new ArrayList<String>();
+			selectCateg.add(categories.get(1));
+			System.out.println("Selected:"+categories.get(1));	
+			
 			long start = System.currentTimeMillis();
 			
-			//Make the call
+			System.out.println("getKeywords(selectCateg,null, [Google, MSN], " + SystemTestDataModel.keyword_SearchTerm + ", " + SystemTestDataModel.keyword_Description + 
+					", null, " + SystemTestDataModel.keyword_LandingPage + ", null , [300,100,100]");
 			KeywordProbabilityObject[] kw = keywordService.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 					SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, SystemTestDataModel.keyword_LandingPage, null ,new Integer[]{300,100,100});
 			
@@ -120,11 +103,13 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 			//Verification
 			if(kw.length < 1){
 				//no keyword is returned
-				errorHandler(new Exception(vMsg + "No keyword has been returned."));
+				SystemTestFunc.ErrorHandler("No keyword has been returned.");
+				errorCounter++;
 			}
 		}
 		catch(Exception e){
-			errorHandler(e);
+			SystemTestFunc.ErrorHandler(e);
+			errorCounter++;
 		}	
 		
 		return null;
@@ -138,20 +123,5 @@ public class KeywordServiceSystemTest implements SemplestKeywordLDAServiceInterf
 	@Override
 	public String checkStatus(String input1, String input2) throws Exception {
 		return null;
-	}
-	
-	private void errorHandler(Exception e){
-		e.printStackTrace();
-		System.out.println("////////////////////////////////////////////////////");	
-		System.out.println("ERROR:");
-		System.out.println(e.getMessage());
-		System.out.println();
-		Writer error = new StringWriter();
-	    PrintWriter printWriter = new PrintWriter(error);
-	    e.printStackTrace(printWriter);
-	    System.out.println(error.toString());
-		System.out.println("////////////////////////////////////////////////////");			
-		
-		errorCounter++;
 	}
 }

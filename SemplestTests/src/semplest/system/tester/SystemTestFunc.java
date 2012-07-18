@@ -1,5 +1,8 @@
 package semplest.system.tester;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,7 +14,7 @@ import semplest.server.service.springjdbc.BaseDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
-public class SetupTest extends BaseDB{
+public class SystemTestFunc extends BaseDB{
 	
 	public static void InitializeSystemTest() throws Exception{
 		//Load the configuration
@@ -159,5 +162,44 @@ public class SetupTest extends BaseDB{
 		
 		System.out.println("History test data cleaned up.");
 	}
+
+	public static void ErrorHandler(Exception e){
+		Writer error = new StringWriter();
+	    PrintWriter printWriter = new PrintWriter(error);
+	    e.printStackTrace(printWriter);
+		e.printStackTrace();		
+		System.out.println("////////////////////////////////////////////////////");	
+		System.out.println("ERROR:");
+		System.out.println(e.getMessage());
+		System.out.println();		
+	    System.out.println(error.toString());
+		System.out.println("////////////////////////////////////////////////////");			
+	}
+	
+	public static void ErrorHandler(String verifFailedMsg){
+		System.out.println("////////////////////////////////////////////////////");	
+		System.out.println("Verification FAILED! - " + verifFailedMsg);		
+		System.out.println("////////////////////////////////////////////////////");			
+	}
+	
+	public static void PrintServiceHead(String serviceName){
+		System.out.println("====================================================================================");
+		System.out.println("### Start to run " + serviceName + " Service Test...");
+		System.out.println();
+	}
+	
+	public static void PrintServiceEnd(String serviceName, int numError){
+		String result = numError > 0 ? "FAILED" : "PASSED";	
+		System.out.println("------------------------------------------------------------");
+		System.out.println();
+		System.out.println("!!! Test of " + serviceName + " Service - " + result);
+		System.out.println();
+	}
+	
+	public static void PrintLineSeperator(){
+		System.out.println("------------------------------------------------------------");
+	}
+
+	
 
 }

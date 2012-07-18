@@ -6,6 +6,8 @@ import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.EmailType;
+import semplest.server.protocol.adengine.BudgetObject;
 
 public class SystemTestDataModel {
 
@@ -63,6 +65,17 @@ public class SystemTestDataModel {
 	public static final String keyword_SearchTerm = "rugby sale balls and gloves";
 	public static final String keyword_Description = "rugby sale balls and gloves";
 	public static final String keyword_LandingPage = "http://www.planetrugby.com";
+	
+	//Bidding Service Variables
+	public static final Double bidding_TotalMonthlyBudget = 20.00;
+	public static final BudgetObject bidding_BudgetData = new BudgetObject(50d,10);
+	
+	//Mail Service Variables
+	public static final String mail_subject = "[Test Mail Service] hello!";
+	public static final String mail_from = "nan@semplest.com";
+	public static final String mail_recipient = "devuser@semplest.com";
+	public static final String mail_msgTxt = "System Test - Mail Service Test";
+	public static final String mail_msgType = EmailType.PlanText.getEmailValue();
 		
 	//helper classes
 	public class AD{
