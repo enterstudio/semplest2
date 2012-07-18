@@ -182,9 +182,6 @@
     <Compile Include="Services\LogService.svc.cs">
       <DependentUpon>LogService.svc</DependentUpon>
     </Compile>
-    <Compile Include="Services\SemplestDataService.svc.cs">
-      <DependentUpon>SemplestDataService.svc</DependentUpon>
-    </Compile>
     <Compile Include="Helpers\ServiceHelper.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -259,7 +256,6 @@
     <Content Include="Scripts\QuestionMarkHelp.js" />
     <Content Include="Scripts\tooltip.js" />
     <Content Include="Services\LogService.svc" />
-    <Content Include="Services\SemplestDataService.svc" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
