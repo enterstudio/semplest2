@@ -32,7 +32,7 @@ namespace SharedResources.Models
                         break;
                     case StaticPages.TermsAndConditions:
                         Text = Queryable.FirstOrDefault(entities.WebContents).TermsAndConditions;
-                        Title = "Terms and Conditions";
+                        Title = "Terms of Use";
                         break;
                     case StaticPages.ServicesAgreement:
                         Text = Queryable.FirstOrDefault(entities.WebContents).ServicesAgreement;
