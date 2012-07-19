@@ -24,15 +24,15 @@ public class createReportsOverTime {
 	 */
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		String matchType = "Broad";
-		String[] dates = {"20120525" , "20120526" ,"20120527" , "20120528" , "20120529" , "20120531",
-				 "20120601", "20120602" , "20120603", "20120604" ,"20120605" ,"20120606" , "20120607" ,
-				 "20120608" , "20120609", "20120610", "20120611" ,"20120612" , "20120613" ,"20120614"  , 
-				 "20120615"  , "20120616" ,"20120617" ,"20120618", "20120619" ,"20120620"};
-		String basePath = "/semplest/data/dailyReportObjects/PiperHallTest/";
+		String matchType = "Exact";
+		String[] dates = {"20120613" , "20120614" ,"20120615" , "20120616" , "20120617" , "20120618",
+				 "20120619", "20120620" , "20120621", "20120622" ,"20120623" ,"20120624" , "20120625" ,
+				 "20120626" , "20120627", "20120628", "20120629" ,"20120630" , "20120701" ,"20120702"  , 
+				 "20120703"  , "20120704" ,"20120705" ,"20120706", "20120708" ,"20120709"};
+		String basePath = "/semplest/data/dailyReportObjects/WeddingHair/";
 		PrintStream stdout = System.out;
-		PrintStream outMSN = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/MSNdailyPerOverlapKw.csv"));
-		PrintStream outGoogle = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/PiperHallTest/GoogledailyOverlapPerKw.csv"));
+		PrintStream outMSN = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/WeddingHair/MSNdailyPerOverlapKw.csv"));
+		PrintStream outGoogle = new PrintStream(new FileOutputStream("/semplest/data/dailyReportObjects/WeddingHair/GoogledailyOverlapPerKw.csv"));
 		
 		//Loading msn Data
 		ReportObject[] repArrayMSN = loadAndMergeReports(dates, basePath, "_MSNReport.robj");
@@ -166,7 +166,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -236,7 +240,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -313,7 +321,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -371,7 +383,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -441,7 +457,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -499,7 +519,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-		
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		
 		Long[] sortedBids = bids.toArray(new Long[bids.size()]);
 		Arrays.sort(sortedBids);
@@ -529,7 +553,12 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
+		
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");
@@ -560,7 +589,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");
@@ -591,7 +624,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");
@@ -622,7 +659,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");
@@ -653,7 +694,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");
@@ -684,7 +729,11 @@ public class createReportsOverTime {
 			stdout.print(kw+", ");
 		}
 		stdout.print("\n");
-
+		stdout.print("WordCount,");
+		for(String kw : keywords){
+			stdout.print(kw.split("\\s+").length+", ");
+		}
+		stdout.print("\n");
 		for(String date : datesS){
 			HashMap<String, ArrayList<ReportObject>> mapKw = mapReportDailybyKw.get(date);
 			stdout.print(date+", ");

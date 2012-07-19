@@ -31,7 +31,7 @@ public class ReportUtils {
 	    out.writeObject(obj);
 	    out.close();
 	}
-	
+
 	public static Double average(ArrayList<Double> array){
 		double sum = 0.0;
 		int count =0;
