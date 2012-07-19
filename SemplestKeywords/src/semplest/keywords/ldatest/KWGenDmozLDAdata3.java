@@ -81,7 +81,7 @@ public class KWGenDmozLDAdata3 implements Runnable{
 			logger.info("Loading Bigrams for each subcategory");
 			biGrams= new MultiWordCollect[nGramsSubC.length];
 			for (int i=0; i< nGramsSubC.length; i++){
-				String biPath = baseMultiWPath+nGramsSubC[i]+".2";
+				String biPath = baseMultiWPath+nGramsSubC[i]+".3.m";
 				logger.info("Loading"+biPath);
 				biGrams[i]= new MultiWordCollect(nGramsSubC[i],biPath);
 			}

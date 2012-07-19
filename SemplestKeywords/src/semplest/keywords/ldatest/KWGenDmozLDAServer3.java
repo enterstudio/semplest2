@@ -535,7 +535,7 @@ public class KWGenDmozLDAServer3 {//implements SemplestKeywordLDAServiceInterfac
 									String subWstem = this.stemvStringNoFilter( subWrds[n], data.dict).replaceAll("\\s+", "");
 									wProb=wProb*wordMap.get(subWstem);
 								}
-								multWMap.put(kwrd, Math.exp(Math.log(wProb)/nGrams));			
+								multWMap.put(kwrd, Math.exp(Math.log(wProb)/subWrds.length));			
 						}
 						
 					}
