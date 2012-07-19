@@ -30,12 +30,12 @@ public class SecureFTPUsingSSH
 	private String host = null;
 	private int port = 22;
 	// location of private public keys
-	private final String publicKeyPath = "KeyFiles/semplest_dsa.pub";
-	private final String privateKeyPath = "KeyFiles/semplest_dsa.pub";
+	private final String publicKeyPath = "KeyFiles/semplest_rsa.pub";
+	private final String privateKeyPath = "KeyFiles/semplest_rsa.pub";
 	/**
 	 * Password that grants access to private key file.
 	 */
-	private String privateKeyPassword = "SEMplest2012";
+	private final String privateKeyPassword;
 	/**
 	 * User account login on remote server.
 	 */
@@ -49,7 +49,7 @@ public class SecureFTPUsingSSH
 		SecureFTPUsingSSH ftps = null;
 		try
 		{
-			ftps = new SecureFTPUsingSSH("user","ftp1.post-n-track.com", null, 22);
+			ftps = new SecureFTPUsingSSH("user","ftp1.post-n-track.com", null, 22, "SEMplest2012");
 			if (ftps.connectFTP())
 			{
 				ftps.setWorkingDirectory("upload");
@@ -85,11 +85,12 @@ public class SecureFTPUsingSSH
 
 	}
 
-	public SecureFTPUsingSSH(String user, String Host, String hostKey, Integer portSSH) throws JSchException
+	public SecureFTPUsingSSH(String user, String Host, String hostKey, Integer portSSH, String privateKeyPassword) throws JSchException
 	{
 		jsch = new JSch();
 		host = Host;
 		sshLogin = user;
+		this.privateKeyPassword = privateKeyPassword;
 		if (hostKey != null)
 		{
 			this.hostKey = hostKey.getBytes();
