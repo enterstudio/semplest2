@@ -18,6 +18,7 @@ import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
+import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
@@ -134,7 +135,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			SemplestAdengineServiceImpl adEng = new SemplestAdengineServiceImpl();
 			adEng.initializeService(null);
 			
-			adEng.ExecuteBidProcess(128, Arrays.asList(AdEngine.Google, AdEngine.MSN));
+			adEng.ExecuteBidProcess(136, Arrays.asList(AdEngine.MSN));
 			//adEng.AddPromotionToAdEngine(16, 55, 121212, Arrays.asList(AdEngine.MSN, AdEngine.Google));
 			
 			/*
@@ -1077,11 +1078,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
 		final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
-		
-		/*
-		 * from Yesterday look back 5 days to get the transactions
-		 */
-
 		Date now = new Date();
 		cal.setTime(now);
 		// get yesterday
@@ -1108,13 +1104,13 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					semplstStr.setSemplestString(accountIdString);
 					GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 					try
-					{
+					{						
 						logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
 						ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
-						logger.info("Got report of size " + reportData.length);
+						logger.info("Got Google report of size " + reportData.length);
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
 						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
-						logger.info("Got report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
+						logger.info("Got Google report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
 						emailContent.append("\tAccount ID: ").append(accountIdString).append("\n")
 									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
 									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
@@ -1158,11 +1154,36 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				else if (adEngine == AdEngine.MSN)
 				{
 					emailContent.append(adEngine).append("\n");
-					final String warnMsg = "REPORT FOR MSN NOT YET IMPLEMENTED";
-					logger.warn(warnMsg);
-					emailContent.append("\t").append(warnMsg).append("\n\n");
-					// get report and store
-					// SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, getReportData);
+					final AdEngineID adEngineData = adEngineMap.get(adEngine);
+					final Long accountId = adEngineData.getAccountID();
+					Long campaignID = adEngineData.getCampaignID();
+					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
+					try
+					{
+						final DateTime today = new DateTime(System.currentTimeMillis());
+						final DateTime yesterdayJodaTime = new DateTime(yesterday.getTime());
+						final DateTime yesterdayJodaTimeMinus5Days = yesterdayJodaTime.minusDays(5);
+						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, yesterdayJodaTimeMinus5Days, yesterdayJodaTime);
+						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");						
+						logger.info("Got MSN report of size " + reportData.length);
+						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
+						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
+						logger.info("Got MSN report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
+						emailContent.append("\tAccount ID: ").append(accountId).append("\n")
+									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
+									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
+						if (filterReportDatabyCampaignID != null)
+						{
+							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
+							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
+						}
+					}
+					catch (Exception e)
+					{
+						final String errMsg = "Unable to download Report for account " + accountId + ":" + e.getMessage();
+						// updating emailContent will be done in the enclosing try-catch
+						throw new Exception(errMsg, e);
+					}
 				}
 				else
 				{

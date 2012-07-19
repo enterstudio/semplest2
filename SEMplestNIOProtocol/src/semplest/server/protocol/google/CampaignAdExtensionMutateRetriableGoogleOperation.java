@@ -2,7 +2,7 @@ package semplest.server.protocol.google;
 
 import java.rmi.RemoteException;
 
-import com.google.api.adwords.v201109.cm.ApiException;
+import com.google.api.adwords.v201109_1.cm.ApiException;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionOperation;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionReturnValue;
 import com.google.api.adwords.v201109_1.cm.CampaignAdExtensionServiceInterface;
