@@ -17,7 +17,10 @@ CREATE PROCEDURE dbo.UpdateDefaultBidForKeywords
 AS
 BEGIN TRY
 	SET NOCOUNT ON;
-	DECLARE @ErrMsg VARCHAR(250), @MicroDefaultBid bigint
+	DECLARE @ErrMsg VARCHAR(250), @MicroDefaultBid bigint, @currentTime datetime2
+	DECLARE @KeybidTable Table(keywordBidPK int)
+	
+	SET @currentTime = CURRENT_TIMESTAMP
 
 	--validate data
 	--AdEngine
@@ -30,13 +33,30 @@ BEGIN TRY
 	inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK
 	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK
 	where ae.AdvertisingEngine = @AdvertisingEngine and aep.PromotionFK = @PromotionPK
-	
+	/*
 	update KeywordBid set MicroBidAmount = @MicroDefaultBid
 	from KeywordBid kb 
 	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
 	where kb.PromotionFK = @PromotionPK and  ae.AdvertisingEngine = @AdvertisingEngine and kb.IsDefaultValue = 1 and kb.MicroBidAmount != -1
-		 
+	*/
+	--Get all the default keywords that are being updated
+	insert into @KeybidTable
+	select kb.KeywordBidPK from KeywordBid kb 
+	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
+	where kb.PromotionFK = @PromotionPK and  ae.AdvertisingEngine = @AdvertisingEngine and kb.IsDefaultValue = 1 and kb.MicroBidAmount != -1 and kb.MicroBidAmount != @MicroDefaultBid
 	
+	
+	--update the last bid with an end Date and set inactive
+	UPDATE KeywordBid set EndDate = @currentTime, IsActive = 0 
+	from KeywordBid kb
+	inner join @KeybidTable kbt on kbt.keywordBidPK = kb.KeywordBidPK
+	
+	--add new active keyword bid
+	INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID, CompetitionType, IsDefaultValue)
+	select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,kb.BidTypeFK,@MicroDefaultBid,kb.AdvertisingEngineFK, kb.CompetitionType, kb.IsDefaultValue
+	from KeywordBid kb
+	inner join @KeybidTable kbt on kbt.keywordBidPK = kb.KeywordBidPK
+			
 END TRY
 BEGIN CATCH
 	DECLARE @ErrMessage	nvarchar(4000),
