@@ -225,7 +225,7 @@
 	<target name="build-installer" depends="compileProtocol,depJars,compile" description="Create the jar">
 		<echo message="Building the jar..."/>  
 		<jar destfile="${basedir}/scripts/Job.jar" basedir="${classes}">		
-	        <zipgroupfileset dir="${lib}" includes="*.jar"/>
+	        <zipgroupfileset dir="${lib}" includes="*.jar" excludes="META-INF/**/*"/>
 	    </jar>
 	</target>
 
