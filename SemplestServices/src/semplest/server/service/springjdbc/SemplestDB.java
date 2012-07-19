@@ -993,12 +993,13 @@ public class SemplestDB extends BaseDB
 		{
 			return null;
 		}
-		catch (Exception e)
-		{
-			throw e;
-		}
 	}
-
+	/*
+	public static List<User> getUsers(final Boolean isActive, final Boolean isRegistered, final java.util.Date lastEmailReminderDate)
+	{
+		logger.info("Will try to get Users for IsActive [" + isActive + "], IsRegistered [" + isRegistered + "], LastEmailReminderDate [" + lastEmailReminderDate + "]");
+	}
+*/
 	public static List<TargetedDailyBudget> getAllTargetedDailyBudget(int promotionID, AdEngine adEngine, java.util.Date startDate,
 			java.util.Date endDate) throws Exception
 	{
