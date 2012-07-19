@@ -316,32 +316,73 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 3. Database call: get report data 
 		
-		//DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		//Date startDate = df.parse("05/01/2012");
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new Date());
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		Date startDate = cal.getTime();
-		//cal.add(Calendar.DAY_OF_MONTH, -1);
-		//Date endDate = cal.getTime();
-		//Date endDate = new Date(); //df.parse("07/21/2012");
+//		//DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+//		//Date startDate = df.parse("05/01/2012");
+//		Calendar cal = Calendar.getInstance();
+//		cal.setTime(new Date());
+//		cal.add(Calendar.DAY_OF_MONTH, -1);
+//		Date startDate = cal.getTime();
+//		//cal.add(Calendar.DAY_OF_MONTH, -1);
+//		//Date endDate = cal.getTime();
+//		//Date endDate = new Date(); //df.parse("07/21/2012");
+//		
+//		
+//		// get report from the database
+//		List<ReportObject> reportObjListYesterday;
+//		try {
+//			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the report data from the database.");
+//			reportObjListYesterday = SemplestDB.getReportData(promotionID, searchEngine, startDate, startDate);
+//			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+//		} catch (Exception e) {
+//			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data from the database. "+ e.getMessage(), e);
+//			// e.printStackTrace();
+//			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the report data from the database. "+ e.getMessage(), e);
+//		}
 		
 		
-		// get report from the database
-		List<ReportObject> reportObjListYesterday;
+		
+		ReportObject[] reportObjArray = null;
+		List<ReportObject> reportObjListYesterday = null;
 		try {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the report data from the database.");
-			reportObjListYesterday = SemplestDB.getReportData(promotionID, searchEngine, startDate, startDate);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the report data via API call.");
+			if(searchEngine.equals(AdEngine.Google)){
+				final Date now = new Date();
+				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+				final Calendar cal = Calendar.getInstance();
+				cal.setTime(now);
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				reportObjArray = clientGoogle.getReportForAccount(googleAccountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			} else {
+				final DateTime lastday = new DateTime(System.currentTimeMillis());
+				final DateTime firstday = lastday.minusDays(1);
+				reportObjArray = msnClient.getKeywordReport(msnAccountID, campaignID, firstday, lastday);
+			}
+			if(reportObjArray!=null && reportObjArray.length > 0){
+				reportObjListYesterday = new ArrayList<ReportObject>(Arrays.asList(reportObjArray));
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+			} else {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No report data found.");
+			}
 		} catch (Exception e) {
-			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data from the database. "+ e.getMessage(), e);
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data via API call. "+ e.getMessage(), e);
 			// e.printStackTrace();
-			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the report data from the database. "+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the report data via API call. "+ e.getMessage(), e);
 		}
+		
+		
+
+		
 				
 		
 		/* ******************************************************************************************* */
 		// 4. Update bids according to the new logic 
+		
+		
+		DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		final Date lastDefaultBidUpdated = presentDefaultBidObject.getDefaultBidEditedDate();
+		final Date today = new Date();
+		Long diff = today.getTime() - lastDefaultBidUpdated.getTime();
+		long daysSinceDefaultBidUpdated = diff / (1000 * 60 * 60 * 24);
 		
 		// map to store bids that need to go to search engine
 		HashMap<String,Long> wordBidMap = new HashMap<String,Long>();
@@ -371,33 +412,50 @@ public class BidGeneratorObj
 
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to read the report for all the keywords that had impressions.");
 		
-		for (ReportObject r : reportObjListYesterday){
-			//System.out.println(r.getKeyword()+": "+r.getAveragePosition()+"  "+r.getNumberImpressions()+"  "+r.getNumberClick());
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
-			if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
-				pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), false);
-				pausedSet.add(r.getKeyword());
-				kwBidElementMap.get(r.getKeyword()).setIsActive(false);
-				bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Pausing keyword " + r.getKeyword());
-				
-				if(kwBidElementMap.get(r.getKeyword()).getIsDefaultValue()){ // if the KW is running on default bid, update the bid value before pausing
-					wordBidMap.put(r.getKeyword(), r.getMicroBidAmount());
-					kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(r.getMicroBidAmount());
-					kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
-					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
+		
+		if(reportObjListYesterday!=null && reportObjListYesterday.size()>0){
+			for (ReportObject r : reportObjListYesterday){
+				if(r.getCampaignID().longValue() == campaignID.longValue()){
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
+
+					Date bidStartDate = kwBidElementMap.get(r.getKeyword()).getStartDate();
+					if(bidStartDate==null){
+						logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+kwBidElementMap.get(r.getKeyword()).getKeyword());
+						throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+kwBidElementMap.get(r.getKeyword()).getKeyword());
+					}
+					long daysSinceBidUpdated = ((Long)(today.getTime() - bidStartDate.getTime()))/ (1000 * 60 * 60 * 24);
+
+					if(kwBidElementMap.get(r.getKeyword()).getIsActive()){
+						if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
+							pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), false);
+							pausedSet.add(r.getKeyword());
+							kwBidElementMap.get(r.getKeyword()).setIsActive(false);
+							bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
+							logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Pausing keyword " + r.getKeyword());
+
+							if(kwBidElementMap.get(r.getKeyword()).getIsDefaultValue()){ // if the KW is running on default bid, update the bid value before pausing
+								wordBidMap.put(r.getKeyword(), r.getMicroBidAmount());
+								kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(r.getMicroBidAmount());
+								kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
+								logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
+							}
+						} else if (daysSinceBidUpdated >=2 ) {
+							long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+							wordBidMap.put(r.getKeyword(), b);
+							kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(b);
+							kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
+							bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
+							logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + r.getKeyword() +" to "+ wordBidMap.get(r.getKeyword()));
+						}
+					}
 				}
-			} else if (kwBidElementMap.get(r.getKeyword()).getIsActive()) {
-				long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
-				wordBidMap.put(r.getKeyword(), b);
-				kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(b);
-				kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
-				bidDataToDatabase.add(kwBidElementMap.get(r.getKeyword()));
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Increasing bid for keyword " + r.getKeyword() +" to "+ wordBidMap.get(r.getKeyword()));
 			}
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Done with all the keywords that had impressions.");
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Didn't find any keyword that had impressions.");
 		}
 		
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Done with all the keywords that had impressions.");
+		
 		
 		
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to look into the keywords that didn't have impressions.");
@@ -405,7 +463,13 @@ public class BidGeneratorObj
 			if(pausedSet.contains(bData.getKeyword()) || wordBidMap.containsKey(bData.getKeyword())){
 				continue;
 			}
-			if(!bData.getIsDefaultValue() && bData.getIsActive()){
+			Date bidStartDate = bData.getStartDate();
+			if(bidStartDate==null){
+				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+bData.getKeyword());
+				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+bData.getKeyword());
+			}
+			long daysSinceBidUpdated = ((Long)(today.getTime() - bidStartDate.getTime()))/ (1000 * 60 * 60 * 24);
+			if(!bData.getIsDefaultValue() && bData.getIsActive() && daysSinceBidUpdated >=2){
 				long b = Math.min(maxBidL, (((long) (bData.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L);
 				wordBidMap.put(bData.getKeyword(),b);
 				bData.setMicroBidAmount(b);
@@ -432,20 +496,24 @@ public class BidGeneratorObj
 		
 		/* ******************************************************************************************* */
 		// 6. Database call: compute and update default bid of the adgroup
-		DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
-		long presentDefaultMicroBid = presentDefaultBidObject.getMicroDefaultBid();
-		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
-		
-		try {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid of " + defaultMicroBid + " to the database.");
-			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
-			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Written default bid to the database.");
+		//DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		if(daysSinceDefaultBidUpdated >=2) {
+			long presentDefaultMicroBid = presentDefaultBidObject.getMicroDefaultBid();
+			defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
 
-		} catch (Exception e) {
-			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to write the default bid to the database. "+ e.getMessage(), e);
-			// e.printStackTrace();
-			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to write the default bid to the database. "+ e.getMessage(), e);
+			try {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid of " + defaultMicroBid + " to the database.");
+				SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
+				SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Written default bid to the database.");
+
+			} catch (Exception e) {
+				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to write the default bid to the database. "+ e.getMessage(), e);
+				// e.printStackTrace();
+				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to write the default bid to the database. "+ e.getMessage(), e);
+			}
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Too soon to update default bid.");
 		}
 		
 		/* ******************************************************************************************* */
@@ -518,39 +586,46 @@ public class BidGeneratorObj
 
 		/* ******************************************************************************************* */
 		// 8. SE API call: Update default bid for campaign
-		if (searchEngine == AdEngine.Google){
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+		if(daysSinceDefaultBidUpdated >=2) {
 
-			int k = 0;
-			while (true) {
-				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-				try {
-					clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
-					break;
-				} catch (Exception e) {
-					if (k <= maxRetry) {
-						// e.printStackTrace();
-						logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
-						k++;
-					} else {
-						// e.printStackTrace();
-						logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
-						throw new Exception( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
-					}
-				} // try-catch
-			} // while(true)
-		}
-		if(searchEngine == AdEngine.MSN){
-			try{
+			if (searchEngine == AdEngine.Google){
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
-				msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, Math.max(defaultMicroBid.doubleValue()*1e-6, 0.05), 0.05, 0.05);
-			} catch(Exception e){
-				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
-				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+
+				int k = 0;
+				while (true) {
+					Thread.sleep(sleepPeriod + k * sleepBackOffTime);
+					try {
+						clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+						break;
+					} catch (Exception e) {
+						if (k <= maxRetry) {
+							// e.printStackTrace();
+							logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
+							k++;
+						} else {
+							// e.printStackTrace();
+							logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
+							throw new Exception( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
+						}
+					} // try-catch
+				} // while(true)
 			}
+			if(searchEngine == AdEngine.MSN){
+				try{
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+					msnClient.updateAdGroupDefaultBids(msnAccountID, campaignID, adGroupID, Math.max(defaultMicroBid.doubleValue()*1e-6, 0.05), 0.05, 0.05);
+				} catch(Exception e){
+					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to update default microBid via MSN API. " + e.getMessage(), e);
+				}
+			}
+
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
+
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Too soon to update default bid.");
 		}
-		
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
+
 		
 		/* ******************************************************************************************* */
 		// 9. SE API call: Pause the selected keywords 
@@ -1303,7 +1378,7 @@ public class BidGeneratorObj
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate called!!");
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
-		Boolean ret = getPromoDataSP.execute(promotionID);
+		getPromoDataSP.execute(promotionID);
 		PromotionObj promotion = getPromoDataSP.getPromotionData();
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Promotion creation date: " + promotion.getCreatedDate());
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Promotion start date: "
@@ -1820,16 +1895,18 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
+			AdEngine searchEngine = AdEngine.MSN;
+			
+			
 			Integer promotionID = new Integer(136);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
-			//bidObject.setBidsUpdate(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
-			//bidObject.setBidsInitialWeek(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
+			bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 
-			
-			AdEngine searchEngine = AdEngine.Google;
+
 			
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
 			
@@ -1852,6 +1929,30 @@ public class BidGeneratorObj
 			
 		
 			
+			//DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+			//Date startDate = df.parse("05/01/2012");
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date());
+			cal.add(Calendar.DAY_OF_MONTH, -1);
+			Date startDate = cal.getTime();
+			//cal.add(Calendar.DAY_OF_MONTH, -1);
+			//Date endDate = cal.getTime();
+			//Date endDate = new Date(); //df.parse("07/21/2012");
+			
+			
+//			// get report from the database
+//			List<ReportObject> reportObjListYesterday;
+//			try {
+//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to get the report data from the database.");
+//				reportObjListYesterday = SemplestDB.getReportData(promotionID, searchEngine, startDate, startDate);
+//				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+//			} catch (Exception e) {
+//				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data from the database. "+ e.getMessage(), e);
+//				// e.printStackTrace();
+//				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the report data from the database. "+ e.getMessage(), e);
+//			}
+			
+			
 //			Integer promotionID = new Integer(33);
 //			BudgetObject budgetData = new BudgetObject();
 //			budgetData.setRemainingBudgetInCycle(45.0);
@@ -1859,15 +1960,20 @@ public class BidGeneratorObj
 //			bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 
 			
-			
+//			long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine).getMicroDefaultBid();
+//			SemplestDB.storeDefaultBid(promotionID, searchEngine, presentDefaultMicroBid);
+//			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+//			
+//			
 //			Date today = new Date();
 //			
-//			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, searchEngine);
+//			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
 //			for(BidElement b : bidData){
+//				
 //				Date d = b.getStartDate();
 //				Long diff = today.getTime() - d.getTime();
 //				long unchangedForDays = diff / (1000 * 60 * 60 * 24);
-//				if(b.getIsDefaultValue()){
+//				if(b.getIsDefaultValue() && b.getIsActive()){
 //					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
 //				}
 ////				if(unchangedForDays>=2){
@@ -1875,9 +1981,7 @@ public class BidGeneratorObj
 ////				}
 //			}
 			
-//			long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
-//			SemplestDB.storeDefaultBid(promotionID, searchEngine, presentDefaultMicroBid);
-//			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+
 			
 			
 //			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
@@ -1890,25 +1994,29 @@ public class BidGeneratorObj
 
 
 			
-			ReportObject[] reportObjList = null;
-						
-			if(searchEngine.equals(AdEngine.Google)){
-				Date now = new Date();
-				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(now);
-				cal.add(Calendar.DAY_OF_MONTH, -1);
-				GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-				reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-			} else {
-				MsnCloudServiceImpl msnClient = new MsnCloudServiceImpl();
-				//reportObjListMSN = msnClient.getKeywordReport(msnAccountID, campaignID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-			}
-
+//			ReportObject[] reportObjList = null;
+//						
+//			if(searchEngine.equals(AdEngine.Google)){
+//				Date now = new Date();
+//				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+//				Calendar cal = Calendar.getInstance();
+//				cal.setTime(now);
+//				cal.add(Calendar.DAY_OF_MONTH, -1);
+//				GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+//				reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+//			} else {
+//				MsnCloudServiceImpl msnClient = new MsnCloudServiceImpl();
+//				//reportObjListMSN = msnClient.getKeywordReport(msnAccountID, campaignID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+//			}
+//
+//			
+//			System.out.println("Number of report entries: "+reportObjList.length);
 			
-			System.out.println("Number of report entries: "+reportObjList.length);
-			
-			
+			/*
+			System.out.println(SemplestDB.getDefaultBid(promotionID, searchEngine).getDefaultBidEditedDate());
+			SemplestDB.storeDefaultBid(promotionID, searchEngine, SemplestDB.getDefaultBid(promotionID, searchEngine).getMicroDefaultBid());
+			System.out.println(SemplestDB.getDefaultBid(promotionID, searchEngine).getDefaultBidEditedDate());
+			*/
 	
 			
 			/*
