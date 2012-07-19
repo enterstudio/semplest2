@@ -1981,9 +1981,23 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 				{
 					msnPositiveKeywordIdsToRemoveArray[i] = msnPositiveKeywordIdsToRemove.get(i);
 				}
-				logger.info("Will try to:\nDelete MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd Negative Keywords: [" + negativeKeywordsToAdd + "]");
-				msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
-				msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
+				logger.info("Will try to:\nDelete MSN keywords for MSN IDs [" + msnPositiveKeywordIdsToRemove + "]\nAdd Negative Keywords: [" + negativeKeywordsToAdd + "]");				
+				if (msnPositiveKeywordIdsToRemoveArray.length != 0)
+				{
+					msn.deleteKeywordsById(accountID, adGroupID, msnPositiveKeywordIdsToRemoveArray);
+				}
+				else
+				{
+					logger.info("No positive keywords to remove");
+				}
+				if (negativeKeywordsToAdd.isEmpty())
+				{
+					logger.info("No negative keywords to add");	
+				}
+				else
+				{
+					msn.setNegativeKeywords(accountID, campaignID, negativeKeywordsToAdd);
+				}
 			}
 			else
 			{
