@@ -9,17 +9,16 @@ import semplest.server.protocol.adengine.BudgetObject;
 import semplest.services.client.api.SemplestBiddingServiceClient;
 import semplest.services.client.interfaces.SemplestBiddingInterface;
 
-public class BiddingServiceSystemTest implements SemplestBiddingInterface {
+public class BiddingServiceTest implements SemplestBiddingInterface {
 	
 	private String serviceName = "Bidding";
-	private int errorCounter = 0;
 	
 	private SemplestBiddingServiceClient biddingService;
 
 	public int Test_BiddingService(String serviceURL){	
 		try{
-			SystemTestFunc.PrintServiceHead(serviceName);			
-			errorCounter = 0;
+			SystemTestFunc.PrintServiceHeader(serviceName);			
+			SystemTestDataModel.errorCounter = 0;
 			
 			biddingService = new SemplestBiddingServiceClient(serviceURL, null);
 			
@@ -35,11 +34,11 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 		catch(Exception e){
 			SystemTestFunc.PrintLineSeperator();
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		
-		SystemTestFunc.PrintServiceEnd(serviceName, errorCounter);		
-		return errorCounter;
+		SystemTestFunc.PrintServiceFooter(serviceName, SystemTestDataModel.errorCounter);		
+		SystemTestDataModel.biddingErrors = SystemTestDataModel.errorCounter;
+		return SystemTestDataModel.errorCounter;
 	}
 	
 	@Override
@@ -47,7 +46,7 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			Integer promotionID, List<AdEngine> searchEngine) throws Exception {
 		SystemTestFunc.PrintLineSeperator();
 		try{
-			System.out.println("GetMonthlyBudgetPercentPerSE(" + SystemTestDataModel.semplestPromotionId + ", " + SystemTestDataModel.adEngineList + ")");
+			SystemTestFunc.PrintMethodCall("GetMonthlyBudgetPercentPerSE(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList");
 			Map<AdEngine, Double> ret = biddingService.GetMonthlyBudgetPercentPerSE(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
 			
 			for(AdEngine a : ret.keySet()){
@@ -58,12 +57,10 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			//Verification
 			if(ret.size() != SystemTestDataModel.adEngineList.size()){
 				SystemTestFunc.ErrorHandler("MonthlyBudgetPercentPerSE not returned for all the AdEngines.");
-				errorCounter++;
 			}
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		
 		return null;
@@ -75,7 +72,7 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			Double totalMonthlyBudget) throws Exception {
 		SystemTestFunc.PrintLineSeperator();
 		try{
-			System.out.println("getInitialValues(" + SystemTestDataModel.semplestPromotionId + ", " + SystemTestDataModel.adEngineList + ", " + SystemTestDataModel.bidding_TotalMonthlyBudget + ")");
+			SystemTestFunc.PrintMethodCall("getInitialValues(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList, SystemTestDataModel.bidding_TotalMonthlyBudget)");
 			Map<AdEngine, AdEngineInitialData> ret = biddingService.getInitialValues(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList, SystemTestDataModel.bidding_TotalMonthlyBudget);
 			
 			for(AdEngine a : ret.keySet()){
@@ -87,12 +84,10 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			//Verification
 			if(ret.size() != SystemTestDataModel.adEngineList.size()){
 				SystemTestFunc.ErrorHandler("InitialValues not returned for all the AdEngines.");
-				errorCounter++;
 			}
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		return null;
 	}
@@ -105,19 +100,17 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			for(AdEngine adEngine : SystemTestDataModel.adEngineList){		
 				System.out.println("Using AdEngine - " + adEngine);
 				
-				System.out.println("setBidsInitial(" + SystemTestDataModel.semplestPromotionId + ", " + adEngine + ", " + budgetData + ")");
-				boolean ret = biddingService.setBidsInitial(SystemTestDataModel.semplestPromotionId, adEngine, budgetData);
+				SystemTestFunc.PrintMethodCall("setBidsInitial(SystemTestDataModel.semplestPromotionId, adEngine, SystemTestDataModel.bidding_BudgetData)");
+				boolean ret = biddingService.setBidsInitial(SystemTestDataModel.semplestPromotionId, adEngine, SystemTestDataModel.bidding_BudgetData);
 				
 				//Verification
 				if(!ret){
 					SystemTestFunc.ErrorHandler("SetBidsInitial failed.");
-					errorCounter++;
 				}
 			}			
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		return null;
 	}
@@ -130,61 +123,36 @@ public class BiddingServiceSystemTest implements SemplestBiddingInterface {
 			for(AdEngine adEngine : SystemTestDataModel.adEngineList){		
 				System.out.println("Using AdEngine - " + adEngine);
 				
-				System.out.println("setBidsUpdate(" + SystemTestDataModel.semplestPromotionId + ", " + adEngine + ", " + budgetData + ")");
-				boolean ret = biddingService.setBidsUpdate(SystemTestDataModel.semplestPromotionId, adEngine, budgetData);
+				SystemTestFunc.PrintMethodCall("setBidsUpdate(SystemTestDataModel.semplestPromotionId, adEngine, SystemTestDataModel.bidding_BudgetData)");
+				boolean ret = biddingService.setBidsUpdate(SystemTestDataModel.semplestPromotionId, adEngine, SystemTestDataModel.bidding_BudgetData);
 				
 				//Verification
 				if(!ret){
 					SystemTestFunc.ErrorHandler("SetBidsUpdate failed.");
-					errorCounter++;
 				}
 			}	
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		return null;
 	}
-
+	
+	//Unused methods
 	@Override
 	public Map<String, Double> getBid(String accountID, Long campaignID,
-			Long adGroupID, List<String> keywords) throws Exception {
-		SystemTestFunc.PrintLineSeperator();		
-		try{
-			
-		}
-		catch(Exception e){
-			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
-		}
+			Long adGroupID, List<String> keywords) throws Exception {		
 		return null;
 	}
 
 	@Override
 	public void getBidsInitialNaive(String accountID, Long campaignID,
 			Long adGroupID, AdEngine searchEngine) throws Exception {
-		SystemTestFunc.PrintLineSeperator();		
-		try{
-			
-		}
-		catch(Exception e){
-			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
-		}		
 	}
 
 	@Override
 	public void getBidsUpdateNaive(String accountID, Long campaignID,
 			Long adGroupID, AdEngine searchEngine) throws Exception {
-		SystemTestFunc.PrintLineSeperator();		
-		try{
-			
-		}
-		catch(Exception e){
-			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
-		}
 	}
 	
 	//unrelated methods

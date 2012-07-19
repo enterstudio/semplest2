@@ -1,26 +1,24 @@
 package semplest.system.tester;
 
-import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.services.client.api.SemplestMailServiceClient;
 import semplest.services.client.interfaces.SemplestMailServiceInterface;
 
-public class MailServiceSystemTest implements SemplestMailServiceInterface{
+public class MailServiceTest implements SemplestMailServiceInterface{
 
 	private String serviceName = "Mail";	
-	private int errorCounter = 0;
 	
 	private SemplestMailServiceClient mailService;
 	
 	public int Test_MailService(String serviceURL){
 		try{			
-			SystemTestFunc.PrintServiceHead(serviceName);			
-			errorCounter = 0;			
+			SystemTestFunc.PrintServiceHeader(serviceName);			
+			SystemTestDataModel.errorCounter = 0;			
 			
 			mailService = new SemplestMailServiceClient(serviceURL);
 						
 			/* ***** List of Methods ***** */
 			
-			
+			SendEmail(null, null, null, null, null);
 			
 			/* ***** End of List of Methods ***** */
 			
@@ -28,11 +26,11 @@ public class MailServiceSystemTest implements SemplestMailServiceInterface{
 		catch(Exception e){
 			SystemTestFunc.PrintLineSeperator();
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		
-		SystemTestFunc.PrintServiceEnd(serviceName, errorCounter);		
-		return errorCounter;
+		SystemTestFunc.PrintServiceFooter(serviceName, SystemTestDataModel.errorCounter);		
+		SystemTestDataModel.mailErrors = SystemTestDataModel.errorCounter;
+		return SystemTestDataModel.errorCounter;
 	}
 
 	@Override
@@ -40,18 +38,16 @@ public class MailServiceSystemTest implements SemplestMailServiceInterface{
 			String msgTxt, String msgType) throws Exception {
 		SystemTestFunc.PrintLineSeperator();		
 		try{
-			System.out.println("SendEmail(" + SystemTestDataModel.mail_subject + ", " + SystemTestDataModel.mail_from + ", " + SystemTestDataModel.mail_recipient + ", " + SystemTestDataModel.mail_msgTxt + ", " + SystemTestDataModel.mail_msgType + ")");
+			SystemTestFunc.PrintMethodCall("SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType)");
 			boolean ret = mailService.SendEmail(SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType);
 		
 			//Verification
 			if(!ret){
 				SystemTestFunc.ErrorHandler("SendEmail failed.");
-				errorCounter++;
 			}
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
-			errorCounter++;
 		}
 		return null;
 	}

@@ -1,11 +1,29 @@
 package semplest.system.tester;
 
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -16,7 +34,20 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{
 	
-	public static void InitializeSystemTest() throws Exception{
+	//private static final String reportDir = "/semplest/TestReports/UnitTest/";
+	private static final String reportDir = "Z:\\TestReports\\UnitTest\\";
+	
+	public static void main(String[] args){		
+		String tmp = "AddPromotionToAdEngine(SystemTestDataModel.semplestCustomerId, SystemTestDataModel.semplestProductGroupId, SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)";
+		PrintMethodCall(tmp);
+	}
+	
+	public static void InitializeSystemTest() throws Exception{		
+		setPropertiesFile(); //Set DB to the Test box
+		
+		PrintLineSeperator();
+		System.out.println("Loading configuration...");
+		
 		//Load the configuration
 		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		Object object = new Object();
@@ -28,7 +59,8 @@ public class SystemTestFunc extends BaseDB{
 			object.wait();
 		}	
 		
-		System.out.println("Initializing the test...");
+		PrintLineSeperator();
+		System.out.println("Initializing the test...");		
 		
 		//create a new promotion for the test
 		String sql;
@@ -57,7 +89,7 @@ public class SystemTestFunc extends BaseDB{
 		}			
 		sql = "SELECT pa.PromotionAdsPK FROM PromotionAds pa WHERE pa.PromotionFK = ?";
 		SystemTestDataModel.promotionAdIds = jdbcTemplate.queryForList(sql, new Object[]
-				{SystemTestDataModel.semplestPromotionId}, Integer.class);
+				{SystemTestDataModel.semplestPromotionId}, Integer.class);							
 		
 		//Keywords
 		for(Integer kwId : SystemTestDataModel.keywordIds){
@@ -66,7 +98,7 @@ public class SystemTestFunc extends BaseDB{
 			
 			jdbcTemplate.update(sql, new Object[]
 					{kwId, SystemTestDataModel.semplestPromotionId});
-		}
+		}		
 		
 		//Negative Keywords
 		for(Integer kwId : SystemTestDataModel.negKeywordIds){
@@ -75,7 +107,7 @@ public class SystemTestFunc extends BaseDB{
 			
 			jdbcTemplate.update(sql, new Object[]
 					{kwId, SystemTestDataModel.semplestPromotionId});
-		}
+		}		
 		
 		//GeoTargeting			
 		sql = "INSERT INTO GeoTargeting (PromotionFK, Address,City,StateCodeFK,Zip,Longitude,Latitude,ProximityRadius) " +
@@ -92,8 +124,10 @@ public class SystemTestFunc extends BaseDB{
 		}		
 				
 		System.out.println(" - Created Promotion " + SystemTestDataModel.semplestPromotionId + " for the system test.");
+		System.out.println(" - Test Data that will be used in this test: " + SystemTestDataModel.printTestData());
 		
 		System.out.println("End of initialization.");
+		System.out.println();
 	}
 	
 	public static void CleanUpTestData() throws Exception{
@@ -105,15 +139,63 @@ public class SystemTestFunc extends BaseDB{
 		
 		System.out.println(" - Delete history test data from database.");
 		
-		System.out.println("  -- clear scheduler data");
 		//Clear the scheduler data
-		sql = "delete from ScheduleLog; " +
-				"delete from ScheduleJob; " +
-				"delete from ScheduleTaskAssociation; " +
-				"delete from Schedule; " +
-				"delete from Task; ";
-		jdbcTemplate.update(sql);
+		System.out.println("  -- clear scheduler data");		
 		
+		sql = "select s.SchedulePK from Schedule s where s.PromotionFK = ?";
+		List<Integer> scheduleIDs = jdbcTemplate.queryForList(sql, new Object[] 
+				{SystemTestDataModel.semplestPromotionId}, Integer.class);
+		
+		List<Integer> scheduleJobIDs = new ArrayList<Integer>();
+		for(Integer schedulePK : scheduleIDs){
+			sql = "select sj.ScheduleJobPK from ScheduleJob sj where ScheduleFK = ?";
+			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+					{schedulePK}, Integer.class);
+			scheduleJobIDs.addAll(ret);
+		}
+		
+		List<Integer> taskIDs = new ArrayList<Integer>();
+		for(Integer schedulePK : scheduleIDs){
+			sql = "select sta.TaskFK from ScheduleTaskAssociation sta where sta.ScheduleFK = ?";
+			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+					{schedulePK}, Integer.class);
+			taskIDs.addAll(ret);
+		}
+		
+		for(Integer scheduleJobID : scheduleJobIDs){
+			sql = "delete from ScheduleLog where ScheduleJobFK = ?";
+			jdbcTemplate.update(sql, new Object[] 
+					{scheduleJobID});
+			System.out.println("  	> deleted ScheduleLogs for ScheduleJobID " + scheduleJobID);	
+		}
+		System.out.println("  	>>");	
+		for(Integer scheduleID : scheduleIDs){
+			sql = "delete from ScheduleJob where ScheduleFK = ?";
+			jdbcTemplate.update(sql, new Object[] 
+					{scheduleID});
+			System.out.println("  	> deleted ScheduleJobs for ScheduleID " + scheduleID);	
+		}
+		System.out.println("  	>>");	
+		for(Integer scheduleID : scheduleIDs){
+			sql = "delete from ScheduleTaskAssociation where ScheduleFK = ?";
+			jdbcTemplate.update(sql, new Object[] 
+					{scheduleID});
+			System.out.println("  	> deleted ScheduleTaskAssociations for ScheduleID " + scheduleID);	
+		}
+		System.out.println("  	>>");
+		sql = "delete from Schedule where PromotionFK = ?";
+		jdbcTemplate.update(sql, new Object[] 
+				{SystemTestDataModel.semplestPromotionId});
+		System.out.println("  	> deleted Schedules for PromotionID " + SystemTestDataModel.semplestPromotionId);
+		System.out.println("  	>>");
+		for(Integer taskID : taskIDs){
+			sql = "delete from Task where TaskPK = ?";
+			jdbcTemplate.update(sql, new Object[] 
+					{taskID});
+			System.out.println("  	> deleted Tasks for TaskID " + taskID);	
+		}
+		
+		//clear other data
 		System.out.println("  -- clear other data");
 		sql= "DELETE from KeywordBidData;" +
 				"DELETE FROM TargetedDailyBudget;" +
@@ -162,7 +244,7 @@ public class SystemTestFunc extends BaseDB{
 		
 		System.out.println("History test data cleaned up.");
 	}
-
+	
 	public static void ErrorHandler(Exception e){
 		Writer error = new StringWriter();
 	    PrintWriter printWriter = new PrintWriter(error);
@@ -174,21 +256,24 @@ public class SystemTestFunc extends BaseDB{
 		System.out.println();		
 	    System.out.println(error.toString());
 		System.out.println("////////////////////////////////////////////////////");			
+		SystemTestDataModel.errorCounter++;
 	}
 	
 	public static void ErrorHandler(String verifFailedMsg){
 		System.out.println("////////////////////////////////////////////////////");	
 		System.out.println("Verification FAILED! - " + verifFailedMsg);		
 		System.out.println("////////////////////////////////////////////////////");			
+		SystemTestDataModel.errorCounter++;
 	}
-	
-	public static void PrintServiceHead(String serviceName){
+
+	public static void PrintServiceHeader(String serviceName){
 		System.out.println("====================================================================================");
-		System.out.println("### Start to run " + serviceName + " Service Test...");
+		System.out.println(">>> Start to run " + serviceName + " Service Test >>>");
+		System.out.println("====================================================================================");
 		System.out.println();
 	}
 	
-	public static void PrintServiceEnd(String serviceName, int numError){
+	public static void PrintServiceFooter(String serviceName, int numError){
 		String result = numError > 0 ? "FAILED" : "PASSED";	
 		System.out.println("------------------------------------------------------------");
 		System.out.println();
@@ -200,6 +285,159 @@ public class SystemTestFunc extends BaseDB{
 		System.out.println("------------------------------------------------------------");
 	}
 
+	public static void PrintMethodCall(String methodCall){		
+		try{
+			String methodName;
+			String[] parameters;
+			
+			String[] step1 = methodCall.split("\\(");
+			methodName = step1[0].trim();
+			String step2 = step1[1].split("\\)")[0];
+			parameters = step2.split(",");				
+			
+			System.out.print("=> Run Method: ");
+			System.out.print(methodName + "(");		
+			int i = 0;
+			for(String par : parameters){
+				i++;
+				par.trim();
+				String[] field = par.split("\\.");
+				if(field.length > 1){
+					System.out.print(SystemTestDataModel.class.getField(field[1]).get(field[1]));
+				}
+				else{
+					System.out.print(field[0]);
+				}				
+				if(i < parameters.length){
+					System.out.print(",");
+				}
+			}
+			System.out.print(")");
+			System.out.println();
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 	
+	public static void InitializeReport(){
+		try{
+			DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
+			Date date = new Date();
+			String now = dateFormat.format(date);
+			SystemTestDataModel.reportName = "UnitTestReport" + now + ".txt";
+			String reportPath = reportDir + SystemTestDataModel.reportName;
+			
+			//Create Report Header						
+			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
+			System.setOut(out);
+			
+			System.out.println("************************************************************************************");
+			System.out.println("*                        SEMplest System Unit Test Report                          *");
+			System.out.println("************************************************************************************");
+			System.out.println("Created Time: " + date);
+			System.out.println("   ");
+		}
+		catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public static void FinalizeReport(){
+		//Generate Report and Email the Report		
+		String eol = System.getProperty("line.separator");
+		
+		int numAllErrs = SystemTestDataModel.adEngineErrors 
+				+ SystemTestDataModel.biddingErrors 
+				+ SystemTestDataModel.keywordErrors 
+				+ SystemTestDataModel.mailErrors;		
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("System Test finished with " + numAllErrs + " errors in total." + eol); 
+		sb.append(eol);
+		sb.append("Number of Errors: " + eol);
+		sb.append("AdEngine Service - " + SystemTestDataModel.adEngineErrors + eol);
+		sb.append("Bidding Service - " + SystemTestDataModel.biddingErrors + eol);
+		sb.append("Keyword Service - " + SystemTestDataModel.keywordErrors + eol);
+		sb.append("Mail Service - " + SystemTestDataModel.mailErrors + eol);
+		sb.append(eol);
+		sb.append("Test Data that has been used in this test:");
+		sb.append(SystemTestDataModel.printTestData());
+		String reportSummary = sb.toString();
+		
+        		
+		System.out.println(" ");
+		System.out.println("************************************************************************************");
+		System.out.println("*                               SYSTEM TEST SUMMARY                                *");
+		System.out.println("************************************************************************************");
+		System.out.println(" ");
+		System.out.println(reportSummary);
+		
+		//send email of the test result
+		String testResult = (numAllErrs > 0)? "FAILED!" : "PASSED!";
+		reportSummary = reportSummary + eol + "Please look at the report at <\\semplest\\TestReports\\UnitTest\\" + SystemTestDataModel.reportName + "> for details";
+		String subject = "[System Test] System Unit Test is " + testResult;		
+		sendEmail(subject, "devuser@semplest.com", "development@semplest.com", reportSummary);
+		
+	}
+	
+	//Helper Methods
+	private static void setPropertiesFile() throws Exception{
+		final String PROPSFILE = "bin/system.properties";
+		String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";		
+		
+		Properties properties = new Properties();
+		FileInputStream in = new FileInputStream(PROPSFILE);
+		properties.load(in);
+		in.close();				
+		FileWriter out = new FileWriter(PROPSFILE);
+		BufferedWriter writer = new BufferedWriter(out);			
+		
+		writer.append("semplest.service" + " = " + properties.getProperty("semplest.service")); writer.newLine();		
+		writer.append("YAJSW.servicename" + " = " + properties.getProperty("YAJSW.servicename")); writer.newLine();
+		writer.append("jdbc.driverClassName" + " = " + properties.getProperty("jdbc.driverClassName")); writer.newLine();
+		writer.append("jdbc.url" + " = " + jdbc); writer.newLine();
+		writer.append("jdbc.username" + " = " + properties.getProperty("jdbc.username")); writer.newLine();
+		writer.append("jdbc.password" + " = " + properties.getProperty("jdbc.password")); writer.newLine();
+		
+		writer.close();
+				
+	}
 
+	private static void sendEmail(String subject, String from, String to, String msg)
+	{		
+		String host = "smtp.gmail.com";
+	    String username = "nan@semplest.com";
+	    String password = "semplest";
+	    Properties props = new Properties();
+	    props.put("mail.smtps.auth", "true");
+	    
+	    Session session = Session.getDefaultInstance(props);	
+	    
+	    MimeMessage message = new MimeMessage(session);	   
+	    Transport t = null;
+	    try {
+			message.setFrom(new InternetAddress(from));
+			message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
+	        message.setSubject(subject);
+	        message.setText(msg);
+	        
+	        t = session.getTransport("smtps");
+			t.connect(host, username, password);
+			t.sendMessage(message, message.getAllRecipients());
+			
+		} catch (AddressException e1) {
+			e1.printStackTrace();
+		} catch (MessagingException e1) {
+			e1.printStackTrace();
+		}        
+	    finally{
+	    	try {
+				t.close();
+			} catch (MessagingException e) {
+				e.printStackTrace();
+			}
+	    }   
+		
+	}
 }

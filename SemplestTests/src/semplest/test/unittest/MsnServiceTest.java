@@ -60,7 +60,7 @@ public class MsnServiceTest {
 	
 	public static void main(String args[]) throws Exception{
 		MsnServiceTest t = new MsnServiceTest();
-		t.Test_MsnServices_Standalone();
+		t.Test_MsnReport();
 	}
 	
 	public int Test_MsnReport(){
@@ -71,6 +71,17 @@ public class MsnServiceTest {
 			System.out.println("#                            MsnAdcenter Report Test                               #");
 			System.out.println("#                                                                                  #");
 			System.out.println("####################################################################################");	
+			
+			//Load the configuration
+			ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
+			Object object = new Object();
+			SemplestConfiguration configDB = new SemplestConfiguration(object);
+			Thread configThread = new Thread(configDB);
+			configThread.start();
+			synchronized (object)
+			{
+				object.wait();
+			}	
 			
 			//getKeywordReport
 			//MSNAdcenterServiceClient test = new MSNAdcenterServiceClient(null);

@@ -84,15 +84,12 @@ public class CleanUpMsnAccounts extends BaseDB{
 		}
 		for(Long accountId : toDeleteAccounts){
 			sql = "SELECT aep.AdvertisingEngineCampaignPK FROM AdvertisingEnginePromotion aep WHERE aep.AdvertisingEngineAccountFK = ?";
-			List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, new Object[] 
-					{accountId});
-			for(Map<String, Object> map : list){
-				for(String s : map.keySet()){
-					Long campaignId = (Long)map.get(s);
-					sql = "DELETE FROM AdvertisingEnginePromotion where AdvertisingEngineCampaignPK = ?";
-					jdbcTemplate.update(sql, new Object[]
-							{campaignId});
-				}
+			List<Integer> list = jdbcTemplate.queryForList(sql, new Object[] 
+					{accountId}, Integer.class);
+			for(Integer campaignId : list){				
+				sql = "DELETE FROM AdvertisingEnginePromotion where AdvertisingEngineCampaignPK = ?";
+				jdbcTemplate.update(sql, new Object[]
+						{campaignId});				
 			}	
 			
 			sql = "DELETE FROM AdvertisingEngineAccount WHERE AdvertisingEngineAccountPK = ?";
@@ -110,14 +107,11 @@ public class CleanUpMsnAccounts extends BaseDB{
 		
 		for(Long accountId : accounts){
 			sql = "SELECT aep.PromotionFK FROM AdvertisingEnginePromotion aep WHERE AdvertisingEngineAccountFK = ?";
-			List<Map<String, Object>> list = jdbcTemplate.queryForList(sql, new Object[] 
-					{accountId});
-			for(Map<String, Object> map : list){
-				for(String s : map.keySet()){
-					Integer Id = (Integer)map.get(s);
-					promotionIDs.add(Id);
-					System.out.println(Id);
-				}
+			List<Integer> list = jdbcTemplate.queryForList(sql, new Object[] 
+					{accountId}, Integer.class);
+			for(Integer Id : list){				
+				promotionIDs.add(Id);
+				System.out.println(Id);				
 			}
 		}	
 		System.out.println("# promotions to be deleted - " + promotionIDs.size());

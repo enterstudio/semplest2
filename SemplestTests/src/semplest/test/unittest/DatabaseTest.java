@@ -39,6 +39,7 @@ import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.service.springjdbc.AdvertisingEnginePromotionObj;
 import semplest.server.service.springjdbc.BaseDB;
 import semplest.server.service.springjdbc.CustomerObj;
+import semplest.server.service.springjdbc.DefaultBidObject;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.TransactionManager;
@@ -357,7 +358,7 @@ public class DatabaseTest extends BaseDB{
 			
 			/* ******************************************************************************************* */
 			//*** get default bid amount from the AdvertisingEnginePromotion table
-			Long ret = db.getDefaultBid(promotionID, AdEngine.Google);
+			DefaultBidObject ret = db.getDefaultBid(promotionID, AdEngine.Google);
 			System.out.println("DefaultBid = " + ret);
 			
 		} catch (Exception e) {
