@@ -448,42 +448,31 @@ public class SemplestDB extends BaseDB
 		logger.info("Added BiddingHistory for promoID=" + PromotionID + " AdEngine=" + advertisingEngine.name() + ":" + promotionBiddingType.name());
 	}
 
-	public static Long getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
+	private static final RowMapper<DefaultBidObject> defaultBidObjectMapper = new BeanPropertyRowMapper<DefaultBidObject>(DefaultBidObject.class);
+	public static DefaultBidObject getDefaultBid(int promotionID, AdEngine adEngine) throws Exception
 	{
-		String sql = "select aep.MicroDefaultBid from AdvertisingEnginePromotion aep  "
+		String strSQL = "select aep.MicroDefaultBid, aep.DefaultBidEditedDate from AdvertisingEnginePromotion aep  "
 				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
 				+ "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
 
-		Integer defBid;
-		try
+		
+		List<DefaultBidObject> defaultBidObjects = jdbcTemplate.query(strSQL, new Object[]
+					{ promotionID, adEngine.name() }, defaultBidObjectMapper);
+		if (defaultBidObjects.size() > 0)
 		{
-			defBid = (Integer) jdbcTemplate.queryForObject(sql, new Object[]
-			{ promotionID, adEngine.name() }, Integer.class);
-		}
-		catch (EmptyResultDataAccessException e)
-		{
-			return null;
-		}
-		catch (Exception e)
-		{
-			throw e;
-		}
-		if (defBid != null)
-		{
-			return new Long(defBid);
+			return defaultBidObjects.get(0);
 		}
 		else
 		{
 			return null;
 		}
-
 	}
 
 	public static void storeDefaultBid(int promotionID, AdEngine adEngine, Long microDefaultBid) throws Exception
 	{
 		Integer microBid = microDefaultBid.intValue();
-		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  " + "from AdvertisingEnginePromotion aep  "
+		String sql = "update AdvertisingEnginePromotion set MicroDefaultBid = ?  , DefaultBidEditedDate = current_timestamp from AdvertisingEnginePromotion aep  "
 				+ "inner join AdvertisingEngineAccount aea on aea.AdvertisingEngineAccountPK = aep.AdvertisingEngineAccountFK "
 				+ "inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = aea.AdvertisingEngineFK "
 				+ "where aep.PromotionFK = ? and ae.AdvertisingEngine = ?";
