@@ -1,5 +1,8 @@
 <project name="SemplestServiceJar" default="build-installer" basedir="..">
 	
+	<property environment="env"/>
+	<property name="product.version" value="${env.BUILD_VERSION}"/>
+	
 	 <condition property="output.dir" value="${artifactsDir}" 
 	             else="${basedir}">
 	    <isset property="artifactsDir"/>
@@ -224,7 +227,7 @@
 
 	<target name="build-installer" depends="compileProtocol,depJars,compile" description="Create the jar">
 		<echo message="Building the jar..."/>  
-		<jar destfile="${basedir}/scripts/Job.jar" basedir="${classes}">		
+		<jar destfile="${basedir}/scripts/Job-${product.version}.jar" basedir="${classes}">		
 	        <zipgroupfileset dir="${lib}" includes="*.jar" excludes="META-INF/**/*"/>
 	    </jar>
 	</target>
