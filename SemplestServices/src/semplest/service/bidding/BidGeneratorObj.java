@@ -253,7 +253,7 @@ public class BidGeneratorObj
 			adEngineInitialDataObject.setMonthlyBudget(seMonthlyBudget);
 			adEngineInitialDataObject.setDailyBudget(seDailyBudget);
 			
-			long defBid = Math.min(defaultMicroBid, (new Double(seDailyBudget*0.95*1e-6)).longValue()/10000L * 10000L);
+			long defBid = Math.max(50000L,Math.min(defaultMicroBid, (new Double(seDailyBudget*0.95*1e-6)).longValue()/10000L * 10000L));
 			
 			adEngineInitialDataObject.setDefaultMicroBid(defBid);
 
@@ -440,7 +440,7 @@ public class BidGeneratorObj
 								logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
 							}
 						} else if (daysSinceBidUpdated >=2 ) {
-							long b = Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L);
+							long b = Math.max(50000L,Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L));
 							wordBidMap.put(r.getKeyword(), b);
 							kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(b);
 							kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
@@ -470,7 +470,7 @@ public class BidGeneratorObj
 			}
 			long daysSinceBidUpdated = ((Long)(today.getTime() - bidStartDate.getTime()))/ (1000 * 60 * 60 * 24);
 			if(!bData.getIsDefaultValue() && bData.getIsActive() && daysSinceBidUpdated >=2){
-				long b = Math.min(maxBidL, (((long) (bData.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L);
+				long b = Math.max(50000L,Math.min(maxBidL, (((long) (bData.getMicroBidAmount()* Math.pow(bidBoostFactor,2)))/10000L) * 10000L));
 				wordBidMap.put(bData.getKeyword(),b);
 				bData.setMicroBidAmount(b);
 				bidDataToDatabase.add(bData);
@@ -499,7 +499,7 @@ public class BidGeneratorObj
 		//DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
 		if(daysSinceDefaultBidUpdated >=2) {
 			long presentDefaultMicroBid = presentDefaultBidObject.getMicroDefaultBid();
-			defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
+			defaultMicroBid = Math.max(50000L,Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L));
 
 			try {
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid of " + defaultMicroBid + " to the database.");
@@ -595,7 +595,7 @@ public class BidGeneratorObj
 				while (true) {
 					Thread.sleep(sleepPeriod + k * sleepBackOffTime);
 					try {
-						clientGoogle.updateDefaultBid(googleAccountID, adGroupID, defaultMicroBid);
+						clientGoogle.updateDefaultBid(googleAccountID, adGroupID, Math.max(50000L,defaultMicroBid));
 						break;
 					} catch (Exception e) {
 						if (k <= maxRetry) {
@@ -1039,7 +1039,7 @@ public class BidGeneratorObj
 			marginFactor = bidParams.getSemplestBiddingMarginFactor().doubleValue();
 			
 			HashMap<String,Double> bidData = bidOptimizer.getCPCPercentilePoint(percentileValue, marginFactor,maxBid);
-			defaultMicroBid = (new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L;
+			defaultMicroBid = Math.max(50000L,(new Double(bidOptimizer.getTargetCPC()*1e6).longValue())/10000L*10000L);
 			totalDailyCost = new Double(bidOptimizer.getTotalDailyCost()*1e6).longValue();
 			totalDailyClick = new Float(bidOptimizer.getTotalDailyClicks());
 			
