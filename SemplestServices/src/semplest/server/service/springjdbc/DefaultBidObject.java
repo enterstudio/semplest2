@@ -1,11 +1,12 @@
 package semplest.server.service.springjdbc;
 
-import java.sql.Timestamp;
+//import java.sql.Timestamp;
+import java.util.Date;
 
 public class DefaultBidObject
 {
 	private Long MicroDefaultBid;
-	private Timestamp DefaultBidEditedDate;
+	private Date DefaultBidEditedDate;
 	public Long getMicroDefaultBid()
 	{
 		return MicroDefaultBid;
@@ -14,11 +15,11 @@ public class DefaultBidObject
 	{
 		MicroDefaultBid = microDefaultBid;
 	}
-	public Timestamp getDefaultBidEditedDate()
+	public Date getDefaultBidEditedDate()
 	{
 		return DefaultBidEditedDate;
 	}
-	public void setDefaultBidEditedDate(Timestamp defaultBidEditedDate)
+	public void setDefaultBidEditedDate(Date defaultBidEditedDate)
 	{
 		DefaultBidEditedDate = defaultBidEditedDate;
 	}

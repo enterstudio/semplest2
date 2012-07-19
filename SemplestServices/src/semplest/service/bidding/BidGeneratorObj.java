@@ -20,6 +20,7 @@ import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
+import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.bidding.estimation.EstimatorData;
@@ -41,6 +42,7 @@ import semplest.server.protocol.bidding.BiddingParameters;
 import semplest.server.protocol.google.GoogleAdGroupObject;
 import semplest.server.protocol.google.GoogleSetBidForKeywordRequest;
 import semplest.server.service.SemplestConfiguration;
+import semplest.server.service.springjdbc.DefaultBidObject;
 import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
@@ -430,7 +432,8 @@ public class BidGeneratorObj
 		
 		/* ******************************************************************************************* */
 		// 6. Database call: compute and update default bid of the adgroup
-		long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		long presentDefaultMicroBid = presentDefaultBidObject.getMicroDefaultBid();
 		defaultMicroBid = Math.min(maxBidL, (((long) (presentDefaultMicroBid * Math.pow(bidBoostFactor,2))) / 10000L) * 10000L);
 		
 		try {
@@ -1176,7 +1179,7 @@ public class BidGeneratorObj
 		// remember to update the bids for the words with default bid with
 		// database
 
-		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine))
+		if (defaultMicroBid != SemplestDB.getDefaultBid(promotionID, searchEngine).getMicroDefaultBid())
 		{
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write the default bid to the database.");
 			SemplestDB.storeDefaultBid(promotionID, searchEngine, defaultMicroBid);
@@ -1817,29 +1820,37 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			Integer promotionID = new Integer(128);
+			Integer promotionID = new Integer(136);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, ProtocolEnum.AdEngine.MSN, budgetData);
 			//bidObject.setBidsUpdate(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
-			bidObject.setBidsInitialWeek(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
+			//bidObject.setBidsInitialWeek(promotionID, ProtocolEnum.AdEngine.Google, budgetData);
 
 			
 			AdEngine searchEngine = AdEngine.Google;
 			
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
-			String accountID = String.valueOf(adEngineInfo.getAccountID());
+			
+			String accountID = null;
+			Long msnAccountID = null;
+			if(searchEngine.equals(AdEngine.Google)){
+				accountID = String.valueOf(adEngineInfo.getAccountID());
+			} else {
+				msnAccountID = adEngineInfo.getAccountID();
+			}
 
 			long campaignID = adEngineInfo.getCampaignID();
 			long adGroupID = adEngineInfo.getAdGroupID();
 			
-			System.out.println(accountID+" "+campaignID+" "+adGroupID);
+			if(searchEngine.equals(AdEngine.Google)){
+				System.out.println("Google "+accountID+" "+campaignID+" "+adGroupID);
+			} else {
+				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
+			}
 			
-			
-
-			
-			
+		
 			
 //			Integer promotionID = new Integer(33);
 //			BudgetObject budgetData = new BudgetObject();
@@ -1849,12 +1860,26 @@ public class BidGeneratorObj
 
 			
 			
-			
-//			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
+//			Date today = new Date();
+//			
+//			ArrayList<BidElement> bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, searchEngine);
 //			for(BidElement b : bidData){
-//				System.out.println(b.getKeyword()+": "+b.getCompetitionType()+", "+b.getMicroBidAmount());
-//				//b.setCompetitionType(ProtocolEnum.SemplestCompetitionType.Comp.name());
+//				Date d = b.getStartDate();
+//				Long diff = today.getTime() - d.getTime();
+//				long unchangedForDays = diff / (1000 * 60 * 60 * 24);
+//				if(b.getIsDefaultValue()){
+//					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
+//				}
+////				if(unchangedForDays>=2){
+////					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
+////				}
 //			}
+			
+//			long presentDefaultMicroBid = SemplestDB.getDefaultBid(promotionID, searchEngine);
+//			SemplestDB.storeDefaultBid(promotionID, searchEngine, presentDefaultMicroBid);
+//			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
+			
+			
 //			SemplestDB.storeBidObjects(promotionID, ProtocolEnum.AdEngine.Google,  bidData );
 //			bidData = (ArrayList<BidElement>) SemplestDB.getLatestBids(promotionID, ProtocolEnum.AdEngine.Google);
 //
@@ -1863,21 +1888,28 @@ public class BidGeneratorObj
 //			}
 			
 
+
+			
+			ReportObject[] reportObjList = null;
+						
+			if(searchEngine.equals(AdEngine.Google)){
+				Date now = new Date();
+				SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(now);
+				cal.add(Calendar.DAY_OF_MONTH, -1);
+				GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
+				reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			} else {
+				MsnCloudServiceImpl msnClient = new MsnCloudServiceImpl();
+				//reportObjListMSN = msnClient.getKeywordReport(msnAccountID, campaignID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
+			}
+
+			
+			System.out.println("Number of report entries: "+reportObjList.length);
 			
 			
-			
-			
-			
-			
-//			GoogleAdwordsServiceImpl client = new GoogleAdwordsServiceImpl();
-//			Date now = new Date();
-//			SimpleDateFormat YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
-//			Calendar cal = Calendar.getInstance();
-//			cal.setTime(now);
-//			cal.add(Calendar.DAY_OF_MONTH, -0);
-//			ReportObject[] reportObjList = client.getReportForAccount(accountID, YYYYMMDD.format(cal.getTime()), YYYYMMDD.format(now));
-//			System.out.println("Number of report entries: "+reportObjList.length);
-			
+	
 			
 			/*
 			GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
