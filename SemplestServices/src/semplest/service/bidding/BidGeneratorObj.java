@@ -1391,7 +1391,9 @@ public class BidGeneratorObj
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "The campaign started " + age + " day(s) ago.");
 
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
-		//return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+		return setBidsInitialWeek(promotionID, searchEngine, budgetData);
+		
+		/*
 		if (age <=10 ) {
 			if(age%2==0){
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Executing update bids method...");
@@ -1404,6 +1406,7 @@ public class BidGeneratorObj
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Logic to bid after 10th day is not implemented yet!!");
 			return new Boolean(true);
 		}
+		*/
 	} // setBidsUpdate()
 
 	
