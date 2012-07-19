@@ -2071,10 +2071,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		ICampaignManagementService campaignManagement = getCampaignManagementService(accountId);
 		Keyword keyword = new Keyword();
 		keyword.setId(keywordId);
-		keyword.setExactMatchBid(null);
-		keyword.setBroadMatchBid(null);
-		keyword.setContentMatchBid(null);
-		keyword.setPhraseMatchBid(null);
 		keyword.setStatus(KeywordStatus.Paused);
 		if (matchType == MatchType.Exact)
 		{
@@ -2206,12 +2202,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			final Double microBidAmountDouble = (microBidAmountLong == null ? null : new Double(((double) microBidAmountLong) / 1000000));
 			final Bid keywordBid = new Bid(microBidAmountDouble);
 			keyword.setId(keywordAdEngineID);
-
-			keyword.setBroadMatchBid(null);
-			keyword.setPhraseMatchBid(null);
-			keyword.setExactMatchBid(null);
-			keyword.setContentMatchBid(null);
-
 			if (SemplestMatchType.Broad.name().equals(matchType))
 			{
 				keyword.setBroadMatchBid(keywordBid);

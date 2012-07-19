@@ -2174,10 +2174,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						k.setText(keywordText);
 						final Integer keywordPK = keywordProbabilitiesForId.getKeywordPK();
 						final Bid bid = new Bid(SemplestUtils.MSN_DEFAULT_BID_AMOUNT);
-						k.setBroadMatchBid(null);
-						k.setExactMatchBid(null);
-						k.setPhraseMatchBid(null);
-						k.setContentMatchBid(null);
 						if (SemplestMatchType.Broad.name().equals(semplestMatchType))
 						{
 							k.setBroadMatchBid(bid);
