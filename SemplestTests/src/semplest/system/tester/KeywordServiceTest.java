@@ -56,7 +56,7 @@ public class KeywordServiceTest implements SemplestKeywordLDAServiceInterface{
 		}		
 		
 		double sec = (double) (System.currentTimeMillis() - start)/1000.0;
-		System.out.println("retCategories took " + sec + " seconds");
+		System.out.println(" - getCategories took " + sec + " seconds");
 		for(String cat : retCategories){
 			System.out.println(cat);
 		}
@@ -86,18 +86,17 @@ public class KeywordServiceTest implements SemplestKeywordLDAServiceInterface{
 		
 		long start = System.currentTimeMillis();
 		
-		SystemTestFunc.PrintMethodCall("getKeywords(selectCateg,null, adEngineList,	SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, SystemTestDataModel.keyword_LandingPage, null ,nGramsList)");
-		String[] adEngineList = {"Google", "MSN"};
-		Integer[] nGramsList = {300,100,100};
+		SystemTestFunc.PrintMethodCall("getKeywords(selectCateg,null, SystemTestDataModel.keyword_AdEngineList, " +
+				"SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, SystemTestDataModel.keyword_LandingPage, null ,SystemTestDataModel.keyword_nGramsList)");
 		try{
-			kw = keywordService.getKeywords(selectCateg,null, adEngineList,
-					SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, SystemTestDataModel.keyword_LandingPage, null ,nGramsList);
+			kw = keywordService.getKeywords(selectCateg,null, SystemTestDataModel.keyword_AdEngineList,
+					SystemTestDataModel.keyword_SearchTerm, SystemTestDataModel.keyword_Description, null, SystemTestDataModel.keyword_LandingPage, null ,SystemTestDataModel.keyword_nGramsList);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
 		}
 		double sec = (double) (System.currentTimeMillis() - start)/1000.0;
-		System.out.println("keywords took " + sec + " seconds");
+		System.out.println(" - getkeywords took " + sec + " seconds");
 		
 		//Verification
 		if(kw == null || kw.length < 1){

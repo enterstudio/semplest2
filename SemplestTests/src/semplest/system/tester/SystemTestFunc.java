@@ -250,19 +250,19 @@ public class SystemTestFunc extends BaseDB{
 	    PrintWriter printWriter = new PrintWriter(error);
 	    e.printStackTrace(printWriter);
 		e.printStackTrace();		
-		System.out.println("////////////////////////////////////////////////////");	
+		System.out.println("****************************************************");	
 		System.out.println("ERROR:");
 		System.out.println(e.getMessage());
 		System.out.println();		
 	    System.out.println(error.toString());
-		System.out.println("////////////////////////////////////////////////////");			
+		System.out.println("****************************************************");			
 		SystemTestDataModel.errorCounter++;
 	}
 	
 	public static void ErrorHandler(String verifFailedMsg){
-		System.out.println("////////////////////////////////////////////////////");	
+		System.out.println("****************************************************");	
 		System.out.println("Verification FAILED! - " + verifFailedMsg);		
-		System.out.println("////////////////////////////////////////////////////");			
+		System.out.println("****************************************************");			
 		SystemTestDataModel.errorCounter++;
 	}
 
@@ -332,9 +332,9 @@ public class SystemTestFunc extends BaseDB{
 			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
 			System.setOut(out);
 			
-			System.out.println("************************************************************************************");
-			System.out.println("*                        SEMplest System Unit Test Report                          *");
-			System.out.println("************************************************************************************");
+			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("/                        SEMplest System Unit Test Report                          /");
+			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 			System.out.println("Created Time: " + date);
 			System.out.println("   ");
 		}
@@ -367,15 +367,15 @@ public class SystemTestFunc extends BaseDB{
 		
         		
 		System.out.println(" ");
-		System.out.println("************************************************************************************");
-		System.out.println("*                               SYSTEM TEST SUMMARY                                *");
-		System.out.println("************************************************************************************");
+		System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+		System.out.println("/                               SYSTEM TEST SUMMARY                                /");
+		System.out.println("////////////////////////////////////////////////////////////////////////////////////");
 		System.out.println(" ");
 		System.out.println(reportSummary);
 		
 		//send email of the test result
 		String testResult = (numAllErrs > 0)? "FAILED!" : "PASSED!";
-		reportSummary = reportSummary + eol + "Please look at the report at <\\semplest\\TestReports\\UnitTest\\" + SystemTestDataModel.reportName + "> for details";
+		reportSummary = reportSummary + eol + eol + eol + "The completed report is at: \\semplest\\TestReports\\UnitTest\\" + SystemTestDataModel.reportName;
 		String subject = "[System Test] System Unit Test is " + testResult;		
 		sendEmail(subject, "devuser@semplest.com", "development@semplest.com", reportSummary);
 		
@@ -407,8 +407,8 @@ public class SystemTestFunc extends BaseDB{
 	private static void sendEmail(String subject, String from, String to, String msg)
 	{		
 		String host = "smtp.gmail.com";
-	    String username = "nan@semplest.com";
-	    String password = "semplest";
+	    String username = "devuser@semplest.com";
+	    String password = "devuser2012";
 	    Properties props = new Properties();
 	    props.put("mail.smtps.auth", "true");
 	    

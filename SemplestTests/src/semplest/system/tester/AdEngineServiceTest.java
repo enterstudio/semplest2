@@ -81,8 +81,10 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			PauseProductGroups(null, null);
 			UnpausePromotion(null, null);
 			PausePromotion(null, null);
-			EndPromotion(null, null);
-			DeletePromotion(null, null);
+			
+			//methods that haven't been implemented by AdEngine service yet
+			//EndPromotion(null, null);
+			//DeletePromotion(null, null);
 			
 			/* ***** End of List of Methods ***** */
 			
@@ -288,10 +290,9 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			Date newStartDate, List<AdEngine> adEngines) throws Exception {
 		SystemTestFunc.PrintLineSeperator();	
 		boolean ret = false;
-		Date newDate = new Date();
-		SystemTestFunc.PrintMethodCall("ChangePromotionStartDate(" + SystemTestDataModel.semplestPromotionId + ", " + newDate + ", " + SystemTestDataModel.adEngineList + ")");
+		SystemTestFunc.PrintMethodCall("ChangePromotionStartDate(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngine_NewPromotionStartDate, SystemTestDataModel.adEngineListGoogle)");
 		try{			
-			ret = adEngineService.ChangePromotionStartDate(SystemTestDataModel.semplestPromotionId, newDate, SystemTestDataModel.adEngineList);
+			ret = adEngineService.ChangePromotionStartDate(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngine_NewPromotionStartDate, SystemTestDataModel.adEngineListGoogle);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -339,9 +340,9 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			List<AdEngine> adEngines) throws Exception {
 		SystemTestFunc.PrintLineSeperator();	
 		boolean ret = false;
-		SystemTestFunc.PrintMethodCall("RefreshSiteLinks(" + SystemTestDataModel.semplestPromotionId + ", " + SystemTestDataModel.adEngineList + ")");
+		SystemTestFunc.PrintMethodCall("RefreshSiteLinks(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineListGoogle");
 		try{			
-			ret = adEngineService.RefreshSiteLinks(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
+			ret = adEngineService.RefreshSiteLinks(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineListGoogle);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -470,13 +471,11 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			List<Integer> keywordIds, List<AdEngine> adEngines)
 			throws Exception {
 		SystemTestFunc.PrintLineSeperator();	
-		boolean ret = false;
+		boolean ret = false;		
 		
-		ArrayList<AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google));
-		
-		SystemTestFunc.PrintMethodCall("DeleteNegativeKeywords(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.negKeywordIds, adEngineList)");
+		SystemTestFunc.PrintMethodCall("DeleteNegativeKeywords(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.negKeywordIds, SystemTestDataModel.adEngineListGoogle)");
 		try{			
-			ret = adEngineService.DeleteNegativeKeywords(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.negKeywordIds, adEngineList);
+			ret = adEngineService.DeleteNegativeKeywords(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.negKeywordIds, SystemTestDataModel.adEngineListGoogle);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -571,71 +570,16 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		
 		Thread.sleep(sleepTime);
 		return null;
-	}	
-	@Override
-	public Boolean EndPromotion(Integer promotionID, List<AdEngine> adEngines)
-			throws Exception {
-		SystemTestFunc.PrintLineSeperator();	
-		boolean ret = false;
-		
-		SystemTestFunc.PrintMethodCall("EndPromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)");
-		try{			
-			ret = adEngineService.EndPromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
-		}
-		catch(Exception e){
-			SystemTestFunc.ErrorHandler(e);
-		}
-		
-		//Verification
-		if(!ret){
-			SystemTestFunc.ErrorHandler("EndPromotion failed.");
-			return false;
-		}
-		else{
-			//no further verification yet
-		}
-		
-		Thread.sleep(sleepTime);
-		return null;
-	}
-	@Override
-	public Boolean DeletePromotion(Integer promotionID, List<AdEngine> adEngines)
-			throws Exception {
-		SystemTestFunc.PrintLineSeperator();	
-		boolean ret = false;
-		
-		SystemTestFunc.PrintMethodCall("DeletePromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)");
-		try{			
-			ret = adEngineService.DeletePromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
-		}
-		catch(Exception e){
-			SystemTestFunc.ErrorHandler(e);
-		}
-		
-		//Verification
-		if(!ret){
-			SystemTestFunc.ErrorHandler("DeletePromotion failed.");
-			return false;
-		}
-		else{
-			//no further verification yet
-		}
-		
-		Thread.sleep(sleepTime);
-		return null;
 	}
 	@Override
 	public List<GoogleViolation> validateGoogleAd(String landingPageURL,
 			String displayURL, List<GoogleAddAdRequest> ads) throws Exception {
 		SystemTestFunc.PrintLineSeperator();	
 		List<GoogleViolation> ret = null;
-		List<GoogleAddAdRequest> googleAds = new ArrayList<GoogleAddAdRequest>();
-		GoogleAddAdRequest adreq = new GoogleAddAdRequest(SystemTestDataModel.promotionAdIds.get(0), SystemTestDataModel.ad1.adTitle, SystemTestDataModel.ad1.adTextLine1, SystemTestDataModel.ad1.adTextLine2);
-		googleAds.add(adreq);
 		
-		SystemTestFunc.PrintMethodCall("validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, googleAds");
+		SystemTestFunc.PrintMethodCall("validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, SystemTestDataModel.adEngine_validateGoogleAds)");
 		try{			
-			ret = adEngineService.validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, googleAds);
+			ret = adEngineService.validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, SystemTestDataModel.adEngine_validateGoogleAds);
 		}
 		catch(Exception e){
 			SystemTestFunc.ErrorHandler(e);
@@ -714,7 +658,6 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		Thread.sleep(sleepTime);
 		return null;
 	}			
-	//unrelated methods
 
 	//Verification Helper Methods
 	private void Verification_AddPromotionToAdEngine() throws Exception{
@@ -1290,6 +1233,61 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	//unimplemented by adEngine service yet
+	
+	@Override
+	public Boolean EndPromotion(Integer promotionID, List<AdEngine> adEngines)
+			throws Exception {
+		SystemTestFunc.PrintLineSeperator();	
+		boolean ret = false;
+		
+		SystemTestFunc.PrintMethodCall("EndPromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)");
+		try{			
+			ret = adEngineService.EndPromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+		}
+		
+		//Verification
+		if(!ret){
+			SystemTestFunc.ErrorHandler("EndPromotion failed.");
+			return false;
+		}
+		else{
+			//no further verification yet
+		}
+		
+		Thread.sleep(sleepTime);
+		return null;
+	}
+	@Override
+	public Boolean DeletePromotion(Integer promotionID, List<AdEngine> adEngines)
+			throws Exception {
+		SystemTestFunc.PrintLineSeperator();	
+		boolean ret = false;
+		
+		SystemTestFunc.PrintMethodCall("DeletePromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)");
+		try{			
+			ret = adEngineService.DeletePromotion(SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList);
+		}
+		catch(Exception e){
+			SystemTestFunc.ErrorHandler(e);
+		}
+		
+		//Verification
+		if(!ret){
+			SystemTestFunc.ErrorHandler("DeletePromotion failed.");
+			return false;
+		}
+		else{
+			//no further verification yet
+		}
+		
+		Thread.sleep(sleepTime);
+		return null;
+	}
 
 
 	//Methods that don't need to be tested (non-scheduled version AddPromotionToAdEngine method and scheduled version of all the other methods)
@@ -1390,7 +1388,7 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			int numberResults) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
-	}
+	}	
 	
 	//Unrelated methods
 	@Override

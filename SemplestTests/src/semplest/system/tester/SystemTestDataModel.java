@@ -2,12 +2,14 @@ package semplest.system.tester;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.EmailType;
 import semplest.server.protocol.adengine.BudgetObject;
+import semplest.server.protocol.google.GoogleAddAdRequest;
 
 public class SystemTestDataModel {
 
@@ -20,6 +22,7 @@ public class SystemTestDataModel {
 	public static Integer semplestPromotionId;
 	public static String semplestPromotionName;	
 	public static final ArrayList<ProtocolEnum.AdEngine> adEngineList = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google, ProtocolEnum.AdEngine.MSN));
+	public static final ArrayList<ProtocolEnum.AdEngine> adEngineListGoogle = new ArrayList<ProtocolEnum.AdEngine>(Arrays.asList(ProtocolEnum.AdEngine.Google));
 	
 	public static final String promotionDescription = "search engine marketing tool";
 	
@@ -77,12 +80,16 @@ public class SystemTestDataModel {
 	public static final Double adEngine_ChangeInBudget = 10.00;
 	public static final String adEngine_ValidateUrl1 = "http://www.semplest.com";
 	public static final String adEngine_ValidateUrl2 = "www.semplest";
-	
+	public static final Date adEngine_NewPromotionStartDate = new Date();
+	public static final List<GoogleAddAdRequest> adEngine_validateGoogleAds = new ArrayList<GoogleAddAdRequest>(
+			Arrays.asList(new GoogleAddAdRequest(SystemTestDataModel.promotionAdIds.get(0), SystemTestDataModel.ad1.adTitle, SystemTestDataModel.ad1.adTextLine1, SystemTestDataModel.ad1.adTextLine2)));
 	
 	//Keyword Service Variables
 	public static final String keyword_SearchTerm = "rugby sale balls and gloves";
 	public static final String keyword_Description = "rugby sale balls and gloves";
 	public static final String keyword_LandingPage = "http://www.planetrugby.com";
+	public static final String[] keyword_AdEngineList = {"Google", "MSN"};
+	public static final Integer[] keyword_nGramsList = {300,100,100};
 	
 	//Bidding Service Variables
 	public static final Double bidding_TotalMonthlyBudget = 20.00;

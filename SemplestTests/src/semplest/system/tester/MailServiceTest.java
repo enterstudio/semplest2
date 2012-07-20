@@ -36,9 +36,10 @@ public class MailServiceTest implements SemplestMailServiceInterface{
 	@Override
 	public Boolean SendEmail(String subject, String from, String recipient,
 			String msgTxt, String msgType) throws Exception {
-		SystemTestFunc.PrintLineSeperator();		
-		try{
-			SystemTestFunc.PrintMethodCall("SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType)");
+		SystemTestFunc.PrintLineSeperator();	
+		
+		SystemTestFunc.PrintMethodCall("SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType)");
+		try{			
 			boolean ret = mailService.SendEmail(SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType);
 		
 			//Verification
