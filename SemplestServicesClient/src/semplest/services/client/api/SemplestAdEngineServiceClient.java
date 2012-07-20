@@ -1110,6 +1110,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 
 	public TaskOutput RunTask(String method, String jsonParameters, String optionalTimeoutMS, TaskOutput previousTaskOutput) throws Exception
 	{
+		logger.info("Will try to RunTask for Method [" + method + "], JSON [" + jsonParameters + "], OptionalTimeoutMS [" + optionalTimeoutMS + "], PreviousTaskOutput [" + previousTaskOutput + "]");
 		if (optionalTimeoutMS == null)
 		{
 			optionalTimeoutMS = timeoutMS;
