@@ -1,10 +1,10 @@
 package semplest.service.scheduler;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 
 import com.google.gson.Gson;
@@ -26,6 +26,7 @@ import semplest.util.SemplestUtils;
  */
 public class CreateSchedulerAndTask
 {
+	private static final Logger logger = Logger.getLogger(CreateSchedulerAndTask.class);
 	
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -401,6 +402,7 @@ public class CreateSchedulerAndTask
 	public static Boolean createScheduleAndRun(String ESBUrl, List<SemplestSchedulerTaskObject> tasks, String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, 
 			Integer CustomerID, Integer ProductGroupID, Integer UserID) throws Exception
 	{
+		logger.info("Will try to Create Schedule for ESB URL [" + ESBUrl + "], ShceduleName [" + ScheduleName + "], StartTime [" + StartTime + "], EndTime [" + EndDate + "], Frequency [" + Frequency + "], IsEnabled [" + isEnabled + "], IsInactive [" + isInactive + "], PromotionID [" + PromotionID + "], Tasks [" + tasks + "]");
 		if (tasks == null  || tasks.size() == 0)
 		{
 			throw new Exception ("No Tasks to Run for Schedule " + ScheduleName);

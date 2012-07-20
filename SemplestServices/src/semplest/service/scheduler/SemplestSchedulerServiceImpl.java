@@ -1,6 +1,7 @@
 package semplest.service.scheduler;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
@@ -10,6 +11,7 @@ import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.springjdbc.ScheduleJobObj;
 import semplest.server.service.springjdbc.storedproc.GetNextScheduleJobSP;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
+import semplest.util.SemplestUtils;
 
 import com.google.gson.Gson;
 
@@ -61,15 +63,14 @@ public class SemplestSchedulerServiceImpl implements SemplestSchedulerInterface
 	public String NewSchedule(String json) throws Exception
 	{
 		logger.debug("call NewSchedule(String json)" + json);
-		HashMap<String, String> data = gson.fromJson(json, HashMap.class);
-		Integer scheduleJobID = Integer.parseInt(data.get("scheduleJobID"));
-		Integer ScheduleID = Integer.parseInt(data.get("ScheduleID"));
-		Boolean IsDelete = Boolean.getBoolean(data.get("IsDelete"));
-		java.util.Date StartTime = new  java.util.Date(data.get("StartTime"));
-		
-		Boolean del =  NewSchedule(scheduleJobID,ScheduleID,StartTime,IsDelete);
-		// convert result to Json String
-		return gson.toJson(del);
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final Integer scheduleJobID = Integer.parseInt(data.get("scheduleJobID"));
+		final Integer ScheduleID = Integer.parseInt(data.get("ScheduleID"));
+		final Boolean IsDelete = Boolean.getBoolean(data.get("IsDelete"));
+		final String startTimeString = data.get("StartTime");
+		final java.util.Date startTime = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.parse(startTimeString);		
+		final Boolean result = NewSchedule(scheduleJobID,ScheduleID,startTime,IsDelete);
+		return gson.toJson(result);
 	}
 	@Override
 	public Boolean NewSchedule(Integer scheduleJobID,Integer ScheduleID, java.util.Date StartTime,Boolean IsDelete) throws Exception

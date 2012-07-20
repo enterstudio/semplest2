@@ -353,8 +353,7 @@ public class SemplestDB extends BaseDB
 		if (ScheduleFrequency.existsFrequency(Frequency))
 		{
 			AddScheduleSP addsched = new AddScheduleSP();
-			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID,
-					ProductGroupID, UserID);
+			Integer scheduleID = addsched.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID, ProductGroupID, UserID);
 			return scheduleID;
 		}
 		else

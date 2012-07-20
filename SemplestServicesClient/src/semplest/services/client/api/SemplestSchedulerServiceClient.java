@@ -12,6 +12,7 @@ import semplest.server.protocol.ProtocolJSON;
 import semplest.server.protocol.TaskOutput;
 import semplest.services.client.interfaces.SchedulerTaskRunnerInterface;
 import semplest.services.client.interfaces.SemplestSchedulerInterface;
+import semplest.util.SemplestUtils;
 
 public class SemplestSchedulerServiceClient extends ServiceRun implements SemplestSchedulerInterface
 {
@@ -74,7 +75,8 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 		HashMap<String, String> jsonHash = new HashMap<String, String>();
 		jsonHash.put("scheduleJobID", String.valueOf(scheduleJobID));
 		jsonHash.put("ScheduleID", String.valueOf(ScheduleID));
-		jsonHash.put("StartTime", StartTime.toString());
+		final String startTimeString = SemplestUtils.DATE_FORMAT_YYYYMMDD_HHmmss.format(StartTime);
+		jsonHash.put("StartTime", startTimeString);
 		jsonHash.put("IsDelete", String.valueOf(IsDelete));
 		String json = protocolJson.createJSONHashmap(jsonHash);
 

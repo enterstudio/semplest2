@@ -36,7 +36,7 @@ public class AddScheduleSP extends StoredProcedure
 	 */
 	public Integer execute(String ScheduleName, Date StartTime, Date EndDate, String Frequency, boolean isEnabled, boolean isInactive, Integer PromotionID, Integer CustomerID, Integer ProductGroupID, Integer UserID)
 	{
-		Map<String, Object> results = super.execute(ScheduleName, StartTime,EndDate, Frequency,isEnabled,isInactive, PromotionID, CustomerID,ProductGroupID, UserID);
+		Map<String, Object> results = super.execute(ScheduleName, StartTime, EndDate, Frequency, isEnabled, isInactive, PromotionID, CustomerID, ProductGroupID, UserID);
 		if (results.get("ID") == null)
 		{
 			return null;
