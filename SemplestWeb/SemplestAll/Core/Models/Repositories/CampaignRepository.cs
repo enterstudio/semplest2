@@ -231,116 +231,26 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public void SaveProductGroupAndCampaign(int userid, CampaignSetupModel model, CampaignSetupModel oldModel)
+        public void SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
+
             using (var dbcontext = new SemplestModel.Semplest())
             {
-                // get the customerfk from userid
-                var queryCustFk = from c in dbcontext.Users where c.UserPK == userid select c.CustomerFK;
-                var i = queryCustFk.FirstOrDefault();
-                if (i != null)
-                {
-                    var custfk = (int) i;
-
-                    // check if the ProductGroupName already exists
-                    var queryProdGrp = from c in dbcontext.ProductGroups
-                                       where
-                                           c.CustomerFK == custfk &&
-                                           c.ProductGroupName == model.ProductGroup.ProductGroupName
-                                       select c;
-                    if (queryProdGrp.Any())
-                    {
-                        // product grp already exists so update the product group 
-                        var updateProdGrp = queryProdGrp.FirstOrDefault();
-                        if (updateProdGrp != null)
-                        {
-                            updateProdGrp.ProductGroupName = model.ProductGroup.ProductGroupName;
-                            updateProdGrp.StartDate = Convert.ToDateTime(model.ProductGroup.StartDate,
-                                                                         new CultureInfo("en-Us"));
-                            updateProdGrp.EndDate = String.IsNullOrEmpty(model.ProductGroup.EndDate)
-                                                        ? (DateTime?) null
-                                                        : Convert.ToDateTime(model.ProductGroup.EndDate);
-
-                            // get promotion and update it
-                            var updatePromotion = GetPromotionFromProductGroup(updateProdGrp,
-                                                                               model.ProductGroup.ProductPromotionName);
-                            // if this is null means promotion name changed so create a new promotion
-                            if (updatePromotion == null)
-                            {
-                                // create new promotion
-                                updatePromotion = CreatePromotionFromModel(model,
-                                                                           dbcontext.Configurations.First().
-                                                                               CustomerDefaultPerCampaignFlatFeeAmount);
-                                updatePromotion.ProductGroupFK = updateProdGrp.ProductGroupPK;
-
-                                // add geotargeting to promotion
-                                AddGeoTargetingToPromotion(updatePromotion, model, custfk);
-                                // promotion ads
-                                AddPromotionAdsToPromotion(updatePromotion, model, custfk, null);
-
-                                dbcontext.Promotions.Add(updatePromotion);
-                            }
-                            else
-                            {
-                                // update promotion
-                                //UpdatePromotionFromModel(updatePromotion, model, dbcontext, custfk, oldModel);
-                            }
-                        }
-
-                        dbcontext.SaveChanges();
-
-                        // we need to set this because the _dbcontext is  and campaign is updated so reflect changes we need to create new context
-                        _savedCampaign = true;
-                    }
-                    else
-                    {
-                        // create product group
-                        var prodgroup = new ProductGroup
-                                            {
-                                                ProductGroupName = model.ProductGroup.ProductGroupName,
-                                                IsActive = true,
-                                                CustomerFK = custfk,
-                                                StartDate =
-                                                    Convert.ToDateTime(model.ProductGroup.StartDate,
-                                                                       new CultureInfo("en-Us")),
-                                                EndDate =
-                                                    String.IsNullOrEmpty(model.ProductGroup.EndDate)
-                                                        ? (DateTime?) null
-                                                        : Convert.ToDateTime(model.ProductGroup.EndDate)
-                                            };
-
-                        // create promotion
-                        var promo = CreatePromotionFromModel(model,
-                                                             dbcontext.Configurations.First().
-                                                                 CustomerDefaultPerCampaignFlatFeeAmount);
-
-                        // add advertising engines that are selected
-                        SavePromotionAdEngineSelected(promo, model, dbcontext);
-
-                        // add geotargeting to promotion
-                        AddGeoTargetingToPromotion(promo, model, custfk);
-
-                        // save site links
-                        AddSiteLinksToPromotion(promo, model, custfk);
-
-                        // promotion ads
-                        AddPromotionAdsToPromotion(promo, model, custfk, null);
-
-                        // add product group
-                        dbcontext.ProductGroups.Add(prodgroup);
-                        // add promotion
-                        dbcontext.Promotions.Add(promo);
-                        dbcontext.SaveChanges();
-
-                        // save negative keywords
-                        SaveNegativeKeywords(promo, model, dbcontext, custfk);
-
-                        // we need to set this because the _dbcontext is  and campaign is updated so reflect changes we need to create new context
-                        _savedCampaign = true;
-                    }
-                }
+                var queryProd = (from c in dbcontext.ProductGroups
+                                 where
+                                     c.CustomerFK == customerFK &&
+                                     c.ProductGroupName == model.ProductGroup.ProductGroupName
+                                 select c).Single();
+                var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+                AddGeoTargetingToPromotion(
+                    GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFK);
+                AddPromotionAdsToPromotion(promo, model, customerFK, null);
+                dbcontext.SaveChanges();
+                _savedCampaign = true;
+                
             }
         }
+
 
         public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false)
         {

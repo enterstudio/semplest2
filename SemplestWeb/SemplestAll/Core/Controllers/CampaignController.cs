@@ -109,9 +109,6 @@ namespace Semplest.Core.Controllers
                 }
                 else
                 {
-                    var custFK =
-                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.
-                            CustomerFK.Value;
                    
                         model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
                         model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
@@ -127,8 +124,10 @@ namespace Semplest.Core.Controllers
 
                         // we need save to database the ProductGroup and Promotion information
                         //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
+                        int customerFK =
+                            ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
                         int userid =
-                            ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).UsersFK;
+                        ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.UserPK;
 
                         //int userid = 1; // for testing
                         string msg =
@@ -138,8 +137,7 @@ namespace Semplest.Core.Controllers
                         var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
                         Logger.Write(logEnty);
 
-                        //Promotion promo = _campaignRepository.GetPromotionFromProductGroup(updateProdGrp, model.ProductGroup.ProductPromotionName);
-                        _campaignRepository.SaveProductGroupAndCampaign(userid, model,
+                        _campaignRepository.SaveGeoTargetingAds(customerFK, model,
                                                                         (CampaignSetupModel)
                                                                         Session["CampaignSetupModel"]);
                         var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
@@ -340,7 +338,7 @@ namespace Semplest.Core.Controllers
                                                                         Session["CampaignSetupModel"]);
                 return Json("Create Ads");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
                 return Json(ExceptionHelper.GetErrorMessage(ex));
