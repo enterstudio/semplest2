@@ -18,11 +18,9 @@ namespace Semplest.Core.Models.Repositories
         int GetBudgetCycleId(string budgetCycleName);
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
-        void UpdatePromotionFromModel(Promotion updatePromotion, CampaignSetupModel model, SemplestModel.Semplest dbcontext,
-                                      int customerFk, CampaignSetupModel oldModel);
-
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
+        void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
         void SaveSiteLinks(CampaignSetupModel model, int customerFk);
         List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);

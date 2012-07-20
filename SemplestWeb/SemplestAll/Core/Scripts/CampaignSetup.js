@@ -109,21 +109,22 @@ $(document).ready(function () {
     }).data("kendoValidator"), status = $(".status");
     var validator1 = $("#adModel").kendoValidator().data("kendoValidator"), status = $(".status");
     //Save Click Validation Logic..
-    $("#save1").click(function () {
+    $("#save1").click(function (e) {
+
         var searchengines = $('input[name="ProductGroup.AdEnginesList"]');
         var prodgrpbudget = $('input[name="ProductGroup.Budget"]');
         if (searchengines[0].checked == true || searchengines[1].checked == true) {
             if (validator.validate()) {
                 status.text("").addClass("valid");
-                tab = tabStrip.select();
-                tabStrip.enable(tab.next(), true);
-                tabStrip.select(1);
-
             } else {
                 status.text("Oops! There is invalid data in the form.").addClass("invalid");
+                e.preventDefault();
             }
         }
-        else status.text("Please select at least one Search Engine").addClass("invalid");
+        else {
+            status.text("Please select at least one Search Engine").addClass("invalid");
+            e.preventDefault();
+        }
     });
     //    $('#getCategories').click(function () {
     //        if (validator1.validate()) {
@@ -236,8 +237,8 @@ $(document).ready(function () {
     }
     var dateArray = $("#ProductGroup_StartDate").val().split("/");
     var toDay = new Date();
-    if (dateArray.length >1)
-    toDay = new Date(dateArray[2], parseInt(dateArray[0]) - 1, dateArray[1]);
+    if (dateArray.length > 1)
+        toDay = new Date(dateArray[2], parseInt(dateArray[0]) - 1, dateArray[1]);
 
 
     var start = $("#ProductGroup_StartDate").kendoDatePicker({
@@ -417,7 +418,10 @@ function OnSuccess(id) {
             tabStrip.select(tab);
         }
     }
-    else if (id == "BillingLaunch") {
+    else if (id == "Create Ads") {
+        tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+        tabStrip.select(tab);
+    } else if (id == "BillingLaunch") {
         if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
             tabStrip.append({
                 text: "BillingLaunch",

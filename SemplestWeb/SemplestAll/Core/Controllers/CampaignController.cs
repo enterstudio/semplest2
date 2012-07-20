@@ -112,14 +112,7 @@ namespace Semplest.Core.Controllers
                     var custFK =
                         ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.
                             CustomerFK.Value;
-                    if (model.AdModelProp.IsNew &&
-                        _campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName,
-                                                               model.ProductGroup.ProductPromotionName, custFK))
-                    {
-                        return Json("The promotion already exists.");
-                    }
-                    else
-                    {
+                   
                         model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
                         model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
                         //no whitespace in database
@@ -218,7 +211,6 @@ namespace Semplest.Core.Controllers
                         //Session.Add("AdModelProp", model.AdModelProp);
                         //Session.Add("ProductGroup", model.ProductGroup);
                         return Json("Categories");
-                    }
                 }
             }
             catch (Exception ex)
@@ -325,6 +317,33 @@ namespace Semplest.Core.Controllers
                     return Json("Invalid words/phrases, URL or ADs<~>Please check your Landing URL and your words/phrases<br>describing your business.  The System was unable to<br>determine Keyword Categories.");
                 else
                     return Json(ex.ToString());
+            }
+        }
+
+        [HttpPost]
+        [ActionName("CampaignSetup")]
+        [AcceptSubmitType(Name = "Command", Type = "SaveProductPromotion")]
+        public ActionResult SaveProductPromotion(CampaignSetupModel model)
+        {
+            try
+            {
+                var custFK =
+                    ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.
+                        CustomerFK.Value;
+                if (model.AdModelProp.IsNew &&
+                    _campaignRepository.DoesPromotionExist(model.ProductGroup.ProductGroupName,
+                                                           model.ProductGroup.ProductPromotionName, custFK))
+                {
+                    return Json("The promotion already exists.");
+                }
+                _campaignRepository.SaveProductPromotion(custFK, model, (CampaignSetupModel)
+                                                                        Session["CampaignSetupModel"]);
+                return Json("Create Ads");
+            }
+            catch (Exception)
+            {
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
+                return Json(ExceptionHelper.GetErrorMessage(ex));
             }
         }
 
