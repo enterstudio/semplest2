@@ -472,6 +472,7 @@ namespace Semplest.Core.Controllers
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
             Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
+            _campaignRepository.SaveSiteLinks(model, ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value);
             return Json("AdditionalLinks");
         }
 

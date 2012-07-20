@@ -1,4 +1,4 @@
-﻿
+﻿/// <reference path="jquery-1.7.2-vsdoc.js" />
 var formClean;
 
 
@@ -395,4 +395,85 @@ function addNestedForm(container, counter, ticks, content) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
         });
     }
+}
+
+
+
+function OnSuccess(id) {
+    if ($('#displayBox').attr('src') != $('#LogoUrlStr').val() + 'congratulations.jpg')
+        $.unblockUI();
+    var tab;
+    //alert(id);
+    if (id == "Categories") {
+        if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+            tabStrip.append({
+                text: "Categories",
+                contentUrl: '@Url.Action("Categories")'
+            }, tabStrip.tabGroup.children("li:last")).select();
+            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tabStrip.select(tab);
+        } else {
+            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tabStrip.select(tab);
+        }
+    }
+    else if (id == "BillingLaunch") {
+        if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+            tabStrip.append({
+                text: "BillingLaunch",
+                contentUrl: '@Url.Action("BillingLaunch")'
+            }, tabStrip.tabGroup.children("li:last")).select();
+            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tabStrip.select(tab);
+        } else {
+            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+            tabStrip.select(tab);
+        }
+    }
+    else if (id == "AdditionalLinks") {
+        if ($('input[id*="SiteLinks_"]').length < 1) {
+            removeCurrentTab();
+        }
+    }
+    else if (id == "NegativeKeywords") {
+        if ($("#NegativeKeywordsText").val().trim().length < 1) {
+            removeCurrentTab();
+        }
+    } else if (id == "Keywords") {
+
+    } else {
+        if (id.name == "Keywords") {
+            alert('in ' + id.name);
+            $('#KeywordCount').html(id.count);
+            removeCurrentTab();
+        }
+        if (id != "" && id.name != "Keywords") {
+            var arr = id.split('<~>');
+            var stitle, sbody;
+            if (arr.length > 1) {
+                sbody = arr[1];
+                stitle = arr[0];
+            } else {
+                sbody = arr[0];
+                stitle = "Error";
+            }
+            $('.InvalidDescriptionText').html(sbody);
+            var pausePromotionWindow = $('#InvalidDescriptionWindow').kendoWindow({
+                resizable: false,
+                modal: true,
+                title: stitle
+            }).data("kendoWindow");
+            $('#InvalidDescriptionWindow').show();
+            pausePromotionWindow.center();
+            pausePromotionWindow.open();
+        }
+    }
+    //$("#tabstrip").children('.k-content').height(650);
+}
+
+function removeCurrentTab() {
+    var tab = tabStrip.select();
+    var otherTab = tab.prev();
+    tabStrip.remove(tab);
+    tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
 }

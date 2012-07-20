@@ -16,14 +16,18 @@ function enableIsLaunched() {
 }
 function openAllTabs(displayCategories) {
     tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
-    tabStrip.append({
-        text: "Additional Links",
-        contentUrl: $('#AdditionalSiteLinksUrl').val()
-    }, tabStrip.tabGroup.children("li:last")).select();
-    tabStrip.append({
-        text: "Negative Keywords",
-        contentUrl: $('#NegativeKeyWordsUrl').val()
-    }, tabStrip.tabGroup.children("li:last")).select();
+    if (($('input[id="HasSiteLinks"]').val() == 'True')) {
+        tabStrip.append({
+            text: "Additional Links",
+            contentUrl: $('#AdditionalSiteLinksUrl').val()
+        }, tabStrip.tabGroup.children("li:last")).select();
+    }
+    if (($('input[id="HasNegativeKeywords"]').val() == 'True')) {
+        tabStrip.append({
+            text: "Negative Keywords",
+            contentUrl: $('#NegativeKeyWordsUrl').val()
+        }, tabStrip.tabGroup.children("li:last")).select();
+    }
     if (displayCategories) {
         tabStrip.append({
             text: "Categories",
@@ -34,10 +38,12 @@ function openAllTabs(displayCategories) {
         text: "BillingLaunch",
         contentUrl: '/Campaign/BillingLaunch'
     }, tabStrip.tabGroup.children("li:last")).select();
-    tabStrip.append({
-        text: "View Keywords",
-        contentUrl: $('#ViewSelectedKeywordsUrl').val()
-    }, tabStrip.tabGroup.children("li:last")).select();
+    if (($('input[id="HasKeywords"]').val() == 'True')) {
+        tabStrip.append({
+            text: "View Keywords",
+            contentUrl: $('#ViewSelectedKeywordsUrl').val()
+        }, tabStrip.tabGroup.children("li:last")).select();
+    }
 }
 function enableDisable() {
     if ($('#IsCompleted').val() == 'True') {

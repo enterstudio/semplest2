@@ -697,7 +697,23 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
+        public void SaveSiteLinks(CampaignSetupModel model, int customerFk)
+        {
+            using (var dbcontext = new SemplestModel.Semplest())
+            {
+                var queryProd = (from c in dbcontext.ProductGroups
+                                   where
+                                       c.CustomerFK == customerFk &&
+                                       c.ProductGroupName == model.ProductGroup.ProductGroupName
+                                   select c).Single();
+                AddSiteLinksToPromotion(GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFk);
+                dbcontext.SaveChanges();
+                _savedCampaign = true;
+            }
+            
+        }
+
+        private void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
         {
             if (model.SiteLinks != null)
                 foreach (var sitelink in model.SiteLinks)
