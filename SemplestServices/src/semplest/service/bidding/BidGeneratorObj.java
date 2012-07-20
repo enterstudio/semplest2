@@ -376,9 +376,14 @@ public class BidGeneratorObj
 		
 		/* ******************************************************************************************* */
 		// 4. Update bids according to the new logic 
-		
-		
-		DefaultBidObject presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		DefaultBidObject presentDefaultBidObject;
+		try{
+			presentDefaultBidObject = SemplestDB.getDefaultBid(promotionID, searchEngine);
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the default bid from the database. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the default bid from the database. "+ e.getMessage(), e);
+		}
 		final Date lastDefaultBidUpdated = presentDefaultBidObject.getDefaultBidEditedDate();
 		final Date today = new Date();
 		Long diff = today.getTime() - lastDefaultBidUpdated.getTime();
@@ -481,12 +486,15 @@ public class BidGeneratorObj
 		/* ******************************************************************************************* */
 		// 5. Database call: store bid data
 		try {
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write " +bidDataToDatabase.size() + "  bid data to the database...");
-			SemplestDB.storeBidObjects(promotionID, searchEngine,bidDataToDatabase);
-			//SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidDataToDatabase.size() + " keywords.");
-			//logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidData.size() + " keywords.");
-
+			if(bidDataToDatabase!=null && bidDataToDatabase.size()>0){
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to write " +bidDataToDatabase.size() + "  bid data to the database...");
+				SemplestDB.storeBidObjects(promotionID, searchEngine,bidDataToDatabase);
+				//SemplestDB.storeBidObjects(promotionID, searchEngine,bidData);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidDataToDatabase.size() + " keywords.");
+				//logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Stroed bid data to the database for "+ bidData.size() + " keywords.");
+			} else {
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No bid data to write to the database.");
+			}
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to store bid data to the database. "+ e.getMessage(), e);
 			// e.printStackTrace();
@@ -518,72 +526,75 @@ public class BidGeneratorObj
 		
 		/* ******************************************************************************************* */
 		// 7. SE API call: Update matchType, bid for keywords
-		if (searchEngine == AdEngine.Google)
-		{
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with Google for " + wordBidMap.size() + " keywords.");
-
-			final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
-			final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
-			for (final Entry<String, Long> entry : entrySet)
+		if(wordBidMap.size()>0) {
+			if (searchEngine == AdEngine.Google)
 			{
-				final String word = entry.getKey();
-				//final Long keywordID = wordIDMap.get(word);
-				final Long keywordID = kwBidElementMap.get(word).getKeywordAdEngineID();
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with Google for " + wordBidMap.size() + " keywords.");
 
-				final Long microBidAmount = wordBidMap.get(word);
-				if(microBidAmount==null){
-					continue; // don't write via API is the bid is null
-				}
-				final GoogleSetBidForKeywordRequest request = new GoogleSetBidForKeywordRequest(adGroupID, word, keywordID, microBidAmount);
-				requests.add(request);
-			}
-			final int batchSize = 500;
-			final List<List<GoogleSetBidForKeywordRequest>> requestBatches = SemplestUtils.getBatches(requests, batchSize);
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
-			for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
-			{
-				clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
-			}
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with Google for " + wordBidMap.size() + " keywords.");
-
-		} 
-
-		if (searchEngine == AdEngine.MSN) {
-			
-			try {
-				ArrayList<BidElement> bidDataToMSN = new ArrayList<BidElement>();
+				final List<GoogleSetBidForKeywordRequest> requests = new ArrayList<GoogleSetBidForKeywordRequest>(); 
 				final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
-				for (final Entry<String, Long> entry : entrySet){
+				for (final Entry<String, Long> entry : entrySet)
+				{
 					final String word = entry.getKey();
-					bidDataToMSN.add(kwBidElementMap.get(word));
-					if(kwBidElementMap.get(word).getIsDefaultValue()){
-						kwBidElementMap.get(word).setMicroBidAmount(null);
+					//final Long keywordID = wordIDMap.get(word);
+					final Long keywordID = kwBidElementMap.get(word).getKeywordAdEngineID();
+
+					final Long microBidAmount = wordBidMap.get(word);
+					if(microBidAmount==null){
+						continue; // don't write via API is the bid is null
 					}
+					final GoogleSetBidForKeywordRequest request = new GoogleSetBidForKeywordRequest(adGroupID, word, keywordID, microBidAmount);
+					requests.add(request);
 				}
-				
-				/*
+				final int batchSize = 500;
+				final List<List<GoogleSetBidForKeywordRequest>> requestBatches = SemplestUtils.getBatches(requests, batchSize);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
+				for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
+				{
+					clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
+				}
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with Google for " + wordBidMap.size() + " keywords.");
+
+			} 
+
+			if (searchEngine == AdEngine.MSN) {
+
+				try {
+					ArrayList<BidElement> bidDataToMSN = new ArrayList<BidElement>();
+					final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
+					for (final Entry<String, Long> entry : entrySet){
+						final String word = entry.getKey();
+						bidDataToMSN.add(kwBidElementMap.get(word));
+						if(kwBidElementMap.get(word).getIsDefaultValue()){
+							kwBidElementMap.get(word).setMicroBidAmount(null);
+						}
+					}
+
+					/*
 				//for(BidElement b : bidData){
 				for(BidElement b : bidDataToDatabase){
 					if(b.getIsDefaultValue()){
 						b.setMicroBidAmount(null);
 					}
 				}
-				*/
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with MSN for " + bidDataToMSN.size() + " keywords.");
-				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
-				//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToDatabase);
-				msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToMSN);
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with MSN for " + bidDataToMSN.size() + " keywords.");
+					 */
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update bids with MSN for " + bidDataToMSN.size() + " keywords.");
+					//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidData);
+					//msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToDatabase);
+					msnClient.updateKeywordBidsByIds(msnAccountID, adGroupID, bidDataToMSN);
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with MSN for " + bidDataToMSN.size() + " keywords.");
 
-			} catch (Exception e) {
-				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
-				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
-			}
+				} catch (Exception e) {
+					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to update bids to MSN. "+ e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update bids to MSN. "+ e.getMessage(), e);
+				}
 
-		} // if(searchEngine.equalsIgnoreCase(msn))
+			} // if(searchEngine.equalsIgnoreCase(msn))
 
-		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids and match type for keywords via the search engine API.");
-
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids and match type for keywords via the search engine API.");
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No bids to update via the search engine API.");
+		}
 		/* ******************************************************************************************* */
 		// 8. SE API call: Update default bid for campaign
 		if(daysSinceDefaultBidUpdated >=2) {
@@ -631,36 +642,36 @@ public class BidGeneratorObj
 		// 9. SE API call: Pause the selected keywords 
 		
 		if( pauseMap.size()>0){
-		if (searchEngine == AdEngine.Google){
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
-			int k = 0;
-			while (true) {
-				Thread.sleep(sleepPeriod + k * sleepBackOffTime);
-				try {
-					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
-					break;
-				} catch (Exception e) {
-					if (k <= maxRetry) {
-						// e.printStackTrace();
-						logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
-						k++;
-					} else {
-						// e.printStackTrace();
-						logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
-						throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
-					}
-				} // try-catch
-			} // while(true)
-		}
-		if(searchEngine == AdEngine.MSN){
-			try{
+			if (searchEngine == AdEngine.Google){
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
-				msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
-			} catch(Exception e){
-				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
-				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				int k = 0;
+				while (true) {
+					Thread.sleep(sleepPeriod + k * sleepBackOffTime);
+					try {
+						clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
+						break;
+					} catch (Exception e) {
+						if (k <= maxRetry) {
+							// e.printStackTrace();
+							logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Received exception : will retry..., k=" + k + " " + e.getMessage(), e);
+							k++;
+						} else {
+							// e.printStackTrace();
+							logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+							throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+						}
+					} // try-catch
+				} // while(true)
 			}
-		}
+			if(searchEngine == AdEngine.MSN){
+				try{
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
+					msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
+				} catch(Exception e){
+					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				}
+			}
 		} else {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time.");
 		}
@@ -1898,10 +1909,10 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			AdEngine searchEngine = AdEngine.MSN;
+			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(136);
+			Integer promotionID = new Integer(139);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
