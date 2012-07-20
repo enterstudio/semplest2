@@ -13,12 +13,27 @@ using SharedResources.Models;
 namespace SemplestWebApp.Controllers
 {
     [ExceptionHelper]
-    [AuthorizeRole]
+    
     [RequireHttpsHelper]
     [OutputCache(NoStore = true, Duration = 0, VaryByParam = "*")]
     public class HomeController : Controller
     {
+#region NonAuthenticated Methods
+        public ActionResult PrivacyPolicy()
+        {
+            StaticModel vm = new StaticModel(StaticPages.PrivacyPolicy);
+            return View("Static", vm);
+        }
 
+        public ActionResult TermsAndConditions()
+        {
+            StaticModel vm = new StaticModel(StaticPages.TermsAndConditions);
+            return View("Static", vm);
+        }
+#endregion
+
+
+        [AuthorizeRole]
         public ActionResult Index()
         {
             return RedirectToAction("Index2", "Home", new HomeModelChild());
@@ -39,7 +54,7 @@ namespace SemplestWebApp.Controllers
             return View(hm);
         }
 
-
+        [AuthorizeRole]
         public ActionResult Index2()
         {
             SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
@@ -51,54 +66,46 @@ namespace SemplestWebApp.Controllers
             child.ProductGroups = cCred.First().User.Customer.ProductGroups;
             return View(child);
         }
+        [AuthorizeRole]
         public ActionResult GetLiveProductGroups()
         {
             Credential cred = ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]));
             SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
             return Json(dbContext.vwGetLivePromotionsForUsers.Where(t => t.UserPK == cred.UsersFK), JsonRequestBehavior.AllowGet);
         }
-
+        [AuthorizeRole]
         public ActionResult About()
         {
             StaticModel vm = new StaticModel(StaticPages.About);
             return View("Static", vm);
         }
-
+        [AuthorizeRole]
         public ActionResult FAQ()
         {
             StaticModel vm = new StaticModel(StaticPages.FAQ);
             return View("Static", vm);
         }
-
+        [AuthorizeRole]
         public ActionResult Contact()
         {
             StaticModel vm = new StaticModel(StaticPages.Contact);
             return View("Static", vm);
         }
 
-        public ActionResult PrivacyPolicy()
-        {
-            StaticModel vm = new StaticModel(StaticPages.PrivacyPolicy);
-            return View("Static", vm);
-        }
 
-        public ActionResult TermsAndConditions()
-        {
-            StaticModel vm = new StaticModel(StaticPages.TermsAndConditions);
-            return View("Static", vm);
-        }
-
+        [AuthorizeRole]
         public ActionResult ServicesAgreement()
         {
             StaticModel vm = new StaticModel(StaticPages.ServicesAgreement);
             return View("Static", vm);
         }
-
+        [AuthorizeRole]
         public ActionResult SearchKeywords()
         {
             return View();
         }
 
+        [AuthorizeRole]
         [HttpPost]
         [ActionName("SearchKeywords")]
         [AcceptSubmitType(Name = "Command", Type = "GetCategories")]
@@ -142,6 +149,7 @@ namespace SemplestWebApp.Controllers
             }
         }
 
+        [AuthorizeRole]
         [HttpPost]
         public ActionResult AddProductGroupName(FormCollection fc)
         {
@@ -169,7 +177,7 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
-
+        [AuthorizeRole]
         [HttpPost]
         [ActionName("SearchKeywords")]
         [AcceptSubmitType(Name = "Command", Type = "GetKeywords")]
@@ -239,7 +247,8 @@ namespace SemplestWebApp.Controllers
                 return View(model);
             }
         }
-
+        
+        [AuthorizeRole]
         [HttpPost]
         public ActionResult RemovePromotion(int promotionId)
         {
@@ -255,6 +264,7 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
+        [AuthorizeRole]
         [HttpPost]
         public ActionResult PausePromotion(int promotionIdP)
         {
@@ -274,6 +284,7 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
+        [AuthorizeRole]
         [HttpPost]
         public ActionResult ResumePromotion(int promotionIdR)
         {
@@ -293,6 +304,7 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
+        [AuthorizeRole]
         [HttpPost]
         public ActionResult EndPromotion(int promotionIdE)
         {
@@ -312,7 +324,7 @@ namespace SemplestWebApp.Controllers
             return RedirectToAction("Index2");
         }
 
-
+        [AuthorizeRole]
         private void CreateDummyModel(SearchKeywordsModel model)
         {
             // create a dummy model
