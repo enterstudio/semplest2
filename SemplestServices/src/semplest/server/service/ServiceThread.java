@@ -38,42 +38,51 @@ public class ServiceThread implements Runnable
 	@Override
 	public void run()
 	{
-		String result = null;
 		try
 		{
-			logger.debug("Run Service [" +  methodName + "], Unique ID [" + uniqueID + "], JSON [" + jsonStr + "]");
-			result = myService.getService().ServiceGet(methodName, jsonStr);
-			
-			if (result == null)
+			String result = null;
+			try
 			{
-				result = getErrorInJson(result, null);
+				logger.debug("Run Service [" +  methodName + "], Unique ID [" + uniqueID + "], JSON [" + jsonStr + "]");
+				result = myService.getService().ServiceGet(methodName, jsonStr);
+				
+				if (result == null)
+				{
+					result = getErrorInJson(result, null);
+				}
+				else
+				{
+					//send back result in hashmap
+					HashMap<String, String> res = new HashMap<String, String>();
+					res.put("result",result);
+					result = gson.toJson(res);
+				}
+				logger.debug("result = " + result + " ByteMessage Type=" + methodName + ":" + uniqueID);
+				//put Json result back onto Queue
+				
 			}
-			else
+			catch (Exception e)
 			{
-				//send back result in hashmap
-				HashMap<String, String> res = new HashMap<String, String>();
-				res.put("result",result);
-				result = gson.toJson(res);
+				result = getErrorInJson("", e);
+				logger.error("Error running Service: " + methodName + ":" + jsonStr);
+				SemplestErrorHandler.logToDatabase(new Exception("Error running Service: " + methodName + ":" + jsonStr + " - " + e.getMessage(), e));
 			}
-			logger.debug("result = " + result + " ByteMessage Type=" + methodName + ":" + uniqueID);
-			//put Json result back onto Queue
-			
+			//put result on message queue
+			try
+			{
+				cn.sendMessage(ProtocolJSON.createBytePacketFromString(result), uniqueID);
+			}
+			catch (JMSException e)
+			{
+				logger.error("maessage queue connection error" + e.getMessage(), e);
+				SemplestErrorHandler.logToDatabase(new Exception("maessage queue connection error - " + e.getMessage(), e));
+			}
 		}
 		catch (Exception e)
 		{
-			result = getErrorInJson("", e);
-			logger.error("Error running Service: " + methodName + ":" + jsonStr);
-			SemplestErrorHandler.logToDatabase(new Exception("Error running Service: " + methodName + ":" + jsonStr + " - " + e.getMessage(), e));
-		}
-		//put result on message queue
-		try
-		{
-			cn.sendMessage(ProtocolJSON.createBytePacketFromString(result), uniqueID);
-		}
-		catch (JMSException e)
-		{
-			logger.error("maessage queue connection error" + e.getMessage(), e);
-			SemplestErrorHandler.logToDatabase(new Exception("maessage queue connection error - " + e.getMessage(), e));
+			final String errMsg = "Problem while running Service Thread";
+			logger.error(errMsg);
+			throw new RuntimeException(errMsg, e);
 		}
 	}
 	

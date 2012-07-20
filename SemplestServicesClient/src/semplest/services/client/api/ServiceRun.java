@@ -22,52 +22,58 @@ public class ServiceRun
 
 	public String runMethod(String baseURL, String serviceName, String methodName, String jsonStr, String timeoutMS) throws Exception
 	{
-		ClientResponse response = null;
-		Client client = null;
-		String ret = null;
+		logger.info("Will try to Run Method for BaseURL [" + baseURL + "], ServiceName [" + serviceName + "], MethodName [" + methodName + "], JSON [" + jsonStr + "], TimeoutMS [" + timeoutMS + "]");		
 		try
 		{
-			client = Client.create();
-			MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
-			queryParams.add("jsonStr", jsonStr);
-			queryParams.add("service", serviceName);
-			queryParams.add("method", methodName);
-			if (timeoutMS != null)
+			ClientResponse response = null;
+			Client client = null;
+			String ret = null;
+			try
 			{
-				queryParams.add("timeout", timeoutMS);
+				client = Client.create();
+				MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+				queryParams.add("jsonStr", jsonStr);
+				queryParams.add("service", serviceName);
+				queryParams.add("method", methodName);
+				if (timeoutMS != null)
+				{
+					queryParams.add("timeout", timeoutMS);
+				}
+				WebResource webResource = client.resource(baseURL);
+				webResource = webResource.queryParams(queryParams);
+				// client response
+				response = webResource.get(ClientResponse.class);
+				ret = response.getEntity(String.class);
+				logger.debug(response.getClientResponseStatus().getStatusCode() + ":" + ret);
 			}
-			WebResource webResource = client.resource(baseURL);
-			webResource = webResource.queryParams(queryParams);
-			// client response
-			response = webResource.get(ClientResponse.class);
-			ret = response.getEntity(String.class);
-			logger.debug(response.getClientResponseStatus().getStatusCode() + ":" + ret);
+			finally
+			{
+				if (response != null)
+				{
+					response.close();
+				}
+				if (client != null)
+				{
+					client.destroy();
+				}
+	
+			}
+	
+			HashMap<String, String> resultMap = gson.fromJson(ret, HashMap.class);
+			if (resultMap.containsKey("errorID"))
+			{
+				throw new Exception(resultMap.get("errorID") + ":" + resultMap.get("errorMessage"));
+			}
+			else
+			{
+				return resultMap.get("result");
+			}
 		}
 		catch (Exception e)
 		{
-			throw e;
-		}
-		finally
-		{
-			if (response != null)
-			{
-				response.close();
-			}
-			if (client != null)
-			{
-				client.destroy();
-			}
-
-		}
-
-		HashMap<String, String> resultMap = gson.fromJson(ret, HashMap.class);
-		if (resultMap.containsKey("errorID"))
-		{
-			throw new Exception(resultMap.get("errorID") + ":" + resultMap.get("errorMessage"));
-		}
-		else
-		{
-			return resultMap.get("result");
+			final String errMsg = "Problem doing Run Method for BaseURL [" + baseURL + "], ServiceName [" + serviceName + "], MethodName [" + methodName + "], JSON [" + jsonStr + "], TimeoutMS [" + timeoutMS + "]"; 					
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e); 
 		}
 	}
 

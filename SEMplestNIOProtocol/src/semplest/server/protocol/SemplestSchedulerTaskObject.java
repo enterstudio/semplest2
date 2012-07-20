@@ -31,5 +31,10 @@ public class SemplestSchedulerTaskObject
 		this.clientServiceName = clientServiceName;
 	}
 	
+	@Override
+	public String toString()
+	{
+		return "SemplestSchedulerTaskObject [clientServiceName=" + clientServiceName + ", methodName=" + methodName + ", parameters=" + parameters + "]";
+	}
 
 }

@@ -387,7 +387,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	 */
 	private void scheduleOngoingBidding(String scheduleName, int promotionID, List<AdEngine> adEngines, Date startTime) throws Exception
 	{
-
+		logger.info("Will try to schedule OngoingBidding for ScheduleName [" + scheduleName + "], PromotionID [" + promotionID + "], AdEngines [" + adEngines + "], StartTime [" + startTime + "]");
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 		listOfTasks.add(executeOngoinBiddingTask);
