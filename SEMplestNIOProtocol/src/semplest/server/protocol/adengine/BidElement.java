@@ -116,4 +116,16 @@ public class BidElement
 		this.competitionType = competitionType;
 	}
 
+	@Override
+	public String toString() {
+		return "BidElement [keywordAdEngineID=" + keywordAdEngineID
+				+ ", keyword=" + keyword + ", microBidAmount=" + microBidAmount
+				+ ", matchType=" + matchType + ", competitionType="
+				+ competitionType + ", startDate=" + startDate + ", endDate="
+				+ endDate + ", isDefaultValue=" + isDefaultValue
+				+ ", isActive=" + isActive + ", isNegative=" + isNegative + "]";
+	}
+	
+	
+
 }

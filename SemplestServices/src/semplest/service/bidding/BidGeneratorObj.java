@@ -309,6 +309,7 @@ public class BidGeneratorObj
 		HashMap<String,BidElement> kwBidElementMap = new HashMap<String,BidElement>();
 		for(BidElement b : bidData){
 			kwBidElementMap.put(b.getKeyword(), b);
+			//logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + b);
 		}
 
 		
@@ -419,7 +420,14 @@ public class BidGeneratorObj
 		
 		
 		if(reportObjListYesterday!=null && reportObjListYesterday.size()>0){
+			HashSet<String> keywordsAlreadySeen = new HashSet<String>();
 			for (ReportObject r : reportObjListYesterday){
+				if(keywordsAlreadySeen.contains(r.getKeyword())){
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Skipping keyword "+r.getKeyword()+".");
+					continue;
+				} else {
+					keywordsAlreadySeen.add(r.getKeyword());
+				}
 				if(r.getCampaignID().longValue() == campaignID.longValue()){
 					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
 
@@ -564,10 +572,13 @@ public class BidGeneratorObj
 					final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
 					for (final Entry<String, Long> entry : entrySet){
 						final String word = entry.getKey();
+						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Keyword: "+word+", Microbid: "+kwBidElementMap.get(word).getMicroBidAmount()+", Kyeword ID: "+kwBidElementMap.get(word).getKeywordAdEngineID());
+
 						bidDataToMSN.add(kwBidElementMap.get(word));
 						if(kwBidElementMap.get(word).getIsDefaultValue()){
 							kwBidElementMap.get(word).setMicroBidAmount(null);
 						}
+						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Keyword: "+word+", Microbid: "+kwBidElementMap.get(word).getMicroBidAmount()+", Kyeword ID: "+kwBidElementMap.get(word).getKeywordAdEngineID());
 					}
 
 					/*
@@ -1909,49 +1920,47 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			AdEngine searchEngine = AdEngine.Google;
+			AdEngine searchEngine = AdEngine.MSN;
 			
 			
-			Integer promotionID = new Integer(139);
+			Integer promotionID = new Integer(165);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
-			bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 
 
 			
-			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
-			
-			String accountID = null;
-			Long msnAccountID = null;
-			if(searchEngine.equals(AdEngine.Google)){
-				accountID = String.valueOf(adEngineInfo.getAccountID());
-			} else {
-				msnAccountID = adEngineInfo.getAccountID();
-			}
-
-			long campaignID = adEngineInfo.getCampaignID();
-			long adGroupID = adEngineInfo.getAdGroupID();
-			
-			if(searchEngine.equals(AdEngine.Google)){
-				System.out.println("Google "+accountID+" "+campaignID+" "+adGroupID);
-			} else {
-				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
-			}
+//			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+//			
+//			String accountID = null;
+//			Long msnAccountID = null;
+//			if(searchEngine.equals(AdEngine.Google)){
+//				accountID = String.valueOf(adEngineInfo.getAccountID());
+//			} else {
+//				msnAccountID = adEngineInfo.getAccountID();
+//			}
+//
+//			long campaignID = adEngineInfo.getCampaignID();
+//			long adGroupID = adEngineInfo.getAdGroupID();
+//			
+//			if(searchEngine.equals(AdEngine.Google)){
+//				System.out.println("Google "+accountID+" "+campaignID+" "+adGroupID);
+//			} else {
+//				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
+//			}
 			
 		
+
 			
-			//DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-			//Date startDate = df.parse("05/01/2012");
-			Calendar cal = Calendar.getInstance();
-			cal.setTime(new Date());
-			cal.add(Calendar.DAY_OF_MONTH, -1);
-			Date startDate = cal.getTime();
-			//cal.add(Calendar.DAY_OF_MONTH, -1);
-			//Date endDate = cal.getTime();
-			//Date endDate = new Date(); //df.parse("07/21/2012");
+			
+//			Calendar cal = Calendar.getInstance();
+//			cal.setTime(new Date());
+//			cal.add(Calendar.DAY_OF_MONTH, -1);
+//			Date startDate = cal.getTime();
+			
 			
 			
 //			// get report from the database
@@ -1979,21 +1988,22 @@ public class BidGeneratorObj
 //			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 //			
 //			
-//			Date today = new Date();
+			Date today = new Date();
 //			
-//			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
-//			for(BidElement b : bidData){
-//				
+			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
+			for(BidElement b : bidData){
+				System.out.println(b.getKeyword()+": "+b.getKeywordAdEngineID());
+				
 //				Date d = b.getStartDate();
 //				Long diff = today.getTime() - d.getTime();
 //				long unchangedForDays = diff / (1000 * 60 * 60 * 24);
 //				if(b.getIsDefaultValue() && b.getIsActive()){
 //					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
 //				}
-////				if(unchangedForDays>=2){
-////					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
-////				}
-//			}
+//				if(unchangedForDays>=2){
+//					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
+//				}
+			}
 			
 
 			
