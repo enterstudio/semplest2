@@ -29,12 +29,14 @@ import semplest.bidding.optimization.CampaignBid;
 import semplest.bidding.optimization.KeyWord;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
+import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
 import semplest.server.protocol.adengine.KeywordDataObject;
 import semplest.server.protocol.adengine.ReportObject;
+import semplest.server.protocol.adengine.SemplestBiddingHistory;
 import semplest.server.protocol.adengine.TrafficEstimatorDataObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject.BidData;
@@ -360,9 +362,9 @@ public class BidGeneratorObj
 			}
 			if(reportObjArray!=null && reportObjArray.length > 0){
 				reportObjListYesterday = new ArrayList<ReportObject>(Arrays.asList(reportObjArray));
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data from the database with "+reportObjListYesterday.size()+" entries.");
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Got report data via API call with "+reportObjListYesterday.size()+" entries.");
 			} else {
-				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No report data found.");
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No report data found via API call.");
 			}
 		} catch (Exception e) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the report data via API call. "+ e.getMessage(), e);
@@ -416,30 +418,58 @@ public class BidGeneratorObj
 		bidBoostFactor = bidParams.getSemplestBiddingInitialBidBoostFactor().doubleValue();
 		
 
+		List<SemplestBiddingHistory> bidHistoryList = null;
+		try{
+			bidHistoryList = SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+		}catch (Exception e){
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time."+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time."+ e.getMessage(), e);
+		}
+		Date initialBidDate = null;
+		
+		//System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
+		//SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
+		
+		for(SemplestBiddingHistory h : bidHistoryList){
+			if(h.getSemplestBidType().equals(PromotionBiddingType.Initial.name())){
+				initialBidDate = h.getBidCompleted();
+			}
+		}
+		if(initialBidDate==null){
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time.");
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time.");
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Initial bid was completed: "+ initialBidDate);
+		}
+		
+
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Going to read the report for all the keywords that had impressions.");
 		
 		
 		if(reportObjListYesterday!=null && reportObjListYesterday.size()>0){
 			HashSet<String> keywordsAlreadySeen = new HashSet<String>();
 			for (ReportObject r : reportObjListYesterday){
-				if(keywordsAlreadySeen.contains(r.getKeyword())){
-					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Skipping keyword "+r.getKeyword()+".");
-					continue;
-				} else {
-					keywordsAlreadySeen.add(r.getKeyword());
-				}
 				if(r.getCampaignID().longValue() == campaignID.longValue()){
 					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + r);
+
+					if(keywordsAlreadySeen.contains(r.getKeyword())){
+						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Skipping keyword "+r.getKeyword()+" since we already seen before.");
+						continue;
+					} else {
+						keywordsAlreadySeen.add(r.getKeyword());
+					}
 
 					Date bidStartDate = kwBidElementMap.get(r.getKeyword()).getStartDate();
 					if(bidStartDate==null){
 						logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+kwBidElementMap.get(r.getKeyword()).getKeyword());
 						throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid start date cannot be null for keyword "+kwBidElementMap.get(r.getKeyword()).getKeyword());
 					}
-					long daysSinceBidUpdated = ((Long)(today.getTime() - bidStartDate.getTime()))/ (1000 * 60 * 60 * 24);
+					long daysSinceBidUpdated = ((Long)(today.getTime()-bidStartDate.getTime()))/(1000 * 60 * 60 * 24);
 
 					if(kwBidElementMap.get(r.getKeyword()).getIsActive()){
-						if(r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100){
+						if( (r.getAveragePosition()<=4 || r.getMicroBidAmount() > (94*maxBidL) / 100) // either top position or very highly bid but still didn't get high position
+								&& (daysSinceBidUpdated>=2 || bidStartDate.before(initialBidDate) ) ) // either bid was set 2 days ago or it was initial bid
+						{ // pause these keywords
 							pauseMap.put(kwBidElementMap.get(r.getKeyword()).getKeywordAdEngineID(), false);
 							pausedSet.add(r.getKeyword());
 							kwBidElementMap.get(r.getKeyword()).setIsActive(false);
@@ -452,7 +482,7 @@ public class BidGeneratorObj
 								kwBidElementMap.get(r.getKeyword()).setIsDefaultValue(false);
 								logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Moving bid on keyword " + r.getKeyword() +" to non-default bid");
 							}
-						} else if (daysSinceBidUpdated >=2 ) {
+						} else if (daysSinceBidUpdated >=2 ) { // increase bids for these keywords
 							long b = Math.max(50000L,Math.min(maxBidL, (((long) (kwBidElementMap.get(r.getKeyword()).getMicroBidAmount()* Math.pow(bidBoostFactor,(r.getAveragePosition()-1)/2)))/10000L) * 10000L));
 							wordBidMap.put(r.getKeyword(), b);
 							kwBidElementMap.get(r.getKeyword()).setMicroBidAmount(b);
@@ -572,8 +602,6 @@ public class BidGeneratorObj
 					final Set<Entry<String, Long>> entrySet = wordBidMap.entrySet();
 					for (final Entry<String, Long> entry : entrySet){
 						final String word = entry.getKey();
-						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Keyword: "+word+", Microbid: "+kwBidElementMap.get(word).getMicroBidAmount()+", Kyeword ID: "+kwBidElementMap.get(word).getKeywordAdEngineID());
-
 						bidDataToMSN.add(kwBidElementMap.get(word));
 						if(kwBidElementMap.get(word).getIsDefaultValue()){
 							kwBidElementMap.get(word).setMicroBidAmount(null);
@@ -686,6 +714,10 @@ public class BidGeneratorObj
 		} else {
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time.");
 		}
+		
+		/* ******************************************************************************************* */
+		// 10. Write to database: Ongoing bidding is done
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Ongoing);
 					
 		return true;
 	}
@@ -1387,6 +1419,12 @@ public class BidGeneratorObj
 		
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated the default bid via search engine API. The default bid is "+defaultMicroBid);
 
+
+		/* ******************************************************************************************* */
+		// 18. Write to database: Initital bidding is done
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
+		
+		
 		return new Boolean(true);
 
 	} // setBidsInitial()
@@ -1398,6 +1436,14 @@ public class BidGeneratorObj
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception {
 		isFirstCall = false;
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate called!!");
+		
+		
+		List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+		if(bidHistory==null || bidHistory.size()==0 || (!bidHistory.get(0).getSemplestBidType().equals(PromotionBiddingType.Initial.name()))){
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
+
+		}
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
@@ -1920,7 +1966,7 @@ public class BidGeneratorObj
 			BidGeneratorObj bidObject = new BidGeneratorObj();
 
 			
-			AdEngine searchEngine = AdEngine.MSN;
+			AdEngine searchEngine = AdEngine.Google;
 			
 			
 			Integer promotionID = new Integer(165);
@@ -1932,26 +1978,51 @@ public class BidGeneratorObj
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 
 
-			
-//			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+//			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+//			System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
+//			//SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 //			
-//			String accountID = null;
-//			Long msnAccountID = null;
-//			if(searchEngine.equals(AdEngine.Google)){
-//				accountID = String.valueOf(adEngineInfo.getAccountID());
-//			} else {
-//				msnAccountID = adEngineInfo.getAccountID();
-//			}
+//			Date now = new Date();
+//			Date initialBidDate = bidHistory.get(0).getBidCompleted();
+//			System.out.println(initialBidDate.compareTo(now));
+//			System.out.println(now.compareTo(initialBidDate));
 //
-//			long campaignID = adEngineInfo.getCampaignID();
-//			long adGroupID = adEngineInfo.getAdGroupID();
-//			
-//			if(searchEngine.equals(AdEngine.Google)){
-//				System.out.println("Google "+accountID+" "+campaignID+" "+adGroupID);
-//			} else {
-//				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
-//			}
+//			System.out.println(now.after(initialBidDate));
+//			System.out.println(now.before(initialBidDate));
+
 			
+			
+			
+			
+			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
+			
+			String accountID = null;
+			Long msnAccountID = null;
+			if(searchEngine.equals(AdEngine.Google)){
+				accountID = String.valueOf(adEngineInfo.getAccountID());
+			} else {
+				msnAccountID = adEngineInfo.getAccountID();
+			}
+
+			long campaignID = adEngineInfo.getCampaignID();
+			long adGroupID = adEngineInfo.getAdGroupID();
+			
+			if(searchEngine.equals(AdEngine.Google)){
+				System.out.println("Google "+accountID+" "+campaignID+" "+adGroupID);
+			} else {
+				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
+			}
+			
+			
+			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
+			System.out.println(bidData.size());
+
+			HashSet<String> wordSet = new HashSet<String>();
+			for(BidElement b : bidData){
+				wordSet.add(b.getKeyword());
+				System.out.println(b.getKeyword()+": "+b.getKeywordAdEngineID());
+			}
+			System.out.println(wordSet.size());
 		
 
 			
@@ -1988,22 +2059,25 @@ public class BidGeneratorObj
 //			SemplestDB.UpdateDefaultBidForKeywords(promotionID, searchEngine);
 //			
 //			
-			Date today = new Date();
-//			
-			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
-			for(BidElement b : bidData){
-				System.out.println(b.getKeyword()+": "+b.getKeywordAdEngineID());
-				
-//				Date d = b.getStartDate();
-//				Long diff = today.getTime() - d.getTime();
-//				long unchangedForDays = diff / (1000 * 60 * 60 * 24);
-//				if(b.getIsDefaultValue() && b.getIsActive()){
-//					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
-//				}
-//				if(unchangedForDays>=2){
-//					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
-//				}
-			}
+//			Date today = new Date();
+
+					
+//			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
+//			System.out.println(bidData.size());
+//
+//			for(BidElement b : bidData){
+//				System.out.println(b.getKeyword()+": "+b.getKeywordAdEngineID()+", "+b.getStartDate());
+//				
+////				Date d = b.getStartDate();
+////				Long diff = today.getTime() - d.getTime();
+////				long unchangedForDays = diff / (1000 * 60 * 60 * 24);
+////				if(b.getIsDefaultValue() && b.getIsActive()){
+////					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
+////				}
+////				if(unchangedForDays>=2){
+////					System.out.println(b.getKeyword()+": "+b.getMicroBidAmount()+", "+unchangedForDays+", "+b.getStartDate());
+////				}
+//			}
 			
 
 			
