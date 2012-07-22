@@ -39,11 +39,12 @@ BEGIN TRY
 	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
 	where kb.PromotionFK = @PromotionPK and  ae.AdvertisingEngine = @AdvertisingEngine and kb.IsDefaultValue = 1 and kb.MicroBidAmount != -1
 	*/
-	--Get all the default keywords that are being updated
+	--Get all the active default keywords that are being updated
 	insert into @KeybidTable
 	select kb.KeywordBidPK from KeywordBid kb 
 	inner join AdvertisingEngine ae on ae.AdvertisingEnginePK = kb.AdvertisingEngineFK
-	where kb.PromotionFK = @PromotionPK and  ae.AdvertisingEngine = @AdvertisingEngine and kb.IsDefaultValue = 1 and kb.MicroBidAmount != -1 and kb.MicroBidAmount != @MicroDefaultBid
+	where kb.PromotionFK = @PromotionPK and  ae.AdvertisingEngine = @AdvertisingEngine and kb.IsDefaultValue = 1  and kb.IsActive = 1 
+			and kb.MicroBidAmount != -1 and kb.MicroBidAmount != @MicroDefaultBid
 	
 	
 	--update the last bid with an end Date and set inactive
@@ -53,7 +54,7 @@ BEGIN TRY
 	
 	--add new active keyword bid
 	INSERT INTO KeywordBid(KeywordFK,AdvertisingEngineFK,PromotionFK,StartDate,EndDate,IsActive,BidTypeFK,MicroBidAmount,KeywordAdEngineID, CompetitionType, IsDefaultValue)
-	select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,kb.BidTypeFK,@MicroDefaultBid,kb.AdvertisingEngineFK, kb.CompetitionType, kb.IsDefaultValue
+	select kb.KeywordFK,kb.AdvertisingEngineFK,kb.PromotionFK,@currentTime,null,1,kb.BidTypeFK,@MicroDefaultBid,kb.KeywordAdEngineID, kb.CompetitionType, 1
 	from KeywordBid kb
 	inner join @KeybidTable kbt on kbt.keywordBidPK = kb.KeywordBidPK
 			
