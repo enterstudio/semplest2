@@ -340,9 +340,8 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					// Schedule ongoing bidding
 					final String scheduleName = getPromoDataSP.getPromotionData().getPromotionName() + "_OnGoingBidding";
 					cal.setTime(new Date());
-					cal.add(Calendar.DAY_OF_MONTH, 1);
 					final Date startTime = cal.getTime();
-					logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
+					logger.info("About to schedule ongoing bidding for " + advertisingEngine);
 					scheduleOngoingBidding(scheduleName, PromotionID, Arrays.asList(advertisingEngine), startTime);
 					logger.info("Scheduled ongoing bidding for " + advertisingEngine);
 				}
