@@ -21,7 +21,6 @@ public class SystemMonitor {
 	public static void main(String[] args){		
 		
 		setPropertiesFile();
-		ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");		
 		
 		ExecutorService executor = Executors.newCachedThreadPool();
 		
@@ -44,7 +43,7 @@ public class SystemMonitor {
 	
 	private static void setPropertiesFile(){
 		try{
-			final String PROPSFILE = "/system.properties";
+			final String PROPSFILE = "bin/system.properties";
 			String jdbc = "jdbc:jtds:sqlserver://172.18.9.23/semplest_testing";		
 			
 			Properties properties = new Properties();

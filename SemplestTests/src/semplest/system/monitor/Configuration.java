@@ -1,5 +1,7 @@
 package semplest.system.monitor;
 
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import semplest.server.service.springjdbc.BaseDB;
 
 public class Configuration extends BaseDB {	
@@ -12,6 +14,8 @@ public class Configuration extends BaseDB {
 	private Boolean isMonitorDev;
 	private Boolean isMonitorTest;
 	private Boolean isMonitorProd;	
+	
+	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");
 		
 	public void loadConiguration(){
 		String sql;
