@@ -1106,7 +1106,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					{						
 						logger.info("Will try to get Bid Performance Report from Google using AccountID [" + accountIdString + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");
 						ReportObject[] reportData = google.getReportForAccount(accountIdString, reportStartDate, reportEndDate);
-						logger.info("Got Google report of size " + reportData.length);
+						logger.info("Got Google report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
 						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
 						logger.info("Got Google report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
@@ -1164,7 +1164,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						final DateTime yesterdayJodaTimeMinus5Days = yesterdayJodaTime.minusDays(5);
 						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, yesterdayJodaTimeMinus5Days, yesterdayJodaTime);
 						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");						
-						logger.info("Got MSN report of size " + reportData.length);
+						logger.info("Got MSN report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
 						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
 						logger.info("Got MSN report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
