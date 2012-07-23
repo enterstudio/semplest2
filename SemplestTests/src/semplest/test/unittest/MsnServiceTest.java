@@ -808,9 +808,6 @@ public class MsnServiceTest {
 				if(!ad1.getId().equals(adId))
 					errorHandler(new Exception(vMsg + "Ad Data returned incorrectly."));
 			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
 			catch(Exception e){
 				errorHandler(e);
 			}
@@ -852,10 +849,7 @@ public class MsnServiceTest {
 				TextAd ad1 = (TextAd)test.getAdById(accountId, adGroupId, adId);				
 				if(!ad1.getTitle().equalsIgnoreCase(adTitle))
 					errorHandler(new Exception(vMsg + "Ad is not updated correctly. " + ad1.getTitle() + " != " + adTitle));
-			}
-			catch(RemoteException e){
-				errorHandler(e);
-			}
+			}		
 			catch(Exception e){
 				errorHandler(e);
 			}

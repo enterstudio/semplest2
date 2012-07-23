@@ -153,7 +153,9 @@
 	         includes="**/*.class">
 			<fileset dir="${basedir}/lib" includes="**/*.*"/>
 	      <manifest>
+	      	
 	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
+	      	
 	      	<attribute name="Class-Path" value="${mf.classpath}"/>
 	      </manifest>
 	    </jar>
