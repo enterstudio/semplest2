@@ -488,7 +488,7 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetAdditionalLinks")]
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
-            Session["SiteLinks"] = model.SiteLinks.Where(t => !t.Delete).ToList();
+            Session["SiteLinks"] = model.SiteLinks.Where(t => t.Delete).ToList();
             _campaignRepository.SaveSiteLinks(model, ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value);
             return Json("AdditionalLinks");
         }
@@ -505,12 +505,11 @@ namespace Semplest.Core.Controllers
             addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
             Session["NegativeKeywords"] = model.NegativeKeywords;
             Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
-            //SemplestDataService.CheckForNegativeKeywords(model.NegativeKeywords);
-            //SemplestDataService ds = new SemplestDataService();
-            //int userid = 1;
-            //CampaignSetupModel fullmodel = 
-            //ds.SaveNegativeKeywords(userid, model);
-
+            var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
+            csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
+            csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
+            csm.AllKeywords =  _campaignRepository.SaveNegativeKeywords(csm, ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value);
+            
             return Json("NegativeKeywords");
         }
 

@@ -19,10 +19,10 @@ namespace Semplest.Core.Models.Repositories
         Promotion CreatePromotionFromModel(CampaignSetupModel model, decimal customerDefaultPerCampaignFlatFeeAmount);
 
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
-        void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk);
+        void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
         void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
         void SaveSiteLinks(CampaignSetupModel model, int customerFk);
-        List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
+        List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
 
         void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
@@ -31,7 +31,7 @@ namespace Semplest.Core.Models.Repositories
         bool IsDeletedKeyword(string keyword, List<string> negativeKeywords);
 
         bool IsNegativeKeyword(string keyword, List<string> negativeKeywords);
-        void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext, int customerFk);
+        List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(CampaignSetupModel model, int customerFk);
         string GetStateNameFromCode(int stateCode);
         List<string> GetAdEngines();
         bool IsPromotionLaunched(int promoId);

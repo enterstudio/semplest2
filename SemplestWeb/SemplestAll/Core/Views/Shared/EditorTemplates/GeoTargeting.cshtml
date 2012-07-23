@@ -60,6 +60,7 @@
                 @Html.ValidationMessageFor(t => t.ProximityRadius)
                 @Html.TextBoxFor(t => t.Latitude, new { @class = "hidden" })
                 @Html.TextBoxFor(t => t.Longitude, new { @class = "hidden" })
+                @Html.HiddenFor(t => t.GeoTargetingPK)
             </td>
         </tr>
         <tr>

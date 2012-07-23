@@ -233,7 +233,6 @@ namespace Semplest.Core.Models.Repositories
 
         public void SaveGeoTargetingAds(int customerFK, CampaignSetupModel model, CampaignSetupModel oldModel)
         {
-
             using (var dbcontext = new SemplestModel.Semplest())
             {
                 var queryProd = (from c in dbcontext.ProductGroups
@@ -242,15 +241,23 @@ namespace Semplest.Core.Models.Repositories
                                      c.ProductGroupName == model.ProductGroup.ProductGroupName
                                  select c).Single();
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
-                AddGeoTargetingToPromotion(
-                    GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFK);
-                AddPromotionAdsToPromotion(promo, model, customerFK, null);
+                AddGeoTargetingToPromotion(promo, model, customerFK, oldModel, ((IObjectContextAdapter)dbcontext).ObjectContext);
+                AddPromotionAdsToPromotion(promo, model, customerFK, oldModel, ((IObjectContextAdapter)dbcontext).ObjectContext);
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
                 
             }
         }
 
+        private Promotion GetDBPromoitionFromCampaign(SemplestModel.Semplest dbcontext, int customerFK, CampaignSetupModel model)
+        {
+            var queryProd = (from c in dbcontext.ProductGroups
+                             where
+                                 c.CustomerFK == customerFK &&
+                                 c.ProductGroupName == model.ProductGroup.ProductGroupName
+                             select c).Single();
+            return GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
+        }
 
         public CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false)
         {
@@ -371,9 +378,6 @@ namespace Semplest.Core.Models.Repositories
             var semplestEntities = new SemplestModel.Semplest();
             return semplestEntities.vwProductPromotions.Where(t => t.UserPK == userid);
         }
-
-
-
 
         public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
@@ -510,79 +514,25 @@ namespace Semplest.Core.Models.Repositories
                                                  customerDefaultPerCampaignFlatFeeAmount;
             updatePromotion.RemainingBudgetInCycle = model.ProductGroup.Budget -
                                                      customerDefaultPerCampaignFlatFeeAmount;
-            //updatePromotion.EditedDate = DateTime.Now;
+
+
+                
+            if (!updatePromotion.IsLaunched) return;
+
+            var sw = new ServiceClientWrapper();
+            var adEngines = new List<string>();
+            adEngines.AddRange(
+                updatePromotion.PromotionAdEngineSelecteds.Select(
+                    pades => pades.AdvertisingEngine.AdvertisingEngine1));
+            if (model.ProductGroup.Budget != oldModel.ProductGroup.Budget) 
+            sw.scheduleUpdateBudget(customerFk, updatePromotion.PromotionPK, model.ProductGroup.Budget,
+                                    adEngines);
+            if (model.ProductGroup.StartDate != oldModel.ProductGroup.StartDate) 
+            sw.scheduleChangePromotionStartDate(customerFk, updatePromotion.PromotionPK,
+                                                updatePromotion.PromotionStartDate, adEngines);
         }
 
-        //try
-    //        {
-    //            var sw = new ServiceClientWrapper();
-    //            var adEngines = new List<string>();
-    //            if (updatePromotion.IsLaunched)
-    //            {
-    //                adEngines.AddRange(
-    //                    updatePromotion.PromotionAdEngineSelecteds.Select(
-    //                        pades => pades.AdvertisingEngine.AdvertisingEngine1));
-    //                sw.scheduleUpdateBudget(customerFk, updatePromotion.PromotionPK, model.ProductGroup.Budget,
-    //                                        adEngines);
-    //                sw.scheduleChangePromotionStartDate(customerFk, updatePromotion.PromotionPK,
-    //                                                    updatePromotion.PromotionStartDate, adEngines);
-    //            }
-    //        }
-    //        catch (Exception ex)
-    //        {
-    //            SharedResources.Helpers.ExceptionHelper.LogException(ex);
-    //        }
-
-    //        // update Geotargeting
-    //        foreach (GeoTargeting geo in updatePromotion.GeoTargetings.ToList())
-    //        {
-    //            dbcontext.GeoTargetings.Remove(geo);
-    //        }
-
-    //        // update promotion ads; delete first and add them again
-    //        foreach (PromotionAd pad in updatePromotion.PromotionAds.ToList())
-    //        {
-    //            //foreach (SiteLink sli in pad.SiteLinks.ToList())
-    //            //{
-    //            //    dbcontext.SiteLinks.Remove(sli);
-    //            //}
-    //            dbcontext.PromotionAds.Remove(pad);
-    //        }
-
-    //        // update sitelink; delet first and add them
-    //        foreach (var slink in updatePromotion.SiteLinks.ToList())
-    //        {
-    //            dbcontext.SiteLinks.Remove(slink);
-    //        }
-
-    //        
-    //        AddGeoTargetingToPromotion(updatePromotion, model, customerFk);
-    //        AddSiteLinksToPromotion(updatePromotion, model, customerFk);
-    //        List<PromotionAd> adAds = AddPromotionAdsToPromotion(updatePromotion, model, customerFk, oldModel);
-    //        SaveNegativeKeywords(updatePromotion, model, dbcontext, customerFk);
-    //        dbcontext.SaveChanges();
-    //        List<int> ads = new List<int>();
-    //        foreach (PromotionAd ad in adAds)
-    //        {
-    //            ads.Add(
-    //                dbcontext.PromotionAds.Where(
-    //                    key =>
-    //                    key.AdTextLine1 == ad.AdTextLine1 && key.AdTextLine2 == ad.AdTextLine2 &&
-    //                    key.AdTitle == ad.AdTitle && key.PromotionFK == updatePromotion.PromotionPK).First().
-    //                    PromotionAdsPK);
-    //        }
-    //        if (ads.Count > 0 && updatePromotion.IsLaunched)
-    //        {
-    //            var adEngines = new List<string>();
-    //            adEngines.AddRange(
-    //                updatePromotion.PromotionAdEngineSelecteds.Select(
-    //                    pades => pades.AdvertisingEngine.AdvertisingEngine1));
-    //            var sw = new ServiceClientWrapper();
-    //            sw.scheduleAds(customerFk, updatePromotion.PromotionPK, ads, adEngines,
-    //                           SEMplestConstants.PromotionAdAction.Add);
-    //        }
-
-    //    }
+        
 
         public void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model,
                                                   SemplestModel.Semplest dbcontext)
@@ -593,9 +543,7 @@ namespace Semplest.Core.Models.Repositories
             model.ProductGroup.AdEnginesList.ForEach(t => templist.Add(Convert.ToInt32(t)));
             var dn = existingAdenginesSeleccted.Where(t => !templist.Contains(t.AdvertisingEngineFK));
             foreach (var adsel in dn)
-            {
                 dbcontext.PromotionAdEngineSelecteds.Remove(adsel);
-            }
 
             foreach (int aes in model.ProductGroup.AdEnginesList)
             {
@@ -625,18 +573,26 @@ namespace Semplest.Core.Models.Repositories
             return new GeoTargeting();
         }
 
-        public void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
+        public void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context)
         {
+            bool shouldUpdateGeoTargeting = false;
             if (model.AdModelProp.Addresses != null)
             {
+                var modelIds = new List<int>();
                 foreach (GeoTargeting geo in model.AdModelProp.Addresses)
                 {
-                    // this is check should be removed once we fix the logic in partialview and model
-                    if (!String.IsNullOrEmpty(geo.Zip) || (!String.IsNullOrEmpty(geo.City) && geo.StateCodeFK > 0))
+                    if (geo.Delete)
                     {
+                        
+                        shouldUpdateGeoTargeting = true;
+                        context.DeleteObject(promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK));
+                        //promo.GeoTargetings.Remove(promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo.GeoTargetingPK));
+                    }
+                    else if (geo.GeoTargetingPK == 0)
+                    {
+                        shouldUpdateGeoTargeting = true;
                         if (geo.StateCodeFK < 0)
                             geo.StateCodeFK = null;
-
                         var geotarget = new GeoTargeting
                                             {
                                                 Address = geo.Address,
@@ -648,25 +604,55 @@ namespace Semplest.Core.Models.Repositories
                                                 Longitude = geo.Longitude
                                             };
                         promo.GeoTargetings.Add(geotarget);
-                        try
+                    }
+                    else
+                    {
+                        GeoTargeting geo1 = geo;
+                        modelIds.Add(geo1.GeoTargetingPK);
+                        var geoOld = oldModel.AdModelProp.Addresses.FirstOrDefault(x => x.GeoTargetingPK == geo1.GeoTargetingPK);
+                        if (geoOld != null)
                         {
-                            var adEngines = new List<string>();
-                            if (promo.IsLaunched)
+                            if (geoOld.Address != geo1.Address ||
+                                geoOld.City != geo1.City ||
+                                geoOld.Latitude != geo1.Latitude ||
+                                geoOld.Longitude != geo1.Longitude ||
+                                geoOld.ProximityRadius != geo1.ProximityRadius ||
+                                geoOld.Zip != geo1.Zip ||
+                                geoOld.StateCode != geo1.StateCode ||
+                                geoOld.Promotion.PromotionName != model.ProductGroup.ProductPromotionName)
                             {
-                                adEngines.AddRange(
-                                    promo.PromotionAdEngineSelecteds.Select(
-                                        pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                                var sw = new ServiceClientWrapper();
-                                sw.scheduleUpdateGeoTargeting(customerFk, promo.PromotionPK, adEngines);
+                                shouldUpdateGeoTargeting = true;
+                                var gt = promo.GeoTargetings.FirstOrDefault(x => x.GeoTargetingPK == geo1.GeoTargetingPK);
+                                gt.Address = geo1.Address;
+                                gt.City = geo1.City;
+                                gt.Latitude = geo1.Latitude;
+                                gt.Longitude = geo1.Longitude;
+                                gt.ProximityRadius = geo1.ProximityRadius;
+                                gt.Zip = geo1.Zip;
+                                gt.StateCode = geo1.StateCode;
                             }
-                        }
-
-                        catch (Exception ex)
-                        {
-                            SharedResources.Helpers.ExceptionHelper.LogException(ex);
                         }
                     }
                 }
+
+                try
+                {
+                    var adEngines = new List<string>();
+                    if (promo.IsLaunched && shouldUpdateGeoTargeting)
+                    {
+                        adEngines.AddRange(
+                            promo.PromotionAdEngineSelecteds.Select(
+                                pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                        var sw = new ServiceClientWrapper();
+                        sw.scheduleUpdateGeoTargeting(customerFk, promo.PromotionPK, adEngines);
+                    }
+                }
+
+                catch (Exception ex)
+                {
+                    SharedResources.Helpers.ExceptionHelper.LogException(ex);
+                }
+                //}
             }
         }
 
@@ -679,18 +665,23 @@ namespace Semplest.Core.Models.Repositories
                                        c.CustomerFK == customerFk &&
                                        c.ProductGroupName == model.ProductGroup.ProductGroupName
                                    select c).Single();
-                AddSiteLinksToPromotion(GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFk);
+                AddSiteLinksToPromotion(GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName), model, customerFk, ((IObjectContextAdapter)dbcontext).ObjectContext);
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
             }
-            
         }
 
-        private void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk)
+        private void AddSiteLinksToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, System.Data.Objects.ObjectContext context)
         {
+            bool shouldRefreshSiteLinks = false;
             if (model.SiteLinks != null)
                 foreach (var sitelink in model.SiteLinks)
                 {
+                    if(sitelink.Delete)
+                    {
+                        context.DeleteObject(promo.SiteLinks.FirstOrDefault(x => x.SiteLInkPK == sitelink.SiteLInkPK));
+                        shouldRefreshSiteLinks = true;
+                    }
                     //TODO remove when the validation is added
                     if (!string.IsNullOrEmpty(sitelink.LinkText) && !string.IsNullOrEmpty((sitelink.LinkURL)))
                     {
@@ -706,7 +697,7 @@ namespace Semplest.Core.Models.Repositories
             try
             {
                 var adEngines = new List<string>();
-                if (promo.IsLaunched)
+                if (promo.IsLaunched && shouldRefreshSiteLinks)
                 {
                     adEngines.AddRange(
                         promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
@@ -721,63 +712,77 @@ namespace Semplest.Core.Models.Repositories
         }
 
         public List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk,
-                                                            CampaignSetupModel oldModel)
+                                                            CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context)
         {
             List<PromotionAd> adAds = new List<PromotionAd>();
             List<GoogleAddAdRequest> verifyAds = new List<GoogleAddAdRequest>();
-            foreach (PromotionAd pad in model.AdModelProp.Ads.Where(t => !t.Delete))
+            List<int> deleteAds = new List<int>();
+            List<int> updateAds = new List<int>();
+            List<int> addAds = new List<int>();
+            bool shouldscheduleAds = false;
+            foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
-                var cad = new PromotionAd
-                              {
-                                  AdTextLine1 = pad.AdTextLine1,
-                                  AdTextLine2 = pad.AdTextLine2,
-                                  AdTitle = pad.AdTitle,
-                                  PromotionAdsPK = pad.PromotionAdsPK
-                              };
-                promo.PromotionAds.Add(cad);
-                verifyAds.Add(new GoogleAddAdRequest
+                if (pad.Delete)
+                {
+                    shouldscheduleAds = true;
+                    deleteAds.Add(pad.PromotionAdsPK);
+                    context.DeleteObject(promo.PromotionAds.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK));
+                }
+                else if (pad.PromotionAdsPK == 0)
+                {
+                    shouldscheduleAds = true;
+                    addAds.Add(pad.PromotionAdsPK);
+                    var cad = new PromotionAd
                                   {
-                                      promotionAdID = promo.PromotionPK,
-                                      headline = pad.AdTitle,
-                                      description1 = pad.AdTextLine1,
-                                      description2 = pad.AdTextLine2
-                                  });
+                                      AdTextLine1 = pad.AdTextLine1,
+                                      AdTextLine2 = pad.AdTextLine2,
+                                      AdTitle = pad.AdTitle,
+                                      PromotionAdsPK = pad.PromotionAdsPK
+                                  };
+                    promo.PromotionAds.Add(cad);
+                    verifyAds.Add(new GoogleAddAdRequest
+                                      {
+                                          promotionAdID = promo.PromotionPK,
+                                          headline = pad.AdTitle,
+                                          description1 = pad.AdTextLine1,
+                                          description2 = pad.AdTextLine2
+                                      });
+                }
+                else
+                {
+                    PromotionAd pad1 = pad;
+                    var padOld = oldModel.AdModelProp.Ads.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK);
+                    if (padOld != null)
+                    {
+                        if (padOld.AdTextLine1 != pad1.AdTextLine1 ||
+                            padOld.AdTextLine2 != pad1.AdTextLine2 ||
+                            padOld.AdTitle != pad1.AdTitle)
+                        {
+                            shouldscheduleAds = true;
+                            updateAds.Add(pad1.PromotionAdsPK);
+                            var pa = promo.PromotionAds.FirstOrDefault(x => x.PromotionAdsPK == pad1.PromotionAdsPK);
+                            pa.AdTextLine1 = pad1.AdTextLine1;
+                            pa.AdTextLine2 = pad1.AdTextLine2;
+                            pa.AdTitle = pad1.AdTitle;
+                        }
+                    }
+                }
             }
             try
             {
-
                 var adEngines = new List<string>();
                 var promoAds = new List<PromotionAd>();
-                List<int> deleteAds = new List<int>();
-                List<int> updateAds = new List<int>();
-                if (promo.IsLaunched)
+                if (promo.IsLaunched && shouldscheduleAds)
                 {
                     adEngines.AddRange(
                         promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                    //promoAds.AddRange(promo.PromotionAds.Select(pa => pa.PromotionAdsPK));
-                    foreach (PromotionAd oldPa in oldModel.AdModelProp.Ads)
-                    {
-                        var matchingAds = promo.PromotionAds.Where(key => key.PromotionAdsPK == oldPa.PromotionAdsPK);
-                        if (matchingAds.Count() > 0)
-                        {
-                            foreach (PromotionAd pa in matchingAds)
-                                if (pa.AdTextLine1 != oldPa.AdTextLine1 || pa.AdTextLine2 != oldPa.AdTextLine2 ||
-                                    pa.AdTitle != oldPa.AdTitle)
-                                {
-                                    updateAds.Add(pa.PromotionAdsPK);
-                                    break;
-                                }
-                        }
-                        else
-                            deleteAds.Add(oldPa.PromotionAdsPK);
-                    }
-                    foreach (PromotionAd pa in promo.PromotionAds.Where(key => key.PromotionAdsPK == 0))
-                        adAds.Add(pa);
                     var sw = new ServiceClientWrapper();
-                    if (updateAds.Count > 0)
+                    if(addAds.Any())
+                        sw.scheduleAds(customerFk, promo.PromotionPK, addAds, adEngines, SEMplestConstants.PromotionAdAction.Add);
+                    if (updateAds.Any())
                         sw.scheduleAds(customerFk, promo.PromotionPK, updateAds, adEngines,
                                        SEMplestConstants.PromotionAdAction.Update);
-                    if (deleteAds.Count > 0)
+                    if (deleteAds.Any())
                         sw.scheduleAds(customerFk, promo.PromotionPK, deleteAds, adEngines,
                                        SEMplestConstants.PromotionAdAction.Delete);
                 }
@@ -891,6 +896,7 @@ namespace Semplest.Core.Models.Repositories
                 {
                     ((IObjectContextAdapter) dbcontext).ObjectContext.CommandTimeout = 100;
                     dbcontext.Database.ExecuteSqlCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
+                    _savedCampaign = true;
                     //set keyword id's back in the model
                     int userid =
                         ((Credential)
@@ -936,92 +942,109 @@ namespace Semplest.Core.Models.Repositories
             return negativeKeywords.Any(key => keyword.ToUpper().Equals(key.ToUpper()));
         }
 
-        public void SaveNegativeKeywords(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext,
-                                         int customerFk)
+        public List<CampaignSetupModel.KeywordsModel> SaveNegativeKeywords(CampaignSetupModel model, int customerFk)
         {
-            IEnumerable<PromotionKeywordAssociation> qry =
-                dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
-            var kpos = new List<KeywordProbabilityObject>();
-            List<KeywordIdRemoveOppositePair> addKiops = new List<KeywordIdRemoveOppositePair>();
-            List<KeywordIdRemoveOppositePair> addNewKiops = new List<KeywordIdRemoveOppositePair>();
-            List<KeywordIdRemoveOppositePair> addDeletedKiops = new List<KeywordIdRemoveOppositePair>();
-            List<string> addNewKeywords = new List<string>();
-            KeywordProbabilityObject kpo;
-            foreach (PromotionKeywordAssociation pka in qry)
+            
+            using (var dbcontext = new SemplestModel.Semplest())
             {
-                kpo = new KeywordProbabilityObject
-                          {
-                              keyword = pka.Keyword.Keyword1,
-                              semplestProbability = pka.SemplestProbability == null ? 0 : pka.SemplestProbability.Value,
-                              isTargetMSN = pka.IsTargetMSN,
-                              isTargetGoogle = pka.IsTargetGoogle
-                          };
-                kpos.Add(kpo);
-            }
-            if (model.AdModelProp.NegativeKeywords != null)
-            {
-                foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
+               var promo = GetDBPromoitionFromCampaign(dbcontext, customerFk, model);
+                IEnumerable<PromotionKeywordAssociation> qry = dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
+                var kpos = new List<KeywordProbabilityObject>();
+                List<KeywordIdRemoveOppositePair> addKiops = new List<KeywordIdRemoveOppositePair>();
+                List<KeywordIdRemoveOppositePair> addNewKiops = new List<KeywordIdRemoveOppositePair>();
+                List<KeywordIdRemoveOppositePair> addDeletedKiops = new List<KeywordIdRemoveOppositePair>();
+                List<string> addNewKeywords = new List<string>();
+                KeywordProbabilityObject kpo;
+                
+                foreach (PromotionKeywordAssociation pka in qry)
                 {
-                    if (qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
+                    kpo = new KeywordProbabilityObject
+                              {
+                                  keyword = pka.Keyword.Keyword1,
+                                  semplestProbability =
+                                      pka.SemplestProbability == null ? 0 : pka.SemplestProbability.Value,
+                                  isTargetMSN = pka.IsTargetMSN,
+                                  isTargetGoogle = pka.IsTargetGoogle
+                              };
+                    kpos.Add(kpo);
+                }
+                if (model.AdModelProp.NegativeKeywords != null)
+                {
+                    foreach (string negativeKeyword in model.AdModelProp.NegativeKeywords)
                     {
-                        if (promo.IsLaunched)
+                        if (qry.Any(key => key.Keyword.Keyword1 == negativeKeyword))
                         {
-                            KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
-                            PromotionKeywordAssociation pka =
-                                qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
-                            //means if the keyword existied and was positive it needs to be removed and added as a negative.
-                            kiop.KeywordId = pka.KeywordFK;
-                            if (!pka.IsNegative)
+                            if (promo.IsLaunched)
                             {
-                                kiop.RemoveOpposite = true;
-                                addKiops.Add(kiop);
+                                KeywordIdRemoveOppositePair kiop = new KeywordIdRemoveOppositePair();
+                                PromotionKeywordAssociation pka =
+                                    qry.Where(key => key.Keyword.Keyword1 == negativeKeyword).First();
+                                //means if the keyword existied and was positive it needs to be removed and added as a negative.
+                                kiop.KeywordId = pka.KeywordFK;
+                                if (!pka.IsNegative)
+                                {
+                                    kiop.RemoveOpposite = true;
+                                    addKiops.Add(kiop);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            kpo = new KeywordProbabilityObject {keyword = negativeKeyword};
+                            kpos.Add(kpo);
+                            if (promo.IsLaunched)
+                            {
+                                addNewKeywords.Add(negativeKeyword);
                             }
                         }
                     }
-                    else
+                }
+                //check for negative keywords that have been removed
+                foreach (PromotionKeywordAssociation k in qry.Where(key => key.IsNegative == true))
+                {
+                    if (!model.AdModelProp.NegativeKeywords.Contains(k.Keyword.Keyword1))
                     {
-                        kpo = new KeywordProbabilityObject {keyword = negativeKeyword};
-                        kpos.Add(kpo);
-                        if (promo.IsLaunched)
-                        {
-                            addNewKeywords.Add(negativeKeyword);
-                        }
+                        //if (k.IsDeleted)
+                        KeywordIdRemoveOppositePair kiopDelete = new KeywordIdRemoveOppositePair();
+                        kiopDelete.KeywordId = k.Keyword.KeywordPK;
+                        kiopDelete.RemoveOpposite = false;
+                        addDeletedKiops.Add(kiopDelete);
                     }
                 }
-            }
-            //check for negative keywords that have been removed
-            foreach (PromotionKeywordAssociation k in qry.Where(key => key.IsNegative == true))
-            {
-                if (!model.AdModelProp.NegativeKeywords.Contains(k.Keyword.Keyword1))
+                var sw = new ServiceClientWrapper();
+                var adEngines = new List<string>();
+                adEngines.AddRange(
+                    promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                //if (addDeletedKiops.Count > 0)
+                //    sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addDeletedKiops, adEngines, false);
+
+                SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords,
+                             model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
+                //find more elegant way of doing this
+                using (var dbcontext2 = new SemplestModel.Semplest())
                 {
-                    //if (k.IsDeleted)
-                    KeywordIdRemoveOppositePair kiopDelete = new KeywordIdRemoveOppositePair();
-                    kiopDelete.KeywordId = k.Keyword.KeywordPK;
-                    kiopDelete.RemoveOpposite = false;
-                    addDeletedKiops.Add(kiopDelete);
+                    promo = GetDBPromoitionFromCampaign(dbcontext2, customerFk, model);
+                    model.AllKeywords.Clear();
+                    model.AllKeywords.AddRange(
+                        promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
+                            key =>
+                            new CampaignSetupModel.KeywordsModel
+                                {Name = key.Keyword.Keyword1, Id = key.Keyword.KeywordPK}));
                 }
-            }
-            ServiceClientWrapper sw = new ServiceClientWrapper();
-            var adEngines = new List<string>();
-            adEngines.AddRange(
-                promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-            if (addDeletedKiops.Count > 0)
-                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addDeletedKiops, adEngines, false);
 
-            SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords,
-                         model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
-
-            if (addKiops.Count() > 0)
-                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
-            KeywordIdRemoveOppositePair kiopNew = new KeywordIdRemoveOppositePair();
-            foreach (string k in addNewKeywords)
-            {
-                kiopNew.KeywordId = dbcontext.Keywords.Where(key => key.Keyword1 == k).FirstOrDefault().KeywordPK;
-                kiopNew.RemoveOpposite = false;
-                addNewKiops.Add(kiopNew);
+                //if (addKiops.Count() > 0)
+                //    sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
+                KeywordIdRemoveOppositePair kiopNew = new KeywordIdRemoveOppositePair();
+                foreach (string k in addNewKeywords)
+                {
+                    kiopNew.KeywordId = dbcontext.Keywords.Where(key => key.Keyword1 == k).FirstOrDefault().KeywordPK;
+                    kiopNew.RemoveOpposite = false;
+                    addNewKiops.Add(kiopNew);
+                }
+                //if (addNewKiops.Count() > 0)
+                //    sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addNewKiops, adEngines, true);
             }
-            if (addNewKiops.Count() > 0)
-                sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addNewKiops, adEngines, true);
+            return model.AllKeywords;
         }
 
         public string GetStateNameFromCode(int stateCode)
