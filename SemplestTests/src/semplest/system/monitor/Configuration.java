@@ -1,12 +1,8 @@
 package semplest.system.monitor;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import semplest.server.service.springjdbc.BaseDB;
 
-public class Configuration extends BaseDB {
-	private static ClassPathXmlApplicationContext appContext = new ClassPathXmlApplicationContext("Service.xml");	
-	
+public class Configuration extends BaseDB {	
 	private Boolean isStop;
 	private int monitorInterval;
 	private String clientTimeout;
@@ -15,7 +11,7 @@ public class Configuration extends BaseDB {
 	private String ProdEsbUrl;
 	private Boolean isMonitorDev;
 	private Boolean isMonitorTest;
-	private Boolean isMonitorProd;
+	private Boolean isMonitorProd;	
 		
 	public void loadConiguration(){
 		String sql;
@@ -83,6 +79,6 @@ public class Configuration extends BaseDB {
 
 	public String getClientTimeout() {
 		return clientTimeout;
-	}
+	}	
 	
 }
