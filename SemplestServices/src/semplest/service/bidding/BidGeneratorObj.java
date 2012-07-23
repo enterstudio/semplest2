@@ -433,6 +433,7 @@ public class BidGeneratorObj
 		for(SemplestBiddingHistory h : bidHistoryList){
 			if(h.getSemplestBidType().equals(PromotionBiddingType.Initial.name())){
 				initialBidDate = h.getBidCompleted();
+				break;
 			}
 		}
 		if(initialBidDate==null){
@@ -1438,12 +1439,33 @@ public class BidGeneratorObj
 		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "setBidsUpdate called!!");
 		
 		
+		/*
 		List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
 		if(bidHistory==null || bidHistory.size()==0 || (!bidHistory.get(0).getSemplestBidType().equals(PromotionBiddingType.Initial.name()))){
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
 
 		}
+		*/
+		
+		List<SemplestBiddingHistory> bidHistoryList = null;
+		try{
+			bidHistoryList = SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+		}catch (Exception e){
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time."+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get initial bid completion time."+ e.getMessage(), e);
+		}
+		Date initialBidDate = null;
+		for(SemplestBiddingHistory h : bidHistoryList){
+			if(h.getSemplestBidType().equals(PromotionBiddingType.Initial.name())){
+				initialBidDate = h.getBidCompleted();
+				break;
+			}
+		}
+		if(initialBidDate==null){
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +"It seems that the initial bidding didn't finish properly.");
+		} 
 
 		GetAllPromotionDataSP getPromoDataSP = new GetAllPromotionDataSP();
 		getPromoDataSP.execute(promotionID);
@@ -1969,18 +1991,18 @@ public class BidGeneratorObj
 			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(165);
+			Integer promotionID = new Integer(166);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
-			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 
 
 //			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+//			System.out.println(bidHistory.size());
 //			System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
-//			//SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 //			
 //			Date now = new Date();
 //			Date initialBidDate = bidHistory.get(0).getBidCompleted();
@@ -1992,7 +2014,7 @@ public class BidGeneratorObj
 
 			
 			
-			
+			/*
 			
 			AdEngineID adEngineInfo = SemplestDB.getAdEngineID(promotionID, searchEngine);
 			
@@ -2025,6 +2047,7 @@ public class BidGeneratorObj
 			System.out.println(wordSet.size());
 		
 
+			 */
 			
 			
 //			Calendar cal = Calendar.getInstance();
