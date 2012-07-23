@@ -42,4 +42,10 @@ public class BudgetObject
 	}
 	*/
 
+	@Override
+	public String toString() {
+		return "BudgetObject [remainingBudgetInCycle=" + remainingBudgetInCycle
+				+ ", remainingDays=" + remainingDays + "]";
+	}
+	
 }
