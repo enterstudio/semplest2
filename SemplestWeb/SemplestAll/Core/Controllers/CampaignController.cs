@@ -112,15 +112,7 @@ namespace Semplest.Core.Controllers
                    
                         model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
                         model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
-                        //no whitespace in database
-                        foreach (PromotionAd ad in model.AdModelProp.Ads)
-                        {
-                            ad.AdTextLine1 = ad.AdTextLine1.Trim();
-                            ad.AdTextLine2 = ad.AdTextLine2.Trim();
-                            ad.AdTitle = ad.AdTitle.Trim();
-                        }
-                        model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
-                        model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
+
 
                         // we need save to database the ProductGroup and Promotion information
                         //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];

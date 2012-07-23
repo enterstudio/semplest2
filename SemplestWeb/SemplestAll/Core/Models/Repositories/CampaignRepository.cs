@@ -460,9 +460,12 @@ namespace Semplest.Core.Models.Repositories
         public Promotion CreatePromotionFromModel(CampaignSetupModel model,
                                                   decimal customerDefaultPerCampaignFlatFeeAmount)
         {
+            model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
+            model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
             var promo = new Promotion
                             {
 
+                                                        //no whitespace in database
 
                                 PromotionName = model.ProductGroup.ProductPromotionName,
                                 LandingPageURL = model.AdModelProp.LandingUrl,
@@ -496,6 +499,8 @@ namespace Semplest.Core.Models.Repositories
                                              decimal customerDefaultPerCampaignFlatFeeAmount, int customerFk,
                                              CampaignSetupModel oldModel)
         {
+            model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
+            model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
             updatePromotion.LandingPageURL = model.AdModelProp.LandingUrl;
             updatePromotion.DisplayURL = model.AdModelProp.DisplayUrl;
             updatePromotion.PromotionDescription = model.ProductGroup.Words;
@@ -732,6 +737,9 @@ namespace Semplest.Core.Models.Repositories
                 {
                     shouldscheduleAds = true;
                     addAds.Add(pad.PromotionAdsPK);
+                    pad.AdTextLine1 = pad.AdTextLine1;
+                    pad.AdTextLine2 = pad.AdTextLine2;
+                    pad.AdTitle = pad.AdTitle;
                     var cad = new PromotionAd
                                   {
                                       AdTextLine1 = pad.AdTextLine1,
@@ -750,20 +758,22 @@ namespace Semplest.Core.Models.Repositories
                 }
                 else
                 {
-                    PromotionAd pad1 = pad;
+                    pad.AdTextLine1 = pad.AdTextLine1;
+                    pad.AdTextLine2 = pad.AdTextLine2;
+                    pad.AdTitle = pad.AdTitle;
                     var padOld = oldModel.AdModelProp.Ads.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK);
                     if (padOld != null)
                     {
-                        if (padOld.AdTextLine1 != pad1.AdTextLine1 ||
-                            padOld.AdTextLine2 != pad1.AdTextLine2 ||
-                            padOld.AdTitle != pad1.AdTitle)
+                        if (padOld.AdTextLine1 != pad.AdTextLine1 ||
+                            padOld.AdTextLine2 != pad.AdTextLine2 ||
+                            padOld.AdTitle != pad.AdTitle)
                         {
                             shouldscheduleAds = true;
-                            updateAds.Add(pad1.PromotionAdsPK);
-                            var pa = promo.PromotionAds.FirstOrDefault(x => x.PromotionAdsPK == pad1.PromotionAdsPK);
-                            pa.AdTextLine1 = pad1.AdTextLine1;
-                            pa.AdTextLine2 = pad1.AdTextLine2;
-                            pa.AdTitle = pad1.AdTitle;
+                            updateAds.Add(pad.PromotionAdsPK);
+                            var pa = promo.PromotionAds.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK);
+                            pa.AdTextLine1 = pad.AdTextLine1;
+                            pa.AdTextLine2 = pad.AdTextLine2;
+                            pa.AdTitle = pad.AdTitle;
                         }
                     }
                 }
