@@ -350,7 +350,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 			final Long timeEnd = System.currentTimeMillis();
 			final Long timeDuration = timeEnd - timeStart;
 			final Long minsDuration = timeDuration / SemplestUtils.MINUTE;
-			final String emailSubject = "Promotion [" + PromotionID + "] created, and took " + minsDuration + " mins to create!";
+			final String emailSubject = "Promotion [" + PromotionID + "] created for AdEngines [" + adEngines + "], and took " + minsDuration + " mins to create!";
 			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString();
 			sendEmail(emailSubject, emailBody);			
 			logger.info("---------------------------------------------------------------------------");
