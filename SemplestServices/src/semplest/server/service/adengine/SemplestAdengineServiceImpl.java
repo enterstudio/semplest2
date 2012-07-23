@@ -343,7 +343,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					cal.add(Calendar.DAY_OF_MONTH, 1);
 					final Date startTime = cal.getTime();
 					logger.info("Abiout to schedule ongoing bidding for " + advertisingEngine);
-					scheduleOngoingBidding(scheduleName, PromotionID, adEngines, startTime);
+					scheduleOngoingBidding(scheduleName, PromotionID, Arrays.asList(advertisingEngine), startTime);
 					logger.info("Scheduled ongoing bidding for " + advertisingEngine);
 				}
 				SemplestDB.updatePromotionStatus(PromotionID, advertisingEngine, PromotionStatus.LIVE);
