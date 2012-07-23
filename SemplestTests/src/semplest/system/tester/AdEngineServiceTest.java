@@ -62,7 +62,7 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 			msn = new MsnCloudServiceImpl();
 			
 			/* ***** List of Methods ***** */
-			AddPromotionToAdEngine(null, null, null, null);
+			AddPromotionToAdEngine(null, null, null, null);					
 			validateGoogleAd(null, null, null);
 			validateGoogleRefreshSiteLinks(null);
 			validateGoogleGeoTargets(null);
@@ -577,6 +577,9 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 		SystemTestFunc.PrintLineSeperator();	
 		List<GoogleViolation> ret = null;
 		
+		SystemTestDataModel.adEngine_validateGoogleAds = new ArrayList<GoogleAddAdRequest>(
+				Arrays.asList(new GoogleAddAdRequest(SystemTestDataModel.promotionAdIds.get(0), SystemTestDataModel.ad1.adTitle, SystemTestDataModel.ad1.adTextLine1, SystemTestDataModel.ad1.adTextLine2)));
+		
 		SystemTestFunc.PrintMethodCall("validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, SystemTestDataModel.adEngine_validateGoogleAds)");
 		try{			
 			ret = adEngineService.validateGoogleAd(SystemTestDataModel.adEngine_ValidateUrl1, SystemTestDataModel.adEngine_ValidateUrl2, SystemTestDataModel.adEngine_validateGoogleAds);
@@ -1052,8 +1055,8 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 				System.out.println("Sitelinks:");
 				for(com.google.api.adwords.v201109_1.cm.Sitelink sl : sle.getSitelinks()){
 					System.out.println(" - " + sl.getDisplayText() + ", " + sl.getDestinationUrl());
-					if((sl.getDisplayText().equalsIgnoreCase(SystemTestDataModel.siteLink1.linkText))
-							&& (sl.getDestinationUrl().equalsIgnoreCase(SystemTestDataModel.siteLink1.linkUrl))){
+					if((sl.getDisplayText().equals(SystemTestDataModel.siteLink1.linkText))
+							&& (sl.getDestinationUrl().equals(SystemTestDataModel.siteLink1.linkUrl))){
 						match++;
 					}
 				}
@@ -1063,7 +1066,7 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 				}
 				if(match != 1){
 					SystemTestFunc.ErrorHandler("SiteLinks are not refreshed correctly on google. " +
-							"A SiteLink " + SystemTestDataModel.siteLink1 + " is not found on google.");
+							"A SiteLink " + SystemTestDataModel.siteLink1.linkText + " is not found on google.");
 				}
 			}
 		}

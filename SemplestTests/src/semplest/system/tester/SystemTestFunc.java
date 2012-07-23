@@ -45,7 +45,11 @@ public class SystemTestFunc extends BaseDB{
 	public static void InitializeSystemTest() throws Exception{		
 		setPropertiesFile(); //Set DB to the Test box
 		
-		PrintLineSeperator();
+		System.out.println("====================================================================================");
+		System.out.println(">>> Initialization >>>");
+		System.out.println("====================================================================================");
+		System.out.println();
+
 		System.out.println("Loading configuration...");
 		
 		//Load the configuration
@@ -60,7 +64,8 @@ public class SystemTestFunc extends BaseDB{
 		}	
 		
 		PrintLineSeperator();
-		System.out.println("Initializing the test...");		
+		System.out.println("Initializing the test data...");	
+		System.out.println();
 		
 		//create a new promotion for the test
 		String sql;
@@ -70,7 +75,7 @@ public class SystemTestFunc extends BaseDB{
 				"LandingPageURL,DisplayURL,PromotionBudgetAmount,BudgetCycleFK,CycleStartDate,CycleEndDate,StartBudgetInCycle,RemainingBudgetInCycle,BudgetToAddToNextCycle," +
 				"IsPaused,IsCompleted,IsLaunched,CreatedDate,IsDeleted)" +
 				"VALUES (?, ?, '" + SystemTestDataModel.promotionDescription + "', CURRENT_TIMESTAMP, '2020-01-01', " +
-				"'http://www.semplest.com', 'http://www.semplest.com',100.00, 3, CURRENT_TIMESTAMP, '2020-01-01', 100.00, 100.00, 100.00, " +
+				"'http://www.semplest.com', 'www.semplest.com',100.00, 3, CURRENT_TIMESTAMP, '2020-01-01', 100.00, 100.00, 100.00, " +
 				"0, 0, 1, CURRENT_TIMESTAMP, 0)";
 		jdbcTemplate.update(sql, new Object[]
 				{SystemTestDataModel.semplestProductGroupId, SystemTestDataModel.semplestPromotionName});
@@ -126,14 +131,20 @@ public class SystemTestFunc extends BaseDB{
 		System.out.println(" - Created Promotion " + SystemTestDataModel.semplestPromotionId + " for the system test.");
 		System.out.println(" - Test Data that will be used in this test: " + SystemTestDataModel.printTestData());
 		
+		System.out.println();
 		System.out.println("End of initialization.");
 		System.out.println();
 	}
 	
 	public static void CleanUpTestData() throws Exception{
+		System.out.println("====================================================================================");
+		System.out.println(">>> Clean Up Test Data >>>");
+		System.out.println("====================================================================================");
+		System.out.println();
+		
 		GoogleAdwordsServiceImpl google = new GoogleAdwordsServiceImpl();
 		MsnCloudServiceImpl msn = new MsnCloudServiceImpl();	
-		String sql;
+		String sql;		
 		
 		System.out.println("Clearing history test data...");
 		
@@ -214,12 +225,14 @@ public class SystemTestFunc extends BaseDB{
 					"DELETE PromotionAds WHERE PromotionFK = ?;" +
 					"DELETE FROM KeywordBid WHERE PromotionFK = ?;" +
 					"DELETE PromotionKeywordAssociation WHERE PromotionFK = ?;" +
+					"DELETE FROM KeywordCategory WHERE PromotionFK = ?;" +
 					"DELETE GeoTargeting WHERE PromotionFK = ?;" +
 					"DELETE SiteLinks WHERE PromotionFK = ?;" +
+					"DELETE FROM PromotionAdEngineSelected WHERE PromotionFK = ?;" +
 					"DELETE Promotion WHERE PromotionPK = ?;";
 			
 			jdbcTemplate.update(sql, new Object[]
-					{promoId,promoId,promoId,promoId,promoId,promoId,promoId});						
+					{promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId});						
 			
 			System.out.println("     - promotion " + promoId + " deleted");
 		}			
@@ -250,19 +263,19 @@ public class SystemTestFunc extends BaseDB{
 	    PrintWriter printWriter = new PrintWriter(error);
 	    e.printStackTrace(printWriter);
 		e.printStackTrace();		
-		System.out.println("****************************************************");	
+		System.out.println("/////////////////////////////////////////////////////");	
 		System.out.println("ERROR:");
 		System.out.println(e.getMessage());
 		System.out.println();		
 	    System.out.println(error.toString());
-		System.out.println("****************************************************");			
+	    System.out.println("/////////////////////////////////////////////////////");
 		SystemTestDataModel.errorCounter++;
 	}
 	
 	public static void ErrorHandler(String verifFailedMsg){
-		System.out.println("****************************************************");	
+		System.out.println("/////////////////////////////////////////////////////");
 		System.out.println("Verification FAILED! - " + verifFailedMsg);		
-		System.out.println("****************************************************");			
+		System.out.println("/////////////////////////////////////////////////////");
 		SystemTestDataModel.errorCounter++;
 	}
 
@@ -332,9 +345,9 @@ public class SystemTestFunc extends BaseDB{
 			PrintStream out = new PrintStream(new FileOutputStream(reportPath));
 			System.setOut(out);
 			
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-			System.out.println("/                        SEMplest System Unit Test Report                          /");
-			System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+			System.out.println("************************************************************************************");
+			System.out.println("*                        SEMplest System Unit Test Report                          *");
+			System.out.println("************************************************************************************");
 			System.out.println("Created Time: " + date);
 			System.out.println("   ");
 		}
@@ -361,15 +374,16 @@ public class SystemTestFunc extends BaseDB{
 		sb.append("Keyword Service - " + SystemTestDataModel.keywordErrors + eol);
 		sb.append("Mail Service - " + SystemTestDataModel.mailErrors + eol);
 		sb.append(eol);
-		sb.append("Test Data that has been used in this test:");
+		sb.append("Test Data that has been used in this test: ");
+		sb.append(eol);
 		sb.append(SystemTestDataModel.printTestData());
 		String reportSummary = sb.toString();
 		
         		
 		System.out.println(" ");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////////");
-		System.out.println("/                               SYSTEM TEST SUMMARY                                /");
-		System.out.println("////////////////////////////////////////////////////////////////////////////////////");
+		System.out.println("************************************************************************************");
+		System.out.println("*                               SYSTEM TEST SUMMARY                                *");
+		System.out.println("************************************************************************************");
 		System.out.println(" ");
 		System.out.println(reportSummary);
 		

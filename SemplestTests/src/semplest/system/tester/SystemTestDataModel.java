@@ -81,8 +81,7 @@ public class SystemTestDataModel {
 	public static final String adEngine_ValidateUrl1 = "http://www.semplest.com";
 	public static final String adEngine_ValidateUrl2 = "www.semplest";
 	public static final Date adEngine_NewPromotionStartDate = new Date();
-	public static final List<GoogleAddAdRequest> adEngine_validateGoogleAds = new ArrayList<GoogleAddAdRequest>(
-			Arrays.asList(new GoogleAddAdRequest(SystemTestDataModel.promotionAdIds.get(0), SystemTestDataModel.ad1.adTitle, SystemTestDataModel.ad1.adTextLine1, SystemTestDataModel.ad1.adTextLine2)));
+	public static List<GoogleAddAdRequest> adEngine_validateGoogleAds;
 	
 	//Keyword Service Variables
 	public static final String keyword_SearchTerm = "rugby sale balls and gloves";

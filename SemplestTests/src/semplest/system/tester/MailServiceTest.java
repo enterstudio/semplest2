@@ -38,7 +38,7 @@ public class MailServiceTest implements SemplestMailServiceInterface{
 			String msgTxt, String msgType) throws Exception {
 		SystemTestFunc.PrintLineSeperator();	
 		
-		SystemTestFunc.PrintMethodCall("SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType)");
+		SystemTestFunc.PrintMethodCall("SendEmail(SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType)");
 		try{			
 			boolean ret = mailService.SendEmail(SystemTestDataModel.mail_subject, SystemTestDataModel.mail_from, SystemTestDataModel.mail_recipient, SystemTestDataModel.mail_msgTxt, SystemTestDataModel.mail_msgType);
 		
