@@ -1109,11 +1109,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						logger.info("Got Google report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
 						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
-						logger.info("Got Google report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
+						logger.info("Got Google report (filtered for CampaignID [" + campaignID + "]) of size " + filteredDataSize);
 						emailContent.append("\tAccount ID: ").append(accountIdString).append("\n")
 									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
 									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
-						if (filterReportDatabyCampaignID != null)
+						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
 							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
@@ -1167,11 +1167,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						logger.info("Got MSN report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
 						final int filteredDataSize = filterReportDatabyCampaignID == null || filterReportDatabyCampaignID.length == 0 ? 0 : filterReportDatabyCampaignID.length; 
-						logger.info("Got MSN report (filtered for CampaignID [" + campaignID + "]) of size " + filterReportDatabyCampaignID.length);
+						logger.info("Got MSN report (filtered for CampaignID [" + campaignID + "]) of size " + filteredDataSize);
 						emailContent.append("\tAccount ID: ").append(accountId).append("\n")
 									.append("\tCampaign ID: ").append(campaignID).append("\n")						        
 									.append("\t# Items Total: ").append(filteredDataSize).append("\n");
-						if (filterReportDatabyCampaignID != null)
+						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
 							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
