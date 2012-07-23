@@ -360,7 +360,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		}
 		catch (Exception e)
 		{
-			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "]";
+			final String emailSubject = "Error while trying to create Promotion [" + PromotionID + "] for AdEngines [" + adEngines + "]";
 			final String emailBody = emailSubject + "\n\n" + emailMessageSB.toString() + "\n\n" + "Error details\n\t" + e.getMessage();
 			sendEmail(emailSubject, emailBody);			
 			logger.info("-------------------------------------------------------------------------");
