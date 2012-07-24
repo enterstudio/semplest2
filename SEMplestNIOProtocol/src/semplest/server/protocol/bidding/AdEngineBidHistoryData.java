@@ -3,7 +3,7 @@ package semplest.server.protocol.bidding;
 import java.util.Date;
 import java.util.List;
 
-public class AdEngineBidHistoryData {
+public class AdEngineBidHistoryData implements Comparable {
 	
 	private String adEngine;
 	private String keyword;
@@ -49,10 +49,10 @@ public class AdEngineBidHistoryData {
 	public void setAvgBid(Double avgBid) {
 		this.avgBid = avgBid;
 	}
-	public Double getAvgCost() {
+	public Double getAvgCPC() {
 		return avgCPC;
 	}
-	public void setAvgCost(Double avgCPC) {
+	public void setAvgCPC(Double avgCPC) {
 		this.avgCPC = avgCPC;
 	}
 	public void setPosition(Integer position) {
@@ -223,6 +223,19 @@ public class AdEngineBidHistoryData {
 		} else if (!startDate.equals(other.startDate))
 			return false;
 		return true;
+	}
+	@Override
+	public int compareTo(Object arg0) {
+		if(this.avgCPC==null && ((AdEngineBidHistoryData) arg0).getAvgCPC()==null ) {
+			return 0;
+		}
+		if(this.avgCPC==null){
+			return 1;
+		}
+		if(((AdEngineBidHistoryData) arg0).getAvgCPC()==null ) {
+			return -1;
+		}
+		return this.avgCPC.compareTo(((AdEngineBidHistoryData) arg0).getAvgCPC());
 	}
 	
 	
