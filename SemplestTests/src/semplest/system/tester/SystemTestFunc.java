@@ -31,7 +31,7 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{	
 	
-	private static final String reportDir = "/semplest/TestReports/UnitTest/";
+	private static final String reportDir = "/semplest/Test Report/System Test Report/";
 	//private static final String reportDir = "Z:\\TestReports\\UnitTest\\";
 	
 	private static final String eol = System.getProperty("line.separator");
@@ -333,13 +333,10 @@ public class SystemTestFunc extends BaseDB{
 	
 	public static void InitializeReport(){
 		try{
-			InetAddress ownIP = InetAddress.getLocalHost();
-			String hudsonServerIP = "172.18.9.5";
-			
-			DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
+			DateFormat dateFormat = new SimpleDateFormat(" MM-dd-yy_HH-mm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
-			SystemTestDataModel.reportName = "UnitTestReport" + now + ".txt";			
+			SystemTestDataModel.reportName = "SystemTestReport" + now + ".txt";			
 			String reportPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
@@ -389,7 +386,7 @@ public class SystemTestFunc extends BaseDB{
 		
 		//send email of the test result
 		String testResult = (numAllErrs > 0)? "FAILED!" : "PASSED!";
-		reportSummary = reportSummary + eol + eol + eol + "The completed report is at: \\semplest\\TestReports\\UnitTest\\" + SystemTestDataModel.reportName;
+		reportSummary = reportSummary + eol + eol + eol + "The completed report is at: " + reportDir + SystemTestDataModel.reportName;
 		String subject = "[System Test] System Unit Test is " + testResult;		
 		sendEmail(subject, "devuser@semplest.com", "development@semplest.com", reportSummary);
 		
