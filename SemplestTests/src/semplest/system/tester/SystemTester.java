@@ -19,7 +19,7 @@ public class SystemTester {
 			//keywordTest.Test_KeywordService(serviceURL);
 			//mailTest.Test_MailService(serviceURL);
 			
-			//SystemTestFunc.CleanUpTestData();			
+			SystemTestFunc.CleanUpTestData();			
 			SystemTestFunc.FinalizeReport();
 		}
 		catch(Exception e){
