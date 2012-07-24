@@ -53,7 +53,6 @@ import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.ReportObject;
 import semplest.server.protocol.adengine.TrafficEstimatorObject;
 import semplest.server.protocol.bidding.AdEngineBidHistoryData;
-import semplest.server.protocol.bidding.MSNBidHistoryData;
 import semplest.server.protocol.google.UpdateAdRequest;
 import semplest.server.protocol.google.UpdateAdsRequestObj;
 import semplest.server.protocol.msn.AddKeywordsRetriableMsnOperation;
@@ -164,7 +163,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 				object.wait();
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
-			msn.getBidHistoryData(null, null);
+			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
+			map.put("wedding flowers", SemplestMatchType.Exact);
+			map.put("wedding bouquet", SemplestMatchType.Exact);
+			map.put("aoidfnainef", SemplestMatchType.Exact);
+			msn.getBidHistoryData(map, 3);
 			//msn.createKeyword(1758634L, 709270153L, "Sneakers", MatchType.Exact, new Bid(0.55));
 			//1758634L
 			//1714527L
@@ -593,7 +596,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		//Generate output objects
 		for(String kwrd : keywordSet){
 			AdEngineBidHistoryData historyData = new AdEngineBidHistoryData();
-			historyData.setAdEngine("msn");
+			historyData.setAdEngine(ProtocolEnum.AdEngine.MSN.toString());
 			historyData.setKeyword(kwrd);
 			historyData.setMatchType(keywordMatchType.get(kwrd).toString());
 			dataList.add(historyData);
