@@ -406,7 +406,7 @@ public class SystemTestFunc extends BaseDB{
 	
 	//Helper Methods
 	private static void setPropertiesFile() throws Exception{
-		final String PROPSFILE = "../system.properties";
+		final String PROPSFILE = "system.properties";
 		String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";		
 		
 		Properties properties = new Properties();
