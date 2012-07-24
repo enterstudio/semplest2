@@ -63,11 +63,15 @@ BEGIN TRY
 			VALUES (@keywordBidPK, @TransactionDate, @MicroBidAmount,@NumberImpressions, @NumberClick, @AveragePosition, @AverageCPC, @BidTypeID, @QualityScore, @ApprovalStatus,
 			@FirstPageMicroCpc,@MicroCost,CURRENT_TIMESTAMP)
 		set @ID = @@IDENTITY		
-	END		
-	
-		  
-	
-	
+	END
+	ELSE -- exists just update		
+	BEGIN
+		update AdvertisingEngineReportData
+		set MicroBidAmount = @MicroBidAmount, NumberImpressions = @NumberImpressions, NumberClick = @NumberClick, 
+			AveragePosition = @AveragePosition, AverageCPC = @AverageCPC, BidTypeFK = @BidTypeID, QualityScore = @QualityScore,ApprovalStatus = @ApprovalStatus, 
+			FirstPageMicroCPC = @FirstPageMicroCpc, MicroCost = @MicroCost
+		from AdvertisingEngineReportData aerd where aerd.KeywordBidFK = @keywordBidPK and aerd.TransactionDate = @TransactionDate
+	END
 END TRY
 BEGIN CATCH
  
