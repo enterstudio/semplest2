@@ -596,7 +596,12 @@ public class BidGeneratorObj
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Broke up " + requests.size() + " GoogleSetBidForKeywordRequests into " + requestBatches.size() + " batches of " + batchSize);
 				for(final List<GoogleSetBidForKeywordRequest> requestBatch : requestBatches)
 				{
-					clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
+					try{
+						clientGoogle.setBidForKeyWords(googleAccountID, requestBatch);
+					} catch (Exception e){
+						logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to update Google API."+ e.getMessage(), e);
+						throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to update Google API."+ e.getMessage(), e);
+					}
 				}
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Updated bids with Google for " + wordBidMap.size() + " keywords.");
 
