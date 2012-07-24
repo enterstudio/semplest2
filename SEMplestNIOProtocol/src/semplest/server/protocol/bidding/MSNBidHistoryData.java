@@ -11,7 +11,7 @@ public class MSNBidHistoryData {
 	private Double avgBid;
 	private Double avgCost;
 	
-	private Integer saerchVol;
+	private Integer searchVol;
 	private Integer clicks;
 	private Integer impressions;
 	
@@ -52,10 +52,10 @@ public class MSNBidHistoryData {
 		this.position = position;
 	}
 	public Integer getSaerchVol() {
-		return saerchVol;
+		return searchVol;
 	}
 	public void setSaerchVol(Integer saerchVol) {
-		this.saerchVol = saerchVol;
+		this.searchVol = saerchVol;
 	}
 	public Integer getClicks() {
 		return clicks;
@@ -89,7 +89,7 @@ public class MSNBidHistoryData {
 	}
 
 
-	
+	public MSNBidHistoryData(){};
 
 	public MSNBidHistoryData(String keyword, String matchType,
 			Integer position, Double avgBid, Double avgCost, Integer saerchVol,
@@ -101,7 +101,7 @@ public class MSNBidHistoryData {
 		this.position = position;
 		this.avgBid = avgBid;
 		this.avgCost = avgCost;
-		this.saerchVol = saerchVol;
+		this.searchVol = saerchVol;
 		this.clicks = clicks;
 		this.impressions = impressions;
 		this.startDate = startDate;
@@ -114,7 +114,7 @@ public class MSNBidHistoryData {
 	public String toString() {
 		return "MSNBidHistoryData [keyword=" + keyword + ", matchType="
 				+ matchType + ", position=" + position + ", avgBid=" + avgBid
-				+ ", avgCost=" + avgCost + ", saerchVol=" + saerchVol
+				+ ", avgCost=" + avgCost + ", saerchVol=" + searchVol
 				+ ", clicks=" + clicks + ", impressions=" + impressions
 				+ ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", transactionDate=" + transactionDate + "]";
