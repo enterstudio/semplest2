@@ -6,6 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
+
+import semplest.server.protocol.ProtocolEnum;
+import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
+
 public class AdEngineBidHistoryData implements Comparable {
 	
 	private String adEngine;
@@ -127,6 +132,27 @@ public class AdEngineBidHistoryData implements Comparable {
 		}
 		return kwrds;
 	}
+	
+	public static ProtocolEnum.SemplestMatchType getListMatchType(List<AdEngineBidHistoryData> historyDataList)throws Exception{
+		SemplestMatchType mt = null;
+		if(historyDataList!=null && historyDataList.size()>0){
+			for(AdEngineBidHistoryData histDat : historyDataList){
+				if(mt!=null && !mt.toString().equalsIgnoreCase(histDat.getMatchType())){
+					throw new Exception("Different Match Types in the list");
+				}else{
+					if(histDat.getMatchType().equalsIgnoreCase(SemplestMatchType.Exact.toString()))
+						mt = SemplestMatchType.Exact;
+					else if(histDat.getMatchType().equalsIgnoreCase(SemplestMatchType.Phrase.toString()))
+						mt = SemplestMatchType.Phrase;
+					else if(histDat.getMatchType().equalsIgnoreCase(SemplestMatchType.Broad.toString()))
+						mt = SemplestMatchType.Broad;
+					
+				}
+			}
+		}
+		return mt;
+	}
+	
 	
 	public static Map<String,List<AdEngineBidHistoryData>> batchByMatchType(List<AdEngineBidHistoryData> historyDataList){
 		Map<String,List<AdEngineBidHistoryData>> matchTypeMap = new HashMap<String,List<AdEngineBidHistoryData>>();
