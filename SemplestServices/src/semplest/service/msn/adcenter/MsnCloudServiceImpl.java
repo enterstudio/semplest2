@@ -21,6 +21,7 @@ import java.util.zip.ZipInputStream;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.log4j.Logger;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.AdPosition;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.Currency;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.DayMonthAndYear;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.EstimatedPositionAndTraffic;
@@ -28,11 +29,14 @@ import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_Campaign
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.HistoricalSearchCountPeriodic;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordAndConfidence;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordEstimatedPosition;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordHistoricalPerformanceByDevice;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordKPI;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordSearchCount;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordSearchCountByDevice;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.KeywordSuggestion;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MatchType;
 import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.MonthAndYear;
+import org.datacontract.schemas._2004._07.Microsoft_AdCenter_Advertiser_CampaignManagement_Api_DataContracts.TimeInterval;
 import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -166,8 +170,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 			map.put("aoidfnainef", SemplestMatchType.Exact);
 			map.put("wedding bouquet", SemplestMatchType.Exact);
-			map.put("aoidfnainef", SemplestMatchType.Exact);
-			msn.getBidHistoryData(map, 3);
+			map.put("wedding flowers", SemplestMatchType.Broad);
+			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 3);
+			
+			for(AdEngineBidHistoryData examp : list){
+				logger.info(examp.toString());
+			}
+			
 			//msn.createKeyword(1758634L, 709270153L, "Sneakers", MatchType.Exact, new Bid(0.55));
 			//1758634L
 			//1714527L
@@ -599,64 +608,104 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			historyData.setAdEngine(ProtocolEnum.AdEngine.MSN.toString());
 			historyData.setKeyword(kwrd);
 			historyData.setMatchType(keywordMatchType.get(kwrd).toString());
+			historyData.setPosition(position);
 			dataList.add(historyData);
 		}
-		//Get volume information
-		populateHistoricVolume(dataList, adInteligenceService);
-		//Get keyword performace information
-		//populateHistoricData(dataList, adInteligenceService);
+		
+		//Batch to maximum number of 1000 keywords per call
+		List<List<AdEngineBidHistoryData>> batchedList = SemplestUtils.getBatches(dataList, 1000);
+		dataList = new ArrayList<AdEngineBidHistoryData>();
+		for(List<AdEngineBidHistoryData> subList : batchedList){
+			//Get volume information
+			subList = getHistoricVolume(subList, adInteligenceService);
+			//Get keyword performace information
+			Map<String, List<AdEngineBidHistoryData>> matchTypeMap = AdEngineBidHistoryData.batchByMatchType(subList);
+			Set<String> mtSet = matchTypeMap.keySet();
+			List<AdEngineBidHistoryData> newdataList = new ArrayList<AdEngineBidHistoryData>();
+			for( String mt : mtSet ){
+				subList = matchTypeMap.get(mt);
+				subList = getHistoricData(subList, position, adInteligenceService);
+				newdataList.addAll(subList);
+			}
+			dataList.addAll(newdataList);
+		}
+		
+		
 		return dataList;
 	}
-	/*
-	public void populateHistoricData(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService){
+	
+	public AdPosition getAdPosition(Integer position){
+		return AdPosition.SideBar1;
+	}
+	public static MatchType semplestMT2msnMT(SemplestMatchType semplestMatchType){
+		MatchType matchType = null;	
+		if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Exact.getValue())){
+			matchType = MatchType.Exact;
+		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Phrase.getValue())){
+			matchType = MatchType.Phrase;
+		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Broad.getValue())){
+			matchType = MatchType.Broad;
+		}
+		return matchType;
+	}
+	public List<AdEngineBidHistoryData> getHistoricData(List<AdEngineBidHistoryData> keywords, Integer position, IAdIntelligenceService adInteligenceService) throws Exception{
+		
 		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
-		GetHistoricalKeywordPerformanceByDeviceRequest q = 
-	      new GetHistoricalKeywordPerformanceByDeviceRequest();
+		SemplestMatchType matchType =  AdEngineBidHistoryData.getListMatchType(keywords);
+		AdPosition adposition = getAdPosition(position);
+		GetHistoricalKeywordPerformanceByDeviceRequest q = new GetHistoricalKeywordPerformanceByDeviceRequest();
 	    q.setKeywords( kwrds );
 	    q.setPublisherCountries(new String[] {"US"} );
 	    q.setLanguage("English");
-
 	    q.setTimeInterval(TimeInterval.Last30Days);
-	    q.setMatchTypes( new MatchType[] {MatchType.Broad, 
-	      MatchType.Phrase, MatchType.Exact});
-	    q.setTargetAdPosition( AdPosition.SideBar5 );
-	    
-	    try {
-	      GetHistoricalKeywordPerformanceByDeviceResponse r = 
-	        s.getHistoricalKeywordPerformanceByDevice( q );
-	      for(KeywordHistoricalPerformanceByDevice k : 
-	          r.getKeywordHistoricalPerformances() ){
-	        System.out.printf("\n%s : ", k.getKeyword()); 
-	        if( k.getDevice() != null )
-	          for( KeywordKPI p: k.getKeywordKPIs() )
-	            System.out.printf("(%s) (bid,cpc): %.2f,%.2f  (c,i):%d,%d \n",
-	                p.getMatchType(), p.getAverageBid(), p.getAverageCPC(), 
-	                p.getClicks(), p.getImpressions());
+	    q.setMatchTypes( new MatchType[] {semplestMT2msnMT(matchType)});
+	    q.setTargetAdPosition( adposition );
+
+	 
+	      GetHistoricalKeywordPerformanceByDeviceResponse r = adInteligenceService.getHistoricalKeywordPerformanceByDevice( q );
+	      if(keywords.size()!=r.getKeywordHistoricalPerformances().length){
+	        	throw new Exception("Number of KeywordPerformances and keywords do not match");
 	      }
-	    } catch (AdApiFaultDetail f ){
-	      for( AdApiError e: f.getErrors() )
-	        System.out.println( e.getMessage() +":"+ e.getDetail());
-	    } catch (Exception e){ e.printStackTrace();}
-	}*/
+	      for(int i=0; i< r.getKeywordHistoricalPerformances().length; i++){
+	    	KeywordHistoricalPerformanceByDevice k = r.getKeywordHistoricalPerformances()[i];
+	    	logger.debug("Keyword : "+ k.getKeyword());
+	    	if(!k.getKeyword().equalsIgnoreCase(keywords.get(i).getKeyword())){
+        		throw new Exception("Returned keyword does not match with requested keyword");
+        	}
+	        if( k.getDevice() != null && k.getKeywordKPIs()!=null)
+	          for( KeywordKPI p: k.getKeywordKPIs() ){
+	        	  if(p.getMatchType().equals(semplestMT2msnMT(matchType)) && p.getAdPosition().equals(adposition)){
+	        		  keywords.get(i).setAvgBid(p.getAverageBid());
+	        		  keywords.get(i).setAvgCPC(p.getAverageCPC());
+	        		  keywords.get(i).setClicks(p.getClicks());
+	        		  keywords.get(i).setImpressions(p.getImpressions());
+	        	  }
+	          }
+	        	  
+	      }
+	      
+	      return keywords;
+	    
+	}
 	
-	public void populateHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ){
+	public List<AdEngineBidHistoryData> getHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ){
 		//Populates AdEngineBidHistoryData objects with information about search volume
-		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
-		GetHistoricalSearchCountByDeviceRequest q = new GetHistoricalSearchCountByDeviceRequest();
-	    q.setKeywords(kwrds);
-	    q.setPublisherCountries(new String[] {"US"} );
-	    q.setLanguage("English");
-	    q.setStartTimePeriod(gDMY("20120601"));
-	    q.setEndTimePeriod(gDMY( "20120630") );
-	    try {
+	String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
+	GetHistoricalSearchCountByDeviceRequest q = new GetHistoricalSearchCountByDeviceRequest();
+    q.setKeywords(kwrds);
+    q.setPublisherCountries(new String[] {"US"} );
+    q.setLanguage("English");
+    q.setStartTimePeriod(gDMY("20120601"));
+    q.setEndTimePeriod(gDMY( "20120630") );
+    try {
         GetHistoricalSearchCountByDeviceResponse r = 
           adInteligenceService.getHistoricalSearchCountByDevice( q );
         if(keywords.size()!=r.getKeywordSearchCounts().length){
-        	throw new Exception("Number of search counts and keywords do not match");
+        	throw new Exception("Number of SearchCounts and keywords do not match");
         }
         for(int i = 0; i< r.getKeywordSearchCounts().length ; i++){
         	KeywordSearchCountByDevice k = r.getKeywordSearchCounts()[i];
-        	logger.info("Keyword : "+ k.getKeyword());
+        	logger.debug("Keyword : "+ k.getKeyword());
         	if(!k.getKeyword().equalsIgnoreCase(keywords.get(i).getKeyword())){
         		throw new Exception("Returned keyword does not match with requested keyword");
         	}
@@ -664,15 +713,17 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
         		if(k.getHistoricalSearchCounts().length >1){
         			throw new Exception("More than 1 HistoricalSearchCountPeriodic");
         		}
-        		logger.info("- Volume: "+ k.getHistoricalSearchCounts()[0].getSearchCount());
+        		logger.debug("- Volume: "+ k.getHistoricalSearchCounts()[0].getSearchCount());
         		keywords.get(i).setSearchVol(k.getHistoricalSearchCounts()[0].getSearchCount());
         	}
                 
         }
-      } catch (AdApiFaultDetail f ){
-        for( AdApiError e: f.getErrors() )
-          System.out.println( e.getMessage() +":"+ e.getDetail());
-      } catch (Exception e){ e.printStackTrace();}
+	} catch (AdApiFaultDetail f ){
+	    for( AdApiError e: f.getErrors() )
+	      System.out.println( e.getMessage() +":"+ e.getDetail());
+	} catch (Exception e){ e.printStackTrace();}
+	   
+    return keywords;
 	}
 	public DayMonthAndYear gDMY( String dates ){
 	      SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
