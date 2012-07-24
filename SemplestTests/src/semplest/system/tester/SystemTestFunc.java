@@ -333,10 +333,10 @@ public class SystemTestFunc extends BaseDB{
 	
 	public static void InitializeReport(){
 		try{
-			DateFormat dateFormat = new SimpleDateFormat(" MM-dd-yy_HH-mm");
+			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yy_HH-mm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
-			SystemTestDataModel.reportName = "SystemTestReport" + now + ".txt";			
+			SystemTestDataModel.reportName = "SystemTestReport " + now + ".txt";			
 			String reportPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
