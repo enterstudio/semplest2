@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.InetAddress;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,10 +33,7 @@ import semplest.server.service.springjdbc.BaseDB;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
-public class SystemTestFunc extends BaseDB{
-	
-	//private static final String reportDir = "/semplest/TestReports/UnitTest/";
-	private static final String reportDir = "Z:\\TestReports\\UnitTest\\";
+public class SystemTestFunc extends BaseDB{	
 	
 	public static void main(String[] args){		
 		String tmp = "AddPromotionToAdEngine(SystemTestDataModel.semplestCustomerId, SystemTestDataModel.semplestProductGroupId, SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)";
@@ -335,10 +333,21 @@ public class SystemTestFunc extends BaseDB{
 	
 	public static void InitializeReport(){
 		try{
+			InetAddress ownIP = InetAddress.getLocalHost();
+			String hudsonServerIP = "172.18.9.5";
+			
 			DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
 			SystemTestDataModel.reportName = "UnitTestReport" + now + ".txt";
+			
+			String reportDir;
+			if(ownIP.getHostAddress().equalsIgnoreCase(hudsonServerIP)){
+				reportDir = "/semplest/TestReports/UnitTest/";
+			}
+			else{
+				reportDir = "Z:\\TestReports\\UnitTest\\";
+			}
 			String reportPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
@@ -397,7 +406,7 @@ public class SystemTestFunc extends BaseDB{
 	
 	//Helper Methods
 	private static void setPropertiesFile() throws Exception{
-		final String PROPSFILE = "bin/system.properties";
+		final String PROPSFILE = "../../../../system.properties";
 		String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";		
 		
 		Properties properties = new Properties();
