@@ -31,8 +31,12 @@ public class TestSpringJDBC extends BaseDB
 			 * new FileInputStream(PROPSFILE); properties.load(is); is.close();
 			 */
 			appContext = new ClassPathXmlApplicationContext("Service.xml");
-			BiddingParameters p = SemplestDB.getBiddingParameters();
-			System.out.println(p.getSemplestBiddingBudgetMultFactor() + ":" + p.getSemplestBiddingInitialBidBoostFactor() + ";" + p.getSemplestBiddingMarginFactor() + ";" + p.getSemplestBiddingPercentileValue());
+			// BiddingParameters p = SemplestDB.getBiddingParameters();
+			
+			String[] ss = SemplestDB.getGeotargetStates( 2 );
+			for( String s: ss ) System.out.println( s );
+			
+			// System.out.println(p.getSemplestBiddingBudgetMultFactor() + ":" + p.getSemplestBiddingInitialBidBoostFactor() + ";" + p.getSemplestBiddingMarginFactor() + ";" + p.getSemplestBiddingPercentileValue());
 			/*
 			java.util.Date date = new java.util.Date();
 			Timestamp ts = new Timestamp(date.getTime());
