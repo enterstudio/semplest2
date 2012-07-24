@@ -1500,9 +1500,9 @@ public class SemplestDB extends BaseDB
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID, currentDailyBudget });
 	}
 	
-	public static List<String> getGeotargetStates( Integer promotionId ) throws Exception {
+	public static String[] getGeotargetStates( Integer promotionId ) throws Exception {
 		final String sql = "Select  stateAbbr from GeoTargeting g, StateCode s where g.StateCodeFK = s.StateAbbrPK and g.promotionFK = ?";
-		return jdbcTemplate.queryForList(sql, String.class, promotionId);
+		return jdbcTemplate.queryForList(sql, String.class, promotionId).toArray( new String[0]);
 	}
 
 	
@@ -1528,10 +1528,6 @@ public class SemplestDB extends BaseDB
 		}
 	}
 	
-	public static void main(String[] args ) throws Exception {
-		List<String> ss = getGeotargetStates( 2 );
-		for( String s: ss )
-			System.out.println( s );
-	}
+
 	
 }
