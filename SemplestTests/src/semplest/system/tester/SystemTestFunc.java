@@ -45,7 +45,6 @@ public class SystemTestFunc extends BaseDB{
 	}
 	
 	public static void InitializeSystemTest() throws Exception{		
-		setPropertiesFile(); //Set DB to the Test box
 		
 		System.out.println("====================================================================================");
 		System.out.println(">>> Initialization >>>");
@@ -405,29 +404,6 @@ public class SystemTestFunc extends BaseDB{
 		String subject = "[System Test] System Unit Test is " + testResult;		
 		sendEmail(subject, "devuser@semplest.com", "development@semplest.com", reportSummary);
 		
-	}
-	
-	//Helper Methods
-	private static void setPropertiesFile() throws Exception{
-		final String PROPSFILE = "system.properties";
-		String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";		
-		
-		InputStream in = SystemTestFunc.class.getClassLoader().getResourceAsStream(PROPSFILE);
-		Properties props = new Properties();
-		props.load(in);			
-		StringBuilder sb = new StringBuilder();			
-		
-		sb.append("semplest.service" + " = " + props.getProperty("semplest.service") + eol);
-		sb.append("YAJSW.servicename" + " = " + props.getProperty("YAJSW.servicename") + eol); 
-		sb.append("jdbc.driverClassName" + " = " + props.getProperty("jdbc.driverClassName") + eol);
-		sb.append("jdbc.url" + " = " + jdbc + eol);
-		sb.append("jdbc.username" + " = " + props.getProperty("jdbc.username") + eol);
-		sb.append("jdbc.password" + " = " + props.getProperty("jdbc.password") + eol);		
-		
-		props.clear();
-		props.store(new FileOutputStream(sb.toString()), "Properties for System Test");
-				
-		in.close();	
 	}
 
 	private static void sendEmail(String subject, String from, String to, String msg)
