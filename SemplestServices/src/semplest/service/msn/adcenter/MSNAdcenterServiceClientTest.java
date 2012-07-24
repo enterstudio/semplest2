@@ -45,8 +45,8 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "DefaultAccount";
-	String accountNumber = "X1660053";
+	String accountName = "_WeddingHair";
+	String accountNumber = "X1289929";
 	String url = "www.WeddingChannel.com";
 	String productSubcategory = "Wedding Hair";
 	double msnMonthlyBudget = 300.0; //In dolars
@@ -97,7 +97,7 @@ public class MSNAdcenterServiceClientTest {
 			//msn.createCampaign();
 			msn.getAccountID();
 			//logger.info(msn.accountID);
-			//msn.getIds();
+			msn.getIds();
 			//msn.updateStatus(true);
 			
 			//msn.setGeoTarget();
@@ -219,6 +219,7 @@ public class MSNAdcenterServiceClientTest {
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
 		 HashMap<String,Long> accounts = test.getAccountIDs();
 		 accountID =  accounts.get(accountNumber).longValue();
+		 logger.info("AccountId - "+accountID);
 	}
 	public void getIds() throws Exception{
 		MsnCloudServiceImpl test = new MsnCloudServiceImpl();
