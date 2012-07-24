@@ -60,7 +60,7 @@ public class AdEngineBidHistoryData {
 	public Integer getSaerchVol() {
 		return searchVol;
 	}
-	public void setSaerchVol(Integer saerchVol) {
+	public void setSearchVol(Integer saerchVol) {
 		this.searchVol = saerchVol;
 	}
 	public Integer getClicks() {
