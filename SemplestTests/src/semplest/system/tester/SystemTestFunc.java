@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,6 +36,8 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{	
+	
+	private static final String eol = System.getProperty("line.separator");
 	
 	public static void main(String[] args){		
 		String tmp = "AddPromotionToAdEngine(SystemTestDataModel.semplestCustomerId, SystemTestDataModel.semplestProductGroupId, SystemTestDataModel.semplestPromotionId, SystemTestDataModel.adEngineList)";
@@ -367,7 +371,6 @@ public class SystemTestFunc extends BaseDB{
 	
 	public static void FinalizeReport(){
 		//Generate Report and Email the Report		
-		String eol = System.getProperty("line.separator");
 		
 		int numAllErrs = SystemTestDataModel.adEngineErrors 
 				+ SystemTestDataModel.biddingErrors 
@@ -406,25 +409,25 @@ public class SystemTestFunc extends BaseDB{
 	
 	//Helper Methods
 	private static void setPropertiesFile() throws Exception{
-		final String PROPSFILE = "../../../system.properties";
+		final String PROPSFILE = "system.properties";
 		String jdbc = "jdbc:jtds:sqlserver://172.18.9.35/semplestTest";		
 		
-		Properties properties = new Properties();
-		FileInputStream in = new FileInputStream(PROPSFILE);
-		properties.load(in);
-		in.close();				
-		FileWriter out = new FileWriter(PROPSFILE);
-		BufferedWriter writer = new BufferedWriter(out);			
+		InputStream in = SystemTestFunc.class.getClassLoader().getResourceAsStream(PROPSFILE);
+		Properties props = new Properties();
+		props.load(in);			
+		StringBuilder sb = new StringBuilder();			
 		
-		writer.append("semplest.service" + " = " + properties.getProperty("semplest.service")); writer.newLine();		
-		writer.append("YAJSW.servicename" + " = " + properties.getProperty("YAJSW.servicename")); writer.newLine();
-		writer.append("jdbc.driverClassName" + " = " + properties.getProperty("jdbc.driverClassName")); writer.newLine();
-		writer.append("jdbc.url" + " = " + jdbc); writer.newLine();
-		writer.append("jdbc.username" + " = " + properties.getProperty("jdbc.username")); writer.newLine();
-		writer.append("jdbc.password" + " = " + properties.getProperty("jdbc.password")); writer.newLine();
+		sb.append("semplest.service" + " = " + props.getProperty("semplest.service") + eol);
+		sb.append("YAJSW.servicename" + " = " + props.getProperty("YAJSW.servicename") + eol); 
+		sb.append("jdbc.driverClassName" + " = " + props.getProperty("jdbc.driverClassName") + eol);
+		sb.append("jdbc.url" + " = " + jdbc + eol);
+		sb.append("jdbc.username" + " = " + props.getProperty("jdbc.username") + eol);
+		sb.append("jdbc.password" + " = " + props.getProperty("jdbc.password") + eol);		
 		
-		writer.close();
+		props.clear();
+		props.store(new FileOutputStream(sb.toString()), "Properties for System Test");
 				
+		in.close();	
 	}
 
 	private static void sendEmail(String subject, String from, String to, String msg)
