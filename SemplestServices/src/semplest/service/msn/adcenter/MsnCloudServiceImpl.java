@@ -175,7 +175,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			map.put("aoidfnainef", SemplestMatchType.Exact);
 			map.put("wedding bouquet", SemplestMatchType.Exact);
 			map.put("wedding flowers", SemplestMatchType.Broad);
-			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 1);
+			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 14);
 			
 			for(AdEngineBidHistoryData examp : list){
 				logger.info(examp.toString());
