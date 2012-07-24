@@ -164,7 +164,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
-			map.put("wedding flowers", SemplestMatchType.Exact);
+			map.put("aoidfnainef", SemplestMatchType.Exact);
 			map.put("wedding bouquet", SemplestMatchType.Exact);
 			map.put("aoidfnainef", SemplestMatchType.Exact);
 			msn.getBidHistoryData(map, 3);
@@ -586,13 +586,13 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	// Data gathering methods
 	// ==================================
 	
-	List<AdEngineBidHistoryData> getBidHistoryData(Map<String, ProtocolEnum.SemplestMatchType> keywordMatchType, Integer position) throws Exception{
+	public List<AdEngineBidHistoryData> getBidHistoryData(Map<String, ProtocolEnum.SemplestMatchType> keywordMatchType, Integer position) throws Exception{
 		if(keywordMatchType == null || keywordMatchType.isEmpty()){
 			throw new Exception("The keyword map is empty");
 		}
 		List<AdEngineBidHistoryData> dataList = new ArrayList<AdEngineBidHistoryData>(keywordMatchType.size());
 		Set<String> keywordSet = keywordMatchType.keySet();
-		IAdIntelligenceService adInteligenceService = getAdInteligenceService(null);
+		IAdIntelligenceService adInteligenceService = getAdInteligenceService(1707019L);
 		//Generate output objects
 		for(String kwrd : keywordSet){
 			AdEngineBidHistoryData historyData = new AdEngineBidHistoryData();
@@ -602,23 +602,52 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			dataList.add(historyData);
 		}
 		//Get volume information
-		populateVolume(dataList, adInteligenceService);
-	   
+		populateHistoricVolume(dataList, adInteligenceService);
+		//Get keyword performace information
+		//populateHistoricData(dataList, adInteligenceService);
 		return dataList;
 	}
+	/*
+	public void populateHistoricData(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService){
+		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
+		GetHistoricalKeywordPerformanceByDeviceRequest q = 
+	      new GetHistoricalKeywordPerformanceByDeviceRequest();
+	    q.setKeywords( kwrds );
+	    q.setPublisherCountries(new String[] {"US"} );
+	    q.setLanguage("English");
+
+	    q.setTimeInterval(TimeInterval.Last30Days);
+	    q.setMatchTypes( new MatchType[] {MatchType.Broad, 
+	      MatchType.Phrase, MatchType.Exact});
+	    q.setTargetAdPosition( AdPosition.SideBar5 );
+	    
+	    try {
+	      GetHistoricalKeywordPerformanceByDeviceResponse r = 
+	        s.getHistoricalKeywordPerformanceByDevice( q );
+	      for(KeywordHistoricalPerformanceByDevice k : 
+	          r.getKeywordHistoricalPerformances() ){
+	        System.out.printf("\n%s : ", k.getKeyword()); 
+	        if( k.getDevice() != null )
+	          for( KeywordKPI p: k.getKeywordKPIs() )
+	            System.out.printf("(%s) (bid,cpc): %.2f,%.2f  (c,i):%d,%d \n",
+	                p.getMatchType(), p.getAverageBid(), p.getAverageCPC(), 
+	                p.getClicks(), p.getImpressions());
+	      }
+	    } catch (AdApiFaultDetail f ){
+	      for( AdApiError e: f.getErrors() )
+	        System.out.println( e.getMessage() +":"+ e.getDetail());
+	    } catch (Exception e){ e.printStackTrace();}
+	}*/
 	
-	public void populateVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ){
-		String[]  kwrds = new String[keywords.size()];
-		for(int i = 0; i< keywords.size(); i++){
-			kwrds[i] = keywords.get(i).getKeyword();
-		}
-		
+	public void populateHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ){
+		//Populates AdEngineBidHistoryData objects with information about search volume
+		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
 		GetHistoricalSearchCountByDeviceRequest q = new GetHistoricalSearchCountByDeviceRequest();
 	    q.setKeywords(kwrds);
 	    q.setPublisherCountries(new String[] {"US"} );
 	    q.setLanguage("English");
 	    q.setStartTimePeriod(gDMY("20120601"));
-	    q.setEndTimePeriod(gDMY( "20120701") );
+	    q.setEndTimePeriod(gDMY( "20120630") );
 	    try {
         GetHistoricalSearchCountByDeviceResponse r = 
           adInteligenceService.getHistoricalSearchCountByDevice( q );
@@ -640,14 +669,6 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
         	}
                 
         }
-        
-        for(KeywordSearchCountByDevice k : r.getKeywordSearchCounts()){
-          System.out.printf("\n%s : ", k.getKeyword()); 
-          if( k.getDevice() != null )
-            for( HistoricalSearchCountPeriodic p: k.getHistoricalSearchCounts())
-  
-                  p.getSearchCount(); 
-        }
       } catch (AdApiFaultDetail f ){
         for( AdApiError e: f.getErrors() )
           System.out.println( e.getMessage() +":"+ e.getDetail());
@@ -662,7 +683,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 
 	    DayMonthAndYear dmy = new DayMonthAndYear();
 	    dmy.setDay(   c.get( Calendar.DATE  ) );
-	    dmy.setMonth( c.get( Calendar.MONTH ) );
+	    dmy.setMonth( c.get( Calendar.MONTH )+1);
 	    dmy.setYear(  c.get( Calendar.YEAR  ) );
 	    return dmy;
 	  }
