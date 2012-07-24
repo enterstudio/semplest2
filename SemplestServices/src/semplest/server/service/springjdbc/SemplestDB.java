@@ -1499,7 +1499,13 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(strSQL, new Object[]
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID, currentDailyBudget });
 	}
+	
+	public static List<String> getGeotargetStates( Integer promotionId ) throws Exception {
+		final String sql = "Select  stateAbbr from GeoTargeting g, StateCode s where g.StateCodeFK = s.StateAbbrPK and g.promotionFK = ?";
+		return jdbcTemplate.queryForList(sql, String.class, promotionId);
+	}
 
+	
 	public static void logError(Exception e, String errorSource)
 	{
 		try
