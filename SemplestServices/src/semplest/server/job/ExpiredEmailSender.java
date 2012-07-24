@@ -13,7 +13,6 @@ import semplest.server.protocol.RunMode;
 import semplest.server.protocol.User;
 import semplest.server.service.SemplestConfiguration;
 import semplest.server.service.mail.SemplestMailClient;
-import semplest.server.service.springjdbc.CustomerObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.util.SemplestUtils;
 
@@ -94,16 +93,25 @@ public class ExpiredEmailSender
 	
 	public String getRefinedEmailBody(final String rawEmailBody, final User user, final Integer numDaysTillExpiration)
 	{
-		final Integer customerID = user.getCustomerFk();
-		final CustomerObj customer = SemplestDB.getCustomer(customerID);
-		final String vendorName = customer.getName();
 		final Integer userID = user.getUserPk();
+		final String firstName = user.getFirstName();
+		final String lastName = user.getLastName();
+		final String middleInitial = SemplestUtils.getTrimmedNonNullString(user.getMiddleInidial());
+		final String fullName;
+		if (middleInitial.equals(""))
+		{
+			fullName = firstName + " " + lastName;
+		}
+		else
+		{
+			fullName = firstName + " " + middleInitial + "." + lastName;
+		}
 		final Credential credential = SemplestDB.getCredential(userID);
 		final String username = credential.getUsername();
 		final String password = credential.getPassword();
 		final java.util.Date now = new java.util.Date();
 		final String link = generateExcryptedLink(userID, now, username, password);		
-		final String refinedEmailBody = rawEmailBody.replaceAll("VendorName", vendorName).replaceAll("XX", "" + numDaysTillExpiration).replaceAll("xxxxxx", username).replaceAll("xxxxx", password).replaceAll("SEMPLEST LINK", link).replaceAll("help@semplest.com", defaultEmailContactUsEmail).replaceAll("\\[", "").replaceAll("\\]", "");
+		final String refinedEmailBody = rawEmailBody.replaceAll("VendorName", fullName).replaceAll("XX", "" + numDaysTillExpiration).replaceAll("xxxxxx", username).replaceAll("xxxxx", password).replaceAll("SEMPLEST LINK", link).replaceAll("help@semplest.com", defaultEmailContactUsEmail).replaceAll("\\[", "").replaceAll("\\]", "");
 		return refinedEmailBody;
 	}
 	
