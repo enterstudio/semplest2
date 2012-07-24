@@ -96,6 +96,28 @@
 		
 		<!-- Create a Jar for SemplestKeywords, and put it to SemplestTests/lib -->
 		<echo message="Creating Jar for SemplestKeywords..."/>
+		
+			<!-- compile SemplestServices just for creating the keywords jar -->
+		<copy todir="${semplest.keywords.lib}" filtering="off">
+  	 		<flattenmapper />
+  	 		<fileset dir="${lib}" includes="**/*.jar" />			
+  	 	</copy>
+		<mkdir dir="${semplest.keywords.dir}/semplestservicescompilefiles"/>
+		<echo message="Compiling SemplestServices and making it a jar for Keyword Service..."/>
+	    <javac srcdir="${source}" destdir="${semplest.keywords.dir}/semplestservicescompilefiles" classpathref="class.path"
+	      target="1.6"
+	      source="1.6"
+	      debug="${java.debug}"   	
+	      includes="**/*.java"
+	      excludes="**/*.svn"
+	    />
+		
+		<jar destfile="${semplest.keywords.lib}/SemplestServices.jar" basedir="${semplest.keywords.dir}/semplestservicescompilefiles">
+  	 		<manifest>
+  	 	    	<attribute name="Main-Class" value="semplest.service.keywords.lda.KeywordGeneratorService"/>
+  	 	    </manifest>
+  	 	</jar>
+		
 	 	<copy todir="${basedir}/lib" filtering="off">
 	 		<flattenmapper />
 	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
@@ -148,13 +170,13 @@
 		        </mapper>
 		</pathconvert>
 		
-	    <jar destfile="UnitTests.jar"
+	    <jar destfile="SystemTest.jar"
 	         basedir="${classes}"
 	         includes="**/*.class">
 			<fileset dir="${basedir}/lib" includes="**/*.*"/>
 	      <manifest>
 	      	
-	        <attribute name="Main-Class" value="semplest.test.unittest.UnitTests" />
+	        <attribute name="Main-Class" value="semplest.system.tester.SystemTester" />
 	      	
 	      	<attribute name="Class-Path" value="${mf.classpath}"/>
 	      </manifest>
