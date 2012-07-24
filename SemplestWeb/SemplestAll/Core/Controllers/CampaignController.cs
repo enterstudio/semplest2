@@ -109,10 +109,8 @@ namespace Semplest.Core.Controllers
                 }
                 else
                 {
-                   
                         model.SiteLinks = (List<SiteLink>) Session["SiteLinks"];
                         model.AdModelProp.NegativeKeywords = (List<string>) Session["NegativeKeywords"];
-
 
                         // we need save to database the ProductGroup and Promotion information
                         //int userid = (int)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID];
@@ -159,18 +157,8 @@ namespace Semplest.Core.Controllers
                             if (gv.Length > 0)
                                 return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                         }
-                        if (model.SiteLinks != null && model.SiteLinks.Any())
-                        {
-                            gv = _campaignRepository.ValidateSiteLinks(promoId);
-                            if (gv.Length > 0)
-                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                        }
-                        if (model.AdModelProp.NegativeKeywords != null && model.AdModelProp.NegativeKeywords.Any())
-                        {
-                            gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.AdModelProp.NegativeKeywords);
-                            if (gv.Length > 0)
-                                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-                        }
+                        
+                        
 
                         msg =
                             "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
@@ -481,7 +469,19 @@ namespace Semplest.Core.Controllers
         public ActionResult SetAdditionalLinks(CampaignSetupModel model)
         {
             Session["SiteLinks"] = model.SiteLinks.Where(t => t.Delete).ToList();
-            _campaignRepository.SaveSiteLinks(model, ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value);
+            var cred =
+                (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+            var customerFK = cred.User.CustomerFK;
+            var userPK = cred.User.UserPK;
+            _campaignRepository.SaveSiteLinks(model, customerFK.Value);
+            var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
+                                                                         model.ProductGroup.ProductPromotionName);
+            if (model.SiteLinks != null && model.SiteLinks.Any())
+            {   
+                GoogleViolation[] gv = _campaignRepository.ValidateSiteLinks(promoId);
+                if (gv.Length > 0)
+                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+            }
             return Json("AdditionalLinks");
         }
 
@@ -498,10 +498,22 @@ namespace Semplest.Core.Controllers
             Session["NegativeKeywords"] = model.NegativeKeywords;
             Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
             var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
+            var cred =
+                (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
+            var customerFK = cred.User.CustomerFK;
+            var userPK = cred.User.UserPK;
             csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
             csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
-            csm.AllKeywords =  _campaignRepository.SaveNegativeKeywords(csm, ((Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value);
+            csm.AllKeywords = _campaignRepository.SaveNegativeKeywords(csm, customerFK.Value);
             
+            var promoId = _campaignRepository.GetPromotionId(userPK, csm.ProductGroup.ProductGroupName,
+                                                                         csm.ProductGroup.ProductPromotionName);
+            if (csm.AdModelProp.NegativeKeywords != null && csm.AdModelProp.NegativeKeywords.Any())
+            {
+                GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(csm.AdModelProp.NegativeKeywords);
+                if (gv.Length > 0)
+                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
+            }
             return Json("NegativeKeywords");
         }
 
