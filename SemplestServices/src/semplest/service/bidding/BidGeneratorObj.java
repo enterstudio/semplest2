@@ -402,8 +402,14 @@ public class BidGeneratorObj
 		HashMap<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		HashSet<String> pausedSet = new HashSet<String>();
 		
-				
-		double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+		double maxBid = 0.05;
+		try{
+			maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the daily budget from the database. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the daily budget from the database. "+ e.getMessage(), e);
+		}
 		if(maxBid<=0.05) {
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
 			return true;
@@ -1077,11 +1083,18 @@ public class BidGeneratorObj
 		Float totalDailyClick = 0F;
 		
 		if(compKeywords.size()>0){
-			bidOptimizer.setDailyBudget(targetDailyBudget);
+			//bidOptimizer.setDailyBudget(targetDailyBudget);
 			//HashMap<String,Double> bidData = bidOptimizer.optimizeBids();
 			
 			
-			double maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+			double maxBid = 0.05;
+			try{
+				maxBid = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+			} catch (Exception e) {
+				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the daily budget from the database. "+ e.getMessage(), e);
+				// e.printStackTrace();
+				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the daily budget from the database. "+ e.getMessage(), e);
+			}
 			if(maxBid<=0.05) {
 				logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Daily budget is too low to do anything with this adgroup...");
 				throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Daily budget is too low to do anything with this adgroup...");
@@ -1991,17 +2004,17 @@ public class BidGeneratorObj
 			AdEngine searchEngine = AdEngine.Google;
 			
 			
-			Integer promotionID = new Integer(166);
+			Integer promotionID = new Integer(175);
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
-			bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 
 
-//			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
-//			System.out.println(bidHistory.size());
+			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+			System.out.println(bidHistory.size());
 //			System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
 //			
 //			Date now = new Date();
