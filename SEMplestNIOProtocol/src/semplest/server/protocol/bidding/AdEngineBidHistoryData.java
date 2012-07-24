@@ -10,7 +10,7 @@ public class AdEngineBidHistoryData {
 	private Integer position;
 	
 	private Double avgBid;
-	private Double avgCost;
+	private Double avgCPC;
 	
 	private Integer searchVol;
 	private Integer clicks;
@@ -49,10 +49,10 @@ public class AdEngineBidHistoryData {
 		this.avgBid = avgBid;
 	}
 	public Double getAvgCost() {
-		return avgCost;
+		return avgCPC;
 	}
-	public void setAvgCost(Double avgCost) {
-		this.avgCost = avgCost;
+	public void setAvgCost(Double avgCPC) {
+		this.avgCPC = avgCPC;
 	}
 	public void setPosition(Integer position) {
 		this.position = position;
@@ -98,7 +98,7 @@ public class AdEngineBidHistoryData {
 	public AdEngineBidHistoryData(){};
 
 	public AdEngineBidHistoryData(String adEngine, String keyword, String matchType,
-			Integer position, Double avgBid, Double avgCost, Integer saerchVol,
+			Integer position, Double avgBid, Double avgCPC, Integer saerchVol,
 			Integer clicks, Integer impressions, Date startDate, Date endDate,
 			Date transactionDate) {
 		super();
@@ -107,7 +107,7 @@ public class AdEngineBidHistoryData {
 		this.matchType = matchType;
 		this.position = position;
 		this.avgBid = avgBid;
-		this.avgCost = avgCost;
+		this.avgCPC = avgCPC;
 		this.searchVol = saerchVol;
 		this.clicks = clicks;
 		this.impressions = impressions;
@@ -121,7 +121,7 @@ public class AdEngineBidHistoryData {
 	public String toString() {
 		return "AdEngineBidHistoryData [adEngine = "+ adEngine+", keyword=" + keyword + ", matchType="
 				+ matchType + ", position=" + position + ", avgBid=" + avgBid
-				+ ", avgCost=" + avgCost + ", saerchVol=" + searchVol
+				+ ", avgCost=" + avgCPC + ", saerchVol=" + searchVol
 				+ ", clicks=" + clicks + ", impressions=" + impressions
 				+ ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", transactionDate=" + transactionDate + "]";
