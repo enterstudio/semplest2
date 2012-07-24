@@ -460,8 +460,11 @@ namespace Semplest.Core.Models.Repositories
         public Promotion CreatePromotionFromModel(CampaignSetupModel model,
                                                   decimal customerDefaultPerCampaignFlatFeeAmount)
         {
-            model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
-            model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
+            if (model.AdModelProp.LandingUrl != null && model.AdModelProp.DisplayUrl != null)
+            {
+                model.AdModelProp.LandingUrl = model.AdModelProp.LandingUrl.Trim();
+                model.AdModelProp.DisplayUrl = model.AdModelProp.DisplayUrl.Trim();
+            }
             var promo = new Promotion
                             {
 

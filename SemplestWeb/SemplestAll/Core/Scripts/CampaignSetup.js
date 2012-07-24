@@ -399,6 +399,117 @@ function addNestedForm(container, counter, ticks, content) {
 }
 
 
+var onSelect = function (e) {
+
+    var formDirty = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
+    if (formClean != formDirty && $('#AdModelProp_IsNew').val() != 'True') {
+        var dirtyFormWindow = $('#DirtyFormWindow').kendoWindow({
+            resizable: false,
+            modal: true,
+            title: "Unsaved Values"
+        }).data("kendoWindow");
+        $('#DirtyFormWindow').show();
+        dirtyFormWindow.center();
+        dirtyFormWindow.open();
+        e.preventDefault();
+    }
+
+};
+var onActivate = function (e) {
+    switch (tabStrip.select().text()) {
+        case "Create Ads":
+
+            for (var map in mapArray) {
+                L.Util.requestAnimFrame(mapArray[map].invalidateSize, mapArray[map], !1, mapArray[map]._container);
+            }
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").removeClass('selected');
+                $("#btnThree").removeClass('selected');
+                $("#btnTwo").addClass('unselected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "Define Product":
+        case 'Additional Click Through Links("SiteLinks")':
+        case "Negative Keywords":
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").removeClass('selected');
+                $("#btnThree").removeClass('selected');
+                $("#btnTwo").addClass('unselected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "Categories":
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").addClass('selected');
+                $("#btnTwo").removeClass('unselected');
+                $("#btnThree").removeClass('selected');
+                $("#btnThree").addClass('unselected');
+            }
+            break;
+        case "Billing & Launch":
+            tabStrip.reload(tabStrip.tabGroup.children('li:contains("Billing & Launch")'));
+            break;
+        case "View Keywords":
+            tabStrip.reload(tabStrip.tabGroup.children('li:contains("View Keywords")'));
+            if ($('#currentMode').val() != "True") {
+                $("#btnOne").removeClass('unselected');
+                $("#btnTwo").removeClass('unselected');
+                $("#btnThree").removeClass('unselected');
+                $("#btnOne").addClass('selected');
+                $("#btnTwo").addClass('selected');
+                $("#btnThree").addClass('selected');
+            }
+            break;
+    }
+};
+
+//Generate Tab
+var tabStrip = $("#tabstrip").kendoTabStrip({ activate: onActivate, select: onSelect
+
+}).data("kendoTabStrip");
+
+// Start Enable tabs region
+var tab = tabStrip.select();
+tabStrip.enable(tab.next(), tab.next().hasClass("k-state-disabled"));
+function OnBegin() {
+    var urlStr = $('#LogoUrlStr').val() + 'congratulations.jpg';
+    if (urlStr == $('#displayBox').attr('src')) {
+        $.blockUI({ message: '<div><img src ="' + urlStr + '" /><div style="text-align:center"><button class="k-button" id="btnCongrats">Ok</button></div></div>', css: {
+            top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+            left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+            width: $('#displayBox')[0].naturalWidth + 'px',
+            border: '0px solid #aaa'
+        }
+        });
+    }
+    else
+        if ($.browser.version > "8.0") {
+            $.blockUI({
+                message: $('#displayBox'),
+                css: {
+                    top: ($(window).height() - $('#displayBox')[0].naturalHeight) / 2 + 'px',
+                    left: ($(window).width() - $('#displayBox')[0].naturalWidth) / 2 + 'px',
+                    width: $('#displayBox')[0].naturalWidth + 'px',
+                    border: '0px solid #aaa'
+                }
+            });
+        } else {
+            $.blockUI({
+                message: $('#displayBox'),
+                css: {
+                    top: ($(window).height() - $('#displayBox')[0].clientHeight) / 2 + 'px',
+                    left: ($(window).width() - $('#displayBox')[0].clientWidth) / 2 + 'px',
+                    width: $('#displayBox')[0].clientWidth + 'px',
+                    border: '0px solid #aaa'
+                }
+            });
+        }
+    }
+
 
 function OnSuccess(id) {
     if ($('#displayBox').attr('src') != $('#LogoUrlStr').val() + 'congratulations.jpg')
@@ -406,19 +517,20 @@ function OnSuccess(id) {
     var tab;
     //alert(id);
     if (id == "Categories") {
-        if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
-            tabStrip.append({
-                text: "Categories",
-                contentUrl: '@Url.Action("Categories")'
-            }, tabStrip.tabGroup.children("li:last")).select();
-            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-            tabStrip.select(tab);
-        } else {
-            tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
-            tabStrip.select(tab);
+        if ($('#IsLaunched').val() == 'False') {
+            if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
+                tabStrip.append({
+                    text: "Categories",
+                    contentUrl: '@Url.Action("Categories")'
+                }, tabStrip.tabGroup.children("li:last")).select();
+                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                tabStrip.select(tab);
+            } else {
+                tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
+                tabStrip.select(tab);
+            }
         }
-    }
-    else if (id == "Create Ads") {
+    } else if (id == "Create Ads") {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
     } else if (id == "Billing & Launch") {
