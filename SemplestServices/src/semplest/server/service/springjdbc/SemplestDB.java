@@ -3,6 +3,7 @@ package semplest.server.service.springjdbc;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -25,11 +26,15 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 
+import semplest.server.protocol.Credential;
 import semplest.server.protocol.CustomOperation;
+import semplest.server.protocol.EmailTemplate;
+import semplest.server.protocol.EmailType;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.ProtocolEnum.PromotionBiddingType;
 import semplest.server.protocol.ProtocolEnum.ScheduleFrequency;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
+import semplest.server.protocol.User;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.BidElement;
 import semplest.server.protocol.adengine.BudgetObject;
@@ -79,7 +84,21 @@ public class SemplestDB extends BaseDB
 
 	public static final String SQL_MARK_KEYWORD_DELETED = "update PromotionKeywordAssociation " + "set IsDeleted = 1, " + "Comment = ? "
 			+ "where KeywordFK = ?" + "  and PromotionFK = ?";
-
+	
+	public static final String GET_EMAIL_TEMPLATE_SQL = "select	e.EmailTemplatePK, e.CustomerFK, e.EmailSubject, e.EmailBody, e.EmailFrom, e.EmailTypeFK " + 
+														"from	EmailTemplate e, " + 
+															   "EmailType t " + 
+														"where	e.EmailTypeFK = t.EmailTypePK " + 
+														   "and t.EmailTypePK = ?";
+	
+	public static final String GET_USERS_FOR_REGISTRATION_REMINDER_SQL = "select	UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate " +
+																		   "from	Users  " +
+																		  "where	IsRegistered = 0 " +
+																		    "and	IsActive = 1 " +
+																		    "and	((LastEmailReminderDate is null and DATEADD(DD, ?, CreatedDate) < ?) " + 
+																				   "	or " +
+																				   "(LastEmailReminderDate is not null and DATEADD(DD, ?, LastEmailReminderDate) < ?))";
+																			 
 	public static <T> T executeRetryOnDeadlock(final CustomOperation<T> customOperation, final int maxNumRetries) throws Exception
 	{
 		final SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
@@ -164,6 +183,74 @@ public class SemplestDB extends BaseDB
 			throw new Exception("Problem performing operations even after max " + maxRetries + " retries", e);
 		}
 	}
+	
+	public static Credential getCredential(final Integer userID)
+	{		
+		final Credential credential = jdbcTemplate.queryForObject("select CredentialPK, UsersFK, Username, Password, RememberMe, SecurityQuestion, SecurityAnswer from Credential where UsersFK = ?", 
+												new RowMapper<Credential>()
+												{
+													@Override
+													public Credential mapRow(ResultSet rs, int rowNum) throws SQLException
+													{							
+														final Integer credentialPK = rs.getInt("CredentialPK");
+														final Integer usersFK = rs.getInt("UsersFK");
+														final String username = rs.getString("Username");
+														final String password = rs.getString("Password");
+														final Boolean rememberMe = rs.getBoolean("RememberMe");
+														final String securityQuestion = rs.getString("SecurityQuestion");
+														final String securityAnswer = rs.getString("SecurityAnswer");														
+														final Credential credential = new Credential(credentialPK, usersFK, username, password, rememberMe, securityQuestion, securityAnswer);
+														return credential;
+													}											
+												}, userID);
+		return credential;
+	}
+	
+	public static List<User> getUsersForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack)
+	{		
+		final List<User> users = jdbcTemplate.query(GET_USERS_FOR_REGISTRATION_REMINDER_SQL, new RowMapper<User>()
+										{
+											@Override
+											public User mapRow(ResultSet rs, int rowNum) throws SQLException
+											{							
+												final Integer userPk = rs.getInt("UserPK");
+												final Integer customerFk = rs.getInt("CustomerFK");
+												final String firstName = rs.getString("FirstName");
+												final String middleInidial = rs.getString("MiddleInitial");
+												final String lastName = rs.getString("LastName");
+												final String email = rs.getString("Email");			
+												final java.util.Date editedDate = rs.getTimestamp("EditedDate");			
+												final Boolean isActive = rs.getBoolean("IsActive");
+												final Boolean isRegistered = rs.getBoolean("IsRegistered");
+												final java.util.Date lastEmailReminderDate = rs.getTimestamp("LastEmailReminderDate");
+												final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+												final User user = new User(userPk, customerFk, firstName, middleInidial, lastName, email, isActive, isRegistered, createdDate, editedDate, lastEmailReminderDate);
+												return user;
+											}
+									
+										}, daysBack, asOfDate, daysBack, asOfDate);
+		return users;
+	}
+	
+	public static List<EmailTemplate> getEmailTemplates(final semplest.server.protocol.EmailType emailType)
+	{
+		final List<EmailTemplate> emailTemplates = new ArrayList<EmailTemplate>(); 
+		final Integer emailTypeCode = emailType.getCode();
+		final List<Map<String, Object>> rows = jdbcTemplate.queryForList(GET_EMAIL_TEMPLATE_SQL, emailTypeCode);
+		for (final Map<String, Object> row : rows)
+		{
+			final Integer code = (Integer)row.get("EmailTemplatePK");
+			final Integer customerFK = (Integer)row.get("CustomerFK");
+			final Integer emailTypeCodeFromDB = (Integer)row.get("EmailTypeFK");
+			final EmailType emailTypeFromDB = EmailType.fromCode(emailTypeCodeFromDB);
+			final String emailFrom = (String)row.get("EmailFrom");
+			final String emailSubject = (String)row.get("EmailSubject");
+			final String emailBody = (String)row.get("EmailBody");
+			final EmailTemplate emailTemplate = new EmailTemplate(code, customerFK, emailTypeFromDB, emailFrom, emailSubject, emailBody);
+			emailTemplates.add(emailTemplate);
+		}		
+		return emailTemplates;
+	}
 
 	public static void updatePromotionStatus(final Integer promotionID, final List<AdEngine> adEngines, final PromotionStatus promotionStatus)
 	{
@@ -215,6 +302,12 @@ public class SemplestDB extends BaseDB
 				+ "begin " + "insert into PromotionAdEngineStatus (PromotionFK, PromotionStatusFK, AdvertisingEngineFK) values (?, ?, ?) " + "end",
 				new Object[]
 				{ promotionID, adEngineCode, promotionStatusCode, promotionID, adEngineCode, promotionID, promotionStatusCode, adEngineCode });
+	}
+	
+	public static void updateUserLastEmailReminderDate(final Integer userID, final java.util.Date now)
+	{
+		logger.info("Will update LastEmailReminderDate to [" + now + "] for UserID [" + userID + "]");
+		jdbcTemplate.update("update Users set LastEmailReminderDate = ? where UserPK = ?", new Object[]{now, userID});
 	}
 
 	public static void SetCurrentDailyBudget(Double currentDailyBudget, Integer promotionID, String adEngine) throws Exception
@@ -285,6 +378,16 @@ public class SemplestDB extends BaseDB
 		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor from Configuration c";
 		return jdbcTemplate.queryForObject(strSQL, BiddingParametersObjMapper);
 	}
+	
+	public static CustomerObj getCustomer(final Integer customerID) 
+	{
+		final String strSQL = "select c.CustomerPK, c.Name, c.TotalTargetCycleBudget, cct.ProductGroupCycleType, cct.CycleInDays, bt.BillType, c.CreatedDate, c.EditedDate from Customer c "
+						+ "inner join ProductGroupCycleType cct on c.ProductGroupCycleTypeFK = cct.ProductGroupCycleTypePK "
+						+ "inner join BillType bt on c.BillTypeFK = bt.BillTypePK "
+						+ "where c.CustomerPK = ?";
+		return jdbcTemplate.queryForObject(strSQL, CustomerObjMapper, customerID);
+	}
+
 
 	/*
 	 * Customer

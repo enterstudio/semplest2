@@ -117,7 +117,16 @@ public final class SemplestUtils
 	public static final Integer MINUTE = 60 * SECOND;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
+	public static final Integer EMAIL_EXPIRED_REGISTRATION_REMINDER_DAYS_BACK = 3;
+	public static final Integer NUM_DATS_TILL_REGISTRATION_LINK_EXPIRATION = 3;
 	public static final String STATUS_GOOD = "STATUS GOOD";
+	public static final String VALUE_DELIMITER = "=";
+	public static final String TOKEN_DELIMITER = "|";	
+	public static final String USER_ID = "USER_ID";
+	public static final String DATE_TIME = "DATE_TIME";
+	public static final String USER_NAME = "USER_NAME";
+	public static final String PASSWORD = "PASSWORD";
+	
 	
 	public static Long getLongMicroAmount(final Double d)
 	{

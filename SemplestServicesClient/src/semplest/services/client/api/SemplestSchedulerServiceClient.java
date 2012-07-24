@@ -17,7 +17,8 @@ import semplest.util.SemplestUtils;
 public class SemplestSchedulerServiceClient extends ServiceRun implements SemplestSchedulerInterface
 {
 	private static String SERVICEOFFERED = "semplest.service.scheduler.SemplestSchedulerService";
-	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest"; // VMJAVA1
+	//private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
+	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest"; 
 	private static String timeoutMS = "40000";
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -33,7 +34,7 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 			{
 				Calendar c = Calendar.getInstance();
 				c.setTime(new Date());
-				c.add(Calendar.MILLISECOND, 20000);
+				//c.add(Calendar.MILLISECOND, 20000);
 				startTime = c.getTime();
 			}
 			catch (Exception e2)
@@ -41,7 +42,7 @@ public class SemplestSchedulerServiceClient extends ServiceRun implements Semple
 				logger.error("Error Getting StartTime" + e2.getMessage(), e2);
 			}
 			SemplestSchedulerServiceClient client = new SemplestSchedulerServiceClient(null);
-			client.NewSchedule(1,1, startTime, false);
+			client.NewSchedule(640, 387, startTime, true);
 			//client.NewSchedule(2,3, new Date(), false);
 		}
 		catch (Exception e)
