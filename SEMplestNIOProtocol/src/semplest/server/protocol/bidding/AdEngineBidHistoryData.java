@@ -1,6 +1,7 @@
 package semplest.server.protocol.bidding;
 
 import java.util.Date;
+import java.util.List;
 
 public class AdEngineBidHistoryData {
 	
@@ -114,6 +115,14 @@ public class AdEngineBidHistoryData {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.transactionDate = transactionDate;
+	}
+	
+	public static String[] getKeywordArray(List<AdEngineBidHistoryData> historyDataList){
+		String[]  kwrds = new String[historyDataList.size()];
+		for(int i = 0; i< kwrds.length; i++){
+			kwrds[i] = historyDataList.get(i).getKeyword();
+		}
+		return kwrds;
 	}
 	
 
