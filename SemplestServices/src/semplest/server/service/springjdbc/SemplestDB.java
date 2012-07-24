@@ -1527,5 +1527,11 @@ public class SemplestDB extends BaseDB
 			logger.error("logError: " + e1.getMessage(), e1);
 		}
 	}
-
+	
+	public static void main(String[] args ) throws Exception {
+		List<String> ss = getGeotargetStates( 2 );
+		for( String s: ss )
+			System.out.println( s );
+	}
+	
 }
