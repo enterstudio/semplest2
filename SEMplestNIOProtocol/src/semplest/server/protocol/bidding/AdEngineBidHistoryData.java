@@ -107,7 +107,7 @@ public class AdEngineBidHistoryData implements Comparable {
 	public AdEngineBidHistoryData(){};
 
 	public AdEngineBidHistoryData(String adEngine, String keyword, String matchType,
-			Integer position, Double avgBid, Double avgCPC, Integer saerchVol,
+			Integer position, Double avgBid, Double avgCPC, Integer searchVol,
 			Integer clicks, Integer impressions, Date startDate, Date endDate,
 			Date transactionDate) {
 		super();
@@ -117,7 +117,7 @@ public class AdEngineBidHistoryData implements Comparable {
 		this.position = position;
 		this.avgBid = avgBid;
 		this.avgCPC = avgCPC;
-		this.searchVol = saerchVol;
+		this.searchVol = searchVol;
 		this.clicks = clicks;
 		this.impressions = impressions;
 		this.startDate = startDate;
@@ -173,7 +173,7 @@ public class AdEngineBidHistoryData implements Comparable {
 	public String toString() {
 		return "AdEngineBidHistoryData [adEngine = "+ adEngine+", keyword=" + keyword + ", matchType="
 				+ matchType + ", position=" + position + ", avgBid=" + avgBid
-				+ ", avgCost=" + avgCPC + ", saerchVol=" + searchVol
+				+ ", avgCost=" + avgCPC + ", searchVol=" + searchVol
 				+ ", clicks=" + clicks + ", impressions=" + impressions
 				+ ", startDate=" + startDate + ", endDate=" + endDate
 				+ ", transactionDate=" + transactionDate + "]";
