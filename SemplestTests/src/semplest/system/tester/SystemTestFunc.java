@@ -146,70 +146,7 @@ public class SystemTestFunc extends BaseDB{
 		
 		System.out.println("Clearing history test data...");
 		
-		System.out.println(" - Delete history test data from database.");
-		
-		//Clear the scheduler data
-		System.out.println("  -- clear scheduler data");		
-		
-		sql = "select s.SchedulePK from Schedule s where s.PromotionFK = ?";
-		List<Integer> scheduleIDs = jdbcTemplate.queryForList(sql, new Object[] 
-				{SystemTestDataModel.semplestPromotionId}, Integer.class);
-		
-		List<Integer> scheduleJobIDs = new ArrayList<Integer>();
-		for(Integer schedulePK : scheduleIDs){
-			sql = "select sj.ScheduleJobPK from ScheduleJob sj where ScheduleFK = ?";
-			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
-					{schedulePK}, Integer.class);
-			scheduleJobIDs.addAll(ret);
-		}
-		
-		List<Integer> taskIDs = new ArrayList<Integer>();
-		for(Integer schedulePK : scheduleIDs){
-			sql = "select sta.TaskFK from ScheduleTaskAssociation sta where sta.ScheduleFK = ?";
-			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
-					{schedulePK}, Integer.class);
-			taskIDs.addAll(ret);
-		}
-		
-		for(Integer scheduleJobID : scheduleJobIDs){
-			sql = "delete from ScheduleLog where ScheduleJobFK = ?";
-			jdbcTemplate.update(sql, new Object[] 
-					{scheduleJobID});
-			System.out.println("  	> deleted ScheduleLogs for ScheduleJobID " + scheduleJobID);	
-		}
-		System.out.println("  	>>");	
-		for(Integer scheduleID : scheduleIDs){
-			sql = "delete from ScheduleJob where ScheduleFK = ?";
-			jdbcTemplate.update(sql, new Object[] 
-					{scheduleID});
-			System.out.println("  	> deleted ScheduleJobs for ScheduleID " + scheduleID);	
-		}
-		System.out.println("  	>>");	
-		for(Integer scheduleID : scheduleIDs){
-			sql = "delete from ScheduleTaskAssociation where ScheduleFK = ?";
-			jdbcTemplate.update(sql, new Object[] 
-					{scheduleID});
-			System.out.println("  	> deleted ScheduleTaskAssociations for ScheduleID " + scheduleID);	
-		}
-		System.out.println("  	>>");
-		sql = "delete from Schedule where PromotionFK = ?";
-		jdbcTemplate.update(sql, new Object[] 
-				{SystemTestDataModel.semplestPromotionId});
-		System.out.println("  	> deleted Schedules for PromotionID " + SystemTestDataModel.semplestPromotionId);
-		System.out.println("  	>>");
-		for(Integer taskID : taskIDs){
-			sql = "delete from Task where TaskPK = ?";
-			jdbcTemplate.update(sql, new Object[] 
-					{taskID});
-			System.out.println("  	> deleted Tasks for TaskID " + taskID);	
-		}
-		
-		//clear other data
-		System.out.println("  -- clear other data");
-		sql= "DELETE from KeywordBidData;" +
-				"DELETE FROM TargetedDailyBudget;" +
-				"DELETE FROM AdvertisingEngineAds;";			
-		jdbcTemplate.update(sql);						
+		System.out.println(" - Delete history test data from database.");	
 		
 		//get the list of promotion IDs
 		sql = "SELECT p.PromotionPK FROM Promotion p WHERE ProductGroupFK = ?";
@@ -217,16 +154,91 @@ public class SystemTestFunc extends BaseDB{
 				{SystemTestDataModel.semplestProductGroupId}, Integer.class);
 				//{testData.productGroupIds.get(1)}, Integer.class);
 		
-		System.out.println("  -- clear promotion data.");
 		for(Integer promoId : promoIds){		
-			sql = "SELECT kb.KeywordBidPK FROM KeywordBid kb WHERE kb.PromotionFK = ?";
-			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+			System.out.println("  - deleting promotion " + promoId);
+			
+			//Clear scheduler data
+			System.out.println("    -- deleting scheduler data");		
+			
+			sql = "select s.SchedulePK from Schedule s where s.PromotionFK = ?";
+			List<Integer> scheduleIDs = jdbcTemplate.queryForList(sql, new Object[] 
 					{promoId}, Integer.class);
-			for(Integer kbId : ret){
-				sql = "DELETE FROM TrafficEstimator WHERE KeywordBidFK = ?";
-				jdbcTemplate.update(sql, new Object[]
-						{kbId});
+			
+			List<Integer> scheduleJobIDs = new ArrayList<Integer>();
+			for(Integer schedulePK : scheduleIDs){
+				sql = "select sj.ScheduleJobPK from ScheduleJob sj where ScheduleFK = ?";
+				List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+						{schedulePK}, Integer.class);
+				scheduleJobIDs.addAll(ret);
 			}
+			
+			List<Integer> taskIDs = new ArrayList<Integer>();
+			for(Integer schedulePK : scheduleIDs){
+				sql = "select sta.TaskFK from ScheduleTaskAssociation sta where sta.ScheduleFK = ?";
+				List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+						{schedulePK}, Integer.class);
+				taskIDs.addAll(ret);
+			}
+			
+			for(Integer scheduleJobID : scheduleJobIDs){
+				sql = "delete from ScheduleLog where ScheduleJobFK = ?";
+				jdbcTemplate.update(sql, new Object[] 
+						{scheduleJobID});
+				System.out.println("  	> deleted ScheduleLogs for ScheduleJobID " + scheduleJobID);	
+			}
+			System.out.println("  	>>");	
+			for(Integer scheduleID : scheduleIDs){
+				sql = "delete from ScheduleJob where ScheduleFK = ?";
+				jdbcTemplate.update(sql, new Object[] 
+						{scheduleID});
+				System.out.println("  	> deleted ScheduleJobs for ScheduleID " + scheduleID);	
+			}
+			System.out.println("  	>>");	
+			for(Integer scheduleID : scheduleIDs){
+				sql = "delete from ScheduleTaskAssociation where ScheduleFK = ?";
+				jdbcTemplate.update(sql, new Object[] 
+						{scheduleID});
+				System.out.println("  	> deleted ScheduleTaskAssociations for ScheduleID " + scheduleID);	
+			}
+			System.out.println("  	>>");
+			sql = "delete from Schedule where PromotionFK = ?";
+			jdbcTemplate.update(sql, new Object[] 
+					{promoId});
+			System.out.println("  	> deleted Schedules for PromotionID " + promoId);
+			System.out.println("  	>>");
+			for(Integer taskID : taskIDs){
+				sql = "delete from Task where TaskPK = ?";
+				jdbcTemplate.update(sql, new Object[] 
+						{taskID});
+				System.out.println("  	> deleted Tasks for TaskID " + taskID);	
+			}		
+			
+			//Clear promotion data
+			System.out.println("    -- deleting promotion data");
+			
+			sql = "SELECT pa.PromotionAdsPK FROM PromotionAds pa WHERE pa.PromotionFK = ?";
+			List<Integer> adIds = jdbcTemplate.queryForList(sql, new Object[]
+					{promoId}, Integer.class);
+			for(Integer adId : adIds){
+				sql = "DELETE FROM AdvertisingEngineAds WHERE PromotionAdsFK = ?";
+				jdbcTemplate.update(sql, new Object[]
+						{adId});	
+				System.out.println("  	> deleted AdvertisingEngineAds for PromotionAdsID " + adId);
+			}
+			System.out.println("  	>>");
+			
+			sql = "SELECT kb.KeywordBidPK FROM KeywordBid kb WHERE kb.PromotionFK = ?";
+			List<Integer> kbIds = jdbcTemplate.queryForList(sql, new Object[] 
+					{promoId}, Integer.class);
+			for(Integer kbId : kbIds){
+				sql = "DELETE FROM TrafficEstimator WHERE KeywordBidFK = ?; " +
+						"DELETE FROM KeywordBidData WHERE KeywordBidFK = ?;";
+				jdbcTemplate.update(sql, new Object[]
+						{kbId, kbId});
+				System.out.println("  	> deleted TrafficEstimator for KeywordBidID " + kbId);
+				System.out.println("  	> deleted KeywordBidData for KeywordBidID " + kbId);
+			}
+			System.out.println("  	>>");
 			
 			sql = "DELETE FROM AdvertisingEnginePromotion where PromotionFK = ?;" +
 					"DELETE PromotionAds WHERE PromotionFK = ?;" +
@@ -236,12 +248,15 @@ public class SystemTestFunc extends BaseDB{
 					"DELETE GeoTargeting WHERE PromotionFK = ?;" +
 					"DELETE SiteLinks WHERE PromotionFK = ?;" +
 					"DELETE FROM PromotionAdEngineSelected WHERE PromotionFK = ?;" +
+					"DELETE FROM PromotionAdengineStatus WHERE PromotionFK = ?;" +
+					"DELETE FROM PromotionBidding WHERE PromotionFK = ?;" +
+					"DELETE FROM TargetedDailyBudget WHERE PromotionFK = ?;" +
 					"DELETE Promotion WHERE PromotionPK = ?;";
 			
 			jdbcTemplate.update(sql, new Object[]
-					{promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId});						
+					{promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId,promoId});		
 			
-			System.out.println("     - promotion " + promoId + " deleted");
+			System.out.println("  	> deleted all the other data for PromotionID " + promoId);
 		}			
 		
 		System.out.println(" - Delete history test data from google.");
