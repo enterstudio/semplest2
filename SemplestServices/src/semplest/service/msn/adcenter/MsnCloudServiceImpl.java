@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.Date;
 
 import javax.xml.rpc.ServiceException;
 
@@ -602,6 +603,11 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		List<AdEngineBidHistoryData> dataList = new ArrayList<AdEngineBidHistoryData>(keywordMatchType.size());
 		Set<String> keywordSet = keywordMatchType.keySet();
 		IAdIntelligenceService adInteligenceService = getAdInteligenceService(1707019L);
+		Date transactionDate = new Date();
+		Date endDate = new Date();
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -30);
+		Date startDate = cal.getTime();
 		//Generate output objects
 		for(String kwrd : keywordSet){
 			AdEngineBidHistoryData historyData = new AdEngineBidHistoryData();
@@ -609,6 +615,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			historyData.setKeyword(kwrd);
 			historyData.setMatchType(keywordMatchType.get(kwrd).toString());
 			historyData.setPosition(position);
+			historyData.setStartDate(startDate);
+			historyData.setEndDate(endDate);
+			historyData.setTransactionDate(transactionDate);
+			
 			dataList.add(historyData);
 		}
 		
@@ -688,16 +698,18 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 	    
 	}
 	
-	public List<AdEngineBidHistoryData> getHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ){
+	public List<AdEngineBidHistoryData> getHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ) throws Exception{
 		//Populates AdEngineBidHistoryData objects with information about search volume
 	String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
 	GetHistoricalSearchCountByDeviceRequest q = new GetHistoricalSearchCountByDeviceRequest();
     q.setKeywords(kwrds);
     q.setPublisherCountries(new String[] {"US"} );
     q.setLanguage("English");
-    q.setStartTimePeriod(gDMY("20120601"));
-    q.setEndTimePeriod(gDMY( "20120630") );
-    try {
+    
+    q.setTimePeriodRollup("Daily");
+    q.setStartTimePeriod(gDMY(-30));
+    q.setEndTimePeriod(gDMY(0));
+    
         GetHistoricalSearchCountByDeviceResponse r = 
           adInteligenceService.getHistoricalSearchCountByDevice( q );
         if(keywords.size()!=r.getKeywordSearchCounts().length){
@@ -710,26 +722,26 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
         		throw new Exception("Returned keyword does not match with requested keyword");
         	}
         	if( k.getDevice() != null  && k.getHistoricalSearchCounts()!=null && k.getHistoricalSearchCounts().length>0){
-        		if(k.getHistoricalSearchCounts().length >1){
-        			throw new Exception("More than 1 HistoricalSearchCountPeriodic");
+        		int count = 0;
+        		for(HistoricalSearchCountPeriodic dailyCount : k.getHistoricalSearchCounts()){
+        			count = count + dailyCount.getSearchCount();
         		}
-        		logger.debug("- Volume: "+ k.getHistoricalSearchCounts()[0].getSearchCount());
-        		keywords.get(i).setSearchVol(k.getHistoricalSearchCounts()[0].getSearchCount());
+        		logger.debug("- Volume: "+ count);
+        		keywords.get(i).setSearchVol(count);
         	}
                 
         }
-	} catch (AdApiFaultDetail f ){
-	    for( AdApiError e: f.getErrors() )
-	      System.out.println( e.getMessage() +":"+ e.getDetail());
-	} catch (Exception e){ e.printStackTrace();}
+	
 	   
     return keywords;
 	}
-	public DayMonthAndYear gDMY( String dates ){
-	      SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+
+	
+	public DayMonthAndYear gDMY(int pastDays ){
+	      
 	      Calendar c = Calendar.getInstance();
 	    try {
-	      c.setTime( df.parse( dates ));
+	      c.add(Calendar.DATE, pastDays);
 	    } catch (Exception e ){ e.printStackTrace(); }
 
 	    DayMonthAndYear dmy = new DayMonthAndYear();
