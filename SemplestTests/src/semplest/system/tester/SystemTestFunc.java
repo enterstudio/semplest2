@@ -1,11 +1,6 @@
 package semplest.system.tester;
 
-import java.io.BufferedWriter;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -17,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -36,6 +30,9 @@ import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{	
+	
+	private static final String reportDir = "/semplest/TestReports/UnitTest/";
+	//private static final String reportDir = "Z:\\TestReports\\UnitTest\\";
 	
 	private static final String eol = System.getProperty("line.separator");
 	
@@ -342,15 +339,7 @@ public class SystemTestFunc extends BaseDB{
 			DateFormat dateFormat = new SimpleDateFormat("_MM-dd-yy_HHmm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
-			SystemTestDataModel.reportName = "UnitTestReport" + now + ".txt";
-			
-			String reportDir;
-			if(ownIP.getHostAddress().equalsIgnoreCase(hudsonServerIP)){
-				reportDir = "/semplest/TestReports/UnitTest/";
-			}
-			else{
-				reportDir = "Z:\\TestReports\\UnitTest\\";
-			}
+			SystemTestDataModel.reportName = "UnitTestReport" + now + ".txt";			
 			String reportPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
