@@ -491,10 +491,11 @@ namespace Semplest.Core.Controllers
         [AcceptSubmitType(Name = "Command", Type = "SetNegativeKeywords")]
         public ActionResult SetNegativeKeywords(AdModel model)
         {
-            if (string.IsNullOrEmpty(model.NegativeKeywordsText))
-                return Json("NegativeKeywords");
-            var addl = model.NegativeKeywordsText.Split(',').ToList();
-            addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
+            if (!string.IsNullOrEmpty(model.NegativeKeywordsText))
+            {
+                var addl = model.NegativeKeywordsText.Split(',').ToList();
+                addl.ForEach(t => model.NegativeKeywords.Add(t.Trim()));
+            }
             Session["NegativeKeywords"] = model.NegativeKeywords;
             Session["NegativeKeywordsText"] = model.NegativeKeywordsText;
             var csm = (CampaignSetupModel) Session["CampaignSetupModel"];
