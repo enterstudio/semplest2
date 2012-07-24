@@ -381,7 +381,7 @@ namespace Semplest.Core.Models.Repositories
 
         public Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName)
         {
-            var promo = prodGroup.Promotions.FirstOrDefault(m => m.PromotionName == promotionName);
+            var promo = prodGroup.Promotions.FirstOrDefault(m => m.PromotionName == promotionName && !m.IsDeleted);
             return promo;
         }
 
@@ -1148,7 +1148,7 @@ namespace Semplest.Core.Models.Repositories
                     var queryProdGrp =
                     from pgs in dbcontext.ProductGroups
                     join pms in dbcontext.Promotions on pgs.ProductGroupPK equals pms.ProductGroupFK
-                    where (pgs.CustomerFK == custFk && pgs.ProductGroupName == prodGroup && pms.PromotionName == promotionName)
+                    where (pgs.CustomerFK == custFk && pgs.ProductGroupName == prodGroup && pms.PromotionName == promotionName && !pms.IsDeleted)
                     select pms;
 
                 if (queryProdGrp.Any())
