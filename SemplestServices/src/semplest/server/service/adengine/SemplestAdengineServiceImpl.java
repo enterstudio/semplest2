@@ -99,7 +99,6 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static Long AdwordsValidationAdGroupID = null;
 	private static String DevelopmentEmail = null;
 	private static String RunMode = null;
-
 	private static Double BudgetMultFactor = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
@@ -1116,7 +1115,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
-							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
+							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n");
+							final Integer numUpdated = filteredDataSize - numInserted;
+							emailContent.append("\t# Items Updated: ").append(numUpdated).append("\n\n");
 						}
 					}
 					catch (Exception e)
@@ -1174,7 +1175,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 						if (filteredDataSize > 0)
 						{
 							final Integer numInserted = SemplestDB.storeAdvertisingEngineReportData(PromotionID, adEngine, filterReportDatabyCampaignID);
-							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n\n");
+							emailContent.append("\t# Items Inserted: ").append(numInserted).append("\n");
+							final Integer numUpdated = filteredDataSize - numInserted;
+							emailContent.append("\t# Items Updated: ").append(numUpdated).append("\n\n");
 						}
 					}
 					catch (Exception e)
