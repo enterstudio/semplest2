@@ -70,6 +70,7 @@ import semplest.services.client.interfaces.MsnAdcenterServiceInterface;
 import semplest.util.SemplestUtils;
 import au.com.bytecode.opencsv.CSVReader;
 
+import com.google.api.adwords.v201109.cm.ApiException;
 import com.google.gson.Gson;
 import com.microsoft.adapi.AdApiError;
 import com.microsoft.adapi.AdApiFaultDetail;
@@ -169,10 +170,12 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 			}
 			MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 			Map<String, ProtocolEnum.SemplestMatchType> map = new HashMap<String, ProtocolEnum.SemplestMatchType>();
+			
+			
 			map.put("aoidfnainef", SemplestMatchType.Exact);
 			map.put("wedding bouquet", SemplestMatchType.Exact);
 			map.put("wedding flowers", SemplestMatchType.Broad);
-			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 3);
+			List<AdEngineBidHistoryData> list = msn.getBidHistoryData(map, 1);
 			
 			for(AdEngineBidHistoryData examp : list){
 				logger.info(examp.toString());
@@ -644,61 +647,8 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		return dataList;
 	}
 	
-	public AdPosition getAdPosition(Integer position){
-		return AdPosition.SideBar1;
-	}
-	public static MatchType semplestMT2msnMT(SemplestMatchType semplestMatchType){
-		MatchType matchType = null;	
-		if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Exact.getValue())){
-			matchType = MatchType.Exact;
-		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Phrase.getValue())){
-			matchType = MatchType.Phrase;
-		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Broad.getValue())){
-			matchType = MatchType.Broad;
-		}
-		return matchType;
-	}
-	public List<AdEngineBidHistoryData> getHistoricData(List<AdEngineBidHistoryData> keywords, Integer position, IAdIntelligenceService adInteligenceService) throws Exception{
-		
-		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
-		SemplestMatchType matchType =  AdEngineBidHistoryData.getListMatchType(keywords);
-		AdPosition adposition = getAdPosition(position);
-		GetHistoricalKeywordPerformanceByDeviceRequest q = new GetHistoricalKeywordPerformanceByDeviceRequest();
-	    q.setKeywords( kwrds );
-	    q.setPublisherCountries(new String[] {"US"} );
-	    q.setLanguage("English");
-	    q.setTimeInterval(TimeInterval.Last30Days);
-	    q.setMatchTypes( new MatchType[] {semplestMT2msnMT(matchType)});
-	    q.setTargetAdPosition( adposition );
-
-	 
-	      GetHistoricalKeywordPerformanceByDeviceResponse r = adInteligenceService.getHistoricalKeywordPerformanceByDevice( q );
-	      if(keywords.size()!=r.getKeywordHistoricalPerformances().length){
-	        	throw new Exception("Number of KeywordPerformances and keywords do not match");
-	      }
-	      for(int i=0; i< r.getKeywordHistoricalPerformances().length; i++){
-	    	KeywordHistoricalPerformanceByDevice k = r.getKeywordHistoricalPerformances()[i];
-	    	logger.debug("Keyword : "+ k.getKeyword());
-	    	if(!k.getKeyword().equalsIgnoreCase(keywords.get(i).getKeyword())){
-        		throw new Exception("Returned keyword does not match with requested keyword");
-        	}
-	        if( k.getDevice() != null && k.getKeywordKPIs()!=null)
-	          for( KeywordKPI p: k.getKeywordKPIs() ){
-	        	  if(p.getMatchType().equals(semplestMT2msnMT(matchType)) && p.getAdPosition().equals(adposition)){
-	        		  keywords.get(i).setAvgBid(p.getAverageBid());
-	        		  keywords.get(i).setAvgCPC(p.getAverageCPC());
-	        		  keywords.get(i).setClicks(p.getClicks());
-	        		  keywords.get(i).setImpressions(p.getImpressions());
-	        	  }
-	          }
-	        	  
-	      }
-	      
-	      return keywords;
-	    
-	}
-	
-	public List<AdEngineBidHistoryData> getHistoricVolume(List<AdEngineBidHistoryData> keywords, IAdIntelligenceService adInteligenceService ) throws Exception{
+	public List<AdEngineBidHistoryData> getHistoricVolume(List<AdEngineBidHistoryData> keywords, 
+			IAdIntelligenceService adInteligenceService ) throws Exception{
 		//Populates AdEngineBidHistoryData objects with information about search volume
 	String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
 	GetHistoricalSearchCountByDeviceRequest q = new GetHistoricalSearchCountByDeviceRequest();
@@ -710,6 +660,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
     q.setStartTimePeriod(gDMY(-30));
     q.setEndTimePeriod(gDMY(0));
     
+    try{
         GetHistoricalSearchCountByDeviceResponse r = 
           adInteligenceService.getHistoricalSearchCountByDevice( q );
         if(keywords.size()!=r.getKeywordSearchCounts().length){
@@ -731,12 +682,81 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
         	}
                 
         }
-	
-	   
+    }catch(ApiException apiE){
+    	throw new Exception(apiE.dumpToString());
+    }
     return keywords;
 	}
-
 	
+	public List<AdEngineBidHistoryData> getHistoricData(List<AdEngineBidHistoryData> keywords, Integer position,
+			IAdIntelligenceService adInteligenceService) throws Exception{
+		
+		String[]  kwrds = AdEngineBidHistoryData.getKeywordArray(keywords);
+		SemplestMatchType matchType =  AdEngineBidHistoryData.getListMatchType(keywords);
+		AdPosition adposition = getAdPosition(position);
+		GetHistoricalKeywordPerformanceByDeviceRequest q = new GetHistoricalKeywordPerformanceByDeviceRequest();
+	    q.setKeywords( kwrds );
+	    q.setPublisherCountries(new String[] {"US"} );
+	    q.setLanguage("English");
+	    q.setTimeInterval(TimeInterval.Last30Days);
+	    q.setMatchTypes( new MatchType[] {semplestMT2msnMT(matchType)});
+	    q.setTargetAdPosition( adposition );
+
+	    try{
+	      GetHistoricalKeywordPerformanceByDeviceResponse r = adInteligenceService.getHistoricalKeywordPerformanceByDevice( q );
+		
+	      if(keywords.size()!=r.getKeywordHistoricalPerformances().length){
+	        	throw new Exception("Number of KeywordPerformances and keywords do not match");
+	      }
+	      for(int i=0; i< r.getKeywordHistoricalPerformances().length; i++){
+	    	KeywordHistoricalPerformanceByDevice k = r.getKeywordHistoricalPerformances()[i];
+	    	logger.debug("Keyword : "+ k.getKeyword());
+	    	if(!k.getKeyword().equalsIgnoreCase(keywords.get(i).getKeyword())){
+        		throw new Exception("Returned keyword does not match with requested keyword");
+        	}
+	        if( k.getDevice() != null && k.getKeywordKPIs()!=null)
+	          for( KeywordKPI p: k.getKeywordKPIs() ){
+	        	  if(p.getMatchType().equals(semplestMT2msnMT(matchType)) && p.getAdPosition().equals(adposition)){
+	        		  keywords.get(i).setAvgBid(p.getAverageBid());
+	        		  keywords.get(i).setAvgCPC(p.getAverageCPC());
+	        		  keywords.get(i).setClicks(p.getClicks());
+	        		  keywords.get(i).setImpressions(p.getImpressions());
+	        	  }
+	          }
+	        	  
+	      }
+	    }catch(ApiException apiE){
+	    	throw new Exception(apiE.dumpToString());
+	    }
+	    return keywords;
+	    
+	}
+	public AdPosition getAdPosition(Integer position) throws Exception{
+		if(position<1 || position>14){
+			throw new Exception("Invalid position value. Values should range from 1 to 14");
+		}
+		String positionString = null;
+		if(position<5){
+			positionString = "MainLine"+position;
+		}else{
+			positionString = "SideBar"+(position-4);
+		}
+		AdPosition adPosition = AdPosition.fromValue(positionString);
+		return adPosition;
+	}
+	
+	public static MatchType semplestMT2msnMT(SemplestMatchType semplestMatchType){
+		MatchType matchType = null;	
+		if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Exact.getValue())){
+			matchType = MatchType.Exact;
+		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Phrase.getValue())){
+			matchType = MatchType.Phrase;
+		}else if(semplestMatchType.toString().equalsIgnoreCase(MatchType.Broad.getValue())){
+			matchType = MatchType.Broad;
+		}
+		return matchType;
+	}
+
 	public DayMonthAndYear gDMY(int pastDays ){
 	      
 	      Calendar c = Calendar.getInstance();
