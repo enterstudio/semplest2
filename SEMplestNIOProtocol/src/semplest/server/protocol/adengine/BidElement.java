@@ -2,7 +2,8 @@ package semplest.server.protocol.adengine;
 
 import java.util.Date;
 
-public class BidElement
+
+public class BidElement implements Cloneable 
 {
 	private Long keywordAdEngineID;
 	private String keyword;
@@ -126,6 +127,9 @@ public class BidElement
 				+ ", isActive=" + isActive + ", isNegative=" + isNegative + "]";
 	}
 	
-	
+	public BidElement clone() throws CloneNotSupportedException
+	{
+		return (BidElement) super.clone();
+	}
 
 }
