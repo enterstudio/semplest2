@@ -375,7 +375,7 @@ public class SemplestDB extends BaseDB
 
 	public static BiddingParameters getBiddingParameters() throws Exception
 	{
-		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor from Configuration c";
+		String strSQL = "select c.SemplestBiddingBudgetMultFactor, c.SemplestBiddingInitialBidBoostFactor,	c.SemplestBiddingPercentileValue, c.SemplestBiddingMarginFactor, c.BiddingServiceTargetPosition from Configuration c";
 		return jdbcTemplate.queryForObject(strSQL, BiddingParametersObjMapper);
 	}
 	

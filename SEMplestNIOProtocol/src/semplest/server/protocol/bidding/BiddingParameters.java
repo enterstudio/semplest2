@@ -6,6 +6,7 @@ public class BiddingParameters
 	private Float SemplestBiddingInitialBidBoostFactor;
 	private Integer SemplestBiddingPercentileValue;
 	private Float SemplestBiddingMarginFactor;
+	private Integer BiddingServiceTargetPosition;
 	public Integer getSemplestBiddingBudgetMultFactor()
 	{
 		return SemplestBiddingBudgetMultFactor;
@@ -37,6 +38,14 @@ public class BiddingParameters
 	public void setSemplestBiddingMarginFactor(Float semplestBiddingMarginFactor)
 	{
 		SemplestBiddingMarginFactor = semplestBiddingMarginFactor;
+	}
+	public Integer getBiddingServiceTargetPosition()
+	{
+		return BiddingServiceTargetPosition;
+	}
+	public void setBiddingServiceTargetPosition(Integer biddingServiceTargetPosition)
+	{
+		BiddingServiceTargetPosition = biddingServiceTargetPosition;
 	}
 
 }
