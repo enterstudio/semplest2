@@ -1,0 +1,165 @@
+<project name="SemplestTestBuild" default="jar" basedir=".">
+	
+	<property name="semplest.protocol.dir" value="${basedir}/../SEMplestProtocol" />
+	<property name="semplest.services.dir" value="${basedir}/../SemplestServices" />
+	<property name="semplest.keywords.dir" value="${basedir}/../SemplestKeywords" />
+	<property name="semplest.bidding.dir" value="${basedir}/../SEMplestBidding" />
+	<property name="semplest.clientapi.dir" value="${basedir}/../SemplestServicesClient" />	
+	
+	<property name="classes" value="${basedir}/classes"/>
+	
+	<target name="init"> 		
+		
+		<mkdir dir="${classes}"/>
+		<copy todir="${basedir}/lib" filtering="off">
+  	      <flattenmapper />
+  	      <fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar" />
+			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar" />
+  	    </copy>
+		
+		<echo message="copy service and properties files..."/>
+		<copy file="${semplest.services.dir}/src/Service.xml" todir="${basedir}/lib"/>
+		<copy file="${semplest.services.dir}/src/system.properties" todir="${basedir}/lib"/>
+		<echo message="copy done."/>
+		
+		<!-- compile protocol -->
+		<path id="protocol.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.protocol.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<javac srcdir="${semplest.protocol.dir}" destdir="${classes}" classpathref="protocol.path"
+	      target="1.6"
+	      source="1.6"
+	      debug="${java.debug}"   	
+	      includes="**/*.java"
+	      excludes="**/*.svn"
+	    />		
+	
+		<!-- Create a Jar for SemplestServicesClient -->
+		<echo message="Creating Jar for SemplestServicesClient..."/>
+		<copy todir="${basedir}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar" />
+		</copy>
+		<path id="api.path">
+			<pathelement location="${classes}"/>
+			<fileset dir="${semplest.clientapi.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.clientapi.dir}/temp"/>
+		<javac srcdir="${semplest.clientapi.dir}" destdir="${semplest.clientapi.dir}/temp" classpathref="api.path"
+			target="1.6"
+			source="1.6"
+			debug="${java.debug}"   	
+			includes="**/*.java" >
+			<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestServicesClient.jar" basedir="${semplest.clientapi.dir}/temp">
+			 <manifest>
+			 	<attribute name="Main-Class" value="semplest.services.client.api"/>
+			 </manifest>
+		</jar> 
+		
+		<!-- Create a Jar for SemplestServicesBidding, and put it to SemplestTests/lib -->
+		<echo message="Creating Jar for SemplestBidding..."/>
+		<copy todir="${basedir}/lib" filtering="off">
+			<flattenmapper />
+			<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar" />
+		</copy>
+		<path id="bid.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.bidding.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.bidding.dir}/temp"/>
+		<javac srcdir="${semplest.bidding.dir}" destdir="${semplest.bidding.dir}/temp" classpathref="bid.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestServicesBidding.jar" basedir="${semplest.bidding.dir}/temp">				 
+		</jar> 		
+		
+		<!-- compile services -->
+		<path id="services.path">
+			<pathelement location="${classes}"/>
+			<fileset dir="${basedir}/lib" includes="**/*.jar"/>
+			<fileset dir="${semplest.services.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<javac srcdir="${semplest.services.dir}" destdir="${classes}" classpathref="services.path"
+	      target="1.6"
+	      source="1.6"
+	      debug="${java.debug}"   	
+	      includes="**/*.java"
+	      excludes="**/*.svn"
+	    />	
+		
+		<!-- Create a Jar for SemplestKeywords, and put it to SemplestTests/lib -->
+		<echo message="Creating Jar for SemplestKeywords..."/>			
+		
+	 	<copy todir="${basedir}/lib" filtering="off">
+	 		<flattenmapper />
+	 		<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar" />
+	 	</copy>
+		<path id="keywords.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${semplest.keywords.dir}/lib" includes="**/*.jar"/>
+		</path>
+		<mkdir dir="${semplest.keywords.dir}/temp"/>
+		<javac srcdir="${semplest.keywords.dir}" destdir="${semplest.keywords.dir}/temp" classpathref="keywords.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+		<jar destfile="${basedir}/lib/SemplestKeywords.jar" basedir="${semplest.keywords.dir}/temp">					 
+		</jar>		
+		
+	</target>
+		
+	<!-- compile the classes all together with the test code -->
+	<target name="compile" depends="init">
+		<path id="test.path">
+			<pathelement location="${classes}"/>
+				<fileset dir="${basedir}/lib" includes="**/*.jar"/>
+		</path>
+		<javac srcdir="${basedir}" destdir="${classes}" classpathref="test.path"
+				target="1.6"
+				source="1.6"
+				debug="${java.debug}"   	
+				includes="**/*.java" >
+				<exclude name="**/*.svn"/>
+		</javac>
+	</target>
+	
+	<!-- Build the Excutable Jar -->
+	<target name="jar" depends="init, compile">  	
+		<path id="build.classpath">
+		        <fileset dir="${basedir}/lib" />
+		</path>
+		
+		<pathconvert property="mf.classpath" pathsep=" ">
+		        <path refid="build.classpath"/>
+		        <mapper>
+		                <chainedmapper>
+		                        <flattenmapper/>
+		                        <globmapper from="*.jar" to="lib/*.jar"/>
+		                </chainedmapper>
+		        </mapper>
+		</pathconvert>
+		
+	    <jar destfile="SystemMonitor.jar"
+	         basedir="${classes}"
+	         includes="**/*.class">
+			<fileset dir="${basedir}/lib" includes="**/*.*"/>
+	      <manifest>
+	      	
+	        <attribute name="Main-Class" value="semplest.system.monitor.SystemMonitor" />
+	      	
+	      	<attribute name="Class-Path" value="${mf.classpath}"/>
+	      </manifest>
+	    </jar>
+	</target>
+	
+</project>
