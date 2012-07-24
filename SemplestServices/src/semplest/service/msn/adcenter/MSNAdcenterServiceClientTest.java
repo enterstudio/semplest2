@@ -45,7 +45,7 @@ public class MSNAdcenterServiceClientTest {
 
 	private static final Logger logger = Logger.getLogger(MSNAdcenterServiceClientTest.class);
 	//Parameters to create campaign and adds
-	String accountName = "-WeddingHairReduced2";
+	String accountName = "DefaultAccount";
 	String accountNumber = "X1660053";
 	String url = "www.WeddingChannel.com";
 	String productSubcategory = "Wedding Hair";
