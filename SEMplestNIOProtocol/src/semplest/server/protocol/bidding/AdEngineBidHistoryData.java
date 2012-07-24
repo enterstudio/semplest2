@@ -58,7 +58,7 @@ public class AdEngineBidHistoryData {
 	public void setPosition(Integer position) {
 		this.position = position;
 	}
-	public Integer getSaerchVol() {
+	public Integer getSearchVol() {
 		return searchVol;
 	}
 	public void setSearchVol(Integer saerchVol) {
