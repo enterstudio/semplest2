@@ -559,7 +559,6 @@ function OnSuccess(id) {
 
     } else {
         if (id.name == "Keywords") {
-            alert('in ' + id.name);
             $('#KeywordCount').html(id.count);
             removeCurrentTab();
         }
