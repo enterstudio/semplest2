@@ -31,8 +31,8 @@ import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 
 public class SystemTestFunc extends BaseDB{	
 	
-	private static final String reportDir = "/semplest/Test Report/System Test Report/";
-	//private static final String reportDir = "Z:\\TestReports\\UnitTest\\";
+	//private static final String reportDir = "/semplest/Test Report/System Test Report/";
+	private static final String reportDir = "Z:\\Test Report\\System Test Report\\";
 	
 	private static final String eol = System.getProperty("line.separator");
 	
