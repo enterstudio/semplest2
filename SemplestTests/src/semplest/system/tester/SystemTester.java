@@ -15,9 +15,9 @@ public class SystemTester {
 			MailServiceTest mailTest = new MailServiceTest();
 			
 			adEngineTest.Test_AdEngineService(serviceURL);
-			//biddingTest.Test_BiddingService(serviceURL);
-			//keywordTest.Test_KeywordService(serviceURL);
-			//mailTest.Test_MailService(serviceURL);
+			biddingTest.Test_BiddingService(serviceURL);
+			keywordTest.Test_KeywordService(serviceURL);
+			mailTest.Test_MailService(serviceURL);
 			
 			SystemTestFunc.CleanUpTestData();			
 			SystemTestFunc.FinalizeReport();
