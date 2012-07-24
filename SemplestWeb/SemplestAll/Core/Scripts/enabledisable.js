@@ -35,7 +35,7 @@ function openAllTabs(displayCategories) {
         }, tabStrip.tabGroup.children("li:last")).select();
     }
     tabStrip.append({
-        text: "BillingLaunch",
+        text: "Billing & Launch",
         contentUrl: '/Campaign/BillingLaunch'
     }, tabStrip.tabGroup.children("li:last")).select();
     if (($('input[id="HasKeywords"]').val() == 'True')) {

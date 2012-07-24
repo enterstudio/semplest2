@@ -296,7 +296,7 @@ namespace Semplest.Core.Controllers
                     model.BillingLaunch.KeywordsCount = model.AllKeywordProbabilityObjects.Count(x => x.isDeleted == false);
                     Session.Add("CampaignSetupModel", model);
 
-                    return Json("BillingLaunch");
+                    return Json("Billing & Launch");
                 }
                 return Json("ModelState Invalid required data is missing");
             }

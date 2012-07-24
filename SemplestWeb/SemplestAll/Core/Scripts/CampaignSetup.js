@@ -299,7 +299,7 @@ $(document).ready(function () {
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("Additional Links")'));
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("Negative Keywords")'));
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("Categories")'));
-        tabStrip.remove(tabStrip.tabGroup.children('li:contains("BillingLaunch")'));
+        tabStrip.remove(tabStrip.tabGroup.children('li:contains("Billing & Launch")'));
         tabStrip.remove(tabStrip.tabGroup.children('li:contains("View Keywords")'));
         tabStrip.select(tabStrip.tabGroup.children('li:contains("Create Ads")'));
         formClean = $('#AdModelProp_LandingUrl').serialize() + $('#AdModelProp_DisplayUrl').serialize() + $('#ProductGroup_Words').serialize();
@@ -421,10 +421,10 @@ function OnSuccess(id) {
     else if (id == "Create Ads") {
         tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
         tabStrip.select(tab);
-    } else if (id == "BillingLaunch") {
+    } else if (id == "Billing & Launch") {
         if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
             tabStrip.append({
-                text: "BillingLaunch",
+                text: "Billing & Launch",
                 contentUrl: '@Url.Action("BillingLaunch")'
             }, tabStrip.tabGroup.children("li:last")).select();
             tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
