@@ -1,7 +1,10 @@
 package semplest.server.protocol.bidding;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdEngineBidHistoryData implements Comparable {
 	
@@ -125,7 +128,21 @@ public class AdEngineBidHistoryData implements Comparable {
 		return kwrds;
 	}
 	
-
+	public static Map<String,List<AdEngineBidHistoryData>> batchByMatchType(List<AdEngineBidHistoryData> historyDataList){
+		Map<String,List<AdEngineBidHistoryData>> matchTypeMap = new HashMap<String,List<AdEngineBidHistoryData>>();
+		for(AdEngineBidHistoryData historyData : historyDataList){
+			if(matchTypeMap.containsKey(historyData.getMatchType())){
+				matchTypeMap.get(historyData.getMatchType()).add(historyData);
+			}else{
+				List<AdEngineBidHistoryData> newList= new ArrayList<AdEngineBidHistoryData>();
+				newList.add(historyData);
+				matchTypeMap.put(historyData.getMatchType(), newList);
+			}
+		}
+		
+		return matchTypeMap;
+	}
+	
 	@Override
 	public String toString() {
 		return "AdEngineBidHistoryData [adEngine = "+ adEngine+", keyword=" + keyword + ", matchType="
