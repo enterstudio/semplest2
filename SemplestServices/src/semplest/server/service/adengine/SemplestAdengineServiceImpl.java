@@ -1076,16 +1076,14 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		Boolean ret = getPromoDataSP.execute(PromotionID);
 		PromotionObj promoObj = getPromoDataSP.getPromotionData();
 		final Map<AdEngine, AdEngineID> adEngineMap = getPromoDataSP.getPromotionAdEngineID(PromotionID);
-		Date now = new Date();
+		final java.util.Date now = new Date();
 		cal.setTime(now);
-		// get yesterday
-		cal.add(Calendar.DAY_OF_MONTH, -1);
-		Date yesterday = cal.getTime();
 		cal.add(Calendar.DAY_OF_MONTH, -5);
-		final String reportStartDate = YYYYMMDD.format(cal.getTime());
-		final String reportEndDate = YYYYMMDD.format(yesterday);
-		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(cal.getTime())).append("\n")
-        		    .append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(yesterday)).append("\n\n");
+		final java.util.Date fiveDaysBefore = cal.getTime();
+		final String reportStartDate = YYYYMMDD.format(fiveDaysBefore);
+		final String reportEndDate = YYYYMMDD.format(now);
+		emailContent.append("Start Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(fiveDaysBefore)).append("\n")
+        		    .append("End Date: ").append(SemplestUtils.DATE_FORMAT_YYYY_MM_DD.format(now)).append("\n\n");
 		try
 		{
 			for (AdEngine adEngine : adEngineList)
@@ -1160,10 +1158,9 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 					final MsnCloudServiceImpl msn = new MsnCloudServiceImpl();
 					try
 					{
-						final DateTime today = new DateTime(System.currentTimeMillis());
-						final DateTime yesterdayJodaTime = new DateTime(yesterday.getTime());
-						final DateTime yesterdayJodaTimeMinus5Days = yesterdayJodaTime.minusDays(5);
-						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, yesterdayJodaTimeMinus5Days, yesterdayJodaTime);
+						final DateTime todayJodaTime = new DateTime(now.getTime());
+						final DateTime todayJodaTimeMinus5Days = new DateTime(fiveDaysBefore.getTime());
+						final ReportObject[] reportData = msn.getKeywordReport(accountId, campaignID, todayJodaTimeMinus5Days, todayJodaTime);
 						logger.info("Will try to get Bid Performance Report from MSN using AccountID [" + accountId + "], StartDate [" + reportStartDate + "], EndDate [" + reportEndDate + "]");						
 						logger.info("Got MSN report of size " + (reportData == null ? 0 : reportData.length));
 						ReportObject[] filterReportDatabyCampaignID = filterReportData(reportData, campaignID);
