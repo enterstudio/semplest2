@@ -217,8 +217,17 @@ public class SystemTestFunc extends BaseDB{
 				{SystemTestDataModel.semplestProductGroupId}, Integer.class);
 				//{testData.productGroupIds.get(1)}, Integer.class);
 		
-		System.out.println("  -- delete promotion data.");
-		for(Integer promoId : promoIds){				
+		System.out.println("  -- clear promotion data.");
+		for(Integer promoId : promoIds){		
+			sql = "SELECT kb.KeywordBidPK FROM KeywordBid kb WHERE kb.PromotionFK = ?";
+			List<Integer> ret = jdbcTemplate.queryForList(sql, new Object[] 
+					{promoId}, Integer.class);
+			for(Integer kbId : ret){
+				sql = "DELETE FROM TrafficEstimator WHERE KeywordBidFK = ?";
+				jdbcTemplate.update(sql, new Object[]
+						{kbId});
+			}
+			
 			sql = "DELETE FROM AdvertisingEnginePromotion where PromotionFK = ?;" +
 					"DELETE PromotionAds WHERE PromotionFK = ?;" +
 					"DELETE FROM KeywordBid WHERE PromotionFK = ?;" +
@@ -336,7 +345,7 @@ public class SystemTestFunc extends BaseDB{
 			DateFormat dateFormat = new SimpleDateFormat("MM-dd-yy_HH-mm");
 			Date date = new Date();
 			String now = dateFormat.format(date);
-			SystemTestDataModel.reportName = "SystemTestReport " + now + ".txt";			
+			SystemTestDataModel.reportName = "SystemTestReport_" + now + ".txt";			
 			String reportPath = reportDir + SystemTestDataModel.reportName;
 			
 			//Create Report Header						
