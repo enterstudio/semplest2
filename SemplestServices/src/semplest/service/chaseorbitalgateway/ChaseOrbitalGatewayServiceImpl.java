@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.server.protocol.SemplestString;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
@@ -43,7 +44,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 
 	public static void main(String[] args)
 	{
-
+		
 	}
 
 	@Override
@@ -122,7 +123,7 @@ public class ChaseOrbitalGatewayServiceImpl implements ChaseOrbitalGatewayInterf
 			request.setFieldValue("CCExpireDate", customerObject.getExpireDateMMYY());
 			request.setFieldValue("CardSecVal", customerObject.getCreditCardSecurityCode());
 			
-			request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
+			//request.setFieldValue("SDMerchantName", ChaseOrbitalGatewayObject.MerchantName);
 
 			// Display the request
 			//logger.debug("\nProfile Request:\n" + request.getXML());
