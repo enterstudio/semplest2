@@ -71,12 +71,6 @@
   <!-- classpath="${basedir}/lib/standalone-compiler.jar" -->
   <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar" 
 	  classname="com.izforge.izpack.ant.IzPackTask"/>
-
-  <!-- Grab parts of version string -->
-  <propertyregex property="major.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\1" casesensitive="false" />
-  <propertyregex property="minor.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\2" casesensitive="false" />
-  <propertyregex property="build.number" input="${buildVersion}" regexp="(\d+)\.(\d+)\.(\d+)" select="\3" casesensitive="false" />
-  <property name="product.base" value="${major.number}.${minor.number}"/>
  
 	<target name="build-installer" depends="" description="Create distribution executable">
 
