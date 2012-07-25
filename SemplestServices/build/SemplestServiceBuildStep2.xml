@@ -48,7 +48,6 @@
 	      <filterchain>
 	        <linecontains>
 	          <contains value="semplest.service"/>
-	        	<contains value="YAJSW.servicename"/>
 	        </linecontains>
 	      </filterchain>
 	    </loadproperties>	
@@ -72,6 +71,10 @@
   <!-- classpath="${basedir}/lib/standalone-compiler.jar" -->
   <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar" 
 	  classname="com.izforge.izpack.ant.IzPackTask"/>
+	
+	<target name="init" depends="" description="Initialize build properties">	   
+	  	<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}" />	  	 
+	</target>
  
 	<target name="build-installer" description="Create distribution executable">
 
