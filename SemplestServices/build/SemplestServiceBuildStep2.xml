@@ -48,6 +48,7 @@
 	      <filterchain>
 	        <linecontains>
 	          <contains value="semplest.service"/>
+	        	<contains value="YAJSW.servicename"/>
 	        </linecontains>
 	      </filterchain>
 	    </loadproperties>	
@@ -72,11 +73,9 @@
   <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar" 
 	  classname="com.izforge.izpack.ant.IzPackTask"/>
  
-	<target name="build-installer" depends="" description="Create distribution executable">
+	<target name="build-installer" description="Create distribution executable">
 
-		<propertyregex property="service.name" input="${semplest.service}" 
-			regexp="([^\.]*)$" 
-		    select="\0" 
+		<propertyregex property="service.name" input="${YAJSW.servicename}" 			
 		    defaultvalue="Service" 
 		    override="true"/>
 	    <!-- Run installer build with install-definition -->
