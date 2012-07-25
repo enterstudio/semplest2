@@ -1205,9 +1205,11 @@ namespace Semplest.Admin.Controllers
                     //if  child customer
                     if (m.SelectedParentID >0)
                     {
-                        var emailtemplate = (from et in dbcontext.EmailTemplates
-                                             where et.EmailTemplatePK.Equals(13)
-                                             select et).FirstOrDefault();
+                        var emailtemplate = (
+                                            from et in dbcontext.EmailTemplates
+                                            join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
+                                            where ey.EmailType1.Equals("WelcomeEmailChild")
+                                            select et).FirstOrDefault();
 
                         var parentdetails = from usr in dbcontext.Users
                                             join cus in dbcontext.Customers on usr.CustomerFK equals cus.CustomerPK
@@ -1234,10 +1236,11 @@ namespace Semplest.Admin.Controllers
 
                     if (m.SelectedParentID == -1) ///set parent
                     {
-
-                        var emailtemplate = (from et in dbcontext.EmailTemplates
-                                             where et.EmailTemplatePK.Equals(14)
-                                             select et).FirstOrDefault();
+                        var emailtemplate = (
+                                            from et in dbcontext.EmailTemplates
+                                            join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
+                                            where ey.EmailType1.Equals("WelcomeEmailParent")
+                                            select et).FirstOrDefault();
 
                         
                         //send mail //revisit
@@ -1264,10 +1267,11 @@ namespace Semplest.Admin.Controllers
                     if (m.SelectedParentID ==0) // non child parent customer - self
                     {
 
-                        var emailtemplate = (from et in dbcontext.EmailTemplates
-                                             where et.EmailTemplatePK.Equals(25)
-                                             select et).FirstOrDefault();
-
+                        var emailtemplate = (
+                                                from et in dbcontext.EmailTemplates
+                                                join ey in dbcontext.EmailTypes on et.EmailTypeFK equals ey.EmailTypePK
+                                                where ey.EmailType1.Equals("WelcomeEmailNonParentUser")
+                                                select et).FirstOrDefault();
 
                         //send mail //revisit
                         from = "accounts@semplest.com";
@@ -1290,7 +1294,7 @@ namespace Semplest.Admin.Controllers
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.TargetSite);
+                Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex);
             }
 
 
