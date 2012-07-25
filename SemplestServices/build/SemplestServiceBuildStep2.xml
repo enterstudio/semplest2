@@ -77,14 +77,11 @@
 	</target>
  
 	<target name="build-installer" description="Create distribution executable">
-
-		<propertyregex property="service.name" input="${YAJSW.servicename}" 			
-		    defaultvalue="Service" 
-		    override="true"/>
+		
 	    <!-- Run installer build with install-definition -->
 	    <echo message="Running IzPack to build the installer(s)..."/>  
 	    <izpack input="${install.xml}"
-	            output="${output.dir}/${product.short.name}-${service.name}-${product.version}-install.jar"
+	            output="${output.dir}/${product.short.name}-${${YAJSW.servicename}}-${product.version}-install.jar"
 	            installerType="standard"
 	            inheritAll="true"
 	            basedir="${dist}"
