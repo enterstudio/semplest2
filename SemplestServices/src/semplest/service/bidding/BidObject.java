@@ -45,6 +45,7 @@ import semplest.server.service.springjdbc.PromotionObj;
 import semplest.server.service.springjdbc.SemplestDB;
 import semplest.server.service.springjdbc.storedproc.GetAllPromotionDataSP;
 import semplest.service.google.adwords.GoogleAdwordsServiceImpl;
+import semplest.service.google.adwords.LocationInfo;
 import semplest.service.msn.adcenter.MsnCloudServiceImpl;
 import semplest.util.SemplestUtils;
 
@@ -351,7 +352,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 6. Database call: store bid data
 		
-		//storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMap);
+		storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
 		
@@ -359,7 +360,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 7. Database call: update default bid 
 		
-		//updateDefaultBidInDatabase(promotionID, searchEngine);
+		updateDefaultBidInDatabase(promotionID, searchEngine);
 
 		
 		
@@ -367,7 +368,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 8. SE API call: Update matchType, bid for keywords
 		
-		//updateBidswithSE(promotionID, searchEngine, kwIDBidElementMap);
+		updateBidswithSE(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
 		
@@ -375,7 +376,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 9. SE API call: Update default bid for campaign
 		
-		//updateDefaultBidWithSE(promotionID, searchEngine, computedDefaultBid);
+		updateDefaultBidWithSE(promotionID, searchEngine, computedDefaultBid);
 
 			
 
@@ -383,7 +384,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 10. Write to database: Initital bidding is done
 		
-		//SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 		
 		
 		
@@ -398,6 +399,7 @@ public class BidObject
 	
 	
 	
+
 
 	private void updateDefaultBidWithSE(Integer promotionID, AdEngine searchEngine, Double computedDefaultBid) throws Exception {
 		if (searchEngine == AdEngine.Google){
@@ -428,7 +430,7 @@ public class BidObject
 		
 	}
 
-	private void updateBidswithDatabase(Integer promotionID, AdEngine searchEngine, HashMap<Long, BidElement> kwIDBidElementMap) throws Exception {
+	private void updateBidswithSE(Integer promotionID, AdEngine searchEngine, HashMap<Long, BidElement> kwIDBidElementMap) throws Exception {
 		if(wordIDBidMap.size()>0) {
 			if (searchEngine == AdEngine.Google)
 			{
@@ -576,6 +578,14 @@ public class BidObject
 		double maxBidValue = 0.0;
 		double computedDefaultBid = 0.0;
 		
+		String[] gs = SemplestDB.getGeotargetStates( promotionID );
+		double multiplierGeolocation = 1.0;
+		if(gs!=null && gs.length>0) {
+			multiplierGeolocation=LocationInfo.reachPctUS( gs ) / 100.0;
+		}
+		
+		double bidMultiplierForGoogle = 1.0;  // ********************* TBD ************************ //
+		
 		List<Double> bidsList = new ArrayList<Double>();
 		
 		for(int i=0; i<historyDataList.size(); i++){
@@ -604,8 +614,13 @@ public class BidObject
 			
 			//logger.info(statData.getAvgCPC()+", "+statData.getAvgBid());
 			
-			double bidValue = Math.min(maxBidDouble, statData.getAvgBid());
-			amountSpent+=statData.getAvgCPC() * (bidValue/statData.getAvgBid()) * statData.getClicks()/daysInMonth; // check
+			double bidValue = statData.getAvgBid();
+			if(searchEngine.equals(AdEngine.Google)){
+				bidValue*=bidMultiplierForGoogle;
+			}
+			bidValue =Math.min(maxBidDouble, bidValue);
+			
+			amountSpent+=statData.getAvgCPC() * (bidValue/statData.getAvgBid()) * statData.getClicks()/daysInMonth * multiplierGeolocation; // check
 
 			wordIDBidMap.put(wordID, bidValue);
 			kwIDBidElementMap.get(wordID).setMicroBidAmount(getMicroBid(bidValue));
@@ -818,9 +833,13 @@ public class BidObject
 			BudgetObject budgetData = new BudgetObject();
 			budgetData.setRemainingBudgetInCycle(100.0);
 			budgetData.setRemainingDays(31);
-			bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
+			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			
+			
+
+
 
 
 			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);

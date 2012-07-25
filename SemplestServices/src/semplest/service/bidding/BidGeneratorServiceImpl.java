@@ -106,8 +106,10 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	@Override
 	public Boolean setBidsInitial(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception 
 	{
-		final BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		final Boolean res = bidGeneratorObj.setBidsInitial(promotionID, searchEngine, budgetData);
+		//final BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		//final Boolean res = bidGeneratorObj.setBidsInitial(promotionID, searchEngine, budgetData);
+		final BidObject bidObj = new BidObject();
+		final Boolean res = bidObj.setBidsInitial(promotionID, searchEngine, budgetData);
 		return res;
 	}
 		
@@ -126,10 +128,12 @@ public class BidGeneratorServiceImpl implements SemplestBiddingInterface {
 	@Override
 	public Boolean setBidsUpdate(Integer promotionID, AdEngine searchEngine, BudgetObject budgetData) throws Exception 
 	{
-		BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
-		Boolean res = bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
+		//BidGeneratorObj bidGeneratorObj = new BidGeneratorObj();
+		//Boolean res = bidGeneratorObj.setBidsUpdate(promotionID, searchEngine, budgetData);
 		// bidGeneratorObj.setBidsInitial(promotionID, searchEngine, BudgetObject budgetData);
-		return res;		
+		//return res;	
+		logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]"+ " bids update is not doing anything right now.");
+		return true;
 	}
 	
 	
