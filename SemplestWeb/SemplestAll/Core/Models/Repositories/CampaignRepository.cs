@@ -243,6 +243,8 @@ namespace Semplest.Core.Models.Repositories
                 var promo = GetPromotionFromProductGroup(queryProd, model.ProductGroup.ProductPromotionName);
                 AddGeoTargetingToPromotion(promo, model, customerFK, oldModel, ((IObjectContextAdapter)dbcontext).ObjectContext);
                 AddPromotionAdsToPromotion(promo, model, customerFK, oldModel, ((IObjectContextAdapter)dbcontext).ObjectContext);
+                promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
+                promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
                 dbcontext.SaveChanges();
                 _savedCampaign = true;
                 
