@@ -72,11 +72,11 @@
   <taskdef name="izpack" classpath="${install.lib}/standalone-compiler.jar" 
 	  classname="com.izforge.izpack.ant.IzPackTask"/>
 	
-	<target name="init" depends="" description="Initialize build properties">	   
+	<target name="init" description="Initialize build properties">	   
 	  	<echo file="${dist}/path.txt" message="c:/${YAJSW.servicename}" />	  	 
 	</target>
  
-	<target name="build-installer" description="Create distribution executable">
+	<target name="build-installer" depends= "init" description="Create distribution executable">
 		
 	    <!-- Run installer build with install-definition -->
 	    <echo message="Running IzPack to build the installer(s)..."/>  
