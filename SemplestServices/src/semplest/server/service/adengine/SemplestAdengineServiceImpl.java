@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import semplest.other.MsnManagementIds;
+import semplest.server.job.ExpiredCredentialsEmailSender;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
 import semplest.server.protocol.ProtocolEnum;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
@@ -29,6 +30,7 @@ import semplest.server.protocol.ProtocolEnum.SemplestMatchType;
 import semplest.server.protocol.ProtocolEnum.ServiceStatus;
 import semplest.server.protocol.SemplestSchedulerTaskObject;
 import semplest.server.protocol.SemplestString;
+import semplest.server.protocol.User;
 import semplest.server.protocol.adengine.AdEngineAccountIdGroup;
 import semplest.server.protocol.adengine.AdEngineID;
 import semplest.server.protocol.adengine.AdEngineInitialData;
@@ -3093,6 +3095,85 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		final List<AdEngine> adEngines = AdEngine.getAdEngines(adEngineStrings);
 		ChangePromotionStartDate(promotionID, newStartDate, adEngines);
 		return gson.toJson(true);
+	}
+	
+	public String sendAccountActivationEmail(String json) throws Exception
+	{
+		logger.debug("JSON: [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String userIdString = data.get("userID");
+		final Integer userID = Integer.parseInt(userIdString);
+		final Boolean result = sendAccountActivationEmail(userID);
+		return gson.toJson(result);
+	}
+	
+	@Override
+	public Boolean sendAccountActivationEmail(Integer userID) throws Exception
+	{
+		logger.info("Will try to send account activation email for UserID [" + userID + "]");
+		final User user;
+		try 
+		{
+			user = SemplestDB.getUser(userID);
+			if (user == null)
+			{
+				throw new Exception("Could not find User data for UserID [" + userID + "]");
+			}
+			else
+			{
+				logger.info("Found User [" + user + "]");
+				final ExpiredCredentialsEmailSender emailSender = ExpiredCredentialsEmailSender.getDefaultExpiredEmailSender();
+				emailSender.engageForUser(userID);	
+			}			
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem sending account activation email to user for UserID [" + userID + "]";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		return true;
+	}
+	
+	public String sendRegistrationReminderEmail(String json) throws Exception
+	{
+		logger.debug("JSON: [" + json + "]");
+		final Map<String, String> data = gson.fromJson(json, SemplestUtils.TYPE_MAP_OF_STRING_TO_STRING);
+		final String userIdString = data.get("userID");
+		final Integer userID = Integer.parseInt(userIdString);
+		final Boolean result = sendRegistrationReminderEmail(userID);
+		return gson.toJson(result);
+	}
+	
+	@Override
+	public Boolean sendRegistrationReminderEmail(final Integer userID) throws Exception
+	{
+		logger.info("Will try to send registration reminder email for UserID [" + userID + "]");
+		final User user;
+		try 
+		{
+			final java.util.Date asOfDate = new java.util.Date();
+			final Integer daysBack = (Integer)SemplestConfiguration.configData.get("RegistrationReminderEmailDaysBack"); 
+			user = SemplestDB.getUserForRegistrationReminder(asOfDate, daysBack, userID);
+			if (user == null)
+			{
+				logger.info("Will not send the registration reminder email because didn't find user for UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "]");
+				return false;
+			}
+			else
+			{
+				logger.info("Found User info [" + user + "]");
+				final ExpiredCredentialsEmailSender emailSender = ExpiredCredentialsEmailSender.getDefaultExpiredEmailSender();
+				emailSender.engageForUser(userID);	
+			}			
+		}
+		catch (Exception e)
+		{
+			final String errMsg = "Problem sending reminder email to user for UserID [" + userID + "] to finish the registration process";
+			logger.error(errMsg, e);
+			throw new Exception(errMsg, e);
+		}
+		return true;
 	}
 
 	@Override

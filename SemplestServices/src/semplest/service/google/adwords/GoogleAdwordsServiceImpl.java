@@ -258,8 +258,8 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			{
 				object.wait();
 			}
-			String accountID = "1419144853";// "54104"; //
-			Long campaignID = 80098839L;
+			String accountID = "7825080804";// "54104"; //
+			Long campaignID = 93755662L;
 			Long adgroupID = 3407235519L;// 3066603844L; //
 			/*String landingPageURL = "http://www.semplest.com";
 			String displayURL = landingPageURL;
@@ -279,10 +279,16 @@ public class GoogleAdwordsServiceImpl implements GoogleAdwordsServiceInterface
 			final Boolean useSandbox = false;
 			logger.info("Will try to get AdWordsUser for Email [" + email + "], Password [" + password + "], ClientID [" + clientID + "], UserAgent [" + userAgent + "], DeveloperToken [" + developerToken + "], UseSandbox [" + useSandbox + "]");
 			final AdWordsUser user = new AdWordsUser(email, password, clientID, userAgent, developerToken, useSandbox);
+			CampaignCriterionServiceInterface ccs = user.getService(AdWordsService.V201109.CAMPAIGN_CRITERION_SERVICE);
+			CampaignData cd = new CampaignData(accountID, campaignID, user);
+			cd.removeAllGeoLoc(campaignID);
+			
 			// AdWordsUser user = new
 			// AdWordsUser("adwords@semplest.com","ic0system",accountID,"Icosystem","2H8l6aUm6K_Q44vDvxs3Og");
 			// Get the TargetingIdeaService
-			final TargetingIdeaServiceInterface targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
+			
+			//final TargetingIdeaServiceInterface targetingIdeaService = user.getService(AdWordsService.V201109.TARGETING_IDEA_SERVICE);
+			
 			/*List<GoogleViolation> res = test.validateAd(accountID, adgroupID, landingPageURL, displayURL, headline, description1, description2);
 			if (!res.isEmpty())
 			{

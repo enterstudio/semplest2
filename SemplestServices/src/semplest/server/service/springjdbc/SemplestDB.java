@@ -28,6 +28,8 @@ import org.springframework.jdbc.core.RowMapper;
 
 import semplest.server.protocol.Credential;
 import semplest.server.protocol.CustomOperation;
+import semplest.server.protocol.CustomerHierarchy;
+import semplest.server.protocol.CustomerType;
 import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.EmailType;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
@@ -98,7 +100,52 @@ public class SemplestDB extends BaseDB
 																		    "and	((LastEmailReminderDate is null and DATEADD(DD, ?, CreatedDate) < ?) " + 
 																				   "	or " +
 																				   "(LastEmailReminderDate is not null and DATEADD(DD, ?, LastEmailReminderDate) < ?))";
-																			 
+	
+	public static final String GET_USER_FOR_REGISTRATION_REMINDER_SQL = GET_USERS_FOR_REGISTRATION_REMINDER_SQL + " and UserPK = ?";
+	
+	public static final String GET_USER_SQL = "select UserPK, CustomerFK, FirstName, MiddleInitial, LastName, Email, IsActive, IsRegistered, CreatedDate, EditedDate, LastEmailReminderDate from Users where UserPK = ?";
+	
+	public static final RowMapper<User> USER_ROW_MAPPER;
+	public static final RowMapper<CustomerHierarchy> CUSTOMER_HIERARCHY_ROW_MAPPER;
+	
+	static
+	{
+		USER_ROW_MAPPER = new RowMapper<User>()
+					{
+						@Override
+						public User mapRow(ResultSet rs, int rowNum) throws SQLException
+						{							
+							final Integer userPk = rs.getInt("UserPK");
+							final Integer customerFk = rs.getInt("CustomerFK");
+							final String firstName = rs.getString("FirstName");
+							final String middleInidial = rs.getString("MiddleInitial");
+							final String lastName = rs.getString("LastName");
+							final String email = rs.getString("Email");			
+							final java.util.Date editedDate = rs.getTimestamp("EditedDate");			
+							final Boolean isActive = rs.getBoolean("IsActive");
+							final Boolean isRegistered = rs.getBoolean("IsRegistered");
+							final java.util.Date lastEmailReminderDate = rs.getTimestamp("LastEmailReminderDate");
+							final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
+							final User user = new User(userPk, customerFk, firstName, middleInidial, lastName, email, isActive, isRegistered, createdDate, editedDate, lastEmailReminderDate);
+							return user;
+						}
+					};
+					
+		CUSTOMER_HIERARCHY_ROW_MAPPER = new RowMapper<CustomerHierarchy>()
+					{
+						@Override
+						public CustomerHierarchy mapRow(ResultSet rs, int rowNum) throws SQLException
+						{							
+							final Integer customerHierarchyID = rs.getInt("CustomerHierarchyPK");
+							final Integer customerID = rs.getInt("CustomerFK");
+							final Integer customerParentID = rs.getInt("CustomerParentFK");
+							final java.util.Date createdDate = rs.getTimestamp("CreatedDate");										
+							final CustomerHierarchy hierarchy = new CustomerHierarchy(customerHierarchyID, customerID, customerParentID, createdDate);
+							return hierarchy;
+						}
+					};					
+	}
+	
 	public static <T> T executeRetryOnDeadlock(final CustomOperation<T> customOperation, final int maxNumRetries) throws Exception
 	{
 		final SimpleRetryPolicy retryPolicy = new SimpleRetryPolicy();
@@ -125,6 +172,21 @@ public class SemplestDB extends BaseDB
 		{
 			throw new Exception("Problem performing operation even after max " + maxNumRetries + " retries", e);
 		}
+	}
+	
+	public static CustomerHierarchy getCustomerHierarchy(final Integer customerID) throws Exception
+	{
+		final List<CustomerHierarchy> hierarchies = jdbcTemplate.query("select CustomerHierarchyPK, CustomerFK, CustomerParentFK, CreatedDate from CustomerHierarchy where CustomerFK = ?", CUSTOMER_HIERARCHY_ROW_MAPPER, customerID);
+		if (hierarchies == null || hierarchies.isEmpty())
+		{
+			return null;
+		}
+		if (hierarchies.size() > 1)
+		{
+			throw new Exception("Found " + hierarchies.size() + " Customer Hierarchies for CustomerID [" + customerID + "], but there should be only 1");
+		}
+		final CustomerHierarchy hierarchy = hierarchies.get(0);
+		return hierarchy;
 	}
 
 	public static void testDeadlockHandling() throws Exception
@@ -206,30 +268,49 @@ public class SemplestDB extends BaseDB
 		return credential;
 	}
 	
+	public static User getUser(final Integer userID) throws Exception
+	{
+		logger.info("Will try to get User data for UserID [" + userID + "]");
+		final List<User> userList = jdbcTemplate.query(GET_USER_SQL, USER_ROW_MAPPER, userID);
+		if (userList == null || userList.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			final Integer numUsersFound = userList.size();
+			if (numUsersFound != 1)
+			{
+				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], but should be 1");
+			}
+			final User user = userList.get(0);
+			return user;
+		}
+	}
+	
+	public static User getUserForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack, final Integer userID) throws Exception
+	{
+		logger.info("Will try to find User for registration reminder using UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "]");
+		final List<User> userList = jdbcTemplate.query(GET_USER_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack, asOfDate, userID);
+		if (userList == null || userList.isEmpty())
+		{
+			return null;
+		}
+		else
+		{
+			final Integer numUsersFound = userList.size();
+			if (numUsersFound != 1)
+			{
+				throw new Exception("Found " + numUsersFound + " Users in database for UserID [" + userID + "], AsOfDate [" + asOfDate + "], DaysBack [" + daysBack + "], but should be 1");
+			}
+			final User user = userList.get(0);
+			return user;
+		}
+	}
+	
 	public static List<User> getUsersForRegistrationReminder(final java.util.Date asOfDate, final Integer daysBack)
 	{		
-		final List<User> users = jdbcTemplate.query(GET_USERS_FOR_REGISTRATION_REMINDER_SQL, new RowMapper<User>()
-										{
-											@Override
-											public User mapRow(ResultSet rs, int rowNum) throws SQLException
-											{							
-												final Integer userPk = rs.getInt("UserPK");
-												final Integer customerFk = rs.getInt("CustomerFK");
-												final String firstName = rs.getString("FirstName");
-												final String middleInidial = rs.getString("MiddleInitial");
-												final String lastName = rs.getString("LastName");
-												final String email = rs.getString("Email");			
-												final java.util.Date editedDate = rs.getTimestamp("EditedDate");			
-												final Boolean isActive = rs.getBoolean("IsActive");
-												final Boolean isRegistered = rs.getBoolean("IsRegistered");
-												final java.util.Date lastEmailReminderDate = rs.getTimestamp("LastEmailReminderDate");
-												final java.util.Date createdDate = rs.getTimestamp("CreatedDate");
-												final User user = new User(userPk, customerFk, firstName, middleInidial, lastName, email, isActive, isRegistered, createdDate, editedDate, lastEmailReminderDate);
-												return user;
-											}
-									
-										}, daysBack, asOfDate, daysBack, asOfDate);
-		return users;
+		return jdbcTemplate.query(GET_USERS_FOR_REGISTRATION_REMINDER_SQL, USER_ROW_MAPPER, daysBack, asOfDate, daysBack, asOfDate);
 	}
 	
 	public static List<EmailTemplate> getEmailTemplates(final semplest.server.protocol.EmailType emailType)
@@ -1501,7 +1582,7 @@ public class SemplestDB extends BaseDB
 		return jdbcTemplate.update(strSQL, new Object[]
 		{ IsSearchNetwork, IsDisplayNetwork, AdvertisingEngineBudget, adEngineCampaignID, currentDailyBudget });
 	}
-	
+
 	public static String[] getGeotargetStates( Integer promotionId ) throws Exception {
 		final String sql = "Select  stateAbbr from GeoTargeting g, StateCode s where g.StateCodeFK = s.StateAbbrPK and g.promotionFK = ?";
 		return jdbcTemplate.queryForList(sql, String.class, promotionId).toArray( new String[0]);
@@ -1529,7 +1610,5 @@ public class SemplestDB extends BaseDB
 			logger.error("logError: " + e1.getMessage(), e1);
 		}
 	}
-	
 
-	
 }
