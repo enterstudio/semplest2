@@ -974,7 +974,7 @@ public class BidObject
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
 			
-			bidObject.resetCampaign(promotionID, searchEngine);
+			//bidObject.resetCampaign(promotionID, searchEngine);
 			
 			
 
@@ -1017,12 +1017,12 @@ public class BidObject
 			}
 			*/
 			
-//			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
-//			System.out.println(bidData.size());
-//
-//			for(BidElement b : bidData){
-//				System.out.println(b);
-//			}
+			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
+			System.out.println(bidData.size());
+
+			for(BidElement b : bidData){
+				System.out.println(b);
+			}
 		
 
 			
