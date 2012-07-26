@@ -307,7 +307,7 @@ public class BidObject
 		List<BidElement> bidElementList = getBidDataFromDatabase(promotionID, searchEngine);
 
 		// create a hash map for faster access
-		HashMap<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
+		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
 		for(BidElement b : bidElementList){
 			if(b.getIsActive()){
 				kwIDBidElementMap.put(b.getKeywordAdEngineID(), b.clone());
@@ -344,7 +344,6 @@ public class BidObject
 		// sets bids for all unused keywords at the max CPC seen so far
 		double computedDefaultBid = computeBidsGreedy(promotionID, searchEngine, historyDataList, kwIDBidElementMap);
 		defaultMicroBid = getMicroBid(computedDefaultBid);
-		
 		
 		
 		
@@ -402,11 +401,13 @@ public class BidObject
 
 
 	private void updateDefaultBidWithSE(Integer promotionID, AdEngine searchEngine, Double computedDefaultBid) throws Exception {
+		
+		Long microBid = getMicroBid(computedDefaultBid);
 		if (searchEngine == AdEngine.Google){
-			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update default bid via search engine API. The default bid is "+defaultMicroBid);
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to update default bid via search engine API. The default bid is "+microBid);
 
 			try {
-				clientGoogle.updateDefaultBid(googleAccountID, adGroupID, Math.max(50000L,defaultMicroBid));
+				clientGoogle.updateDefaultBid(googleAccountID, adGroupID, Math.max(50000L,microBid));
 			} catch (Exception e) {
 				logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
 				throw new Exception( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to update default microBid via Google API. " + e.getMessage(), e);
@@ -430,7 +431,7 @@ public class BidObject
 		
 	}
 
-	private void updateBidswithSE(Integer promotionID, AdEngine searchEngine, HashMap<Long, BidElement> kwIDBidElementMap) throws Exception {
+	private void updateBidswithSE(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap) throws Exception {
 		if(wordIDBidMap.size()>0) {
 			if (searchEngine == AdEngine.Google)
 			{
@@ -509,7 +510,7 @@ public class BidObject
 		
 	}
 
-	private void storeBidDataToDatabase(Integer promotionID, AdEngine searchEngine, HashMap<Long, BidElement> kwIDBidElementMap) throws Exception {
+	private void storeBidDataToDatabase(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap) throws Exception {
 		try {
 			if(kwIDBidElementMap!=null && kwIDBidElementMap.size()>0){
 				List<BidElement> bidElementList = new ArrayList<BidElement>();
@@ -531,7 +532,7 @@ public class BidObject
 	}
 
 	private double computeBidsGreedy(Integer promotionID, AdEngine searchEngine, List<AdEngineBidHistoryData> historyDataList, 
-			HashMap<Long, BidElement> kwIDBidElementMap) throws Exception {
+			Map<Long, BidElement> kwIDBidElementMap) throws Exception {
 		
 		wordIDBidMap = new HashMap<Long,Double>();
 
@@ -656,7 +657,7 @@ public class BidObject
 		return new Long((new Double(bidValue*1e6)).longValue() / 10000L * 10000L);
 	}
 
-	private List<AdEngineBidHistoryData> getBidHistoryData(Integer promotionID, AdEngine searchEngine, HashMap<Long, BidElement> kwIDBidElementMap) throws Exception{
+	private List<AdEngineBidHistoryData> getBidHistoryData(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap) throws Exception{
 		Map<String, ProtocolEnum.SemplestMatchType> keywordMatchType = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 		for(Long l : kwIDBidElementMap.keySet()){
 			String matchTypeString = kwIDBidElementMap.get(l).getMatchType();
@@ -682,8 +683,8 @@ public class BidObject
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Bid history call returned null.");
 			}
 		} catch(Exception e){
-			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bid history data from MSN.");
-			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bid history data from MSN.");
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bid history data from MSN."+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bid history data from MSN."+ e.getMessage(), e);
 		}
 		return historyData;
 	}
@@ -734,10 +735,140 @@ public class BidObject
 	}
 
 	
+	private void resetCampaign(Integer promotionID, AdEngine searchEngine) throws Exception {
+		
+		
+		/* ******************************************************************************************* */
+		// 1. Database call: get campaign specific IDs
+		
+		getCampaignIDsFromDatabase(promotionID, searchEngine);
+		
+		
+		/* ******************************************************************************************* */
+		// 2. Database call: get present bid info
+		
+		// get present bid status from database
+		List<BidElement> bidElementList = getBidDataFromDatabase(promotionID, searchEngine);
+
+		// get Map of BidElement in reset state
+		Map<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
+		Map<Long,BidElement> kwIDBidElementMap = getBidElementMapInResetState(promotionID, searchEngine, bidElementList, pauseMap);
+		
+				
+		/* ******************************************************************************************* */
+		// 3. Reset default bid
+		
+		defaultMicroBid = resetDefaultMicroBid(promotionID, searchEngine);
+		
+
+		/* ******************************************************************************************* */
+		// 6. Database call: store bid data
+		
+		storeBidDataToDatabase(promotionID, searchEngine, kwIDBidElementMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 7. Database call: update default bid 
+		
+		updateDefaultBidInDatabase(promotionID, searchEngine);
+		
+		
+		/* ******************************************************************************************* */
+		// 8. SE API call: Unpause all inactive keywords
+		
+		updatePauseStatus(promotionID, searchEngine, pauseMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 9. SE API call: Update bids for all keywords 
+		
+		updateBidswithSE(promotionID, searchEngine, kwIDBidElementMap);
+		
+		
+		/* ******************************************************************************************* */
+		// 10. SE API call: Update default bid for campaign
+		
+		updateDefaultBidWithSE(promotionID, searchEngine, defaultMicroBid.longValue()*1e-6);
+			
+
+
+		/* ******************************************************************************************* */
+		// 11. Write to database: Initital bidding is done
+		
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Reset);
+		
+		
+	}
+	
+	
 	
 	
 
+	private void updatePauseStatus(Integer promotionID, AdEngine searchEngine, Map<Long, Boolean> pauseMap) throws Exception {
+		if( pauseMap.size()>0){
+			if (searchEngine == AdEngine.Google){
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
 
+				try {
+					clientGoogle.updateKeywordStatus(googleAccountID, campaignID, adGroupID, pauseMap);
+				} catch (Exception e) {
+					logger.error( "[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via Google API. " + e.getMessage(), e);
+				} // try-catch
+			} // while(true)
+
+			if(searchEngine == AdEngine.MSN){
+				try{
+					logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Trying to pause " + pauseMap.size() + " keywords");
+					msnClient.updateKeywordStatus(msnAccountID, adGroupID, pauseMap);
+				} catch(Exception e){
+					logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+					throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" +  "Failed to pause " + pauseMap.size() + " keywords via MSN API. " + e.getMessage(), e);
+				}
+			}
+		} else {
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "No keywords to pause at this time.");
+		}
+		
+	}
+
+	private long resetDefaultMicroBid(Integer promotionID, AdEngine searchEngine) throws Exception {
+		double dailyBudget = 0.0;
+		try{
+			dailyBudget = SemplestDB.GetCurrentDailyBudget(promotionID, searchEngine);
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "ERROR: Unable to get the daily budget from the database. "+ e.getMessage(), e);
+			// e.printStackTrace();
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Failed to get the daily budget from the database. "+ e.getMessage(), e);
+		}
+		return Math.max(50000L,Math.min(defaultMicroBid, (new Double(dailyBudget*0.95*1e-6)).longValue()/10000L * 10000L));
+		
+	}
+
+	private Map<Long, BidElement> getBidElementMapInResetState(Integer promotionID, AdEngine searchEngine, List<BidElement> bidElementList, Map<Long,Boolean> pauseMap) throws Exception {
+		Map<Long,BidElement> kwIDBidElementMap = new HashMap<Long,BidElement>();
+		wordIDBidMap = new HashMap<Long,Double>();
+		for(BidElement b : bidElementList){
+			BidElement bidElem = b.clone();
+			bidElem.setIsActive(true);
+			bidElem.setIsDefaultValue(true);
+			bidElem.setMicroBidAmount(null);
+			bidElem.setCompetitionType(null);
+			kwIDBidElementMap.put(b.getKeywordAdEngineID(), bidElem);
+			
+			//if(!b.getIsDefaultValue()){
+				wordIDBidMap.put(b.getKeywordAdEngineID(), null);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Forcing default value on keyword " + b.getKeyword());
+			//}
+			
+			//if(!b.getIsActive()){
+				pauseMap.put(b.getKeywordAdEngineID(), false);
+				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Activating keyword " + b.getKeyword());
+			//}
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Createing reset state for keyword: " + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
+		}
+		return kwIDBidElementMap;
+	}
 	
 
 	public static void main(String[] args)  throws CloneNotSupportedException
@@ -836,6 +967,8 @@ public class BidObject
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
+			
+			bidObject.resetCampaign(promotionID, searchEngine);
 			
 			
 
