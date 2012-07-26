@@ -1737,7 +1737,10 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		AddAdsResponse addAds = null;
 		try
 		{
+			AddAdsRequest adreq = new AddAdsRequest(adGroupId, new Ad[] { ad });
 			addAds = campaignManagement.addAds(new AddAdsRequest(adGroupId, new Ad[] { ad }));
+			//campaignManagement.setCampaignAdExtensions(arg0)
+			
 		}
 		catch (AdApiFaultDetail e1)
 		{
