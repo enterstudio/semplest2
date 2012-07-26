@@ -118,21 +118,8 @@ namespace Semplest.Core.Controllers
                             ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.CustomerFK.Value;
                         int userid =
                         ((Credential) (Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID])).User.UserPK;
-
-                        //int userid = 1; // for testing
-                        string msg =
-                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} --- Before saving  SaveProductGroupAndCampaign to database";
-                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                            model.ProductGroup.ProductPromotionName);
-                        var logEnty = new LogEntry {ActivityId = Guid.NewGuid(), Message = msg};
-                        Logger.Write(logEnty);
-
-                        _campaignRepository.SaveGeoTargetingAds(customerFK, model,
-                                                                        (CampaignSetupModel)
-                                                                        Session["CampaignSetupModel"]);
                         var promoId = _campaignRepository.GetPromotionId(userid, model.ProductGroup.ProductGroupName,
                                                                          model.ProductGroup.ProductPromotionName);
-
                         List<GoogleAddAdRequest> verifyAds =
                             model.AdModelProp.Ads.Where(t => !t.Delete).Select(pad => new GoogleAddAdRequest
                                                                                           {
@@ -157,37 +144,12 @@ namespace Semplest.Core.Controllers
                             if (gv.Length > 0)
                                 return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
                         }
-                        
-                        
-
-                        msg =
-                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After saving  SaveProductGroupAndCampaign";
-                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                            model.ProductGroup.ProductPromotionName);
-                        logEnty.Message = msg;
-                        Logger.Write(logEnty);
-
-                        msg =
-                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} Before getting categories form web service";
-                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                            model.ProductGroup.ProductPromotionName);
-                        logEnty.Message = msg;
-                        Logger.Write(logEnty);
-
+                        _campaignRepository.SaveGeoTargetingAds(customerFK, model,
+                                                                           (CampaignSetupModel)
+                                                                           Session["CampaignSetupModel"]);
                         // get the categoris from the web service
                         model = _campaignRepository.GetCategories(model);
-
-                        msg =
-                            "In GetCategories ActionResult for --- ProductGroup: {0} --- Promotion: {1} After successfully getting categories form web service";
-                        msg = String.Format(msg, model.ProductGroup.ProductGroupName,
-                                            model.ProductGroup.ProductPromotionName);
-                        logEnty.Message = msg;
-                        Logger.Write(logEnty);
-
-                        // save this some how while getting the keywords this is becoming null
                         Session.Add("AllCategories", model.AllCategories);
-                        //Session.Add("AdModelProp", model.AdModelProp);
-                        //Session.Add("ProductGroup", model.ProductGroup);
                         return Json("Categories");
                 }
             }
@@ -473,15 +435,17 @@ namespace Semplest.Core.Controllers
                 (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
             var customerFK = cred.User.CustomerFK;
             var userPK = cred.User.UserPK;
-            _campaignRepository.SaveSiteLinks(model, customerFK.Value, (CampaignSetupModel)Session["CampaignSetupModel"]);
             var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
-                                                                         model.ProductGroup.ProductPromotionName);
+                                                             model.ProductGroup.ProductPromotionName);
+
             if (model.SiteLinks != null && model.SiteLinks.Any())
-            {   
+            {
                 GoogleViolation[] gv = _campaignRepository.ValidateSiteLinks(promoId);
                 if (gv.Length > 0)
                     return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
             }
+            _campaignRepository.SaveSiteLinks(model, customerFK.Value, (CampaignSetupModel)Session["CampaignSetupModel"]);
+
             return Json("AdditionalLinks");
         }
 
@@ -502,19 +466,12 @@ namespace Semplest.Core.Controllers
             var cred =
                 (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
             var customerFK = cred.User.CustomerFK;
-            var userPK = cred.User.UserPK;
             csm.AdModelProp.NegativeKeywords = model.NegativeKeywords;
             csm.AdModelProp.NegativeKeywordsText = model.NegativeKeywordsText;
+            GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(model.NegativeKeywords);
+            if (gv.Length > 0)
+                return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
             csm.AllKeywords = _campaignRepository.SaveNegativeKeywords(csm, customerFK.Value);
-            
-            var promoId = _campaignRepository.GetPromotionId(userPK, csm.ProductGroup.ProductGroupName,
-                                                                         csm.ProductGroup.ProductPromotionName);
-            if (csm.AdModelProp.NegativeKeywords != null && csm.AdModelProp.NegativeKeywords.Any())
-            {
-                GoogleViolation[] gv = _campaignRepository.ValidateGoogleNegativeKeywords(csm.AdModelProp.NegativeKeywords);
-                if (gv.Length > 0)
-                    return Content(gv.First().shortFieldPath + ": " + gv.First().errorMessage);
-            }
             return Json("NegativeKeywords");
         }
 

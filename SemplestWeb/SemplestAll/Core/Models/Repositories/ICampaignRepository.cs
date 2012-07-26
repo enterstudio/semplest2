@@ -12,7 +12,7 @@ namespace Semplest.Core.Models.Repositories
         CampaignSetupModel GetCampaignSetupModelForPromotionId(int promoId, bool preview = false);
         bool DoesPromotionExist(string prodGroup, string promotionName, int custFk);
         IQueryable<vwProductPromotion> GetUserWithProductGroupAndPromotions(int userid);
-        Promotion GetPromotionFromProductGroup(ProductGroup prodGroup, string promotionName);
+        Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model);
         List<ProductGroup> GetProductGroupsForUser(int userid);
         int GetPromotionId(int userid, string prodGroupName, string promotionName);
         int GetBudgetCycleId(string budgetCycleName);

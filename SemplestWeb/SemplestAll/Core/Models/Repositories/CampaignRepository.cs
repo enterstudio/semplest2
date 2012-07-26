@@ -248,7 +248,6 @@ namespace Semplest.Core.Models.Repositories
                 List<int> updateAds;
                 List<int> deleteAds;
                 var shouldscheduleAds = AddPromotionAdsToPromotion(promo, model, customerFK, oldModel,
-                                                                   ((IObjectContextAdapter) dbcontext).ObjectContext,
                                                                    out addAds, out updateAds, out deleteAds);
                 promo.LandingPageURL = model.AdModelProp.LandingUrl.Trim();
                 promo.DisplayURL = model.AdModelProp.DisplayUrl.Trim();
@@ -284,7 +283,17 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        private Promotion GetDBPromoitionFromCampaign(SemplestModel.Semplest dbcontext, int customerFK, CampaignSetupModel model)
+        public Promotion GetPromoitionFromCampaign(int customerFK, CampaignSetupModel model)
+        {
+            Promotion promo;
+            using (var dbContext =new SemplestModel.Semplest())
+            {
+                promo = GetPromoitionFromCampaign(dbContext, customerFK, model);
+            }
+            return promo;
+        }
+
+        private Promotion GetPromoitionFromCampaign(SemplestModel.Semplest dbcontext, int customerFK, CampaignSetupModel model)
         {
             var queryProd = (from c in dbcontext.ProductGroups
                              where
@@ -349,7 +358,7 @@ namespace Semplest.Core.Models.Repositories
                 model.AdModelProp.Addresses = promo.GeoTargetings.ToList();
 
                 // set promotionads
-                model.AdModelProp.Ads = promo.PromotionAds.ToList();
+                model.AdModelProp.Ads = promo.PromotionAds.Where(ads => !ads.IsDeleted).ToList();
 
                 if (!preview)
                 {
@@ -767,8 +776,8 @@ namespace Semplest.Core.Models.Repositories
             }
         }
 
-        public bool AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk,
-                                                            CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context, out List<PromotionAd> addAds, out List<int> updateAds, out List<int> deleteAds)
+        private static bool AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk,
+                                                            CampaignSetupModel oldModel, out List<PromotionAd> addAds, out List<int> updateAds, out List<int> deleteAds)
         {
             deleteAds = new List<int>();
             updateAds = new List<int>();
@@ -776,13 +785,14 @@ namespace Semplest.Core.Models.Repositories
             bool shouldscheduleAds = false;
             foreach (PromotionAd pad in model.AdModelProp.Ads)
             {
-                if (pad.Delete)
+                if (pad.Delete && pad.PromotionAdsPK != 0)
                 {
                     shouldscheduleAds = true;
-                    deleteAds.Add(pad.PromotionAdsPK);
-                    context.DeleteObject(promo.PromotionAds.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK));
+                    var singlePromo = promo.PromotionAds.Single(id => id.PromotionAdsPK == pad.PromotionAdsPK);
+                    singlePromo.IsDeleted = true;
+                    singlePromo.DeletedDate = DateTime.Now;
                 }
-                else if (pad.PromotionAdsPK == 0)
+                else if (!pad.Delete && pad.PromotionAdsPK == 0)
                 {
                     shouldscheduleAds = true;
                     addAds.Add(pad);
@@ -794,16 +804,14 @@ namespace Semplest.Core.Models.Repositories
                                       AdTextLine1 = pad.AdTextLine1,
                                       AdTextLine2 = pad.AdTextLine2,
                                       AdTitle = pad.AdTitle,
-                                      PromotionAdsPK = pad.PromotionAdsPK
+                                      PromotionAdsPK = pad.PromotionAdsPK,
+                                      CreatedDate = DateTime.Now
                                   };
                     promo.PromotionAds.Add(cad);
                 }
-                else
+                else if (!pad.Delete && pad.PromotionAdsPK != 0)
                 {
-                    pad.AdTextLine1 = pad.AdTextLine1;
-                    pad.AdTextLine2 = pad.AdTextLine2;
-                    pad.AdTitle = pad.AdTitle;
-                    var padOld = oldModel.AdModelProp.Ads.FirstOrDefault(x => x.PromotionAdsPK == pad.PromotionAdsPK);
+                    var padOld = oldModel.AdModelProp.Ads.Single(x => x.PromotionAdsPK == pad.PromotionAdsPK);
                     if (padOld != null)
                     {
                         if (padOld.AdTextLine1 != pad.AdTextLine1 ||
@@ -860,11 +868,6 @@ namespace Semplest.Core.Models.Repositories
                     dbcontext.SaveChanges();
                 }
             }
-
-
-
-
-
         }
 
         public void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
@@ -956,12 +959,15 @@ namespace Semplest.Core.Models.Repositories
                             }
                         }
                     }
-                    var sw = new ServiceClientWrapper();
-                    var adEngines = new List<string>();
                     var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promotionId);
-                    adEngines.AddRange(
-                        promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
-                    sw.DeleteKeywords(promotionId, deletedKeywords, adEngines);
+                    if (promo.IsLaunched && deletedKeywords.Any())
+                    {
+                        var sw = new ServiceClientWrapper();
+                        var adEngines = new List<string>();
+                        adEngines.AddRange(
+                            promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                        sw.DeleteKeywords(promotionId, deletedKeywords, adEngines);
+                    }
                 }
             }
         }
@@ -987,7 +993,7 @@ namespace Semplest.Core.Models.Repositories
         {
             using (var dbcontext = new SemplestModel.Semplest())
             {
-                var promo = GetDBPromoitionFromCampaign(dbcontext, customerFk, model);
+                var promo = GetPromoitionFromCampaign(dbcontext, customerFk, model);
                 IEnumerable<PromotionKeywordAssociation> qry =
                     dbcontext.PromotionKeywordAssociations.Where(key => key.PromotionFK == promo.PromotionPK).ToList();
                 var kpos = new List<KeywordProbabilityObject>();
@@ -1063,7 +1069,7 @@ namespace Semplest.Core.Models.Repositories
                 //get the id's of the newly added negative keywords to call the api
                 using (var dbcontext2 = new SemplestModel.Semplest())
                 {
-                    promo = GetDBPromoitionFromCampaign(dbcontext2, customerFk, model);
+                    promo = GetPromoitionFromCampaign(dbcontext2, customerFk, model);
                     model.AllKeywords.Clear();
                     model.AllKeywords.AddRange(
                         promo.PromotionKeywordAssociations.Where(key => !key.IsDeleted && !key.IsNegative).Select(
