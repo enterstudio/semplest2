@@ -166,11 +166,12 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionAdIds", jsonAdds);
 
             if (actionType == SEMplestConstants.PromotionAdAction.Add)
-                return runBooleanMethod(ADENGINESERVICE, "AddAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(ADENGINESERVICE, "AddAds", JsonConvert.SerializeObject(jsonHash));
             else if (actionType == SEMplestConstants.PromotionAdAction.Delete)
-                return runBooleanMethod(ADENGINESERVICE, "DeleteAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(ADENGINESERVICE, "DeleteAds", JsonConvert.SerializeObject(jsonHash));
             else
-                return runBooleanMethod(ADENGINESERVICE, "UpdateAds", JsonConvert.SerializeObject(jsonHash));
+                runBooleanMethod(ADENGINESERVICE, "UpdateAds", JsonConvert.SerializeObject(jsonHash));
+            return true;
         }
 
         public bool scheduleUpdateGeoTargeting(int promotionID, List<String> adEngines)
