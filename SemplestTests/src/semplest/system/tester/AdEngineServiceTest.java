@@ -1401,4 +1401,18 @@ public class AdEngineServiceTest extends BaseDB implements SemplestAdengineServi
 	@Override
 	public void initializeService(String input) throws Exception {		
 	}
+
+	@Override
+	public Boolean sendRegistrationReminderEmail(Integer userID) throws Exception
+	{
+		// S
+		return null;
+	}
+
+	@Override
+	public Boolean sendAccountActivationEmail(Integer userID) throws Exception
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

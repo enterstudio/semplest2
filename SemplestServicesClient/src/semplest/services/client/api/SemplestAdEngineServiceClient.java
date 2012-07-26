@@ -36,6 +36,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	private static String SERVICEOFFERED = "semplest.server.service.adengine.SemplestAdengineService";
 	// private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";
 	private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";
+	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";
 	private static String timeoutMS = "18000000"; // 5 hours
 	private static Gson gson = new Gson();
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
@@ -47,7 +48,10 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://23.22.63.111:9898/semplest");
 		// final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient("http://VMJava1:9898/semplest");
 		final SemplestAdEngineServiceClient client = new SemplestAdEngineServiceClient(BASEURLTEST);
-
+		final Integer userID = 24;
+		client.sendRegistrationReminderEmail(userID);
+		
+		/*
 		// validateGoogleAd 
 		final String landingPageURL = "http://www.semplest.com"; 
 		final String displayURL = landingPageURL; final String
@@ -61,7 +65,7 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		if (validations != null) 
 		{
 			logger.error("Google Violations:\n" + SemplestUtils.getEasilyReadableString(validations)); 
-		}
+		}*/
 		/* 
 		 * // validateGoogleRefreshSiteLinks final Integer promotionID_validateGoogleRefreshSiteLinks = 23; final List<GoogleViolation>
 		 * googleViolations_validateGoogleRefreshSiteLinks = client.validateGoogleRefreshSiteLinks(promotionID_validateGoogleRefreshSiteLinks);
@@ -134,13 +138,24 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 		
 		 * // schedulePausePromotion final Integer promotionID_PausePromotion = 62; final List<String> adEngines_PausePromotion =
 		 * Arrays.asList(AdEngine.Google.name()); client.PausePromotion(promotionID_PausePromotion, adEngines_PausePromotion);
-		 * 
-		 * // scheduleAddPromotionToAdEngine final Integer customerID_scheduleAddPromotionToAdEngine = 12; final Integer
-		 * productGroupID_scheduleAddPromotionToAdEngine = 76; final Integer promotionID_scheduleAddPromotionToAdEngine = 62; final ArrayList<String>
-		 * adEngines_scheduleAddPromotionToAdEngine = new ArrayList<String>(Arrays.asList(new String[]{AdEngine.Google.name()}));
-		 * client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine,
-		 * promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
-		 * 
+		 *
+		 */
+		
+		
+		/*
+		 // scheduleAddPromotionToAdEngine 			
+		 final Integer customerID_scheduleAddPromotionToAdEngine = 1; 
+		 final Integer productGroupID_scheduleAddPromotionToAdEngine = 1; 
+		 final Integer promotionID_scheduleAddPromotionToAdEngine = 1; 
+		 final List<AdEngine> adEngines_scheduleAddPromotionToAdEngine = Arrays.asList(AdEngine.Google);
+		 client.scheduleAddPromotionToAdEngine(customerID_scheduleAddPromotionToAdEngine, productGroupID_scheduleAddPromotionToAdEngine, promotionID_scheduleAddPromotionToAdEngine, adEngines_scheduleAddPromotionToAdEngine);
+		 */
+		
+		//client.validateGoogleNegativeKeywords(Arrays.asList("hooker"));
+		
+		
+		
+		 /* 
 		 * // AddPromotionToAdEngine final Integer customerID_AddPromotionToAdEngine = 12; final Integer productGroupID_AddPromotionToAdEngine = 76;
 		 * final Integer promotionID_AddPromotionToAdEngine = 62; final ArrayList<String> adEngines_AddPromotionToAdEngine = new
 		 * ArrayList<String>(Arrays.asList(AdEngine.Google.name())); client.AddPromotionToAdEngine(customerID_AddPromotionToAdEngine,
@@ -1213,8 +1228,15 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	@Override
 	public List<GoogleViolation> validateGoogleNegativeKeywords(List<String> negativeKeywords) throws Exception
 	{
-		// will implement if needed
-		return null;
+		final String methodName = "validateGoogleNegativeKeywords";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		final String negativeKeywordListStr = gson.toJson(negativeKeywords, List.class);
+		jsonHash.put("negativeKeywords", negativeKeywordListStr);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Type type = new TypeToken<List<GoogleViolation>>(){}.getType();
+		return gson.fromJson(returnData, type);
 	}
 
 	@Override
@@ -1243,5 +1265,31 @@ public class SemplestAdEngineServiceClient extends ServiceRun implements Semples
 	{
 		// will implement if needed
 		return null;
+	}
+
+	@Override
+	public Boolean sendRegistrationReminderEmail(Integer userID) throws Exception
+	{
+		final String methodName = "sendRegistrationReminderEmail";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("userID", "" + userID);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Boolean result = gson.fromJson(returnData, Boolean.class);
+		return result;
+	}
+
+	@Override
+	public Boolean sendAccountActivationEmail(Integer userID) throws Exception
+	{
+		final String methodName = "sendAccountActivationEmail";
+		final HashMap<String, String> jsonHash = new HashMap<String, String>();		
+		jsonHash.put("userID", "" + userID);
+		final String json = protocolJson.createJSONHashmap(jsonHash);
+		logger.info("JSON [" + json + "]");
+		final String returnData = runMethod(baseurl, SERVICEOFFERED, methodName, json, timeoutMS);
+		final Boolean result = gson.fromJson(returnData, Boolean.class);
+		return result;
 	}
 }
