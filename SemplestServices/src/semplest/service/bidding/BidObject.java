@@ -801,7 +801,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 11. Write to database: Initital bidding is done
 		
-		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
+		//SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Reset);
 		
 		
 	}
