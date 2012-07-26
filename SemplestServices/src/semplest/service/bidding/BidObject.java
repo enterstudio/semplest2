@@ -996,7 +996,7 @@ public class BidObject
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
-			bidObject.resetCampaign(promotionID, searchEngine);
+			//bidObject.resetCampaign(promotionID, searchEngine);
 			
 			
 
