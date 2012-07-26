@@ -473,7 +473,7 @@ namespace Semplest.Core.Controllers
                 (Credential)(Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]);
             var customerFK = cred.User.CustomerFK;
             var userPK = cred.User.UserPK;
-            _campaignRepository.SaveSiteLinks(model, customerFK.Value);
+            _campaignRepository.SaveSiteLinks(model, customerFK.Value, (CampaignSetupModel)Session["CampaignSetupModel"]);
             var promoId = _campaignRepository.GetPromotionId(userPK, model.ProductGroup.ProductGroupName,
                                                                          model.ProductGroup.ProductPromotionName);
             if (model.SiteLinks != null && model.SiteLinks.Any())

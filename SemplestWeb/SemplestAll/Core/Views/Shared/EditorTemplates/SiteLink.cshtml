@@ -14,5 +14,6 @@
         @Html.TextBoxFor(t => t.LinkURL, new {@class = "k-textbox", @required = true, @validationmessage = "Please enter {0}"})
         @Html.ValidationMessageFor(t => t.LinkURL)
         @Html.LinkToRemoveNestedForm("Delete", "li.sitelinks", "input.mark-for-delete")
+        @Html.HiddenFor(t => t.SiteLInkPK)
     </li>
 

@@ -21,8 +21,7 @@ namespace Semplest.Core.Models.Repositories
         void SavePromotionAdEngineSelected(Promotion promo, CampaignSetupModel model, SemplestModel.Semplest dbcontext);
         void AddGeoTargetingToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
         void SaveProductPromotion(int customerFk, CampaignSetupModel model, CampaignSetupModel oldModel);
-        void SaveSiteLinks(CampaignSetupModel model, int customerFk);
-        List<PromotionAd> AddPromotionAdsToPromotion(Promotion promo, CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel, System.Data.Objects.ObjectContext context);
+        void SaveSiteLinks(CampaignSetupModel model, int customerFk, CampaignSetupModel oldModel);
         void SaveSelectedCategories(int promotionId, IEnumerable<string> selectedCategories);
 
         void SaveKeywords(int promotionId, List<KeywordProbabilityObject> kpos, List<string> negativeKeywords,
