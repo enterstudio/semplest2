@@ -110,11 +110,10 @@ namespace Semplest.SharedResources.Services
 
         #region AdEngine
 
-        public bool schedulePromotion(int customerId, int promoId, string[] adds,
+        public bool schedulePromotion(int promoId, string[] adds,
                                       SEMplestConstants.SchedulePromotionType st)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerId.ToString());
             jsonHash.Add("promotionID", promoId.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adds, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
@@ -123,16 +122,16 @@ namespace Semplest.SharedResources.Services
             switch (st)
             {
                 case SEMplestConstants.SchedulePromotionType.Unpause:
-                    requestedService = "scheduleUnpausePromotion";
+                    requestedService = "UnpausePromotion";
                     break;
                 case SEMplestConstants.SchedulePromotionType.Pause:
-                    requestedService = "schedulePausePromotion";
+                    requestedService = "PausePromotion";
                     break;
                 case SEMplestConstants.SchedulePromotionType.Delete:
-                    requestedService = "scheduleDeletePromotion";
+                    requestedService = "DeletePromotion";
                     break;
                 case SEMplestConstants.SchedulePromotionType.End:
-                    requestedService = "scheduleEndPromotion";
+                    requestedService = "EndPromotion";
                     break;
                 default:
                     throw new Exception("Invalid Promotion Schedule Type");
@@ -156,11 +155,10 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "scheduleAddPromotionToAdEngine", jsonstr);
         }
 
-        public bool scheduleAds(int customerID, int promotionID, List<int> promotionAdIds, List<String> adEngines,
+        public bool scheduleAds(int promotionID, List<int> promotionAdIds, List<String> adEngines,
                                 SEMplestConstants.PromotionAdAction actionType)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
@@ -168,74 +166,69 @@ namespace Semplest.SharedResources.Services
             jsonHash.Add("promotionAdIds", jsonAdds);
 
             if (actionType == SEMplestConstants.PromotionAdAction.Add)
-                return runBooleanMethod(ADENGINESERVICE, "scheduleAddAds", JsonConvert.SerializeObject(jsonHash));
+                return runBooleanMethod(ADENGINESERVICE, "AddAds", JsonConvert.SerializeObject(jsonHash));
             else if (actionType == SEMplestConstants.PromotionAdAction.Delete)
-                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteAds", JsonConvert.SerializeObject(jsonHash));
+                return runBooleanMethod(ADENGINESERVICE, "DeleteAds", JsonConvert.SerializeObject(jsonHash));
             else
-                return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateAds", JsonConvert.SerializeObject(jsonHash));
+                return runBooleanMethod(ADENGINESERVICE, "UpdateAds", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleUpdateGeoTargeting(int customerID, int promotionID, List<String> adEngines)
+        public bool scheduleUpdateGeoTargeting(int promotionID, List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "UpdateGeoTargeting", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleChangePromotionStartDate(int customerID, int promotionID, DateTime newStartDate,
+        public bool scheduleChangePromotionStartDate(int promotionID, DateTime newStartDate,
                                                      List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             jsonHash.Add("newStartDate", newStartDate.ToString("yyyymmdd"));
-            return runBooleanMethod(ADENGINESERVICE, "scheduleChangePromotionStartDate",
+            return runBooleanMethod(ADENGINESERVICE, "ChangePromotionStartDate",
                                     JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleUpdateBudget(int customerID, int promotionID, Decimal changeInBudget, List<String> adEngines)
+        public bool scheduleUpdateBudget(int promotionID, Decimal changeInBudget, List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             jsonHash.Add("changeInBudget", changeInBudget.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "scheduleUpdateBudget", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleNegativeKeywords(int customerID, int promotionID,
+        public bool scheduleNegativeKeywords(int promotionID,
                                              List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
                                              List<String> adEngines, bool isAdd)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(keywordIdRemoveOppositePairs, Formatting.Indented);
             jsonHash.Add("keywordIdRemoveOppositePairs", jsonAdds);
             jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
             if (isAdd)
-                return runBooleanMethod(ADENGINESERVICE, "scheduleAddNegativeKeywords",
+                return runBooleanMethod(ADENGINESERVICE, "AddNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
             else
-                return runBooleanMethod(ADENGINESERVICE, "scheduleDeleteNegativeKeywords",
+                return runBooleanMethod(ADENGINESERVICE, "DeleteNegativeKeywords",
                                         JsonConvert.SerializeObject(jsonHash));
         }
 
-        public bool scheduleRefreshSiteLinks(int customerID, int promotionID, List<String> adEngines)
+        public bool scheduleRefreshSiteLinks(int promotionID, List<String> adEngines)
         {
             var jsonHash = new Dictionary<string, string>();
-            jsonHash.Add("customerID", customerID.ToString());
             jsonHash.Add("promotionID", promotionID.ToString());
             string jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
             jsonHash.Add("adEngines", jsonAdds);
-            return runBooleanMethod(ADENGINESERVICE, "scheduleRefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
+            return runBooleanMethod(ADENGINESERVICE, "RefreshSiteLinks", JsonConvert.SerializeObject(jsonHash));
         }
 
         #endregion
@@ -338,16 +331,54 @@ namespace Semplest.SharedResources.Services
         private bool runBooleanMethod(string serviceRequested, string methodRequested, string jsonStr)
         {
             var dbContext = new SemplestModel.Semplest();
+            var retVal = false;
             if (!dbContext.Configurations.First().DoNotLaunchAdServices)
             {
-                ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
-                _workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
-                _workerThread.Start(tData);
+                //ThreadData tData = new ThreadData(serviceRequested, methodRequested, jsonStr);
+                //_workerThread = new Thread(new ParameterizedThreadStart(runBooleanMethodAsync));
+                //_workerThread.Start(tData);
+                //return runBooleanMethodAsync(tData);
+                
+                string returnData = string.Empty;
+                try
+                {
+                    returnData = runMethod(_baseURLTest, serviceRequested, methodRequested, jsonStr,
+                                           timeoutMS);
+                    var dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(returnData);
+                    List<string> lis = dict.Values.ToList();
+                    string jsonstrlist = lis[0];
+                    //this should be the case but we are always going to return true so this line has been commented out
+                    if (!bool.Parse(lis[0]))
+                        throw new Exception("Json Call returned a false");
+                    else
+                    {
+                        retVal = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    var stemp = new System.Text.StringBuilder();
+                    stemp.Append("Json Passed:");
+                    stemp.Append(jsonStr);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Service Requested:");
+                    stemp.Append(serviceRequested);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Method Requested:");
+                    stemp.Append(methodRequested);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append("Json Returned:");
+                    stemp.Append(returnData);
+                    stemp.Append(Environment.NewLine);
+                    stemp.Append(ex.ToString());
+                    Semplest.SharedResources.Helpers.ExceptionHelper.LogException(new Exception(stemp.ToString()));
+                }
             }
-            return true;
+            return retVal;
         }
 
-        private void runBooleanMethodAsync(object data)
+
+       private void RunBooleanMethodAsync(object data)
         {
             ThreadData param = (ThreadData) data;
 

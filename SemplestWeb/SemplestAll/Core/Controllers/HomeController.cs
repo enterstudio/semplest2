@@ -257,7 +257,7 @@ namespace SemplestWebApp.Controllers
                 ServiceClientWrapper sw = new ServiceClientWrapper();
                 SemplestModel.Semplest dbContext = new SemplestModel.Semplest();
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
-                dbContext.Promotions.First(x => x.PromotionPK == promotionId).IsDeleted = sw.schedulePromotion(customerId, promotionId, dbContext.Promotions.First(x => x.PromotionPK == promotionId).PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1).ToArray(), SEMplestConstants.SchedulePromotionType.Delete);
+                dbContext.Promotions.First(x => x.PromotionPK == promotionId).IsDeleted = sw.schedulePromotion(promotionId, dbContext.Promotions.First(x => x.PromotionPK == promotionId).PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1).ToArray(), SEMplestConstants.SchedulePromotionType.Delete);
                 dbContext.SaveChanges();
             }
             catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
@@ -277,7 +277,7 @@ namespace SemplestWebApp.Controllers
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
                 foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
                     adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-                p.IsPaused = sw.schedulePromotion(customerId, promotionIdP, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
+                p.IsPaused = sw.schedulePromotion(promotionIdP, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
                 dbContext.SaveChanges();
             }
             catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
@@ -297,7 +297,7 @@ namespace SemplestWebApp.Controllers
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
                 foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
                     adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-                p.IsPaused = !sw.schedulePromotion(customerId, promotionIdR, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
+                p.IsPaused = !sw.schedulePromotion(promotionIdR, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
                 dbContext.SaveChanges();
             }
             catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }
@@ -317,7 +317,7 @@ namespace SemplestWebApp.Controllers
                 int customerId = ((Credential)Session[Semplest.SharedResources.SEMplestConstants.SESSION_USERID]).User.CustomerFK.Value;
                 foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
                     adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-                p.IsCompleted = sw.schedulePromotion(customerId, promotionIdE, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.End);
+                p.IsCompleted = sw.schedulePromotion(promotionIdE, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.End);
                 dbContext.SaveChanges();
             }
             catch (Exception ex) { Semplest.SharedResources.Helpers.ExceptionHelper.LogException(ex); }

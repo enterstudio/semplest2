@@ -396,6 +396,8 @@ function addNestedForm(container, counter, ticks, content) {
             doOptions('AdModelProp_Addresses_' + nextIndex + '__Address', 'AdModelProp_Addresses_' + nextIndex + '__City', 'AdModelProp_Addresses_' + nextIndex + '__StateCodeFK', 'AdModelProp_Addresses_' + nextIndex + '__Zip', 'AdModelProp_Addresses_' + nextIndex + '__ProximityRadius');
         });
     }
+//    $.validator.unobtrusive.parse('#form0');
+//    $.validate.unobtrusive.parse('#form0');
 }
 
 
@@ -521,7 +523,7 @@ function OnSuccess(id) {
             if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
                 tabStrip.append({
                     text: "Categories",
-                    contentUrl: '@Url.Action("Categories")'
+                    contentUrl: '/Campaign/Categories'
                 }, tabStrip.tabGroup.children("li:last")).select();
                 tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
                 tabStrip.select(tab);
@@ -537,7 +539,7 @@ function OnSuccess(id) {
         if (!tabStrip.tabGroup.children('li:contains("' + id + '")').text()) {
             tabStrip.append({
                 text: "Billing & Launch",
-                contentUrl: '@Url.Action("BillingLaunch")'
+                contentUrl: '/Campaign/BillingLaunch")'
             }, tabStrip.tabGroup.children("li:last")).select();
             tab = tabStrip.tabGroup.children('li:contains("' + id + '")');
             tabStrip.select(tab);

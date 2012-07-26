@@ -535,10 +535,10 @@ namespace Semplest.Core.Models.Repositories
                 updatePromotion.PromotionAdEngineSelecteds.Select(
                     pades => pades.AdvertisingEngine.AdvertisingEngine1));
             if (model.ProductGroup.Budget != oldModel.ProductGroup.Budget) 
-            sw.scheduleUpdateBudget(customerFk, updatePromotion.PromotionPK, model.ProductGroup.Budget,
+            sw.scheduleUpdateBudget(updatePromotion.PromotionPK, model.ProductGroup.Budget,
                                     adEngines);
             if (model.ProductGroup.StartDate != oldModel.ProductGroup.StartDate) 
-            sw.scheduleChangePromotionStartDate(customerFk, updatePromotion.PromotionPK,
+            sw.scheduleChangePromotionStartDate(updatePromotion.PromotionPK,
                                                 updatePromotion.PromotionStartDate, adEngines);
         }
 
@@ -654,7 +654,7 @@ namespace Semplest.Core.Models.Repositories
                             promo.PromotionAdEngineSelecteds.Select(
                                 pades => pades.AdvertisingEngine.AdvertisingEngine1));
                         var sw = new ServiceClientWrapper();
-                        sw.scheduleUpdateGeoTargeting(customerFk, promo.PromotionPK, adEngines);
+                        sw.scheduleUpdateGeoTargeting(promo.PromotionPK, adEngines);
                     }
                 }
 
@@ -712,7 +712,7 @@ namespace Semplest.Core.Models.Repositories
                     adEngines.AddRange(
                         promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
                     var sw = new ServiceClientWrapper();
-                    sw.scheduleRefreshSiteLinks(customerFk, promo.PromotionPK, adEngines);
+                    sw.scheduleRefreshSiteLinks(promo.PromotionPK, adEngines);
                 }
             }
             catch (Exception ex)
@@ -793,12 +793,12 @@ namespace Semplest.Core.Models.Repositories
                         promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
                     var sw = new ServiceClientWrapper();
                     if(addAds.Any())
-                        sw.scheduleAds(customerFk, promo.PromotionPK, addAds, adEngines, SEMplestConstants.PromotionAdAction.Add);
+                        sw.scheduleAds(promo.PromotionPK, addAds, adEngines, SEMplestConstants.PromotionAdAction.Add);
                     if (updateAds.Any())
-                        sw.scheduleAds(customerFk, promo.PromotionPK, updateAds, adEngines,
+                        sw.scheduleAds(promo.PromotionPK, updateAds, adEngines,
                                        SEMplestConstants.PromotionAdAction.Update);
                     if (deleteAds.Any())
-                        sw.scheduleAds(customerFk, promo.PromotionPK, deleteAds, adEngines,
+                        sw.scheduleAds(promo.PromotionPK, deleteAds, adEngines,
                                        SEMplestConstants.PromotionAdAction.Delete);
                 }
             }
@@ -1027,9 +1027,9 @@ namespace Semplest.Core.Models.Repositories
                 adEngines.AddRange(
                     promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
                 if (addDeletedKiops.Any())
-                    sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addDeletedKiops, adEngines, false);
+                    sw.scheduleNegativeKeywords(promo.PromotionPK, addDeletedKiops, adEngines, false);
                 if (addKiops.Any())
-                    sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addKiops, adEngines, true);
+                    sw.scheduleNegativeKeywords(promo.PromotionPK, addKiops, adEngines, true);
 
                 SaveKeywords(promo.PromotionPK, kpos, model.AdModelProp.NegativeKeywords,
                              model.ProductGroup.ProductGroupName, model.ProductGroup.ProductPromotionName);
@@ -1052,7 +1052,7 @@ namespace Semplest.Core.Models.Repositories
                         addNewKiops.Add(kiopNew);
                     }
                     if (addNewKiops.Any())
-                        sw.scheduleNegativeKeywords(customerFk, promo.PromotionPK, addNewKiops, adEngines, true);
+                        sw.scheduleNegativeKeywords(promo.PromotionPK, addNewKiops, adEngines, true);
                 }
             }
             return model.AllKeywords;

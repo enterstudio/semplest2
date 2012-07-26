@@ -539,7 +539,7 @@ namespace Semplest.Admin.Controllers
                         List<string> adEngines = new List<string>();
                         foreach(PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
                             adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-                        p.IsPaused = sw.schedulePromotion(id, p.PromotionPK, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
+                        p.IsPaused = sw.schedulePromotion(p.PromotionPK, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Pause);
                     }
                 }
             }
@@ -564,7 +564,7 @@ namespace Semplest.Admin.Controllers
                         List<string> adEngines = new List<string>();
                         foreach (PromotionAdEngineSelected pades in p.PromotionAdEngineSelecteds)
                             adEngines.Add(pades.AdvertisingEngine.AdvertisingEngine1);
-                        p.IsPaused = !sw.schedulePromotion(id, p.PromotionPK, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Unpause);
+                        p.IsPaused = !sw.schedulePromotion(p.PromotionPK, adEngines.ToArray(), SEMplestConstants.SchedulePromotionType.Unpause);
                     }
                 }
             }
