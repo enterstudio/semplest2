@@ -14,7 +14,12 @@ import java.util.Random;
 
 import org.apache.axis.types.UnsignedByte;
 
+import semplest.server.encryption.AESBouncyCastle;
+import semplest.server.protocol.CustomerHierarchy;
+import semplest.server.protocol.CustomerType;
+import semplest.server.protocol.EmailTemplate;
 import semplest.server.protocol.KeywordIdRemoveOppositePair;
+import semplest.server.protocol.RegistrationLinkDecryptedInfo;
 import semplest.server.protocol.ProtocolEnum.AdEngine;
 import semplest.server.protocol.chaseorbitalgateway.CustomerObject;
 import semplest.server.protocol.google.GoogleViolation;
@@ -93,6 +98,7 @@ public final class SemplestUtils
 	public static final DateFormat DATE_FORMAT_YYYYMMDD = new SimpleDateFormat("yyyyMMdd");
 	public static final DateFormat DATE_FORMAT_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
 	public static final DateFormat DATE_FORMAT_YYYYMMDD_HHmmss = new SimpleDateFormat("yyyyMMdd HHmmss");
+	public static final DateFormat DATE_FORMAT_YYYYMMDD_HH_MM_SS = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 	public static final Long GOOGLE_MONEY_UNIT = 1000000L;
 	public static final Double MICRO_AMOUNT_FACTOR = 1000000d;
 	public static final Long DOUBLE_TO_LONG_MICRO_DIVISOR_HELPER = 10000L;
@@ -117,8 +123,6 @@ public final class SemplestUtils
 	public static final Integer MINUTE = 60 * SECOND;
 	public static final Integer DEFAULT_API_SLEEP_SECS = 30;
 	public static final Integer DEFAULT_RETRY_COUNT = 10;
-	public static final Integer EMAIL_EXPIRED_REGISTRATION_REMINDER_DAYS_BACK = 3;
-	public static final Integer NUM_DATS_TILL_REGISTRATION_LINK_EXPIRATION = 3;
 	public static final String STATUS_GOOD = "STATUS GOOD";
 	public static final String VALUE_DELIMITER = "=";
 	public static final String TOKEN_DELIMITER = "|";	
@@ -126,6 +130,190 @@ public final class SemplestUtils
 	public static final String DATE_TIME = "DATE_TIME";
 	public static final String USER_NAME = "USER_NAME";
 	public static final String PASSWORD = "PASSWORD";
+	
+	public static CustomerType getCustomerType(final CustomerHierarchy hierarchy) throws Exception
+	{		
+		final Integer customerID = hierarchy.getCustsomerID();
+		if (customerID == null)
+		{
+			throw new Exception("The given CUstomer Hierarchy has a null CustomerID, which is illegal: " + hierarchy);
+		}
+		final Integer parentID = hierarchy.getParentCustomerID();
+		if (customerID.equals(parentID))
+		{
+			return CustomerType.SINGLE_USER;
+		}
+		if (parentID == null || parentID == 0)
+		{
+			return CustomerType.PARENT;
+		}
+		return CustomerType.CHILD;
+	}
+	
+	public static EmailTemplate getEmailTemplateForCustomer(final Integer customerID, final List<EmailTemplate> emailTemplates)
+	{
+		for (final EmailTemplate emailTemplate : emailTemplates)
+		{
+			final Integer emailTemplateaCustomerID = emailTemplate.getCustomerFK();
+			if (emailTemplateaCustomerID != null && emailTemplateaCustomerID.equals(customerID))
+			{
+				return emailTemplate;
+			}			
+		}
+		return null;
+	}
+	
+	public static EmailTemplate getEmailTemplateForNoCustomer(final List<EmailTemplate> emailTemplates)
+	{
+		for (final EmailTemplate emailTemplate : emailTemplates)
+		{
+			final Integer emailTemplateCustomerID = emailTemplate.getCustomerFK();
+			if (emailTemplateCustomerID == null)
+			{
+				return emailTemplate;
+			}
+		}
+		return null;
+	}
+	
+	public static EmailTemplate getEmailTemplateForUser(final semplest.server.protocol.User user, final List<EmailTemplate> emailTemplates)
+	{
+		final Integer customerFK = user.getCustomerFk();
+		final EmailTemplate emailTemplateForCustomer = getEmailTemplateForCustomer(customerFK, emailTemplates);
+		if (emailTemplateForCustomer != null)
+		{
+			return emailTemplateForCustomer;
+		}
+		final EmailTemplate emailTemplate = getEmailTemplateForNoCustomer(emailTemplates);		
+		return emailTemplate;
+	}
+	
+	public static RegistrationLinkDecryptedInfo getDecryptedInfo(final AESBouncyCastle aes, final String encryptedToken) throws Exception
+	{
+		final String decryptedToken;
+		try
+		{
+			decryptedToken = aes.decrypt(encryptedToken);			
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Could not decrypt token [" + encryptedToken + "]");
+		}
+		try
+		{
+			final RegistrationLinkDecryptedInfo decryptedInfo = getDecryptedInfoFromDescryptedString(decryptedToken);
+			return decryptedInfo;
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Could not decrypt token [" + encryptedToken + "]");
+		}
+	}
+	
+	public static String generateEncryptedLink(final AESBouncyCastle aes, final String reminderEmailUrlPrefix, final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	{
+		final String encryptedToken = generateEncryptedToken(aes, userID, dateTime, username, password);
+		final String encryptedUrl = reminderEmailUrlPrefix + encryptedToken;
+		return encryptedUrl;
+	}
+	
+	public static String generateEncryptedToken(final AESBouncyCastle aes, final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	{
+		final String unencryptedToken = getConcatenatedRegistrationString(userID, dateTime, username, password);
+		final String encryptedToken = aes.encrypt(unencryptedToken);
+		return encryptedToken;
+	}
+	
+	public static RegistrationLinkDecryptedInfo getDecryptedInfoFromDescryptedString(final String s) throws Exception
+	{		
+		final String[] tokens = s.split("\\" + SemplestUtils.TOKEN_DELIMITER);
+		if (tokens.length != 4)
+		{
+			throw new Exception("Expecting 4 tokens but got " + tokens.length + " within String [" + s + "] separated by [" + SemplestUtils.TOKEN_DELIMITER + "]: " + SemplestUtils.USER_ID + ", " + SemplestUtils.DATE_TIME + ", " + SemplestUtils.USER_NAME + ", " + SemplestUtils.PASSWORD);
+		}
+		final String userIdToken = tokens[0];
+		final String dateTimeToken = tokens[1];
+		final String usernameToken = tokens[2];
+		final String passwordToken = tokens[3];
+		final String[] userIdNameValue = userIdToken.split(SemplestUtils.VALUE_DELIMITER);
+		if (userIdNameValue.length != 2)
+		{
+			throw new Exception("Expecting 2 items within User String [" + userIdNameValue + "] separated by [" + SemplestUtils.VALUE_DELIMITER + "]");
+		}
+		final String[] dateTimeNameValue = dateTimeToken.split(SemplestUtils.VALUE_DELIMITER);
+		if (dateTimeNameValue.length != 2)
+		{
+			throw new Exception("Expecting 2 items within DateTime String [" + dateTimeNameValue + "] separated by [" + SemplestUtils.VALUE_DELIMITER + "]");
+		}
+		final String[] userNameNameValue = usernameToken.split(SemplestUtils.VALUE_DELIMITER);
+		if (userNameNameValue.length != 2)
+		{
+			throw new Exception("Expecting 2 items within Username String [" + userNameNameValue + "] separated by [" + SemplestUtils.VALUE_DELIMITER + "]");
+		}
+		final String[] passwordNameValue = passwordToken.split(SemplestUtils.VALUE_DELIMITER);
+		if (passwordNameValue.length != 2)
+		{
+			throw new Exception("Expecting 2 items within Password String [" + passwordNameValue + "] separated by [" + SemplestUtils.VALUE_DELIMITER + "]");
+		}
+		final String userIdName = userIdNameValue[0];
+		final String userIdValue = userIdNameValue[1];		
+		final String dateTimeName = dateTimeNameValue[0];
+		final String dateTimeValue = dateTimeNameValue[1];		
+		final String usernameName = userNameNameValue[0];
+		final String usernameValue = userNameNameValue[1];		
+		final String passwordName = passwordNameValue[0];
+		final String passwordValue = passwordNameValue[1];
+		if (!SemplestUtils.USER_ID.equals(userIdName))
+		{
+			throw new Exception("UserID token name expected is [" + SemplestUtils.USER_ID + "], but encountered [" + userIdName + "]");
+		}
+		if (!SemplestUtils.DATE_TIME.equals(dateTimeName))
+		{
+			throw new Exception("DateTime token name expected is [" + SemplestUtils.DATE_TIME + "], but encountered [" + dateTimeName + "]");
+		}
+		if (!SemplestUtils.USER_NAME.equals(usernameName))
+		{
+			throw new Exception("Username token name expected is [" + SemplestUtils.USER_NAME + "], but encountered [" + usernameName + "]");
+		}
+		if (!SemplestUtils.PASSWORD.equals(passwordName))
+		{
+			throw new Exception("Password token name expected is [" + SemplestUtils.PASSWORD + "], but encountered [" + passwordName + "]");
+		}
+		final Integer userID = Integer.parseInt(userIdValue);
+		final java.util.Date dateTime = SemplestUtils.DATE_FORMAT_YYYYMMDD_HH_MM_SS.parse(dateTimeValue);
+		final RegistrationLinkDecryptedInfo descryptedInfo = new RegistrationLinkDecryptedInfo(userID, dateTime, usernameValue, passwordValue);
+		return descryptedInfo;
+	}
+			
+	public static String getConcatenatedRegistrationString(final Integer userID, final java.util.Date dateTime, final String username, final String password)
+	{
+		final StringBuilder sb = new StringBuilder();
+		final String dateTimeString = SemplestUtils.DATE_FORMAT_YYYYMMDD_HH_MM_SS.format(dateTime);
+		sb.append(SemplestUtils.USER_ID).append(SemplestUtils.VALUE_DELIMITER).append(userID).append(SemplestUtils.TOKEN_DELIMITER);
+		sb.append(SemplestUtils.DATE_TIME).append(SemplestUtils.VALUE_DELIMITER).append(dateTimeString).append(SemplestUtils.TOKEN_DELIMITER);
+		sb.append(SemplestUtils.USER_NAME).append(SemplestUtils.VALUE_DELIMITER).append(username).append(SemplestUtils.TOKEN_DELIMITER);
+		sb.append(SemplestUtils.PASSWORD).append(SemplestUtils.VALUE_DELIMITER).append(password);
+		return sb.toString();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	public static Long getLongMicroAmount(final Double d)

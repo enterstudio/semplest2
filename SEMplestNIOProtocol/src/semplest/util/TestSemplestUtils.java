@@ -1,6 +1,8 @@
 package semplest.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,8 +14,124 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import semplest.server.protocol.CustomerHierarchy;
+import semplest.server.protocol.CustomerType;
+import semplest.server.protocol.EmailTemplate;
+import semplest.server.protocol.EmailType;
+import semplest.server.protocol.RegistrationLinkDecryptedInfo;
+
 public class TestSemplestUtils
 {
+	@Test
+	public void testGetCustomerType_Child() throws Exception
+	{
+		final CustomerHierarchy hierarchy = new CustomerHierarchy(1, 2, 3, new java.util.Date());
+		final CustomerType actualCustomerType = SemplestUtils.getCustomerType(hierarchy);
+		final CustomerType expectedCustomerType = CustomerType.CHILD;
+		Assert.assertEquals(expectedCustomerType, actualCustomerType);
+	}
+	
+	@Test
+	public void testGetCustomerType_Parent() throws Exception
+	{
+		final CustomerHierarchy hierarchy = new CustomerHierarchy(1, 2, null, new java.util.Date());
+		final CustomerType actualCustomerType = SemplestUtils.getCustomerType(hierarchy);
+		final CustomerType expectedCustomerType = CustomerType.PARENT;
+		Assert.assertEquals(expectedCustomerType, actualCustomerType);
+	}
+	
+	@Test
+	public void testGetCustomerType_SingleUser() throws Exception
+	{
+		final CustomerHierarchy hierarchy = new CustomerHierarchy(1, 2, 2, new java.util.Date());
+		final CustomerType actualCustomerType = SemplestUtils.getCustomerType(hierarchy);
+		final CustomerType expectedCustomerType = CustomerType.SINGLE_USER;
+		Assert.assertEquals(expectedCustomerType, actualCustomerType);
+	}
+	
+	@Test
+	public void testGetEmailTemplateForCustomer_CustomerSpecificExists()
+	{
+		final Integer customerID = 2;	
+		final EmailTemplate emailTemplate1 = new EmailTemplate(1, null, EmailType.EXPIRED_ACTIVATION_IDS, "bob@abc.com", "Welcome!", "Hello, nice to meet you.");
+		final EmailTemplate emailTemplate2 = new EmailTemplate(2, 2, EmailType.EXPIRED_ACTIVATION_IDS, "john@abc.com", "Welcome to Oz!", "Hi, nice to meet you.");
+		final EmailTemplate emailTemplate3 = new EmailTemplate(3, null, EmailType.FORGOTTEN_PASSWORD, "ted@abc.com", "Welcome to NY!", "Hey, nice to meet you.");
+		final List<EmailTemplate> emailTemplates = Arrays.asList(emailTemplate1, emailTemplate2, emailTemplate3);
+		final EmailTemplate actualEmailTemplate = SemplestUtils.getEmailTemplateForCustomer(customerID, emailTemplates);
+		Assert.assertEquals(emailTemplate2, actualEmailTemplate);
+	}
+	
+	@Test
+	public void testGetEmailTemplateForCustomer_CustomerSpecificExistsForAnotherCustomer()
+	{
+		final Integer customerID = 2;	
+		final EmailTemplate emailTemplate1 = new EmailTemplate(1, null, EmailType.EXPIRED_ACTIVATION_IDS, "bob@abc.com", "Welcome!", "Hello, nice to meet you.");
+		final EmailTemplate emailTemplate2 = new EmailTemplate(2, 6, EmailType.EXPIRED_ACTIVATION_IDS, "john@abc.com", "Welcome to Oz!", "Hi, nice to meet you.");
+		final EmailTemplate emailTemplate3 = new EmailTemplate(3, null, EmailType.FORGOTTEN_PASSWORD, "ted@abc.com", "Welcome to NY!", "Hey, nice to meet you.");
+		final List<EmailTemplate> emailTemplates = Arrays.asList(emailTemplate1, emailTemplate2, emailTemplate3);
+		final EmailTemplate actualEmailTemplate = SemplestUtils.getEmailTemplateForCustomer(customerID, emailTemplates);
+		Assert.assertEquals(null, actualEmailTemplate);
+	}
+	
+	@Test
+	public void testGetEmailTemplateForNoCustomer_Exists()
+	{
+		final EmailType emailType = EmailType.EXPIRED_ACTIVATION_IDS;		
+		final EmailTemplate emailTemplate1 = new EmailTemplate(1, 6, emailType, "bob@abc.com", "Welcome!", "Hello, nice to meet you.");
+		final EmailTemplate emailTemplate2 = new EmailTemplate(2, null, emailType, "john@abc.com", "Welcome to Oz!", "Hi, nice to meet you.");
+		final EmailTemplate emailTemplate3 = new EmailTemplate(3, 7, emailType, "stacy@abc.com", "Welcome to NY!", "Hey, nice to meet you.");
+		final List<EmailTemplate> emailTemplates = Arrays.asList(emailTemplate1, emailTemplate2, emailTemplate3);
+		final EmailTemplate actualEmailTemplate = SemplestUtils.getEmailTemplateForNoCustomer(emailTemplates);
+		Assert.assertEquals(emailTemplate2, actualEmailTemplate);
+	}
+	
+	@Test
+	public void testGetEmailTemplateForNoCustomer_NotExists()
+	{
+		final EmailType emailType = EmailType.EXPIRED_ACTIVATION_IDS;		
+		final EmailTemplate emailTemplate1 = new EmailTemplate(1, 6, emailType, "bob@abc.com", "Welcome!", "Hello, nice to meet you.");
+		final EmailTemplate emailTemplate2 = new EmailTemplate(2, 8, emailType, "john@abc.com", "Welcome to Oz!", "Hi, nice to meet you.");
+		final EmailTemplate emailTemplate3 = new EmailTemplate(3, 7, emailType, "stacy@abc.com", "Welcome to NY!", "Hey, nice to meet you.");
+		final List<EmailTemplate> emailTemplates = Arrays.asList(emailTemplate1, emailTemplate2, emailTemplate3);
+		final EmailTemplate actualEmailTemplate = SemplestUtils.getEmailTemplateForNoCustomer(emailTemplates);
+		Assert.assertEquals(null, actualEmailTemplate);
+	}
+	
+	@Test
+	public void testGetConcatenatedRegistrationString()
+	{
+		final Integer userID = 5;
+		final Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 1994);
+		cal.set(Calendar.MONTH, Calendar.JUNE);
+		cal.set(Calendar.DAY_OF_MONTH, 25);
+		cal.set(Calendar.HOUR_OF_DAY, 10);
+		cal.set(Calendar.MINUTE, 45);
+		cal.set(Calendar.SECOND, 30);
+		cal.set(Calendar.MILLISECOND, 500);
+		final java.util.Date dateTime = cal.getTime();
+		final String username = "user123";
+		final String password = "hey777";
+		final String actualResult = SemplestUtils.getConcatenatedRegistrationString(userID, dateTime, username, password);
+		final String expectedResult = "USER_ID=5|DATE_TIME=1994-06-25-10-45-30|USER_NAME=user123|PASSWORD=hey777";
+		Assert.assertEquals(expectedResult, actualResult);
+	}
+	
+	
+	@Test
+	public void testGetDecryptedInfoFromDescryptedString() throws Exception
+	{
+		final Integer userID = 5;
+		final String dateTimeString = "1994-06-25-10-45-30";
+		final java.util.Date dateTime = SemplestUtils.DATE_FORMAT_YYYYMMDD_HH_MM_SS.parse(dateTimeString);
+		final String username = "user123";
+		final String password = "hey777";
+		final String decryptedString = "USER_ID=" + userID + "|DATE_TIME=" + dateTimeString + "|USER_NAME=" + username + "|PASSWORD=" + password;
+		final RegistrationLinkDecryptedInfo actualResult = SemplestUtils.getDecryptedInfoFromDescryptedString(decryptedString);
+		final RegistrationLinkDecryptedInfo expectedResult = new RegistrationLinkDecryptedInfo(userID, dateTime, username, password);
+		Assert.assertEquals(expectedResult, actualResult);
+	}
+	
 	@Test
 	public void testIsNullReturnBlank()
 	{

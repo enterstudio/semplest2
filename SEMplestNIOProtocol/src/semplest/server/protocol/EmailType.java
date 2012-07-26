@@ -8,7 +8,8 @@ public enum EmailType
 	FORGOTTEN_PASSWORD (4, "ForgottenPassword"),
 	PROMOTION_NOT_STARTED (5, "PromotionNotStarted"),
 	WELCOME_EMAIL_CHILD (6, "WelcomeEmailChild"),
-	WELCOME_EMAIL_PARENT (7, "WelcomeEmailParent");
+	WELCOME_EMAIL_PARENT (7, "WelcomeEmailParent"),
+	WELCOME_EMAIL_NON_PARENT_USER (8, "WelcomeEmailNonParentUser");
 	
 	private final Integer code;
 	private final String name;
