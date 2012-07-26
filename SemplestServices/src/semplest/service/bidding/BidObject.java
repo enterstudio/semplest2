@@ -322,8 +322,6 @@ public class BidObject
 		// 3. MSN call to get average statistics
 		
 		// Remember that is data is fetched for a specific targetPosition 
-		BiddingParameters  bidParams = SemplestDB.getBiddingParameters();
-		targetPosition = bidParams.getBiddingServiceTargetPosition();
 		List<AdEngineBidHistoryData>  historyDataList = getBidHistoryData(promotionID, searchEngine, kwIDBidElementMap);
 		
 		
@@ -588,7 +586,20 @@ public class BidObject
 			multiplierGeolocation=LocationInfo.reachPctUS( gs ) / 100.0;
 		}
 		
+		BiddingParameters  bidParams = null;
+		try{
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Getting bidding parameters from config files.");
+			bidParams = SemplestDB.getBiddingParameters();
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
+		}
 		double bidMultiplierForGoogle = 1.0;  // ********************* TBD ************************ //
+		double googleVolMultiplier = 1.0;
+		if(searchEngine.equals(AdEngine.Google)){
+			googleVolMultiplier=20.0;
+		}
+
 		
 		List<Double> bidsList = new ArrayList<Double>();
 		
@@ -624,7 +635,8 @@ public class BidObject
 			}
 			bidValue =Math.min(maxBidDouble, bidValue);
 			
-			amountSpent+=statData.getAvgCPC() * (bidValue/statData.getAvgBid()) * statData.getClicks()/daysInMonth * multiplierGeolocation; // check
+			
+			amountSpent+=statData.getAvgCPC() * (bidValue/statData.getAvgBid()) * statData.getClicks()/daysInMonth * googleVolMultiplier* multiplierGeolocation; // check
 
 			wordIDBidMap.put(wordID, bidValue);
 			kwIDBidElementMap.get(wordID).setMicroBidAmount(getMicroBid(bidValue));
@@ -661,6 +673,17 @@ public class BidObject
 	}
 
 	private List<AdEngineBidHistoryData> getBidHistoryData(Integer promotionID, AdEngine searchEngine, Map<Long, BidElement> kwIDBidElementMap) throws Exception{
+		
+		
+		try{
+			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Getting bidding parameters from config files.");
+			BiddingParameters  bidParams = SemplestDB.getBiddingParameters();
+			targetPosition = bidParams.getBiddingServiceTargetPosition();
+		} catch (Exception e) {
+			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
+			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
+		}
+		
 		Map<String, ProtocolEnum.SemplestMatchType> keywordMatchType = new HashMap<String, ProtocolEnum.SemplestMatchType>();
 		for(Long l : kwIDBidElementMap.keySet()){
 			String matchTypeString = kwIDBidElementMap.get(l).getMatchType();
@@ -973,8 +996,7 @@ public class BidObject
 			//bidObject.setBidsInitial(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsUpdate(promotionID, searchEngine, budgetData);
 			//bidObject.setBidsInitialWeek(promotionID, searchEngine, budgetData);
-			
-			//bidObject.resetCampaign(promotionID, searchEngine);
+			bidObject.resetCampaign(promotionID, searchEngine);
 			
 			
 
