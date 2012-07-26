@@ -626,7 +626,7 @@ public class MsnCloudServiceImpl implements MsnAdcenterServiceInterface // MsnCl
 		}
 		
 		//Batch to maximum number of 1000 keywords per call
-		List<List<AdEngineBidHistoryData>> batchedList = SemplestUtils.getBatches(dataList, 1000);
+		List<List<AdEngineBidHistoryData>> batchedList = SemplestUtils.getBatches(dataList, 500);
 		dataList = new ArrayList<AdEngineBidHistoryData>();
 		for(List<AdEngineBidHistoryData> subList : batchedList){
 			//Get volume information
