@@ -100,6 +100,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 	private static String DevelopmentEmail = null;
 	private static String RunMode = null;
 	private static Double BudgetMultFactor = null;
+	private static String AdengineExecuteBidProcessFrequency = null;
 
 	// private String esbURL = "http://VMDEVJAVA1:9898/semplest";
 
@@ -232,6 +233,11 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		BudgetMultFactor = (Double) SemplestConfiguration.configData.get("SemplestBiddingBudgetMultFactor");
 		DevelopmentEmail = (String) SemplestConfiguration.configData.get("DevelopmentEmail");
 		RunMode = (String) SemplestConfiguration.configData.get("RunMode");
+		AdengineExecuteBidProcessFrequency = (String) SemplestConfiguration.configData.get("AdengineExecuteBidProcessFrequency");
+		if (!ProtocolEnum.ScheduleFrequency.existsFrequency(AdengineExecuteBidProcessFrequency))
+		{
+			throw new Exception("AdengineExecuteBidProcessFrequency parameter " + AdengineExecuteBidProcessFrequency + " is not a valid Schedule Frequency");
+		}
 	}
 
 	public String AddPromotionToAdEngine(String json) throws Exception
@@ -389,7 +395,7 @@ public class SemplestAdengineServiceImpl implements SemplestAdengineServiceInter
 		ArrayList<SemplestSchedulerTaskObject> listOfTasks = new ArrayList<SemplestSchedulerTaskObject>();
 		SemplestSchedulerTaskObject executeOngoinBiddingTask = CreateSchedulerAndTask.ExecuteBidProcess(promotionID, adEngines);
 		listOfTasks.add(executeOngoinBiddingTask);
-		CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startTime, null, ProtocolEnum.ScheduleFrequency.TwoHour.name(), true, false, promotionID, null, null, null);
+		CreateSchedulerAndTask.createScheduleAndRun(ESBWebServerURL, listOfTasks, scheduleName, startTime, null, AdengineExecuteBidProcessFrequency, true, false, promotionID, null, null, null);
 		// *****TEST
 		// CreateSchedulerAndTask.createScheduleAndRun(listOfTasks,
 		// scheduleName, new Date(), null,
