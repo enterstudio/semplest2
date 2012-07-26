@@ -594,10 +594,10 @@ public class BidObject
 			logger.error("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
 			throw new Exception("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Unable to get bidding parameters from config files."+ e.getMessage(), e);
 		}
-		double bidMultiplierForGoogle = 1.0;  // ********************* TBD ************************ //
+		double bidMultiplierForGoogle = bidParams.getBiddingServiceBidMultiplierForGoogleFromMSNHistory();  // ********************* TBD ************************ //
 		double googleVolMultiplier = 1.0;
 		if(searchEngine.equals(AdEngine.Google)){
-			googleVolMultiplier=20.0;
+			googleVolMultiplier=bidParams.getBiddingServiceGoogleVolMultiplierFromMSNHistory().doubleValue();
 		}
 
 		
