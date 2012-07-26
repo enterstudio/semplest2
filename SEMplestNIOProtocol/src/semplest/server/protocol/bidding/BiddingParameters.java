@@ -7,6 +7,8 @@ public class BiddingParameters
 	private Integer SemplestBiddingPercentileValue;
 	private Float SemplestBiddingMarginFactor;
 	private Integer BiddingServiceTargetPosition;
+	private Double BiddingServiceBidMultiplierForGoogleFromMSNHistory;
+	private Integer BiddingServiceGoogleVolMultiplierFromMSNHistory;
 	public Integer getSemplestBiddingBudgetMultFactor()
 	{
 		return SemplestBiddingBudgetMultFactor;
@@ -46,6 +48,22 @@ public class BiddingParameters
 	public void setBiddingServiceTargetPosition(Integer biddingServiceTargetPosition)
 	{
 		BiddingServiceTargetPosition = biddingServiceTargetPosition;
+	}
+	public Double getBiddingServiceBidMultiplierForGoogleFromMSNHistory()
+	{
+		return BiddingServiceBidMultiplierForGoogleFromMSNHistory;
+	}
+	public void setBiddingServiceBidMultiplierForGoogleFromMSNHistory(Double biddingServiceBidMultiplierForGoogleFromMSNHistory)
+	{
+		BiddingServiceBidMultiplierForGoogleFromMSNHistory = biddingServiceBidMultiplierForGoogleFromMSNHistory;
+	}
+	public Integer getBiddingServiceGoogleVolMultiplierFromMSNHistory()
+	{
+		return BiddingServiceGoogleVolMultiplierFromMSNHistory;
+	}
+	public void setBiddingServiceGoogleVolMultiplierFromMSNHistory(Integer biddingServiceGoogleVolMultiplierFromMSNHistory)
+	{
+		BiddingServiceGoogleVolMultiplierFromMSNHistory = biddingServiceGoogleVolMultiplierFromMSNHistory;
 	}
 
 }
