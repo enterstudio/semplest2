@@ -71,7 +71,7 @@ public class ProtocolEnum
 	
 	public static enum PromotionBiddingType
 	{
-		Initial,Ongoing, Reset;
+		Initial,Ongoing;
 	}
 	
 	public static enum AdEngine

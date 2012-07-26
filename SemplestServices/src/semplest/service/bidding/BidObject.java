@@ -444,7 +444,7 @@ public class BidObject
 					final Long keywordID = entry.getKey();
 					final String word = kwIDBidElementMap.get(keywordID).getKeyword();
 
-					final Long microBidAmount = getMicroBid(wordIDBidMap.get(keywordID));
+					final Long microBidAmount = (wordIDBidMap.get(keywordID) == null) ? null : getMicroBid(wordIDBidMap.get(keywordID));
 					final GoogleSetBidForKeywordRequest request = new GoogleSetBidForKeywordRequest(adGroupID, word, keywordID, microBidAmount);
 					requests.add(request);
 				}
@@ -472,6 +472,9 @@ public class BidObject
 					for (final Entry<Long, Double> entry : entrySet){
 						final Long wordID = entry.getKey();
 						bidDataToMSN.add(kwIDBidElementMap.get(wordID));
+						if(kwIDBidElementMap.get(wordID).getIsDefaultValue()){
+							kwIDBidElementMap.get(wordID).setMicroBidAmount((wordIDBidMap.get(wordID) == null) ? null : getMicroBid(wordIDBidMap.get(wordID)));
+						}
 						logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Keyword: "+kwIDBidElementMap.get(wordID).getKeyword()+", Microbid: "+kwIDBidElementMap.get(wordID).getMicroBidAmount()+", Kyeword ID: "+wordID);
 					}
 
@@ -742,10 +745,18 @@ public class BidObject
 		// 1. Database call: get campaign specific IDs
 		
 		getCampaignIDsFromDatabase(promotionID, searchEngine);
+
 		
 		
 		/* ******************************************************************************************* */
-		// 2. Database call: get present bid info
+		// 2. Reset default bid
+
+		defaultMicroBid = resetDefaultMicroBid(promotionID, searchEngine);
+
+
+		
+		/* ******************************************************************************************* */
+		// 3. Database call: get present bid info
 		
 		// get present bid status from database
 		List<BidElement> bidElementList = getBidDataFromDatabase(promotionID, searchEngine);
@@ -754,12 +765,7 @@ public class BidObject
 		Map<Long,Boolean> pauseMap = new HashMap<Long,Boolean>();
 		Map<Long,BidElement> kwIDBidElementMap = getBidElementMapInResetState(promotionID, searchEngine, bidElementList, pauseMap);
 		
-				
-		/* ******************************************************************************************* */
-		// 3. Reset default bid
-		
-		defaultMicroBid = resetDefaultMicroBid(promotionID, searchEngine);
-		
+
 
 		/* ******************************************************************************************* */
 		// 6. Database call: store bid data
@@ -795,7 +801,7 @@ public class BidObject
 		/* ******************************************************************************************* */
 		// 11. Write to database: Initital bidding is done
 		
-		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Reset);
+		SemplestDB.setSemplestBiddingHistory(promotionID, searchEngine, PromotionBiddingType.Initial);
 		
 		
 	}
@@ -852,8 +858,8 @@ public class BidObject
 			BidElement bidElem = b.clone();
 			bidElem.setIsActive(true);
 			bidElem.setIsDefaultValue(true);
-			bidElem.setMicroBidAmount(null);
-			bidElem.setCompetitionType(null);
+			bidElem.setMicroBidAmount(defaultMicroBid);
+			//bidElem.setCompetitionType(null);
 			kwIDBidElementMap.put(b.getKeywordAdEngineID(), bidElem);
 			
 			//if(!b.getIsDefaultValue()){
@@ -862,7 +868,7 @@ public class BidObject
 			//}
 			
 			//if(!b.getIsActive()){
-				pauseMap.put(b.getKeywordAdEngineID(), false);
+				pauseMap.put(b.getKeywordAdEngineID(), true);
 				logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Activating keyword " + b.getKeyword());
 			//}
 			logger.info("[PromotionID: "+promotionID+ "-"+searchEngine.name()+"]" + "Createing reset state for keyword: " + kwIDBidElementMap.get(b.getKeywordAdEngineID()));
@@ -957,7 +963,7 @@ public class BidObject
 			BidObject bidObject = new BidObject();
 
 			
-			AdEngine searchEngine = AdEngine.Google;
+			AdEngine searchEngine = AdEngine.MSN;
 			
 			
 			Integer promotionID = new Integer(175);
@@ -975,8 +981,8 @@ public class BidObject
 
 
 
-			List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
-			System.out.println(bidHistory.size());
+			//List<SemplestBiddingHistory> bidHistory= SemplestDB.getSemplestBiddingHistory(promotionID, searchEngine);
+			//System.out.println(bidHistory.size());
 //			System.out.println(bidHistory.get(0).getSemplestBidType()+": "+bidHistory.get(0).getBidCompleted());
 //			
 //			Date now = new Date();
@@ -1009,20 +1015,16 @@ public class BidObject
 			} else {
 				System.out.println("MSN "+msnAccountID+" "+campaignID+" "+adGroupID);
 			}
+			*/
 			
-			
-			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
-			System.out.println(bidData.size());
-
-			HashSet<String> wordSet = new HashSet<String>();
-			for(BidElement b : bidData){
-				wordSet.add(b.getKeyword());
-				System.out.println(b.getKeyword()+": "+b.getKeywordAdEngineID());
-			}
-			System.out.println(wordSet.size());
+//			List<BidElement> bidData = SemplestDB.getLatestBids(promotionID, searchEngine);
+//			System.out.println(bidData.size());
+//
+//			for(BidElement b : bidData){
+//				System.out.println(b);
+//			}
 		
 
-			 */
 			
 			
 //			Calendar cal = Calendar.getInstance();
