@@ -204,6 +204,17 @@ namespace Semplest.SharedResources.Services
             return runBooleanMethod(ADENGINESERVICE, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
         }
 
+        public bool DeleteKeywords(int promotionID, List<int> keywordIds, List<string> adEngines)
+        {
+            var jsonHash = new Dictionary<string, string>();
+            jsonHash.Add("promotionID", promotionID.ToString());
+            string jsonAdds = JsonConvert.SerializeObject(keywordIds, Formatting.Indented);
+            jsonHash.Add("keywordIds", jsonAdds);
+            jsonAdds = JsonConvert.SerializeObject(adEngines, Formatting.Indented);
+            jsonHash.Add("adEngines", jsonAdds);
+            return runBooleanMethod(ADENGINESERVICE, "UpdateBudget", JsonConvert.SerializeObject(jsonHash));
+        }
+
         public bool scheduleNegativeKeywords(int promotionID,
                                              List<KeywordIdRemoveOppositePair> keywordIdRemoveOppositePairs,
                                              List<String> adEngines, bool isAdd)

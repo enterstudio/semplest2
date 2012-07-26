@@ -477,6 +477,7 @@ namespace Semplest.Core.Models.Repositories
             return -1;
         }
 
+
         public int GetBudgetCycleId(string budgetCycleName)
         {
             using (var dbcontext = new SemplestModel.Semplest())
@@ -878,12 +879,16 @@ namespace Semplest.Core.Models.Repositories
             stationIds.Columns.Add("IsTargetMSN", typeof (Boolean));
             stationIds.Columns.Add("IsTargetGoogle", typeof (Boolean));
             var negativeKeywordsToBeInserted = new List<string>();
+            var deletedKeywords = new List<int>();
             if (negativeKeywords != null)
                 negativeKeywordsToBeInserted.AddRange(negativeKeywords);
             foreach (var kpo in kpos)
             {
                 if (!kpo.isDeleted)
+                {
                     kpo.isDeleted = IsDeletedKeyword(kpo.keyword.Trim(), negativeKeywords);
+                    deletedKeywords.Add(kpo.id);
+                }
 
                 var dr = stationIds.NewRow();
                 dr["Keyword"] = kpo.keyword.Trim();
@@ -927,6 +932,7 @@ namespace Semplest.Core.Models.Repositories
                     ((IObjectContextAdapter) dbcontext).ObjectContext.CommandTimeout = 100;
                     dbcontext.Database.ExecuteSqlCommand("exec sp_UpdateKeywords @kwa, @PromotionId", parameters);
                     _savedCampaign = true;
+                    
                     //set keyword id's back in the model
                     int userid =
                         ((Credential)
@@ -950,6 +956,12 @@ namespace Semplest.Core.Models.Repositories
                             }
                         }
                     }
+                    var sw = new ServiceClientWrapper();
+                    var adEngines = new List<string>();
+                    var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promotionId);
+                    adEngines.AddRange(
+                        promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                    sw.DeleteKeywords(promotionId, deletedKeywords, adEngines);
                 }
             }
         }
@@ -994,7 +1006,8 @@ namespace Semplest.Core.Models.Repositories
                                       pka.SemplestProbability == null ? 0 : pka.SemplestProbability.Value,
                                   isTargetMSN = pka.IsTargetMSN,
                                   isTargetGoogle = pka.IsTargetGoogle,
-                                  isDeleted = pka.IsDeleted
+                                  isDeleted = pka.IsDeleted,
+                                  id = pka.KeywordFK
                               };
                     kpos.Add(kpo);
                 }
@@ -1124,7 +1137,13 @@ namespace Semplest.Core.Models.Repositories
                 foreach (int keywordId in keywordIds)
                     dbcontext.PromotionKeywordAssociations.Where(key => key.KeywordFK == keywordId).First(
                         key => key.PromotionFK == promoId).IsDeleted = true;
+                var sw = new ServiceClientWrapper();
                 dbcontext.SaveChanges();
+                var adEngines = new List<string>();
+                var promo = dbcontext.Promotions.Single(row => row.PromotionPK == promoId);
+                adEngines.AddRange(
+                        promo.PromotionAdEngineSelecteds.Select(pades => pades.AdvertisingEngine.AdvertisingEngine1));
+                sw.DeleteKeywords(promoId, keywordIds, adEngines);
             }
         }
 
