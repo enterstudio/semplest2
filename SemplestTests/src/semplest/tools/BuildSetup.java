@@ -71,9 +71,11 @@ public class BuildSetup {
 	}
 	
 	public void setProductionBuild(String serverIndex){
-		String path = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/bin/system.properties";
+		String path1 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/src/system.properties";
+		String path2 = "/var/lib/hudson/jobs/SEMplestProductionServiceBuild/workspace/SemplestServices/dist/bin/system.properties";
 		
-		setProps(path, ProdJdbc, serverIndex);
+		setProps(path1, ProdJdbc, serverIndex);
+		setProps(path2, ProdJdbc, serverIndex);
 	}
 	
 	public void setProps(String path, String jdbc, String serverIndex){
