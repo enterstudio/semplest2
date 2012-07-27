@@ -15,30 +15,47 @@ import semplest.keywords.ldatest.KWGenDmozLDAdata3;
  *
  */
 
-public class CatSplitter {
+public class CatSplitter implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3739542623678622166L;
 	private static final Logger logger = Logger.getLogger(CatSplitter.class);
-	
-	private HashMap<String, String> loadedCats;
 	private String[] allCats;
 	private int numSubFiles;
+	private String destinFolder; 
+	private String outputFileName;
+	private String extension;
 	
-	public CatSplitter(int numSubFiles) {
+	public CatSplitter(int numSubFiles,  String destinFolder, String outputFileName, String extension) {
 		this.numSubFiles = numSubFiles;
+		this.destinFolder = destinFolder;
+		this.outputFileName = outputFileName;
+		this.extension	= extension;
+		
 	}
 	
 	public String[] getAllCats(){
 		return allCats;
 	}
-	
+	public static void saveSerializedCatSplitter(String path, CatSplitter splitter) throws FileNotFoundException, IOException{
+		ObjectOutputStream obj_out = new ObjectOutputStream(new FileOutputStream(path));
+		obj_out.writeObject(splitter);
+	}
+	public static CatSplitter loadSerializedCatSplitter(String path) throws FileNotFoundException, IOException, ClassNotFoundException{
+		ObjectInputStream obj_in = new ObjectInputStream(new FileInputStream(path));
+		return (CatSplitter) obj_in.readObject();
+	}
 	public void loadAllCats(String inputFile) throws FileNotFoundException{
 		ArrayList<String> allCatsList = new ArrayList<String>();
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		logger.info("loading all categories...");
 		long start = System.currentTimeMillis();
+		
 		while(sc.hasNext()){
 			String[] split =sc.nextLine().split(":");
-			if(split.length>0)
+			if(split[0].indexOf("top/")==0)
 				allCatsList.add(split[0]);
 		}
 		allCats = allCatsList.toArray(new String[allCatsList.size()]);
@@ -46,7 +63,7 @@ public class CatSplitter {
 		logger.info("time to load categories : "+(System.currentTimeMillis()-start)+" msec");
 	}
 	
-	private PrintStream[] openAllOutputFiles(String destinFolder, String outputFileName, String extension) throws FileNotFoundException{
+	private PrintStream[] openAllOutputFiles() throws FileNotFoundException{
 		PrintStream[] outputs = new PrintStream[numSubFiles];
 		for(int i=0; i<outputs.length ; i++){
 			outputs[i] = new PrintStream(new FileOutputStream(destinFolder+outputFileName+"_"+i+extension));
@@ -60,10 +77,11 @@ public class CatSplitter {
 		}
 	}
 	
-	public void splitCatFile(String inputFile, String destinFolder, String outputFileName, String extension) throws FileNotFoundException {
+	public void splitCatFile(String inputFile) throws FileNotFoundException {
 		String line, cat;
 		String[] split;
-		PrintStream[] outputs = openAllOutputFiles(destinFolder, outputFileName, extension);
+		PrintStream[] outputs = openAllOutputFiles();
+
 		
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		if(allCats == null)
@@ -76,19 +94,59 @@ public class CatSplitter {
 			line = sc.nextLine();
 			split = line.split(":");
 			cat = split[0].trim();
-			//Find index of category
-			int index = Arrays.binarySearch(allCats, cat);
-			PrintStream output = outputs[index/catsPerFile];
-			output.println(line);
+			if(split[0].indexOf("top/")==0){
+				//Find index of category
+				int index = Arrays.binarySearch(allCats, cat);
+				if(index>=0){
+					PrintStream output = outputs[index/catsPerFile];
+					output.println(line);
+				}
+			}
 		}
 		logger.info("time to generate subfiles : " + (System.currentTimeMillis()-start)+" msec");
 		closeAllOutputFiles(outputs);
 	}
 	
+	public ArrayList<String> getCatData(ArrayList<String> categories) throws FileNotFoundException{
+		logger.info("retrieving category information from files...");
+		long start = System.currentTimeMillis();
+		int catsPerFile = (int) Math.ceil(1.0*allCats.length/numSubFiles);
+		ArrayList<String> outData = new ArrayList<String> (categories.size());
+		HashMap<Integer,HashSet<String>> indexCatMap = new HashMap<Integer,HashSet<String>>(numSubFiles);
+		for(String cat : categories){
+			int indexCat = Arrays.binarySearch(allCats, cat);
+			Integer indexFile = indexCat/catsPerFile;
+			if(indexCatMap.containsKey(indexFile)){
+				indexCatMap.get(indexFile).add(cat);
+			}else{
+				HashSet<String> aux = new HashSet<String>();
+				aux.add(cat);
+				indexCatMap.put(indexFile, aux);
+			}
+		}
+		Set<Integer> keySet = indexCatMap.keySet();
+		for(int key : keySet){
+			HashSet<String> catSet = indexCatMap.get(key); 
+			String line, cat;
+			String[] split;
+			Scanner sc = new Scanner(new FileInputStream(destinFolder+outputFileName+"_"+key+extension));
+			while(sc.hasNext()){
+				line = sc.nextLine();
+				split = line.split(":");
+				cat = split[0].trim();
+				if(catSet.contains(cat)){
+					outData.add(line);
+				}
+			}
+			sc.close();
+		}
+		logger.info("time to retrieve "+ outData.size()+" categories : "+(System.currentTimeMillis()-start)+"msec");
+		return outData;
+	}
+	//////////////////////////////////////////////////////////////////////////////////////////////
 	
 	
-	/*
-	public void splitCatFile2HashMap(String inputFile, String destinFolder, String outputFileName, String extension, int catsPerFile) throws FileNotFoundException {
+	public void splitCatFile2HashMap(String inputFile, int catsPerFile) throws FileNotFoundException {
 		HashMap<String, String> cat2fileMap = new HashMap<String,String>();
 		Scanner sc = new Scanner(new FileInputStream(inputFile));
 		int catCount =0;
@@ -97,6 +155,8 @@ public class CatSplitter {
 		PrintStream outputStream = new PrintStream(new FileOutputStream(outputFile));
 		logger.info("Generating file: "+outputFile);
 		//Read line by line
+		logger.info("Creating hashmap...");
+		long start = System.currentTimeMillis();
 		while(sc.hasNext()){
 			String line = sc.nextLine();
 			String[] split = line.split(":");
@@ -114,21 +174,49 @@ public class CatSplitter {
 				outputStream.println(line);
 				cat2fileMap.put(cat, outputFile);
 				catCount++;
+			}else{
+				logger.info(line);
 			}
 		}
+		logger.info("time to create hashmap : " + (System.currentTimeMillis() - start));
 		
 	}
-	*/
 	
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	public static int[] randIndexArray(int sizeOut, int maxNum){
+		int[] ret = new int[sizeOut];
+		for(int i=0; i<sizeOut; i++){
+			ret[i] = (int) (Math.random()*(maxNum-1));
+		}
+		return ret;
+	}
 	
 	public static void main(String[] args) throws FileNotFoundException{
 		try{
-		BasicConfigurator.configure();
-		CatSplitter splitter = new CatSplitter(100);
-		splitter.splitCatFile("/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/business.2", "/home/lluis/Documents/splitTest/", 
-				"business",".2.txt");
+			String[] subCats = {"arts"};//,"business", "computers","games", "health", "home", "news", "recreation",
+					//"regional", "reference", "science","society", "shopping","sports"};
+			//BasicConfigurator.configure();
+			for(String subCat : subCats){
+				System.out.println("PROCESSING: "+subCat);
+				CatSplitter splitter = new CatSplitter(3000,"/home/lluis/Documents/splitTest/"+subCat+"/", subCat,".2.txt");
+				splitter.splitCatFile("/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/"+subCat+".2");
+				//splitter.splitCatFile2HashMap("/semplest/data/dmoz/multiwords/crawl2MSNVolFiltered/business.2", "/home/lluis/Documents/splitTest/", "business",".2.txt",100);
+				saveSerializedCatSplitter("/home/lluis/Documents/splitTest/"+subCat+"/"+subCat+".spl", splitter);
+				/*
+				long start = System.currentTimeMillis();
+				CatSplitter splitter2 = CatSplitter.loadSerializedCatSplitter("/home/lluis/Documents/splitTest/arts.spl");
+				String[] cats = splitter2.getAllCats();
+				System.out.println("Time to load serialized : "+(System.currentTimeMillis()-start)+"msec");
+				int[] randInd = randIndexArray(1000, cats.length);
+				ArrayList<String> categories = new ArrayList<String>();
+				for(int i: randInd){
+					categories.add(cats[i]);
+				}
+				splitter2.getCatData(categories);*/
+			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
 	}
 }
