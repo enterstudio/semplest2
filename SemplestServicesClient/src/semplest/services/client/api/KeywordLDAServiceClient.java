@@ -15,8 +15,8 @@ import com.google.gson.Gson;
 public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywordLDAServiceInterface 
 {
 	private static String SERVICEOFFERED = "semplest.service.keywords.lda.KeywordGeneratorService";
-	//private static String BASEURLTEST = "http://VMJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
-	private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
+	private static String BASEURLTEST = "http://VMDEVJAVA1:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
+	//private static String BASEURLTEST = "http://23.22.63.111:9898/semplest";  ///VMJAVA1 23.22.63.111 NY-semplestDev2
 	private static String timeoutMS = "60000";
 	private static ProtocolJSON protocolJson = new ProtocolJSON();
 	private static Gson gson = new Gson();
@@ -30,7 +30,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 
 		try
 		{
-			boolean flag = false;
+			boolean flag = true;
 			while(flag){
 				System.out.println("**************DEV MACHINE 1*****************");
 				KeywordLDAServiceClient client = new KeywordLDAServiceClient(BASEURLTEST);
@@ -48,7 +48,7 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				ArrayList<String> selectCateg = new ArrayList<String>();
 				selectCateg.add(res.get(1));
 				System.out.println("Selected:"+res.get(1));
-				
+				/*
 				KeywordProbabilityObject[] kw = client.getKeywords(selectCateg,null, new String[] {"Google", "MSN"},
 						"Lobster Dinners", "lobster, lobster dinners, lobster salad, take out, seafood, fresh fish, fish", 
 						null, "http://www.thelobsterhouse.com/home", null ,new Integer[]{300,100,100});
@@ -59,8 +59,8 @@ public class KeywordLDAServiceClient extends ServiceRun implements SemplestKeywo
 				
 				
 					String kaux=kw[0].getKeyword();
-					System.out.println(kaux+" "+kw[0].getSemplestProbability());
-					Thread.sleep(3000);
+					System.out.println(kaux+" "+kw[0].getSemplestProbability());*/
+					Thread.sleep(10000);
 	
 			}
 			while(!flag){
